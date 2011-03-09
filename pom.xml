@@ -154,7 +154,13 @@
             <fork>${compiler.fork}</fork>
           </configuration>
         </plugin>
-  
+
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <version>0.7</version>
+        </plugin>
+   
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-eclipse-plugin</artifactId>
@@ -457,6 +463,30 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <excludeSubProjects>false</excludeSubProjects>
+          <excludes>
+            <exclude>**/README</exclude>
+            <exclude>**/README.txt</exclude>
+            <exclude>**/resources/**/*.xsd</exclude>
+            <exclude>**/webapp/js/**/*</exclude>
+            <exclude>**/test/resources/**/*</exclude>
+            <exclude>**/test/data*/**/*</exclude>
+            <exclude>.gitignore</exclude>
+            <exclude>.git/**/*</exclude>
+            <!-- generated files -->
+            <exclude>**/target/**/*</exclude>
+            <exclude>**/eclipse-classes/**/*</exclude>
+            <exclude>**/.*</exclude>
+            <exclude>**/.settings/**/*</exclude>
+            <exclude>**/*.iml</exclude>
+            <exclude>.idea/**/*</exclude>
+          </excludes>
+        </configuration>
       </plugin>
     </plugins>
   </build>
