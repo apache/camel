@@ -1629,8 +1629,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
-     * This splitter responds with the latest message returned from destination
-     * endpoint.
+     * This splitter responds with the original input message. You can use a custom {@link AggregationStrategy} to
+     * control what to respond from the splitter.
      *
      * @return the expression clause builder for the expression on which to split
      */
@@ -1644,8 +1644,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
-     * This splitter responds with the latest message returned from destination
-     * endpoint.
+     * This splitter responds with the original input message. You can use a custom {@link AggregationStrategy} to
+     * control what to respond from the splitter.
      *
      * @param expression  the expression on which to split the message
      * @return the builder
