@@ -244,7 +244,7 @@
                     <dependency>
                      <groupId>org.slf4j</groupId>
                      <artifactId>slf4j-simple</artifactId>
-                     <version>1.6.0</version>
+                     <version>${slf4j-version}</version>
                 </dependency>
                  </dependencies>
                </plugin>
