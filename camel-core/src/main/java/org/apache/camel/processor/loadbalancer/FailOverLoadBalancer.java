@@ -134,7 +134,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 // are we exhausted by attempts?
                 if (maximumFailoverAttempts > -1 && attempts.get() > maximumFailoverAttempts) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Braking out of failover after " + attempts + " failover attempts");
+                        log.debug("Breaking out of failover after " + attempts + " failover attempts");
                     }
                     break;
                 }
@@ -154,7 +154,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                     counter.set(0);
                 } else {
                     // no more processors to try
-                    log.trace("Braking out of failover as we reach the end of endpoints to use for failover");
+                    log.trace("Breaking out of failover as we reached the end of endpoints to use for failover");
                     break;
                 }
             }
@@ -257,7 +257,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 // are we exhausted by attempts?
                 if (maximumFailoverAttempts > -1 && attempts.get() > maximumFailoverAttempts) {
                     if (log.isTraceEnabled()) {
-                        log.trace("Braking out of failover after " + attempts + " failover attempts");
+                        log.trace("Breaking out of failover after " + attempts + " failover attempts");
                     }
                     break;
                 }
@@ -273,7 +273,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                         counter.set(0);
                     } else {
                         // no more processors to try
-                        log.trace("Braking out of failover as we reach the end of endpoints to use for failover");
+                        log.trace("Breaking out of failover as we reached the end of endpoints to use for failover");
                         break;
                     }
                 }
