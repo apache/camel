@@ -16,14 +16,16 @@
  */
 package org.apache.camel.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownableService;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -305,17 +307,38 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
      * Returns the version of this service
      */
     public synchronized String getVersion() {
-        if (ObjectHelper.isNotEmpty(version)) {
+        if (version != null) {
             return version;
         }
-        
-        Package aPackage = getClass().getPackage();
-        if (aPackage != null) {
-            version = aPackage.getImplementationVersion();
-            if (version == null) {
-                version = aPackage.getSpecificationVersion();
+
+        // try to load from maven properties first
+        try {
+            Properties p = new Properties();
+            InputStream is = getClass().getResourceAsStream("/META-INF/maven/org.apache.camel/camel-core/pom.properties");
+            if (is != null) {
+                p.load(is);
+                version = p.getProperty("version", "");
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        // fallback to using Java API
+        if (version == null) {
+            Package aPackage = getClass().getPackage();
+            if (aPackage != null) {
+                version = aPackage.getImplementationVersion();
+                if (version == null) {
+                    version = aPackage.getSpecificationVersion();
+                }
             }
         }
-        return version != null ? version : "";
+
+        if (version == null) {
+            // we could not compute the version so use a blank
+            version = "";
+        }
+
+        return version;
     }
 }
