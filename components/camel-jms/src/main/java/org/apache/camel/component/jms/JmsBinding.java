@@ -259,9 +259,10 @@ public class JmsBinding {
         Message answer = null;
 
         boolean alwaysCopy = endpoint != null && endpoint.getConfiguration().isAlwaysCopyMessage();
+        boolean force = endpoint != null && endpoint.getConfiguration().isForceSendOriginalMessage();
         if (!alwaysCopy && camelMessage instanceof JmsMessage) {
             JmsMessage jmsMessage = (JmsMessage)camelMessage;
-            if (!jmsMessage.shouldCreateNewMessage() || endpoint.getConfiguration().isForceSendOriginalMessage()) {
+            if (!jmsMessage.shouldCreateNewMessage() || force) {
                 answer = jmsMessage.getJmsMessage();
             }
         }

@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
@@ -41,7 +40,6 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
         MockEndpoint twoMock = getMockEndpoint("mock:two");
         MockEndpoint resultMock = getMockEndpoint("mock:result");
 
-        
         oneMock.expectedMessageCount(1);
         oneMock.expectedHeaderReceived("foo", "bar");
         twoMock.expectedMessageCount(1);
@@ -50,7 +48,7 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
         resultMock.expectedMessageCount(1);
         resultMock.expectedHeaderReceived("foo", "bar");
 
-        String out = template.requestBodyAndHeader("jms:queue:start?jmsMessageType=Text&forceSendOriginalMessage=" + forceSendOriginalMessage, "Hello World", "foo", "bar", String.class);
+        String out = template.requestBodyAndHeader("jms:queue:start", "Hello World", "foo", "bar", String.class);
         assertEquals("Hello Back", out);
         
         assertMockEndpointsSatisfied();
@@ -79,7 +77,7 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
         resultMock.expectedMessageCount(1);
         resultMock.expectedHeaderReceived("foo", "bar");
         
-        out = template.requestBodyAndHeader("jms:queue:start?jmsMessageType=Text&forceSendOriginalMessage=" + forceSendOriginalMessage, "Hello World", "foo", "bar", String.class);
+        out = template.requestBodyAndHeader("jms:queue:start", "Hello World", "foo", "bar", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -96,21 +94,21 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
             public void configure() throws Exception {
                 from("jms:queue:start?mapJmsMessage=false")
                     .loadBalance().failover(-1, false, true)
-                        .to("jms:queue:one?transferException=true&forceSendOriginalMessage=" + forceSendOriginalMessage)
-                        .to("jms:queue:two?transferException=true&forceSendOriginalMessage=" + forceSendOriginalMessage)
-                        .to("jms:queue:three?transferException=true&forceSendOriginalMessage=" + forceSendOriginalMessage)
+                        .to("jms:queue:one?forceSendOriginalMessage=" + forceSendOriginalMessage)
+                        .to("jms:queue:two?forceSendOriginalMessage=" + forceSendOriginalMessage)
+                        .to("jms:queue:three?forceSendOriginalMessage=" + forceSendOriginalMessage)
                     .end()
                     .to("mock:result");
 
-                from("jms:queue:one?transferException=true&mapJmsMessage=false")
+                from("jms:queue:one?mapJmsMessage=false")
                     .to("mock:one")
                     .throwException(new IllegalArgumentException("Damn"));
 
-                from("jms:queue:two?transferException=true&mapJmsMessage=false")
+                from("jms:queue:two?mapJmsMessage=false")
                     .to("mock:two")
                     .transform().simple("Hello Back");
                 
-                from("jms:queue:three?transferException=true&mapJmsMessage=false")
+                from("jms:queue:three?mapJmsMessage=false")
                     .to("mock:three")
                     .transform().simple("Bye World");
             }
@@ -121,7 +119,11 @@ public class JmsLoadBalanceFailoverWithForceSendOriginalJmsMessageTest extends C
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
+        JmsComponent jms = jmsComponentAutoAcknowledge(connectionFactory);
+        // we want to transfer the exception
+        jms.setTransferException(true);
+
+        camelContext.addComponent("jms", jms);
 
         return camelContext;
     }

@@ -301,6 +301,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setTestConnectionOnStartup(testConnectionOnStartup);
     }
 
+    public void setForceSendOriginalMessage(boolean forceSendOriginalMessage) {
+        getConfiguration().setForceSendOriginalMessage(forceSendOriginalMessage);
+    }
+
     public void setRequestTimeout(long requestTimeout) {
         getConfiguration().setRequestTimeout(requestTimeout);
     }

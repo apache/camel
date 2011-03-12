@@ -926,6 +926,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         configuration.setTestConnectionOnStartup(testConnectionOnStartup);
     }
 
+    @ManagedAttribute
+    public boolean isForceSendOriginalMessage() {
+        return configuration.isForceSendOriginalMessage();
+    }
+
+    @ManagedAttribute
+    public void setForceSendOriginalMessage(boolean forceSendOriginalMessage) {
+        configuration.setForceSendOriginalMessage(forceSendOriginalMessage);
+    }
+
     @ManagedAttribute(description = "Camel id")
     public String getCamelId() {
         return getCamelContext().getName();
