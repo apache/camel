@@ -144,7 +144,6 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             handleException(e);
         }
 
-
     }
 
     /**
