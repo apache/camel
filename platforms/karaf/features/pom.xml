@@ -170,6 +170,12 @@
             <version>${felix.configadmin.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>org.apache.aries.blueprint</artifactId>
+            <version>${aries-blueprint-version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

@@ -41,10 +41,6 @@
   </feature>
   <feature name='camel-blueprint' version='${pom.version}' resolver='(obr)'>
      <feature version='${pom.version}'>camel-core</feature>
-     <bundle>mvn:org.apache.aries.blueprint/org.apache.aries.blueprint/${aries-blueprint-version}</bundle>
-     <bundle>mvn:org.apache.aries.proxy/org.apache.aries.proxy/${aries-blueprint-version}</bundle>
-     <bundle>mvn:org.apache.aries/org.apache.aries.util/${aries-blueprint-version}</bundle>
-     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/${asm-bundle-version}</bundle>
      <bundle>mvn:org.apache.camel/camel-blueprint/${pom.version}</bundle>
   </feature>
   <feature name='camel-test' version='${pom.version}' resolver='(obr)'>
