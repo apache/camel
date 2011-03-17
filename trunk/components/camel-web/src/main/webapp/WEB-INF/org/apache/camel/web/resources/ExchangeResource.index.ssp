@@ -1,0 +1,57 @@
+<%@ import val it: ExchangeResource %>
+
+#{ attributes("title") = "Exchange " + it.getExchangeId}#
+
+
+<h1>Exchange: ${it.getExchangeId}</h1>
+
+
+<table>
+  <tr>
+    <td valign="top">
+      <table>
+        <tr>
+          <th colspan="2">Properties</th>
+        </tr>
+        <tr>
+          <th>Name</th>
+          <th>Value</th>
+        </tr>
+        #for(entry <- it.getProperties)
+          <tr>
+            <td>${entry.getKey}</td>
+            <td><a class="type" title="${entry.getValue.getClass.getCanonicalName}">${entry.getValue}</a></td>
+          </tr>
+        #end
+      </table>
+    </td>
+    <td valign="top">
+      <table>
+        <tr>
+          <th colspan="2">Headers</th>
+        </tr>
+        <tr>
+          <th>Name</th>
+          <th>Value</th>
+        </tr>
+        #for(entry <- it.getHeaders)
+          <tr>
+            <td>${entry.getKey}</td>
+            <td><a class="type" title="${entry.getValue.getClass.getCanonicalName}">${entry.getValue}</a></td>
+          </tr>
+        #end
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <th colspan="2">
+      Message Body is Java Class: ${it.getIn.getBody.getClass.getCanonicalName}
+    </th>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <div class="message">${escape(it.getIn.getBody)}</div>
+    </td>
+  </tr>
+</table>
+

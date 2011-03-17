@@ -1,0 +1,41 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Header>
+		<Action xmlns="http://www.w3.org/2005/08/addressing">
+			http://hello_world_soap_http.apache.org/GreeterPortType/greetMe
+		</Action>
+		<MessageID xmlns="http://www.w3.org/2005/08/addressing">
+			urn:uuid:d67279aa-9230-4e47-a57e-4166a44d9d96</MessageID>
+		<To xmlns="http://www.w3.org/2005/08/addressing">http://localhost:9001/SoapContext/SoapPort
+		</To>
+		<ReplyTo xmlns="http://www.w3.org/2005/08/addressing">
+			<Address>http://www.w3.org/2005/08/addressing/anonymous
+			</Address>
+		</ReplyTo>
+	</soap:Header>
+	<soap:Body>
+		<ns1:greetMe xmlns:ns1="http://hello_world_soap_http.apache.org/">
+			<ns2:arg0 xmlns="http://apache.org/hello_world_soap_http/types"
+				xmlns:ns2="http://hello_world_soap_http.apache.org/">world!</ns2:arg0>
+		</ns1:greetMe>
+	</soap:Body>
+</soap:Envelope>
+
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+	<soap:Header>
+		<Action xmlns="http://www.w3.org/2005/08/addressing">
+			http://hello_world_soap_http.apache.org/GreeterPortType/greetMeResponse
+		</Action>
+		<MessageID xmlns="http://www.w3.org/2005/08/addressing">
+			urn:uuid:ab509c5d-6c8a-49fc-b4e1-d3dc80e90812</MessageID>
+		<To xmlns="http://www.w3.org/2005/08/addressing">http://www.w3.org/2005/08/addressing/anonymous
+		</To>
+		<RelatesTo xmlns="http://www.w3.org/2005/08/addressing">
+			urn:uuid:d67279aa-9230-4e47-a57e-4166a44d9d96</RelatesTo>
+	</soap:Header>
+	<soap:Body>
+		<ns1:greetMeResponse xmlns:ns1="http://hello_world_soap_http.apache.org/">
+			<ns2:return xmlns="http://apache.org/hello_world_soap_http/types"
+				xmlns:ns2="http://hello_world_soap_http.apache.org/">Hello world!</ns2:return>
+		</ns1:greetMeResponse>
+	</soap:Body>
+</soap:Envelope>

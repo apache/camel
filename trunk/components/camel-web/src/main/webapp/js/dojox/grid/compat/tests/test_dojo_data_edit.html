@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Test dojox.Grid Editing with DojoData model</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+<style>
+	@import "../../_grid/Grid.css";
+	body {
+		font-family: Tahoma, Arial, Helvetica, sans-serif;
+		font-size: 11px;
+	}
+	.dojoxGrid-row-editing td {
+		background-color: #F4FFF4;
+	}
+	.dojoxGrid input, .dojoxGrid select, .dojoxGrid textarea {
+		margin: 0;
+		padding: 0;
+		border-style: none;
+		width: 100%;
+		font-size: 100%;
+		font-family: inherit;
+	}
+	.dojoxGrid input {
+	}
+	.dojoxGrid select {
+	}
+	.dojoxGrid textarea {
+	}
+	#controls {
+		padding: 6px 0;
+	}
+	#grid {
+		width: 850px;
+		height: 350px;
+		border: 1px solid silver;
+	}
+</style>
+	<script type="text/javascript" src="../../../../dojo/dojo.js" 
+		djConfig="isDebug: true, debugAtAllCosts: false, parseOnLoad: true"></script>
+	<script type="text/javascript">
+		dojo.require("dojox.grid.Grid");
+		dojo.require("dojo.data.ItemFileWriteStore");
+		dojo.require("dojo.parser");
+	</script>
+
+	<script type="text/javascript">
+		function getRow(inRowIndex){
+			return ' ' + inRowIndex;
+		}
+		
+		var layoutCountries = [
+			// view 0
+			{ type: 'dojox.GridRowView', width: '20px' },
+			// view 1
+			{ cells: [[{ name: "Row", get: getRow, width: 5}]], noscroll: true},
+			// view 2
+			{ cells: [[
+				{ field: 0, width: 'auto' },
+				{ width: 8 }
+			]]}
+		];
+		
+		removeItem = function() {
+			// Removes the first item in the model from the store
+			// Grid should reflect removal of the first item and items should be re-indexed
+			jsonStore.deleteItem(dataModel.data[0].__dojo_data_item);
+		}
+		
+		var i = 0;
+		addItem = function() {
+			grid.addRow({name: "country"+(i++), type: "country"});
+		}
+		addItemToStore = function() {
+			// Adds a new item to the store
+			// Grid should reflect the new item.
+			jsonStore.newItem({name: "country"+(i++), type: "country"});
+		}
+	</script>
+</head>
+<body class="tundra">
+<h2>
+	dojox.Grid Basic Editing test
+</h2>
+<div id="controls">
+	<button onclick="grid.refresh()">Refresh</button>&nbsp;&nbsp;&nbsp;
+	<button onclick="dataModel.clearData(true)">Clear Data (Model)</button>&nbsp;&nbsp;&nbsp;
+	<button onclick="dataModel.refresh()">Refresh (Model)</button>&nbsp;&nbsp;&nbsp;
+	<button onclick="grid.edit.focusEditor()">Focus Editor</button>
+	<button onclick="grid.focus.next()">Next Focus</button>&nbsp;&nbsp;&nbsp;
+	<button onclick="addItem()">Add</button>
+	<button onclick="grid.removeSelectedRows()">Remove</button>&nbsp;&nbsp;&nbsp;
+	<button onclick="jsonStore.revert()">Revert (Store)</button>
+	<button onclick="removeItem()">Remove (Store)</button>
+	<button onclick="addItemToStore()">Add (Store)</button>&nbsp;&nbsp;&nbsp;
+	<button onclick="grid.edit.apply()">Apply</button>
+	<button onclick="grid.edit.cancel()">Cancel</button>&nbsp;&nbsp;&nbsp;
+	<button onclick="grid.singleClickEdit = !grid.singleClickEdit">Toggle singleClickEdit</button>&nbsp;
+</div>
+<span dojoType="dojo.data.ItemFileWriteStore" 
+	 jsId="jsonStore" url="../../../../dijit/tests/_data/countries.json">
+</span>
+<span dojoType="dojox.grid.data.DojoData" 
+	  jsId="dataModel" 
+	  rowsPerPage="20"
+	  store="jsonStore" 
+	  query="{ name : '*' }">
+</span>
+<div id="grid" jsId="grid" dojoType="dojox.Grid" elasticView="2" 
+	 model="dataModel" structure="layoutCountries">
+</div>
+<span dojoType="dojox.grid.data.DojoData" 
+	  jsId="dataModel2" 
+	  rowsPerPage="20"
+	  store="jsonStore" 
+	  query="{ name : '*' }">
+</span>
+<div id="grid2" dojoType="dojox.Grid" elasticView="2" 
+	 model="dataModel2" structure="layoutCountries">
+</div>
+</body>
+</html>
+
+
+

@@ -1,0 +1,64 @@
+<%@ import val it: RoutesResource %>
+
+#{ attributes("title") = "Routes"}#
+
+
+<h2>Routes</h2>
+
+<table>
+  <tr>
+    <th>Route</th>
+    <th colspan="2">Status</th>
+    <th>Remove</th>
+    <th>Exchanges (Completed/Failed/Inflight)</th>
+    <th>Processing Time (Min/Max/Mean)</th>
+    <th>Message Time (First/Last)</th>
+  </tr>
+<ul>
+  #for(i <- it.getRoutes)
+  <tr>
+    <td>
+      <a href='${uri("/routes/" + i.getId)}'>${i.getId}</a> ${i.getDescription.getText}
+    </td>
+    <td class="${i.getStatus}">
+      ${i.getStatus}
+    </td>
+    <td>
+      <form action='${uri("/routes/" + i.getId + "/status")}' method="POST" name="setStatus">
+      #if(i.isStartable)
+        <input type="hidden" name="status" value="start">
+        <input type="submit" value="Start">
+      #end
+      #if(i.isStoppable)
+        <input type="hidden" name="status" value="stop">
+        <input type="submit" value="Stop">
+      #end
+      </form>
+    </td>
+    <td>
+    	#if(i.isStoppable)
+      		(stop first)
+      	#end
+    	#if(i.isStartable)
+      		<a href='${uri("/routes/" + i.getId + "/remove")}'>remove</a>
+      	#end
+    </td>
+    <td>
+      ${i.getStatistic("ExchangesCompleted")} / ${i.getStatistic("ExchangesFailed")} / ${i.getStatistic("InflightExchanges")}
+    </td>
+    <td>
+      ${i.getStatistic("MinProcessingTime")} / ${i.getStatistic("MaxProcessingTime")} / ${i.getStatistic("MeanProcessingTime")}
+    </td>
+    <td>
+      ${i.getStatistic("FirstExchangeCompletedTimestamp")} / ${i.getStatistic("LastExchangeCompletedTimestamp")}
+    </td>
+  </tr>
+  #end
+</ul>
+</table>
+
+<ul>
+<li><a href='${uri("/routes/create")}'>Create New Route</a>
+</ul>
+
+

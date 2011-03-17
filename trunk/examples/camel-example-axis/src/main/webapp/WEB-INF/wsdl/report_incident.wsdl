@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://reportincident.example.camel.apache.org"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	targetNamespace="http://reportincident.example.camel.apache.org">
+
+	<!-- Type definitions for input- and output parameters for webservice -->
+	<wsdl:types>
+	<xs:schema targetNamespace="http://reportincident.example.camel.apache.org">
+			<xs:element name="inputReportIncident">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element type="xs:string"  name="incidentId"/>
+						<xs:element type="xs:string"  name="incidentDate"/>
+						<xs:element type="xs:string"  name="givenName"/>
+						<xs:element type="xs:string"  name="familyName"/>
+						<xs:element type="xs:string"  name="summary"/>
+						<xs:element type="xs:string"  name="details"/>
+						<xs:element type="xs:string"  name="email"/>
+						<xs:element type="xs:string"  name="phone"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="outputReportIncident">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element type="xs:string" name="code"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+
+	<!-- Message definitions for input and output -->
+	<wsdl:message name="inputReportIncident">
+		<wsdl:part name="parameters" element="tns:inputReportIncident"/>
+	</wsdl:message>
+	<wsdl:message name="outputReportIncident">
+		<wsdl:part name="parameters" element="tns:outputReportIncident"/>
+	</wsdl:message>
+
+	<!-- Port (interface) definitions -->
+	<wsdl:portType name="ReportIncidentService">
+		<wsdl:operation name="ReportIncident">
+			<wsdl:input message="tns:inputReportIncident"/>
+			<wsdl:output message="tns:outputReportIncident"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<!-- Port bindings to transports and encoding - HTTP, document literal encoding is used -->
+	<wsdl:binding name="ReportIncidentBinding" type="tns:ReportIncidentService">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="ReportIncident">
+			<soap:operation
+				soapAction="http://reportincident.example.camel.apache.org/ReportIncident"
+				style="document"/>
+			<wsdl:input>
+				<soap:body parts="parameters" use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body parts="parameters" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+
+	<!-- Service definition -->
+	<wsdl:service name="ReportIncidentService">
+		<wsdl:port name="ReportIncidentPort" binding="tns:ReportIncidentBinding">
+			<soap:address location="http://reportincident.example.camel.apache.org"/>
+		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>

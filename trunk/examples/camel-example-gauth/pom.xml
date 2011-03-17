@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>examples</artifactId>
+        <version>2.7.0</version>
+    </parent>
+
+    <artifactId>camel-example-gauth</artifactId>
+    <name>Camel :: Example :: GAuth</name>
+    <description>Demonstrates how to implement Camel's OAuth support for GAE</description>
+    <packaging>war</packaging>
+
+    <properties>
+        <!-- application properties -->
+        <gae.application.name>replaceme</gae.application.name>
+        <gae.consumer.key>replaceme</gae.consumer.key>
+        <gae.consumer.secret>replaceme</gae.consumer.secret>
+
+        <!-- dependency versions -->
+        <gdata-version>1.41.1</gdata-version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-gae</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.appengine.orm</groupId>
+            <artifactId>datanucleus-appengine</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gdata</groupId>
+            <artifactId>gdata-core</artifactId>
+            <version>${gdata-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gdata</groupId>
+            <artifactId>gdata-client</artifactId>
+            <version>${gdata-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gdata</groupId>
+            <artifactId>gdata-calendar</artifactId>
+            <version>${gdata-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gdata</groupId>
+            <artifactId>gdata-calendar-meta</artifactId>
+            <version>${gdata-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.common</groupId>
+            <artifactId>google-collect</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+
+        <!-- testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webResources>
+                        <!--
+                           Copied from root pom.xml because it is not combined
+                           with custom resource configuration below.
+                        -->
+                        <resource>
+                            <directory>${project.build.outputDirectory}</directory>
+                            <includes>
+                                <include>META-INF/LICENSE*</include>
+                                <include>META-INF/NOTICE*</include>
+                                <include>META-INF/DEPENDENCIES*</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>appengine-web.xml</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>appengine-web.xml</exclude>
+                </excludes>
+            </resource>
+        </resources>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>camel.internal.maven.repository</id>
+            <name>Camel Maven Repository</name>
+            <url>http://svn.apache.org/repos/asf/camel/m2-repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+</project>

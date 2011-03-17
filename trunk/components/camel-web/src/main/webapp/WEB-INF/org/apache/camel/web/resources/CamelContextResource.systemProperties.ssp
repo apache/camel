@@ -1,0 +1,20 @@
+<%@ import val it: CamelContextResource %>
+
+#{ attributes("title") = "System Properties"}#
+
+
+<h1>System Properties</h1>
+
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Value</th>
+  </tr>
+  #for(entry <- it.getSystemProperties)
+    <tr>
+      <td>${entry.getKey}</td>
+      <td>${entry.getValue}</td>
+    </tr>
+  #end
+</table>
