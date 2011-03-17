@@ -259,9 +259,10 @@ public class JmsBinding {
         Message answer = null;
 
         boolean alwaysCopy = endpoint != null && endpoint.getConfiguration().isAlwaysCopyMessage();
+        boolean force = endpoint != null && endpoint.getConfiguration().isForceSendOriginalMessage();
         if (!alwaysCopy && camelMessage instanceof JmsMessage) {
             JmsMessage jmsMessage = (JmsMessage)camelMessage;
-            if (!jmsMessage.shouldCreateNewMessage()) {
+            if (!jmsMessage.shouldCreateNewMessage() || force) {
                 answer = jmsMessage.getJmsMessage();
             }
         }
@@ -296,7 +297,7 @@ public class JmsBinding {
      * Appends the JMS headers from the Camel {@link JmsMessage}
      */
     public void appendJmsProperties(Message jmsMessage, Exchange exchange, org.apache.camel.Message in) throws JMSException {
-        Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();
+        Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();        
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
