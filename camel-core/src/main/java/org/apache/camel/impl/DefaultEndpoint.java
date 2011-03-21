@@ -46,7 +46,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     //Match any key-value pair in the URI query string whose key contains "passphrase" or "password" (case-insensitive).
     //First capture group is the key, second is the value.
-    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password)[^=]*)=([^&]*)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=([^&]*)", Pattern.CASE_INSENSITIVE);
 
     private String endpointUri;
     private CamelContext camelContext;

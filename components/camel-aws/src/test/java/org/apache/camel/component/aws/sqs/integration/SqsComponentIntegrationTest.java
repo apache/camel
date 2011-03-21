@@ -57,7 +57,7 @@ public class SqsComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
         
         assertNotNull(exchange.getIn().getHeader(SqsConstants.MESSAGE_ID));
-        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
+        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
     }
     
     @Test

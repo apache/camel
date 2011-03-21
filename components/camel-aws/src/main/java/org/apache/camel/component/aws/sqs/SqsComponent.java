@@ -25,7 +25,6 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS Component</a> 
  * 
- * @version 
  */
 public class SqsComponent extends DefaultComponent {
     
@@ -41,13 +40,13 @@ public class SqsComponent extends DefaultComponent {
         SqsConfiguration configuration = new SqsConfiguration();
         setProperties(configuration, parameters);
 
-        if (remaining == null) {
-            throw new IllegalArgumentException("Queue name not specified.");
+        if (remaining == null || remaining.trim().length() == 0) {
+            throw new IllegalArgumentException("Queue name must be specified.");
         }
         configuration.setQueueName(remaining);
 
         if (configuration.getAmazonSQSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonSQSClient or accessKey and secretKey must be set");
+            throw new IllegalArgumentException("AmazonSQSClient or accessKey and secretKey must be specified.");
         }
 
         SqsEndpoint sqsEndpoint = new SqsEndpoint(uri, this, configuration);

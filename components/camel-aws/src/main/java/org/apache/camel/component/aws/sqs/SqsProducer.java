@@ -23,6 +23,7 @@ import com.amazonaws.services.sqs.model.SendMessageResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,6 @@ import org.slf4j.LoggerFactory;
  * A Producer which sends messages to the Amazon Web Service Simple Queue Service
  * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
  * 
- * @version 
  */
 public class SqsProducer extends DefaultProducer {
     
@@ -45,15 +45,11 @@ public class SqsProducer extends DefaultProducer {
         String body = exchange.getIn().getBody(String.class);
         SendMessageRequest request = new SendMessageRequest(getQueueUrl(), body);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Sending request [" + request + "] from exchange [" + exchange + "]...");
-        }
+        LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
         
         SendMessageResult result = getClient().sendMessage(request);
         
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Received result [" + result + "]");
-        }
+        LOG.trace("Received result [{}]", result);
         
         Message message = getMessageForResponse(exchange);
         message.setHeader(SqsConstants.MESSAGE_ID, result.getMessageId());
@@ -81,5 +77,10 @@ public class SqsProducer extends DefaultProducer {
     @Override
     public SqsEndpoint getEndpoint() {
         return (SqsEndpoint) super.getEndpoint();
+    }
+    
+    @Override
+    public String toString() {
+        return "SqsProducer[" + DefaultEndpoint.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
     }
 }

@@ -23,7 +23,6 @@ import com.amazonaws.services.sqs.AmazonSQSClient;
 /**
  * The AWS SQS component configuration properties
  * 
- * @version 
  */
 public class SqsConfiguration {
 

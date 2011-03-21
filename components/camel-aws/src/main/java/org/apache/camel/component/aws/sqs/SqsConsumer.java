@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
@@ -43,9 +44,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Consumer of messages from the Amazon Web Service Simple Queue Service
- * <a href="http://aws.amazon.com/aws-sqs/">AWS SQS</a>
+ * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
  * 
- * @version 
  */
 public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
     
@@ -68,16 +68,19 @@ public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer,
         request.setMaxNumberOfMessages(getMaxMessagesPerPoll() > 0 ? getMaxMessagesPerPoll() : null);
         request.setVisibilityTimeout(getConfiguration().getVisibilityTimeout() != null ? getConfiguration().getVisibilityTimeout() : null);
         request.setAttributeNames(getConfiguration().getAttributeNames() != null ? getConfiguration().getAttributeNames() : null);
+        
+        LOG.trace("Receiving messages with request [{}]...", request);
+        
         ReceiveMessageResult messageResult = getClient().receiveMessage(request);
+        
+        LOG.trace("Received {} messages", messageResult.getMessages().size());
         
         Queue<Exchange> exchanges = createExchanges(messageResult.getMessages());
         return processBatch(CastUtils.cast(exchanges));
     }
     
     protected Queue<Exchange> createExchanges(List<Message> messages) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Received " + messages.size() + " messages in this poll");
-        }
+        LOG.trace("Received {} messages in this poll", messages.size());
         
         Queue<Exchange> answer = new LinkedList<Exchange>();
         for (Message message : messages) {
@@ -118,9 +121,7 @@ public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer,
                 }
             });
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchange [" + exchange + "]...");
-            }
+            LOG.trace("Processing exchange [{}]...", exchange);
 
             getProcessor().process(exchange);
         }
@@ -139,11 +140,11 @@ public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer,
                 String receiptHandle = exchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE, String.class);
                 DeleteMessageRequest deleteRequest = new DeleteMessageRequest(getQueueUrl(), receiptHandle);
                 
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Deleting message with receipt handle " + receiptHandle + "...");
-                }
+                LOG.trace("Deleting message with receipt handle {}...", receiptHandle);
                 
                 getClient().deleteMessage(deleteRequest);
+                
+                LOG.trace("Message deleted");
             }
         } catch (AmazonClientException e) {
             LOG.warn("Error occurred during deleting message", e);
@@ -161,7 +162,7 @@ public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer,
         if (cause != null) {
             LOG.warn("Exchange failed, so rolling back message status: " + exchange, cause);
         } else {
-            LOG.warn("Exchange failed, so rolling back message status: " + exchange);
+            LOG.warn("Exchange failed, so rolling back message status: {}", exchange);
         }
     }
     
@@ -224,5 +225,10 @@ public class SqsConsumer extends ScheduledPollConsumer implements BatchConsumer,
     
     public int getMaxMessagesPerPoll() {
         return getEndpoint().getMaxMessagesPerPoll();
+    }
+    
+    @Override
+    public String toString() {
+        return "SqsConsumer[" + DefaultEndpoint.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
     }
 }

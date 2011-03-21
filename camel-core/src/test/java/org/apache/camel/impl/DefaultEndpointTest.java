@@ -34,6 +34,8 @@ public class DefaultEndpointTest extends ContextTestSupport {
                 DefaultEndpoint.sanitizeUri("ftp://host.mysite.com/records?passiveMode=true&user=someuser&password=superSecret"));
         assertEquals("sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=******&knownHostsFile=hosts.list",
                 DefaultEndpoint.sanitizeUri("sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=superSecret&knownHostsFile=hosts.list"));
+        assertEquals("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=******",
+                DefaultEndpoint.sanitizeUri("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=qi472qfberu33dqjncq"));
     }
 
     public void assertSanitizedUriUnchanged(String uri) {

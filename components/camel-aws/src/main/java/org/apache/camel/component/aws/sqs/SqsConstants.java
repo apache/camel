@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.sqs;
 /**
  * Constants used in Camel AWS SQS module
  *
- * @version 
  */
 public interface SqsConstants {
 
