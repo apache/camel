@@ -17,6 +17,7 @@
 package org.apache.camel.itest.osgi.blueprint;
 
 import org.apache.camel.CamelContext;
+import org.apache.karaf.testing.Helper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -27,8 +28,8 @@ import org.osgi.service.blueprint.container.BlueprintContainer;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
+import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
@@ -79,7 +80,11 @@ public class CamelBlueprint3Test extends OSGiBlueprintTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
 
-        Option[] options = options(
+        Option[] options = combine(
+                // Default karaf environment
+                Helper.getDefaultOptions(
+                // this is how you set the default log level when using pax logging (logProfile)
+                     Helper.setLogLevel("WARN")),
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-6.xml"))
@@ -108,25 +113,11 @@ public class CamelBlueprint3Test extends OSGiBlueprintTestSupport {
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 
-                // install the spring dm profile
-                profile("spring.dm").version("1.2.0"),
-                // this is how you set the default log level when using pax logging (logProfile)
-                // org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("TRACE"),
-
-                // install blueprint requirements
-                mavenBundle("org.apache.felix", "org.apache.felix.configadmin"),
-                // install tiny bundles
-                mavenBundle("org.ops4j.base", "ops4j-base-store"),
-                wrappedBundle(mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-bnd")),
-                mavenBundle("org.ops4j.pax.swissbox", "pax-swissbox-tinybundles"),
-
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
                         "camel-core", "camel-blueprint", "camel-test", "camel-ftp", "camel-jackson", "camel-jms"),
 
                 workingDirectory("target/paxrunner/"),
-
-//                vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
 
                 felix(),
                 equinox());

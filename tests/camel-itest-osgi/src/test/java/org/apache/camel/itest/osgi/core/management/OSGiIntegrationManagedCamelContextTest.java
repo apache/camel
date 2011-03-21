@@ -76,7 +76,7 @@ public class OSGiIntegrationManagedCamelContextTest extends OSGiIntegrationTestS
         
         Option[] options = options(
             // install the spring dm profile            
-            profile("spring.dm").version("1.2.0"),    
+            profile("spring.dm").version("1.2.1"),    
             // this is how you set the default log level when using pax logging (logProfile)
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
             

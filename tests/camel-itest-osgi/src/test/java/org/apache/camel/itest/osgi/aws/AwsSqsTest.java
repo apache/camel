@@ -24,6 +24,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.aws.sqs.SqsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
+import org.apache.karaf.testing.Helper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -32,9 +33,8 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
+import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
@@ -100,27 +100,18 @@ public class AwsSqsTest extends OSGiIntegrationSpringTestSupport {
 
     @Configuration
     public static Option[] configure() {
-        Option[] options = options(
-            // install the spring dm profile            
-            profile("spring.dm").version("1.2.0"),    
+        Option[] options = combine(
+            // Default karaf environment
+            Helper.getDefaultOptions(
             // this is how you set the default log level when using pax logging (logProfile)
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG"),
-            
-            mavenBundle().groupId("org.apache.servicemix.bundles").artifactId("org.apache.servicemix.bundles.commons-httpclient").version("3.1_4"),
-            mavenBundle().groupId("commons-codec").artifactId("commons-codec").version("1.4"),
-            mavenBundle().groupId("org.apache.servicemix.specs").artifactId("org.apache.servicemix.specs.stax-api-1.0").version("1.7.0"),
-            mavenBundle().groupId("org.codehaus.jackson").artifactId("jackson-core-asl").version("1.6.4"),
-            mavenBundle().groupId("org.apache.servicemix.bundles").artifactId("org.apache.servicemix.bundles.aws-java-sdk").version("1.1.1_1"),
+                Helper.setLogLevel("WARN")),
 
-            // using the features to install the camel components
+            // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-spring", "camel-test", "camel-aws"),
-
-            // TODO: our app need to import the FTP server stuff
-
+                "camel-core", "camel-spring", "camel-test", "camel-aws"),
             workingDirectory("target/paxrunner/"),
-
-            /*felix(),*/ equinox());
+            equinox(),
+            felix());
         
         return options;
     }

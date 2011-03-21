@@ -19,6 +19,7 @@ package org.apache.camel.itest.osgi;
 import org.apache.camel.CamelContext;
 import org.apache.camel.osgi.CamelContextFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.karaf.testing.Helper;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
@@ -80,24 +81,21 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     }
     
     public static UrlReference getKarafFeatureUrl() {
-        String karafVersion = "2.1.4";
+        String karafVersion = "2.2.0";
         System.out.println("*** The karaf version is " + karafVersion + " ***");
 
         String type = "xml/features";
-        return mavenBundle().groupId("org.apache.karaf").
-            artifactId("apache-karaf").version(karafVersion).type(type);
+        return mavenBundle().groupId("org.apache.karaf.assemblies.features").
+            artifactId("standard").version(karafVersion).type(type);
     }
 
     @Configuration
     public static Option[] configure() throws Exception {
-        Option[] options = options(
-            // install the spring dm profile            
-            profile("spring.dm").version("1.2.0"),    
+        Option[] options = combine(
+            // Default karaf environment
+            Helper.getDefaultOptions(
             // this is how you set the default log level when using pax logging (logProfile)
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
-
-            // need to install some karaf features
-            scanFeatures(getKarafFeatureUrl(), "http"),
+                  Helper.setLogLevel("WARN")),
 
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         

@@ -113,6 +113,7 @@
     <openjpa-version>1.2.2</openjpa-version>
     <osgi-version>4.1.0</osgi-version>
     <pax-exam-version>1.2.4</pax-exam-version>
+    <pax-runner-version>1.6.1</pax-runner-version>
     <pax-tiny-bundle-version>1.2.0</pax-tiny-bundle-version>
     <pax-logging-version>1.5.3</pax-logging-version>
     <protobuf-version>2.3.0</protobuf-version>
@@ -1180,6 +1181,11 @@
         <groupId>org.ops4j.pax.exam</groupId>
         <artifactId>pax-exam-container-default</artifactId>
         <version>${pax-exam-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ops4j.pax.runner</groupId>
+        <artifactId>pax-runner-no-jcl</artifactId>
+        <version>${pax-runner-version}</version>
       </dependency>
       <dependency>
         <groupId>org.ops4j.pax.exam</groupId>

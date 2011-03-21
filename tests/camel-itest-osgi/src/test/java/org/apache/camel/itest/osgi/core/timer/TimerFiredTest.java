@@ -22,16 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 public class TimerFiredTest extends OSGiIntegrationTestSupport {
@@ -56,25 +47,6 @@ public class TimerFiredTest extends OSGiIntegrationTestSupport {
                 from("timer://hello").to("mock:result");
             }
         };
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        Option[] options = options(
-            // install the spring dm profile            
-            profile("spring.dm").version("1.2.0"),    
-            // this is how you set the default log level when using pax logging (logProfile)
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
-            
-            // using the features to install the camel components             
-            scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-test"),
-            
-            workingDirectory("target/paxrunner/"),
-
-            felix(), equinox());
-        
-        return options;
     }
 
 }

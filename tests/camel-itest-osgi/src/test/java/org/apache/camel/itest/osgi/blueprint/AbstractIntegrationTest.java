@@ -151,5 +151,19 @@ public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport
     protected static MavenArtifactProvisionOption mavenBundle(String groupId, String artifactId) {
         return CoreOptions.mavenBundle(groupId, artifactId).versionAsInProject();
     }
+    
+    /**
+     *  Create an provisioning option for the specified maven artifact
+     * (groupId and artifactId), using the version found in the list
+     * of dependencies of this maven project.
+     *
+     * @param groupId the groupId of the maven bundle
+     * @param artifactId the artifactId of the maven bundle
+     * @param version the version of the maven bundle
+     * @return the provisioning option for the given bundle
+     */
+    protected static MavenArtifactProvisionOption mavenBundle(String groupId, String artifactId, String version) {
+        return CoreOptions.mavenBundle(groupId, artifactId).version(version);
+    }
 
 }

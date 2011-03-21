@@ -17,6 +17,7 @@
 package org.apache.camel.itest.osgi.jms;
 
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
+import org.apache.karaf.testing.Helper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -26,8 +27,7 @@ import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
+import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
@@ -52,14 +52,13 @@ public class JmsTest extends OSGiIntegrationSpringTestSupport {
     }
 
     @Configuration
-    public static Option[] configure() {
-        Option[] options = options(
-
-            // install the spring dm profile
-            profile("spring.dm").version("1.2.0"),
+    public static Option[] configure() throws Exception {
+        Option[] options = combine(
+            // Default karaf environment
+            Helper.getDefaultOptions(
             // this is how you set the default log level when using pax logging (logProfile)
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
-
+                Helper.setLogLevel("WARN")), 
+                
             // using the features to install AMQ
             scanFeatures("mvn:org.apache.activemq/activemq-karaf/5.4.0/xml/features", "activemq"),
 

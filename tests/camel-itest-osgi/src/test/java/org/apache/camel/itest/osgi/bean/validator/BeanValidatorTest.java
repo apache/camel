@@ -20,6 +20,7 @@ package org.apache.camel.itest.osgi.bean.validator;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.apache.karaf.testing.Helper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -29,9 +30,7 @@ import org.ops4j.pax.swissbox.tinybundles.dp.Constants;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.provision;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
+import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
@@ -67,26 +66,22 @@ public class BeanValidatorTest extends OSGiIntegrationTestSupport {
     }
 
     @Configuration
-    public static Option[] configure() {
-        Option[] options = options(
-                // install the spring dm profile
-                profile("spring.dm").version("1.2.0"),
-                // this is how you set the default log level when using pax logging (logProfile)
-                org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG"),
+    public static Option[] configure() throws Exception {
+        Option[] options = combine(
+            // Default karaf environment
+            Helper.getDefaultOptions(
+            // this is how you set the default log level when using pax logging (logProfile)
+                  Helper.setLogLevel("WARN")),
 
-                // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(), "camel-core", "camel-test", "camel-bean-validator"),
+            // using the features to install the camel components             
+            scanFeatures(getCamelKarafFeatureUrl(),                         
+                          "camel-core", "camel-spring", "camel-test", "camel-bean-validator"),
+            
+            workingDirectory("target/paxrunner/"),
 
-                workingDirectory("target/paxrunner/"),
-                //provision(newBundle()
-                //        .add("META-INF/validation.xml", BeanValidatorTest.class.getClassLoader().getResource("META-INF/validation.xml"))
-                //        .add("constraints-car.xml", BeanValidatorTest.class.getClassLoader().getResource("constraints-car.xml"))
-                //        .set(Constants.BUNDLE_SYMBOLICNAME, "validation-fragment")
-                //        .set(Constants.FRAGMENT_HOST, "org.apache.servicemix.specs.jsr303-api-1.0.0")
-                //        .build(withBnd())),
-
-                felix(), equinox());
-
+            equinox(),
+            felix());
+        
         return options;
     }
 }

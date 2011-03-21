@@ -21,6 +21,7 @@ import org.apache.camel.example.reportincident.OutputReportIncident;
 import org.apache.camel.example.reportincident.ReportIncidentEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.karaf.testing.Helper;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +32,8 @@ import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.provision;
-import static org.ops4j.pax.exam.CoreOptions.systemPackage;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
+import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
@@ -52,8 +51,8 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
         return (ReportIncidentEndpoint) factory.create();
     }
 
+    @Ignore("CXF bundle can't be installed in Karaf")
     @Test
-    @Ignore ("This test doens't work in OSGi")
     public void testCxfProxy() throws Exception {
         // create input parameter
         InputReportIncident input = new InputReportIncident();
@@ -81,41 +80,34 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
    
     // TODO: CxfConsumer should use OSGi http service (no embedded Jetty)
     // TODO: Make this test work with OSGi
-
+    
     @Configuration
-    public static Option[] configure() {
-        Option[] options = options(
-            
-            profile("log"),
-            profile("compendium"),
-            
-            systemPackage("com.sun.xml.bind.marshaller"),
-            systemPackage("com.sun.org.apache.xerces.internal.dom"),
-            systemPackage("com.sun.org.apache.xerces.internal.jaxp"),
-         
+    public static Option[] configure() throws Exception {
+        Option[] options = combine(
+            // Default karaf environment
+            Helper.getDefaultOptions(
             // this is how you set the default log level when using pax logging (logProfile)
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
-
-            // need to install some karaf features
-            scanFeatures(getKarafFeatureUrl(), "http"),
-            
+                  Helper.setLogLevel("WARN")),
+           
             // using the features to install the camel components
             scanFeatures(getCamelKarafFeatureUrl(),
-                          "spring", "spring-dm", "camel-core", "camel-spring", "camel-http", "camel-test", "camel-cxf"),
-                                  
+                                "spring", "spring-dm", "camel-core", "camel-spring", "camel-http", "camel-test", "camel-cxf"),
+                                        
             // need to install the generated src as the pax-exam doesn't wrap this bundles
             provision(newBundle()
-                      .add(org.apache.camel.example.reportincident.InputReportIncident.class)
-                      .add(org.apache.camel.example.reportincident.OutputReportIncident.class)
-                      .add(org.apache.camel.example.reportincident.ReportIncidentEndpoint.class)
-                      .add(org.apache.camel.example.reportincident.ReportIncidentEndpointService.class)
-                      .add(org.apache.camel.example.reportincident.ObjectFactory.class)
-                      .build(withBnd())),
-                      
+                            .add(org.apache.camel.example.reportincident.InputReportIncident.class)
+                            .add(org.apache.camel.example.reportincident.OutputReportIncident.class)
+                            .add(org.apache.camel.example.reportincident.ReportIncidentEndpoint.class)
+                            .add(org.apache.camel.example.reportincident.ReportIncidentEndpointService.class)
+                            .add(org.apache.camel.example.reportincident.ObjectFactory.class)
+                            .build(withBnd())),
+                            
             workingDirectory("target/paxrunner/"),
-            
+                  
             felix(), equinox());
-
+          
         return options;
     }
+
+    
 }

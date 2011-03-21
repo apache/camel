@@ -52,6 +52,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.ops4j.pax.runner</groupId>
+      <artifactId>pax-runner-no-jcl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-container-default</artifactId>
       <scope>test</scope>
@@ -64,6 +69,12 @@
 	<dependency>
 		<groupId>org.ops4j.pax.swissbox</groupId>
 		<artifactId>pax-swissbox-tinybundles</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.karaf.tooling</groupId>
+		<artifactId>org.apache.karaf.tooling.testing</artifactId>
+		<version>2.2.0</version>
 		<scope>test</scope>
 	</dependency>
 	<dependency>
@@ -84,6 +95,11 @@
       <artifactId>apache-camel</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-blueprint</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
