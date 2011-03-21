@@ -591,18 +591,23 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // is the a failure processor to process the Exchange
         if (processor != null) {
 
-            // reset cached streams so they can be read again
-            MessageHelper.resetStreamCache(exchange.getIn());
-
             // prepare original IN body if it should be moved instead of current body
             if (data.useOriginalInMessage) {
                 if (log.isTraceEnabled()) {
                     log.trace("Using the original IN message instead of current");
                 }
-
                 Message original = exchange.getUnitOfWork().getOriginalInMessage();
                 exchange.setIn(original);
+                if (exchange.hasOut()) {
+                    if (log.isTraceEnabled()) {
+                        log.trace("Removing the out message to avoid some uncertain behavior");
+                    }
+                    exchange.setOut(null);
+                }
             }
+            
+            // reset cached streams so they can be read again
+            MessageHelper.resetStreamCache(exchange.getIn());
 
             if (log.isTraceEnabled()) {
                 log.trace("Failure processor " + processor + " is processing Exchange: " + exchange);
