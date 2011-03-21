@@ -20,7 +20,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.aws.sqs.SqsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
@@ -43,9 +42,6 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey in CamelIntegrationContext.xml!")
 public class AwsSqsIntegrationTest extends OSGiIntegrationSpringTestSupport {
 
-    @EndpointInject(uri = "direct:start")
-    private ProducerTemplate template;
-    
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
     
@@ -99,8 +95,6 @@ public class AwsSqsIntegrationTest extends OSGiIntegrationSpringTestSupport {
         assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
     }
-    
-    
 
     @Configuration
     public static Option[] configure() {

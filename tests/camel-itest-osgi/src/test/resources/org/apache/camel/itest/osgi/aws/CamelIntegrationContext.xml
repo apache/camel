@@ -30,5 +30,10 @@
             <from uri="aws-sqs://MyQueue?accessKey=xxx&amp;secretKey=yyy"/>
             <to uri="mock:result"/>
         </route>
+        
+        <route>
+            <from uri="direct:start-sns"/>
+            <to uri="aws-sns://MyTopic?accessKey=xxx&amp;secretKey=yyy"/>
+        </route>
     </camelContext>
 </beans>

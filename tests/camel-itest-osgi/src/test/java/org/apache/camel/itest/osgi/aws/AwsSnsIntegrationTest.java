@@ -16,14 +16,13 @@
  */
 package org.apache.camel.itest.osgi.aws;
 
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.component.aws.sqs.SqsConstants;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.aws.sns.SnsConstants;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.apache.karaf.testing.Helper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -38,62 +37,38 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
-public class AwsSqsTest extends OSGiIntegrationSpringTestSupport {
-
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint result;
+@Ignore("Must be manually tested. Provide your own accessKey and secretKey in CamelIntegrationContext.xml!")
+public class AwsSnsIntegrationTest extends OSGiIntegrationSpringTestSupport {
     
     @Override
     protected OsgiBundleXmlApplicationContext createApplicationContext() {
-        return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/aws/CamelContext.xml"});
+        return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/aws/CamelIntegrationContext.xml"});
     }
     
     @Test
     public void sendInOnly() throws Exception {
-        result.expectedMessageCount(1);
-        
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+        Exchange exchange = template.send("direct:start-sns", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(SnsConstants.SUBJECT, "This is my subject");
                 exchange.getIn().setBody("This is my message text.");
             }
         });
         
-        assertMockEndpointsSatisfied();
-        
-        Exchange resultExchange = result.getExchanges().get(0);
-        assertEquals("This is my message text.", resultExchange.getIn().getBody());
-        assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ID));
-        assertNotNull(resultExchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE));
-        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
-        assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
-        
-        assertNotNull(exchange.getIn().getHeader(SqsConstants.MESSAGE_ID));
-        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
+        assertNotNull(exchange.getIn().getHeader(SnsConstants.MESSAGE_ID));
     }
     
     @Test
     public void sendInOut() throws Exception {
-        result.expectedMessageCount(1);
-        
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
+        Exchange exchange = template.send("direct:start-sns", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(SnsConstants.SUBJECT, "This is my subject");
                 exchange.getIn().setBody("This is my message text.");
             }
         });
         
-        assertMockEndpointsSatisfied();
-        
-        Exchange resultExchange = result.getExchanges().get(0);
-        assertEquals("This is my message text.", resultExchange.getIn().getBody());
-        assertNotNull(resultExchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE));
-        assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ID));
-        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
-        assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
-        
-        assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
-        assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
+        assertNotNull(exchange.getOut().getHeader(SnsConstants.MESSAGE_ID));
     }
-
+    
     @Configuration
     public static Option[] configure() {
         Option[] options = combine(
