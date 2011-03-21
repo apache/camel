@@ -125,11 +125,13 @@ public class HttpProducer extends DefaultProducer {
     }
 
     protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException, ClassNotFoundException {
+        //We just make the out message is not create when extractResponseBody throws exception,
+        Object response = extractResponseBody(method, exchange);
         Message answer = exchange.getOut();
 
         answer.setHeaders(in.getHeaders());
         answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
-        answer.setBody(extractResponseBody(method, exchange));
+        answer.setBody(response);
 
         // propagate HTTP response headers
         Header[] headers = method.getResponseHeaders();
