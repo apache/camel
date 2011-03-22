@@ -31,17 +31,17 @@
         <onException useOriginalMessage="true">
             <exception>java.lang.IllegalArgumentException</exception>
             <handled><constant>true</constant></handled>
-            <to uri="sead:test"/>
+            <to uri="seda:test"/>
         </onException>
 
         <route>
             <from uri="direct:a"/>
-            <inOut/>
-            <process ref="proc"/>
+            <inOut uri="log:test"/>
+            <process ref="proc" />
         </route>
 
         <route>
-            <from uri="sead:test"/>
+            <from uri="seda:test"/>
             <to uri="mock:middle" />
             <to uri="mock:end" />
         </route>

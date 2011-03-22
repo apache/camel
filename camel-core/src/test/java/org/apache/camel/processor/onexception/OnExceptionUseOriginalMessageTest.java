@@ -16,14 +16,11 @@
  */
 package org.apache.camel.processor.onexception;
 
-import java.io.File;
-import java.io.InputStream;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.converter.stream.FileInputStreamCache;
+import org.apache.camel.converter.stream.InputStreamCache;
 
 /**
  * @version 
@@ -32,7 +29,7 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
     
     private static final String HELLO_WORLD = "Hello World";
     
-    private static final String TEST_FILE = "src/test/resources/org/apache/camel/converter/stream/test.xml";
+    private static final String TEST_STRING = "<firstName>James</firstName>";
 
     public void testOnExceptionError() throws Exception {
         getMockEndpoint("mock:middle").expectedBodiesReceived(HELLO_WORLD);
@@ -51,9 +48,8 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
         getMockEndpoint("mock:middle").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
         getMockEndpoint("mock:end").expectedMessageCount(1);
         getMockEndpoint("mock:end").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
-        
-        File file = new File(TEST_FILE).getAbsoluteFile();
-        FileInputStreamCache cache = new FileInputStreamCache(file);
+    
+        InputStreamCache cache = new InputStreamCache(TEST_STRING.getBytes());
         
         template.sendBody("direct:a", cache);
 
