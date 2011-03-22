@@ -18,7 +18,7 @@
   #for(i <- it.getRoutes)
   <tr>
     <td>
-      <a href='${uri("/routes/" + i.getId)}'>${i.getId}</a> ${i.getDescription.getText}
+      <a href='${uri("/routes/" + i.getId)}'>${i.getId}</a> ${i.getDescriptionText}
     </td>
     <td class="${i.getStatus}">
       ${i.getStatus}
