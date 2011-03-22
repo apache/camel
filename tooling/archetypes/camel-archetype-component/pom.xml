@@ -41,7 +41,13 @@
         <artifactId>archetype-packaging</artifactId>
       </extension>
     </extensions>
+
+    <!-- include all resources but only filter archetype-metadata.xml -->
     <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource> 
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
