@@ -47,6 +47,10 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringProducer.xml");
     }
     
+    protected void setupDestinationURL(Message inMessage) {
+        // do nothing here
+    }
+    
     @Test
     public void testGetConstumerWithClientProxyAPI() {
         // START SNIPPET: ProxyExample
@@ -54,6 +58,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();
+                setupDestinationURL(inMessage);
                 // set the operation name 
                 inMessage.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
                 // using the proxy client API
@@ -79,6 +84,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();
+                setupDestinationURL(inMessage);
                 // set the operation name 
                 inMessage.setHeader(CxfConstants.OPERATION_NAME, "getCustomers");
                 // using the proxy client API
@@ -104,6 +110,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();
+                setupDestinationURL(inMessage);
                 // using the http central client API
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.TRUE);
                 // set the Http method
