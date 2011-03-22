@@ -181,7 +181,11 @@ public class CxfRsProducer extends DefaultProducer {
         // find out the method which we want to invoke
         JAXRSServiceFactoryBean sfb = cfb.getServiceFactory();
         sfb.getResourceClasses();
-        Object[] parameters = inMessage.getBody(Object[].class);
+        // check the null body first
+        Object[] parameters = null;
+        if (inMessage.getBody() != null) {
+            parameters = inMessage.getBody(Object[].class);
+        }
         // get the method
         Method method = findRightMethod(sfb.getResourceClasses(), methodName, getParameterTypes(parameters));
         // Will send out the message to
@@ -219,6 +223,10 @@ public class CxfRsProducer extends DefaultProducer {
     }
 
     private Class<?>[] getParameterTypes(Object[] objects) {
+        // We need to handle the void parameter situation.
+        if (objects == null) {
+            return new Class[]{};
+        }
         Class<?>[] answer = new Class[objects.length];
         int i = 0;
         for (Object obj : objects) {

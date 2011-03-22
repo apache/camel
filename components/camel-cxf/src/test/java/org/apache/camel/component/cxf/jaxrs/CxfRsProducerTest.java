@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.io.InputStream;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -70,6 +71,30 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
         // END SNIPPET: ProxyExample     
+    }
+    
+    @Test
+    public void testGetConstumersWithClientProxyAPI() {
+        Exchange exchange = template.send("direct://proxy", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setPattern(ExchangePattern.InOut);
+                Message inMessage = exchange.getIn();
+                // set the operation name 
+                inMessage.setHeader(CxfConstants.OPERATION_NAME, "getCustomers");
+                // using the proxy client API
+                inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
+                // set the parameters , if you just have one parameter 
+                // camel will put this object into an Object[] itself
+                inMessage.setBody(null);
+            }
+        });
+     
+        // get the response message 
+        List<Customer> response = (List<Customer>) exchange.getOut().getBody();
+        
+        assertNotNull("The response should not be null ", response);
+        assertEquals("Get a wrong customer id ", String.valueOf(response.get(0).getId()), "113");
+        assertEquals("Get a wrong customer name", response.get(0).getName(), "Dan");
     }
     
     @Test
