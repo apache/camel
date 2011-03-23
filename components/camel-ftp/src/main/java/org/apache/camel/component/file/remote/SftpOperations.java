@@ -159,7 +159,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             LOG.debug("Using StrickHostKeyChecking: " + sftpConfig.getStrictHostKeyChecking());
             session.setConfig("StrictHostKeyChecking", sftpConfig.getStrictHostKeyChecking());
         }
-
+        
+        session.setServerAliveInterval(sftpConfig.getServerAliveInterval());
+        session.setServerAliveCountMax(sftpConfig.getServerAliveCountMax());
+        
         // set user information
         session.setUserInfo(new UserInfo() {
             public String getPassphrase() {
