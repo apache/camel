@@ -98,6 +98,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean loggingFeatureEnabled;
     private String address;
     private boolean mtomEnabled;
+    private boolean skipPayloadMessagePartCheck;
 
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
         super(remaining, cxfComponent);
@@ -341,6 +342,16 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             ObjectHelper.notEmpty(getServiceClass(), CxfConstants.SERVICE_CLASS);      
         }
         
+        if (getWsdlURL() == null && getServiceClass() == null) {
+            // no WSDL and serviceClass specified, set our default serviceClass
+            setServiceClass(org.apache.camel.component.cxf.DefaultSEI.class.getName());
+            setDefaultOperationNamespace(CxfConstants.DISPATCH_NAMESPACE);
+            setDefaultOperationName(CxfConstants.DISPATCH_DEFAULT_OPERATION_NAMESPACE);            
+            if (getDataFormat().equals(DataFormat.PAYLOAD)) { 
+                setSkipPayloadMessagePartCheck(true);
+            }
+        }
+        
         Class<?> cls = null;
         if (getServiceClass() != null) {
             cls = ClassLoaderUtils.loadClass(getServiceClass(), getClass());
@@ -352,6 +363,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         } else {            
             checkName(portName, "endpoint/port name");
             checkName(serviceName, "service name");
+            
             ClientFactoryBean factoryBean = createClientFactoryBean();
             // setup client factory bean
             setupClientFactoryBean(factoryBean);
@@ -550,6 +562,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return loggingFeatureEnabled;
     }
 
+    protected boolean isSkipPayloadMessagePartCheck() {
+        return skipPayloadMessagePartCheck;
+    }
+
+    protected void setSkipPayloadMessagePartCheck(boolean skipPayloadMessagePartCheck) {
+        this.skipPayloadMessagePartCheck = skipPayloadMessagePartCheck;
+    }
+
     @Override
     protected void doStart() throws Exception {
         if (headerFilterStrategy == null) {
@@ -618,8 +638,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 int i = 0;
                 
                 for (MessagePartInfo partInfo : boi.getOperationInfo().getInput().getMessageParts()) {
-                    if (elements.size() > i && partInfo.getConcreteName().getLocalPart()
-                        .equals(elements.get(i).getLocalName())) {
+                    if (elements.size() > i && (isSkipPayloadMessagePartCheck() || partInfo.getConcreteName().getLocalPart()
+                        .equals(elements.get(i).getLocalName()))) {
                         content.put(partInfo, elements.get(i++));
                     }
                 }

@@ -112,6 +112,17 @@ public class CxfSpringEndpoint extends CxfEndpoint {
             ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
         }
 
+        if (getWsdlURL() == null && cls == null) {
+            // no WSDL and serviceClass specified, set our default serviceClass
+            setServiceClass(org.apache.camel.component.cxf.DefaultSEI.class.getName());
+            setDefaultOperationNamespace(CxfConstants.DISPATCH_NAMESPACE);
+            setDefaultOperationName(CxfConstants.DISPATCH_DEFAULT_OPERATION_NAMESPACE);               
+            if (getDataFormat().equals(DataFormat.PAYLOAD)) { 
+                setSkipPayloadMessagePartCheck(true);
+            }
+            cls = getSEIClass();
+        }
+        
         if (cls != null) {
             // create client factory bean
             ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
@@ -139,6 +150,7 @@ public class CxfSpringEndpoint extends CxfEndpoint {
 
             return ((ClientProxy)Proxy.getInvocationHandler(factoryBean.create())).getClient();
         } else {
+            
             ClientFactoryBean factoryBean = createClientFactoryBean();
 
             // configure client factory bean by CXF configurer
@@ -268,6 +280,11 @@ public class CxfSpringEndpoint extends CxfEndpoint {
 
     public String getEndpointNamespace() {
         return endpointNamespace;
+    }
+    
+    @Override
+    public String getWsdlURL() {
+        return bean.getWsdlURL();
     }
 
 }

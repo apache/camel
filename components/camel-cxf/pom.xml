@@ -93,6 +93,12 @@
     <!--  Test Dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core-xml</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
