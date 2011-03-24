@@ -36,6 +36,16 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         exchange.getIn().setBody("Hello Big World");
         assertExpression("${in.body} == 'Hello Big World'", true);
     }
+    
+    public void testNullValue() throws Exception {
+        exchange.getIn().setBody("Value");
+        assertExpression("${in.body} != null", true);
+        assertExpression("${body} == null", false);
+        
+        exchange.getIn().setBody(null);
+        assertExpression("${in.body} == null", true);
+        assertExpression("${body} != null", false);
+    }
 
     public void testAnd() throws Exception {
         assertExpression("${in.header.foo} == abc and ${in.header.bar} == 123", true);
