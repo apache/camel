@@ -56,9 +56,7 @@ public class MinaConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Binding to server address: " + address + " using acceptor: " + acceptor);
-        }
+        LOG.info("Binding to server address: {} using acceptor: {}", address, acceptor);
 
         IoHandler handler = new ReceiveHandler();
         acceptor.bind(address, handler, getEndpoint().getAcceptorConfig());
@@ -66,9 +64,7 @@ public class MinaConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Unbinding from server address: " + address + " using acceptor: " + acceptor);
-        }
+        LOG.info("Unbinding from server address: {} using acceptor: {}", address, acceptor);
         acceptor.unbind(address);
         super.doStop();
     }

@@ -84,9 +84,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             history.setMaxChars(0); // we do not want any historical messages
 
             muc.join(endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Joined room: " + muc.getRoom() + " as: " + endpoint.getNickname());
-            }
+            LOG.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
         }
 
         super.doStart();
@@ -96,9 +94,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
     protected void doStop() throws Exception {
         super.doStop();
         if (muc != null) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Leaving room: " + muc.getRoom());
-            }
+            LOG.info("Leaving room: {}", muc.getRoom());
             muc.removeMessageListener(this);
             muc.leave();
             muc = null;

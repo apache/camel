@@ -82,9 +82,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
             DiscussionHistory history = new DiscussionHistory();
             history.setMaxChars(0); // we do not want any historical messages
             chat.join(endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Joined room: " + room + " as: " + endpoint.getNickname());
-            }
+            LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
         }
 
         super.doStart();
@@ -93,9 +91,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         if (chat != null) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Leaving room: " + room);
-            }
+            LOG.info("Leaving room: {}", room);
             chat.leave();
             chat = null;
         }

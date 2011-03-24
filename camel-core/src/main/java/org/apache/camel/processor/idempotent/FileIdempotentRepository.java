@@ -252,9 +252,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * to the file store.
      */
     protected void trunkStore() {
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Trunking idempotent filestore: " + fileStore);
-        }
+        LOG.info("Trunking idempotent filestore: {}", fileStore);
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(fileStore);

@@ -42,15 +42,12 @@ public class ExecProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         ExecCommand execCommand = getBinding().readInput(exchange, endpoint);
 
-        if (log.isInfoEnabled()) {
-            log.info("Executing " + execCommand);
-        }
+        log.info("Executing {}", execCommand);
         ExecResult result = endpoint.getCommandExecutor().execute(execCommand);
         ObjectHelper.notNull(result, "The command executor must return a not-null result");
-        if (log.isInfoEnabled()) {
-            log.info("The command " + execCommand + " had exit value " + result.getExitValue());
-        } else if (log.isErrorEnabled() && result.getExitValue() != 0) {
-            log.error("The command " + execCommand + " returned exit value " + result.getExitValue());
+        log.info("The command {} had exit value {}", execCommand, result.getExitValue());
+        if (result.getExitValue() != 0) {
+            log.error("The command {} returned exit value {}", execCommand, result.getExitValue());
         }
         getBinding().writeOutput(exchange, result);
     }

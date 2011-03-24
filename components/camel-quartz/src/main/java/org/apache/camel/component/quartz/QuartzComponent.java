@@ -395,9 +395,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     protected Properties loadProperties() throws SchedulerException {
         Properties answer = getProperties();
         if (answer == null && getPropertiesFile() != null) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Loading Quartz properties file from classpath: " + getPropertiesFile());
-            }
+            LOG.info("Loading Quartz properties file from classpath: {}", getPropertiesFile());
             InputStream is = getCamelContext().getClassResolver().loadResourceAsStream(getPropertiesFile());
             if (is == null) {
                 throw new SchedulerException("Quartz properties file not found in classpath: " + getPropertiesFile());

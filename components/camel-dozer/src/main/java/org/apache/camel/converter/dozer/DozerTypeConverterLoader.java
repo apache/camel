@@ -127,9 +127,7 @@ public class DozerTypeConverterLoader implements CamelContextAware {
     private void registerClassMaps(TypeConverterRegistry registry, DozerBeanMapper dozer, List<ClassMap> all) {
         DozerTypeConverter converter = new DozerTypeConverter(dozer);
         for (ClassMap map : all) {
-            if (log.isInfoEnabled()) {
-                log.info("Added " + map.getSrcClassName() + " -> " + map.getDestClassName() + " as type converter to: " + registry);
-            }
+            log.info("Added {} -> {} as type converter to: {}", new Object[]{map.getSrcClassName(), map.getDestClassName(), registry});
             registry.addTypeConverter(map.getSrcClassToMap(), map.getDestClassToMap(), converter);
             registry.addTypeConverter(map.getDestClassToMap(), map.getSrcClassToMap(), converter);
         }
