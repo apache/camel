@@ -141,7 +141,7 @@ public class BeanInfo {
     }
 
     public MethodInvocation createInvocation(Object pojo, Exchange exchange)
-        throws AmbiguousMethodCallException, MethodNotFoundException, ClassNotFoundException {
+        throws AmbiguousMethodCallException, MethodNotFoundException {
         MethodInfo methodInfo = null;
 
         String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
@@ -371,9 +371,8 @@ public class BeanInfo {
      * @param name an optional name of the method that must match, use <tt>null</tt> to indicate all methods
      * @return the method to invoke or null if no definitive method could be matched
      * @throws AmbiguousMethodCallException is thrown if cannot chose method due to ambiguous
-     * @throws ClassNotFoundException is thrown if name contains parameter types to use as qualifier and a class was not found
      */
-    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name) throws AmbiguousMethodCallException, ClassNotFoundException {
+    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name) throws AmbiguousMethodCallException {
         // @Handler should be select first
         // then any single method that has a custom @annotation
         // or any single method that has a match parameter type that matches the Exchange payload
@@ -684,7 +683,7 @@ public class BeanInfo {
         }
     }
 
-    private void removeNonMatchingMethods(List<MethodInfo> methods, String name) throws ClassNotFoundException {
+    private void removeNonMatchingMethods(List<MethodInfo> methods, String name) {
         Iterator<MethodInfo> it = methods.iterator();
         while (it.hasNext()) {
             MethodInfo info = it.next();
@@ -695,7 +694,7 @@ public class BeanInfo {
         }
     }
 
-    private boolean matchMethod(Method method, String methodName) throws ClassNotFoundException {
+    private boolean matchMethod(Method method, String methodName) {
         if (methodName == null) {
             return true;
         }

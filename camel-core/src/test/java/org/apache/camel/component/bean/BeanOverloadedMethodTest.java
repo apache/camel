@@ -73,10 +73,11 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // START SNIPPET: e2
                 from("direct:start")
                     .bean(MyBean.class, "hello(String,String)")
                     .to("mock:result");
-
+                // END SNIPPET: e2
             }
         });
         context.start();
@@ -96,6 +97,26 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
                     .bean(MyBean.class, "hello(*,String)")
                     .to("mock:result");
 
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Claus you are from Denmark");
+
+        template.sendBodyAndHeader("direct:start", "Claus", "country", "Denmark");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testHelloOverloadedWildcardWildcard() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // START SNIPPET: e3
+                from("direct:start")
+                    .bean(MyBean.class, "hello(*,*)")
+                    .to("mock:result");
+                // END SNIPPET: e2
             }
         });
         context.start();
@@ -227,6 +248,8 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+
+    // START SNIPPET: e1
     public static final class MyBean {
 
         public String hello(String name) {
@@ -269,4 +292,6 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
         }
 
     }
+    // END SNIPPET: e1
+
 }
