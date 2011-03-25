@@ -37,6 +37,9 @@ public class RestletQueryTest extends RestletTestSupport {
             public void configure() throws Exception {
                 from("restlet:http://localhost:9080/users/{username}")
                     .process(new SetUserProcessor());
+                
+                from("direct:start").to("restlet:http://localhost:9080/users/{username}");
+
             }
         };
     }
@@ -54,5 +57,20 @@ public class RestletQueryTest extends RestletTestSupport {
         HttpResponse response = doExecute(new HttpGet("http://localhost:9080/users/homer?" + QUERY_STRING));
 
         assertHttpResponse(response, 200, "text/plain");
+    }
+    
+    
+    @Test
+    public void testGetBodyByRestletProducer() throws Exception {        
+        Exchange ex = template.request("direct:start", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_QUERY, QUERY_STRING);
+                exchange.getIn().setHeader("username", "homer");
+                
+            }
+        });
+        assertEquals(200, ex.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        
     }
 }
