@@ -36,7 +36,7 @@ public class JmsMutateRemoveHeaderMessageTest extends CamelTestSupport {
 
     private String uri = "activemq:queue:hello";
 
-    public void testMuateMessage() throws Exception {
+    public void testMutateMessage() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body().isEqualTo("Hello World");
