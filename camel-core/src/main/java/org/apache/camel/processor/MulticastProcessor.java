@@ -297,9 +297,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                             }
                         }
 
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Parallel processing complete for exchange: " + subExchange);
-                        }
+                        LOG.trace("Parallel processing complete for exchange: {}", subExchange);
                         return subExchange;
                     }
                 });
@@ -308,9 +306,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             }
 
             // signal all tasks has been submitted
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Signaling that all " + total.get() + " tasks has been submitted.");
-            }
+            LOG.trace("Signaling that all {} tasks has been submitted.", total.get());
             allTasksSubmitted.set(true);
 
             // its to hard to do parallel async routing so we let the caller thread be synchronously
@@ -412,22 +408,16 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     // we are timed out but try to grab if some tasks has been completed
                     // poll will return null if no tasks is present
                     future = completion.poll();
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Polled completion task #" + aggregated + " after timeout to grab already completed tasks: " + future);
-                    }
+                    LOG.trace("Polled completion task #{} after timeout to grab already completed tasks: {}", aggregated, future);
                 } else if (timeout > 0) {
                     long left = timeout - watch.taken();
                     if (left < 0) {
                         left = 0;
                     }
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Polling completion task #" + aggregated + " using timeout " + left + " millis.");
-                    }
+                    LOG.trace("Polling completion task #{} using timeout {} millis.", aggregated, left);
                     future = completion.poll(left, TimeUnit.MILLISECONDS);
                 } else {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Polling completion task #" + aggregated);
-                    }
+                    LOG.trace("Polling completion task #{}", aggregated);
                     // we must not block so poll every second
                     future = completion.poll(1, TimeUnit.SECONDS);
                     if (future == null) {
@@ -511,7 +501,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             boolean sync = doProcessSequential(original, result, pairs, it, pair, callback, total);
             if (!sync) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchangeId: " + pair.getExchange().getExchangeId() + " is continued being processed asynchronously");
+                    LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", pair.getExchange().getExchangeId());
                 }
                 // the remainder of the multicast will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
@@ -519,7 +509,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchangeId: " + pair.getExchange().getExchangeId() + " is continued being processed synchronously");
+                LOG.trace("Processing exchangeId: {} is continued being processed synchronously", pair.getExchange().getExchangeId());
             }
 
             // Decide whether to continue with the multicast or not; similar logic to the Pipeline
@@ -538,9 +528,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 }
             }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Sequential processing complete for number " + total + " exchange: " + subExchange);
-            }
+            LOG.trace("Sequential processing complete for number {} exchange: {}", total, subExchange);
 
             doAggregate(getAggregationStrategy(subExchange), result, subExchange);
             total.incrementAndGet();
@@ -632,9 +620,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         boolean sync = doProcessSequential(original, result, pairs, it, pair, callback, total);
 
                         if (!sync) {
-                            if (LOG.isTraceEnabled()) {
-                                LOG.trace("Processing exchangeId: " + original.getExchangeId() + " is continued being processed asynchronously");
-                            }
+                            LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
                             return;
                         }
 
@@ -843,15 +829,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // lookup cached first to reuse and preserve memory
             answer = errorHandlers.get(key);
             if (answer != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Using existing error handler for: " + processor);
-                }
+                LOG.trace("Using existing error handler for: {}", processor);
                 return answer;
             }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Creating error handler for: " + processor);
-            }
+            LOG.trace("Creating error handler for: {}", processor);
             ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
             // create error handler (create error handler directly to keep it light weight,
             // instead of using ProcessorDefinition.wrapInErrorHandler)

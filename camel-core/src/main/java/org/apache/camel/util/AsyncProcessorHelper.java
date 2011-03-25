@@ -55,9 +55,7 @@ public final class AsyncProcessorHelper {
 
         if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
-            }
+            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             try {
                 process(processor, exchange);
             } catch (Throwable e) {
@@ -83,8 +81,8 @@ public final class AsyncProcessorHelper {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Exchange processed and is continued routed " + (sync ? "synchronously" : "asynchronously")
-                + " for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
+            LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
+                    new Object[]{sync ? "synchronously" : "asynchronously", exchange.getExchangeId(), exchange});
         }
         return sync;
     }
@@ -103,9 +101,7 @@ public final class AsyncProcessorHelper {
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 if (!doneSync) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Asynchronous callback received for exchangeId: " + exchange.getExchangeId());
-                    }
+                    LOG.trace("Asynchronous callback received for exchangeId: {}", exchange.getExchangeId());
                     latch.countDown();
                 }
             }
@@ -116,13 +112,11 @@ public final class AsyncProcessorHelper {
             }
         });
         if (!sync) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
-            }
+            LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
+                    exchange.getExchangeId(), exchange);
             latch.await();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Asynchronous callback received, will continue routing exchangeId: " + exchange.getExchangeId() + " -> " + exchange);
-            }
+            LOG.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
+                    exchange.getExchangeId(), exchange);
         }
     }
 

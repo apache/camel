@@ -149,8 +149,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     @SuppressWarnings("unchecked")
     protected Object doConvertTo(final Class type, final Exchange exchange, final Object value) {
         if (log.isTraceEnabled()) {
-            log.trace("Converting " + (value == null ? "null" : value.getClass().getCanonicalName())
-                    + " -> " + type.getCanonicalName() + " with value: " + value);
+            log.trace("Converting {} -> {} with value: {}",
+                    new Object[]{value == null ? "null" : value.getClass().getCanonicalName(), 
+                        type.getCanonicalName(), value});
         }
 
         if (value == null) {
@@ -176,9 +177,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // try to find a suitable type converter
         TypeConverter converter = getOrFindTypeConverter(type, value);
         if (converter != null) {
-            if (log.isTraceEnabled()) {
-                log.trace("Using converter: " + converter + " to convert " + key);
-            }
+            log.trace("Using converter: {} to convert {}", converter, key);
             Object rc = converter.convertTo(type, exchange, value);
             if (rc != null) {
                 return rc;
@@ -207,8 +206,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                 }
 
                 if (log.isTraceEnabled()) {
-                    log.trace("Fallback type converter " + fallback.getFallbackTypeConverter() + " converted type from: "
-                                + type.getCanonicalName() + " to: " + value.getClass().getCanonicalName());
+                    log.trace("Fallback type converter {} converted type from: {} to: {}",
+                            new Object[]{fallback.getFallbackTypeConverter(),
+                                type.getCanonicalName(), value.getClass().getCanonicalName()});
                 }
 
                 // return converted value
@@ -234,9 +234,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
-        if (log.isTraceEnabled()) {
-            log.trace("Adding type converter: " + typeConverter);
-        }
+        log.trace("Adding type converter: {}", typeConverter);
         TypeMapping key = new TypeMapping(toType, fromType);
         synchronized (typeMappings) {
             TypeConverter converter = typeMappings.get(key);
@@ -252,9 +250,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
-        if (log.isTraceEnabled()) {
-            log.trace("Adding fallback type converter: " + typeConverter + " which can promote: " + canPromote);
-        }
+        log.trace("Adding fallback type converter: {} which can promote: {}", typeConverter, canPromote);
 
         // add in top of fallback as the toString() fallback will nearly always be able to convert
         fallbackConverters.add(0, new FallbackTypeConverter(typeConverter, canPromote));

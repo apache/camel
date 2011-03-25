@@ -103,9 +103,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             }
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Should failover: " + answer + " for exchangeId: " + exchange.getExchangeId());
-        }
+        log.trace("Should failover: {} for exchangeId: {}", answer, exchange.getExchangeId());
 
         return answer;
     }
@@ -124,9 +122,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             }
             index.set(counter.get());
         }
-        if (log.isTraceEnabled()) {
-            log.trace("Failover starting with endpoint index " + index);
-        }
+        log.trace("Failover starting with endpoint index {}", index);
 
         while (first || shouldFailOver(exchange)) {
             if (!first) {
@@ -168,17 +164,13 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
 
             // continue as long its being processed synchronously
             if (!sync) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-                }
+                log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                 // the remainder of the failover will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            if (log.isTraceEnabled()) {
-                log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
-            }
+            log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
         }
 
         if (log.isDebugEnabled()) {
@@ -256,9 +248,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 attempts.incrementAndGet();
                 // are we exhausted by attempts?
                 if (maximumFailoverAttempts > -1 && attempts.get() > maximumFailoverAttempts) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Breaking out of failover after " + attempts + " failover attempts");
-                    }
+                    log.trace("Breaking out of failover after {} failover attempts", attempts);
                     break;
                 }
 
@@ -285,9 +275,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 // try to failover using the next processor
                 doneSync = processExchange(processor, exchange, attempts, index, callback, processors);
                 if (!doneSync) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-                    }
+                    log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                     // the remainder of the failover will be completed async
                     // so we break out now, then the callback will be invoked which then continue routing from where we left here
                     return;

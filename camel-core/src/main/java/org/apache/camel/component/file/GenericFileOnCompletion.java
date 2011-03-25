@@ -124,9 +124,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             try {
                 // delete done file
                 boolean deleted = operations.deleteFile(doneFileName);
-                if (log.isTraceEnabled()) {
-                    log.trace("Done file: " + doneFileName + " was deleted: " + deleted);
-                }
+                log.trace("Done file: {} was deleted: {}", doneFileName, deleted);
                 if (!deleted) {
                     log.warn("Done file: " + doneFileName + " could not be deleted");
                 }
@@ -136,9 +134,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         }
 
         try {
-            if (log.isTraceEnabled()) {
-                log.trace("Commit file strategy: " + processStrategy + " for file: " + file);
-            }
+            log.trace("Commit file strategy: {} for file: {}", processStrategy, file);
             processStrategy.commit(operations, endpoint, exchange, file);
         } catch (Exception e) {
             handleException(e);

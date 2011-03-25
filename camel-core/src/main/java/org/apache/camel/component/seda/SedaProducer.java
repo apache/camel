@@ -68,12 +68,12 @@ public class SedaProducer extends CollectionProducer {
                     // check for timeout, which then already would have invoked the latch
                     if (latch.getCount() == 0) {
                         if (log.isTraceEnabled()) {
-                            log.trace(this + ". Timeout occurred so response will be ignored: " + (response.hasOut() ? response.getOut() : response.getIn()));
+                            log.trace("{}. Timeout occurred so response will be ignored: {}", this, response.hasOut() ? response.getOut() : response.getIn());
                         }
                         return;
                     } else {
                         if (log.isTraceEnabled()) {
-                            log.trace(this + " with response: " + (response.hasOut() ? response.getOut() : response.getIn()));
+                            log.trace("{} with response: {}", this, response.hasOut() ? response.getOut() : response.getIn());
                         }
                         try {
                             ExchangeHelper.copyResults(exchange, response);
@@ -97,14 +97,12 @@ public class SedaProducer extends CollectionProducer {
                 }
             });
 
-            if (log.isTraceEnabled()) {
-                log.trace("Adding Exchange to queue: " + copy);
-            }
+            log.trace("Adding Exchange to queue: {}", copy);
             queue.add(copy);
 
             if (timeout > 0) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Waiting for task to complete using timeout (ms): " + timeout + " at [" + endpoint.getEndpointUri() + "]");
+                    log.trace("Waiting for task to complete using timeout (ms): {} at [{}]", timeout, endpoint.getEndpointUri());
                 }
                 // lets see if we can get the task done before the timeout
                 boolean done = false;
@@ -120,7 +118,7 @@ public class SedaProducer extends CollectionProducer {
                 }
             } else {
                 if (log.isTraceEnabled()) {
-                    log.trace("Waiting for task to complete (blocking) at [" + endpoint.getEndpointUri() + "]");
+                    log.trace("Waiting for task to complete (blocking) at [{}]", endpoint.getEndpointUri());
                 }
                 // no timeout then wait until its done
                 try {
@@ -131,9 +129,7 @@ public class SedaProducer extends CollectionProducer {
             }
         } else {
             // no wait, eg its a InOnly then just add to queue and return
-            if (log.isTraceEnabled()) {
-                log.trace("Adding Exchange to queue: " + copy);
-            }
+            log.trace("Adding Exchange to queue: {}", copy);
             queue.add(copy);
         }
 

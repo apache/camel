@@ -59,9 +59,7 @@ public class CamelInvocationHandler implements InvocationHandler {
         exchange.getIn().setBody(invocation);
 
         // process the exchange
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Proxied method call " + method.getName() + " invoking producer: " + producer);
-        }
+        LOG.trace("Proxied method call {} invoking producer: {}", method.getName(), producer);
         producer.process(exchange);
 
         // check if we had an exception
@@ -98,9 +96,7 @@ public class CamelInvocationHandler implements InvocationHandler {
         // use type converter so we can convert output in the desired type defined by the method
         // and let it be mandatory so we know wont return null if we cant convert it to the defined type
         Object answer = exchange.getOut().getMandatoryBody(to);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Proxied method call " + method.getName() + " returning: " + answer);
-        }
+        LOG.trace("Proxied method call {} returning: {}", method.getName(), answer);
         return answer;
     }
 

@@ -635,9 +635,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     protected Object doInEvaluateAs(XPathExpression xpathExpression, Exchange exchange, QName resultQName) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Evaluating exchange: " + exchange + " as: " + resultQName);
-        }
+        LOG.trace("Evaluating exchange: {} as: {}", exchange, resultQName);
 
         Object answer;
 
@@ -671,9 +669,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             throw new InvalidXPathExpression(getText(), e);
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Done evaluating exchange: " + exchange + " as: " + resultQName + " with result: " + answer);
-        }
+        LOG.trace("Done evaluating exchange: {} as: {} with result: {}", new Object[]{exchange, resultQName, answer});
         return answer;
     }
 

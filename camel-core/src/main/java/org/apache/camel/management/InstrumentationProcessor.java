@@ -82,9 +82,7 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
     }
 
     protected void recordTime(Exchange exchange, long duration) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace((type != null ? type + ": " : "") + "Recording duration: " + duration + " millis for exchange: " + exchange);
-        }
+        LOG.trace("{}Recording duration: {} millis for exchange: {}", new Object[]{type != null ? type + ": " : "", duration, exchange});
 
         if (!exchange.isFailed() && exchange.getException() == null) {
             counter.completedExchange(duration);

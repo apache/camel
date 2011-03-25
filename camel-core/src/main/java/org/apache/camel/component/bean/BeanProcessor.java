@@ -93,9 +93,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         // should not be invoked if an explicit method has been set
         Processor processor = getProcessor();
         if (!isExplicitMethod && processor != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Using a custom adapter as bean invocation: " + processor);
-            }
+            LOG.trace("Using a custom adapter as bean invocation: {}", processor);
             try {
                 processor.process(exchange);
             } catch (Throwable e) {
@@ -114,14 +112,10 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         // so we must test whether BeanHolder and BeanInvocation is the same bean or not
         BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
         if (beanInvoke != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Exchange IN body is a BeanInvocation instance: " + beanInvoke);
-            }
+            LOG.trace("Exchange IN body is a BeanInvocation instance: {}", beanInvoke);
             Class<?> clazz = beanInvoke.getMethod().getDeclaringClass();
             boolean sameBean = clazz.isInstance(bean);
-            if (LOG.isTraceEnabled()) {
-                LOG.debug("BeanHolder bean: " + bean.getClass() + " and beanInvocation bean: " + clazz + " is same instance: " + sameBean);
-            }
+            LOG.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", new Object[]{bean.getClass(), clazz, sameBean});
             if (sameBean) {
                 beanInvoke.invoke(bean, exchange);
                 // propagate headers
@@ -166,17 +160,13 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             AtomicBoolean sync = new AtomicBoolean(true);
             value = invocation.proceed(callback, sync);
             if (!sync.get()) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-                }
+                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                 // the remainder of the routing will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
-            }
+            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
         } catch (InvocationTargetException e) {
             // lets unwrap the exception when its an invocation target exception
             exchange.setException(e.getCause());

@@ -51,9 +51,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {
         lockFileName = file.getAbsoluteFilePath() + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Locking the file: " + file + " using the lock file name: " + lockFileName);
-        }
+        LOG.trace("Locking the file: {} using the lock file name: {}", file, lockFileName);
 
         // create a plain file as marker filer for locking (do not use FileLock)
         lock = new File(lockFileName);
@@ -69,14 +67,10 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
                                          GenericFile<File> file, Exchange exchange) throws Exception {
         if (lock != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Unlocking file: " + lockFileName);
-            }
+            LOG.trace("Unlocking file: {}", lockFileName);
 
             boolean deleted = FileUtil.deleteFile(lock);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Lock file: " + lockFileName + " was deleted: " + deleted);
-            }
+            LOG.trace("Lock file: {} was deleted: {}", lockFileName, deleted);
         }
     }
 

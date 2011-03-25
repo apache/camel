@@ -180,9 +180,7 @@ public class BeanInfo {
             methodInfo = defaultMethod;
         }
         if (methodInfo != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Chosen method to invoke: " + methodInfo + " on bean: " + pojo);
-            }
+            LOG.trace("Chosen method to invoke: {} on bean: {}", methodInfo, pojo);
             return methodInfo.createMethodInvocation(pojo, exchange);
         }
 
@@ -201,16 +199,12 @@ public class BeanInfo {
         // get the target clazz as it could potentially have been enhanced by CGLIB etc.
         clazz = getTargetClass(clazz);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Introspecting class: " + clazz);
-        }
+        LOG.trace("Introspecting class: {}", clazz);
 
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
             boolean valid = isValidMethod(clazz, method);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Method:  " + method + " is valid: " + valid);
-            }
+            LOG.trace("Method:  {} is valid: {}", method, valid);
             if (valid) {
                 introspect(clazz, method);
             }
@@ -230,9 +224,7 @@ public class BeanInfo {
      * @return the method info, is newer <tt>null</tt>
      */
     protected MethodInfo introspect(Class<?> clazz, Method method) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Introspecting class: " + clazz + ", method: " + method);
-        }
+        LOG.trace("Introspecting class: {}, method: {}", clazz, method);
         String opName = method.getName();
 
         MethodInfo methodInfo = createMethodInfo(clazz, method);
@@ -242,16 +234,12 @@ public class BeanInfo {
         // the method then use it (we are traversing upwards: sub (child) -> super (farther) )
         MethodInfo existingMethodInfo = overridesExistingMethod(methodInfo);
         if (existingMethodInfo != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("This method is already overridden in a subclass, so the method from the sub class is preferred: " + existingMethodInfo);
-            }
+            LOG.trace("This method is already overridden in a subclass, so the method from the sub class is preferred: {}", existingMethodInfo);
 
             return existingMethodInfo;
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Adding operation: " + opName + " for method: " + methodInfo);
-        }
+        LOG.trace("Adding operation: {} for method: {}", opName, methodInfo);
 
         if (hasMethod(opName)) {
             // we have an overloaded method so add the method info to the same key
@@ -312,9 +300,7 @@ public class BeanInfo {
         boolean hasHandlerAnnotation = ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
 
         int size = parameterTypes.length;
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Creating MethodInfo for class: " + clazz + " method: " + method + " having " + size + " parameters");
-        }
+        LOG.trace("Creating MethodInfo for class: {} method: {} having {} parameters", new Object[]{clazz, method, size});
 
         for (int i = 0; i < size; i++) {
             Class parameterType = parameterTypes[i];
@@ -323,15 +309,11 @@ public class BeanInfo {
             hasCustomAnnotation |= expression != null;
 
             ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations, expression);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Parameter #" + i + ": " + parameterInfo);
-            }
+            LOG.trace("Parameter #{}: {}", i, parameterInfo);
             parameters.add(parameterInfo);
             if (expression == null) {
                 boolean bodyAnnotation = ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
-                if (LOG.isTraceEnabled() && bodyAnnotation) {
-                    LOG.trace("Parameter #" + i + " has @Body annotation");
-                }
+                LOG.trace("Parameter #{} has @Body annotation", i);
                 hasCustomAnnotation |= bodyAnnotation;
                 if (bodyParameters.isEmpty()) {
                     // okay we have not yet set the body parameter and we have found
@@ -344,18 +326,14 @@ public class BeanInfo {
                         // but we allow null bodies in case the message really contains a null body
                         expression = ExpressionBuilder.mandatoryBodyExpression(parameterType, true);
                     }
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Parameter #" + i + " is the body parameter using expression " + expression);
-                    }
+                    LOG.trace("Parameter #{} is the body parameter using expression {}", i, expression);
                     parameterInfo.setExpression(expression);
                     bodyParameters.add(parameterInfo);
                 } else {
                     // will ignore the expression for parameter evaluation
                 }
             }
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Parameter #" + i + " has parameter info: " + parameterInfo);
-            }
+            LOG.trace("Parameter #{} has parameter info: ", i, parameterInfo);
         }
 
         // now lets add the method to the repository
@@ -438,9 +416,7 @@ public class BeanInfo {
         Object body = in.getBody();
         if (body != null) {
             Class bodyType = body.getClass();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Matching for method with a single parameter that matches type: " + bodyType.getCanonicalName());
-            }
+            LOG.trace("Matching for method with a single parameter that matches type: {}", bodyType.getCanonicalName());
 
             List<MethodInfo> possibles = new ArrayList<MethodInfo>();
             List<MethodInfo> possiblesWithException = new ArrayList<MethodInfo>();
@@ -454,9 +430,7 @@ public class BeanInfo {
 
                 // try to match the arguments
                 if (methodInfo.bodyParameterMatches(bodyType)) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Found a possible method: " + methodInfo);
-                    }
+                    LOG.trace("Found a possible method: {}", methodInfo);
                     if (methodInfo.hasExceptionParameter()) {
                         // methods with accepts exceptions
                         possiblesWithException.add(methodInfo);
@@ -482,17 +456,13 @@ public class BeanInfo {
 
         Exception exception = ExpressionBuilder.exchangeExceptionExpression().evaluate(exchange, Exception.class);
         if (exception != null && possiblesWithException.size() == 1) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Exchange has exception set so we prefer method that also has exception as parameter");
-            }
+            LOG.trace("Exchange has exception set so we prefer method that also has exception as parameter");
             // prefer the method that accepts exception in case we have an exception also
             return possiblesWithException.get(0);
         } else if (possibles.size() == 1) {
             return possibles.get(0);
         } else if (possibles.isEmpty()) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("No possible methods so now trying to convert body to parameter types");
-            }
+            LOG.trace("No possible methods so now trying to convert body to parameter types");
 
             // lets try converting
             Object newBody = null;
@@ -506,8 +476,8 @@ public class BeanInfo {
                 Object value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
                 if (value != null) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Converted body from: " + body.getClass().getCanonicalName()
-                                + "to: " + methodInfo.getBodyParameterType().getCanonicalName());
+                        LOG.trace("Converted body from: {} to: {}",
+                                body.getClass().getCanonicalName(), methodInfo.getBodyParameterType().getCanonicalName());
                     }
                     matchCounter++;
                     newBody = value;
@@ -518,9 +488,7 @@ public class BeanInfo {
                 throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, matched));
             }
             if (matched != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Setting converted body: " + body);
-                }
+                LOG.trace("Setting converted body: {}", body);
                 Message in = exchange.getIn();
                 in.setBody(newBody);
                 return matched;
@@ -529,9 +497,7 @@ public class BeanInfo {
             // if we only have a single method with custom annotations, lets use that one
             if (possibleWithCustomAnnotation.size() == 1) {
                 MethodInfo answer = possibleWithCustomAnnotation.get(0);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("There are only one method with annotations so we choose it: " + answer);
-                }
+                LOG.trace("There are only one method with annotations so we choose it: {}", answer);
                 return answer;
             }
             // phew try to choose among multiple methods with annotations

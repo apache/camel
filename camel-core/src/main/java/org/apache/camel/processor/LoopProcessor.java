@@ -71,17 +71,13 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable {
             boolean sync = process(exchange, callback, index, count);
 
             if (!sync) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-                }
+                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                 // the remainder of the routing slip will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
-            }
+            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
 
             // increment counter before next loop
             index.getAndIncrement();
@@ -89,9 +85,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable {
 
         // we are done so prepare the result
         ExchangeHelper.prepareOutToIn(exchange);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
-        }
+        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
         callback.done(true);
         return true;
     }
@@ -124,9 +118,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable {
                     // process again
                     boolean sync = process(exchange, callback, index, count);
                     if (!sync) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-                        }
+                        LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                         // the remainder of the routing slip will be completed async
                         // so we break out now, then the callback will be invoked which then continue routing from where we left here
                         return;
@@ -138,9 +130,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable {
 
                 // we are done so prepare the result
                 ExchangeHelper.prepareOutToIn(exchange);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
-                }
+                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 callback.done(false);
             }
         });

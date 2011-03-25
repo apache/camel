@@ -239,9 +239,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
      * @param consumer the consumer to shutdown
      */
     protected void shutdownNow(Consumer consumer) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Shutting down: " + consumer);
-        }
+        LOG.trace("Shutting down: {}", consumer);
 
         // allow us to do custom work before delegating to service helper
         try {
@@ -263,9 +261,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
      * @param consumer the consumer to suspend
      */
     protected void suspendNow(Consumer consumer) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Suspending: " + consumer);
-        }
+        LOG.trace("Suspending: {}", consumer);
 
         // allow us to do custom work before delegating to service helper
         try {
@@ -364,8 +360,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 ShutdownRunningTask shutdownRunningTask = order.getRoute().getRouteContext().getShutdownRunningTask();
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace((suspendOnly ? "Suspending route: " : "Shutting down route: ") + order.getRoute().getId()
-                            + " with options [" + shutdownRoute + "," + shutdownRunningTask + "]");
+                    LOG.trace("{}{} with options [{},{}]",
+                            new Object[]{suspendOnly ? "Suspending route: " : "Shutting down route: ",
+                                order.getRoute().getId(), shutdownRoute, shutdownRunningTask});
                 }
 
                 for (Consumer consumer : order.getInputs()) {

@@ -191,17 +191,13 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
             current = copy;
 
             if (!sync) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-                }
+                log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                 // the remainder of the routing slip will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            if (log.isTraceEnabled()) {
-                log.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
-            }
+            log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
 
             // we ignore some kind of exceptions and allow us to continue
             if (isIgnoreInvalidEndpoints()) {
@@ -221,12 +217,10 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
             }
         }
 
-        if (log.isTraceEnabled()) {
-            // logging nextExchange as it contains the exchange that might have altered the payload and since
-            // we are logging the completion if will be confusing if we log the original instead
-            // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-            log.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + current);
-        }
+        // logging nextExchange as it contains the exchange that might have altered the payload and since
+        // we are logging the completion if will be confusing if we log the original instead
+        // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
+        log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), current);
 
         // copy results back to the original exchange
         ExchangeHelper.copyResults(exchange, current);
@@ -265,10 +259,8 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
     protected boolean processExchange(final Endpoint endpoint, final Exchange exchange, final Exchange original,
                                       final AsyncCallback callback, final RoutingSlipIterator iter) {
 
-        if (log.isTraceEnabled()) {
-            // this does the actual processing so log at trace level
-            log.trace("Processing exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
-        }
+        // this does the actual processing so log at trace level
+        log.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
 
         boolean sync = producerCache.doInAsyncProducer(endpoint, exchange, null, callback, new AsyncProducerCallback() {
             public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, final Exchange exchange,
@@ -325,19 +317,15 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                             current = copy;
 
                             if (!sync) {
-                                if (log.isTraceEnabled()) {
-                                    log.trace("Processing exchangeId: " + original.getExchangeId() + " is continued being processed asynchronously");
-                                }
+                                log.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
                                 return;
                             }
                         }
 
-                        if (log.isTraceEnabled()) {
-                            // logging nextExchange as it contains the exchange that might have altered the payload and since
-                            // we are logging the completion if will be confusing if we log the original instead
-                            // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-                            log.trace("Processing complete for exchangeId: " + original.getExchangeId() + " >>> " + current);
-                        }
+                        // logging nextExchange as it contains the exchange that might have altered the payload and since
+                        // we are logging the completion if will be confusing if we log the original instead
+                        // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
+                        log.trace("Processing complete for exchangeId: {} >>> {}", original.getExchangeId(), current);
 
                         // copy results back to the original exchange
                         ExchangeHelper.copyResults(original, current);

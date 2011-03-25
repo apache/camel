@@ -36,9 +36,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
     }
 
     protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList) {
-        if (log.isTraceEnabled()) {
-            log.trace("pollDirectory from fileName: " + fileName);
-        }
+        log.trace("pollDirectory from fileName: {}", fileName);
 
         File directory = new File(fileName);
         if (!directory.exists() || !directory.isDirectory()) {
@@ -51,21 +49,15 @@ public class FileConsumer extends GenericFileConsumer<File> {
             return true;
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Polling directory: " + directory.getPath());
-        }
+        log.trace("Polling directory: {}", directory.getPath());
         File[] files = directory.listFiles();
         if (files == null || files.length == 0) {
             // no files in this directory to poll
-            if (log.isTraceEnabled()) {
-                log.trace("No files found in directory: " + directory.getPath());
-            }
+            log.trace("No files found in directory: {}", directory.getPath());
             return true;
         } else {
             // we found some files
-            if (log.isTraceEnabled()) {
-                log.trace("Found " + files.length + " in directory: " + directory.getPath());
-            }
+            log.trace("Found {} in directory: {}", files.length, directory.getPath());
         }
 
         for (File file : files) {
@@ -76,8 +68,8 @@ public class FileConsumer extends GenericFileConsumer<File> {
 
             // trace log as Windows/Unix can have different views what the file is?
             if (log.isTraceEnabled()) {
-                log.trace("Found file: " + file + " [isAbsolute: " + file.isAbsolute() + ", isDirectory: "
-                        + file.isDirectory() + ", isFile: " + file.isFile() + ", isHidden: " + file.isHidden() + "]");
+                log.trace("Found file: {} [isAbsolute: {}, isDirectory: {}, isFile: {}, isHidden: {}]",
+                        new Object[]{file, file.isAbsolute(), file.isDirectory(), file.isFile(), file.isHidden()});
             }
 
             // creates a generic file
@@ -96,13 +88,9 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 // Windows can report false to a file on a share so regard it always as a file (if its not a directory)
                 if (isValidFile(gf, false)) {
                     if (isInProgress(gf)) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Skipping as file is already in progress: " + gf.getFileName());
-                        }
+                        log.trace("Skipping as file is already in progress: {}", gf.getFileName());
                     } else {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Adding valid file: " + file);
-                        }
+                        log.trace("Adding valid file: {}", file);
                         // matched file so add
                         fileList.add(gf);
                     }

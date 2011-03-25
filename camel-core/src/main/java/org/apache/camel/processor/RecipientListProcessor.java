@@ -98,15 +98,11 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         public void begin() {
             // we have already acquired and prepare the producer so we
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("RecipientProcessorExchangePair #" + index + " begin: " + exchange);
-            }
+            LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
         }
 
         public void done() {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("RecipientProcessorExchangePair #" + index + " done: " + exchange);
-            }
+            LOG.trace("RecipientProcessorExchangePair #{} done: {}", index, exchange);
             // when we are done we should release back in pool
             try {
                 producerCache.releaseProducer(endpoint, producer);

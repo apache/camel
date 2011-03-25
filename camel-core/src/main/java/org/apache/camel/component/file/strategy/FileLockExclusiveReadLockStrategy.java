@@ -52,9 +52,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         File target = new File(file.getAbsoluteFilePath());
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for exclusive read lock to file: " + target);
-        }
+        LOG.trace("Waiting for exclusive read lock to file: {}", target);
 
         try {
             // try to acquire rw lock on the file before we can consume it
@@ -81,9 +79,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
                     // Also catch the OverlappingFileLockException here. Do nothing here                    
                 }
                 if (lock != null) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Acquired exclusive read lock: " + lock + " to file: " + target);
-                    }
+                    LOG.trace("Acquired exclusive read lock: {} to file: {}", lock, target);
                     lockFileName = target.getName();
                     exclusive = true;
                 } else {
@@ -128,9 +124,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
     }
 
     private boolean sleep() {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Exclusive read lock not granted. Sleeping for " + checkInterval + " millis.");
-        }
+        LOG.trace("Exclusive read lock not granted. Sleeping for {} millis.", checkInterval);
         try {
             Thread.sleep(checkInterval);
             return false;

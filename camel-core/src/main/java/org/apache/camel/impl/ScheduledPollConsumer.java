@@ -66,9 +66,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      */
     public void run() {
         if (isSuspended()) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Cannot start to poll: " + this.getEndpoint() + " as its suspended");
-            }
+            LOG.trace("Cannot start to poll: {} as its suspended", this.getEndpoint());
             return;
         }
 
@@ -82,9 +80,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                 if (isPollAllowed()) {
 
                     if (retryCounter == -1) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Starting to poll: " + this.getEndpoint());
-                        }
+                        LOG.trace("Starting to poll: {}", this.getEndpoint());
                     } else {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Retrying attempt " + retryCounter + " to poll: " + this.getEndpoint());
@@ -103,9 +99,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                     }
                 }
 
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Finished polling: " + this.getEndpoint());
-                }
+                LOG.trace("Finished polling: {}", this.getEndpoint());
             } catch (Exception e) {
                 try {
                     boolean retry = pollStrategy.rollback(this, getEndpoint(), retryCounter, e);

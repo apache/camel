@@ -83,7 +83,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
         for (Class type : classes) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Loading converter class: " + ObjectHelper.name(type));
+                LOG.trace("Loading converter class: {}", ObjectHelper.name(type));
             }
             loadConverterMethods(registry, type);
         }

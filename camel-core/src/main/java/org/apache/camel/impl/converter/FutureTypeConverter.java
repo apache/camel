@@ -61,14 +61,10 @@ public final class FutureTypeConverter implements TypeConverter {
             }
 
             // do some trace logging as the get is blocking until the response is ready
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Getting future response");
-            }
+            LOG.trace("Getting future response");
 
             Object body = future.get();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Got future response");
-            }
+            LOG.trace("Got future response");
 
             if (body == null) {
                 // return void to indicate its not possible to convert at this time

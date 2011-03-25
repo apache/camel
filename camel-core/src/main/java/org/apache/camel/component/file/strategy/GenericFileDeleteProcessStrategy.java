@@ -69,9 +69,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
             if (!exits) {
                 deleted = true;
             } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("File was not deleted at this attempt will try again in 1 sec.: " + file);
-                }
+                log.trace("File was not deleted at this attempt will try again in 1 sec.: {}", file);
                 // sleep a bit and try again
                 Thread.sleep(1000);
             }

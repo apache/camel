@@ -68,9 +68,7 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
                 log.debug("Starting producer: " + this);
             }
         } else {
-            if (log.isTraceEnabled()) {
-                log.trace("Starting producer: " + this);
-            }
+            log.trace("Starting producer: {}", this);
         }
     }
 
@@ -81,9 +79,7 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
                 log.debug("Stopping producer: " + this);
             }
         } else {
-            if (log.isTraceEnabled()) {
-                log.trace("Stopping producer: " + this);
-            }
+            log.trace("Stopping producer: {}", this);
         }
     }
 }

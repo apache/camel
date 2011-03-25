@@ -97,9 +97,7 @@ public class TimerConsumer extends DefaultConsumer {
         // also set now on in header with same key as quartz to be consistent
         exchange.getIn().setHeader("firedTime", now);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Timer " + endpoint.getTimerName() + " is firing");
-        }
+        LOG.trace("Timer {} is firing", endpoint.getTimerName());
         try {
             getProcessor().process(exchange);
 

@@ -211,9 +211,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             }
             ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(name);
             done = !getManagementStrategy().isManaged(mc, on);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Using name: " + name + " in ObjectName[" + on + "] exists? " + done);
-            }
+            LOG.trace("Using name: {} in ObjectName[{}] exists? {}", new Object[]{name, on, done});
         }
         return name;
     }
@@ -348,9 +346,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(managedObject, null)) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("The service is already managed: " + service);
-            }
+            LOG.trace("The service is already managed: {}", service);
             return;
         }
 
@@ -533,9 +529,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
             // skip already managed routes, for example if the route has been restarted
             if (getManagementStrategy().isManaged(mr, null)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("The route is already managed: " + route);
-                }
+                LOG.trace("The route is already managed: {}", route);
                 continue;
             }
 
@@ -572,9 +566,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
             // skip unmanaged routes
             if (!getManagementStrategy().isManaged(mr, null)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("The route is not managed: " + route);
-                }
+                LOG.trace("The route is not managed: {}", route);
                 continue;
             }
 
@@ -597,9 +589,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(me, null)) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("The error handler builder is already managed: " + errorHandlerBuilder);
-            }
+            LOG.trace("The error handler builder is already managed: {}", errorHandlerBuilder);
             return;
         }
 
@@ -623,9 +613,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(mtp, null)) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("The thread pool is already managed: " + threadPool);
-            }
+            LOG.trace("The thread pool is already managed: {}", threadPool);
             return;
         }
 
@@ -756,9 +744,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return false;
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Checking whether to register " + service + " from route: " + route);
-        }
+        LOG.trace("Checking whether to register {} from route: {}", service, route);
 
         // always register if we are starting CamelContext
         if (getCamelContext().getStatus().isStarting()) {

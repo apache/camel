@@ -355,9 +355,7 @@ public final class ExecutorServiceHelper {
             Thread answer = new Thread(runnable, threadName);
             answer.setDaemon(daemon);
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Created thread[" + name + "]: " + answer);
-            }
+            LOG.trace("Created thread[{}]: {}", name, answer);
             return answer;
         }
 

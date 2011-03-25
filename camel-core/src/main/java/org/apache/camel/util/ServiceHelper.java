@@ -47,16 +47,12 @@ public final class ServiceHelper {
     public static void startService(Object value) throws Exception {
         if (isStarted(value)) {
             // only start service if not already started
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Service already started: " + value);
-            }
+            LOG.trace("Service already started: {}", value);
             return;
         }
         if (value instanceof Service) {
             Service service = (Service)value;
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Starting service: " + service);
-            }
+            LOG.trace("Starting service: {}", service);
             service.start();
         } else if (value instanceof Collection) {
             startServices((Collection<?>)value);
@@ -104,16 +100,12 @@ public final class ServiceHelper {
     public static void stopService(Object value) throws Exception {
         if (isStopped(value)) {
             // only stop service if not already stopped
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Service already stopped: " + value);
-            }
+            LOG.trace("Service already stopped: {}", value);
             return;
         }
         if (value instanceof Service) {
             Service service = (Service)value;
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Stopping service " + value);
-            }
+            LOG.trace("Stopping service {}", value);
             service.stop();
         } else if (value instanceof Collection) {
             stopServices((Collection<?>)value);
@@ -168,9 +160,7 @@ public final class ServiceHelper {
         // then try to shutdown
         if (value instanceof ShutdownableService) {
             ShutdownableService service = (ShutdownableService)value;
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Shutting down service " + value);
-            }
+            LOG.trace("Shutting down service {}", value);
             service.shutdown();
         } else if (value instanceof Collection) {
             stopAndShutdownServices((Collection<?>)value);
@@ -195,9 +185,7 @@ public final class ServiceHelper {
             if (value instanceof ShutdownableService) {
                 ShutdownableService service = (ShutdownableService)value;
                 try {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Shutting down service: " + service);
-                    }
+                    LOG.trace("Shutting down service: {}", service);
                     service.shutdown();
                 } catch (Exception e) {
                     if (LOG.isDebugEnabled()) {
@@ -318,9 +306,7 @@ public final class ServiceHelper {
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (!ss.isSuspended()) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Suspending service " + service);
-                }
+                LOG.trace("Suspending service {}", service);
                 ss.suspend();
                 return true;
             } else {

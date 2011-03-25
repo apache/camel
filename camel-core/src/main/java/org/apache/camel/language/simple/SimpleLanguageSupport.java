@@ -164,13 +164,13 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
 
     private void dumpMatcher(Matcher matcher) {
         if (log.isTraceEnabled()) {
-            log.trace("Matcher start: " + matcher.start());
-            log.trace("Matcher end: " + matcher.end());
-            log.trace("Matcher group: " + matcher.group());
-            log.trace("Matcher group count: " + matcher.groupCount());
+            log.trace("Matcher start: {}", matcher.start());
+            log.trace("Matcher end: {}", matcher.end());
+            log.trace("Matcher group: {}", matcher.group());
+            log.trace("Matcher group count: {}", matcher.groupCount());
             for (int i = 0; i < matcher.groupCount() + 1; i++) {
                 String group = matcher.group(i);
-                log.trace("Matcher group #" + i + ": " + group);
+                log.trace("Matcher group #{}: {}", i, group);
             }
         }
     }

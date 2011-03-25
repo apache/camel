@@ -217,9 +217,7 @@ public class ThroughputLogger extends CamelLogger {
         public void run() {
             // only run if CamelContext has been fully started
             if (!camelContext.getStatus().isStarted()) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("ThroughputLogger cannot start because CamelContext(" + camelContext.getName() + ") has not been started yet");
-                }
+                LOG.trace("ThroughputLogger cannot start because CamelContext({}) has not been started yet", camelContext.getName());
                 return;
             }
 

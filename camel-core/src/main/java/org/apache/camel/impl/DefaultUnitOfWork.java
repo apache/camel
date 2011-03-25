@@ -57,9 +57,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private final Stack<RouteContext> routeContextStack = new Stack<RouteContext>();
 
     public DefaultUnitOfWork(Exchange exchange) {
-        if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork created for ExchangeId: " + exchange.getExchangeId() + " with " + exchange);
-        }
+        log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
         tracedRouteNodes = new DefaultTracedRouteNodes();
         context = exchange.getContext();
 
@@ -115,9 +113,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (synchronizations == null) {
             synchronizations = new ArrayList<Synchronization>();
         }
-        if (log.isTraceEnabled()) {
-            log.trace("Adding synchronization " + synchronization);
-        }
+        log.trace("Adding synchronization {}", synchronization);
         synchronizations.add(synchronization);
     }
 
@@ -143,24 +139,18 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             }
 
             if (handover) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Handover synchronization " + synchronization + " to: " + target);
-                }
+                log.trace("Handover synchronization {} to: {}", synchronization, target);
                 target.addOnCompletion(synchronization);
                 // remove it if its handed over
                 it.remove();
             } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("Handover not allow for synchronization " + synchronization);
-                }
+                log.trace("Handover not allow for synchronization {}", synchronization);
             }
         }
     }
    
     public void done(Exchange exchange) {
-        if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork done for ExchangeId: " + exchange.getExchangeId() + " with " + exchange);
-        }
+        log.trace("UnitOfWork done for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
 
         boolean failed = exchange.isFailed();
 

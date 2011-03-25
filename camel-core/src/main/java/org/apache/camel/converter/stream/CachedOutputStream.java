@@ -204,9 +204,7 @@ public class CachedOutputStream extends OutputStream {
             tempFile = FileUtil.createTempFile("cos", ".tmp", outputDir);
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Creating temporary stream cache file: " + tempFile);
-        }
+        LOG.trace("Creating temporary stream cache file: {}", tempFile);
 
         try {
             currentStream = new BufferedOutputStream(new FileOutputStream(tempFile));

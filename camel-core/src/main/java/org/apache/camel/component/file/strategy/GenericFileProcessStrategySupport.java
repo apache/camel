@@ -108,9 +108,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         File local = exchange.getIn().getHeader(Exchange.FILE_LOCAL_WORK_PATH, File.class);
         if (local != null && local.exists()) {
             boolean deleted = FileUtil.deleteFile(local);
-            if (log.isTraceEnabled()) {
-                log.trace("Local work file: " + local + " was deleted: " + deleted);
-            }
+            log.trace("Local work file: {} was deleted: {}", local, deleted);
         }
     }
 }

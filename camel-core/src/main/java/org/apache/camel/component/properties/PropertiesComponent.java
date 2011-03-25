@@ -67,9 +67,7 @@ public class PropertiesComponent extends DefaultComponent {
         // override default locations
         String locations = getAndRemoveParameter(parameters, "locations", String.class);
         if (locations != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Overriding default locations with location: " + locations);
-            }
+            LOG.trace("Overriding default locations with location: {}", locations);
             paths = locations.split(",");
         }
         String endpointUri = parseUri(remaining, paths);
@@ -107,9 +105,7 @@ public class PropertiesComponent extends DefaultComponent {
             uri = uri + SUFFIX_TOKEN;
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Parsing uri " + uri + " with properties: " + prop);
-        }
+        LOG.trace("Parsing uri {} with properties: {}", uri, prop);
         return propertiesParser.parseUri(uri, prop, PREFIX_TOKEN, SUFFIX_TOKEN);
     }
 

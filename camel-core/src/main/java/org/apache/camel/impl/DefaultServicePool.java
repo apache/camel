@@ -66,9 +66,7 @@ public abstract class DefaultServicePool<Key, Service> extends ServiceSupport im
             entry = new ArrayBlockingQueue<Service>(capacity);
             pool.put(key, entry);
         }
-        if (log.isTraceEnabled()) {
-            log.trace("AddAndAcquire key: " + key + " service: " + service);
-        }
+        log.trace("AddAndAcquire key: {} service: {}", key, service);
 
         // test if queue will be full
         if (entry.size() >= capacity) {
@@ -80,23 +78,17 @@ public abstract class DefaultServicePool<Key, Service> extends ServiceSupport im
     public synchronized Service acquire(Key key) {
         BlockingQueue<Service> services = pool.get(key);
         if (services == null || services.isEmpty()) {
-            if (log.isTraceEnabled()) {
-                log.trace("No free services in pool to acquire for key: " + key);
-            }
+            log.trace("No free services in pool to acquire for key: {}", key);
             return null;
         }
 
         Service answer = services.poll();
-        if (log.isTraceEnabled()) {
-            log.trace("Acquire: " + key + " service: " + answer);
-        }
+        log.trace("Acquire: {} service: {}", key, answer);
         return answer;
     }
 
     public synchronized void release(Key key, Service service) {
-        if (log.isTraceEnabled()) {
-            log.trace("Release: " + key + " service: " + service);
-        }
+        log.trace("Release: {} service: {}", key, service);
         BlockingQueue<Service> services = pool.get(key);
         if (services != null) {
             services.add(service);

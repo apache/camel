@@ -322,9 +322,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         // register bean if by force or not exists
         ObjectInstance instance = null;
         if (forceRegistration || !exists) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Registering MBean with objectname: " + name);
-            }
+            LOG.trace("Registering MBean with objectname: {}", name);
             instance = server.registerMBean(obj, name);
         }
 

@@ -45,9 +45,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
         File target = new File(file.getAbsoluteFilePath());
         boolean exclusive = false;
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for exclusive read lock to file: " + file);
-        }
+        LOG.trace("Waiting for exclusive read lock to file: {}", file);
 
         try {
             long lastModified = Long.MIN_VALUE;
@@ -68,10 +66,8 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
                 long newLastModified = target.lastModified();
                 long newLength = target.length();
 
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Previous last modified: " + lastModified + ", new last modified: " + newLastModified);
-                    LOG.trace("Previous length: " + length + ", new length: " + newLength);
-                }
+                LOG.trace("Previous last modified: {}, new last modified: {}", lastModified, newLastModified);
+                LOG.trace("Previous length: {}, new length: {}", length, newLength);
 
                 if (newLastModified == lastModified && newLength == length) {
                     // let super handle the last part of acquiring the lock now the file is not
@@ -111,9 +107,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
     }
 
     private boolean sleep() {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Exclusive read lock not granted. Sleeping for " + checkInterval + " millis.");
-        }
+        LOG.trace("Exclusive read lock not granted. Sleeping for {} millis.", checkInterval);
         try {
             Thread.sleep(checkInterval);
             return false;

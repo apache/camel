@@ -397,9 +397,7 @@ public class ProducerCache extends ServiceSupport {
         int size = producers.size();
         size += pool.size();
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("size = " + size);
-        }
+        LOG.trace("size = {}", size);
         return size;
     }
 

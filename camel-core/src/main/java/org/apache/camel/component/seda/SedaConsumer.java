@@ -128,9 +128,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                         getExceptionHandler().handleException("Error processing exchange", exchange, e);
                     }
                 } else if (shutdownPending && queue.isEmpty()) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
-                    }
+                    LOG.trace("Shutdown is pending, so this consumer thread is breaking out because the task queue is empty.");
                     // we want to shutdown so break out if there queue is empty
                     break;
                 }

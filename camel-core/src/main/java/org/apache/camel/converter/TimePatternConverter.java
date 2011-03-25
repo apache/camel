@@ -53,9 +53,7 @@ public final class TimePatternConverter {
             matcher = createMatcher(REPLACEMENT_PATTERN, source);
             String replacedSource = matcher.replaceAll(""); 
             
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Replaced original source " + source + " to " + replacedSource);
-            }
+            LOG.trace("Replaced original source {} to {}", source, replacedSource);
             
             matcher = createMatcher(HOUR_REGEX_PATTERN, replacedSource);
             if (matcher.find()) {
@@ -90,9 +88,7 @@ public final class TimePatternConverter {
             }
         }       
         
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("source: " + source + " milliseconds: " + milliseconds);
-        }
+        LOG.trace("source: {} milliseconds: ", source, milliseconds);
         
         return milliseconds;
     }

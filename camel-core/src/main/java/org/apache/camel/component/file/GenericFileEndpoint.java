@@ -139,41 +139,31 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         Class<?> factory = null;
         try {
             FactoryFinder finder = getCamelContext().getFactoryFinder("META-INF/services/org/apache/camel/component/");
-            if (log.isTraceEnabled()) {
-                log.trace("Using FactoryFinder: " + finder);
-            }
+            log.trace("Using FactoryFinder: {}", finder);
             factory = finder.findClass(getScheme(), "strategy.factory.");
         } catch (ClassNotFoundException e) {
-            if (log.isTraceEnabled()) {
-                log.trace("'strategy.factory.class' not found", e);
-            }
+            log.trace("'strategy.factory.class' not found", e);
         } catch (IOException e) {
-            if (log.isTraceEnabled()) {
-                log.trace("No strategy factory defined in 'META-INF/services/org/apache/camel/component/'", e);
-            }
+            log.trace("No strategy factory defined in 'META-INF/services/org/apache/camel/component/'", e);
         }
 
         if (factory == null) {
             // use default
             try {
-                if (log.isTraceEnabled()) {
-                    log.trace("Using ClassResolver to resolve class: " + DEFAULT_STRATEGYFACTORY_CLASS);
-                }
+                log.trace("Using ClassResolver to resolve class: {}", DEFAULT_STRATEGYFACTORY_CLASS);
                 factory = this.getCamelContext().getClassResolver().resolveClass(DEFAULT_STRATEGYFACTORY_CLASS);
             } catch (Exception e) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Cannot load class: " + DEFAULT_STRATEGYFACTORY_CLASS, e);
-                }
+                log.trace("Cannot load class: {}", DEFAULT_STRATEGYFACTORY_CLASS, e);
             }
             // fallback and us this class loader
             try {
                 if (log.isTraceEnabled()) {
-                    log.trace("Using classloader: " + this.getClass().getClassLoader() + " to resolve class: " + DEFAULT_STRATEGYFACTORY_CLASS);
+                    log.trace("Using classloader: {} to resolve class: {}", this.getClass().getClassLoader(), DEFAULT_STRATEGYFACTORY_CLASS);
                 }
                 factory = this.getCamelContext().getClassResolver().resolveClass(DEFAULT_STRATEGYFACTORY_CLASS, this.getClass().getClassLoader());
             } catch (Exception e) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Cannot load class: " + DEFAULT_STRATEGYFACTORY_CLASS + " using classloader: " + this.getClass().getClassLoader(), e);
+                    log.trace("Cannot load class: {} using classloader: " + this.getClass().getClassLoader(), DEFAULT_STRATEGYFACTORY_CLASS, e);
                 }
             }
 

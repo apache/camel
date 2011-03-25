@@ -263,9 +263,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      */
     protected void processExchange(final Exchange exchange) {
         GenericFile<T> file = getExchangeFileProperty(exchange);
-        if (log.isTraceEnabled()) {
-            log.trace("Processing file: " + file);
-        }
+        log.trace("Processing file: {}", file);
 
         // must extract the absolute name before the begin strategy as the file could potentially be pre moved
         // and then the file name would be changed
@@ -299,9 +297,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         final String name = target.getAbsoluteFilePath();
         try {
             // retrieve the file using the stream
-            if (log.isTraceEnabled()) {
-                log.trace("Retrieving file: " + name + " from: " + endpoint);
-            }
+            log.trace("Retrieving file: {} from: {}", name, endpoint);
 
             // retrieve the file and check it was a success
             boolean retrieved = operations.retrieveFile(name, exchange);
@@ -312,9 +308,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
                 throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint);
             }
 
-            if (log.isTraceEnabled()) {
-                log.trace("Retrieved file: " + name + " from: " + endpoint);
-            }
+            log.trace("Retrieved file: {} from: {}", name, endpoint);
 
             // register on completion callback that does the completion strategies
             // (for instance to move the file after we have processed it)
@@ -330,9 +324,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // noop
-                    if (log.isTraceEnabled()) {
-                        log.trace("Done processing file: " + target + (doneSync ? " synchronously" : " asynchronously"));
-                    }
+                    log.trace("Done processing file: {} {}", target, doneSync ? "synchronously" : "asynchronously");
                 }
             });
 
@@ -355,14 +347,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      */
     protected boolean isValidFile(GenericFile<T> file, boolean isDirectory) {
         if (!isMatched(file, isDirectory)) {
-            if (log.isTraceEnabled()) {
-                log.trace("File did not match. Will skip this file: " + file);
-            }
+            log.trace("File did not match. Will skip this file: {}", file);
             return false;
         } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getAbsoluteFilePath())) {
-            if (log.isTraceEnabled()) {
-                log.trace("This consumer is idempotent and the file has been consumed before. Will skip this file: " + file);
-            }
+            log.trace("This consumer is idempotent and the file has been consumed before. Will skip this file: {}", file);
             return false;
         }
 
@@ -438,17 +426,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
             // is it a done file name?
             if (endpoint.isDoneFile(file.getFileNameOnly())) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Skipping done file: " + file);
-                }
+                log.trace("Skipping done file: {}", file);
                 return false;
             }
 
             // the file is only valid if the done file exist
             if (!operations.existsFile(doneFileName)) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Done file: " + doneFileName + " does not exist");
-                }
+                log.trace("Done file: {} does not exist", doneFileName);
                 return false;
             }
         }

@@ -78,9 +78,7 @@ public class PropertyEditorTypeConverter implements TypeConverter, Service {
     private PropertyEditor lookupEditor(Class type) {
         // check misses first
         if (misses.containsKey(type)) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("No previously found property editor for type: " + type);
-            }
+            LOG.trace("No previously found property editor for type: {}", type);
             return null;
         }
 
@@ -94,14 +92,10 @@ public class PropertyEditorTypeConverter implements TypeConverter, Service {
 
                 // either we found an editor, or if not then register it as a miss
                 if (editor != null) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Found property editor for type: " + type + " -> " + editor);
-                    }
+                    LOG.trace("Found property editor for type: {} -> {}", type, editor);
                     cache.put(type, editor);
                 } else {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Cannot find property editor for type: " + type);
-                    }
+                    LOG.trace("Cannot find property editor for type: {}", type);
                     misses.put(type, type);
                 }
             }

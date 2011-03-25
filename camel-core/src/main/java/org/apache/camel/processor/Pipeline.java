@@ -81,17 +81,13 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
 
             // continue as long its being processed synchronously
             if (!sync) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-                }
+                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                 // the remainder of the pipeline will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
-            }
+            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
 
             // check for error if so we should break out
             if (!continueProcessing(nextExchange, "so breaking out of pipeline", LOG)) {
@@ -99,12 +95,10 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
             }
         }
 
-        if (LOG.isTraceEnabled()) {
-            // logging nextExchange as it contains the exchange that might have altered the payload and since
-            // we are logging the completion if will be confusing if we log the original instead
-            // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-            LOG.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + nextExchange);
-        }
+        // logging nextExchange as it contains the exchange that might have altered the payload and since
+        // we are logging the completion if will be confusing if we log the original instead
+        // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
+        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), nextExchange);
 
         // copy results back to the original exchange
         ExchangeHelper.copyResults(exchange, nextExchange);
@@ -115,10 +109,8 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
 
     private boolean process(final Exchange original, final Exchange exchange, final AsyncCallback callback,
                             final Iterator<Processor> processors, final AsyncProcessor asyncProcessor) {
-        if (LOG.isTraceEnabled()) {
-            // this does the actual processing so log at trace level
-            LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
-        }
+        // this does the actual processing so log at trace level
+        LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
 
         // implement asynchronous routing logic in callback so we can have the callback being
         // triggered and then continue routing where we left
@@ -142,17 +134,13 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
                     nextExchange = createNextExchange(nextExchange);
                     doneSync = process(original, nextExchange, callback, processors, processor);
                     if (!doneSync) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-                        }
+                        LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                         return;
                     }
                 }
 
                 ExchangeHelper.copyResults(original, nextExchange);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing complete for exchangeId: " + original.getExchangeId() + " >>> " + original);
-                }
+                LOG.trace("Processing complete for exchangeId: {} >>> {}", original.getExchangeId(), original);
                 callback.done(false);
             }
         });
@@ -203,9 +191,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
             answer = it.hasNext();
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("ExchangeId: " + exchange.getExchangeId() + " should continue routing: " + answer);
-        }
+        LOG.trace("ExchangeId: {} should continue routing: {}", exchange.getExchangeId(), answer);
         return answer;
     }
 

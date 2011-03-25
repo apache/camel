@@ -56,9 +56,7 @@ public class JmxMBeanAssembler {
         if (obj instanceof ManagedInstance) {
             Object custom = ((ManagedInstance) obj).getInstance();
             if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Assembling MBeanInfo for: " + name.toString() + " from custom @ManagedResource object: " + custom);
-                }
+                LOG.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name.toString(), custom);
                 // get the mbean info from the custom managed object
                 mbi = assembler.getMBeanInfo(custom, name.toString());
                 // and let the custom object be registered in JMX
@@ -68,9 +66,7 @@ public class JmxMBeanAssembler {
 
         if (mbi == null) {
             // use the default provided mbean which has been annotated with Spring JMX annotations
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Assembling MBeanInfo for: " + name.toString() + " from @ManagedResource object: " + obj);
-            }
+            LOG.trace("Assembling MBeanInfo for: {} from @ManagedResource object: {}", name.toString(), obj);
             mbi = assembler.getMBeanInfo(obj, name.toString());
         }
 

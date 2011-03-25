@@ -49,14 +49,10 @@ public final class UnitOfWorkHelper {
             for (Synchronization synchronization : copy) {
                 try {
                     if (failed) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Invoking synchronization.onFailure: " + synchronization + " with " + exchange);
-                        }
+                        log.trace("Invoking synchronization.onFailure: {} with {}", synchronization, exchange);
                         synchronization.onFailure(exchange);
                     } else {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Invoking synchronization.onComplete: " + synchronization + " with " + exchange);
-                        }
+                        log.trace("Invoking synchronization.onComplete: {} with {}", synchronization, exchange);
                         synchronization.onComplete(exchange);
                     }
                 } catch (Throwable e) {

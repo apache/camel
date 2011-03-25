@@ -144,9 +144,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
                         traced.addTraced(new DefaultRouteNode(node, super.getProcessor()));
                     }
                 } else {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Cannot trace as this Exchange does not have an UnitOfWork: " + exchange);
-                    }
+                    LOG.trace("Cannot trace as this Exchange does not have an UnitOfWork: {}", exchange);
                 }
             }
 

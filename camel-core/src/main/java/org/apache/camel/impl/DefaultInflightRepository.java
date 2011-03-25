@@ -39,9 +39,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     public void add(Exchange exchange) {
         int count = totalCount.incrementAndGet();
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Total " + count + " inflight exchanges. Last added: " + exchange.getExchangeId());
-        }
+        LOG.trace("Total {} inflight exchanges. Last added: {}", count, exchange.getExchangeId());
 
         if (exchange.getFromEndpoint() == null) {
             return;
@@ -56,9 +54,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     public void remove(Exchange exchange) {
         int count = totalCount.decrementAndGet();
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Total " + count + " inflight exchanges. Last removed: " + exchange.getExchangeId());
-        }
+        LOG.trace("Total {} inflight exchanges. Last removed: {}", count, exchange.getExchangeId());
 
         if (exchange.getFromEndpoint() == null) {
             return;

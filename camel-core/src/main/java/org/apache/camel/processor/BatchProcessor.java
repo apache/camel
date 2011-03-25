@@ -240,9 +240,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
             int size = exchange.getProperty(Exchange.BATCH_SIZE, Integer.class);
             if (batchSize != size) {
                 batchSize = size;
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Using batch consumer completion, so setting batch size to: " + batchSize);
-                }
+                LOG.trace("Using batch consumer completion, so setting batch size to: {}", batchSize);
             }
         }
 
@@ -294,9 +292,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                 do {
                     try {
                         if (!exchangeEnqueued) {
-                            if (LOG.isTraceEnabled()) {
-                                LOG.trace("Waiting for new exchange to arrive or batchTimeout to occur after " + batchTimeout + " ms.");
-                            }
+                            LOG.trace("Waiting for new exchange to arrive or batchTimeout to occur after {} ms.", batchTimeout);
                             exchangeEnqueuedCondition.await(batchTimeout, TimeUnit.MILLISECONDS);
                         }
 
@@ -307,12 +303,10 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                         }
 
                         if (id != null || !exchangeEnqueued) {
-                            if (LOG.isTraceEnabled()) {
-                                if (id != null) {
-                                    LOG.trace("Collecting exchanges to be aggregated triggered by completion predicate");
-                                } else {
-                                    LOG.trace("Collecting exchanges to be aggregated triggered by batch timeout");
-                                }
+                            if (id != null) {
+                                LOG.trace("Collecting exchanges to be aggregated triggered by completion predicate");
+                            } else {
+                                LOG.trace("Collecting exchanges to be aggregated triggered by batch timeout");
                             }
                             drainQueueTo(collection, batchSize, id);
                         } else {
@@ -392,9 +386,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                 if (completionPredicate != null) {
                     boolean matches = completionPredicate.matches(exchange);
                     if (matches) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Exchange matched completion predicate: " + exchange);
-                        }
+                        LOG.trace("Exchange matched completion predicate: {}", exchange);
                         // add this exchange to the list of exchanges which marks the batch as complete
                         completionPredicateMatched.add(exchange.getExchangeId());
                     }

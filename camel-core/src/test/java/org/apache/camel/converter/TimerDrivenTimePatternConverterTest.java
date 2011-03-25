@@ -41,9 +41,7 @@ public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         long interval = watch.stop();
         
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Should take approx 2000 milliseconds, was: " + interval);
-        }
+        LOG.trace("Should take approx 2000 milliseconds, was: {}", interval);
         assertTrue("Should take approx 2000 milliseconds, was: " + interval, interval >= 1700);
     }
     

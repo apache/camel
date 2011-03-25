@@ -203,9 +203,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                     log.debug("Endpoint interceptor should not be added as an event driven consumer route: " + processor);
                 }
             } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("Adding event driven processor: " + processor);
-                }
+                log.trace("Adding event driven processor: {}", processor);
                 routeContext.addEventDrivenProcessor(processor);
             }
 
@@ -253,9 +251,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         } else {
             // use error handler by default or if configured to do so
             if (isInheritErrorHandler() == null || isInheritErrorHandler()) {
-                if (log.isTraceEnabled()) {
-                    log.trace(defn + " is configured to inheritErrorHandler");
-                }
+                log.trace("{} is configured to inheritErrorHandler", defn);
                 // only add error handler if we are configured to do so
                 // regular definition so add the error handler
                 Processor output = channel.getOutput();
@@ -269,9 +265,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             }
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace(defn + " wrapped in Channel: " + channel);
-        }
+        log.trace("{} wrapped in Channel: {}", defn, channel);
         return channel;
     }
 
@@ -430,9 +424,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @see org.apache.camel.component.properties.PropertiesComponent
      */
     protected void resolvePropertyPlaceholders(RouteContext routeContext, ProcessorDefinition definition) throws Exception {
-        if (log.isTraceEnabled()) {
-            log.trace("Resolving property placeholders for: " + definition);
-        }
+        log.trace("Resolving property placeholders for: {}", definition);
 
         // find all getter/setter which we can use for property placeholders
         Map<Object, Object> properties = new HashMap<Object, Object>();
@@ -463,9 +455,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         }
 
         if (!properties.isEmpty()) {
-            if (log.isTraceEnabled()) {
-                log.trace("There are " + properties.size() + " properties on: " + definition);
-            }
+            log.trace("There are {} properties on: {}", properties.size(), definition);
             // lookup and resolve properties for String based properties
             for (Map.Entry entry : properties.entrySet()) {
                 // the name is always a String
@@ -499,18 +489,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param definition   the processor definition
      */
     protected void resolveKnownConstantFields(ProcessorDefinition definition) throws Exception {
-        if (log.isTraceEnabled()) {
-            log.trace("Resolving known fields for: " + definition);
-        }
+        log.trace("Resolving known fields for: {}", definition);
 
         // find all String getter/setter
         Map<Object, Object> properties = new HashMap<Object, Object>();
         IntrospectionSupport.getProperties(definition, properties, null);
 
         if (!properties.isEmpty()) {
-            if (log.isTraceEnabled()) {
-                log.trace("There are " + properties.size() + " properties on: " + definition);
-            }
+            log.trace("There are {} properties on: {}", properties.size(), definition);
 
             // lookup and resolve known constant fields for String based properties
             for (Map.Entry entry : properties.entrySet()) {

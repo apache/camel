@@ -146,17 +146,13 @@ public class GenericFile<T>  {
      * @param newName the new name
      */
     public void changeFileName(String newName) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Changing name to: " + newName);
-        }
+        LOG.trace("Changing name to: {}", newName);
 
         // Make sure the newName is normalized.
         String newFileName = normalizePath(newName);
 
-        if (LOG.isTraceEnabled()) {            
-            LOG.trace("Normalized endpointPath: " + endpointPath);
-            LOG.trace("Normalized newFileName: " + newFileName);
-        }
+        LOG.trace("Normalized endpointPath: {}", endpointPath);
+        LOG.trace("Normalized newFileName: ()", newFileName);
 
         File file = new File(newFileName);
         if (!absolute) {
@@ -197,12 +193,12 @@ public class GenericFile<T>  {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("FileNameOnly: " + getFileNameOnly());
-            LOG.trace("FileName: " + getFileName());
-            LOG.trace("Absolute: " + isAbsolute());
-            LOG.trace("Relative path: " + getRelativeFilePath());
-            LOG.trace("Absolute path: " + getAbsoluteFilePath());
-            LOG.trace("Name changed to: " + this);
+            LOG.trace("FileNameOnly: {}", getFileNameOnly());
+            LOG.trace("FileName: {}", getFileName());
+            LOG.trace("Absolute: {}", isAbsolute());
+            LOG.trace("Relative path: {}", getRelativeFilePath());
+            LOG.trace("Absolute path: {}", getAbsoluteFilePath());
+            LOG.trace("Name changed to: {}", this);
         }
     }
 

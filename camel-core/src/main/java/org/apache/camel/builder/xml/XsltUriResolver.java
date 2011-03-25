@@ -58,9 +58,7 @@ public class XsltUriResolver implements URIResolver {
             throw new TransformerException("include href is empty");
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Resolving URI with href: " + href + " and base: " + base);
-        }
+        LOG.trace("Resolving URI with href: {} and base: {}", href, base);
 
         if (href.startsWith("classpath:")) {
             if (LOG.isDebugEnabled()) {

@@ -85,9 +85,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         }
 
         // now go through the candidates and find the best
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Found " + candidates.size() + " candidates");
-        }
+        LOG.trace("Found {} candidates", candidates.size());
 
         if (candidates.isEmpty()) {
             // no type found
@@ -118,7 +116,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
                                                Exchange exchange, Throwable exception,
                                                Map<Integer, OnExceptionDefinition> candidates) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Finding best suited exception policy for thrown exception " + exception.getClass().getName());
+            LOG.trace("Finding best suited exception policy for thrown exception {}", exception.getClass().getName());
         }
 
         // the goal is to find the exception with the same/closet inheritance level as the target exception being thrown
@@ -141,7 +139,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
                 RouteDefinition typeRoute = ProcessorDefinitionHelper.getRoute(type);
                 if (route != null && typeRoute != null && route != typeRoute) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("The type is scoped for route: " + typeRoute.getId() + " however Exchange is at route: " + route.getId());
+                        LOG.trace("The type is scoped for route: {} however Exchange is at route: {}", typeRoute.getId(), route.getId());
                     }
                     continue;
                 }
@@ -151,9 +149,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
                 // must match
                 if (!matchesWhen(type, exchange)) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("The type did not match when: " + type);
-                    }
+                    LOG.trace("The type did not match when: {}", type);
                     continue;
                 }
 
@@ -179,16 +175,14 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         if (candidate != null) {
             if (!candidates.containsKey(candidateDiff)) {
                 // only add as candidate if we do not already have it registered with that level
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Adding " + candidate + " as candidate at level " + candidateDiff);
-                }
+                LOG.trace("Adding {} as candidate at level {}", candidate, candidateDiff);
                 candidates.put(candidateDiff, candidate);
             } else {
                 // we have an existing candidate already which we should prefer to use
                 // for example we check route scope before context scope (preferring route scopes)
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Existing candidate " + candidates.get(candidateDiff)
-                        + " takes precedence over " + candidate + " at level " + candidateDiff);
+                    LOG.trace("Existing candidate {} takes precedence over{} at level {}",
+                            new Object[]{candidates.get(candidateDiff), candidate, candidateDiff});
                 }
             }
         }
@@ -196,7 +190,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         // if we found a exact match then we should stop continue looking
         boolean exactMatch = candidateDiff == 0;
         if (LOG.isTraceEnabled() && exactMatch) {
-            LOG.trace("Exact match found for candidate: " + candidate);
+            LOG.trace("Exact match found for candidate: {}", candidate);
         }
         return exactMatch;
     }

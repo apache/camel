@@ -53,9 +53,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
         }
 
         public void run() {
-            if (log.isTraceEnabled()) {
-                log.trace("Delayed task woke up and continues routing for exchangeId: " + exchange.getExchangeId());
-            }
+            log.trace("Delayed task woke up and continues routing for exchangeId: {}", exchange.getExchangeId());
             if (!isRunAllowed()) {
                 exchange.setException(new RejectedExecutionException("Run is not allowed"));
             }
@@ -105,9 +103,8 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
             // asynchronous delay so schedule a process call task
             ProcessCall call = new ProcessCall(exchange, callback);
             try {
-                if (log.isTraceEnabled()) {
-                    log.trace("Scheduling delayed task to run in " + delay + " millis for exchangeId: " + exchange.getExchangeId());
-                }
+                log.trace("Scheduling delayed task to run in {} millis for exchangeId: {}",
+                        delay, exchange.getExchangeId());
                 executorService.schedule(call, delay, TimeUnit.MILLISECONDS);
                 // tell Camel routing engine we continue routing asynchronous
                 return false;
@@ -197,9 +194,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
         if (delay <= 0) {
             return;
         }
-        if (log.isTraceEnabled()) {
-            log.trace("Sleeping for: " + delay + " millis");
-        }
+        log.trace("Sleeping for: {} millis", delay);
         Thread.sleep(delay);
     }
 

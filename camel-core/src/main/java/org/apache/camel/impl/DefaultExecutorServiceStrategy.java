@@ -334,9 +334,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
             LOG.debug("Shutdown ExecutorService: " + executorService);
         }
         executorService.shutdown();
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Shutdown ExecutorService: " + executorService + " complete.");
-        }
+        LOG.trace("Shutdown ExecutorService: {} complete.", executorService);
     }
 
     public List<Runnable> shutdownNow(ExecutorService executorService) {
@@ -350,9 +348,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
             LOG.debug("ShutdownNow ExecutorService: " + executorService);
         }
         List<Runnable> answer = executorService.shutdownNow();
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("ShutdownNow ExecutorService: " + executorService + " complete.");
-        }
+        LOG.trace("ShutdownNow ExecutorService: {} complete.", executorService);
 
         return answer;
     }

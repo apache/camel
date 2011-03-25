@@ -51,9 +51,7 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
             }
 
             messagesPolled++;
-            if (log.isTraceEnabled()) {
-                log.trace("Polled " + messagesPolled + " " + exchange);
-            }
+            log.trace("Polled {} {}", messagesPolled, exchange);
 
             // if the result of the polled exchange has output we should create a new exchange and
             // use the output as input to the next processor

@@ -163,9 +163,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     }
 
     public void purge() {
-        if (log.isTraceEnabled()) {
-            log.trace("There are " + map.size() + " in the timeout map");
-        }
+        log.trace("There are {} in the timeout map", map.size());
         long now = currentTime();
 
         List<TimeoutMapEntry<K, V>> expired = new ArrayList<TimeoutMapEntry<K, V>>();

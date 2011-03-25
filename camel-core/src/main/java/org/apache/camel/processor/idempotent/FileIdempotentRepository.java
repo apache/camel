@@ -271,9 +271,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * Loads the given file store into the 1st level cache
      */
     protected void loadStore() {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Loading to 1st level cache from idempotent filestore: " + fileStore);
-        }
+        LOG.trace("Loading to 1st level cache from idempotent filestore: {}", fileStore);
 
         if (!fileStore.exists()) {
             return;

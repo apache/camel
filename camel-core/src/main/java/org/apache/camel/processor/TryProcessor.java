@@ -78,33 +78,25 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
 
             // continue as long its being processed synchronously
             if (!sync) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-                }
+                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                 // the remainder of the try .. catch .. finally will be completed async
                 // so we break out now, then the callback will be invoked which then continue routing from where we left here
                 return false;
             }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
-            }
+            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
         }
 
         ExchangeHelper.prepareOutToIn(exchange);
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
-        }
+        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
         callback.done(true);
         return true;
     }
 
     protected boolean process(final Exchange exchange, final AsyncCallback callback,
                               final AsyncProcessor processor, final Iterator<AsyncProcessor> processors) {
-        if (LOG.isTraceEnabled()) {
-            // this does the actual processing so log at trace level
-            LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
-        }
+        // this does the actual processing so log at trace level
+        LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
 
         // implement asynchronous routing logic in callback so we can have the callback being
         // triggered and then continue routing where we left
@@ -124,9 +116,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                     doneSync = process(exchange, callback, processor, processors);
 
                     if (!doneSync) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-                        }
+                        LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                         // the remainder of the try .. catch .. finally will be completed async
                         // so we break out now, then the callback will be invoked which then continue routing from where we left here
                         return;
@@ -134,9 +124,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                 }
 
                 ExchangeHelper.prepareOutToIn(exchange);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
-                }
+                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 callback.done(false);
             }
         });
@@ -226,7 +214,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                 Throwable caught = catchClause.catches(exchange, e);
                 if (caught != null) {
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("This TryProcessor catches the exception: " + caught.getClass().getName() + " caused by: " + e.getMessage());
+                        LOG.trace("This TryProcessor catches the exception: {} caused by: {}", caught.getClass().getName(), e.getMessage());
                     }
                     processor = catchClause;
                     break;
@@ -241,7 +229,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                 return AsyncProcessorHelper.process(cool, exchange, callback);
             } else {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("This TryProcessor does not catch the exception: " + e.getClass().getName() + " caused by: " + e.getMessage());
+                    LOG.trace("This TryProcessor does not catch the exception: {} caused by: {}", e.getClass().getName(), e.getMessage());
                 }
             }
 
@@ -310,9 +298,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
 
                     // signal callback to continue routing async
                     ExchangeHelper.prepareOutToIn(exchange);
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Processing complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
-                    }
+                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                     callback.done(false);
                 }
             });

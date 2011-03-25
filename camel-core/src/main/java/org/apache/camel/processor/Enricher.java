@@ -137,17 +137,13 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
         });
 
         if (!sync) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed asynchronously");
-            }
+            LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
             // the remainder of the routing slip will be completed async
             // so we break out now, then the callback will be invoked which then continue routing from where we left here
             return false;
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " is continued being processed synchronously");
-        }
+        LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
 
         if (resourceExchange.isFailed()) {
             // copy resource exchange onto original exchange (preserving pattern)

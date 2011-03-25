@@ -41,9 +41,7 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
 
     public boolean acquireExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file,
                                             Exchange exchange) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for exclusive read lock to file: " + file);
-        }
+        LOG.trace("Waiting for exclusive read lock to file: {}", file);
 
         // the trick is to try to rename the file, if we can rename then we have exclusive read
         // since its a Generic file we cannot use java.nio to get a RW lock
@@ -68,9 +66,7 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
 
             exclusive = operations.renameFile(file.getAbsoluteFilePath(), newFile.getAbsoluteFilePath());
             if (exclusive) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Acquired exclusive read lock to file: " + file);
-                }
+                LOG.trace("Acquired exclusive read lock to file: {}", file);
                 // rename it back so we can read it
                 operations.renameFile(newFile.getAbsoluteFilePath(), file.getAbsoluteFilePath());
             } else {
@@ -91,9 +87,7 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
     }
 
     private boolean sleep() {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Exclusive read lock not granted. Sleeping for " + checkInterval + " millis.");
-        }
+        LOG.trace("Exclusive read lock not granted. Sleeping for {} millis.", checkInterval);
         try {
             Thread.sleep(checkInterval);
             return false;

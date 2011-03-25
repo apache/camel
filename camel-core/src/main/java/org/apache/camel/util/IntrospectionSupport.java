@@ -330,8 +330,8 @@ public final class IntrospectionSupport {
                         typeConvertionFailed = e;
                     }
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Setter \"" + setter + "\" with parameter type \""
-                                  + setter.getParameterTypes()[0] + "\" could not be used for type conversions of " + value);
+                        LOG.trace("Setter \"{}\" with parameter type \"{}\" could not be used for type conversions of {}",
+                                new Object[]{setter, setter.getParameterTypes()[0], value});
                     }
                 }
             }
@@ -412,15 +412,11 @@ public final class IntrospectionSupport {
             return candidates;
         } else {
             // find the best match if possible
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Found " + candidates.size() + " suitable setter methods for setting " + name);
-            }
+            LOG.trace("Found {} suitable setter methods for setting {}", candidates.size(), name);
             // prefer to use the one with the same instance if any exists
             for (Method method : candidates) {                               
                 if (method.getParameterTypes()[0].isInstance(value)) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Method " + method + " is the best candidate as it has parameter with same instance type");
-                    }
+                    LOG.trace("Method {} is the best candidate as it has parameter with same instance type", method);
                     // retain only this method in the answer
                     candidates.clear();
                     candidates.add(method);

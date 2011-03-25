@@ -79,13 +79,9 @@ public class BeanInvocation implements Externalizable {
      */
     public void invoke(Object pojo, Exchange exchange) {
         try {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Invoking method: " + getMethod() + " with args: " + getArgs());
-            }
+            LOG.trace("Invoking method: {} with args: {}", getMethod(), getArgs());
             Object response = getMethod().invoke(pojo, getArgs());
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Got response: " + response);
-            }
+            LOG.trace("Got response: {}", response);
             exchange.getOut().setBody(response);
         } catch (InvocationTargetException e) {
             exchange.setException(ObjectHelper.wrapRuntimeCamelException(e.getCause()));

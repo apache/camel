@@ -219,7 +219,7 @@ public class MethodInfo {
 
                 // invoke pojo
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace(">>>> invoking: " + method + " on bean: " + pojo + " with arguments: " + asString(arguments) + " for exchange: " + exchange);
+                    LOG.trace(">>>> invoking: {} on bean: {} with arguments: {} for exchange: {}", new Object[]{method, pojo, asString(arguments), exchange});
                 }
                 Object result = invoke(method, pojo, arguments, exchange);
 
@@ -324,17 +324,13 @@ public class MethodInfo {
 
     protected Expression createParametersExpression() {
         final int size = parameters.size();
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Creating parameters expression for " + size + " parameters");
-        }
+        LOG.trace("Creating parameters expression for {} parameters", size);
 
         final Expression[] expressions = new Expression[size];
         for (int i = 0; i < size; i++) {
             Expression parameterExpression = parameters.get(i).getExpression();
             expressions[i] = parameterExpression;
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Parameter #" + i + " has expression: " + parameterExpression);
-            }
+            LOG.trace("Parameter #{} has expression: {}", i, parameterExpression);
         }
         return new Expression() {
             @SuppressWarnings("unchecked")
@@ -359,15 +355,13 @@ public class MethodInfo {
                                 try {
                                     value = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameters.get(i).getType(), result);
                                     if (LOG.isTraceEnabled()) {
-                                        LOG.trace("Parameter #" + i + " evaluated as: " + value + " type: " + ObjectHelper.type(value));
+                                        LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{i, value, ObjectHelper.type(value)});
                                     }
                                 } catch (NoTypeConversionAvailableException e) {
                                     throw ObjectHelper.wrapCamelExecutionException(exchange, e);
                                 }
                             } else {
-                                if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Parameter #" + i + " evaluated as null");
-                                }
+                                LOG.trace("Parameter #{} evaluated as null", i);
                             }
                         }
                     }

@@ -58,9 +58,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         try {
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
             if (ccl != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Adding ContextClassLoader from current thread: " + ccl);
-                }
+                log.trace("Adding ContextClassLoader from current thread: {}", ccl);
                 classLoaders.add(ccl);
             }
         } catch (Exception e) {
@@ -214,8 +212,8 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
 
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
         if (log.isTraceEnabled()) {
-            log.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
-                    + loader.getClass().getName());
+            log.trace("Searching for: {} in package: {} using classloader: {}", 
+                    new Object[]{test, packageName, loader.getClass().getName()});
         }
 
         Enumeration<URL> urls;
@@ -233,16 +231,14 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             URL url = null;
             try {
                 url = urls.nextElement();
-                if (log.isTraceEnabled()) {
-                    log.trace("URL from classloader: " + url);
-                }
+                log.trace("URL from classloader: {}", url);
                 
                 url = customResourceLocator(url);
 
                 String urlPath = url.getFile();
                 urlPath = URLDecoder.decode(urlPath, "UTF-8");
                 if (log.isTraceEnabled()) {
-                    log.trace("Decoded urlPath: " + urlPath + " with protocol: " + url.getProtocol());
+                    log.trace("Decoded urlPath: {} with protocol: {}", urlPath, url.getProtocol());
                 }
 
                 // If it's a file in a directory, trim the stupid file: spec
@@ -273,15 +269,11 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     urlPath = urlPath.substring(0, urlPath.indexOf('!'));
                 }
 
-                if (log.isTraceEnabled()) {
-                    log.trace("Scanning for classes in [" + urlPath + "] matching criteria: " + test);
-                }
+                log.trace("Scanning for classes in [{}] matching criteria: {}", urlPath, test);
 
                 File file = new File(urlPath);
                 if (file.isDirectory()) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Loading from directory using file: " + file);
-                    }
+                    log.trace("Loading from directory using file: {}", file);
                     loadImplementationsInDirectory(test, packageName, file, classes);
                 } else {
                     InputStream stream;
@@ -290,18 +282,14 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                             || isAcceptableScheme(urlPath)) {                        
                         // load resources using http/https, sonicfs and other acceptable scheme
                         // sonic ESB requires to be loaded using a regular URLConnection
-                        if (log.isTraceEnabled()) {
-                            log.trace("Loading from jar using url: " + urlPath);
-                        }
+                        log.trace("Loading from jar using url: {}", urlPath);
                         URL urlStream = new URL(urlPath);
                         URLConnection con = urlStream.openConnection();
                         // disable cache mainly to avoid jar file locking on Windows
                         con.setUseCaches(false);
                         stream = con.getInputStream();
                     } else {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Loading from jar using file: " + file);
-                        }
+                        log.trace("Loading from jar using file: {}", file);
                         stream = new FileInputStream(file);
                     }
 
@@ -332,9 +320,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
      * @throws IOException is thrown by the classloader
      */
     protected Enumeration<URL> getResources(ClassLoader loader, String packageName) throws IOException {
-        if (log.isTraceEnabled()) {
-            log.trace("Getting resource URL for package: " + packageName + " with classloader: " + loader);
-        }
+        log.trace("Getting resource URL for package: {} with classloader: {}", packageName, loader);
         
         // If the URL is a jar, the URLClassloader.getResources() seems to require a trailing slash.  The
         // trailing slash is harmless for other URLs  
@@ -436,18 +422,12 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             Set<ClassLoader> set = getClassLoaders();
             boolean found = false;
             for (ClassLoader classLoader : set) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Testing for class " + externalName + " matches criteria [" + test + "] using classloader:" + classLoader);
-                }
+                log.trace("Testing for class {} matches criteria [{}] using classloader: {}", new Object[]{externalName, test, classLoader});
                 try {
                     Class<?> type = classLoader.loadClass(externalName);
-                    if (log.isTraceEnabled()) {
-                        log.trace("Loaded the class: " + type + " in classloader: " + classLoader);
-                    }
+                    log.trace("Loaded the class: {} in classloader: {}", type, classLoader);
                     if (test.matches(type)) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Found class: " + type + " which matches the filter in classloader: " + classLoader);
-                        }
+                        log.trace("Found class: {} which matches the filter in classloader: {}", type, classLoader);
                         classes.add(type);
                     }
                     found = true;

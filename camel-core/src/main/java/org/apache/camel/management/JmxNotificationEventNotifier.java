@@ -49,9 +49,7 @@ public class JmxNotificationEventNotifier extends EventNotifierSupport implement
             String message = event.toString();
             Notification notification = new Notification(type, source, counter.getAndIncrement(), message);
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Broadcasting JMX notification: " + notification);
-            }
+            LOG.trace("Broadcasting JMX notification: {}", notification);
             notificationBroadcaster.sendNotification(notification);
         }
     }

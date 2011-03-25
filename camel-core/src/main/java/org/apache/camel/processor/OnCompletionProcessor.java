@@ -121,9 +121,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
         answer.setPattern(ExchangePattern.InOnly);
 
         if (useOriginalBody) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Using the original IN message instead of current");
-            }
+            LOG.trace("Using the original IN message instead of current");
 
             Message original = exchange.getUnitOfWork().getOriginalInMessage();
             answer.setIn(original);
