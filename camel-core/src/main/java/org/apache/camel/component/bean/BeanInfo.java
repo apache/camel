@@ -140,28 +140,36 @@ public class BeanInfo {
         return null;
     }
 
-    public MethodInvocation createInvocation(Object pojo, Exchange exchange) throws AmbiguousMethodCallException, MethodNotFoundException {
+    public MethodInvocation createInvocation(Object pojo, Exchange exchange)
+        throws AmbiguousMethodCallException, MethodNotFoundException, ClassNotFoundException {
         MethodInfo methodInfo = null;
 
-        String name = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
-        if (name != null) {
-            if (hasMethod(name)) {
-                List<MethodInfo> methods = getOperations(name);
-                if (methods != null && methods.size() == 1) {
-                    // only one method then choose it
-                    methodInfo = methods.get(0);
-                } else {
-                    // there are more methods with that name so we cannot decide which to use
+        String methodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
+        if (methodName != null) {
 
-                    // but first lets try to choose a method and see if that comply with the name
-                    methodInfo = chooseMethod(pojo, exchange, name);
-                    if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
-                        throw new AmbiguousMethodCallException(exchange, methods);
-                    }
+            // do not use qualifier for name
+            String name = methodName;
+            if (methodName.contains("(")) {
+                name = ObjectHelper.before(methodName, "(");
+            }
+
+            List<MethodInfo> methods = getOperations(name);
+            if (methods != null && methods.size() == 1) {
+                // only one method then choose it
+                methodInfo = methods.get(0);
+            } else if (methods != null) {
+                // there are more methods with that name so we cannot decide which to use
+
+                // but first lets try to choose a method and see if that comply with the name
+                // must use the method name which may have qualifiers
+                methodInfo = chooseMethod(pojo, exchange, methodName);
+
+                if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
+                    throw new AmbiguousMethodCallException(exchange, methods);
                 }
             } else {
                 // a specific method was given to invoke but not found
-                throw new MethodNotFoundException(exchange, pojo, name);
+                throw new MethodNotFoundException(exchange, pojo, methodName);
             }
         }
         if (methodInfo == null) {
@@ -363,8 +371,9 @@ public class BeanInfo {
      * @param name an optional name of the method that must match, use <tt>null</tt> to indicate all methods
      * @return the method to invoke or null if no definitive method could be matched
      * @throws AmbiguousMethodCallException is thrown if cannot chose method due to ambiguous
+     * @throws ClassNotFoundException is thrown if name contains parameter types to use as qualifier and a class was not found
      */
-    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name) throws AmbiguousMethodCallException {
+    protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name) throws AmbiguousMethodCallException, ClassNotFoundException {
         // @Handler should be select first
         // then any single method that has a custom @annotation
         // or any single method that has a match parameter type that matches the Exchange payload
@@ -675,15 +684,74 @@ public class BeanInfo {
         }
     }
 
-    private static void removeNonMatchingMethods(List<MethodInfo> methods, String name) {
+    private void removeNonMatchingMethods(List<MethodInfo> methods, String name) throws ClassNotFoundException {
         Iterator<MethodInfo> it = methods.iterator();
         while (it.hasNext()) {
             MethodInfo info = it.next();
-            if (!name.equals(info.getMethod().getName())) {
+            if (!matchMethod(info.getMethod(), name)) {
                 // name does not match so remove it
                 it.remove();
             }
         }
+    }
+
+    private boolean matchMethod(Method method, String methodName) throws ClassNotFoundException {
+        if (methodName == null) {
+            return true;
+        }
+
+        if (methodName.contains("(") && !methodName.endsWith(")")) {
+            throw new IllegalArgumentException("Name must have both starting and ending parenthesis, was: " + methodName);
+        }
+
+        // do not use qualifier for name matching
+        String name = methodName;
+        if (name.contains("(")) {
+            name = ObjectHelper.before(name, "(");
+        }
+
+        // must match name
+        if (!name.equals(method.getName())) {
+            return false;
+        }
+
+        // match qualifier types which is used to select among overloaded methods
+        String types = ObjectHelper.between(methodName, "(", ")");
+        if (types != null) {
+            // we must qualify based on types to match method
+            Iterator it = ObjectHelper.createIterator(types);
+            for (int i = 0; i < method.getParameterTypes().length; i++) {
+                if (it.hasNext()) {
+                    String qualifyType = (String) it.next();
+                    if ("*".equals(qualifyType)) {
+                        // * is a wildcard so we accept and match that parameter type
+                        continue;
+                    }
+
+                    // match on either simple name or FQN decided by end user as how
+                    // he specified the qualify type
+                    String parameterType = method.getParameterTypes()[i].getSimpleName();
+                    if (qualifyType.indexOf(".") > -1) {
+                        parameterType = method.getParameterTypes()[i].getName();
+                    }
+                    if (!parameterType.equals(qualifyType)) {
+                        return false;
+                    }
+                } else {
+                    // there method has more parameters than was specified in the method name qualifiers
+                    return false;
+                }
+            }
+
+            // if the method has no more types then we can only regard it as matched
+            // if there are no more qualifiers
+            if (it.hasNext()) {
+                return false;
+            }
+        }
+
+        // the method matched
+        return true;
     }
 
     private static Class<?> getTargetClass(Class<?> clazz) {
@@ -744,6 +812,11 @@ public class BeanInfo {
      * @return the found method, or <tt>null</tt> if not found
      */
     private List<MethodInfo> getOperations(String methodName) {
+        // do not use qualifier for name
+        if (methodName.contains("(")) {
+            methodName = ObjectHelper.before(methodName, "(");
+        }
+
         List<MethodInfo> answer = operations.get(methodName);
         if (answer != null) {
             return answer;
