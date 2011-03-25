@@ -116,7 +116,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
                 from("direct:start")
                     .bean(MyBean.class, "hello(*,*)")
                     .to("mock:result");
-                // END SNIPPET: e2
+                // END SNIPPET: e3
             }
         });
         context.start();
