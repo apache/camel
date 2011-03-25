@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.bean.ProxyHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A build to create Camel proxies.
@@ -64,6 +65,7 @@ public final class ProxyBuilder {
      * @throws Exception is thrown if error creating the proxy
      */
     public <T> T build(Class<T>... interfaceClasses) throws Exception {
+        ObjectHelper.notNull(endpoint, "endpoint");
         return ProxyHelper.createProxy(endpoint, interfaceClasses);
     }
 
