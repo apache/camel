@@ -182,17 +182,14 @@ public class BeanExpression implements Expression, Predicate {
             // loop and invoke each method
             Object beanToCall = bean;
 
-            // Split ognl except
-            // when this is not a Map, Array
-            // and we would like to keep the dots
-            // within the key name
+            // Split ognl except when this is not a Map, Array
+            // and we would like to keep the dots within the key name
             List<String> methods;
-
             if (ognl.startsWith("[") && ognl.endsWith("]")) {
-               methods = new ArrayList<String>();
-               methods.add(ognl);
+                methods = new ArrayList<String>();
+                methods.add(ognl);
             } else {
-               methods = OgnlHelper.splitOgnl(ognl);
+                methods = OgnlHelper.splitOgnl(ognl);
             }
 
             for (String methodName : methods) {
