@@ -23,8 +23,8 @@
     ">
 
     <bean id="myDLC" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-        <!-- invalid option in mock uri -->
-        <property name="deadLetterUri" value="mock:error?foo=bar"/>
+        <!-- invalid option in direct uri -->
+        <property name="deadLetterUri" value="direct:error?foo=bar"/>
     </bean>
 
     <camelContext errorHandlerRef="myDLC" xmlns="http://camel.apache.org/schema/spring">

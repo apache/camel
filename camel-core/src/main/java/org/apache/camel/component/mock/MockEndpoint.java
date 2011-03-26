@@ -1106,4 +1106,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     public boolean isSingleton() {
         return true;
     }
+
+    public boolean isLenientProperties() {
+        return true;
+    }
 }

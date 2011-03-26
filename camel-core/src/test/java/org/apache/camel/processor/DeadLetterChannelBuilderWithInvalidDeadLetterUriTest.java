@@ -48,7 +48,7 @@ public class DeadLetterChannelBuilderWithInvalidDeadLetterUriTest extends Contex
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    errorHandler(deadLetterChannel("mock:error?foo=bar"));
+                    errorHandler(deadLetterChannel("direct:error?foo=bar"));
 
                     from("direct:start").to("mock:foo");
                 }

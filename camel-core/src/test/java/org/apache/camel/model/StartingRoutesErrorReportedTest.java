@@ -47,13 +47,13 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start").routeId("route2").to("mock:result?foo=bar");
+                    from("direct:start").routeId("route2").to("direct:result?foo=bar");
                 }
             });
             context.start();
             fail();
         } catch (FailedToCreateRouteException e) {
-            assertTrue(e.getMessage().startsWith("Failed to create route route2 at: >>> To[mock:result?foo=bar] <<< in route: Route[[From[direct:start]] -> [To[mock:result?foo=bar]]] because of"));
+            assertTrue(e.getMessage().startsWith("Failed to create route route2 at: >>> To[direct:result?foo=bar] <<< in route: Route[[From[direct:start]] -> [To[direct:result?foo=bar]]] because of"));
         }
     }
 
