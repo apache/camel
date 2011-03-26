@@ -25,6 +25,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,19 +65,21 @@ public final class AsyncProcessorHelper {
             callback.done(true);
             sync = true;
         } else {
+            final UnitOfWork uow = exchange.getUnitOfWork();
+
             // allow unit of work to wrap callback in case it need to do some special work
             // for example the MDCUnitOfWork
             AsyncCallback async = callback;
-            if (exchange.getUnitOfWork() != null) {
-                async = exchange.getUnitOfWork().beforeProcess(processor, exchange, callback);
+            if (uow != null) {
+                async = uow.beforeProcess(processor, exchange, callback);
             }
 
             // we support asynchronous routing so invoke it
             sync = processor.process(exchange, async);
 
-            // execute any after processor work
-            if (exchange.getUnitOfWork() != null) {
-                exchange.getUnitOfWork().afterProcess(processor, exchange, callback, sync);
+            // execute any after processor work (in current thread, not in the callback)
+            if (uow != null) {
+                uow.afterProcess(processor, exchange, callback, sync);
             }
         }
 
