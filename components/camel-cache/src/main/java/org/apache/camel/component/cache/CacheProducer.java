@@ -54,15 +54,13 @@ public class CacheProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Cache Name: " + config.getCacheName());
-        }
+        LOG.trace("Cache Name: {}", config.getCacheName());
 
         if (cacheManager.cacheExists(config.getCacheName())) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Found an existing cache: " + config.getCacheName());
-                LOG.trace("Cache " + config.getCacheName() + " currently contains "
-                        + cacheManager.getCache(config.getCacheName()).getSize() + " elements");
+                LOG.trace("Found an existing cache: {}", config.getCacheName());
+                LOG.trace("Cache {} currently contains {} elements",
+                        config.getCacheName(), cacheManager.getCache(config.getCacheName()).getSize());
             }
             cache = cacheManager.getCache(config.getCacheName());
         } else {

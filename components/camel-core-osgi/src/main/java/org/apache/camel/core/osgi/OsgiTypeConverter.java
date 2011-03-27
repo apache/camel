@@ -51,9 +51,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     }
 
     public Object addingService(ServiceReference serviceReference) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("AddingService: " + serviceReference);
-        }
+        LOG.trace("AddingService: {}", serviceReference);
         TypeConverterLoader loader = (TypeConverterLoader) bundleContext.getService(serviceReference);
         if (loader != null) {
             try {
@@ -69,9 +67,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     }
 
     public void removedService(ServiceReference serviceReference, Object o) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("RemovedService: " + serviceReference);
-        }
+        LOG.trace("RemovedService: {}", serviceReference);
         this.delegate = null;
     }
 
@@ -155,12 +151,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
             }
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Created TypeConverter: " + reg);
-        }
+        LOG.trace("Created TypeConverter: {}", reg);
         return reg;
     }
-
-
-
 }

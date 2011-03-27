@@ -53,9 +53,7 @@ public class ContextScanRouteBuilderFinder {
             Object bean = entry.getValue();
             Object key = entry.getKey();
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Found RouteBuilder with id: " + key + " -> " + bean);
-            }
+            LOG.trace("Found RouteBuilder with id: {} -> {}", key, bean);
 
             // certain beans should be ignored
             if (shouldIgnoreBean(bean)) {

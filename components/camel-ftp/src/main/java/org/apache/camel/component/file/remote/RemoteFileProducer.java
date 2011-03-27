@@ -105,9 +105,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             }
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("preWriteCheck send noop success: " + noop);
-        }
+        log.trace("preWriteCheck send noop success: {}", noop);
 
         // if not alive then reconnect
         if (!noop) {
@@ -131,9 +129,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     public void postWriteCheck() {
         try {
             if (getEndpoint().isDisconnect()) {
-                if (log.isTraceEnabled()) {
-                    log.trace("postWriteCheck disconnect from: " + getEndpoint());
-                }
+                log.trace("postWriteCheck disconnect from: {}", getEndpoint());
                 disconnect();
             }
         } catch (GenericFileOperationFailedException e) {

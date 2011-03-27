@@ -89,9 +89,7 @@ public class MyBatisConsumer extends ScheduledPollConsumer implements BatchConsu
 
         // poll data from the database
         MyBatisEndpoint endpoint = getEndpoint();
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Polling: " + endpoint);
-        }
+        LOG.trace("Polling: {}", endpoint);
         List<Object> data = CastUtils.cast(endpoint.getProcessingStrategy().poll(this, getEndpoint()));
 
         // create a list of exchange objects with the data

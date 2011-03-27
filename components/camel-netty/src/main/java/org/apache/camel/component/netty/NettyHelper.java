@@ -57,17 +57,13 @@ public final class NettyHelper {
             if (TextLineDelimiter.LINE.equals(delimiter)) {
                 // line delimiter so ensure it ends with newline
                 if (!s.endsWith("\n")) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Auto appending missing newline delimiter to body");
-                    }
+                    LOG.trace("Auto appending missing newline delimiter to body");
                     s = s + "\n";
                 }
             } else {
                 // null delimiter so ensure it ends with null
                 if (!s.endsWith("\u0000")) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Auto appending missing null delimiter to body");
-                    }
+                    LOG.trace("Auto appending missing null delimiter to body");
                     s = s + "\u0000";
                 }
             }
@@ -96,9 +92,7 @@ public final class NettyHelper {
         }
 
         // wait for the write
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for write to complete");
-        }
+        LOG.trace("Waiting for write to complete");
         future.awaitUninterruptibly();
 
         // if it was not a success then thrown an exception
@@ -115,9 +109,7 @@ public final class NettyHelper {
      */
     public static void close(Channel channel) {
         if (channel != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Closing channel: " + channel);
-            }
+            LOG.trace("Closing channel: {}", channel);
             channel.close().awaitUninterruptibly();
         }
     }

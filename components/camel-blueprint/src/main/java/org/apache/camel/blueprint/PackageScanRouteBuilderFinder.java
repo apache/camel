@@ -57,9 +57,7 @@ public class PackageScanRouteBuilderFinder {
     public void appendBuilders(List<RoutesBuilder> list) throws IllegalAccessException, InstantiationException {
         Set<Class<?>> classes = resolver.findImplementations(RoutesBuilder.class, packages);
         for (Class aClass : classes) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Found RouteBuilder class: " + aClass);
-            }
+            LOG.trace("Found RouteBuilder class: {}", aClass);
 
             // certain beans should be ignored
             if (shouldIgnoreBean(aClass)) {

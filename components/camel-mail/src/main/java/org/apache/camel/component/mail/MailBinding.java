@@ -142,9 +142,7 @@ public class MailBinding {
             contentType = contentType.trim() + "; charset=" + IOConverter.getCharsetName(exchange, false);
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Determined Content-Type: " + contentType);
-        }
+        LOG.trace("Determined Content-Type: {}", contentType);
 
         return contentType;
     }
@@ -197,9 +195,7 @@ public class MailBinding {
 
         String contentType = determineContentType(configuration, exchange);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Using Content-Type " + contentType + " for MimeMessage: " + part);
-        }
+        LOG.trace("Using Content-Type {} for MimeMessage: {}", contentType, part);
 
         // always store content in a byte array data store to avoid various content type and charset issues
         DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
@@ -216,9 +212,7 @@ public class MailBinding {
 
         String contentType = determineContentType(configuration, exchange);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Using Content-Type " + contentType + " for BodyPart: " + part);
-        }
+        LOG.trace("Using Content-Type {} for BodyPart: {}", contentType, part);
 
         // always store content in a byte array data store to avoid various content type and charset issues
         DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), contentType);
@@ -301,12 +295,12 @@ public class MailBinding {
             } else {
                 String disposition = part.getDisposition();
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Part #" + i + ": Disposition: " + part.getDisposition());
-                    LOG.trace("Part #" + i + ": Description: " + part.getDescription());
-                    LOG.trace("Part #" + i + ": ContentType: " + part.getContentType());
-                    LOG.trace("Part #" + i + ": FileName: " + part.getFileName());
-                    LOG.trace("Part #" + i + ": Size: " + part.getSize());
-                    LOG.trace("Part #" + i + ": LineCount: " + part.getLineCount());
+                    LOG.trace("Part #{}: Disposition: {}", i, part.getDisposition());
+                    LOG.trace("Part #{}: Description: {}", i, part.getDescription());
+                    LOG.trace("Part #{}: ContentType: {}", i, part.getContentType());
+                    LOG.trace("Part #{}: FileName: {}", i, part.getFileName());
+                    LOG.trace("Part #{}: Size: {}", i, part.getSize());
+                    LOG.trace("Part #{}: LineCount: {}", i, part.getLineCount());
                 }
 
                 if (disposition != null && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE))) {
@@ -437,9 +431,9 @@ public class MailBinding {
             DataHandler handler = entry.getValue();
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Attachment #" + i + ": Disposition: " + partDisposition);
-                LOG.trace("Attachment #" + i + ": DataHandler: " + handler);
-                LOG.trace("Attachment #" + i + ": FileName: " + attachmentFilename);
+                LOG.trace("Attachment #{}: Disposition: {}", i, partDisposition);
+                LOG.trace("Attachment #{}: DataHandler: {}", i, handler);
+                LOG.trace("Attachment #{}: FileName: {}", i, attachmentFilename);
             }
             if (handler != null) {
                 if (shouldAddAttachment(exchange, attachmentFilename, handler)) {

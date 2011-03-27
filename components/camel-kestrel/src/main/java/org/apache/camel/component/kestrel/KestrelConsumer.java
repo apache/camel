@@ -143,9 +143,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
         }
 
         public void run() {
-            if (log.isTraceEnabled()) {
-                log.trace("Kestrel poller is running");
-            }
+            log.trace("Kestrel poller is running");
 
             // Construct the target key that we'll be requesting from kestrel.
             // Include the /t=... wait time as applicable.
@@ -179,9 +177,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
                 // Poll kestrel until we get an object back
                 Object value = null;
                 while (isRunAllowed() && !shutdownPending) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Polling " + target);
-                    }
+                    log.trace("Polling {}", target);
                     try {
                         value = memcachedClient.get(target);
                         if (value != null) {
@@ -209,9 +205,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
                     }
                 }
 
-                if (log.isTraceEnabled()) {
-                    log.trace("Got object from " + target);
-                }
+                log.trace("Got object from {}", target);
 
                 if (concurrent) {
                     // Pass the object to the handler thread via the exchanger.
@@ -247,9 +241,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
                     }
                 }
             }
-            if (log.isTraceEnabled()) {
-                log.trace("Finished polling " + target);
-            }
+            log.trace("Finished polling {}", target);
 
             // Decrement the shutdown countdown latch
             shutdownLatch.countDown();
@@ -262,7 +254,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
 
         public void run() {
             if (log.isTraceEnabled()) {
-                log.trace(Thread.currentThread().getName() + " is starting");
+                log.trace("{} is starting", Thread.currentThread().getName());
             }
 
             while (isRunAllowed() && !shutdownPending) {
@@ -292,9 +284,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
                         continue;
                     }
 
-                    if (log.isTraceEnabled()) {
-                        log.trace("Got a value from the exchanger");
-                    }
+                    log.trace("Got a value from the exchanger");
 
                     // Create the exchange and let camel process/route it
                     Exchange exchange = null;
@@ -319,7 +309,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
             shutdownLatch.countDown();
 
             if (log.isTraceEnabled()) {
-                log.trace(Thread.currentThread().getName() + " is finished");
+                log.trace("{} is finished", Thread.currentThread().getName());
             }
         }
     }

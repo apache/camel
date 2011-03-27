@@ -82,9 +82,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     }
 
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Camel bean processing before initialization for bean: " + beanName);
-        }
+        LOG.trace("Camel bean processing before initialization for bean: {}", beanName);
 
         // some beans cannot be post processed at this given time, so we gotta check beforehand
         if (!canPostProcessBean(bean, beanName)) {
@@ -108,9 +106,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     }
 
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Camel bean processing after initialization for bean: " + beanName);
-        }
+        LOG.trace("Camel bean processing after initialization for bean: {}", beanName);
 
         // some beans cannot be post processed at this given time, so we gotta check beforehand
         if (!canPostProcessBean(bean, beanName)) {
@@ -175,9 +171,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             CamelContextAware camelContextAware = (CamelContextAware) bean;
             CamelContext context = camelContextAware.getCamelContext();
             if (context != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("CamelContext already set on bean with id [" + beanName + "]. Will keep existing CamelContext on bean.");
-                }
+                LOG.trace("CamelContext already set on bean with id [{}]. Will keep existing CamelContext on bean.", beanName);
                 return false;
             }
         }

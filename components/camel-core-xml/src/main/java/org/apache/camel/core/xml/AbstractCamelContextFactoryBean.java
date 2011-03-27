@@ -667,9 +667,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             name = context.resolvePropertyPlaceholders(name);
             name = ObjectHelper.normalizeClassName(name);
             if (ObjectHelper.isNotEmpty(name)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Using package: " + name + " to scan for RouteBuilder classes");
-                }
+                LOG.trace("Using package: {} to scan for RouteBuilder classes", name);
                 packages.add(name);
             }
         }

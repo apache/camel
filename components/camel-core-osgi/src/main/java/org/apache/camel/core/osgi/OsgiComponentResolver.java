@@ -62,9 +62,7 @@ public class OsgiComponentResolver implements ComponentResolver {
     }
 
     protected Component getComponent(String name, CamelContext context) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Finding Component: " + name);
-        }
+        LOG.trace("Finding Component: {}", name);
         try {
             ServiceReference[] refs = bundleContext.getServiceReferences(ComponentResolver.class.getName(), "(component=" + name + ")");
             if (refs != null && refs.length > 0) {

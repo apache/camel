@@ -26,9 +26,7 @@ public class CacheValidate {
     private static final transient Logger LOG = LoggerFactory.getLogger(CacheValidate.class);
 
     public boolean isValid(CacheManager cacheManager, String cacheName, String key) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Cache Name: " + cacheName);
-        }
+        LOG.trace("Cache Name: {}", cacheName);
 
         if (!cacheManager.cacheExists(cacheName)) {
             if (LOG.isDebugEnabled()) {
@@ -44,7 +42,7 @@ public class CacheValidate {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Cache " + cacheName + " currently contains " + cacheManager.getCache(cacheName).getSize() + " elements");
+            LOG.trace("Cache {} currently contains {} elements", cacheName, cacheManager.getCache(cacheName).getSize());
         }
         Ehcache cache = cacheManager.getCache(cacheName);
 

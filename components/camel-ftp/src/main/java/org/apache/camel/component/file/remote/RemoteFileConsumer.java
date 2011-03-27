@@ -72,9 +72,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     @Override
     protected void postPollCheck() {
         if (getEndpoint().isDisconnect()) {
-            if (log.isTraceEnabled()) {
-                log.trace("postPollCheck disconnect from: " + getEndpoint());
-            }
+            log.trace("postPollCheck disconnect from: {}", getEndpoint());
             disconnect();
         }
     }

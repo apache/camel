@@ -64,21 +64,20 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
-        if (log.isTraceEnabled()) {
-            log.trace("Connecting using FTPClient: " + client);
-        }
+        log.trace("Connecting using FTPClient: {}", client);
 
         String host = configuration.getHost();
         int port = configuration.getPort();
         String username = configuration.getUsername();
 
         if (clientConfig != null) {
-            log.trace("Configuring FTPClient with config: " + clientConfig);
+            log.trace("Configuring FTPClient with config: {}", clientConfig);
             client.configure(clientConfig);
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("Connecting to " + configuration.remoteServerInformation() + " using connection timeout: " + client.getConnectTimeout());
+            log.trace("Connecting to {} using connection timeout: {}",
+                    configuration.remoteServerInformation(), client.getConnectTimeout());
         }
 
         boolean connected = false;
@@ -87,7 +86,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         while (!connected) {
             try {
                 if (log.isTraceEnabled() && attempt > 0) {
-                    log.trace("Reconnect attempt #" + attempt + " connecting to + " + configuration.remoteServerInformation());
+                    log.trace("Reconnect attempt #{} connecting to {}", attempt, configuration.remoteServerInformation());
                 }
                 client.connect(host, port);
                 // must check reply code if we are connected
@@ -113,9 +112,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     failed = new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
                 }
 
-                if (log.isTraceEnabled()) {
-                    log.trace("Cannot connect due: " + failed.getMessage());
-                }
+                log.trace("Cannot connect due: {}", failed.getMessage());
                 attempt++;
                 if (attempt > endpoint.getMaximumReconnectAttempts()) {
                     throw failed;
@@ -154,17 +151,13 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             boolean login;
             if (username != null) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Attempting to login user: " + username + " using password: " + configuration.getPassword());
-                }
+                log.trace("Attempting to login user: {} using password: {}", username, configuration.getPassword());
                 login = client.login(username, configuration.getPassword());
             } else {
                 log.trace("Attempting to login anonymous");
                 login = client.login("anonymous", "");
             }
-            if (log.isTraceEnabled()) {
-                log.trace("User " + (username != null ? username : "anonymous") + " logged in: " + login);
-            }
+            log.trace("User {} logged in: {}", username != null ? username : "anonymous", login);
             if (!login) {
                 throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString());
             }
@@ -180,9 +173,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             while (it.hasNext()) {
                 Object next = it.next();
                 String command = endpoint.getCamelContext().getTypeConverter().convertTo(String.class, next);
-                if (log.isTraceEnabled()) {
-                    log.trace("Site command to send: " + command);
-                }
+                log.trace("Site command to send: {}", command);
                 if (command != null) {
                     boolean result = sendSiteCommand(command);
                     if (!result) {
@@ -240,9 +231,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         // must normalize directory first
         directory = endpoint.getConfiguration().normalizePath(directory);
 
-        if (log.isTraceEnabled()) {
-            log.trace("buildDirectory(" + directory + ")");
-        }
+        log.trace("buildDirectory({})", directory);
         try {
             String originalDirectory = client.printWorkingDirectory();
 
@@ -251,9 +240,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 // maybe the full directory already exists
                 success = client.changeWorkingDirectory(directory);
                 if (!success) {
-                    if (log.isTraceEnabled()) {
-                        log.trace("Trying to build remote directory: " + directory);
-                    }
+                    log.trace("Trying to build remote directory: {}", directory);
                     success = client.makeDirectory(directory);
                     if (!success) {
                         // we are here if the server side doesn't create intermediate folders so create the folder one by one
@@ -274,9 +261,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean retrieveFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        if (log.isTraceEnabled()) {
-            log.trace("retrieveFile(" + name + ")");
-        }
+        log.trace("retrieveFile({})", name);
         if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
             // local work directory is configured so we should store file content as files in this local directory
             return retrieveFileToFileInLocalWorkDirectory(name, exchange);
@@ -402,9 +387,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
 
         } catch (IOException e) {
-            if (log.isTraceEnabled()) {
-                log.trace("Error occurred during retrieving file: " + name + " to local directory. Deleting local work file: " + temp);
-            }
+            log.trace("Error occurred during retrieving file: {} to local directory. Deleting local work file: {}", name, temp);
             // failed to retrieve the file so we need to close streams and delete in progress file
             // must close stream before deleting file
             IOHelper.close(os, "retrieve: " + name, log);
@@ -423,9 +406,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         if (result) {
-            if (log.isTraceEnabled()) {
-                log.trace("Renaming local in progress file from: " + temp + " to: " + local);
-            }
+            log.trace("Renaming local in progress file from: {} to: {}", temp, local);
             // operation went okay so rename temp to local after we have retrieved the data
             if (!FileUtil.renameFile(temp, local)) {
                 throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
@@ -439,9 +420,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
 
-        if (log.isTraceEnabled()) {
-            log.trace("storeFile(" + name + ")");
-        }
+        log.trace("storeFile({})", name);
 
         boolean answer = false;
         String currentDir = null;
@@ -473,18 +452,14 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     private boolean doStoreFile(String name, String targetName, Exchange exchange) throws GenericFileOperationFailedException {
-        if (log.isTraceEnabled()) {
-            log.trace("doStoreFile(" + targetName + ")");
-        }
+        log.trace("doStoreFile({})", targetName);
 
         // if an existing file already exists what should we do?
         if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail) {
             boolean existFile = existsFile(targetName);
             if (existFile && endpoint.getFileExist() == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
-                if (log.isTraceEnabled()) {
-                    log.trace("An existing file already exists: " + name + ". Ignore and do not override it.");
-                }
+                log.trace("An existing file already exists: {}. Ignore and do not override it.", name);
                 return true;
             } else if (existFile && endpoint.getFileExist() == GenericFileExist.Fail) {
                 throw new GenericFileOperationFailedException("File already exist: " + name + ". Cannot write new file.");
@@ -509,9 +484,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
-        if (log.isTraceEnabled()) {
-            log.trace("existsFile(" + name + ")");
-        }
+        log.trace("existsFile({})", name);
 
         // check whether a file already exists
         String directory = FileUtil.onlyPath(name);
@@ -528,9 +501,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 return false;
             }
             for (String existing : names) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Existing file: " + existing + ", target file: " + name);
-                }
+                log.trace("Existing file: {}, target file: {}", existing, name);
                 existing = FileUtil.stripPath(existing);
                 if (existing != null && existing.equals(onlyName)) {
                     return true;
@@ -543,9 +514,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
-        if (log.isTraceEnabled()) {
-            log.trace("getCurrentDirectory()");
-        }
+        log.trace("getCurrentDirectory()");
         try {
             return client.printWorkingDirectory();
         } catch (IOException e) {
@@ -554,9 +523,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
-        if (log.isTraceEnabled()) {
-            log.trace("changeCurrentDirectory(" + path + ")");
-        }
+        log.trace("changeCurrentDirectory({})", path);
         if (ObjectHelper.isEmpty(path)) {
             return;
         }
@@ -597,9 +564,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             return;
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Changing directory: " + path);
-        }
+        log.trace("Changing directory: {}", path);
         boolean success;
         try {
             if ("..".equals(path)) {
@@ -625,9 +590,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public List<FTPFile> listFiles() throws GenericFileOperationFailedException {
-        if (log.isTraceEnabled()) {
-            log.trace("listFiles()");
-        }
+        log.trace("listFiles()");
         try {
             final List<FTPFile> list = new ArrayList<FTPFile>();
             FTPFile[] files = client.listFiles();
@@ -642,9 +605,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public List<FTPFile> listFiles(String path) throws GenericFileOperationFailedException {
-        if (log.isTraceEnabled()) {
-            log.trace("listFiles(" + path + ")");
-        }
+        log.trace("listFiles({})", path);
         // use current directory if path not given
         if (ObjectHelper.isEmpty(path)) {
             path = ".";
@@ -664,9 +625,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean sendNoop() throws GenericFileOperationFailedException {
-        if (log.isTraceEnabled()) {
-            log.trace("sendNoOp");
-        }
+        log.trace("sendNoOp");
         try {
             return client.sendNoOp();
         } catch (IOException e) {
@@ -675,9 +634,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
-        if (log.isTraceEnabled()) {
-            log.trace("sendSiteCommand(" + command + ")");
-        }
+        log.trace("sendSiteCommand({})", command);
         try {
             return client.sendSiteCommand(command);
         } catch (IOException e) {
@@ -701,9 +658,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             // do not try to build root folder (/ or \)
             if (!(directory.equals("/") || directory.equals("\\"))) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Trying to build remote directory by chunk: " + directory);
-                }
+                log.trace("Trying to build remote directory by chunk: {}", directory);
 
                 success = client.makeDirectory(directory);
             }

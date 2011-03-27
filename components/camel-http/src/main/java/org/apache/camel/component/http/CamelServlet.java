@@ -55,9 +55,7 @@ public class CamelServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (log.isTraceEnabled()) {
-            log.trace("Service: " + request);
-        }
+        log.trace("Service: {}", request);
 
         // Is there a consumer registered for the request.
         HttpConsumer consumer = resolve(request);
@@ -87,9 +85,7 @@ public class CamelServlet extends HttpServlet {
         exchange.setIn(new HttpMessage(exchange, request, response));
 
         try {
-            if (log.isTraceEnabled()) {
-                log.trace("Processing request for exchangeId: " + exchange.getExchangeId());
-            }
+            log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
             // process the exchange
             consumer.getProcessor().process(exchange);
         } catch (Exception e) {
@@ -97,9 +93,7 @@ public class CamelServlet extends HttpServlet {
         }
 
         try {
-            if (log.isTraceEnabled()) {
-                log.trace("Writing response for exchangeId: " + exchange.getExchangeId());
-            }
+            log.trace("Writing response for exchangeId: {}", exchange.getExchangeId());
 
             // now lets output to the response
             consumer.getBinding().writeResponse(exchange, response);

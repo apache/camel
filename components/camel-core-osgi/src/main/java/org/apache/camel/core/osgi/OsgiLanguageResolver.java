@@ -64,9 +64,7 @@ public class OsgiLanguageResolver implements LanguageResolver {
     }
 
     protected Language getLanguage(String name, CamelContext context) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Finding Language: " + name);
-        }
+        LOG.trace("Finding Language: {}", name);
         try {
             ServiceReference[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(language=" + name + ")");
             if (refs != null && refs.length > 0) {
@@ -80,9 +78,7 @@ public class OsgiLanguageResolver implements LanguageResolver {
     }
 
     protected LanguageResolver getLanguageResolver(String name, CamelContext context) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Finding LanguageResolver: " + name);
-        }
+        LOG.trace("Finding LanguageResolver: {}", name);
         try {
             ServiceReference[] refs = bundleContext.getServiceReferences(LanguageResolver.class.getName(), "(resolver=" + name + ")");
             if (refs != null && refs.length > 0) {

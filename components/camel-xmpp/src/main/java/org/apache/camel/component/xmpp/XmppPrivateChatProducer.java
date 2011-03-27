@@ -65,14 +65,10 @@ public class XmppPrivateChatProducer extends DefaultProducer {
 
         ChatManager chatManager = connection.getChatManager();
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Looking for existing chat instance with thread ID " + endpoint.getChatId());
-        }
+        LOG.trace("Looking for existing chat instance with thread ID {}", endpoint.getChatId());
         Chat chat = chatManager.getThreadChat(endpoint.getChatId());
         if (chat == null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Creating new chat instance with thread ID " + endpoint.getChatId());
-            }
+            LOG.trace("Creating new chat instance with thread ID {}", endpoint.getChatId());
             chat = chatManager.createChat(getParticipant(), endpoint.getChatId(), new MessageListener() {
                 public void processMessage(Chat chat, Message message) {
                     // not here to do conversation

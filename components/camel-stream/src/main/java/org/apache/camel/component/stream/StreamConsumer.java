@@ -118,9 +118,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             // repeat scanning from stream
             while (isRunAllowed()) {
                 line = br.readLine();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Read line: " + line);
-                }
+                LOG.trace("Read line: {}", line);
                 boolean eos = line == null;
                 if (!eos && isRunAllowed()) {
                     processLine(line);
@@ -144,9 +142,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 }
 
                 line = br.readLine();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Read line: " + line);
-                }
+                LOG.trace("Read line: {}", line);
                 eos = line == null;
                 if (!eos && isRunAllowed()) {
                     processLine(line);

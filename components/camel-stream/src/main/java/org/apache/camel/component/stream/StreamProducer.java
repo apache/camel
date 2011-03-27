@@ -116,9 +116,7 @@ public class StreamProducer extends DefaultProducer {
         if (ms == 0) {
             return;
         }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Delaying " + ms + " millis");
-        }
+        LOG.trace("Delaying {} millis", ms);
         Thread.sleep(ms);
     }
 

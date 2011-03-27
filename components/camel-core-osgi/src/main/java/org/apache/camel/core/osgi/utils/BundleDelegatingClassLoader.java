@@ -43,16 +43,12 @@ public class BundleDelegatingClassLoader extends ClassLoader {
     }
 
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("FindClass: " + name);
-        }
+        LOG.trace("FindClass: {}", name);
         return bundle.loadClass(name);
     }
 
     protected URL findResource(String name) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("FindResource: " + name);
-        }
+        LOG.trace("FindResource: {}", name);
         URL resource = bundle.getResource(name);
         if (classLoader != null && resource == null) {
             resource = classLoader.getResource(name);
@@ -62,16 +58,12 @@ public class BundleDelegatingClassLoader extends ClassLoader {
 
     @SuppressWarnings("unchecked")
     protected Enumeration findResources(String name) throws IOException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("FindResource: " + name);
-        }
+        LOG.trace("FindResource: {}", name);
         return bundle.getResources(name);
     }
 
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("LoadClass: " + name + ", resolve: " + resolve);
-        }
+        LOG.trace("LoadClass: {}, resolve: {}", name, resolve);
         Class clazz;
         try {
             clazz = findClass(name);

@@ -50,18 +50,14 @@ public class SpringAntPathMatcherFileFilter implements FileFilter {
         // must use single / as path separators
         path = StringUtils.replace(path, File.separator, "/");
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Filtering file: " + path);
-        }
+        LOG.trace("Filtering file: {}", path);
 
         // excludes take precedence
         if (excludes != null) {
             for (String exclude : excludes) {
                 if (matcher.match(exclude, path)) {
                     // something to exclude so we cant accept it
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("File is excluded: " + path);
-                    }
+                    LOG.trace("File is excluded: {}", path);
                     return false;
                 }
             }
@@ -71,9 +67,7 @@ public class SpringAntPathMatcherFileFilter implements FileFilter {
             for (String include : includes) {
                 if (matcher.match(include, path)) {
                     // something to include so we accept it
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("File is included: " + path);
-                    }
+                    LOG.trace("File is included: {}", path);
                     return true;
                 }
             }

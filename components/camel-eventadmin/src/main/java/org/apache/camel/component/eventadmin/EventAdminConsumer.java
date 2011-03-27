@@ -46,9 +46,7 @@ public class EventAdminConsumer extends DefaultConsumer implements EventHandler 
         // TODO: populate exchange headers
         exchange.getIn().setBody(event);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("EventAdmin " + endpoint.getTopic() + " is firing");
-        }
+        LOG.trace("EventAdmin {} is firing", endpoint.getTopic());
         try {
             getProcessor().process(exchange);
             // log exception if an exception occurred and was not handled

@@ -149,9 +149,7 @@ public class XsltComponent extends ResourceBasedComponent {
     }
 
     private void loadResource(XsltBuilder xslt, Resource resource) throws TransformerConfigurationException {
-        if (log.isTraceEnabled()) {
-            log.trace(this + " loading schema resource: " + resource);
-        }
+        log.trace("{} loading schema resource: {}", this, resource);
         try {
             xslt.setTransformerInputStream(resource.getInputStream());
         } catch (Exception e) {

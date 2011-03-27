@@ -107,18 +107,14 @@ public class LdapProducer extends DefaultProducer {
     private List<SearchResult> pagedSearch(LdapContext ldapContext, String searchFilter) throws Exception {
         List<SearchResult> data = new ArrayList<SearchResult>();
 
-        if (log.isTraceEnabled()) {
-            log.trace("Using paged ldap search, pageSize=" + pageSize);
-        }
+        log.trace("Using paged ldap search, pageSize={}", pageSize);
 
         Control[] requestControls = new Control[]{new PagedResultsControl(pageSize, Control.CRITICAL)};
         ldapContext.setRequestControls(requestControls);
         do {
             List<SearchResult> pageResult = simpleSearch(ldapContext, searchFilter);
             data.addAll(pageResult);
-            if (log.isTraceEnabled()) {
-                log.trace("Page returned " + pageResult.size() + " entries");
-            }
+            log.trace("Page returned {} entries", pageResult.size());
         } while (prepareNextPage(ldapContext));
 
         if (log.isDebugEnabled()) {

@@ -44,9 +44,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     }
 
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
-        if (log.isTraceEnabled()) {
-            log.trace("Updated provisional correlationId [" + correlationId + "] to expected correlationId [" + newCorrelationId + "]");
-        }
+        log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
 
         ReplyHandler handler = correlation.remove(correlationId);
         correlation.put(newCorrelationId, handler, requestTimeout);

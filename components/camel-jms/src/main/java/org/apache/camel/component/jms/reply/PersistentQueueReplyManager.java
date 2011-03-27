@@ -53,9 +53,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
     }
 
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
-        if (log.isTraceEnabled()) {
-            log.trace("Updated provisional correlationId [" + correlationId + "] to expected correlationId [" + newCorrelationId + "]");
-        }
+        log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
 
         ReplyHandler handler = correlation.remove(correlationId);
         if (handler == null) {
@@ -147,9 +145,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
             } else if (creator != null) {
                 id = creator.get();
             }
-            if (log.isTraceEnabled()) {
-                log.trace("Using MessageSelector[" + id + "]");
-            }
+            log.trace("Using MessageSelector[{}]", id);
             return id;
         }
     }

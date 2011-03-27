@@ -242,9 +242,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                         new RowMapper<String>() {
                             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                                 String id = rs.getString(ID);
-                                if (LOG.isTraceEnabled()) {
-                                    LOG.trace("getKey [" + id + "]");
-                                }
+                                LOG.trace("getKey [{}]", id);
                                 return id;
                             }
                         });
@@ -261,9 +259,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                         new RowMapper<String>() {
                             public String mapRow(ResultSet rs, int rowNum) throws SQLException {
                                 String id = rs.getString(ID);
-                                if (LOG.isTraceEnabled()) {
-                                    LOG.trace("getKey [" + id + "]");
-                                }
+                                LOG.trace("getKey [{}]", id);
                                 return id;
                             }
                         });

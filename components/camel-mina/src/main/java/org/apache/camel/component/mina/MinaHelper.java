@@ -48,9 +48,7 @@ public final class MinaHelper {
         WriteFuture future = session.write(body);
         // must use a timeout (we use 10s) as in some very high performance scenarios a write can cause 
         // thread hanging forever
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for write to complete");
-        }
+        LOG.trace("Waiting for write to complete");
         future.join(10 * 1000L);
         if (!future.isWritten()) {
             LOG.warn("Cannot write body: " + body + " using session: " + session);

@@ -79,9 +79,7 @@ public class EndpointMessageListener implements MessageListener {
             }
 
             // process the exchange
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("onMessage.process START");
-            }
+            LOG.trace("onMessage.process START");
 
             String correlationId = message.getJMSCorrelationID();
             if (correlationId != null) {
@@ -93,9 +91,7 @@ public class EndpointMessageListener implements MessageListener {
             } catch (Throwable e) {
                 exchange.setException(e);
             }
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("onMessage.process END");
-            }
+            LOG.trace("onMessage.process END");
 
             // get the correct jms message to send as reply
             JmsMessage body = null;
@@ -145,9 +141,7 @@ public class EndpointMessageListener implements MessageListener {
 
         if (rce != null) {
             handleException(rce);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("onMessage END throwing exception: " + rce.getMessage());
-            }
+            LOG.trace("onMessage END throwing exception: {}", rce.getMessage());
             throw rce;
         }
 

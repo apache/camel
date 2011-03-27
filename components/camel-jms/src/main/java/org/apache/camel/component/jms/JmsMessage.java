@@ -206,9 +206,7 @@ public class JmsMessage extends DefaultMessage {
     @Override
     protected String createMessageId() {
         if (jmsMessage == null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("No javax.jms.Message set so generating a new message id");
-            }
+            LOG.trace("No javax.jms.Message set so generating a new message id");
             return super.createMessageId();
         }
         try {

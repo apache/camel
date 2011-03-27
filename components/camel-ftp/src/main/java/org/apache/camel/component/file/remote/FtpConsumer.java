@@ -64,9 +64,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList) {
-        if (log.isTraceEnabled()) {
-            log.trace("doPollDirectory from absolutePath: " + absolutePath + ", dirName: " + dirName);
-        }
+        log.trace("doPollDirectory from absolutePath: {}, dirName: {}", absolutePath, dirName);
         // remove trailing /
         dirName = FileUtil.stripTrailingSeparator(dirName);
 
@@ -79,9 +77,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             dir = absolutePath;
         }
 
-        if (log.isTraceEnabled()) {
-            log.trace("Polling directory: " + dir);
-        }
+        log.trace("Polling directory: {}", dir);
         List<FTPFile> files;
         if (isStepwise()) {
             files = operations.listFiles();
@@ -91,15 +87,11 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
         if (files == null || files.isEmpty()) {
             // no files in this directory to poll
-            if (log.isTraceEnabled()) {
-                log.trace("No files found in directory: " + dir);
-            }
+            log.trace("No files found in directory: {}", dir);
             return true;
         } else {
             // we found some files
-            if (log.isTraceEnabled()) {
-                log.trace("Found " + files.size() + " in directory: " + dir);
-            }
+            log.trace("Found {} in directory: {}", files.size(), dir);
         }
 
         for (FTPFile file : files) {
@@ -124,9 +116,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file);
                 if (isValidFile(remote, false)) {
                     if (isInProgress(remote)) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Skipping as file is already in progress: " + remote.getFileName());
-                        }
+                        log.trace("Skipping as file is already in progress: {}", remote.getFileName());
                     } else {
                         // matched file so add
                         fileList.add(remote);

@@ -55,14 +55,10 @@ public class CxfRsInvoker extends JAXRSInvoker {
         }
         Continuation continuation;
         if (!endpoint.isSynchronous() && (continuation = getContinuation(cxfExchange)) != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Calling the Camel async processors.");
-            }
+            LOG.trace("Calling the Camel async processors.");
             return asyncInvoke(cxfExchange, serviceObject, method, paramArray, continuation);
         } else {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Calling the Camel sync processors.");
-            }
+            LOG.trace("Calling the Camel sync processors.");
             return syncInvoke(cxfExchange, serviceObject, method, paramArray);
         }
     }
@@ -85,9 +81,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 CxfRsBinding binding = endpoint.getBinding();
                 binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
                 // Now we don't set up the timeout value
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Suspending continuation of exchangeId: " + camelExchange.getExchangeId());
-                }
+                LOG.trace("Suspending continuation of exchangeId: {}", camelExchange.getExchangeId());
                 // TODO Support to set the timeout in case the Camel can't send the response back on time.
                 // The continuation could be called before the suspend is called
                 continuation.suspend(0);
@@ -96,9 +90,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
                     public void done(boolean doneSync) {
                         // make sure the continuation resume will not be called before the suspend method in other thread
                         synchronized (continuation) {
-                            if (LOG.isTraceEnabled()) {
-                                LOG.trace("Resuming continuation of exchangeId: " + camelExchange.getExchangeId());
-                            }
+                            LOG.trace("Resuming continuation of exchangeId: {}", camelExchange.getExchangeId());
                             // resume processing after both, sync and async callbacks
                             continuation.setObject(camelExchange);
                             continuation.resume();

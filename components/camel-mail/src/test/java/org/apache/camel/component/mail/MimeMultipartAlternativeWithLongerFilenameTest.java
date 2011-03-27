@@ -71,9 +71,7 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
         ((MailMessage)out.getIn()).getMessage().writeTo(baos);
         String dumpedMessage = baos.toString();
         assertTrue("There should have the " + expectString, dumpedMessage.indexOf(expectString) > 0);
-        if (log.isTraceEnabled()) {
-            log.trace("multipart alternative: \n" + dumpedMessage);
-        }
+        log.trace("multipart alternative: \n{}", dumpedMessage);
 
         // plain text
         assertEquals(alternativeBody, out.getIn().getBody(String.class));

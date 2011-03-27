@@ -106,23 +106,19 @@ public class JmsBinding {
             // based on message type
             if (endpoint != null && endpoint.getMessageConverter() != null) {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Extracting body using a custom MessageConverter: " + endpoint.getMessageConverter() + " from JMS message: " + message);
+                    LOG.trace("Extracting body using a custom MessageConverter: {} from JMS message: {}", endpoint.getMessageConverter(), message);
                 }
                 return endpoint.getMessageConverter().fromMessage(message);
             }
 
             // if we are configured to not map the jms message then return it as body
             if (endpoint != null && !endpoint.getConfiguration().isMapJmsMessage()) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Option map JMS message is false so using JMS message as body: " + message);
-                }
+                LOG.trace("Option map JMS message is false so using JMS message as body: {}", message);
                 return message;
             }
 
             if (message instanceof ObjectMessage) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Extracting body as a ObjectMessage from JMS message: " + message);
-                }
+                LOG.trace("Extracting body as a ObjectMessage from JMS message: {}", message);
                 ObjectMessage objectMessage = (ObjectMessage)message;
                 Object payload = objectMessage.getObject();
                 if (payload instanceof DefaultExchangeHolder) {
@@ -133,25 +129,17 @@ public class JmsBinding {
                     return objectMessage.getObject();
                 }
             } else if (message instanceof TextMessage) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Extracting body as a TextMessage from JMS message: " + message);
-                }
+                LOG.trace("Extracting body as a TextMessage from JMS message: {}", message);
                 TextMessage textMessage = (TextMessage)message;
                 return textMessage.getText();
             } else if (message instanceof MapMessage) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Extracting body as a MapMessage from JMS message: " + message);
-                }
+                LOG.trace("Extracting body as a MapMessage from JMS message: {}", message);
                 return createMapFromMapMessage((MapMessage)message);
             } else if (message instanceof BytesMessage) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Extracting body as a BytesMessage from JMS message: " + message);
-                }
+                LOG.trace("Extracting body as a BytesMessage from JMS message: {}", message);
                 return createByteArrayFromBytesMessage((BytesMessage)message);
             } else if (message instanceof StreamMessage) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Extracting body as a StreamMessage from JMS message: " + message);
-                }
+                LOG.trace("Extracting body as a StreamMessage from JMS message: {}", message);
                 return message;
             } else {
                 return null;
@@ -327,13 +315,13 @@ public class JmsBinding {
                 jmsMessage.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, deliveryMode);
             } else if (headerName.equals("JMSExpiration")) {
                 jmsMessage.setJMSExpiration(ExchangeHelper.convertToType(exchange, Long.class, headerValue));
-            } else if (LOG.isTraceEnabled()) {
+            } else {
                 // The following properties are set by the MessageProducer:
                 // JMSDestination
                 // The following are set on the underlying JMS provider:
                 // JMSMessageID, JMSTimestamp, JMSRedelivered
                 // log at trace level to not spam log
-                LOG.trace("Ignoring JMS header: " + headerName + " with value: " + headerValue);
+                LOG.trace("Ignoring JMS header: {} with value: {}", headerName, headerValue);
             }
         } else if (shouldOutputHeader(in, headerName, headerValue, exchange)) {
             // only primitive headers and strings is allowed as properties
@@ -415,9 +403,7 @@ public class JmsBinding {
     }
 
     protected Message createJmsMessage(Exception cause, Session session) throws JMSException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Using JmsMessageType: " + Object);
-        }
+        LOG.trace("Using JmsMessageType: {}", Object);
         return session.createObjectMessage(cause);
     }
 
@@ -426,9 +412,7 @@ public class JmsBinding {
 
         // special for transferExchange
         if (endpoint != null && endpoint.isTransferExchange()) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
-            }
+            LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
             Serializable holder = DefaultExchangeHolder.marshal(exchange);
             return session.createObjectMessage(holder);
         }
@@ -436,7 +420,7 @@ public class JmsBinding {
         // use a custom message converter
         if (endpoint != null && endpoint.getMessageConverter() != null) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Creating JmsMessage using a custom MessageConverter: " + endpoint.getMessageConverter() + " with body: " + body);
+                LOG.trace("Creating JmsMessage using a custom MessageConverter: {} with body: {}", endpoint.getMessageConverter(), body);
             }
             return endpoint.getMessageConverter().toMessage(body, session);
         }
@@ -453,9 +437,7 @@ public class JmsBinding {
 
         // create the JmsMessage based on the type
         if (type != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Using JmsMessageType: " + type);
-            }
+            LOG.trace("Using JmsMessageType: {}", type);
             return createJmsMessageForType(exchange, body, headers, session, context, type);
         }
 

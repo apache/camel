@@ -56,9 +56,7 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
             // Using the non-OSGi classloaders as a fallback
             // this is necessary when use JBI packaging for servicemix-camel SU
             // so that we get chance to use SU classloader to scan packages in the SU
-            if (log.isTraceEnabled()) {
-                log.trace("Cannot find any classes in bundles, not trying regular classloaders scanning: " + packageName);
-            }
+            log.trace("Cannot find any classes in bundles, not trying regular classloaders scanning: {}", packageName);
             for (ClassLoader classLoader : super.getClassLoaders()) {
                 if (!isOsgiClassloader(classLoader)) {
                     find(test, packageName, classLoader, classes);
@@ -99,9 +97,7 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         }
         Set<String> urls = new LinkedHashSet<String>();
         for (Bundle bd : bundles) {
-            if (log.isTraceEnabled()) {
-                log.trace("Searching in bundle:" + bd);
-            }
+            log.trace("Searching in bundle: {}", bd);
             try {
                 Enumeration<URL> paths = bd.findEntries("/" + packageName, "*.class", true);
                 while (paths != null && paths.hasMoreElements()) {
@@ -109,9 +105,7 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
                     String pathString = path.getPath();
                     String urlString = pathString.substring(pathString.indexOf(packageName));
                     urls.add(urlString);
-                    if (log.isTraceEnabled()) {
-                        log.trace("Added url: " + urlString);
-                    }
+                    log.trace("Added url: {}", urlString);
                 }
             } catch (Throwable t) {
                 log.warn("Cannot search in bundle: " + bundle + " for classes matching criteria: " + test + " due: "

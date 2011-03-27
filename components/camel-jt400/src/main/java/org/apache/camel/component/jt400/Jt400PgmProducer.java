@@ -62,7 +62,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         boolean result = pgmCall.run();
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Executed PGM '" + commandStr + "' in host '" + iSeries.getSystemName() + "'. Success? " + result);
+            LOG.trace("Executed PGM '{}' in host '{}'. Success? {}", new Object[]{commandStr, iSeries.getSystemName(), result});
         }
 
         if (result) {

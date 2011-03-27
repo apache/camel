@@ -67,14 +67,10 @@ public class MyBatisProducer extends DefaultProducer {
             Object result;
             Object in = exchange.getIn().getBody();
             if (in != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("SelectOne: " + in + "  using statement: " + statement);
-                }
+                LOG.trace("SelectOne: {} using statement: {}", in, statement);
                 result = session.selectOne(statement, in);
             } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("SelectOne using statement: " + statement);
-                }
+                LOG.trace("SelectOne using statement: {}", statement);
                 result = session.selectOne(statement);
             }
 
@@ -91,14 +87,10 @@ public class MyBatisProducer extends DefaultProducer {
             Object result;
             Object in = exchange.getIn().getBody();
             if (in != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("SelectList: " + in + "  using statement: " + statement);
-                }
+                LOG.trace("SelectList: {} using statement: {}", in, statement);
                 result = session.selectList(statement, in);
             } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("SelectList using statement: " + statement);
-                }
+                LOG.trace("SelectList using statement: {}", statement);
                 result = session.selectList(statement);
             }
 
@@ -119,16 +111,12 @@ public class MyBatisProducer extends DefaultProducer {
                 Iterator iter = ObjectHelper.createIterator(in);
                 while (iter.hasNext()) {
                     Object value = iter.next();
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Inserting: " + value + " using statement: " + statement);
-                    }
+                    LOG.trace("Inserting: {} using statement: {}", value, statement);
                     result = session.insert(statement, value);
                     doProcessResult(exchange, result);
                 }
             } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Inserting using statement: " + statement);
-                }
+                LOG.trace("Inserting using statement: {}", statement);
                 result = session.insert(statement);
                 doProcessResult(exchange, result);
             }
@@ -149,16 +137,12 @@ public class MyBatisProducer extends DefaultProducer {
                 Iterator iter = ObjectHelper.createIterator(in);
                 while (iter.hasNext()) {
                     Object value = iter.next();
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Updating: " + value + " using statement: " + statement);
-                    }
+                    LOG.trace("Updating: {} using statement: {}", value, statement);
                     result = session.update(statement, value);
                     doProcessResult(exchange, result);
                 }
             } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Updating using statement: " + statement);
-                }
+                LOG.trace("Updating using statement: {}", statement);
                 result = session.update(statement);
                 doProcessResult(exchange, result);
             }
@@ -179,16 +163,12 @@ public class MyBatisProducer extends DefaultProducer {
                 Iterator iter = ObjectHelper.createIterator(in);
                 while (iter.hasNext()) {
                     Object value = iter.next();
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Deleting: " + value + " using statement: " + statement);
-                    }
+                    LOG.trace("Deleting: {} using statement: {}", value, statement);
                     result = session.delete(statement, value);
                     doProcessResult(exchange, result);
                 }
             } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Deleting using statement: " + statement);
-                }
+                LOG.trace("Deleting using statement: {}", statement);
                 result = session.delete(statement);
                 doProcessResult(exchange, result);
             }

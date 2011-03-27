@@ -71,9 +71,7 @@ public class XmppBinding {
                 } else {
                     try {
                         message.setProperty(name, value);
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Added property name: " + name + " value: " + value.toString());
-                        }
+                        LOG.trace("Added property name: {} value: {}", name, value.toString());
                     } catch (IllegalArgumentException iae) {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Cannot add property " + name + " to XMPP message due: ", iae);

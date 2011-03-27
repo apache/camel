@@ -61,9 +61,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     }
 
     public void setReplyTo(Destination replyTo) {
-        if (log.isTraceEnabled()) {
-            log.trace("ReplyTo destination: " + replyTo);
-        }
+        log.trace("ReplyTo destination: {}", replyTo);
         this.replyTo = replyTo;
         // trigger latch as the reply to has been resolved and set
         replyToLatch.countDown();
@@ -176,9 +174,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         boolean done = false;
         int counter = 0;
         while (!done && counter++ < 50) {
-            if (log.isTraceEnabled()) {
-                log.trace("Early reply not found handler at attempt " + counter + ". Waiting a bit longer.");
-            }
+            log.trace("Early reply not found handler at attempt {}. Waiting a bit longer.", counter);
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -191,8 +187,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
             if (answer != null) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Early reply with correlationID [" + correlationID + "] has been matched after "
-                            + counter + " attempts and can be processed using handler: " + answer);
+                    log.trace("Early reply with correlationID [{}] has been matched after {} attempts and can be processed using handler: {}",
+                            new Object[]{correlationID, counter, answer});
                 }
             }
         }

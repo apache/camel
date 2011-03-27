@@ -90,9 +90,7 @@ public class RestletProducer extends DefaultProducer {
         String uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" + endpoint.getPort() + endpoint.getUriPattern();
 
         // substitute { } placeholders in uri and use mandatory headers
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Substituting { } placeholders in uri: " + uri);
-        }
+        LOG.trace("Substituting { } placeholders in uri: {}", uri);
         Matcher matcher = PATTERN.matcher(uri);
         while (matcher.find()) {
             String key = matcher.group(1);
@@ -103,7 +101,7 @@ public class RestletProducer extends DefaultProducer {
             }
 
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Replacing: " + matcher.group(0) + " with header value: " + header);
+                LOG.trace("Replacing: {} with header value: {}", matcher.group(0), header);
             }
 
             uri = matcher.replaceFirst(header);
@@ -182,9 +180,7 @@ public class RestletProducer extends DefaultProducer {
         if (response instanceof Response) {
 
             for (Map.Entry<String, Object> entry : ((Response) response).getAttributes().entrySet()) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Parse external header " + entry.getKey() + "=" + entry.getValue());
-                }
+                LOG.trace("Parse external header {}={}", entry.getKey(), entry.getValue());
                 answer.put(entry.getKey(), entry.getValue().toString());
             }
         }

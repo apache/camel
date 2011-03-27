@@ -65,11 +65,8 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
         
         // TODO propagate security context
         
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Processing " + camelExchange + ", requestContentType = " + requestContentType 
-                    + ", acceptContentTypes = " + acceptContentTypes + ", encoding = " + enc
-                    + ", path = " + path + ", basePath = " + basePath + ", verb = " + verb); 
-        }
+        LOG.trace("Processing {}, requestContentType = {}, acceptContentTypes = {}, encoding = {}, path = {}, basePath = {}, verb = {}",
+            new Object[]{camelExchange, requestContentType, acceptContentTypes, enc, path, basePath, verb});
 
         return answer;
     }
@@ -77,9 +74,7 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
     public void propagateResponseHeadersToCamel(Message cxfMessage, Exchange exchange,
                                                 HeaderFilterStrategy strategy) {
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Propagating response headers from CXF message " + cxfMessage);
-        }
+        LOG.trace("Propagating response headers from CXF message {}", cxfMessage);
         
         if (strategy == null) {
             return;
@@ -95,10 +90,7 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
                 if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
                     camelHeaders.put(entry.getKey(), entry.getValue().get(0));
                     
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Populate header from CXF header=" + entry.getKey() + " value="
-                                + entry.getValue());
-                    }
+                    LOG.trace("Populate header from CXF header={} value={}", entry.getKey(), entry.getValue());
                 }
             }
         }
@@ -108,10 +100,8 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
         Object value = cxfMessage.get(key);
         if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
             camelHeaders.put(Exchange.HTTP_RESPONSE_CODE, value);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Populate header from CXF header=" + key + " value=" + value
-                          + " as " + Exchange.HTTP_RESPONSE_CODE);
-            } 
+            LOG.trace("Populate header from CXF header={} value={} as {}",
+                    new Object[]{key, value, Exchange.HTTP_RESPONSE_CODE}); 
         }
         
         // propagate HTTP CONTENT_TYPE

@@ -60,7 +60,8 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         Collection<Client> clients = bayeux.getClients();
         for (Client client : clients) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Delivering to client id: " + client.getId() + " path:" + endpoint.getPath() + " exchange: " + exchange);
+                LOG.trace("Delivering to client id: {} path: {} exchange: {}",
+                        new Object[]{client.getId(), endpoint.getPath(), exchange});
             }
             client.deliver(client, endpoint.getPath(), exchange.getIn().getBody(), null);
         }

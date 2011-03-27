@@ -262,9 +262,7 @@ public final class Rfc3164SyslogConverter {
         syslogMessage.setTimestamp(calendar.getTime());
 
         syslogMessage.setLogMessage(msg.toString());
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Syslog message : " + syslogMessage.toString());
-        }
+        LOG.trace("Syslog message : {}", syslogMessage.toString());
 
         return syslogMessage;
     }

@@ -76,9 +76,7 @@ public class LuceneSearcher {
     }
                 
     private int doSearch(String searchPhrase, int maxNumberOfHits, Version luenceVersion) throws NullPointerException, ParseException, IOException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("*** Search Phrase: " + searchPhrase + " ***");
-        }
+        LOG.trace("*** Search Phrase: {} ***", searchPhrase);
 
         QueryParser parser = new QueryParser(luenceVersion, "contents", analyzer);
         Query query = parser.parse(searchPhrase);
@@ -86,9 +84,7 @@ public class LuceneSearcher {
         indexSearcher.search(query, collector);
         hits = collector.topDocs().scoreDocs;
         
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("*** Search generated " + hits.length + " hits ***");
-        }
+        LOG.trace("*** Search generated {} hits ***", hits.length);
         return hits.length;
     }
 }

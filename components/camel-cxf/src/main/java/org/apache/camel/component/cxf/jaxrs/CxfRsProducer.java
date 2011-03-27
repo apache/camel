@@ -90,9 +90,9 @@ public class CxfRsProducer extends DefaultProducer {
         String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("HTTP method = " + httpMethod);
-            LOG.trace("path = " + path);
-            LOG.trace("responseClass = " + responseClass);
+            LOG.trace("HTTP method = {}", httpMethod);
+            LOG.trace("path = {}", path);
+            LOG.trace("responseClass = {}", responseClass);
         }
 
         // set the path
@@ -156,9 +156,7 @@ public class CxfRsProducer extends DefaultProducer {
         }
         // set response
         if (exchange.getPattern().isOutCapable()) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Response body = " + response);
-            }
+            LOG.trace("Response body = {}", response);
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getOut().setHeaders(binding.bindResponseHeadersToCamelHeaders(response, exchange));
         }
@@ -277,9 +275,7 @@ public class CxfRsProducer extends DefaultProducer {
         if (response instanceof Response) {
 
             for (Map.Entry<String, List<Object>> entry : ((Response) response).getMetadata().entrySet()) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Parse external header " + entry.getKey() + "=" + entry.getValue());
-                }
+                LOG.trace("Parse external header {}={}", entry.getKey(), entry.getValue());
                 answer.put(entry.getKey(), entry.getValue().get(0).toString());
             }
         }
@@ -311,14 +307,10 @@ public class CxfRsProducer extends DefaultProducer {
                     
                     cache.put(address, new SoftReference<JAXRSClientFactoryBean>(retval));
                     
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Created client factory bean and add to cache for address '" + address + "'");
-                    }
+                    LOG.trace("Created client factory bean and add to cache for address '{}'", address);
                     
                 } else {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Retrieved client factory bean from cache for address '" + address + "'");
-                    }
+                    LOG.trace("Retrieved client factory bean from cache for address '{}'", address);
                 }
             }
             return retval;

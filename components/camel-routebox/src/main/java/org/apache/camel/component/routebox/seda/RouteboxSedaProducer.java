@@ -72,12 +72,12 @@ public class RouteboxSedaProducer extends DefaultAsyncProducer implements Routeb
                     // check for timeout, which then already would have invoked the latch
                     if (latch.getCount() == 0) {
                         if (log.isTraceEnabled()) {
-                            log.trace(this + ". Timeout occurred so response will be ignored: " + (response.hasOut() ? response.getOut() : response.getIn()));
+                            log.trace("{}. Timeout occurred so response will be ignored: {}", this, response.hasOut() ? response.getOut() : response.getIn());
                         }
                         return;
                     } else {
                         if (log.isTraceEnabled()) {
-                            log.trace(this + " with response: " + (response.hasOut() ? response.getOut() : response.getIn()));
+                            log.trace("{} with response: {}", this, response.hasOut() ? response.getOut() : response.getIn());
                         }
                         try {
                             ExchangeHelper.copyResults(exchange, response);
@@ -102,9 +102,7 @@ public class RouteboxSedaProducer extends DefaultAsyncProducer implements Routeb
             queue.add(copy);
 
             if (timeout > 0) {
-                if (log.isTraceEnabled()) {
-                    log.trace("Waiting for task to complete using timeout (ms): " + timeout + " at [" + endpoint.getEndpointUri() + "]");
-                }
+                log.trace("Waiting for task to complete using timeout (ms): {} at [{}]", timeout, endpoint.getEndpointUri());
                 // lets see if we can get the task done before the timeout
                 boolean done = false;
                 try {
@@ -118,9 +116,7 @@ public class RouteboxSedaProducer extends DefaultAsyncProducer implements Routeb
                     latch.countDown();
                 }
             } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("Waiting for task to complete (blocking) at [" + endpoint.getEndpointUri() + "]");
-                }
+                log.trace("Waiting for task to complete (blocking) at [{}]", endpoint.getEndpointUri());
                 // no timeout then wait until its done
                 try {
                     latch.await();

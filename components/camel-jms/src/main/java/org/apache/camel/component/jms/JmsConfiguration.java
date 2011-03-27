@@ -259,8 +259,6 @@ public class JmsConfiguration implements Cloneable {
                     logger.trace("Sent JMS message to: " + producer.getDestination() + " with message: " + message);
                 }
             }
-
-
         }
     }
 

@@ -69,9 +69,7 @@ public class CxfBeanDestination extends CamelDestination implements Processor {
     }
 
     public void process(Exchange camelExchange) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Received request : " + camelExchange);
-        }
+        LOG.trace("Received request : {}", camelExchange);
         
         org.apache.cxf.message.Message cxfMessage = 
             endpoint.getCxfBeanBinding().createCxfMessageFromCamelExchange(camelExchange,

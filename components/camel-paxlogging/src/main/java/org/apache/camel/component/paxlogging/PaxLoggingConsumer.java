@@ -70,9 +70,7 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
         // TODO: populate exchange headers
         exchange.getIn().setBody(paxLoggingEvent);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("PaxLogging " + endpoint.getName() + " is firing");
-        }
+        LOG.trace("PaxLogging {} is firing", endpoint.getName());
         try {
             getProcessor().process(exchange);
             // log exception if an exception occurred and was not handled

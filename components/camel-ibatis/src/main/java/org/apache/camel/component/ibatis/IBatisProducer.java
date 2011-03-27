@@ -64,14 +64,10 @@ public class IBatisProducer extends DefaultProducer {
         Object result;
         Object in = exchange.getIn().getBody();
         if (in != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("QueryForObject: " + in + "  using statement: " + statement);
-            }
+            LOG.trace("QueryForObject: {} using statement: {}", in, statement);
             result = client.queryForObject(statement, in);
         } else {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("QueryForObject using statement: " + statement);
-            }
+            LOG.trace("QueryForObject using statement: {}", statement);
             result = client.queryForObject(statement);
         }
 
@@ -84,14 +80,10 @@ public class IBatisProducer extends DefaultProducer {
         Object result;
         Object in = exchange.getIn().getBody();
         if (in != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("QueryForList: " + in + "  using statement: " + statement);
-            }
+            LOG.trace("QueryForList: {} using statement: {}", in, statement);
             result = client.queryForList(statement, in);
         } else {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("QueryForList using statement: " + statement);
-            }
+            LOG.trace("QueryForList using statement: {}", statement);
             result = client.queryForList(statement);
         }
 
@@ -108,16 +100,12 @@ public class IBatisProducer extends DefaultProducer {
             Iterator iter = ObjectHelper.createIterator(in);
             while (iter.hasNext()) {
                 Object value = iter.next();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Inserting: " + value + " using statement: " + statement);
-                }
+                LOG.trace("Inserting: {} using statement: {}", value, statement);
                 result = client.insert(statement, value);
                 doProcessResult(exchange, result);
             }
         } else {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Inserting using statement: " + statement);
-            }
+            LOG.trace("Inserting using statement: {}", statement);
             result = client.insert(statement);
             doProcessResult(exchange, result);
         }
@@ -133,16 +121,12 @@ public class IBatisProducer extends DefaultProducer {
             Iterator iter = ObjectHelper.createIterator(in);
             while (iter.hasNext()) {
                 Object value = iter.next();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Updating: " + value + " using statement: " + statement);
-                }
+                LOG.trace("Updating: {} using statement: {}", value, statement);
                 result = client.update(statement, value);
                 doProcessResult(exchange, result);
             }
         } else {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Updating using statement: " + statement);
-            }
+            LOG.trace("Updating using statement: {}", statement);
             result = client.update(statement);
             doProcessResult(exchange, result);
         }
@@ -158,16 +142,12 @@ public class IBatisProducer extends DefaultProducer {
             Iterator iter = ObjectHelper.createIterator(in);
             while (iter.hasNext()) {
                 Object value = iter.next();
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Deleting: " + value + " using statement: " + statement);
-                }
+                LOG.trace("Deleting: {} using statement: {}", value, statement);
                 result = client.delete(statement, value);
                 doProcessResult(exchange, result);
             }
         } else {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Deleting using statement: " + statement);
-            }
+            LOG.trace("Deleting using statement: {}", statement);
             result = client.delete(statement);
             doProcessResult(exchange, result);
         }

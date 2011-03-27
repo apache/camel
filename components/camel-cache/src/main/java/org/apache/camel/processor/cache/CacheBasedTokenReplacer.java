@@ -74,9 +74,7 @@ public class CacheBasedTokenReplacer extends CacheValidate implements Processor 
                     .convertTo(String.class, cache.get(key).getObjectValue());
             String replacedTokenString = new String(buffer).replaceAll(replacementToken, cacheValue);
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("replacedTokenString = " + replacedTokenString);
-            }
+            LOG.trace("replacedTokenString = {}", replacedTokenString);
             exchange.getIn().setBody(replacedTokenString.getBytes());
         }
     }

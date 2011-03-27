@@ -132,9 +132,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         for (Map.Entry<String, Object> entry : camelHeaders.entrySet()) {
             
             if (headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Drop Camel header: " + entry.getKey() + "=" + entry.getValue());
-                }
+                LOG.trace("Drop Camel header: {}={}", entry.getKey(), entry.getValue());
                 continue;
             }
             
@@ -143,10 +141,8 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
                 mappedHeaderName = entry.getKey();
             }
             
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Propagate Camel header: " + entry.getKey() + "=" + entry.getValue() + " as " 
-                          + mappedHeaderName);
-            }
+            LOG.trace("Propagate Camel header: {}={} as {}",
+                new Object[]{entry.getKey(), entry.getValue(), mappedHeaderName});
             
             answer.putSingle(mappedHeaderName, entry.getValue().toString());
         }
@@ -196,17 +192,13 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
                         mappedHeaderName = entry.getKey();
                     }
                     
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Populate external header " + entry.getKey() + "=" + entry.getValue()
-                                  + " as " + mappedHeaderName);
-                    }
+                    LOG.trace("Populate external header {}={} as {}",
+                        new Object[]{entry.getKey(), entry.getValue(), mappedHeaderName});
                     
                     answer.put(mappedHeaderName, entry.getValue().get(0));
 
                 } else {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Drop external header " + entry.getKey() + "=" + entry.getValue());
-                    }
+                    LOG.trace("Drop external header {}={}", entry.getKey(), entry.getValue());
                 }
             }
             
@@ -259,9 +251,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         Map<String, List<String>> headers = (Map<String, List<String>>)cxfMessage.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS);
         for (Map.Entry<String, List<String>>entry : headers.entrySet()) {
             if (headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Drop CXF message protocol header: " + entry.getKey() + "=" + entry.getValue());
-                }
+                LOG.trace("Drop CXF message protocol header: {}={}", entry.getKey(), entry.getValue());
             } else {
                 // just put the first String element, as the complex one is filtered
                 camelMessage.setHeader(entry.getKey(), entry.getValue().get(0));

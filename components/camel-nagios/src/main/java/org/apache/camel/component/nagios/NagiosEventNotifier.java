@@ -52,9 +52,7 @@ public class NagiosEventNotifier extends EventNotifierSupport {
 
         log.info("Sending notification to Nagios: {}", payload.getMessage());
         sender.send(payload);
-        if (log.isTraceEnabled()) {
-            log.trace("Sending notification done");
-        }
+        log.trace("Sending notification done");
     }
 
     public boolean isEnabled(EventObject eventObject) {

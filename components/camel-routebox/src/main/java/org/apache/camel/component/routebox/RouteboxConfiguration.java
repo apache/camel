@@ -71,7 +71,7 @@ public class RouteboxConfiguration {
         setUri(uri);
         setAuthority(uri.getAuthority());
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Authority: " + uri.getAuthority());
+            LOG.trace("Authority: {}", uri.getAuthority());
         }
         
         setEndpointName(getAuthority());

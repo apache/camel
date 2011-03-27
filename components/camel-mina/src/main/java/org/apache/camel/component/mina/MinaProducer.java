@@ -187,9 +187,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
             // Change the worker timeout to 0 second to make the I/O thread quit soon when there's no connection to manage.
             // Default worker timeout is 60 sec and therefore the client using MinaProducer cannot terminate the JVM
             // asap but must wait for the timeout to happen, so to speed this up we set the timeout to 0.
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Setting SocketConnector WorkerTimeout=0 to force MINA stopping its resources faster");
-            }
+            LOG.trace("Setting SocketConnector WorkerTimeout=0 to force MINA stopping its resources faster");
             ((SocketConnector) connector).setWorkerTimeout(0);
         }
 

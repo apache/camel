@@ -172,10 +172,8 @@ public final class CxfEndpointUtils {
         if (retval == null) {
             retval = defaultAddress;
         } else {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Client address is overridden by header '" + Exchange.DESTINATION_OVERRIDE_URL
-                          + "' to value '" + retval + "'");
-            }
+            LOG.trace("Client address is overridden by header '{}' to value '{}'",
+                Exchange.DESTINATION_OVERRIDE_URL, retval);
         }
         return retval;
     }

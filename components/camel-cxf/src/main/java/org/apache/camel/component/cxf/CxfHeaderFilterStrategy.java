@@ -127,9 +127,7 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
             return false;
         }
         
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("messageHeaderfilter = " + messageHeaderfilter);
-        }
+        LOG.trace("messageHeaderfilter = {}", messageHeaderfilter);
 
         try {
             messageHeaderfilter.filter(direction, (List<Header>)value);

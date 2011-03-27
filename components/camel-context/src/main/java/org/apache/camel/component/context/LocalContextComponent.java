@@ -69,7 +69,7 @@ public class LocalContextComponent extends DefaultComponent {
         Map<String, Endpoint> map = getLocalCamelContext().getEndpointMap();
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Trying to lookup " + remaining + " in local map " + map.keySet());
+            LOG.trace("Trying to lookup {} in local map {}", remaining, map.keySet());
         }
         Endpoint endpoint = map.get(remaining);
         if (endpoint != null) {

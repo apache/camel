@@ -56,14 +56,10 @@ public class SoapMessageHeaderFilter implements MessageHeaderFilter {
         Iterator<Header> iterator = headers.iterator();
         while (iterator.hasNext()) {
             Header header = iterator.next();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing header: " + header);
-            }
+            LOG.trace("Processing header: {}", header);
             
             if (!(header instanceof SoapHeader)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Skipped header: " + header + " since it is not a SoapHeader");
-                }
+                LOG.trace("Skipped header: {} since it is not a SoapHeader", header);
                 continue;
             }
             
@@ -76,9 +72,7 @@ public class SoapMessageHeaderFilter implements MessageHeaderFilter {
                     // dropping headers if actor/role equals to {ns}/role|actor/next
                     // cxf SoapHeader needs to have soap:header@relay attribute, 
                     // then we can check for it here as well
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Filtered header: " + header);
-                    }
+                    LOG.trace("Filtered header: {}", header);
                     iterator.remove();
                     break;
                 }

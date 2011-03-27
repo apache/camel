@@ -102,8 +102,8 @@ public class LuceneIndexer {
 
     private void add(String field, String value, boolean analyzed) throws IOException {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Adding field: " + field);
-            LOG.trace("       value: " + value);
+            LOG.trace("Adding field: {}", field);
+            LOG.trace("       value: {}", value);
         }
 
         Document doc = new Document();
@@ -126,18 +126,14 @@ public class LuceneIndexer {
                     }
                 }
             } else {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Adding " + file);
-                }
+                LOG.trace("Adding {}", file);
 
                 openIndexWriter();
                 add("path", file.getPath(), false);
                 add("contents", new String(IOConverter.toByteArray(file)), true);
                 closeIndexWriter();
 
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Added " + file + " successfully");
-                }
+                LOG.trace("Added {} successfully", file);
             }
         } else {
             LOG.warn("Directory/File " + file.getAbsolutePath() + " could not be read."

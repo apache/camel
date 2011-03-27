@@ -86,9 +86,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
 
     @Override
     public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Channel closed: " + ctx.getChannel());
-        }
+        LOG.trace("Channel closed: {}", ctx.getChannel());
 
         if (producer.getConfiguration().isSync() && !messageReceived && !exceptionHandled) {
             // session was closed but no message received. This could be because the remote server had an internal error

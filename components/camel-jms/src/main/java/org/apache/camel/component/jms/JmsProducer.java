@@ -330,9 +330,7 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         CamelJmsTemplate template = (CamelJmsTemplate) (inOut ? getInOutTemplate() : getInOnlyTemplate());
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Using " + (inOut ? "inOut" : "inOnly") + " jms template");
-        }
+        LOG.trace("Using {} jms template", inOut ? "inOut" : "inOnly");
 
         // destination should be preferred
         if (destination != null) {

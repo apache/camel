@@ -91,14 +91,10 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
             DataQueueEntry entry;
             if (timeout >= 0) {
                 int seconds = (int)timeout / 1000;
-                if (log.isTraceEnabled()) {
-                    log.trace("Reading from data queue: " + queue.getName() + " with " + seconds + " seconds timeout");
-                }
+                log.trace("Reading from data queue: {} with {} seconds timeout", queue.getName(), seconds);
                 entry = queue.read(seconds);
             } else {
-                if (log.isTraceEnabled()) {
-                    log.trace("Reading from data queue: " + queue.getName() + " with no timeout");
-                }
+                log.trace("Reading from data queue: {} with no timeout", queue.getName());
                 entry = queue.read(-1);
             }
 

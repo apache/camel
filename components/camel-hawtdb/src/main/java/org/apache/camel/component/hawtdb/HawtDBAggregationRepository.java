@@ -250,9 +250,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
                         throw new RuntimeException("Error unmarshalling key: " + keyBuffer, e);
                     }
                     if (key != null) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("getKey [" + key + "]");
-                        }
+                        LOG.trace("getKey [{}]", key);
                         keys.add(key);
                     }
                 }
@@ -296,9 +294,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
                         throw new RuntimeException("Error unmarshalling confirm key: " + keyBuffer, e);
                     }
                     if (exchangeId != null) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Scan exchangeId [" + exchangeId + "]");
-                        }
+                        LOG.trace("Scan exchangeId [{}]", exchangeId);
                         answer.add(exchangeId);
                     }
                 }

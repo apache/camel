@@ -51,18 +51,14 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
 
     @Override
     public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Channel open: " + e.getChannel());
-        }
+        LOG.trace("Channel open: {}", e.getChannel());
         // to keep track of open sockets
         consumer.getAllChannels().add(e.getChannel());
     }
 
     @Override
     public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Channel closed: " + e.getChannel());
-        }
+        LOG.trace("Channel closed: {}", e.getChannel());
     }
 
     @Override

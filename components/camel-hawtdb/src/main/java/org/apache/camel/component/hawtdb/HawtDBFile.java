@@ -103,16 +103,12 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
     }
 
     public <T> T execute(Work<T> work) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Executing work +++ start +++ " + work);
-        }
+        LOG.trace("Executing work +++ start +++ {}", work);
 
         Transaction tx = pageFile.tx();
         T answer = doExecute(work, tx, pageFile);
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Executing work +++ done  +++ " + work);
-        }
+        LOG.trace("Executing work +++ done  +++ {}", work);
         return answer;
     }
 
@@ -136,15 +132,11 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
 
             answer = created;
         } else if (location != null) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Repository index with name " + name + " at location " + location);
-            }
+            LOG.trace("Repository index with name {} at location {}", name, location);
             answer = INDEX_FACTORY.open(tx, location);
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Repository index with name " + name + " -> " + answer);
-        }
+        LOG.trace("Repository index with name {} -> {}", name, answer);
         return answer;
     }
 
@@ -164,9 +156,7 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
                 // execute and get answer
                 answer = work.execute(tx);
 
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("TX is read only: " + tx.isReadOnly() + " for executed work: " + work);
-                }
+                LOG.trace("TX is read only: {} for executed work: {}", tx.isReadOnly(), work);
                 // commit work
                 tx.commit();
                 // and flush so we ensure data is spooled to disk
