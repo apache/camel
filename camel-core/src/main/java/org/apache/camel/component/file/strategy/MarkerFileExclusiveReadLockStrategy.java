@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
  */
 public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
     private static final transient Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategy.class);
-    private File lock;
-    private String lockFileName;
 
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
         String dir = endpoint.getConfiguration().getDirectory();
@@ -50,28 +48,25 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {
-        lockFileName = file.getAbsoluteFilePath() + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+        String lockFileName = getLockFileName(file);
         LOG.trace("Locking the file: {} using the lock file name: {}", file, lockFileName);
 
         // create a plain file as marker filer for locking (do not use FileLock)
-        lock = new File(lockFileName);
+        File lock = new File(lockFileName);
         boolean acquired = lock.createNewFile();
-        if (!acquired) {
-            lock = null;
-
-        }
 
         return acquired;
     }
 
     public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
                                          GenericFile<File> file, Exchange exchange) throws Exception {
-        if (lock != null) {
-            LOG.trace("Unlocking file: {}", lockFileName);
+        String lockFileName = getLockFileName(file);
+        File lock = new File(lockFileName);
 
-            boolean deleted = FileUtil.deleteFile(lock);
-            LOG.trace("Lock file: {} was deleted: {}", lockFileName, deleted);
-        }
+        LOG.trace("Unlocking file: {}", lockFileName);
+
+        boolean deleted = FileUtil.deleteFile(lock);
+        LOG.trace("Lock file: {} was deleted: {}", lockFileName, deleted);
     }
 
     public void setTimeout(long timeout) {
@@ -99,6 +94,10 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
                 deleteLockFiles(file, true);
             }
         }
+    }
+
+    private static String getLockFileName(GenericFile<File> file) {
+        return file.getAbsoluteFilePath() + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
     }
 
 }

@@ -29,18 +29,21 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
     @Override
     public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
-        // must invoke super
-        boolean result = super.begin(operations, endpoint, exchange, file);
-        if (!result) {
-            return false;
-        }
+
+        // We need to invoke super, but to the file that we are going to use for processing, so we do super after renaming.
+        GenericFile<T> to = file;
 
         if (beginRenamer != null) {
             GenericFile<T> newName = beginRenamer.renameFile(exchange, file);
-            GenericFile<T> to = renameFile(operations, file, newName);
+            to = renameFile(operations, file, newName);
             if (to != null) {
                 to.bindToExchange(exchange);
             }
+        }
+        // must invoke super
+        boolean result = super.begin(operations, endpoint, exchange, to);
+        if (!result) {
+            return false;
         }
 
         return true;
@@ -79,7 +82,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
             throw new GenericFileOperationFailedException("Cannot delete file: " + file);
         }
     }
-    
+
     @Override
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         // must invoke super
@@ -98,7 +101,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
             renameFile(operations, file, newName);
         }
     }
-    
+
     public GenericFileRenamer<T> getFailureRenamer() {
         return failureRenamer;
     }
