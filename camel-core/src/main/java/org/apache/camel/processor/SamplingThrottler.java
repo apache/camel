@@ -43,7 +43,7 @@ public class SamplingThrottler extends DelegateAsyncProcessor {
     private long messageFrequency;
     private long currentMessageCount;
     private long samplePeriod;
-    private long periodInNanos;
+    private long periodInMillis;
     private TimeUnit units;
     private long timeOfLastExchange;
     private StopProcessor stopper = new StopProcessor();
@@ -70,7 +70,7 @@ public class SamplingThrottler extends DelegateAsyncProcessor {
         }
         this.samplePeriod = samplePeriod;
         this.units = units;
-        this.periodInNanos = units.toNanos(samplePeriod);
+        this.periodInMillis = units.toMillis(samplePeriod);
     }
 
     @Override
@@ -102,8 +102,8 @@ public class SamplingThrottler extends DelegateAsyncProcessor {
                     doSend = true;
                 }
             } else {
-                long now = System.nanoTime();
-                if (now >= timeOfLastExchange + periodInNanos) {
+                long now = System.currentTimeMillis();
+                if (now >= timeOfLastExchange + periodInMillis) {
                     doSend = true;
                     if (log.isTraceEnabled()) {
                         log.trace(sampled.sample());

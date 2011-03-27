@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,21 +58,15 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // use nano time as its more accurate
-        // and only record time if stats is enabled
-        long start = -1;
-        if (counter != null && counter.isStatisticsEnabled()) {
-            start = System.nanoTime();
-        }
-        final long startTime = start;
+        // only record time if stats is enabled
+        final StopWatch watch = (counter != null && counter.isStatisticsEnabled()) ? new StopWatch() : null;
 
         return super.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 try {
                     // record end time
-                    if (startTime > -1) {
-                        long diff = (System.nanoTime() - startTime) / 1000000;
-                        recordTime(exchange, diff);
+                    if (watch != null) {
+                        recordTime(exchange, watch.stop());
                     }
                 } finally {
                     // and let the original callback know we are done as well
