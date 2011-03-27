@@ -111,17 +111,22 @@ public class ManagedRoute extends ManagedPerformanceCounter {
     @ManagedAttribute(description = "Route Policy List")
     public String getRoutePolicyList() {
         List<RoutePolicy> policyList = route.getRouteContext().getRoutePolicyList();
-        if (policyList != null) {
-            StringBuilder sb = new StringBuilder();
-            for (RoutePolicy policy : policyList) {
-                sb.append(policy.getClass().getSimpleName());
-                sb.append("(").append(ObjectHelper.getIdentityHashCode(policy)).append(")");
+
+        if (policyList == null || policyList.isEmpty()) {
+            // return an empty string to have it displayed nicely in JMX consoles
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < policyList.size(); i++) {
+            RoutePolicy policy = policyList.get(i);
+            sb.append(policy.getClass().getSimpleName());
+            sb.append("(").append(ObjectHelper.getIdentityHashCode(policy)).append(")");
+            if (i < policyList.size() - 1) {
                 sb.append(", ");
             }
-            sb = sb.delete(sb.lastIndexOf(", "), sb.length() - 1);
-            return sb.toString();
         }
-        return null;
+        return sb.toString();
     }
 
     @ManagedOperation(description = "Start route")
