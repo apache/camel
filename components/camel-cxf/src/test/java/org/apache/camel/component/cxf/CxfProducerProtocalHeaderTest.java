@@ -41,6 +41,7 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
 
                     public void process(Exchange exchange) throws Exception {
                         assertNull("We should not get this header", exchange.getIn().getHeader("CamelCxfTest"));
+                        System.out.println("header " + exchange.getIn().getHeader("SOAPAction"));
                         assertNull("We should not get this header", exchange.getIn().getHeader("Transfer-Encoding"));
                        // check the headers
                         exchange.getOut().setHeader("Content-Type", "text/xml");
@@ -62,7 +63,8 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
                 // Test the CxfHeaderFilterStrategy
-                exchange.getIn().setHeader("CamelCxfTest", "test");
+                exchange.getIn().setHeader("CamelCxfTest", "\"test\"");
+                exchange.getIn().setHeader("SOAPAction", "\"test\"");
                 exchange.getIn().setHeader("Transfer-Encoding", "chunked");
             }
         });

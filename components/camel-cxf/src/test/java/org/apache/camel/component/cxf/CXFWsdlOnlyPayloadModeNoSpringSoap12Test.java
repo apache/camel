@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf;
 
 import javax.xml.ws.Endpoint;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.wsdl_first.PersonImpl12;
 import org.junit.BeforeClass;
 
@@ -32,6 +33,11 @@ public class CXFWsdlOnlyPayloadModeNoSpringSoap12Test extends CXFWsdlOnlyPayload
     @Override
     protected String getServiceName() {
         return "{http://camel.apache.org/wsdl-first}PersonService12";
+    }
+    
+    @Override
+    protected void checkSOAPAction(Exchange exchange) {
+        assertEquals(exchange.getIn().getHeader("SOAPAction"), "GetPersonAction");
     }
     
 }

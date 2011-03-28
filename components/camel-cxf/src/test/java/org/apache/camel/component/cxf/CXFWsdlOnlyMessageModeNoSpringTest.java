@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf;
 
+import org.apache.camel.Exchange;
+
 public class CXFWsdlOnlyMessageModeNoSpringTest extends CXFWsdlOnlyPayloadModeNoSpringTest {
 
     @Override

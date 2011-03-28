@@ -22,6 +22,8 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
@@ -58,12 +60,26 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
         }
 
     }
+    
+    protected void checkSOAPAction(Exchange exchange) {
+        // check the SOAPAction to be null
+        assertNull(exchange.getIn().getHeader("SOAPAction"));
+        
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("cxf://http://localhost:8092/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat())
+                    .process(new Processor() {
+
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            checkSOAPAction(exchange);
+                        }
+                        
+                    })
                     .to("cxf://http://localhost:8093/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat());
             }
         };

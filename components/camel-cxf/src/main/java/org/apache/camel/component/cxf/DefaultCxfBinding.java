@@ -38,7 +38,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.attachment.AttachmentImpl;
+import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
@@ -463,7 +465,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             }
         }
         
-        
         // propagate SOAP/protocol header list
         String key = Header.HEADER_LIST;
         Object value = cxfMessage.get(key);
@@ -474,7 +475,22 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             } else {
                 ((List<?>)value).clear();
             }
-        }       
+        }
+        
+        // propagate the SOAPAction header
+        String soapAction = (String)camelHeaders.get(SoapBindingConstants.SOAP_ACTION);
+        // Remove SOAPAction from the protocol header, as it will not be overrided
+        if (ObjectHelper.isEmpty(soapAction) || "\"\"".equals(soapAction)) {
+            camelHeaders.remove(SoapBindingConstants.SOAP_ACTION);
+        }
+        soapAction = (String)cxfMessage.get(SoapBindingConstants.SOAP_ACTION);
+        if (soapAction != null) {
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(SoapBindingConstants.SOAP_ACTION, soapAction, exchange)) {
+                camelHeaders.put(SoapBindingConstants.SOAP_ACTION, soapAction);
+                LOG.trace("Populate header from CXF header={} value={}", SoapBindingConstants.SOAP_ACTION, soapAction);
+            } 
+        }
+        
     }
     
     // replace the multi-part content-type
