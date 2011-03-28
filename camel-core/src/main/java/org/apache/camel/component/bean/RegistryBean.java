@@ -69,11 +69,11 @@ public class RegistryBean implements BeanHolder {
             }
         }
         if (value != bean) {
-            bean = value;
-            processor = null;
             if (!ObjectHelper.equal(ObjectHelper.type(bean), ObjectHelper.type(value))) {
                 beanInfo = null;
             }
+            bean = value;
+            processor = null;
 
             // could be a class then create an instance of it
             if (bean instanceof Class) {
