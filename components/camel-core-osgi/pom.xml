@@ -28,7 +28,14 @@
 
   <artifactId>camel-core-osgi</artifactId>
   <name>Camel :: Core OSGi</name>
+  <packaging>bundle</packaging>
   <description>Camel Core OSGi support</description>
+  
+  <properties>
+      <camel.osgi.export.pkg>
+            org.apache.camel.core.osgi.*
+      </camel.osgi.export.pkg>
+  </properties>
 
   <dependencies>
 
