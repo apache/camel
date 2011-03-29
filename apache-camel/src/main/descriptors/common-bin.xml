@@ -43,6 +43,7 @@
         <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-castor</include>
         <include>org.apache.camel:camel-core</include>
+        <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-cometd</include>
         <include>org.apache.camel:camel-context</include>
         <include>org.apache.camel:camel-crypto</include>
