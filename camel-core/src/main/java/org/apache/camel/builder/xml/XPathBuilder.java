@@ -50,6 +50,7 @@ import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExchangeHelper;
@@ -123,11 +124,17 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     public boolean matches(Exchange exchange) {
+        // add on completion so the thread locals is removed when exchange is done
+        exchange.addOnCompletion(new XPathBuilderOnCompletion());
+
         Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
         return exchange.getContext().getTypeConverter().convertTo(Boolean.class, booleanResult);
     }
 
     public <T> T evaluate(Exchange exchange, Class<T> type) {
+        // add on completion so the thread locals is removed when exchange is done
+        exchange.addOnCompletion(new XPathBuilderOnCompletion());
+
         Object result = evaluate(exchange);
         return exchange.getContext().getTypeConverter().convertTo(type, result);
     }
@@ -149,6 +156,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         boolean answer = matches(dummy);
 
         // remove the dummy from the thread local after usage
+        variableResolver.remove();
         exchange.remove();
         return answer;
     }
@@ -171,6 +179,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         T answer = evaluate(dummy, type);
 
         // remove the dummy from the thread local after usage
+        variableResolver.remove();
         exchange.remove();
         return answer;
     }
@@ -193,6 +202,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         String answer = evaluate(dummy, String.class);
 
         // remove the dummy from the thread local after usage
+        variableResolver.remove();
         exchange.remove();
         return answer;
     }
@@ -803,4 +813,34 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public void stop() throws Exception {
         pool.clear();
     }
+
+    /**
+     * On completion class which cleanup thread local resources
+     */
+    private final class XPathBuilderOnCompletion extends SynchronizationAdapter {
+
+        @Override
+        public void onDone(Exchange exchange) {
+            // when the exchange is done, then cleanup thread locals if they are still
+            // pointing to this exchange that was done
+            if (exchange.equals(XPathBuilder.this.exchange.get())) {
+                // cleanup thread locals after usage
+                XPathBuilder.this.variableResolver.remove();
+                XPathBuilder.this.exchange.remove();
+            }
+        }
+
+        @Override
+        public boolean allowHandover() {
+            // this completion should not be handed over, as we want to execute it
+            // on current thread as the thread locals is bound the current thread
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return "XPathBuilderOnCompletion";
+        }
+    }
+
 }
