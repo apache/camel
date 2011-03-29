@@ -83,7 +83,8 @@ public class TracerTest extends ContextTestSupport {
         assertNotNull(em.getShortExchangeId());
         assertNotNull(em.getExchangePattern());
         assertEquals("direct://start", em.getFromEndpointUri());
-        assertNull(em.getHeaders());
+        // there is always a breadcrumb header
+        assertNotNull(em.getHeaders());
         assertNotNull(em.getProperties());
         assertNull(em.getOutBody());
         assertNull(em.getOutBodyType());

@@ -167,6 +167,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Boolean disableJMX = Boolean.FALSE;
     private Boolean lazyLoadTypeConverters = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
+    private Boolean useBreadcrumb = Boolean.TRUE;
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
@@ -2175,6 +2176,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public void setUseMDCLogging(Boolean useMDCLogging) {
         this.useMDCLogging = useMDCLogging;
+    }
+
+    public Boolean isUseBreadcrumb() {
+        return useBreadcrumb != null && useBreadcrumb;
+    }
+
+    public void setUseBreadcrumb(Boolean useBreadcrumb) {
+        this.useBreadcrumb = useBreadcrumb;
     }
 
     public ClassLoader getApplicationContextClassLoader() {

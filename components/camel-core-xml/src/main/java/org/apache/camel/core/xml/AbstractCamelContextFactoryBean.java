@@ -453,6 +453,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
 
     public abstract String getUseMDCLogging();
 
+    public abstract String getUseBreadcrumb();
+
     public abstract Boolean getLazyLoadTypeConverters();
 
     public abstract CamelJMXAgentDefinition getCamelJMXAgent();
@@ -507,6 +509,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         }
         if (getUseMDCLogging() != null) {
             ctx.setUseMDCLogging(CamelContextHelper.parseBoolean(getContext(), getUseMDCLogging()));
+        }
+        if (getUseBreadcrumb() != null) {
+            ctx.setUseBreadcrumb(CamelContextHelper.parseBoolean(getContext(), getUseBreadcrumb()));
         }
         if (getShutdownRoute() != null) {
             ctx.setShutdownRoute(getShutdownRoute());

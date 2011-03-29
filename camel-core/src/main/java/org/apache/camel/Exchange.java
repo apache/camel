@@ -85,6 +85,9 @@ public interface Exchange {
     String BEAN_METHOD_NAME           = "CamelBeanMethodName";
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
     String BINDING                    = "CamelBinding";
+    // do not prefix with Camel and use lower-case starting letter as its a shared key
+    // used across other Apache products such as AMQ, SMX etc.
+    String BREADCRUMB_ID              = "breadcrumbId";
 
     String CHARSET_NAME      = "CamelCharsetName";
     String CREATED_TIMESTAMP = "CamelCreatedTimestamp";

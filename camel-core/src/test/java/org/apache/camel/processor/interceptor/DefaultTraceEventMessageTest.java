@@ -61,7 +61,7 @@ public class DefaultTraceEventMessageTest extends ContextTestSupport {
         assertTrue(em.getProperties().contains("foo=123"));
         assertTrue(em.getProperties().contains("CamelToEndpoint=direct://start"));
         assertTrue(em.getProperties().contains("CamelCreatedTimestamp"));
-        assertEquals("{bar=456}", em.getHeaders());
+        assertTrue(em.getHeaders().contains("bar=456"));
         assertEquals("Hello World", em.getBody());
         assertEquals("String", em.getBodyType());
         assertEquals("Bye World", em.getOutBody());

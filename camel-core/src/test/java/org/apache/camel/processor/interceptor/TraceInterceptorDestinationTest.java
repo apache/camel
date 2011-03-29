@@ -71,12 +71,10 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
         assertEquals("Foo World", tracedBodies.get(7));
 
         // assert headers as well
-        assertEquals("{to=James}", tracedHeaders.get(0));
-        assertEquals("{to=Hello}", tracedHeaders.get(1));
-        assertEquals("{to=Goodday}", tracedHeaders.get(2));
-        assertEquals("{to=Bye}", tracedHeaders.get(3));
-        assertEquals("{to=Foo}", tracedHeaders.get(4));
-        assertEquals("{to=Foo}", tracedHeaders.get(5));
+        assertTrue(tracedHeaders.get(0), tracedHeaders.get(0).contains("to=James"));
+        assertTrue(tracedHeaders.get(1), tracedHeaders.get(1).contains("to=Hello"));
+        assertTrue(tracedHeaders.get(2), tracedHeaders.get(2).contains("to=Goodday"));
+        assertTrue(tracedHeaders.get(3), tracedHeaders.get(3).contains("to=Bye"));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

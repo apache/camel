@@ -54,7 +54,7 @@ public class JettyHttpProducerSlowResponseTest extends BaseJettyTest {
         String reply = exchange.getOut().getBody(String.class);
         assertEquals("Bye World", reply);
 
-        assertEquals(4, exchange.getOut().getHeaders().size());
+        assertEquals(5, exchange.getOut().getHeaders().size());
     }
 
     @Override

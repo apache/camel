@@ -40,7 +40,8 @@ public class RemoveHeadersExcludeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
+        // there is also a breadcrumb header
+        assertEquals(2, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
     }
 
     public void testRemoveHeadersRegEx() throws Exception {
@@ -62,7 +63,8 @@ public class RemoveHeadersExcludeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(3, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
+        // there is also a breadcrumb header
+        assertEquals(4, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
     }
 
     protected RouteBuilder createRouteBuilder() {

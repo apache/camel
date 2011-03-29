@@ -97,6 +97,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute(required = false)
     private String useMDCLogging;
     @XmlAttribute(required = false)
+    private String useBreadcrumb;
+    @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
     private ShutdownRunningTask shutdownRunningTask;
@@ -458,6 +460,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setUseMDCLogging(String useMDCLogging) {
         this.useMDCLogging = useMDCLogging;
+    }
+
+    public String getUseBreadcrumb() {
+        return useBreadcrumb;
+    }
+
+    public void setUseBreadcrumb(String useBreadcrumb) {
+        this.useBreadcrumb = useBreadcrumb;
     }
 
     public Boolean getLazyLoadTypeConverters() {

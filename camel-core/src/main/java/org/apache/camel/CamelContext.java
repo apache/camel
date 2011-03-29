@@ -992,4 +992,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     void setUseMDCLogging(Boolean useMDCLogging);
 
+    /**
+     * Whether or not breadcrumb is enabled.
+     *
+     * @return <tt>true</tt> if breadcrumb is enabled
+     */
+    Boolean isUseBreadcrumb();
+
+    /**
+     * Set whether breadcrumb is enabled.
+     *
+     * @param useBreadcrumb <tt>true</tt> to enable breadcrumb, <tt>false</tt> to disable
+     */
+    void setUseBreadcrumb(Boolean useBreadcrumb);
+
+
+
 }

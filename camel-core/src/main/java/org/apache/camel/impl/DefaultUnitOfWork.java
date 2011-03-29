@@ -78,6 +78,17 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             exchange.setProperty(Exchange.CREATED_TIMESTAMP, new Date());
         }
 
+        // inject breadcrumb header if enabled
+        if (exchange.getContext().isUseBreadcrumb()) {
+            // create or use existing breadcrumb
+            String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
+            if (breadcrumbId == null) {
+                // no existing breadcrumb, so create a new one based on the message id
+                breadcrumbId = exchange.getIn().getMessageId();
+                exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
+            }
+        }
+
         // fire event
         EventHelper.notifyExchangeCreated(exchange.getContext(), exchange);
 

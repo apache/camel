@@ -29,6 +29,7 @@ import org.slf4j.MDC;
  */
 public class MDCUnitOfWork extends DefaultUnitOfWork {
 
+    public static final String MDC_BREADCRUMB_ID = "breadcrumbId";
     public static final String MDC_EXCHANGE_ID = "exchangeId";
     public static final String MDC_CORRELATION_ID = "correlationId";
     public static final String MDC_ROUTE_ID = "routeId";
@@ -42,6 +43,11 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         String corrId = exchange.getProperty(Exchange.CORRELATION_ID, String.class);
         if (corrId != null) {
             MDC.put(MDC_CORRELATION_ID, corrId);
+        }
+        // and add optional breadcrumb id
+        String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
+        if (breadcrumbId != null) {
+            MDC.put(MDC_BREADCRUMB_ID, breadcrumbId);
         }
     }
 
@@ -94,9 +100,11 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
      * Clears information put on the MDC by this {@link MDCUnitOfWork}
      */
     public void clear() {
+        MDC.remove(MDC_BREADCRUMB_ID);
         MDC.remove(MDC_EXCHANGE_ID);
         MDC.remove(MDC_CORRELATION_ID);
         MDC.remove(MDC_ROUTE_ID);
+        MDC.remove(MDC_TRANSACTION_KEY);
     }
 
     @Override
@@ -111,6 +119,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     private static final class MDCCallback implements AsyncCallback {
 
         private final AsyncCallback delegate;
+        private final String breadcrumbId;
         private final String exchangeId;
         private final String correlationId;
         private final String routeId;
@@ -118,6 +127,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         private MDCCallback(AsyncCallback delegate) {
             this.delegate = delegate;
             this.exchangeId = MDC.get(MDC_EXCHANGE_ID);
+            this.breadcrumbId = MDC.get(MDC_BREADCRUMB_ID);
             this.correlationId = MDC.get(MDC_CORRELATION_ID);
 
             String routeId = MDC.get(MDC_ROUTE_ID);
@@ -130,19 +140,26 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         }
 
         public void done(boolean doneSync) {
-            if (!doneSync) {
-                // when done asynchronously then restore information from previous thread
-                if (exchangeId != null) {
-                    MDC.put(MDC_EXCHANGE_ID, exchangeId);
+            try {
+                if (!doneSync) {
+                    // when done asynchronously then restore information from previous thread
+                    if (breadcrumbId != null) {
+                        MDC.put(MDC_BREADCRUMB_ID, breadcrumbId);
+                    }
+                    if (exchangeId != null) {
+                        MDC.put(MDC_EXCHANGE_ID, exchangeId);
+                    }
+                    if (correlationId != null) {
+                        MDC.put(MDC_CORRELATION_ID, correlationId);
+                    }
+                    if (routeId != null) {
+                        MDC.put(MDC_ROUTE_ID, routeId);
+                    }
                 }
-                if (correlationId != null) {
-                    MDC.put(MDC_CORRELATION_ID, correlationId);
-                }
-                if (routeId != null) {
-                    MDC.put(MDC_ROUTE_ID, routeId);
-                }
+            } finally {
+                // muse ensure delegate is invoked
+                delegate.done(doneSync);
             }
-            delegate.done(doneSync);
         }
 
         @Override
