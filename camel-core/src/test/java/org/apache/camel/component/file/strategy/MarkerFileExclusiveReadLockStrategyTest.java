@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
 public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport {
 
     private static final transient Log LOG = LogFactory.getLog(MarkerFileExclusiveReadLockStrategyTest.class);
-    private static int NUMBER_OF_THREADS = 5;
+    private static final int NUMBER_OF_THREADS = 5;
     private AtomicInteger numberOfFilesProcessed = new AtomicInteger(0);
 
     public void testMultithreadedLocking() throws Exception {
