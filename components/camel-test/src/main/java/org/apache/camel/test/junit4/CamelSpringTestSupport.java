@@ -52,7 +52,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
             assertNotNull("Should have created a valid spring context", applicationContext);
             super.setUp();
         } else {
-            log.info("Detect the system property, test skips starting camel context!");
+            log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
         }
     }
 
