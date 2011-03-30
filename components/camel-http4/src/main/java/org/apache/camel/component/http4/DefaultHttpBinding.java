@@ -156,11 +156,13 @@ public class DefaultHttpBinding implements HttpBinding {
             String body = message.getBody(String.class);
             for (String param : body.split("&")) {
                 String[] pair = param.split("=", 2);
-                String name = URLDecoder.decode(pair[0], charset);
-                String value = URLDecoder.decode(pair[1], charset);
-                if (headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                    headers.put(name, value);
+                if (pair.length == 2) {
+                    String name = URLDecoder.decode(pair[0], charset);
+                    String value = URLDecoder.decode(pair[1], charset);
+                    if (headerFilterStrategy != null
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                        headers.put(name, value);
+                    }
                 }
             }
         }
