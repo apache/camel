@@ -154,7 +154,7 @@ public class InterceptSendToEndpoint implements Endpoint {
             }
 
             public void stop() throws Exception {
-                ServiceHelper.stopService(detour);
+                // do not stop detour as it should only be stopped when the interceptor stops
             }
         };
     }
@@ -188,11 +188,11 @@ public class InterceptSendToEndpoint implements Endpoint {
     }
 
     public void start() throws Exception {
-        delegate.start();
+        ServiceHelper.startServices(detour, delegate);
     }
 
     public void stop() throws Exception {
-        delegate.stop();
+        ServiceHelper.stopServices(delegate, detour);
     }
 
     @Override
