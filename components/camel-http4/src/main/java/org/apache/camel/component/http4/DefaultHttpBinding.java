@@ -161,7 +161,7 @@ public class DefaultHttpBinding implements HttpBinding {
                         headers.put(name, value);
                     }
                 } else {
-                    throw new IllegalArgumentException("Cannot parser the parameter " + param);
+                    throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
                 }
             }
         }
