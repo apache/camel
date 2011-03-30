@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Map;
@@ -70,7 +69,6 @@ public class DefaultHttpBinding implements HttpBinding {
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
     }
 
-    @SuppressWarnings("rawtypes")
     public void readRequest(HttpServletRequest request, HttpMessage message) {
         // lets force a parse of the body and headers
         message.getBody();
@@ -99,7 +97,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
         try {
             populateRequestParameters(request, message);
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             throw new RuntimeCamelException("Cannot read request parameters due " + e.getMessage(), e);
         }
 
@@ -133,8 +131,7 @@ public class DefaultHttpBinding implements HttpBinding {
         populateAttachments(request, message);
     }
 
-    @SuppressWarnings("rawtypes")
-    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws UnsupportedEncodingException {
+    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
         //we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
         Enumeration names = request.getParameterNames();
@@ -163,12 +160,13 @@ public class DefaultHttpBinding implements HttpBinding {
                             && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
                         headers.put(name, value);
                     }
+                } else {
+                    throw new IllegalArgumentException("Cannot parser the parameter " + param);
                 }
             }
         }
     }
 
-    @SuppressWarnings("rawtypes")
     protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
         // check if there is multipart files, if so will put it into DataHandler
         Enumeration names = request.getAttributeNames();
