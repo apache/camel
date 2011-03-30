@@ -35,7 +35,11 @@ public class CamelTransportClientServerTest extends Assert {
     
     @BeforeClass
     public static void startUpServer() throws Exception {
-        context = new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/CamelTransportSpringConfig.xml"});   
+        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
+            context = new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/CamelTransportSpringConfig.xml"});
+        } else {
+            System.out.println("Detect the system property, test skips starting camel context!");
+        }
     }
     
     @AfterClass

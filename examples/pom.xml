@@ -64,8 +64,35 @@
     <module>camel-example-spring-security</module>
     <module>camel-example-tracer</module>
   </modules>
+ 
+  <properties>
+    <skip.starting.camel.context>false</skip.starting.camel.context>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>pertest</forkMode>
+          <includes>
+            <include>**/*Test.*</include>
+          </includes>
+          <systemPropertyVariables>
+             <skipStartingCamelContext>${skip.starting.camel.context}</skipStartingCamelContext>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <profiles>
+    <profile>
+       <id>container-test</id>
+       <properties>
+          <skip.starting.camel.context>true</skip.starting.camel.context>
+       </properties>
+    </profile>
     <!-- 
       This profile allows you to add a repository to the repo list so that 
       you can test the examples out against a staged version of the camel distribution 

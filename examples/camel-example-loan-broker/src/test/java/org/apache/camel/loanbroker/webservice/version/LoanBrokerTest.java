@@ -29,7 +29,11 @@ public class LoanBrokerTest extends Assert {
     
     @Before
     public void startServices() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/webServiceCamelContext.xml"});
+        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
+            applicationContext = new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/webServiceCamelContext.xml"});
+        } else {
+            System.out.println("Detect the system property, test skips starting camel context!");
+        }
     }
     
     @After
