@@ -76,7 +76,7 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
 
         int queueSize = -1;
         if (maxQueueSize != null) {
-            queueSize = CamelContextHelper.parseInteger(getCamelContext(), keepAliveTime);
+            queueSize = CamelContextHelper.parseInteger(getCamelContext(), maxQueueSize);
         }
 
         ExecutorService answer = getCamelContext().getExecutorServiceStrategy().newThreadPool(getId(), getThreadName(),
