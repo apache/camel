@@ -34,10 +34,10 @@ import javax.jws.soap.SOAPBinding.ParameterStyle;
 public interface DefaultSEI {
 
     @Oneway
-    @WebMethod(operationName="InvokeOneWay")
+    @WebMethod(operationName = "InvokeOneWay")
     void invokeOneWay(@WebParam(partName = "InvokeOneWayRequest",  mode = WebParam.Mode.IN)String in);
     
-    @WebMethod(operationName="Invoke")
+    @WebMethod(operationName = "Invoke")
     void invoke(@WebParam(partName = "InvokeRequest", mode = WebParam.Mode.IN)String in,
                    @WebParam(partName = "InvokeResponse",  mode = WebParam.Mode.OUT)String out);
 }

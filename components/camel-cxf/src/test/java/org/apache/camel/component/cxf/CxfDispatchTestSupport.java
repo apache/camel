@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,19 +23,17 @@ import javax.xml.ws.Endpoint;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.GreeterImpl;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+
 
 /**
  * Base class for testing arbitrary payload
  */
 public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
     protected static Endpoint endpoint;
-    private static DocumentBuilderFactory documentBuilderFactory;
-    
     protected static final String DISPATCH_NS = "http://camel.apache.org/cxf/jaxws/dispatch";
     protected static final String INVOKE_NAME = "Invoke";
     protected static final String INVOKE_ONEWAY_NAME = "InvokeOneWay";
@@ -47,7 +45,8 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
         + "</soap:Body></soap:Envelope>";
     protected static final String MESSAGE_ONEWAY_TEMPLATE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>" 
         + PAYLOAD_ONEWAY_TEMPLATE
-        + "</soap:Body></soap:Envelope>"; 
+        + "</soap:Body></soap:Envelope>";
+    private static DocumentBuilderFactory documentBuilderFactory;
 
     @Override
     public boolean isUseRouteBuilder() {
