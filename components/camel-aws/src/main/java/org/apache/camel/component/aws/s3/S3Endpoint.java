@@ -118,7 +118,6 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         message.setHeader(S3Constants.E_TAG, objectMetadata.getETag());
         message.setHeader(S3Constants.LAST_MODIFIED, objectMetadata.getLastModified());
         message.setHeader(S3Constants.VERSION_ID, objectMetadata.getVersionId());
-        message.setHeader(S3Constants.LAST_MODIFIED, objectMetadata.getLastModified());
         message.setHeader(S3Constants.CONTENT_TYPE, objectMetadata.getContentType());
         message.setHeader(S3Constants.CONTENT_MD5, objectMetadata.getContentMD5());
         message.setHeader(S3Constants.CONTENT_LENGTH, objectMetadata.getContentLength());
