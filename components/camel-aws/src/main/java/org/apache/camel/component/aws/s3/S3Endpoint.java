@@ -48,7 +48,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
 
     private AmazonS3Client s3Client;
     private S3Configuration configuration;
-    private int maxMessagesPerPoll;
+    private int maxMessagesPerPoll = 10;
     
     public S3Endpoint(String uri, CamelContext context, S3Configuration configuration) {
         super(uri, context);
