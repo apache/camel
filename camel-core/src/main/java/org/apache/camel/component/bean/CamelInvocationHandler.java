@@ -18,10 +18,19 @@ package org.apache.camel.component.bean;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultExchange;
@@ -38,6 +47,9 @@ import org.slf4j.LoggerFactory;
 public class CamelInvocationHandler implements InvocationHandler {
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelInvocationHandler.class);
 
+    // use a static thread pool to not create a new thread pool for each invocation
+    private static ExecutorService executorService;
+
     private final Endpoint endpoint;
     private final Producer producer;
     private final MethodInfoCache methodInfoCache;
@@ -48,26 +60,61 @@ public class CamelInvocationHandler implements InvocationHandler {
         this.methodInfoCache = methodInfoCache;
     }
 
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         BeanInvocation invocation = new BeanInvocation(method, args);
-        ExchangePattern pattern = ExchangePattern.InOut;
         MethodInfo methodInfo = methodInfoCache.getMethodInfo(method);
-        if (methodInfo != null) {
-            pattern = methodInfo.getPattern();
-        }
-        Exchange exchange = new DefaultExchange(endpoint, pattern);
+
+        final ExchangePattern pattern = methodInfo != null ? methodInfo.getPattern() : ExchangePattern.InOut;
+        final Exchange exchange = new DefaultExchange(endpoint, pattern);
         exchange.getIn().setBody(invocation);
 
-        // process the exchange
-        LOG.trace("Proxied method call {} invoking producer: {}", method.getName(), producer);
-        producer.process(exchange);
+        // is the return type a future
+        final boolean isFuture = method.getReturnType() == Future.class;
 
+        // create task to execute the proxy and gather the reply
+        FutureTask task = new FutureTask<Object>(new Callable<Object>() {
+            public Object call() throws Exception {
+                // process the exchange
+                LOG.trace("Proxied method call {} invoking producer: {}", method.getName(), producer);
+                producer.process(exchange);
+
+                Object answer = afterInvoke(method, exchange, pattern, isFuture);
+                LOG.trace("Proxied method call {} returning: {}", method.getName(), answer);
+                return answer;
+            }
+        });
+
+        if (isFuture) {
+            // submit task and return future
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Submitting task for exchange id {}", exchange.getExchangeId());
+            }
+            getExecutorService(exchange.getContext()).submit(task);
+            return task;
+        } else {
+            // execute task now
+            try {
+                task.run();
+                return task.get();
+            } catch (ExecutionException e) {
+                // we don't want the wrapped exception from JDK
+                throw e.getCause();
+            }
+        }
+    }
+
+    protected Object afterInvoke(Method method, Exchange exchange, ExchangePattern pattern, boolean isFuture) throws Exception {
         // check if we had an exception
         Throwable cause = exchange.getException();
         if (cause != null) {
             Throwable found = findSuitableException(cause, method);
             if (found != null) {
-                throw found;
+                if (found instanceof Exception) {
+                    throw (Exception) found;
+                } else {
+                    // wrap as exception
+                    throw new CamelExchangeException("Error processing exchange", exchange, cause);
+                }
             }
             // special for runtime camel exceptions as they can be nested
             if (cause instanceof RuntimeCamelException) {
@@ -78,26 +125,71 @@ public class CamelInvocationHandler implements InvocationHandler {
                 throw (RuntimeCamelException) cause;
             }
             // okay just throw the exception as is
-            throw cause;
+            if (cause instanceof Exception) {
+                throw (Exception) cause;
+            } else {
+                // wrap as exception
+                throw new CamelExchangeException("Error processing exchange", exchange, cause);
+            }
         }
 
-        // do not return a reply if the method is VOID or the MEP is not OUT capable
+        // do not return a reply if the method is VOID
         Class<?> to = method.getReturnType();
-        if (to == Void.TYPE || !pattern.isOutCapable()) {
-            return null;
-        }
-
-        // only convert if there is a body
-        if (!exchange.hasOut() || exchange.getOut().getBody() == null) {
-            // there is no body so return null
+        if (to == Void.TYPE) {
             return null;
         }
 
         // use type converter so we can convert output in the desired type defined by the method
         // and let it be mandatory so we know wont return null if we cant convert it to the defined type
-        Object answer = exchange.getOut().getMandatoryBody(to);
-        LOG.trace("Proxied method call {} returning: {}", method.getName(), answer);
+        Object answer;
+        if (!isFuture) {
+            answer = getBody(exchange, to);
+        } else {
+            // if its a Future then we need to extract the class from the future type so we know
+            // which class to return the result as
+            Class<?> returnTo = getGenericType(exchange.getContext(), method.getGenericReturnType());
+            answer = getBody(exchange, returnTo);
+        }
+
         return answer;
+    }
+
+    private static Object getBody(Exchange exchange, Class<?> type) throws InvalidPayloadException {
+        // get the body from the Exchange from either OUT or IN
+        if (exchange.hasOut()) {
+            if (exchange.getOut().getBody() != null) {
+                return exchange.getOut().getMandatoryBody(type);
+            } else {
+                return null;
+            }
+        } else {
+            if (exchange.getIn().getBody() != null) {
+                return exchange.getIn().getMandatoryBody(type);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    protected static Class getGenericType(CamelContext context, Type type) throws ClassNotFoundException {
+        if (type == null) {
+            // fallback and use object
+            return Object.class;
+        }
+
+        // unfortunately java dont provide a nice api for getting the generic type of the return type
+        // due type erasure, so we have to gather it based on a String representation
+        String name = ObjectHelper.between(type.toString(), "<", ">");
+        if (name != null) {
+            if (name.contains("<")) {
+                // we only need the outer type
+                name = ObjectHelper.before(name, "<");
+            }
+            return context.getClassResolver().resolveMandatoryClass(name);
+        } else {
+            // fallback and use object
+            return Object.class;
+        }
     }
 
     /**
@@ -124,6 +216,19 @@ public class CamelInvocationHandler implements InvocationHandler {
         }
 
         return null;
+    }
+
+    protected static synchronized ExecutorService getExecutorService(CamelContext context) {
+        // CamelContext will shutdown thread pool when it shutdown so we can lazy create it on demand
+        // but in case of hot-deploy or the likes we need to be able to re-create it (its a shared static instance)
+        if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
+            // try to lookup a pool first based on id/profile
+            executorService = context.getExecutorServiceStrategy().lookup(CamelInvocationHandler.class, "CamelInvocationHandler", "CamelInvocationHandler");
+            if (executorService == null) {
+                executorService = context.getExecutorServiceStrategy().newDefaultThreadPool(CamelInvocationHandler.class, "CamelInvocationHandler");
+            }
+        }
+        return executorService;
     }
 
 }

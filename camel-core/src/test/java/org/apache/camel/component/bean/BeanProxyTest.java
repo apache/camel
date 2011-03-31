@@ -83,16 +83,6 @@ public class BeanProxyTest extends ContextTestSupport {
         assertEquals("<order>FAIL</order>", reply);
     }
 
-    // TODO: Does not pass on JDK6
-
-    public void disabledtestBeanProxyFailureNullBody() throws Exception {
-        Endpoint endpoint = context.getEndpoint("direct:start");
-        OrderService service = ProxyHelper.createProxy(endpoint, OrderService.class);
-
-        String reply = service.submitOrderStringReturnString(null);
-        assertEquals("<order>FAIL</order>", reply);
-    }
-
     public void testBeanProxyFailureNotXMLBody() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:start");
         OrderService service = ProxyHelper.createProxy(endpoint, OrderService.class);
