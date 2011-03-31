@@ -42,13 +42,7 @@ public class JdbcAggregateRecoverDeadLetterChannelFailedTest extends AbstractJdb
         getMockEndpoint("mock:aggregated").expectedMessageCount(4);
         // it should keep sending to DLC if it failed, so test for min 3 attempts
         getMockEndpoint("mock:dead").expectedMinimumMessageCount(3);
-        // all the details should be the same about redelivered and redelivered 3 times
-        getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
-        getMockEndpoint("mock:dead").message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        getMockEndpoint("mock:dead").message(1).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
-        getMockEndpoint("mock:dead").message(1).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        getMockEndpoint("mock:dead").message(2).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
-        getMockEndpoint("mock:dead").message(2).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
+        getMockEndpoint("mock:dead").allMessages().header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
 
         template.sendBodyAndHeader("direct:start", "A", "id", 123);
         template.sendBodyAndHeader("direct:start", "B", "id", 123);
