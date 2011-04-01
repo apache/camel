@@ -637,7 +637,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 MessageContentsList content = new MessageContentsList();
                 int i = 0;
                 
-                for (MessagePartInfo partInfo : boi.getOperationInfo().getInput().getMessageParts()) {
+                for (MessagePartInfo partInfo : boi.getInput().getMessageParts()) {
                     if (elements.size() > i && (isSkipPayloadMessagePartCheck() || partInfo.getConcreteName().getLocalPart()
                         .equals(elements.get(i).getLocalName()))) {
                         content.put(partInfo, elements.get(i++));
