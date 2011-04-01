@@ -66,11 +66,10 @@
       <artifactId>spring-orm</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-jpa_3.0_spec</artifactId>
+      <groupId>org.apache.servicemix.specs</groupId>
+      <artifactId>org.apache.servicemix.specs.java-persistence-api-1.1.1</artifactId>
       <scope>provided</scope>
-    </dependency>
-
+    </dependency> 
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>

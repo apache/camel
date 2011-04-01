@@ -978,6 +978,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.apache.servicemix.specs</groupId>
+        <artifactId>org.apache.servicemix.specs.java-persistence-api-1.1.1</artifactId>
+        <version>${servicemix-specs-version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jsp_2.1_spec</artifactId>
         <version>${geronimo-jsp-spec-version}</version>
