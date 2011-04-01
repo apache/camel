@@ -419,6 +419,6 @@ public class ProducerCache extends ServiceSupport {
 
     @Override
     public String toString() {
-        return "ProducerCache for source: " + source;
+        return "ProducerCache for source: " + source + ", capacity: " + getCapacity();
     }
 }
