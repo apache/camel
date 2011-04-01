@@ -114,7 +114,9 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             Buffer rc = hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
                     SortedIndex<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, true);
-                    return index.put(keyBuffer, exchangeBuffer);
+                    Buffer buffer = index.put(keyBuffer, exchangeBuffer);
+                    LOG.trace("Added key index {}", keyBuffer);
+                    return buffer;
                 }
 
                 @Override
@@ -147,7 +149,9 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
                     if (index == null) {
                         return null;
                     }
-                    return index.get(keyBuffer);
+                    Buffer buffer = index.get(keyBuffer);
+                    LOG.trace("Getting key index {}", keyBuffer);
+                    return buffer;
                 }
 
                 @Override
@@ -180,11 +184,13 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
                 public Buffer execute(Transaction tx) {
                     SortedIndex<Buffer, Buffer> index = hawtDBFile.getRepositoryIndex(tx, repositoryName, true);
                     // remove from the in progress index
-                    index.remove(keyBuffer);
+                    Buffer buffer = index.remove(keyBuffer);
+                    LOG.trace("Removed key index {} -> {}", keyBuffer, buffer);
 
                     // and add it to the confirmed index
                     SortedIndex<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted(), true);
                     indexCompleted.put(confirmKeyBuffer, exchangeBuffer);
+                    LOG.trace("Added confirm index {}", confirmKeyBuffer);
                     return null;
                 }
 
@@ -208,7 +214,9 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             hawtDBFile.execute(new Work<Buffer>() {
                 public Buffer execute(Transaction tx) {
                     SortedIndex<Buffer, Buffer> indexCompleted = hawtDBFile.getRepositoryIndex(tx, getRepositoryNameCompleted(), true);
-                    return indexCompleted.remove(confirmKeyBuffer);
+                    Buffer buffer = indexCompleted.remove(confirmKeyBuffer);
+                    LOG.trace("Removed confirm index {} -> {}", confirmKeyBuffer, buffer);
+                    return buffer;
                 }
 
                 @Override
