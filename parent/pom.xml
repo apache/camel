@@ -142,7 +142,7 @@
     <stax-api-version>1.0.1</stax-api-version>
     <stringtemplate-version>3.0</stringtemplate-version>
     <tagsoup-version>1.2</tagsoup-version>
-    <testng-version>5.8</testng-version>
+    <testng-version>6.0.1</testng-version>
     <velocity-version>1.7</velocity-version>
     <woodstox-version>4.0.7</woodstox-version>
     <xbean-spring-version>3.5</xbean-spring-version>
@@ -668,6 +668,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-testng</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1242,7 +1247,6 @@
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
         <version>${testng-version}</version>
-        <classifier>jdk15</classifier>
       </dependency>
       <dependency>
         <groupId>org.hamcrest</groupId>

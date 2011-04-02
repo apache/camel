@@ -414,6 +414,10 @@
     </dependency>    
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-testng</artifactId>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-velocity</artifactId>
     </dependency>
     <dependency>
