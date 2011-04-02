@@ -135,7 +135,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
     private String managementName;
     private ClassLoader applicationContextClassLoader;
-    private final Map<EndpointKey, Endpoint> endpoints = new EndpointRegistry();
+    private Map<EndpointKey, Endpoint> endpoints;
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
@@ -201,6 +201,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public DefaultCamelContext() {
         super();
+
+        // create endpoint registry at first since end users may access endpoints before CamelContext is started
+        this.endpoints = new EndpointRegistry(this);
 
         // use WebSphere specific resolver if running on WebSphere
         if (WebSpherePackageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
@@ -1418,6 +1421,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         EventHelper.notifyCamelContextStarting(this);
 
         forceLazyInitialization();
+
+        // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
+        // and we needed to create endpoints up-front as it may be accessed before this context is started
+        endpoints = new EndpointRegistry(this, endpoints);
+        addService(endpoints);
         addService(executorServiceStrategy);
         addService(producerServicePool);
         addService(inflightRepository);

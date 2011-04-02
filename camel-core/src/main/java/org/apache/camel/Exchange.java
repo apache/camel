@@ -138,9 +138,10 @@ public interface Exchange {
     String LOOP_INDEX               = "CamelLoopIndex";
     String LOOP_SIZE                = "CamelLoopSize";
 
-    String MAXIMUM_CACHE_POOL_SIZE = "CamelMaximumCachePoolSize";
-    String MULTICAST_INDEX         = "CamelMulticastIndex";
-    String MULTICAST_COMPLETE      = "CamelMulticastComplete";
+    String MAXIMUM_CACHE_POOL_SIZE     = "CamelMaximumCachePoolSize";
+    String MAXIMUM_ENDPOINT_CACHE_SIZE = "CamelMaximumEndpointCacheSize";
+    String MULTICAST_INDEX             = "CamelMulticastIndex";
+    String MULTICAST_COMPLETE          = "CamelMulticastComplete";
 
     String NOTIFY_EVENT = "CamelNotifyEvent";
 

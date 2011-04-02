@@ -16,20 +16,34 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Map;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUCache;
 
 /**
- * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUCache}
- * to keep the last 1000 in an internal cache.
+ * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUCache}.
  *
  * @version 
  */
 public class EndpointRegistry extends LRUCache<EndpointKey, Endpoint> {
 
-    public EndpointRegistry() {
-        // use a cache size of 1000
-        super(1000);
+    private final CamelContext context;
+
+    public EndpointRegistry(CamelContext context) {
+        super(CamelContextHelper.getMaximumEndpointCacheSize(context));
+        this.context = context;
     }
 
+    public EndpointRegistry(CamelContext context, Map<EndpointKey, Endpoint> endpoints) {
+        this(context);
+        putAll(endpoints);
+    }
+
+    @Override
+    public String toString() {
+        return "EndpointRegistry for " + context.getName() + ", capacity: " + getMaxCacheSize();
+    }
 }

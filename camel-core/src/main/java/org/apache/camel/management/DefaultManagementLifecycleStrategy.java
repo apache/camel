@@ -42,6 +42,7 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
+import org.apache.camel.impl.EndpointRegistry;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.ProducerCache;
@@ -54,6 +55,7 @@ import org.apache.camel.management.mbean.ManagedComponent;
 import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedEndpoint;
+import org.apache.camel.management.mbean.ManagedEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
@@ -407,6 +409,8 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             answer = new ManagedThrottlingInflightRoutePolicy(context, (ThrottlingInflightRoutePolicy) service);
         } else if (service instanceof ProducerCache) {
             answer = new ManagedProducerCache(context, (ProducerCache) service);
+        } else if (service instanceof EndpointRegistry) {
+            answer = new ManagedEndpointRegistry(context, (EndpointRegistry) service);
         } else if (service != null) {
             // fallback as generic service
             answer = new ManagedService(context, service);

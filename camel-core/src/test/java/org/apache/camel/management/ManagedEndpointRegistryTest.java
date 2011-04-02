@@ -27,9 +27,9 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class ManagedProducerCacheTest extends ManagementTestSupport {
+public class ManagedEndpointRegistryTest extends ManagementTestSupport {
 
-    public void testManageProducerCache() throws Exception {
+    public void testManageEndpointRegistry() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
@@ -43,22 +43,23 @@ public class ManagedProducerCacheTest extends ManagementTestSupport {
         List<ObjectName> list = new ArrayList<ObjectName>(set);
         ObjectName on = null;
         for (ObjectName name : list) {
-            if (name.getCanonicalName().contains("ProducerCache")) {
+            if (name.getCanonicalName().contains("EndpointRegistry")) {
                 on = name;
                 break;
             }
         }
 
-        assertNotNull("Should have found ProducerCache", on);
+        assertNotNull("Should have found EndpointRegistry", on);
 
         Integer max = (Integer) mbeanServer.getAttribute(on, "MaximumCacheSize");
         assertEquals(1000, max.intValue());
 
         Integer current = (Integer) mbeanServer.getAttribute(on, "Size");
-        assertEquals(1, current.intValue());
+        assertEquals(2, current.intValue());
 
         String source = (String) mbeanServer.getAttribute(on, "Source");
-        assertEquals("sendTo(Endpoint[mock://result])", source);
+        assertTrue(source.startsWith("EndpointRegistry"));
+        assertTrue(source.endsWith("capacity: 1000"));
     }
 
     @Override
