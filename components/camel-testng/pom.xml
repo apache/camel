@@ -26,13 +26,13 @@
         <relativePath>../../parent</relativePath>
     </parent>
 
-    <artifactId>camel-test</artifactId>
+    <artifactId>camel-testng</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: Test</name>
-    <description>Camel Testing Library using JUnit</description>
+    <name>Camel :: TestNG</name>
+    <description>Camel Testing Library using TestNG</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.test.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.testng.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>
@@ -46,8 +46,8 @@
             <artifactId>camel-spring</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
         </dependency>
 
         <!-- optional dependencies for running tests -->
