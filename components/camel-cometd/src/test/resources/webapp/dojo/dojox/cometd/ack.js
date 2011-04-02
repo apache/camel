@@ -3,8 +3,9 @@
  * $Revision$ $Date: 2009-05-10 13:06:45 +1000 (Sun, 10 May 2009) $
  */
 
-dojo.provide("dojox.cometd.timestamp");
+dojo.provide("dojox.cometd.ack");
 dojo.require("dojox.cometd");
-dojo.require("org.cometd.TimeStampExtension");
 
-dojox.cometd.registerExtension('timestamp', new org.cometd.TimeStampExtension());
+dojo.require("org.cometd.AckExtension");
+
+dojox.cometd.registerExtension('ack', new org.cometd.AckExtension());

@@ -28,11 +28,9 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Endpoint for Camel Cometd.
- *
- * @version 
  */
 public class CometdEndpoint extends DefaultEndpoint {
-   
+
     private String baseResource;
     private int timeout = 240000;
     private int interval;
@@ -42,7 +40,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     private int logLevel = 1;
     private URI uri;
     private CometdComponent component;
-    
+
     public CometdEndpoint(CometdComponent component, String uri, String remaining, Map<String, Object> parameters) {
         super(uri, component);
         this.component = component;
@@ -61,18 +59,18 @@ public class CometdEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(component, "component");
-        CometdConsumer consumer =  new CometdConsumer(this, processor);
+        CometdConsumer consumer = new CometdConsumer(this, processor);
         return consumer;
     }
 
     public void connect(CometdProducerConsumer prodcons) throws Exception {
         component.connect(prodcons);
     }
-    
+
     public void disconnect(CometdProducerConsumer prodcons) throws Exception {
         component.disconnect(prodcons);
     }
-    
+
     public CometdComponent getComponent() {
         return component;
     }
@@ -80,7 +78,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return false;
     }
-    
+
     public String getPath() {
         return uri.getPath();
     }
@@ -111,7 +109,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     public void setBaseResource(String baseResource) {
         this.baseResource = baseResource;
     }
-   
+
     public int getTimeout() {
         return timeout;
     }

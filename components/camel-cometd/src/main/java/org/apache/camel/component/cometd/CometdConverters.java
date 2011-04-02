@@ -20,12 +20,10 @@ import org.apache.camel.Converter;
 
 /**
  * Cometd specific converters.
- *
- * @version 
  */
 @Converter
 public final class CometdConverters {
-    
+
     private CometdConverters() {
         //Utility Class
     }

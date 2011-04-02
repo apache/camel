@@ -28,8 +28,6 @@ import org.cometd.server.BayeuxService;
 
 /**
  * A Consumer for receiving messages using Cometd and Bayeux protocol.
- * 
- * @version 
  */
 public class CometdConsumer extends DefaultConsumer implements CometdProducerConsumer {
 

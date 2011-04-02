@@ -4,9 +4,7 @@
 <head>
 <title>My Simple Ajax Example</title>
 
-<script type="text/javascript" src="dojo/dojo/dojo.js.uncompressed.js"></script>
-<script type="text/javascript"
-	src="dojo/dojox/cometd.js.uncompressed.js"></script>
+<script type="text/javascript" src="dojo/dojo/dojo.js"></script>
 <script type="text/javascript">
     
         dojo.require("dojox.cometd");
@@ -17,6 +15,7 @@
         }
            
         dojo.addOnLoad(setupComet);
+        dojo.addOnUnload(dojox.cometd, "disconnect");
         
         function callback(msg){      
         	dojo.byId("MSG").innerHTML += msg.data + "\n";              

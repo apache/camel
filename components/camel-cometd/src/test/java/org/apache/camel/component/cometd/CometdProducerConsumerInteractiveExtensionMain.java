@@ -12,19 +12,24 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.           hello
- *
+ * limitations under the License.
  */
 package org.apache.camel.component.cometd;
 
 import java.io.File;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.cometd.Client;
+import org.cometd.Extension;
+import org.cometd.Message;
+import org.cometd.RemoveListener;
 
-public class CometdProducerConsumerInteractiveMain {
+public class CometdProducerConsumerInteractiveExtensionMain {
 
     private static final String URI = "cometd://127.0.0.1:9091/service/test?baseResource=file:./src/test/resources/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
@@ -37,7 +42,7 @@ public class CometdProducerConsumerInteractiveMain {
     private String pwd = "changeit";
 
     public static void main(String[] args) throws Exception {
-        CometdProducerConsumerInteractiveMain me = new CometdProducerConsumerInteractiveMain();
+        CometdProducerConsumerInteractiveExtensionMain me = new CometdProducerConsumerInteractiveExtensionMain();
         me.testCometdProducerConsumerInteractive();
     }
 
@@ -53,6 +58,11 @@ public class CometdProducerConsumerInteractiveMain {
                 CometdComponent component = (CometdComponent) context.getComponent("cometds");
                 component.setSslPassword(pwd);
                 component.setSslKeyPassword(pwd);
+
+                CometdComponent component2 = (CometdComponent) context.getComponent("cometd");
+                Censor bayeuxAuthenticator = new Censor();
+                component2.addExtension(bayeuxAuthenticator);
+
                 File file = new File("./src/test/resources/jsse/localhost.ks");
                 URI keyStoreUrl = file.toURI();
                 component.setSslKeystore(keyStoreUrl.getPath());
@@ -62,4 +72,37 @@ public class CometdProducerConsumerInteractiveMain {
         };
     }
 
+    public static final class Censor implements Extension, RemoveListener {
+
+        private HashSet<String> forbidden = new HashSet<String>(Arrays.asList("one", "two"));
+
+        @Override
+        public void removed(String clientId, boolean timeout) {
+            // called on remove of client
+        }
+
+        @Override
+        public Message rcv(Client from, Message message) {
+            return message;
+        }
+
+        @Override
+        public Message rcvMeta(Client from, Message message) {
+            return message;
+        }
+
+        @Override
+        public Message send(Client from, Message message) {
+            Object data = message.getData();
+            if (forbidden.contains(data)) {
+                message.put("data", "***");
+            }
+            return message;
+        }
+
+        @Override
+        public Message sendMeta(Client from, Message message) {
+            return message;
+        }
+    }
 }

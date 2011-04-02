@@ -35,7 +35,7 @@ public class SslCometdProducerConsumerTest extends CamelTestSupport {
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     protected String pwd = "changeit";
-    
+
     @Test
     public void testProducer() throws Exception {
         Person person = new Person("David", "Greco");
@@ -72,26 +72,29 @@ public class SslCometdProducerConsumerTest extends CamelTestSupport {
             }
         };
     }
-    
+
     public static class Person {
 
         private String name;
         private String surname;
-        
+
         Person(String name, String surname) {
             this.name = name;
             this.surname = surname;
         }
-        
+
         public String getName() {
             return name;
         }
+
         public String getSurname() {
             return surname;
         }
+
         public void setName(String name) {
             this.name = name;
         }
+
         public void setSurname(String surname) {
             this.surname = surname;
         }

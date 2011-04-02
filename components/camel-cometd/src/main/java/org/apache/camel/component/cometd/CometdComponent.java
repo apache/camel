@@ -17,11 +17,15 @@
 package org.apache.camel.component.cometd;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.cometd.Extension;
+import org.cometd.SecurityPolicy;
 import org.cometd.server.AbstractBayeux;
 import org.cometd.server.continuation.ContinuationCometdServlet;
 import org.eclipse.jetty.server.Connector;
@@ -37,8 +41,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Component for Jetty Cometd
- * 
- * @version 
  */
 public class CometdComponent extends DefaultComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(CometdComponent.class);
@@ -50,6 +52,8 @@ public class CometdComponent extends DefaultComponent {
     private String sslPassword;
     private String sslKeystore;
     private SslSocketConnector sslSocketConnector;
+    private SecurityPolicy securityPolicy;
+    private List<Extension> extensions;
 
     class ConnectorRef {
         Connector connector;
@@ -57,7 +61,7 @@ public class CometdComponent extends DefaultComponent {
         int refCount;
 
         public ConnectorRef(Connector connector,
-                ContinuationCometdServlet servlet) {
+                            ContinuationCometdServlet servlet) {
             this.connector = connector;
             this.servlet = servlet;
             increment();
@@ -102,7 +106,7 @@ public class CometdComponent extends DefaultComponent {
                 connector.setHost(endpoint.getUri().getHost());
                 if ("localhost".equalsIgnoreCase(endpoint.getUri().getHost())) {
                     LOG.warn("You use localhost interface! It means that no external connections will be available."
-                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)?");
+                            + " Don't you want to use 0.0.0.0 instead (all network interfaces)?");
                 }
                 getServer().addConnector(connector);
 
@@ -114,8 +118,18 @@ public class CometdComponent extends DefaultComponent {
             } else {
                 connectorRef.increment();
             }
+
             AbstractBayeux bayeux = connectorRef.servlet.getBayeux();
             bayeux.setJSONCommented(endpoint.isJsonCommented());
+
+            if (securityPolicy != null) {
+                bayeux.setSecurityPolicy(securityPolicy);
+            }
+            if (extensions != null) {
+                for (Extension extension : extensions) {
+                    bayeux.addExtension(extension);
+                }
+            }
             prodcon.setBayeux(bayeux);
         }
     }
@@ -145,26 +159,26 @@ public class CometdComponent extends DefaultComponent {
         ContinuationCometdServlet servlet = new ContinuationCometdServlet();
 
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
-        context.setConnectorNames(new String[] {connector.getName()});
+        context.setConnectorNames(new String[]{connector.getName()});
 
         ServletHolder holder = new ServletHolder();
         holder.setServlet(servlet);
-        
+
         // Use baseResource to pass as a parameter the url
         // pointing to by example classpath:webapp
         if (endpoint.getBaseResource() != null) {
             String[] resources = endpoint.getBaseResource().split(":");
             LOG.debug(">>> Protocol found :" + resources[0] + ", and resource : " + resources[1]);
-            
+
             if (resources[0].equals("file")) {
                 context.setBaseResource(Resource.newResource(resources[1]));
             } else if (resources[0].equals("classpath")) {
                 // Create a URL handler using classpath protocol
-                URL url = this.getCamelContext().getClassResolver().loadResourceAsURL(resources[1]); 
+                URL url = this.getCamelContext().getClassResolver().loadResourceAsURL(resources[1]);
                 context.setBaseResource(Resource.newResource(url));
-            } 
+            }
         }
-        
+
         context.addServlet(holder, "/cometd/*");
         context.addServlet("org.eclipse.jetty.servlet.DefaultServlet", "/");
 
@@ -225,6 +239,29 @@ public class CometdComponent extends DefaultComponent {
 
     public void setSslKeystore(String sslKeystore) {
         this.sslKeystore = sslKeystore;
+    }
+
+    public void setSecurityPolicy(SecurityPolicy securityPolicy) {
+        this.securityPolicy = securityPolicy;
+    }
+
+    public SecurityPolicy getSecurityPolicy() {
+        return securityPolicy;
+    }
+
+    public List<Extension> getExtensions() {
+        return extensions;
+    }
+
+    public void setExtensions(List<Extension> extensions) {
+        this.extensions = extensions;
+    }
+
+    public void addExtension(Extension extension) {
+        if (extensions == null) {
+            extensions = new ArrayList<Extension>();
+        }
+        extensions.add(extension);
     }
 
     protected Server createServer() throws Exception {

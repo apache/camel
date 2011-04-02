@@ -30,5 +30,5 @@ public interface CometdProducerConsumer {
      * Sets the bayeux to use.
      */
     void setBayeux(AbstractBayeux bayeux);
-   
+
 }
