@@ -313,7 +313,9 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
 
             // should we use ordinary or jpa objects
             if (tracer.isUseJpa()) {
-                LOG.trace("Using class: " + this.jpaTraceEventMessageClassName + " for tracing event messages");
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Using class: " + this.jpaTraceEventMessageClassName + " for tracing event messages");
+                }
 
                 // load the jpa event message class
                 loadJpaTraceEventMessageClass(exchange);

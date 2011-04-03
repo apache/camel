@@ -417,6 +417,14 @@ public class ProducerCache extends ServiceSupport {
         return capacity;
     }
 
+    /**
+     * Purges this cache
+     */
+    public synchronized void purge() {
+        producers.clear();
+        pool.purge();
+    }
+
     @Override
     public String toString() {
         return "ProducerCache for source: " + source + ", capacity: " + getCapacity();

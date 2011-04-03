@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.EndpointRegistry;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
@@ -50,6 +51,11 @@ public class ManagedEndpointRegistry extends ManagedService {
     @ManagedAttribute(description = "Maximum cache size (capacity)")
     public Integer getMaximumCacheSize() {
         return endpointRegistry.getMaxCacheSize();
+    }
+
+    @ManagedOperation(description = "Purges the cache")
+    public void purge() {
+        endpointRegistry.purge();
     }
 
 }

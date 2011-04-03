@@ -59,6 +59,12 @@ public class ManagedProducerCacheTest extends ManagementTestSupport {
 
         String source = (String) mbeanServer.getAttribute(on, "Source");
         assertEquals("sendTo(Endpoint[mock://result])", source);
+
+        // purge
+        mbeanServer.invoke(on, "purge", null, null);
+
+        current = (Integer) mbeanServer.getAttribute(on, "Size");
+        assertEquals(0, current.intValue());
     }
 
     @Override

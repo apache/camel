@@ -42,6 +42,13 @@ public class EndpointRegistry extends LRUCache<EndpointKey, Endpoint> {
         putAll(endpoints);
     }
 
+    /**
+     * Purges the cache
+     */
+    public void purge() {
+        clear();
+    }
+
     @Override
     public String toString() {
         return "EndpointRegistry for " + context.getName() + ", capacity: " + getMaxCacheSize();

@@ -78,4 +78,9 @@ public interface ServicePool<Key, Service> {
      */
     int size();
 
+    /**
+     * Purges the pool.
+     */
+    void purge();
+
 }

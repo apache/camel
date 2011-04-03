@@ -114,6 +114,10 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
         public int size() {
             return producer != null ? 1 : 0;
         }
+
+        public void purge() {
+            producer = null;
+        }
     }
 
     @Override
@@ -147,6 +151,9 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
         pool.release(endpoint, producer);
         assertEquals(1, pool.size());
 
+        pool.purge();
+        assertEquals(0, pool.size());
+
         assertIsInstanceOf(MyPool.class, context.getProducerServicePool());
     }
 
@@ -175,6 +182,9 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
 
         assertEquals(2, counter);
         assertEquals(1, pool.size());
+
+        pool.purge();
+        assertEquals(0, pool.size());
     }
 
 }

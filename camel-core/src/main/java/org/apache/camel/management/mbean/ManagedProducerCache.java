@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.ProducerCache;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
@@ -53,6 +54,11 @@ public class ManagedProducerCache extends ManagedService {
     @ManagedAttribute(description = "Maximum cache size (capacity)")
     public Integer getMaximumCacheSize() {
         return producerCache.getCapacity();
+    }
+
+    @ManagedOperation(description = "Purges the cache")
+    public void purge() {
+        producerCache.purge();
     }
 
 }

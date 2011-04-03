@@ -60,6 +60,12 @@ public class ManagedEndpointRegistryTest extends ManagementTestSupport {
         String source = (String) mbeanServer.getAttribute(on, "Source");
         assertTrue(source.startsWith("EndpointRegistry"));
         assertTrue(source.endsWith("capacity: 1000"));
+
+        // purge
+        mbeanServer.invoke(on, "purge", null, null);
+
+        current = (Integer) mbeanServer.getAttribute(on, "Size");
+        assertEquals(0, current.intValue());
     }
 
     @Override

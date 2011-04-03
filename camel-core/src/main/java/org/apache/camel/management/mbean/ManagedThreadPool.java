@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ManagementStrategy;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
@@ -155,6 +156,11 @@ public class ManagedThreadPool {
     @ManagedAttribute(description = "Is shutdown")
     public boolean isShutdown() {
         return threadPool.isShutdown();
+    }
+
+    @ManagedOperation(description = "Purges the pool")
+    public void purge() {
+        threadPool.purge();
     }
 
 }

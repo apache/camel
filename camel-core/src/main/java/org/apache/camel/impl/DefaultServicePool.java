@@ -95,6 +95,10 @@ public abstract class DefaultServicePool<Key, Service> extends ServiceSupport im
         }
     }
 
+    public void purge() {
+        pool.clear();
+    }
+
     protected void doStart() throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Starting service pool: " + this);
