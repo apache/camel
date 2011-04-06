@@ -18,19 +18,17 @@ package org.apache.camel.component.jetty;
 
 import java.io.File;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
-public class HttpStreamCacheFileTest extends BaseJettyTest {
+public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
 
     private String body = "12345678901234567890123456789012345678901234567890";
 
@@ -43,31 +41,18 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
     }
 
     @Test
-    public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() throws Exception {
+    public void testStreamCacheToFileShouldBeDeletedInCaseOfStop() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
         String out = template.requestBody("direct:start", "Hello World", String.class);
-        assertEquals("Bye World", out);
+        assertEquals(body, out);
 
         // the temporary files should have been deleted
         File file = new File("./target/cachedir");
         String[] files = file.list();
         assertEquals("There should be no files", 0, files.length);
-    }
 
-    @Test
-    public void testStreamCacheToFileShouldBeDeletedInCaseOfException() throws Exception {
-        try {
-            template.requestBody("direct:start", null, String.class);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            HttpOperationFailedException hofe = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            String s = context.getTypeConverter().convertTo(String.class, hofe.getResponseBody());
-            assertEquals("Response body", body, s);
-        }
-
-        // the temporary files should have been deleted
-        File file = new File("./target/cachedir");
-        String[] files = file.list();
-        assertEquals("There should be no files", 0, files.length);
+       assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -81,19 +66,25 @@ public class HttpStreamCacheFileTest extends BaseJettyTest {
                 context.setStreamCaching(true);
 
                 // use a route so we got an unit of work
-                from("direct:start").to("http://localhost:{{port}}/myserver");
+                from("direct:start")
+                    .to("http://localhost:{{port}}/myserver")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            // there should be a temp cache file
+                            File file = new File("./target/cachedir");
+                            String[] files = file.list();
+                            assertTrue("There should be a temp cache file", files.length > 0);
+                        }
+                    })
+                    // TODO: CAMEL-3839: need to convert the body to a String as the tmp file will be deleted
+                    // before the producer template can convert the result back
+                    .convertBodyTo(String.class)
+                    // mark the exchange to stop continue routing
+                    .stop()
+                    .to("mock:result");
 
                 from("jetty://http://localhost:{{port}}/myserver")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                if (exchange.getIn().getBody() == null) {
-                                    exchange.getOut().setBody(body);
-                                    exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
-                                } else {
-                                    exchange.getOut().setBody("Bye World");
-                                }
-                            }
-                        });
+                    .transform().constant(body);
             }
         };
     }
