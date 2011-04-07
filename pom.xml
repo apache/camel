@@ -84,7 +84,7 @@
   </distributionManagement>
 
   <!-- Comment out the snapshot repositories as we don't need them now -->
-  <!--repositories>
+  <repositories>
         <repository>
               <id>apache.snapshots</id>
               <url>http://repository.apache.org/snapshots/</url>
@@ -108,7 +108,7 @@
                  <enabled>false</enabled>
              </releases>
          </pluginRepository>
-  </pluginRepositories-->
+  </pluginRepositories>
   <modules>
     <module>buildingtools</module>
     <module>parent</module>
