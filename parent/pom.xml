@@ -93,7 +93,7 @@
     <javax-mail-version>1.4.3</javax-mail-version>
     <jaxen-version>1.1.1</jaxen-version>
     <jdom-version>1.1</jdom-version>
-    <jetty-version>7.2.2.v20101205</jetty-version>
+    <jetty-version>7.3.1.v20110307</jetty-version>
     <jettison-version>1.2</jettison-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jibx-version>1.2.2</jibx-version>
@@ -101,7 +101,7 @@
     <jsch-version>0.1.44</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
-    <karaf-version>2.2.0</karaf-version>
+    <karaf-version>2.2.1-SNAPSHOT</karaf-version>
     <log4j-version>1.2.16</log4j-version>
     <lucene-version>3.0.3</lucene-version>
     <mina-version>1.1.7</mina-version>
