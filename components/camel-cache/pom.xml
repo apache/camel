@@ -33,9 +33,14 @@
     <description>Camel Cache support based on ehCache</description>
 
     <properties>
+        <camel.osgi.import>
+            !org.apache.camel.component.cache.*,
+            !org.apache.camel.processor.cache.*,
+            *
+        </camel.osgi.import>
         <camel.osgi.export.pkg>
-            org.apache.camel.component.cache.*,
-            org.apache.camel.processor.cache.*
+            org.apache.camel.component.cache.*;${camel.osgi.version},
+            org.apache.camel.processor.cache.*;${camel.osgi.version}
         </camel.osgi.export.pkg>
     </properties>
 
