@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.apache.camel.Exchange;
+
 /**
  * Delegates to another {@link org.apache.camel.management.PerformanceCounter}.
  * <p/>
@@ -44,17 +46,17 @@ public class DelegatePerformanceCounter implements PerformanceCounter {
         this.counter.setStatisticsEnabled(statisticsEnabled);
     }
 
-    public void completedExchange(long time) {
-        counter.completedExchange(time);
+    public void completedExchange(Exchange exchange, long time) {
+        counter.completedExchange(exchange, time);
     }
 
-    public void failedExchange() {
-        counter.failedExchange();
+    public void failedExchange(Exchange exchange) {
+        counter.failedExchange(exchange);
     }
 
     public boolean isStatisticsEnabled() {
         // statistics is only considered enabled if we have a counter to delegate to
-        // otherwise we do not want to gather statistics (we are just a delegate with noone to delegate to)
+        // otherwise we do not want to gather statistics (we are just a delegate with none to delegate to)
         return counter != null && counter.isStatisticsEnabled();
     }
 

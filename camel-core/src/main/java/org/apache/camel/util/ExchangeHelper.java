@@ -455,6 +455,10 @@ public final class ExchangeHelper {
         return exchange.getProperty(Exchange.REDELIVERY_EXHAUSTED, false, Boolean.class);
     }
 
+    public static boolean isRedelivered(Exchange exchange) {
+        return exchange.getIn().hasHeaders() && exchange.getIn().getHeader(Exchange.REDELIVERED, false, Boolean.class);
+    }
+
     public static boolean isInterrupted(Exchange exchange) {
         return exchange.getException(InterruptedException.class) != null;
     }

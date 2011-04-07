@@ -82,9 +82,9 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
         }
 
         if (!exchange.isFailed() && exchange.getException() == null) {
-            counter.completedExchange(duration);
+            counter.completedExchange(exchange, duration);
         } else {
-            counter.failedExchange();
+            counter.failedExchange(exchange);
         }
     }
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.apache.camel.Exchange;
+
 /**
  * A counter that gathers performance metrics when {@link org.apache.camel.Exchange} are routed in Camel.
  *
@@ -26,14 +28,17 @@ public interface PerformanceCounter {
     /**
      * Executed when an {@link org.apache.camel.Exchange} is complete.
      *
+     * @param exchange the exchange
      * @param time  the time it took in millis to complete it
      */
-    void completedExchange(long time);
+    void completedExchange(Exchange exchange, long time);
 
     /**
      * Executed when an {@link org.apache.camel.Exchange} failed.
+     *
+     * @param exchange the exchange
      */
-    void failedExchange();
+    void failedExchange(Exchange exchange);
 
     /**
      * Is statistics enabled.

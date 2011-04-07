@@ -18,8 +18,10 @@ package org.apache.camel.management.mbean;
 
 import java.util.Date;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.management.PerformanceCounter;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ExchangeHelper;
 import org.fusesource.commons.management.Statistic;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -29,6 +31,8 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 public abstract class ManagedPerformanceCounter extends ManagedCounter implements PerformanceCounter {
     private Statistic exchangesCompleted;
     private Statistic exchangesFailed;
+    private Statistic failuresHandled;
+    private Statistic redeliveries;
     private Statistic minProcessingTime;
     private Statistic maxProcessingTime;
     private Statistic totalProcessingTime;
@@ -44,6 +48,10 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         super.init(strategy);
         this.exchangesCompleted = strategy.createStatistic("org.apache.camel.exchangesCompleted", this, Statistic.UpdateMode.COUNTER);
         this.exchangesFailed = strategy.createStatistic("org.apache.camel.exchangesFailed", this, Statistic.UpdateMode.COUNTER);
+
+        this.failuresHandled = strategy.createStatistic("org.apache.camel.failuresHandled", this, Statistic.UpdateMode.COUNTER);
+        this.redeliveries = strategy.createStatistic("org.apache.camel.redeliveries", this, Statistic.UpdateMode.COUNTER);
+
         this.minProcessingTime = strategy.createStatistic("org.apache.camel.minimumProcessingTime", this, Statistic.UpdateMode.MINIMUM);
         this.maxProcessingTime = strategy.createStatistic("org.apache.camel.maximumProcessingTime", this, Statistic.UpdateMode.MAXIMUM);
         this.totalProcessingTime = strategy.createStatistic("org.apache.camel.totalProcessingTime", this, Statistic.UpdateMode.COUNTER);
@@ -62,6 +70,8 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         super.reset();
         exchangesCompleted.reset();
         exchangesFailed.reset();
+        failuresHandled.reset();
+        redeliveries.reset();
         minProcessingTime.reset();
         maxProcessingTime.reset();
         totalProcessingTime.reset();
@@ -81,6 +91,16 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     @ManagedAttribute(description = "Number of failed exchanges")
     public long getExchangesFailed() throws Exception {
         return exchangesFailed.getValue();
+    }
+
+    @ManagedAttribute(description = "Number of failures handled")
+    public long getFailuresHandled() throws Exception {
+        return failuresHandled.getValue();
+    }
+
+    @ManagedAttribute(description = "Number of redeliveries")
+    public long getRedeliveries() throws Exception {
+        return redeliveries.getValue();
     }
 
     @ManagedAttribute(description = "Min Processing Time [milliseconds]")
@@ -142,14 +162,13 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         this.statisticsEnabled = statisticsEnabled;
     }
 
-    /**
-     * This method is called when an exchange has been processed successfully.
-     * 
-     * @param time in milliseconds it spent on processing the exchange
-     */
-    public synchronized void completedExchange(long time) {
+    public synchronized void completedExchange(Exchange exchange, long time) {
         increment();
         exchangesCompleted.increment();
+
+        if (ExchangeHelper.isFailureHandled(exchange)) {
+            failuresHandled.increment();
+        }
 
         minProcessingTime.updateValue(time);
         maxProcessingTime.updateValue(time);
@@ -169,12 +188,13 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         meanProcessingTime.updateValue(mean);
     }
 
-    /**
-     * This method is called when an exchange has been processed and failed.
-     */
-    public synchronized void failedExchange() {
+    public synchronized void failedExchange(Exchange exchange) {
         increment();
         exchangesFailed.increment();
+
+        if (ExchangeHelper.isRedelivered(exchange)) {
+            redeliveries.increment();
+        }
 
         long now = new Date().getTime();
         if (firstExchangeFailureTimestamp.getUpdateCount() == 0) {
