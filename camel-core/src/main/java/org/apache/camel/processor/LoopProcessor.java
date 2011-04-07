@@ -94,9 +94,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable {
                               final AtomicInteger index, final AtomicInteger count) {
 
         // set current index as property
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("LoopProcessor: iteration #" + index.get());
-        }
+        LOG.debug("LoopProcessor: iteration #{}", index.get());
         exchange.setProperty(Exchange.LOOP_INDEX, index.get());
 
         boolean sync = processNext(exchange, new AsyncCallback() {

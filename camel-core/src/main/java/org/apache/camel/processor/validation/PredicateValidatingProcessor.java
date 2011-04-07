@@ -43,7 +43,7 @@ public class PredicateValidatingProcessor implements Processor, Traceable {
         boolean matches = predicate.matches(exchange);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Validation " + (matches ? "succeed " : "failed ") + "for " + exchange + " with Predicate[" + predicate + "]");
+            LOG.debug("Validation {} for {} with Predicate[{}]", new Object[]{matches ? "succeed" : "failed", exchange, predicate});
         }
 
         if (!matches) {

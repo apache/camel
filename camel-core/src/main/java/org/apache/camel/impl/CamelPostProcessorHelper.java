@@ -98,9 +98,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             try {
                 Processor processor = createConsumerProcessor(bean, method, endpoint);
                 Consumer consumer = endpoint.createConsumer(processor);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Created processor: " + processor + " for consumer: " + consumer);
-                }
+                LOG.debug("Created processor: {} for consumer: {}", processor, consumer);
                 startService(consumer, bean, beanName);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -115,9 +113,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         if (isSingleton(bean, beanName)) {
             getCamelContext().addService(service);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Service is not singleton so you must remember to stop it manually " + service);
-            }
+            LOG.debug("Service is not singleton so you must remember to stop it manually {}", service);
             ServiceHelper.startService(service);
         }
     }

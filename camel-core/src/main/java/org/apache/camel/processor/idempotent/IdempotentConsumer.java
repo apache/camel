@@ -138,9 +138,7 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
      * @param messageId the message ID of this exchange
      */
     protected void onDuplicateMessage(Exchange exchange, String messageId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Ignoring duplicate message with id: " + messageId + " for exchange: " + exchange);
-        }
+        LOG.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
     }
 
 }

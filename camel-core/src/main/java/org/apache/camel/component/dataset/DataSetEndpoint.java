@@ -190,8 +190,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
         // now lets assert that they are the same
         if (log.isDebugEnabled()) {
-            Integer dsi = actual.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class);
-            log.debug("Received message: " + index + " (DataSet index=" + dsi + ") = " + actual);
+            log.debug("Received message: {} (DataSet index={}) = {}",
+                    new Object[]{index, actual.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), actual});
         }
 
         assertMessageExpected(index, expected, actual);

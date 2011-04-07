@@ -71,9 +71,7 @@ public class PropertiesComponent extends DefaultComponent {
             paths = locations.split(",");
         }
         String endpointUri = parseUri(remaining, paths);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Endpoint uri parsed as: " + endpointUri);
-        }
+        LOG.debug("Endpoint uri parsed as: {}", endpointUri);
         return getCamelContext().getEndpoint(endpointUri);
     }
 

@@ -81,19 +81,13 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
         Matcher matcher = OPERATOR_PATTERN.matcher(expression);
         Matcher startMatcher = START_ANDOR_PATTERN.matcher(expression);
         if (matcher.matches() || startMatcher.matches()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Expression is evaluated as simple (with operator) expression: " + expression);
-            }
+            log.debug("Expression is evaluated as simple (with operator) expression: {}", expression);
             return createOperatorExpression(matcher, startMatcher, expression);
         } else if (SimpleLanguage.hasStartToken(expression)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Expression is evaluated as simple (strict) expression: " + expression);
-            }
+            log.debug("Expression is evaluated as simple (strict) expression: {}", expression);
             return createComplexConcatExpression(expression);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Expression is evaluated as simple (non strict) expression: " + expression);
-            }
+            log.debug("Expression is evaluated as simple (non strict) expression: {}", expression);
             return createSimpleExpression(expression, false);
         }
     }

@@ -116,28 +116,20 @@ public class PollEnricher extends ServiceSupport implements Processor {
 
         Exchange resourceExchange;
         if (timeout < 0) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Consumer receive: " + consumer);
-            }
+            LOG.debug("Consumer receive: {}", consumer);
             resourceExchange = consumer.receive();
         } else if (timeout == 0) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Consumer receiveNoWait: " + consumer);
-            }
+            LOG.debug("Consumer receiveNoWait: {}", consumer);
             resourceExchange = consumer.receiveNoWait();
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Consumer receive with timeout: " + timeout + " ms. " + consumer);
-            }
+            LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
             resourceExchange = consumer.receive(timeout);
         }
 
-        if (LOG.isDebugEnabled()) {
-            if (resourceExchange == null) {
-                LOG.debug("Consumer received no exchange");
-            } else {
-                LOG.debug("Consumer received: " + resourceExchange);
-            }
+        if (resourceExchange == null) {
+            LOG.debug("Consumer received no exchange");
+        } else {
+            LOG.debug("Consumer received: {}", resourceExchange);
         }
 
         if (resourceExchange != null && resourceExchange.isFailed()) {

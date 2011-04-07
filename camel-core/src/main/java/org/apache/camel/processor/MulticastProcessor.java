@@ -312,24 +312,20 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // its to hard to do parallel async routing so we let the caller thread be synchronously
             // and have it pickup the replies and do the aggregation (eg we use a latch to wait)
             // wait for aggregation to be done
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Waiting for on-the-fly aggregation to complete aggregating " + total.get() + " responses.");
-            }
+            LOG.debug("Waiting for on-the-fly aggregation to complete aggregating {} responses.", total.get());
             aggregationOnTheFlyDone.await();
 
             // did we fail for whatever reason, if so throw that caused exception
             if (executionException.get() != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Parallel processing failed due " + executionException.get().getMessage());
+                    LOG.debug("Parallel processing failed due {}", executionException.get().getMessage());
                 }
                 throw executionException.get();
             }
         }
 
         // no everything is okay so we are done
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Done parallel processing " + total + " exchanges");
-        }
+        LOG.debug("Done parallel processing {} exchanges", total);
     }
 
     /**
@@ -397,9 +393,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             while (!done) {
                 // check if we have already aggregate everything
                 if (allTasksSubmitted.get() && aggregated >= total.get()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Done aggregating " + aggregated + " exchanges on the fly.");
-                    }
+                    LOG.debug("Done aggregating {} exchanges on the fly.", aggregated);
                     break;
                 }
 
@@ -444,9 +438,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         // log a WARN we timed out since it will not be aggregated and the Exchange will be lost
                         LOG.warn("Parallel processing timed out after " + timeout + " millis for number " + aggregated + ". This task will be cancelled and will not be aggregated.");
                     }
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Timeout occurred after " + timeout + " millis for number " + aggregated + " task.");
-                    }
+                    LOG.debug("Timeout occurred after {} millis for number {} task.", timeout, aggregated);
                     timedOut = true;
 
                     // mark that index as timed out, which allows us to try to retrieve
@@ -477,10 +469,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             }
 
             if (timedOut || stoppedOnException) {
-                if (timedOut && LOG.isDebugEnabled()) {
-                    LOG.debug("Cancelling tasks due timeout after " + timeout + " millis.");
+                if (timedOut) {
+                    LOG.debug("Cancelling tasks due timeout after {} millis.", timeout);
                 }
-                if (stoppedOnException && LOG.isDebugEnabled()) {
+                if (stoppedOnException) {
                     LOG.debug("Cancelling tasks due stopOnException.");
                 }
                 // cancel tasks as we timed out (its safe to cancel done tasks)
@@ -534,9 +526,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             total.incrementAndGet();
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Done sequential processing " + total + " exchanges");
-        }
+        LOG.debug("Done sequential processing {} exchanges", total);
 
         return true;
     }

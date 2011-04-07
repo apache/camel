@@ -563,9 +563,7 @@ public final class EventHelper {
             started = ((ServiceSupport) notifier).isStarted();
         }
         if (!started) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Ignoring notifying event " + event + ". The EventNotifier has not been started yet: " + notifier);
-            }
+            LOG.debug("Ignoring notifying event {}. The EventNotifier has not been started yet: {}", event, notifier);
             return;
         }
 

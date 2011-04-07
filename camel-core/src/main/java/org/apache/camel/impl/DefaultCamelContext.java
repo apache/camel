@@ -432,7 +432,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                             answer = component.createEndpoint(uri);
 
                             if (answer != null && log.isDebugEnabled()) {
-                                log.debug(uri + " converted to endpoint: " + answer + " by component: " + component);
+                                log.debug("{} converted to endpoint: {} by component: {}", new Object[]{uri, answer, component});
                             }
                         }
                     }
@@ -606,9 +606,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public void addRoutes(RoutesBuilder builder) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Adding routes from builder: " + builder);
-        }
+        log.debug("Adding routes from builder: {}", builder);
         // lets now add the routes from the builder
         builder.addRoutesToCamelContext(this);
     }
@@ -961,9 +959,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             PropertiesComponent pc = getComponent("properties", PropertiesComponent.class);
             // the parser will throw exception if property key was not found
             String answer = pc.parseUri(text);
-            if (log.isDebugEnabled()) {
-                log.debug("Resolved text: " + text + " -> " + answer);
-            }
+            log.debug("Resolved text: {} -> {}", text, answer);
             return answer;
         }
 
@@ -1831,9 +1827,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             // what this does is to ensure Camel is more robust on starting routes as all routes
             // will then be prepared in time before we start inputs which will consume messages to be routed
             RouteService routeService = entry.getValue().getRouteService();
-            if (log.isDebugEnabled()) {
-                log.debug("Warming up route id: " + routeService.getId() + " having autoStartup=" + autoStartup);
-            }
+            log.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
             routeService.warmUp();
         }
     }
@@ -1872,13 +1866,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 }
 
                 // start the consumer on the route
-                if (log.isDebugEnabled()) {
-                    log.debug("Route: " + route.getId() + " >>> " + route);
-                    if (resumeOnly) {
-                        log.debug("Resuming consumer (order: " + order + ") on route: " + route.getId());
-                    } else {
-                        log.debug("Starting consumer (order: " + order + ") on route: " + route.getId());
-                    }
+                log.debug("Route: {} >>> {}", route.getId(), route);
+                if (resumeOnly) {
+                    log.debug("Resuming consumer (order: {}) on route: {}", order, route.getId());
+                } else {
+                    log.debug("Starting consumer (order: {}) on route: {}", order, route.getId());
                 }
 
                 if (resumeOnly && route.supportsSuspension()) {

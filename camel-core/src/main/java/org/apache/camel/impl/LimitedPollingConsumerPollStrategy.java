@@ -68,9 +68,7 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
         } else {
             times += 1;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Rollback occurred after " + times + " times when consuming " + endpoint);
-        }
+        log.debug("Rollback occurred after {} times when consuming {}", times, endpoint);
 
         boolean retry = false;
 

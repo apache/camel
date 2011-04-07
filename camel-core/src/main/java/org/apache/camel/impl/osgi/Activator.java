@@ -94,9 +94,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     public Object addingBundle(Bundle bundle, BundleEvent event) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Bundle started: " + bundle.getSymbolicName());
-        }
+        LOG.debug("Bundle started: {}", bundle.getSymbolicName());
         List<BaseService> r = new ArrayList<BaseService>();
         registerComponents(bundle, r);
         registerLanguages(bundle, r);
@@ -113,9 +111,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     public void removedBundle(Bundle bundle, BundleEvent event, Object object) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Bundle stopped: " + bundle.getSymbolicName());
-        }
+        LOG.debug("Bundle stopped: {}", bundle.getSymbolicName());
         List<BaseService> r = resolvers.remove(bundle.getBundleId());
         if (r != null) {
             for (BaseService service : r) {
@@ -129,9 +125,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             Map<String, String> components = new HashMap<String, String>();
             for (Enumeration e = bundle.getEntryPaths(META_INF_COMPONENT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found entry: " + path + " in bundle " + bundle.getSymbolicName());
-                }
+                LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
                 String name = path.substring(path.lastIndexOf("/") + 1);
                 components.put(name, path);
             }
@@ -146,9 +140,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             Map<String, String> languages = new HashMap<String, String>();
             for (Enumeration e = bundle.getEntryPaths(META_INF_LANGUAGE); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found entry: " + path + " in bundle " + bundle.getSymbolicName());
-                }
+                LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
                 String name = path.substring(path.lastIndexOf("/") + 1);
                 languages.put(name, path);
             }
@@ -157,9 +149,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             }
             for (Enumeration e = bundle.getEntryPaths(META_INF_LANGUAGE_RESOLVER); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found entry: " + path + " in bundle " + bundle.getSymbolicName());
-                }
+                LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
                 String name = path.substring(path.lastIndexOf("/") + 1);
                 resolvers.add(new BundleMetaLanguageResolver(bundle, name, path));
             }
@@ -171,9 +161,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             Map<String, String> dataformats = new HashMap<String, String>();
             for (Enumeration e = bundle.getEntryPaths(META_INF_DATAFORMAT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found entry: " + path + " in bundle " + bundle.getSymbolicName());
-                }
+                LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
                 String name = path.substring(path.lastIndexOf("/") + 1);
                 dataformats.put(name, path);
             }
@@ -323,10 +311,10 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                         }
                     }
                 }
-                LOG.info("Found " + classes.size() + " @Converter classes to load");
+                LOG.info("Found {} @Converter classes to load", classes.size());
                 for (Class type : classes) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Loading converter class: " + ObjectHelper.name(type));
+                        LOG.debug("Loading converter class: {}", ObjectHelper.name(type));
                     }
                     loadConverterMethods(registry, type);
                 }
@@ -357,9 +345,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 return null;
             }
             URL url = bundle.getEntry(path);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("The entry " + name + "'s url is" + url);
-            }
+            LOG.debug("The entry {}'s url is {}", name, url);
             return createInstance(name, url, context.getInjector());
         }
 

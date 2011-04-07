@@ -113,9 +113,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
         // setting batch size to 0 or negative is like disabling it, so we set it as the max value
         // as the code logic is dependent on a batch size having 1..n value
         if (batchSize <= 0) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Disabling batch size, will only be triggered by timeout");
-            }
+            LOG.debug("Disabling batch size, will only be triggered by timeout");
             this.batchSize = Integer.MAX_VALUE;
         } else {
             this.batchSize = batchSize;
@@ -377,9 +375,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
         }
 
         public void enqueueExchange(Exchange exchange) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Received exchange to be batched: " + exchange);
-            }
+            LOG.debug("Received exchange to be batched: {}", exchange);
             queueLock.lock();
             try {
                 // pre test whether the completion predicate matched
@@ -405,9 +401,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
                 Exchange exchange = iter.next();
                 iter.remove();
                 try {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Sending aggregated exchange: " + exchange);
-                    }
+                    LOG.debug("Sending aggregated exchange: {}", exchange);
                     processExchange(exchange);
                 } catch (Throwable t) {
                     // must catch throwable to avoid growing memory

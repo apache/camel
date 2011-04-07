@@ -163,9 +163,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         if (ObjectHelper.isEmpty(key)) {
             // we have a bad correlation key
             if (isIgnoreInvalidCorrelationKeys()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Invalid correlation key. This Exchange will be ignored: " + exchange);
-                }
+                LOG.debug("Invalid correlation key. This Exchange will be ignored: {}", exchange);
                 return;
             } else {
                 throw new CamelExchangeException("Invalid correlation key", exchange);
@@ -361,9 +359,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         if (fromTimeout && isDiscardOnCompletionTimeout()) {
             // discard due timeout
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Aggregation for correlation key " + key + " discarding aggregated exchange: " + exchange);
-            }
+            LOG.debug("Aggregation for correlation key {} discarding aggregated exchange: ()", key, exchange);
             // must confirm the discarded exchange
             aggregationRepository.confirm(exchange.getContext(), exchange.getExchangeId());
             // and remove redelivery state as well
@@ -375,9 +371,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     }
 
     private void onSubmitCompletion(final Object key, final Exchange exchange) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Aggregation complete for correlation key " + key + " sending aggregated exchange: " + exchange);
-        }
+        LOG.debug("Aggregation complete for correlation key {} sending aggregated exchange: {}", key, exchange);
 
         // add this as in progress before we submit the task
         inProgressCompleteExchanges.add(exchange.getExchangeId());
@@ -385,9 +379,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // send this exchange
         executorService.submit(new Runnable() {
             public void run() {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Processing aggregated exchange: " + exchange);
-                }
+                LOG.debug("Processing aggregated exchange: {}", exchange);
 
                 // add on completion task so we remember to update the inProgressCompleteExchanges
                 exchange.addOnCompletion(new AggregateOnCompletion(exchange.getExchangeId()));
@@ -583,9 +575,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
         @Override
         public boolean onEviction(String key, String exchangeId) {
-            if (log.isDebugEnabled()) {
-                log.debug("Completion timeout triggered for correlation key: " + key);
-            }
+            log.debug("Completion timeout triggered for correlation key: {}", key);
 
             boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
             if (inProgress) {
@@ -675,9 +665,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 if (inProgress) {
                     LOG.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
                 } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Loading aggregated exchange with id: " + exchangeId + " to be recovered.");
-                    }
+                    LOG.debug("Loading aggregated exchange with id: {} to be recovered.", exchangeId);
                     Exchange exchange = recoverable.recover(camelContext, exchangeId);
                     if (exchange != null) {
                         // get the correlation key
@@ -725,9 +713,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                                 exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER, recoverable.getMaximumRedeliveries());
                             }
 
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Delivery attempt: " + data.redeliveryCounter + " to recover aggregated exchange with id: " + exchangeId + "");
-                            }
+                            LOG.debug("Delivery attempt: {} to recover aggregated exchange with id: {}", data.redeliveryCounter, exchangeId);
 
                             // not exhaust so resubmit the recovered exchange
                             onSubmitCompletion(key, exchange);

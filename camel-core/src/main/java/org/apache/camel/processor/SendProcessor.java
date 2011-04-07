@@ -80,9 +80,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 exchange = configureExchange(exchange, pattern);
-                if (log.isDebugEnabled()) {
-                    log.debug(">>>> " + destination + " " + exchange);
-                }
+                log.debug(">>>> {} {}", destination, exchange);
                 producer.process(exchange);
                 return exchange;
             }
@@ -98,9 +96,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         return producerCache.doInAsyncProducer(destination, exchange, pattern, callback, new AsyncProducerCallback() {
             public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, Exchange exchange, ExchangePattern pattern, AsyncCallback callback) {
                 exchange = configureExchange(exchange, pattern);
-                if (log.isDebugEnabled()) {
-                    log.debug(">>>> " + destination + " " + exchange);
-                }
+                log.debug(">>>> {} {}", destination, exchange);
                 return AsyncProcessorHelper.process(asyncProducer, exchange, callback);
             }
         });
@@ -136,7 +132,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         Endpoint lookup = camelContext.hasEndpoint(destination.getEndpointKey());
         if (lookup instanceof InterceptSendToEndpoint) {
             if (log.isDebugEnabled()) {
-                log.debug("Intercepted sending to " + destination.getEndpointUri() + " -> " + lookup.getEndpointUri());
+                log.debug("Intercepted sending to {} -> {}", destination.getEndpointUri(), lookup.getEndpointUri());
             }
             destination = lookup;
         }

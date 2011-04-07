@@ -61,9 +61,7 @@ public class XsltUriResolver implements URIResolver {
         LOG.trace("Resolving URI with href: {} and base: {}", href, base);
 
         if (href.startsWith("classpath:")) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Resolving URI from classpath: " + href);
-            }
+            LOG.debug("Resolving URI from classpath: {}", href);
 
             String name = ObjectHelper.after(href, ":");
             InputStream is = resolver.loadResourceAsStream(name);
@@ -74,9 +72,7 @@ public class XsltUriResolver implements URIResolver {
         }
 
         if (href.startsWith("file:")) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Resolving URI from file: " + href);
-            }
+            LOG.debug("Resolving URI from file: {}", href);
 
             String name = ObjectHelper.after(href, ":");
             File file = new File(name);

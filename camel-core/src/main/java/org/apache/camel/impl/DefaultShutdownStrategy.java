@@ -250,9 +250,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Shutdown complete for: " + consumer);
-        }
+        LOG.debug("Shutdown complete for: {}", consumer);
     }
 
     /**
@@ -272,9 +270,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Suspend complete for: " + consumer);
-        }
+        LOG.debug("Suspend complete for: {}", consumer);
     }
 
     private ExecutorService getExecutorService() {
@@ -346,9 +342,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // 2) wait until all inflight and pending exchanges has been completed
             // 3) shutdown the deferred routes
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("There are " + routes.size() + " routes to " + (suspendOnly ? "suspend" : "shutdown"));
-            }
+            LOG.debug("There are {} routes to {}", routes.size(), suspendOnly ? "suspend" : "shutdown");
 
             // list of deferred consumers to shutdown when all exchanges has been completed routed
             // and thus there are no more inflight exchanges so they can be safely shutdown at that time
@@ -423,9 +417,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         }
                         if (inflight > 0) {
                             size += inflight;
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug(inflight + " inflight and pending exchanges for consumer: " + consumer);
-                            }
+                            LOG.debug("{} inflight and pending exchanges for consumer: {}", inflight, consumer);
                         }
                     }
                 }
@@ -455,7 +447,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 Consumer consumer = deferred.getConsumer();
                 if (consumer instanceof ShutdownAware) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Route: " + deferred.getRoute().getId() + " preparing to shutdown.");
+                        LOG.debug("Route: {} preparing to shutdown.", deferred.getRoute().getId());
                     }
                     ((ShutdownAware) consumer).prepareShutdown();
                     LOG.info("Route: " + deferred.getRoute().getId() + " preparing to shutdown complete.");

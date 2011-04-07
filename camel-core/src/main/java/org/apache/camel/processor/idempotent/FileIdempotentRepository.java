@@ -227,9 +227,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * @param messageId  the message id
      */
     protected void appendToStore(final String messageId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Appending " + messageId + " to idempotent filestore: " + fileStore);
-        }
+        LOG.debug("Appending {} to idempotent filestore: {}", messageId, fileStore);
         FileOutputStream fos = null;
         try {
             // create store if missing
@@ -294,9 +292,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
             }
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Loaded " + cache.size() + " to the 1st level cache from idempotent filestore: " + fileStore);
-        }
+        LOG.debug("Loaded {} to the 1st level cache from idempotent filestore: {}", cache.size(), fileStore);
     }
 
     @Override

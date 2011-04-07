@@ -80,16 +80,12 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
     }
 
     protected void doStop() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Stopping consumer: " + this);
-        }
+        log.debug("Stopping consumer: {}", this);
         ServiceHelper.stopServices(processor);
     }
 
     protected void doStart() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Starting consumer: " + this);
-        }
+        log.debug("Starting consumer: {}", this);
         ServiceHelper.startServices(processor);
     }
 

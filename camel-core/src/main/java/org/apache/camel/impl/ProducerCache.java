@@ -318,9 +318,7 @@ public class ProducerCache extends ServiceSupport {
                 }
 
                 // now lets dispatch
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(">>>> " + endpoint + " " + exchange);
-                }
+                LOG.debug(">>>> {} {}", endpoint, exchange);
 
                 // set property which endpoint we send to
                 exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
@@ -364,14 +362,10 @@ public class ProducerCache extends ServiceSupport {
 
             // add producer to cache or pool if applicable
             if (pooled && answer instanceof ServicePoolAware) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Adding to producer service pool with key: " + endpoint + " for producer: " + answer);
-                }
+                LOG.debug("Adding to producer service pool with key: {} for producer: {}", endpoint, answer);
                 answer = pool.addAndAcquire(endpoint, answer);
             } else if (answer.isSingleton()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Adding to producer cache with key: " + endpoint + " for producer: " + answer);
-                }
+                LOG.debug("Adding to producer cache with key: {} for producer: {}", endpoint, answer);
                 producers.put(key, answer);
             }
         }

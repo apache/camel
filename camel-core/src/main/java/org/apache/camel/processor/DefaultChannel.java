@@ -287,9 +287,7 @@ public class DefaultChannel extends ServiceSupport implements Channel {
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Exchange is marked to stop routing: " + exchange);
-                }
+                LOG.debug("Exchange is marked to stop routing: {}", exchange);
                 return false;
             }
         }

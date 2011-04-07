@@ -68,9 +68,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         // before we poll is there anything we need to check?
         // such as are we connected to the FTP Server still?
         if (!prePollCheck()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Skipping poll as pre poll check returned false");
-            }
+            log.debug("Skipping poll as pre poll check returned false");
             return 0;
         }
 
@@ -83,14 +81,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
         boolean limitHit = !pollDirectory(name, files);
         long delta = stop.stop();
         if (log.isDebugEnabled()) {
-            log.debug("Took " + TimeUtils.printDuration(delta) + " to poll: " + name);
+            log.debug("Took {} to poll: {}", TimeUtils.printDuration(delta), name);
         }
 
         // log if we hit the limit
         if (limitHit) {
-            if (log.isDebugEnabled()) {
-                log.debug("Limiting maximum messages to poll at " + maxMessagesPerPoll + " files as there was more messages in this poll.");
-            }
+            log.debug("Limiting maximum messages to poll at {} files as there was more messages in this poll.", maxMessagesPerPoll);
         }
 
         // sort files using file comparator if provided
@@ -113,8 +109,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
         // consume files one by one
         int total = exchanges.size();
-        if (total > 0 && log.isDebugEnabled()) {
-            log.debug("Total " + total + " files to consume");
+        if (total > 0) {
+            log.debug("Total {} files to consume", total);
         }
 
         Queue<Exchange> q = exchanges;
@@ -135,9 +131,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            if (log.isDebugEnabled()) {
-                log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
-            }
+            log.debug("Limiting to maximum messages to poll {} as there was {} messages in this poll.", maxMessagesPerPoll, total);
             total = maxMessagesPerPoll;
         }
 
@@ -275,9 +269,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
             boolean begin = processStrategy.begin(operations, endpoint, exchange, file);
             if (!begin) {
-                if (log.isDebugEnabled()) {
-                    log.debug(endpoint + " cannot begin processing file: " + file);
-                }
+                log.debug(endpoint + " cannot begin processing file: {}", file);
                 // begin returned false, so remove file from the in progress list as its no longer in progress
                 endpoint.getInProgressRepository().remove(absoluteFileName);
                 return;
@@ -314,9 +306,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             // (for instance to move the file after we have processed it)
             exchange.addOnCompletion(new GenericFileOnCompletion<T>(endpoint, operations, target, absoluteFileName));
 
-            if (log.isDebugEnabled()) {
-                log.debug("About to process file: " + target + " using exchange: " + exchange);
-            }
+            log.debug("About to process file: {} using exchange: {}", target, exchange);
 
             // process the exchange using the async consumer to support async routing engine
             // which can be supported by this file consumer as all the done work is

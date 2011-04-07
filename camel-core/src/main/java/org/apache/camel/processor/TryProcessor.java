@@ -141,9 +141,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Exchange is marked to stop routing: " + exchange);
-                }
+                LOG.debug("Exchange is marked to stop routing: {}", exchange);
                 return false;
             }
         }
@@ -351,8 +349,8 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
             final Boolean handled = catchClause.handles(exchange);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("The exception is handled: " + handled + " for the exception: " + caught.getClass().getName()
-                    + " caused by: " + caught.getMessage());
+                LOG.debug("The exception is handled: {} for the exception: {} caused by: {}",
+                        new Object[]{handled, caught.getClass().getName(), caught.getMessage()});
             }
 
             boolean sync = super.processNext(exchange, new AsyncCallback() {

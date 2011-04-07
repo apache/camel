@@ -81,9 +81,7 @@ public class IdempotentOnCompletion implements Synchronization {
      */
     protected void onFailedMessage(Exchange exchange, String messageId) {
         idempotentRepository.remove(messageId);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Removed from repository as exchange failed: " + exchange + " with id: " + messageId);
-        }
+        LOG.debug("Removed from repository as exchange failed: {} with id: {}", exchange, messageId);
     }
 
     @Override

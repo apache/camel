@@ -97,9 +97,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         // signal we want to shutdown
         shutdownPending = true;
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Preparing to shutdown, waiting for " + latch.getCount() + " consumer threads to complete.");
-        }
+        LOG.debug("Preparing to shutdown, waiting for {} consumer threads to complete.", latch.getCount());
 
         // wait for all threads to end
         try {
@@ -133,9 +131,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                     break;
                 }
             } catch (InterruptedException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
-                }
+                LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
                 continue;
             } catch (Throwable e) {
                 if (exchange != null) {
@@ -147,9 +143,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         }
 
         latch.countDown();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Ending this polling consumer thread, there are still " + latch.getCount() + " consumer threads left.");
-        }
+        LOG.debug("Ending this polling consumer thread, there are still {} consumer threads left.", latch.getCount());
     }
 
     /**
@@ -170,7 +164,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         if (size > 1) {
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Multicasting to " + endpoint.getConsumers().size() + " consumers for Exchange: " + exchange);
+                LOG.debug("Multicasting to {} consumers for Exchange: {}", endpoint.getConsumers().size(), exchange);
             }
            
             // use a multicast processor to process it

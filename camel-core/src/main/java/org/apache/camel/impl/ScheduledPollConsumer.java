@@ -82,9 +82,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                     if (retryCounter == -1) {
                         LOG.trace("Starting to poll: {}", this.getEndpoint());
                     } else {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Retrying attempt " + retryCounter + " to poll: " + this.getEndpoint());
-                        }
+                        LOG.debug("Retrying attempt {} to poll: {}", retryCounter, this.getEndpoint());
                     }
 
                     boolean begin = pollStrategy.begin(this, getEndpoint());
@@ -93,9 +91,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                         int polledMessages = poll();
                         pollStrategy.commit(this, getEndpoint(), polledMessages);
                     } else {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Cannot begin polling as pollStrategy returned false: " + pollStrategy);
-                        }
+                        LOG.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
                     }
                 }
 
@@ -188,14 +184,14 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         super.doStart();
         if (isUseFixedDelay()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Scheduling poll (fixed delay) with initialDelay: " + getInitialDelay() + ", delay: " + getDelay()
-                        + " (" + getTimeUnit().name().toLowerCase() + ") for: " + getEndpoint());
+                LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
+                        new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(), getEndpoint()});
             }
             future = executor.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Scheduling poll (fixed rate) with initialDelay: " + getInitialDelay() + ", delay: " + getDelay()
-                        + " (" + getTimeUnit().name().toLowerCase() + ") for: " + getEndpoint());
+                LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
+                        new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(), getEndpoint()});
             }
             future = executor.scheduleAtFixedRate(this, getInitialDelay(), getDelay(), getTimeUnit());
         }

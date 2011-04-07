@@ -156,9 +156,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
 
             executorService.submit(new Callable<Exchange>() {
                 public Exchange call() throws Exception {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Processing onComplete: " + copy);
-                    }
+                    LOG.debug("Processing onComplete: {}", copy);
                     doProcess(processor, copy);
                     return copy;
                 }
@@ -183,9 +181,7 @@ public class OnCompletionProcessor extends ServiceSupport implements Processor, 
 
             executorService.submit(new Callable<Exchange>() {
                 public Exchange call() throws Exception {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Processing onFailure: " + copy);
-                    }
+                    LOG.debug("Processing onFailure: {}", copy);
                     doProcess(processor, copy);
                     return null;
                 }

@@ -70,41 +70,31 @@ public class ConsumerCache extends ServiceSupport {
             }
 
             if (singleton) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Adding to consumer cache with key: " + endpoint + " for consumer: " + answer);
-                }
+                LOG.debug("Adding to consumer cache with key: {} for consumer: {}", endpoint, answer);
                 consumers.put(key, answer);
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Consumer for endpoint: " + key + " is not singleton and thus not added to consumer cache");
-                }
+                LOG.debug("Consumer for endpoint: {} is not singleton and thus not added to consumer cache", key);
             }
         }
         return answer;
     }
 
     public Exchange receive(Endpoint endpoint) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("<<<< " + endpoint);
-        }
+        LOG.debug("<<<< {}", endpoint);
 
         PollingConsumer consumer = getConsumer(endpoint);
         return consumer.receive();
     }
 
     public Exchange receive(Endpoint endpoint, long timeout) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("<<<< " + endpoint);
-        }
+        LOG.debug("<<<< {}", endpoint);
 
         PollingConsumer consumer = getConsumer(endpoint);
         return consumer.receive(timeout);
     }
 
     public Exchange receiveNoWait(Endpoint endpoint) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("<<<< " + endpoint);
-        }
+        LOG.debug("<<<< {}", endpoint);
 
         PollingConsumer consumer = getConsumer(endpoint);
         return consumer.receiveNoWait();

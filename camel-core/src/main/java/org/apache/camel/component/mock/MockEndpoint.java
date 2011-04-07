@@ -1044,9 +1044,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         StopWatch watch = new StopWatch();
         waitForCompleteLatch(resultWaitTime);
         long delta = watch.stop();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Took " + delta + " millis to complete latch");
-        }
+        LOG.debug("Took {} millis to complete latch", delta);
 
         if (resultMinimumWaitTime > 0 && delta < resultMinimumWaitTime) {
             fail("Expected minimum " + resultMinimumWaitTime
@@ -1080,7 +1078,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             List<Exchange> list = getReceivedExchanges();
             int index = 0;
             for (Exchange exchange : list) {
-                LOG.debug(getEndpointUri() + " failed and received[" + (++index) + "]: " + exchange);
+                LOG.debug("{} failed and received[{}]: {}", new Object[]{getEndpointUri(), ++index, exchange});
             }
         }
         throw new AssertionError(getEndpointUri() + " " + message);

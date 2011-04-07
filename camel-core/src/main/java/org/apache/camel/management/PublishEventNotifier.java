@@ -46,17 +46,13 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
     public void notify(EventObject event) throws Exception {
         // only notify when we are started
         if (!isStarted()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Cannot publish event as notifier is not started: " + event);
-            }
+            log.debug("Cannot publish event as notifier is not started: {}", event);
             return;
         }
 
         // only notify when camel context is running
         if (!camelContext.getStatus().isStarted()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Cannot publish event as CamelContext is not started: " + event);
-            }
+            log.debug("Cannot publish event as CamelContext is not started: {}", event);
             return;
         }
 

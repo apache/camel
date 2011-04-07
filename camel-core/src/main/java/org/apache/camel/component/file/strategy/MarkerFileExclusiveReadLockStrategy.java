@@ -39,9 +39,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         String dir = endpoint.getConfiguration().getDirectory();
         File file = new File(dir);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Prepare on startup by deleting orphaned lock files from: " + dir);
-        }
+        LOG.debug("Prepare on startup by deleting orphaned lock files from: {}", dir);
 
         deleteLockFiles(file, endpoint.isRecursive());
     }

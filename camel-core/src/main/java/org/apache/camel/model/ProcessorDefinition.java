@@ -199,9 +199,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
             // only add regular processors as event driven
             if (endpointInterceptor) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Endpoint interceptor should not be added as an event driven consumer route: " + processor);
-                }
+                log.debug("Endpoint interceptor should not be added as an event driven consumer route: {}", processor);
             } else {
                 log.trace("Adding event driven processor: {}", processor);
                 routeContext.addEventDrivenProcessor(processor);
@@ -259,9 +257,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 // set error handler on channel
                 channel.setErrorHandler(errorHandler);
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug(defn + " is configured to not inheritErrorHandler.");
-                }
+                log.debug("{} is configured to not inheritErrorHandler.", defn);
             }
         }
 
@@ -472,7 +468,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                             throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + definition);
                         }
                         if (log.isDebugEnabled()) {
-                            log.debug("Changed property [" + name + "] from: " + value + " to: " + text);
+                            log.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, text});
                         }
                     }
                 }
@@ -515,7 +511,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                             // invoke setter as the text has changed
                             IntrospectionSupport.setProperty(definition, name, constant);
                             if (log.isDebugEnabled()) {
-                                log.debug("Changed property [" + name + "] from: " + value + " to: " + constant);
+                                log.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, constant});
                             }
                         } else {
                             throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");

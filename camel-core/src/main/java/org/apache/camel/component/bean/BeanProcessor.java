@@ -186,17 +186,13 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         if (!invocation.getMethod().getReturnType().equals(Void.TYPE) && value != Void.TYPE) {
             if (exchange.getPattern().isOutCapable()) {
                 // force out creating if not already created (as its lazy)
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Setting bean invocation result on the OUT message: " + value);
-                }
+                LOG.debug("Setting bean invocation result on the OUT message: {}", value);
                 exchange.getOut().setBody(value);
                 // propagate headers
                 exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
             } else {
                 // if not out then set it on the in
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Setting bean invocation result on the IN message: " + value);
-                }
+                LOG.debug("Setting bean invocation result on the IN message: {}", value);
                 exchange.getIn().setBody(value);
             }
         }

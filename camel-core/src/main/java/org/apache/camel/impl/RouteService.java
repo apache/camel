@@ -118,9 +118,7 @@ public class RouteService extends ServiceSupport {
         if (warmUpDone.compareAndSet(false, true)) {
 
             for (Route route : routes) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Starting services on route: " + route.getId());
-                }
+                LOG.debug("Starting services on route: {}", route.getId());
 
                 List<Service> services = route.getServices();
 
@@ -182,9 +180,7 @@ public class RouteService extends ServiceSupport {
         }
         
         for (Route route : routes) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Stopping services on route: " + route.getId());
-            }
+            LOG.debug("Stopping services on route: {}", route.getId());
             // getServices will not add services again
             List<Service> services = route.getServices();
 

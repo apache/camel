@@ -92,9 +92,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
             throw new GenericFileOperationFailedException("Cannot create directory: " + to.getParent() + " (could be because of denied permissions)");
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Renaming file: " + from + " to: " + to);
-        }
+        log.debug("Renaming file: {} to: {}", from, to);
         boolean renamed = operations.renameFile(from.getAbsoluteFilePath(), to.getAbsoluteFilePath());
         if (!renamed) {
             throw new GenericFileOperationFailedException("Cannot rename file: " + from + " to: " + to);

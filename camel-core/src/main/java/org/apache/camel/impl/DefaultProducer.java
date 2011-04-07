@@ -64,9 +64,7 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
     protected void doStart() throws Exception {
         // log at debug level for singletons, for prototype scoped log at trace level to not spam logs
         if (isSingleton()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Starting producer: " + this);
-            }
+            log.debug("Starting producer: {}", this);
         } else {
             log.trace("Starting producer: {}", this);
         }
@@ -75,9 +73,7 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
     protected void doStop() throws Exception {
         // log at debug level for singletons, for prototype scoped log at trace level to not spam logs
         if (isSingleton()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Stopping producer: " + this);
-            }
+            log.debug("Stopping producer: {}", this);
         } else {
             log.trace("Stopping producer: {}", this);
         }

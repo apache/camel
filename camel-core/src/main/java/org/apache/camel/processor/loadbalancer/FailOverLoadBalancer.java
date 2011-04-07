@@ -129,9 +129,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 attempts.incrementAndGet();
                 // are we exhausted by attempts?
                 if (maximumFailoverAttempts > -1 && attempts.get() > maximumFailoverAttempts) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Breaking out of failover after " + attempts + " failover attempts");
-                    }
+                    log.debug("Breaking out of failover after {} failover attempts", attempts);
                     break;
                 }
 
@@ -173,9 +171,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             log.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Failover complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
-        }
+        log.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
 
         callback.done(true);
         return true;
@@ -189,7 +185,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
     protected void prepareExchangeForFailover(Exchange exchange) {
         if (exchange.getException() != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Failover due " + exchange.getException().getMessage() + " for exchangeId: " + exchange.getExchangeId());
+                log.debug("Failover due {} for exchangeId: {}", exchange.getException().getMessage(), exchange.getExchangeId());
             }
 
             // clear exception so we can try failover
@@ -210,9 +206,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         if (processor == null) {
             throw new IllegalStateException("No processors could be chosen to process " + exchange);
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Processing failover at attempt " + attempts + " for " + exchange);
-        }
+        log.debug("Processing failover at attempt {} for {}", attempts, exchange);
 
         AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
         return AsyncProcessorHelper.process(albp, exchange, new FailOverAsyncCallback(exchange, attempts, index, callback, processors));
@@ -282,9 +276,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 }
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("Failover complete for exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
-            }
+            log.debug("Failover complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
 
             // signal callback we are done
             callback.done(false);

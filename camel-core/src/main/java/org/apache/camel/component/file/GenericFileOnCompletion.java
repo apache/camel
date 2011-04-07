@@ -71,9 +71,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     protected void onCompletion(Exchange exchange) {
         GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
 
-        if (log.isDebugEnabled()) {
-            log.debug("Done processing file: " + file + " using exchange: " + exchange);
-        }
+        log.debug("Done processing file: {} using exchange: {}", file, exchange);
 
         // commit or rollback
         boolean committed = false;

@@ -250,7 +250,7 @@ public final class EndpointHelper {
                     boolean hit = IntrospectionSupport.setProperty(context.getTypeConverter(), bean, name, ref);
                     if (hit) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Configured property: " + name + " on bean: " + bean + " with value: " + ref);
+                            LOG.debug("Configured property: {} on bean: {} with value: {}", new Object[]{name, bean, ref});
                         }
                         // must remove as its a valid option and we could configure it
                         it.remove();

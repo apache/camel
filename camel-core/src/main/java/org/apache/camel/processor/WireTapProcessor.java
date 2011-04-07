@@ -80,9 +80,7 @@ public class WireTapProcessor extends SendProcessor {
             public Exchange call() throws Exception {
                 return producerCache.doInProducer(destination, wireTapExchange, pattern, new ProducerCallback<Exchange>() {
                     public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
-                        if (log.isDebugEnabled()) {
-                            log.debug(">>>> (wiretap) " + destination + " " + exchange);
-                        }
+                        log.debug(">>>> (wiretap) {} {}", destination, exchange);
                         producer.process(exchange);
                         return exchange;
                     }
@@ -104,9 +102,7 @@ public class WireTapProcessor extends SendProcessor {
             public Exchange call() throws Exception {
                 return producerCache.doInProducer(destination, wireTapExchange, pattern, new ProducerCallback<Exchange>() {
                     public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
-                        if (log.isDebugEnabled()) {
-                            log.debug(">>>> (wiretap) " + destination + " " + exchange);
-                        }
+                        log.debug(">>>> (wiretap) {} {}", destination, exchange);
                         producer.process(exchange);
                         return exchange;
                     }

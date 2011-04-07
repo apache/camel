@@ -181,9 +181,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("ExchangeId: " + exchange.getExchangeId() + " is marked to stop routing: " + exchange);
-                }
+                LOG.debug("ExchangeId: {} is marked to stop routing: {}", exchange.getExchangeId(), exchange);
                 answer = false;
             }
         } else {

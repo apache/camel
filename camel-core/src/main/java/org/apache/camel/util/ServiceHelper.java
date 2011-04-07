@@ -247,9 +247,7 @@ public final class ServiceHelper {
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (ss.isSuspended()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Resuming service " + service);
-                }
+                LOG.debug("Resuming service {}", service);
                 ss.resume();
                 return true;
             } else {

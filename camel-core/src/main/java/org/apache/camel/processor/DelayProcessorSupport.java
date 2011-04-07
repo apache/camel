@@ -180,7 +180,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
      */
     protected void handleSleepInterruptedException(InterruptedException e, Exchange exchange) throws InterruptedException {
         if (log.isDebugEnabled()) {
-            log.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+            log.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
         }
         Thread.currentThread().interrupt();
         throw e;

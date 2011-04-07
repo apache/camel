@@ -206,14 +206,10 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
                     // as this is only done during route building it does not matter that we
                     // use reflection as performance is no a concern during route building
                     Object transactionManager = maps.values().iterator().next();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("One instance of PlatformTransactionManager found in registry: " + transactionManager);
-                    }
+                    LOG.debug("One instance of PlatformTransactionManager found in registry: {}", transactionManager);
                     Class txClazz = routeContext.getCamelContext().getClassResolver().resolveClass("org.apache.camel.spring.spi.SpringTransactionPolicy");
                     if (txClazz != null) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Creating a new temporary SpringTransactionPolicy using the PlatformTransactionManager: " + transactionManager);
-                        }
+                        LOG.debug("Creating a new temporary SpringTransactionPolicy using the PlatformTransactionManager: {}", transactionManager);
                         TransactedPolicy txPolicy = ObjectHelper.newInstance(txClazz, TransactedPolicy.class);
                         Method method;
                         try {
@@ -231,8 +227,8 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
                         if (maps.isEmpty()) {
                             LOG.debug("No PlatformTransactionManager found in registry.");
                         } else {
-                            LOG.debug("Found " + maps.size() + " PlatformTransactionManager in registry. "
-                                    + "Cannot determine which one to use. Please configure a TransactionTemplate on the policy");
+                            LOG.debug("Found {} PlatformTransactionManager in registry. "
+                                    + "Cannot determine which one to use. Please configure a TransactionTemplate on the policy", maps.size());
                         }
                     }
                 }

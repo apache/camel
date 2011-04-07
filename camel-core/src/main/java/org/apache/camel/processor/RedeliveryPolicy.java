@@ -179,9 +179,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      * @throws InterruptedException is thrown if the sleep is interrupted likely because of shutdown
      */
     public void sleep(long redeliveryDelay) throws InterruptedException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sleeping for: " + redeliveryDelay + " millis until attempting redelivery");
-        }
+        LOG.debug("Sleeping for: {} millis until attempting redelivery", redeliveryDelay);
         Thread.sleep(redeliveryDelay);
     }
 

@@ -120,7 +120,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Searching for annotations of " + annotation.getName() + " in packages: " + Arrays.asList(packageNames));
+            log.debug("Searching for annotations of {} in packages: {}", annotation.getName(), Arrays.asList(packageNames));
         }
 
         PackageScanFilter test = getCompositeFilter(new AnnotatedWithPackageScanFilter(annotation, true));
@@ -129,9 +129,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             find(test, pkg, classes);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Found: " + classes);
-        }
+        log.debug("Found: {}", classes);
 
         return classes;
     }
@@ -143,7 +141,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Searching for annotations of " + annotations + " in packages: " + Arrays.asList(packageNames));
+            log.debug("Searching for annotations of {} in packages: {}", annotations, Arrays.asList(packageNames));
         }
 
         PackageScanFilter test = getCompositeFilter(new AnnotatedWithAnyPackageScanFilter(annotations, true));
@@ -152,9 +150,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             find(test, pkg, classes);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Found: " + classes);
-        }
+        log.debug("Found: {}", classes);
 
         return classes;
     }
@@ -166,7 +162,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays.asList(packageNames));
+            log.debug("Searching for implementations of {} in packages: {}", parent.getName(), Arrays.asList(packageNames));
         }
 
         PackageScanFilter test = getCompositeFilter(new AssignableToPackageScanFilter(parent));
@@ -175,9 +171,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             find(test, pkg, classes);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Found: " + classes);
-        }
+        log.debug("Found: {}", classes);
 
         return classes;
     }
@@ -193,9 +187,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             find(filter, pkg, classes);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Found: " + classes);
-        }
+        log.debug("Found: {}", classes);
 
         return classes;
     }
@@ -445,10 +437,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 }
             }
             if (!found) {
-                if (log.isDebugEnabled()) {
-                    // use debug to avoid being noisy in logs
-                    log.debug("Cannot find class '" + fqn + "' in any classloaders: " + set);
-                }
+                log.debug("Cannot find class '{}' in any classloaders: {}", fqn, set);
             }
         } catch (Exception e) {
             if (log.isWarnEnabled()) {

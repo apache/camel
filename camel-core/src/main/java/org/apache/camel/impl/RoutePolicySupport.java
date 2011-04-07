@@ -51,16 +51,16 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
 
     protected boolean startConsumer(Consumer consumer) throws Exception {
         boolean resumed = ServiceHelper.resumeService(consumer);
-        if (resumed && log.isDebugEnabled()) {
-            log.debug("Resuming consumer " + consumer);
+        if (resumed) {
+            log.debug("Resuming consumer {}", consumer);
         }
         return resumed;
     }
 
     protected boolean stopConsumer(Consumer consumer) throws Exception {
         boolean suspended = ServiceHelper.suspendService(consumer);
-        if (suspended && log.isDebugEnabled()) {
-            log.debug("Suspended consumer " + consumer);
+        if (suspended) {
+            log.debug("Suspended consumer {}", consumer);
         }
         return suspended;
     }

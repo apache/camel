@@ -240,9 +240,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     public void unregister(ObjectName name) throws JMException {
         if (server.isRegistered(name)) {
             server.unregisterMBean(name);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Unregistered MBean with objectname: " + name);
-            }
+            LOG.debug("Unregistered MBean with objectname: {}" + name);
         }
         mbeansRegistered.remove(name);
     }
@@ -262,9 +260,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         assembler = new JmxMBeanAssembler(server);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting JMX agent on server: " + getMBeanServer());
-        }
+        LOG.debug("Starting JMX agent on server: {}", getMBeanServer());
     }
 
     protected void doStop() throws Exception {
@@ -313,9 +309,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
                 server.unregisterMBean(name);
             } else {
                 // okay ignore we do not want to force it and it could be a shared instance
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("MBean already registered with objectname: " + name);
-                }
+                LOG.debug("MBean already registered with objectname: {}", name);
             }
         }
 
@@ -328,9 +322,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         if (instance != null) {
             ObjectName registeredName = instance.getObjectName();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Registered MBean with objectname: " + registeredName);
-            }
+            LOG.debug("Registered MBean with objectname: {}", registeredName);
 
             mbeansRegistered.add(registeredName);
         }
@@ -383,9 +375,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         List<MBeanServer> servers = (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
 
         for (MBeanServer server : servers) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Found MBeanServer with default domain " + server.getDefaultDomain());
-            }
+            LOG.debug("Found MBeanServer with default domain {}", server.getDefaultDomain());
 
             if (mBeanServerDefaultDomain.equals(server.getDefaultDomain())) {
                 return server;
@@ -403,9 +393,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         try {
             LocateRegistry.createRegistry(registryPort);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Created JMXConnector RMI registry on port " + registryPort);
-            }
+            LOG.debug("Created JMXConnector RMI registry on port {}", registryPort);
         } catch (RemoteException ex) {
             // The registry may had been created, we could get the registry instead
         }

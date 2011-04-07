@@ -184,9 +184,7 @@ public class BeanInfo {
             return methodInfo.createMethodInvocation(pojo, exchange);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Cannot find suitable method to invoke on bean: " + pojo);
-        }
+        LOG.debug("Cannot find suitable method to invoke on bean: {}", pojo);
         return null;
     }
 

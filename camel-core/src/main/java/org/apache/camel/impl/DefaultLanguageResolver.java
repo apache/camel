@@ -46,8 +46,8 @@ public class DefaultLanguageResolver implements LanguageResolver {
         Object bean = null;
         try {
             bean = context.getRegistry().lookup(name);
-            if (bean != null && getLog().isDebugEnabled()) {
-                getLog().debug("Found language: " + name + " in registry: " + bean);
+            if (bean != null) {
+                getLog().debug("Found language: {} in registry: {}", name, bean);
             }
         } catch (Exception e) {
             if (getLog().isDebugEnabled()) {

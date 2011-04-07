@@ -164,7 +164,7 @@ public class TimeClause extends BinaryPredicateSupport {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Evaluated time clause [" + toString() + "] with current: " + currentDate + ", other: " + otherDate + " -> " + answer);
+            LOG.debug("Evaluated time clause [{}] with current: {}, other: {} -> {}", new Object[]{toString(), currentDate, otherDate, answer});
         }
 
         return answer;

@@ -71,7 +71,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
             }
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("#" + i + " - " + predicate + " matches: " + matches + " for: " + exchange);
+                LOG.debug("#{} - {} matches: {} for: {}", new Object[]{i, predicate, matches, exchange});
             }
 
             if (matches) {

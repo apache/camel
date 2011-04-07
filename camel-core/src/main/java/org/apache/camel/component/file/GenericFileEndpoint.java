@@ -124,9 +124,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     public GenericFileProcessStrategy<T> getGenericFileProcessStrategy() {
         if (processStrategy == null) {
             processStrategy = createGenericFileStrategy();
-            if (log.isDebugEnabled()) {
-                log.debug("Using Generic file process strategy: " + processStrategy);
-            }
+            log.debug("Using Generic file process strategy: {}", processStrategy);
         }
         return processStrategy;
     }

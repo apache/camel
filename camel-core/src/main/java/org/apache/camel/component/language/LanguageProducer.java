@@ -49,9 +49,7 @@ public class LanguageProducer extends DefaultProducer {
         ObjectHelper.notNull(exp, "expression");
 
         Object result = exp.evaluate(exchange, Object.class);
-        if (log.isDebugEnabled()) {
-            log.debug("Evaluated expression as: " + result + " with: " + exchange);
-        }
+        log.debug("Evaluated expression as: {} with: {}", result, exchange);
 
         // set message body if transform is enabled
         if (getEndpoint().isTransform()) {

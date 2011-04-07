@@ -119,9 +119,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             if (!visitedURIs.contains(uri)) {
                 // remember we have visited this uri so we wont read it twice
                 visitedURIs.add(uri);
-                if (LOG.isDebugEnabled()) {
-                    LOG.info("Loading file " + META_INF_SERVICES + " to retrieve list of packages, from url: " + url);
-                }
+                LOG.info("Loading file {} to retrieve list of packages, from url: {}", META_INF_SERVICES, url);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
                 try {
                     while (true) {

@@ -97,9 +97,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
                 // if not using timeout, then we cant retry, so rethrow
                 throw e;
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Cannot acquire read lock. Will try again.", e);
-            }
+            LOG.debug("Cannot acquire read lock. Will try again.", e);
             boolean interrupted = sleep();
             if (interrupted) {
                 // we were interrupted while sleeping, we are likely being shutdown so return false
@@ -129,9 +127,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
             Thread.sleep(checkInterval);
             return false;
         } catch (InterruptedException e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
-            }
+            LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
             return true;
         }
     }

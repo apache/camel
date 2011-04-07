@@ -47,9 +47,7 @@ public class DefaultComponentResolver implements ComponentResolver {
         Object bean = null;
         try {
             bean = context.getRegistry().lookup(name);
-            if (bean != null && getLog().isDebugEnabled()) {
-                getLog().debug("Found component: " + name + " in registry: " + bean);
-            }
+            getLog().debug("Found component: {} in registry: {}", name, bean);
         } catch (Exception e) {
             getLog().debug("Ignored error looking up bean: " + name, e);
         }
@@ -82,7 +80,7 @@ public class DefaultComponentResolver implements ComponentResolver {
         }
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Found component: " + name + " via type: " + type.getName() + " via: " + factoryFinder.getResourcePath() + name);
+            getLog().debug("Found component: {} via type: {} via: {}{}", new Object[]{name, type.getName(), factoryFinder.getResourcePath(), name});
         }
 
         // create the component

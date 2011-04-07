@@ -204,9 +204,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         ObjectHelper.notNull(camelContext, "CamelContext");
         ObjectHelper.notNull(builder, "RouteBuilder");
 
-        if (log.isDebugEnabled()) {
-            log.debug("AdviceWith route before: " + this);
-        }
+        log.debug("AdviceWith route before: {}", this);
 
         // inject this route into the advice route builder so it can access this route
         // and offer features to manipulate the route directly
@@ -217,9 +215,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         // configure and prepare the routes from the builder
         RoutesDefinition routes = builder.configureRoutes(camelContext);
 
-        if (log.isDebugEnabled()) {
-            log.debug("AdviceWith routes: " + routes);
-        }
+        log.debug("AdviceWith routes: {}", routes);
 
         // we can only advice with a route builder without any routes
         if (!routes.getRoutes().isEmpty()) {
@@ -683,9 +679,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             if (isTrace != null) {
                 routeContext.setTracing(isTrace);
                 if (isTrace) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Tracing is enabled on route: " + getId());
-                    }
+                    log.debug("Tracing is enabled on route: {}", getId());
                     // tracing is added in the DefaultChannel so we can enable it on the fly
                 }
             }
@@ -697,9 +691,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             if (isStreamCache != null) {
                 routeContext.setStreamCaching(isStreamCache);
                 if (isStreamCache) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("StreamCaching is enabled on route: " + getId());
-                    }
+                    log.debug("StreamCaching is enabled on route: {}", getId());
                     // only add a new stream cache if not already a global configured on camel context
                     if (StreamCaching.getStreamCaching(camelContext) == null) {
                         addInterceptStrategy(new StreamCaching());
@@ -714,9 +706,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             if (isHandleFault != null) {
                 routeContext.setHandleFault(isHandleFault);
                 if (isHandleFault) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("HandleFault is enabled on route: " + getId());
-                    }
+                    log.debug("HandleFault is enabled on route: {}", getId());
                     // only add a new handle fault if not already a global configured on camel context
                     if (HandleFault.getHandleFault(camelContext) == null) {
                         addInterceptStrategy(new HandleFault());
@@ -731,14 +721,10 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             if (delayer != null) {
                 routeContext.setDelayer(delayer);
                 if (delayer > 0) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Delayer is enabled with: " + delayer + " ms. on route: " + getId());
-                    }
+                    log.debug("Delayer is enabled with: {} ms. on route: {}", delayer, getId());
                     addInterceptStrategy(new Delayer(delayer));
                 } else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Delayer is disabled on route: " + getId());
-                    }
+                    log.debug("Delayer is disabled on route: {}", getId());
                 }
             }
         }
@@ -746,9 +732,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         // configure route policy
         if (routePolicies != null && !routePolicies.isEmpty()) {
             for (RoutePolicy policy : routePolicies) {
-                if (log.isDebugEnabled()) {
-                    log.debug("RoutePolicy is enabled: " + policy + " on route: " + getId());
-                }
+                log.debug("RoutePolicy is enabled: {} on route: {}", policy, getId());
                 routeContext.getRoutePolicyList().add(policy);
             }
         }
@@ -757,9 +741,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             while (policyTokens.hasMoreTokens()) {
                 String ref = policyTokens.nextToken().trim();
                 RoutePolicy policy = CamelContextHelper.mandatoryLookup(camelContext, ref, RoutePolicy.class);
-                if (log.isDebugEnabled()) {
-                    log.debug("RoutePolicy is enabled: " + policy + " on route: " + getId());
-                }
+                log.debug("RoutePolicy is enabled: {} on route: {}", policy, getId());
                 routeContext.getRoutePolicyList().add(policy);
             }
         }
@@ -767,23 +749,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         // configure auto startup
         Boolean isAutoStartup = CamelContextHelper.parseBoolean(camelContext, getAutoStartup());
         if (isAutoStartup != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Using AutoStartup " + isAutoStartup + " on route: " + getId());
-            }
+            log.debug("Using AutoStartup {} on route: {}", isAutoStartup, getId());
             routeContext.setAutoStartup(isAutoStartup);
         }
 
         // configure shutdown
         if (shutdownRoute != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Using ShutdownRoute " + getShutdownRoute() + " on route: " + getId());
-            }
+            log.debug("Using ShutdownRoute {} on route: {}", getShutdownRoute(), getId());
             routeContext.setShutdownRoute(getShutdownRoute());
         }
         if (shutdownRunningTask != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Using ShutdownRunningTask " + getShutdownRunningTask() + " on route: " + getId());
-            }
+            log.debug("Using ShutdownRunningTask {} on route: {}", getShutdownRunningTask(), getId());
             routeContext.setShutdownRunningTask(getShutdownRunningTask());
         }
 
