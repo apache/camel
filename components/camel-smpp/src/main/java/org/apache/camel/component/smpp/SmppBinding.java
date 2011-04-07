@@ -170,10 +170,8 @@ public class SmppBinding {
         }
         
         if (in.getHeaders().containsKey(DATA_CODING)) {
-            System.out.println("1");
             submitSm.setDataCoding((Byte) in.getHeader(DATA_CODING));
         } else {
-            System.out.println("2");
             submitSm.setDataCoding(configuration.getDataCoding());
         }
 
