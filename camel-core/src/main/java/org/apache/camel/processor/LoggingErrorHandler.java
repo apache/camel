@@ -36,7 +36,7 @@ public class LoggingErrorHandler extends DefaultErrorHandler {
      * @param exceptionPolicyStrategy strategy for onException handling
      */
     public LoggingErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        super(camelContext, output, logger, null, new RedeliveryPolicy(), null, exceptionPolicyStrategy, null);
+        super(camelContext, output, logger, null, new RedeliveryPolicy(), null, exceptionPolicyStrategy, null, null);
     }
 
     @Override

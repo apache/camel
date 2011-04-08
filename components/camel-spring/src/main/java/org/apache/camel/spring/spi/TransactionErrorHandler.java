@@ -54,11 +54,12 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param exceptionPolicyStrategy strategy for onException handling
      * @param transactionTemplate     the transaction template
      * @param retryWhile              retry while
+     * @param executorServiceRef      reference to a {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
      */
     public TransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
                                    RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy,
-                                   TransactionTemplate transactionTemplate, Predicate retryWhile) {
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false, retryWhile);
+                                   TransactionTemplate transactionTemplate, Predicate retryWhile, String executorServiceRef) {
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, null, null, false, retryWhile, executorServiceRef);
         setExceptionPolicy(exceptionPolicyStrategy);
         this.transactionTemplate = transactionTemplate;
         this.transactionKey = ObjectHelper.getIdentityHashCode(transactionTemplate);

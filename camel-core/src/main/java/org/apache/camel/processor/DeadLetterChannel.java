@@ -46,11 +46,12 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
      * @param deadLetterUri             an optional uri for logging purpose
      * @param useOriginalBodyPolicy     should the original IN body be moved to the dead letter queue or the current exchange IN body?
      * @param retryWhile                retry while
+     * @param executorServiceRef        reference to a {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
      */
     public DeadLetterChannel(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
                              Predicate handledPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy, Processor deadLetter,
-                             String deadLetterUri, boolean useOriginalBodyPolicy, Predicate retryWhile) {
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, deadLetter, deadLetterUri, useOriginalBodyPolicy, retryWhile);
+                             String deadLetterUri, boolean useOriginalBodyPolicy, Predicate retryWhile, String executorServiceRef) {
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, deadLetter, deadLetterUri, useOriginalBodyPolicy, retryWhile, executorServiceRef);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 

@@ -50,6 +50,7 @@ import org.apache.camel.util.ServiceHelper;
 public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport implements AsyncProcessor {
 
     private static ScheduledExecutorService executorService;
+    protected final String executorServiceRef;
     protected final CamelContext camelContext;
     protected final Processor deadLetter;
     protected final String deadLetterUri;
@@ -169,7 +170,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
                                   RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy, Processor deadLetter,
-                                  String deadLetterUri, boolean useOriginalMessagePolicy, Predicate retryWhile) {
+                                  String deadLetterUri, boolean useOriginalMessagePolicy, Predicate retryWhile, String executorServiceRef) {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
 
@@ -184,6 +185,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.handledPolicy = handledPolicy;
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
         this.retryWhilePolicy = retryWhile;
+        this.executorServiceRef = executorServiceRef;
     }
 
     public boolean supportTransacted() {
@@ -825,7 +827,14 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // use a shared scheduler
         if (executorService == null || executorService.isShutdown()) {
             // camel context will shutdown the executor when it shutdown so no need to shut it down when stopping
-            executorService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "ErrorHandlerRedeliveryTask");
+            if (executorServiceRef != null) {
+                executorService = camelContext.getExecutorServiceStrategy().lookupScheduled(this, "ErrorHandlerRedeliveryTask", executorServiceRef);
+                if (executorService == null) {
+                    throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
+                }
+            } else {
+                executorService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "ErrorHandlerRedeliveryTask");
+            }
         }
     }
 

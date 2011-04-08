@@ -145,6 +145,11 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
             throw new IllegalArgumentException("Attribute redeliveryPolicyRef is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
+        String executorServiceRef = element.getAttribute("executorServiceRef");
+        if (ObjectHelper.isNotEmpty(executorServiceRef) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+            throw new IllegalArgumentException("Attribute executorServiceRef is not supported by error handler type: "
+                    + type.name() + ", in error handler with id: " + id);
+        }
     }
 
     private void parserRefAttribute(Element element, String attributeName, String propertyName, BeanDefinitionBuilder builder) {

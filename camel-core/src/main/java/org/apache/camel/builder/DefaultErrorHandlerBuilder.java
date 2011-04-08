@@ -52,6 +52,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     protected String deadLetterUri;
     protected boolean useOriginalMessage;
     protected boolean asyncDelayedRedelivery;
+    protected String executorServiceRef;
 
     public DefaultErrorHandlerBuilder() {
     }
@@ -59,7 +60,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DefaultErrorHandler answer = new DefaultErrorHandler(routeContext.getCamelContext(), processor, getLogger(),
                 getOnRedelivery(), getRedeliveryPolicy(), getHandledPolicy(), getExceptionPolicyStrategy(),
-                getRetryWhilePolicy(routeContext.getCamelContext()));
+                getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorServiceRef());
         // configure error handler before we can use it
         configure(answer);
         return answer;
@@ -161,6 +162,17 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      */
     public DefaultErrorHandlerBuilder asyncDelayedRedelivery() {
         getRedeliveryPolicy().setAsyncDelayedRedelivery(true);
+        return this;
+    }
+
+    /**
+     * Sets a reference to a thread pool to be used for redelivery.
+     *
+     * @param ref reference to a scheduled thread pool
+     * @return the builder.
+     */
+    public DefaultErrorHandlerBuilder executorServiceRef(String ref) {
+        setExecutorServiceRef(ref);
         return this;
     }
 
@@ -450,6 +462,14 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setAsyncDelayedRedelivery(boolean asyncDelayedRedelivery) {
         this.asyncDelayedRedelivery = asyncDelayedRedelivery;
+    }
+
+    public String getExecutorServiceRef() {
+        return executorServiceRef;
+    }
+
+    public void setExecutorServiceRef(String executorServiceRef) {
+        this.executorServiceRef = executorServiceRef;
     }
 
     protected Predicate createHandledPolicy() {

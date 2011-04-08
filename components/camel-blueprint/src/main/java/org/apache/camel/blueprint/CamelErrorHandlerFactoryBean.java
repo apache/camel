@@ -55,6 +55,8 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     @XmlAttribute
     private String retryWhileRef;
     @XmlAttribute
+    private String executorServiceRef;
+    @XmlAttribute
     private String redeliveryPolicyRef;
     @XmlElement
     private RedeliveryPolicyDefinition redeliveryPolicy;
@@ -85,6 +87,9 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             }
             if (retryWhileRef != null) {
                 handler.setRetryWhileRef(retryWhileRef);
+            }
+            if (executorServiceRef != null) {
+                handler.setExecutorServiceRef(executorServiceRef);
             }
         } else if (errorHandler instanceof LoggingErrorHandlerBuilder) {
             LoggingErrorHandlerBuilder handler = (LoggingErrorHandlerBuilder) errorHandler;

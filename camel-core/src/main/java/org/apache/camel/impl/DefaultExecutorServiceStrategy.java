@@ -166,9 +166,12 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         }
 
         if (answer == null) {
-            ThreadPoolProfile profile = getThreadPoolProfile(name);
+            ThreadPoolProfile profile = getThreadPoolProfile(executorServiceRef);
             if (profile != null) {
-                int poolSize = profile.getPoolSize();
+                Integer poolSize = profile.getPoolSize();
+                if (poolSize == null) {
+                    poolSize = getDefaultThreadPoolProfile().getPoolSize();
+                }
                 answer = newScheduledThreadPool(source, name, poolSize);
                 if (answer != null) {
                     LOG.debug("Looking up ScheduledExecutorService with ref: {} and found a matching ThreadPoolProfile to create the ScheduledExecutorService: {}",
