@@ -128,8 +128,7 @@
     <scala-plugin-version>2.15.0</scala-plugin-version>
     <servicemix-specs-version>1.7.0</servicemix-specs-version>
     <shiro-bundle-version>1.1.0_1</shiro-bundle-version>
-    <!-- pax-logging (osgi) dont support slf4j 1.6.x -->    
-    <slf4j-version>1.5.11</slf4j-version>
+    <slf4j-version>1.6.1</slf4j-version>
     <smack-version>3.1.0</smack-version>
     <snmp4j-version>1.8.1_3</snmp4j-version>
     <smpp-version>2.1.0_1</smpp-version>
