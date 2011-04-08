@@ -51,9 +51,12 @@ import net.sf.saxon.value.Whitespace;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.component.bean.BeanInvocation;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
@@ -422,7 +425,44 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         if (item != null) {
             dynamicQueryContext.setContextItem(item);
         } else {
-            Source source = in.getMandatoryBody(Source.class);
+            Source source = in.getBody(Source.class);
+            if (source == null) {
+                Object body = in.getBody();
+
+                // lets try coerce some common types into something JAXP can deal with
+                if (body instanceof GenericFile) {
+                    // special for files so we can work with them out of the box
+                    InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
+                    source = converter.toDOMSource(is);
+                } else if (body instanceof BeanInvocation) {
+                    // if its a null bean invocation then handle that
+                    BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, body);
+                    if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
+                        // its a null argument from the bean invocation so use null as answer
+                        source = null;
+                    }
+                } else if (body instanceof String) {
+                    source = converter.toDOMSource(body.toString());
+                } else {
+                    // try some of Camels type converters
+                    InputStream is = in.getBody(InputStream.class);
+                    if (is != null) {
+                        source = converter.toDOMSource(is);
+                    }
+                    // fallback and use String
+                    if (source == null) {
+                        String s = in.getBody(String.class);
+                        if (s != null) {
+                            source = converter.toDOMSource(s);
+                        }
+                    }
+                }
+
+                if (source == null) {
+                    // indicate it was not possible to convert to a Source type
+                    throw new NoTypeConversionAvailableException(body, Source.class);
+                }
+            }
             DocumentInfo doc = getStaticQueryContext().buildDocument(source);
             dynamicQueryContext.setContextItem(doc);
         }
