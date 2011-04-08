@@ -65,7 +65,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Creates an XQuery builder
+ * Creates an XQuery builder.
+ * <p/>
+ * The XQueryExpression, as you would expect, can be executed repeatedly, as often as you want, in the same or in different threads.
  *
  * @version 
  */
@@ -420,10 +422,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         if (item != null) {
             dynamicQueryContext.setContextItem(item);
         } else {
-            Source source = in.getBody(Source.class);
-            if (source == null) {
-                source = converter.toDOMSource(converter.createDocument());
-            }
+            Source source = in.getMandatoryBody(Source.class);
             DocumentInfo doc = getStaticQueryContext().buildDocument(source);
             dynamicQueryContext.setContextItem(doc);
         }
