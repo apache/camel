@@ -24,18 +24,23 @@
 
     <!-- START SNIPPET: e1 -->
     <!-- setup JMS connection factory -->
+    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+        <property name="maxConnections" value="8"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+    </bean>
+
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
     </bean>
 
     <!-- setup spring jms TX manager -->
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
-        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
     </bean>
 
     <!-- define our activemq component -->
     <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
         <!-- define the jms consumer/producer as transacted -->
         <property name="transacted" value="true"/>
         <!-- setup the transaction manager to use -->

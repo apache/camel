@@ -21,6 +21,16 @@
     http://camel.apache.org/schema/spring
     http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+        <property name="maxConnections" value="8"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+    </bean>
+
+    <bean id="poolConnectionFactory-1" class="org.apache.activemq.pool.PooledConnectionFactory">
+        <property name="maxConnections" value="8"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory-1"/>
+    </bean>
+
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://broker1?broker.persistent=false&amp;broker.useJmx=false"/>
     </bean>
@@ -30,22 +40,22 @@
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
-        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
     </bean>
 
     <bean id="jmsTransactionManager-1" class="org.springframework.jms.connection.JmsTransactionManager">
-        <property name="connectionFactory" ref="jmsConnectionFactory-1"/>
+        <property name="connectionFactory" ref="poolConnectionFactory-1"/>
     </bean>
 
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
-        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
         <property name="transacted" value="true"/>
         <property name="concurrentConsumers" value="1"/>
     </bean>
 
     <bean id="jmsConfig-1" class="org.apache.camel.component.jms.JmsConfiguration">
-        <property name="connectionFactory" ref="jmsConnectionFactory-1"/>
+        <property name="connectionFactory" ref="poolConnectionFactory-1"/>
         <property name="transactionManager" ref="jmsTransactionManager-1"/>
         <property name="transacted" value="true"/>
         <property name="concurrentConsumers" value="1"/>
@@ -74,7 +84,6 @@
                 <property name="propagationBehaviorName" value="PROPAGATION_NOT_SUPPORTED"/>
             </bean>
         </constructor-arg>
-
     </bean>
 
     <bean id="PROPAGATION_REQUIRES_NEW_POLICY" class="org.apache.camel.spring.spi.SpringTransactionPolicy">

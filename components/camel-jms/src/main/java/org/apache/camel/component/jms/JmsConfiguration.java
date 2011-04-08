@@ -913,13 +913,15 @@ public class JmsConfiguration implements Cloneable {
     /**
      * Defaults the JMS cache level if none is explicitly specified.
      * <p/>
-     * Will by default use <tt>CACHE_CONSUMER</tt> which is the most efficient.
+     * Will return <tt>CACHE_AUTO</tt> which will pickup and use <tt>CACHE_NONE</tt>
+     * if transacted has been enabled, otherwise it will use <tt>CACHE_CONSUMER</tt>
+     * which is the most efficient.
      *
      * @param endpoint the endpoint
      * @return the cache level
      */
     protected int defaultCacheLevel(JmsEndpoint endpoint) {
-        return DefaultMessageListenerContainer.CACHE_CONSUMER;
+        return DefaultMessageListenerContainer.CACHE_AUTO;
     }
 
     /**

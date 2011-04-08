@@ -21,12 +21,17 @@
     http://camel.apache.org/schema/spring
     http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+        <property name="maxConnections" value="8"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+    </bean>
+
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
     </bean>     
 
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
-        <property name="connectionFactory" ref="jmsConnectionFactory"/>        
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
         <property name="transacted" value="true"/>
         <property name="concurrentConsumers" value="1"/>
     </bean>

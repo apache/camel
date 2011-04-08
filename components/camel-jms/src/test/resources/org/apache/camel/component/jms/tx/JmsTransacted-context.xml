@@ -26,12 +26,17 @@
         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
     </bean>
 
-    <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
+    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+        <property name="maxConnections" value="8"/>
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
     </bean>
 
+    <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
+    </bean>
+
     <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
         <property name="transacted" value="true"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
     </bean>

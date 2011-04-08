@@ -22,13 +22,18 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <!-- ActiveMQ connection factory -->
-    <bean id="jmsFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+        <property name="maxConnections" value="8"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+    </bean>
+
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
     </bean>
 
     <!-- Spring JMX TX manager -->
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
-        <property name="connectionFactory" ref="jmsFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
     </bean>
 
     <!-- Policy for required -->
@@ -38,7 +43,7 @@
 
     <!-- Jms configuration -->
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
-        <property name="connectionFactory" ref="jmsFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
         <property name="transacted" value="true"/>
         <property name="concurrentConsumers" value="1"/>
@@ -46,7 +51,7 @@
 
     <!-- ActiveMQ component to be used in Camel -->
     <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="connectionFactory" ref="jmsFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
         <property name="configuration" ref="jmsConfig"/>
     </bean>
 

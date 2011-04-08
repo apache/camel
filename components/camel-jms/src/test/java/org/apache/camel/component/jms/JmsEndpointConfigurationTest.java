@@ -117,13 +117,13 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     @Test
     public void testCacheConsumerEnabledForQueue() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar");
-        assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_CONSUMER);
+        assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_AUTO);
     }
 
     @Test
     public void testCacheConsumerEnabledForTopic() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar");
-        assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_CONSUMER);
+        assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_AUTO);
     }
 
     @Test

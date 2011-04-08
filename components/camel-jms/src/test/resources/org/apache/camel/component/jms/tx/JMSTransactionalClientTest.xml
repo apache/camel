@@ -48,16 +48,21 @@
         <property name="springTransactionPolicy" ref="PROPAGATION_REQUIRED"/>
     </bean>
 
+    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+        <property name="maxConnections" value="8"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+    </bean>
+
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
-        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
     </bean>
 
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
-        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
         <property name="transacted" value="true"/>
         <property name="concurrentConsumers" value="1"/>

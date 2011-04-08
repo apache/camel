@@ -22,6 +22,11 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+        <property name="maxConnections" value="8"/>
+        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+    </bean>
+
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://myBroker?brokerConfig=xbean:org/apache/camel/component/jms/tx/activemq-security.xml"/>
         <!-- use scott as user -->
@@ -32,11 +37,11 @@
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
-        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
     </bean>
 
     <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="connectionFactory" ref="jmsConnectionFactory"/>
+        <property name="connectionFactory" ref="poolConnectionFactory"/>
         <property name="transacted" value="true"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
     </bean>
