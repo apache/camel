@@ -16,9 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.io.File;
-import java.io.InputStream;
-
 import junit.framework.TestCase;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
@@ -26,29 +23,19 @@ import org.apache.camel.TypeConverter;
 /**
  * @version 
  */
-public class TypeConverterRegistryTest extends TestCase {
+public class TypeConverterRegistryMissesThenAddTest extends TestCase {
 
-    public void testDefaultTypeConverterRegistry() {
-        DefaultCamelContext ctx = new DefaultCamelContext();
-        assertNotNull(ctx.getTypeConverterRegistry());
-
-        // file to inputstream is a default converter in Camel 
-        TypeConverter tc = ctx.getTypeConverterRegistry().lookup(InputStream.class, File.class);
-        assertNotNull(tc);
-    }
-
-    public void testAddTypeConverter() {
+    public void testMissThenAddTypeConverter() {
         DefaultCamelContext context = new DefaultCamelContext();
 
-        // START SNIPPET: e1
-        // add our own type converter manually that converts from String -> MyOrder using MyOrderTypeConverter
-        context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
-        // END SNIPPET: e1
-
-        // START SNIPPET: e3
         MyOrder order = context.getTypeConverter().convertTo(MyOrder.class, "123");
-        // END SNIPPET: e3
+        assertNull(order);
 
+        // add missing type converter
+        context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
+
+        // this time it should work
+        order = context.getTypeConverter().convertTo(MyOrder.class, "123");
         assertNotNull(order);
         assertEquals(123, order.getId());
     }
@@ -65,7 +52,6 @@ public class TypeConverterRegistryTest extends TestCase {
         }
     }
 
-    // START SNIPPET: e2
     private class MyOrderTypeConverter implements TypeConverter {
 
         @SuppressWarnings("unchecked")
@@ -91,6 +77,5 @@ public class TypeConverterRegistryTest extends TestCase {
             return convertTo(type, value);
         }
     }
-    // END SNIPPET: e2
 
 }
