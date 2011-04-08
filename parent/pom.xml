@@ -51,7 +51,7 @@
     <commons-collections-version>3.2.1</commons-collections-version>
     <commons-pool-version>1.5.4</commons-pool-version>
     <commons-dbcp-version>1.3</commons-dbcp-version>
-    <cxf-version>2.4.0-SNAPSHOT</cxf-version>
+    <cxf-version>2.3.4-SNAPSHOT</cxf-version>
     <cxf-xjc-utils-version>2.3.2</cxf-xjc-utils-version>
     <derby-version>10.4.2.0</derby-version>
     <dnsjava-version>2.1.0</dnsjava-version>
