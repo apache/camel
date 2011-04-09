@@ -47,6 +47,9 @@ public class JmsSuspendResumeTest extends CamelTestSupport {
         resetMocks();
         mock.expectedMessageCount(0);
 
+        // sleep a bit to ensure its properly suspended
+        Thread.sleep(2000);
+
         template.sendBody("activemq:queue:foo", "Bye World");
 
         assertMockEndpointsSatisfied(1, TimeUnit.SECONDS);
