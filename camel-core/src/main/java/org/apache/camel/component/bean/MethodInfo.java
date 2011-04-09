@@ -34,6 +34,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.RecipientList;
@@ -165,6 +166,11 @@ public class MethodInfo {
             if (ObjectHelper.isNotEmpty(annotation.strategyRef())) {
                 AggregationStrategy strategy = CamelContextHelper.mandatoryLookup(camelContext, annotation.strategyRef(), AggregationStrategy.class);
                 recipientList.setAggregationStrategy(strategy);
+            }
+
+            if (ObjectHelper.isNotEmpty(annotation.onPrepareRef())) {
+                Processor onPrepare = CamelContextHelper.mandatoryLookup(camelContext, annotation.onPrepareRef(), Processor.class);
+                recipientList.setOnPrepare(onPrepare);
             }
 
             // add created recipientList as a service so we have its lifecycle managed

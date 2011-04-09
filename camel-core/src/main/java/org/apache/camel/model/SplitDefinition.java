@@ -57,6 +57,10 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     private Boolean stopOnException;
     @XmlAttribute
     private Long timeout;
+    @XmlAttribute
+    private String onPrepareRef;
+    @XmlTransient
+    private Processor onPrepare;
 
     public SplitDefinition() {
     }
@@ -98,10 +102,13 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         if (getTimeout() > 0 && !isParallelProcessing()) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
+        if (onPrepareRef != null) {
+            onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
+        }
 
         Expression exp = getExpression().createExpression(routeContext);
         return new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
-                            isParallelProcessing(), executorService, isStreaming(), isStopOnException(), getTimeout());
+                            isParallelProcessing(), executorService, isStreaming(), isStopOnException(), getTimeout(), onPrepare);
     }
 
     
@@ -191,6 +198,32 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     
     public SplitDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
+        return this;
+    }
+
+    /**
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send.
+     * This can be used to deep-clone messages that should be send, or any custom logic needed before
+     * the exchange is send.
+     *
+     * @param onPrepare the processor
+     * @return the builder
+     */
+    public SplitDefinition onPrepare(Processor onPrepare) {
+        setOnPrepare(onPrepare);
+        return this;
+    }
+
+    /**
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send.
+     * This can be used to deep-clone messages that should be send, or any custom logic needed before
+     * the exchange is send.
+     *
+     * @param onPrepareRef reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
+     * @return the builder
+     */
+    public SplitDefinition onPrepareRef(String onPrepareRef) {
+        setOnPrepareRef(onPrepareRef);
         return this;
     }
 
@@ -289,5 +322,21 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
 
     public void setTimeout(Long timeout) {
         this.timeout = timeout;
+    }
+
+    public String getOnPrepareRef() {
+        return onPrepareRef;
+    }
+
+    public void setOnPrepareRef(String onPrepareRef) {
+        this.onPrepareRef = onPrepareRef;
+    }
+
+    public Processor getOnPrepare() {
+        return onPrepare;
+    }
+
+    public void setOnPrepare(Processor onPrepare) {
+        this.onPrepare = onPrepare;
     }
 }

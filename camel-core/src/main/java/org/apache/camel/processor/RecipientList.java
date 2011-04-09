@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -54,6 +55,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     private boolean ignoreInvalidEndpoints;
     private boolean streaming;
     private long timeout;
+    private Processor onPrepare;
     private ExecutorService executorService;
     private ExecutorService aggregateExecutorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
@@ -109,7 +111,8 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         Iterator<Object> iter = ObjectHelper.createIterator(recipientList, delimiter);
 
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
-                                                                isParallelProcessing(), getExecutorService(), isStreaming(), isStopOnException(), getTimeout()) {
+                                                                isParallelProcessing(), getExecutorService(), isStreaming(),
+                                                                isStopOnException(), getTimeout(), getOnPrepare()) {
             @Override
             protected synchronized ExecutorService createAggregateExecutorService(String name) {
                 // use a shared executor service to avoid creating new thread pools
@@ -211,4 +214,11 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         this.timeout = timeout;
     }
 
+    public Processor getOnPrepare() {
+        return onPrepare;
+    }
+
+    public void setOnPrepare(Processor onPrepare) {
+        this.onPrepare = onPrepare;
+    }
 }

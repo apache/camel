@@ -137,6 +137,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     }
 
+    protected final Processor onPrepare;
     private final CamelContext camelContext;
     private Collection<Processor> processors;
     private final AggregationStrategy aggregationStrategy;
@@ -153,11 +154,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
-        this(camelContext, processors, aggregationStrategy, false, null, false, false, 0);
+        this(camelContext, processors, aggregationStrategy, false, null, false, false, 0, null);
     }
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
-                              boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException, long timeout) {
+                              boolean parallelProcessing, ExecutorService executorService, boolean streaming,
+                              boolean stopOnException, long timeout, Processor onPrepare) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.processors = processors;
@@ -168,6 +170,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         // must enable parallel if executor service is provided
         this.parallelProcessing = parallelProcessing || executorService != null;
         this.timeout = timeout;
+        this.onPrepare = onPrepare;
     }
 
     @Override
@@ -796,8 +799,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @param routeContext the route context
      * @return prepared for use
      */
-    protected ProcessorExchangePair createProcessorExchangePair(int index, Processor processor,
-                                                                Exchange exchange, RouteContext routeContext) {
+    protected ProcessorExchangePair createProcessorExchangePair(int index, Processor processor, Exchange exchange,
+                                                                RouteContext routeContext) {
         Processor prepared = processor;
 
         // set property which endpoint we send to
@@ -806,6 +809,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         // rework error handling to support fine grained error handling
         prepared = createErrorHandler(routeContext, prepared);
 
+        // invoke on prepare on the exchange if specified
+        if (onPrepare != null) {
+            try {
+                onPrepare.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+        }
         return new DefaultProcessorExchangePair(index, processor, prepared, exchange);
     }
 

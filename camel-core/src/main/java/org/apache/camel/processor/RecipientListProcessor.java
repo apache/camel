@@ -128,8 +128,8 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<Object> iter, AggregationStrategy aggregationStrategy,
-                                  boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException, long timeout) {
-        super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, streaming, stopOnException, timeout);
+                                  boolean parallelProcessing, ExecutorService executorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare) {
+        super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, streaming, stopOnException, timeout, onPrepare);
         this.producerCache = producerCache;
         this.iter = iter;
     }
@@ -190,6 +190,15 @@ public class RecipientListProcessor extends MulticastProcessor {
         // rework error handling to support fine grained error handling
         RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
         prepared = createErrorHandler(routeContext, prepared);
+
+        // invoke on prepare on the exchange if specified
+        if (onPrepare != null) {
+            try {
+                onPrepare.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+        }
 
         // and create the pair
         return new RecipientProcessorExchangePair(index, producerCache, endpoint, producer, prepared, copy);

@@ -30,6 +30,7 @@ import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
@@ -60,6 +61,10 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     private Boolean streaming;
     @XmlAttribute
     private Long timeout;
+    @XmlAttribute
+    private String onPrepareRef;
+    @XmlTransient
+    private Processor onPrepare;
 
     public RecipientListDefinition() {
     }
@@ -95,6 +100,12 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         answer.setAggregationStrategy(createAggregationStrategy(routeContext));
         answer.setParallelProcessing(isParallelProcessing());
         answer.setStreaming(isStreaming());   
+        if (onPrepareRef != null) {
+            onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
+        }
+        if (onPrepare != null) {
+            answer.setOnPrepare(onPrepare);
+        }
         if (stopOnException != null) {
             answer.setStopOnException(isStopOnException());
         }
@@ -219,6 +230,32 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     }
 
     /**
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be used send.
+     * This can be used to deep-clone messages that should be send, or any custom logic needed before
+     * the exchange is send.
+     *
+     * @param onPrepare the processor
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> onPrepare(Processor onPrepare) {
+        setOnPrepare(onPrepare);
+        return this;
+    }
+
+    /**
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send.
+     * This can be used to deep-clone messages that should be send, or any custom logic needed before
+     * the exchange is send.
+     *
+     * @param onPrepareRef reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> onPrepareRef(String onPrepareRef) {
+        setOnPrepareRef(onPrepareRef);
+        return this;
+    }
+
+    /**
      * Sets a timeout value in millis to use when using parallelProcessing.
      *
      * @param timeout timeout in millis
@@ -326,5 +363,21 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
 
     public void setTimeout(Long timeout) {
         this.timeout = timeout;
+    }
+
+    public String getOnPrepareRef() {
+        return onPrepareRef;
+    }
+
+    public void setOnPrepareRef(String onPrepareRef) {
+        this.onPrepareRef = onPrepareRef;
+    }
+
+    public Processor getOnPrepare() {
+        return onPrepare;
+    }
+
+    public void setOnPrepare(Processor onPrepare) {
+        this.onPrepare = onPrepare;
     }
 }
