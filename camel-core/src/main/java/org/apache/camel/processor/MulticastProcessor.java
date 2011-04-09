@@ -258,11 +258,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // issue task to execute in separate thread so it can aggregate on-the-fly
             // while we submit new tasks, and those tasks complete concurrently
             // this allows us to optimize work and reduce memory consumption
-            AggregateOnTheFlyTask task = new AggregateOnTheFlyTask(result, original, total, completion, running,
+            final AggregateOnTheFlyTask aggregateOnTheFlyTask = new AggregateOnTheFlyTask(result, original, total, completion, running,
                     aggregationOnTheFlyDone, allTasksSubmitted, executionException);
-
-            // and start the aggregation task so we can aggregate on-the-fly
-            aggregateExecutorService.submit(task);
+            final AtomicBoolean aggregationTaskSubmitted = new AtomicBoolean();
 
             LOG.trace("Starting to submit parallel tasks");
 
@@ -273,6 +271,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
                 completion.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
+                        // only start the aggregation task when the task is being executed to avoid staring
+                        // the aggregation task to early and pile up too many threads
+                        if (aggregationTaskSubmitted.compareAndSet(false, true)) {
+                            // but only submit the task once
+                            aggregateExecutorService.submit(aggregateOnTheFlyTask);
+                        }
+
                         if (!running.get()) {
                             // do not start processing the task if we are not running
                             return subExchange;
@@ -312,7 +317,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // its to hard to do parallel async routing so we let the caller thread be synchronously
             // and have it pickup the replies and do the aggregation (eg we use a latch to wait)
             // wait for aggregation to be done
-            LOG.debug("Waiting for on-the-fly aggregation to complete aggregating {} responses.", total.get());
+            LOG.debug("Waiting for on-the-fly aggregation to complete aggregating {} responses for exchangeId: {}", total.get(), original.getExchangeId());
             aggregationOnTheFlyDone.await();
 
             // did we fail for whatever reason, if so throw that caused exception
@@ -365,7 +370,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         public void run() {
-            LOG.trace("Aggregate on the fly task +++ started +++");
+            LOG.trace("Aggregate on the fly task started for exchangeId: {}", original.getExchangeId());
 
             try {
                 aggregateOnTheFly();
@@ -377,8 +382,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 }
             } finally {
                 // must signal we are done so the latch can open and let the other thread continue processing
-                LOG.debug("Signaling we are done aggregating on the fly");
-                LOG.trace("Aggregate on the fly task +++ done +++");
+                LOG.debug("Signaling we are done aggregating on the fly for exchangeId: {}", original.getExchangeId());
+                LOG.trace("Aggregate on the fly task done for exchangeId: {}", original.getExchangeId());
                 aggregationOnTheFlyDone.countDown();
             }
         }
@@ -436,7 +441,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         ((TimeoutAwareAggregationStrategy) strategy).timeout(oldExchange, aggregated, total.intValue(), timeout);
                     } else {
                         // log a WARN we timed out since it will not be aggregated and the Exchange will be lost
-                        LOG.warn("Parallel processing timed out after " + timeout + " millis for number " + aggregated + ". This task will be cancelled and will not be aggregated.");
+                        LOG.warn("Parallel processing timed out after {} millis for number {}. This task will be cancelled and will not be aggregated.", timeout, aggregated);
                     }
                     LOG.debug("Timeout occurred after {} millis for number {} task.", timeout, aggregated);
                     timedOut = true;
@@ -856,9 +861,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         if (isParallelProcessing() && aggregateExecutorService == null) {
             // use unbounded thread pool so we ensure the aggregate on-the-fly task always will have assigned a thread
             // and run the tasks when the task is submitted. If not then the aggregate task may not be able to run
-            // and signal completion during processing, which would lead to a dead-lock
-            // keep at least one thread in the pool so we re-use the thread avoiding to create new threads because
-            // the pool shrank to zero.
+            // and signal completion during processing, which would lead to what would appear as a dead-lock or a slow processing
             String name = getClass().getSimpleName() + "-AggregateTask";
             aggregateExecutorService = createAggregateExecutorService(name);
         }
@@ -873,7 +876,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @return the thread pool
      */
     protected synchronized ExecutorService createAggregateExecutorService(String name) {
-        return camelContext.getExecutorServiceStrategy().newThreadPool(this, name, 1, Integer.MAX_VALUE);
+        // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
+        return camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, name);
     }
 
     protected void doStop() throws Exception {
