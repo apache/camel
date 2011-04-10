@@ -1928,8 +1928,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uri  the destination
      * @return the builder
      */
-    public WireTapDefinition wireTap(String uri) {
-        WireTapDefinition answer = new WireTapDefinition();
+    public WireTapDefinition<Type> wireTap(String uri) {
+        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
         answer.setUri(uri);
         addOutput(answer);
         return answer;
@@ -1945,11 +1945,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param      executorService a custom {@link ExecutorService} to use as thread pool
      *             for sending tapped exchanges
      * @return the builder
-     * @deprecated use the fluent builder from {@link WireTapDefinition}
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition wireTap(String uri, ExecutorService executorService) {
-        WireTapDefinition answer = new WireTapDefinition();
+    public WireTapDefinition<Type> wireTap(String uri, ExecutorService executorService) {
+        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
         answer.setUri(uri);
         answer.setExecutorService(executorService);
         addOutput(answer);
@@ -1966,11 +1966,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param      executorServiceRef reference to lookup a custom {@link ExecutorService}
      *             to use as thread pool for sending tapped exchanges
      * @return the builder
-     * @deprecated use the fluent builder from {@link WireTapDefinition}
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition wireTap(String uri, String executorServiceRef) {
-        WireTapDefinition answer = new WireTapDefinition();
+    public WireTapDefinition<Type> wireTap(String uri, String executorServiceRef) {
+        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
         answer.setUri(uri);
         answer.setExecutorServiceRef(executorServiceRef);
         addOutput(answer);
@@ -1988,10 +1988,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uri  the destination
      * @param body expression that creates the body to send
      * @return the builder
-     * @deprecated use the fluent builder from {@link WireTapDefinition}
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition wireTap(String uri, Expression body) {
+    public WireTapDefinition<Type> wireTap(String uri, Expression body) {
         return wireTap(uri, true, body);
     }
 
@@ -2004,11 +2004,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param copy whether or not use a copy of the original exchange or a new empty exchange
      * @param body expression that creates the body to send
      * @return the builder
-     * @deprecated use the fluent builder from {@link WireTapDefinition}
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition wireTap(String uri, boolean copy, Expression body) {
-        WireTapDefinition answer = new WireTapDefinition();
+    public WireTapDefinition<Type> wireTap(String uri, boolean copy, Expression body) {
+        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
         answer.setUri(uri);
         answer.setCopy(copy);
         answer.setNewExchangeExpression(body);
@@ -2027,10 +2027,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uri  the destination
      * @param processor  processor preparing the new exchange to send
      * @return the builder
-     * @deprecated use the fluent builder from {@link WireTapDefinition}
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition wireTap(String uri, Processor processor) {
+    public WireTapDefinition<Type> wireTap(String uri, Processor processor) {
         return wireTap(uri, true, processor);
     }
 
@@ -2043,11 +2043,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param copy whether or not use a copy of the original exchange or a new empty exchange
      * @param processor  processor preparing the new exchange to send
      * @return the builder
-     * @deprecated use the fluent builder from {@link WireTapDefinition}
+     * @deprecated use the fluent builder from {@link WireTapDefinition}, will be removed in Camel 3.0
      */
     @Deprecated
-    public WireTapDefinition wireTap(String uri, boolean copy, Processor processor) {
-        WireTapDefinition answer = new WireTapDefinition();
+    public WireTapDefinition<Type> wireTap(String uri, boolean copy, Processor processor) {
+        WireTapDefinition<Type> answer = new WireTapDefinition<Type>();
         answer.setUri(uri);
         answer.setCopy(copy);
         answer.setNewExchangeProcessor(processor);
