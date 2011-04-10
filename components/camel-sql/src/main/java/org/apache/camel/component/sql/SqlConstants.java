@@ -21,6 +21,8 @@ package org.apache.camel.component.sql;
  */
 public final class SqlConstants {
 
+    public static final String SQL_QUERY = "CamelSqlQuery";
+
     public static final String SQL_UPDATE_COUNT = "CamelSqlUpdateCount";
 
     public static final String SQL_ROW_COUNT = "CamelSqlRowCount";

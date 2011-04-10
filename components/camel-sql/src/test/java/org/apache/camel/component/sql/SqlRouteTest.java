@@ -16,12 +16,6 @@
  */
 package org.apache.camel.component.sql;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -33,6 +27,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @version 
@@ -54,6 +53,28 @@ public class SqlRouteTest extends CamelTestSupport {
         List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         Map row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("Linux", row.get("PROJECT"));
+    }
+
+    @Test
+    public void testQueryAsHeader() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:simple", "Camel", SqlConstants.SQL_QUERY, "select * from projects where project = ? order by id");
+        mock.assertIsSatisfied();
+        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        Map row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals(1, row.get("id"));
+        assertEquals("ASF", row.get("license"));
+        mock.reset();
+
+        mock.expectedMessageCount(1);
+        template.sendBodyAndHeader("direct:simple", 3, SqlConstants.SQL_QUERY, "select * from projects where id = ? order by id");
+        mock.assertIsSatisfied();
+        received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("Linux", row.get("PROJECT"));
+        assertEquals("XXX", row.get("license"));
     }
 
     @Test
