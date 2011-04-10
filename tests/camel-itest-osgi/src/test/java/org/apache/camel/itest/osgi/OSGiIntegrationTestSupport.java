@@ -105,7 +105,10 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
 
             equinox(),
             felix());
-        
+
+        // for remote debugging
+        // vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
+
         return options;
     }
 
