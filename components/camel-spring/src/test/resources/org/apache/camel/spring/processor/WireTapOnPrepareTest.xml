@@ -26,11 +26,9 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <!-- use on prepare with multicast -->
-            <multicast onPrepareRef="animalDeepClonePrepare">
-                <to uri="direct:a"/>
-                <to uri="direct:b"/>
-            </multicast>
+            <!-- use on prepare with wiretap -->
+            <wireTap uri="direct:a" onPrepareRef="animalDeepClonePrepare"/>
+            <to uri="direct:b"/>
         </route>
 
         <route>

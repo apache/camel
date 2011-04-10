@@ -76,6 +76,46 @@ public class WireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
         assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
     }
 
+    public void testFireAndForgetUsingProcessor2() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .wireTap("direct:foo").copy().newExchange(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            String body = exchange.getIn().getBody(String.class);
+                            exchange.getIn().setBody("Bye " + body);
+                            exchange.getIn().setHeader("foo", "bar");
+                        }
+                    }).to("mock:result");
+
+
+                from("direct:foo").to("mock:foo");
+            }
+        });
+        context.start();
+
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived("World");
+
+        MockEndpoint foo = getMockEndpoint("mock:foo");
+        foo.expectedBodiesReceived("Bye World");
+        foo.expectedHeaderReceived("foo", "bar");
+
+        template.sendBody("direct:start", "World");
+
+        assertMockEndpointsSatisfied();
+
+        // should be different exchange instances
+        Exchange e1 = result.getReceivedExchanges().get(0);
+        Exchange e2 = foo.getReceivedExchanges().get(0);
+        assertNotSame("Should not be same Exchange", e1, e2);
+
+        // should have same from endpoint
+        assertEquals("direct://start", e1.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
+    }
+
     public void testFireAndForgetUsingExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -87,6 +127,39 @@ public class WireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
 
                 from("direct:foo").to("mock:foo");
                 // END SNIPPET: e2
+            }
+        });
+        context.start();
+
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived("World");
+
+        MockEndpoint foo = getMockEndpoint("mock:foo");
+        foo.expectedBodiesReceived("Bye World");
+
+        template.sendBody("direct:start", "World");
+
+        assertMockEndpointsSatisfied();
+
+        // should be different exchange instances
+        Exchange e1 = result.getReceivedExchanges().get(0);
+        Exchange e2 = foo.getReceivedExchanges().get(0);
+        assertNotSame("Should not be same Exchange", e1, e2);
+
+        // should have same from endpoint
+        assertEquals("direct://start", e1.getFromEndpoint().getEndpointUri());
+        assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
+    }
+
+    public void testFireAndForgetUsingExpression2() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .wireTap("direct:foo").copy().newExchange(simple("Bye ${body}"))
+                    .to("mock:result");
+
+                from("direct:foo").to("mock:foo");
             }
         });
         context.start();

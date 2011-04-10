@@ -44,6 +44,7 @@ public class WireTapProcessor extends SendProcessor {
     private Expression newExchangeExpression;
     private Processor newExchangeProcessor;
     private boolean copy;
+    private Processor onPrepare;
 
     public WireTapProcessor(Endpoint destination, ExecutorService executorService) {
         super(destination);
@@ -144,6 +145,15 @@ public class WireTapProcessor extends SendProcessor {
             }
         }
 
+        // invoke on prepare on the exchange if specified
+        if (onPrepare != null) {
+            try {
+                onPrepare.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+        }
+
         return answer;
     }
 
@@ -181,5 +191,13 @@ public class WireTapProcessor extends SendProcessor {
 
     public void setCopy(boolean copy) {
         this.copy = copy;
+    }
+
+    public Processor getOnPrepare() {
+        return onPrepare;
+    }
+
+    public void setOnPrepare(Processor onPrepare) {
+        this.onPrepare = onPrepare;
     }
 }

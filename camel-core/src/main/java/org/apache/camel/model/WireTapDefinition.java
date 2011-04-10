@@ -30,12 +30,11 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;wireTap/&gt; element
- *
- * @version 
  */
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -52,6 +51,10 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
     private String executorServiceRef;
     @XmlAttribute
     private Boolean copy;
+    @XmlAttribute
+    private String onPrepareRef;
+    @XmlTransient
+    private Processor onPrepare;
 
     public WireTapDefinition() {
     }
@@ -82,6 +85,12 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
         if (newExchangeExpression != null) {
             answer.setNewExchangeExpression(newExchangeExpression.createExpression(routeContext));
         }
+        if (onPrepareRef != null) {
+            onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
+        }
+        if (onPrepare != null) {
+            answer.setOnPrepare(onPrepare);
+        }
 
         return answer;
     }
@@ -99,17 +108,108 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
     public String getShortName() {
         return "wireTap";
     }
-    
-    public ProcessorDefinition executorService(ExecutorService executorService) {
-        // wiretap has no outputs and therefore we cannot use custom wiretap builder methods in Java DSL
-        // as the Java DSL is stretched so far we can using regular Java
-        throw new UnsupportedOperationException("wireTap does not support these builder methods");
+
+    @Override
+    public void addOutput(ProcessorDefinition output) {
+        // add outputs on parent as this wiretap does not support outputs
+        getParent().addOutput(output);
     }
-    
-    public ProcessorDefinition executorServiceRef(String executorServiceRef) {
-        // wiretap has no outputs and therefore we cannot use custom wiretap builder methods in Java DSL
-        // as the Java DSL is stretched so far we can using regular Java
-        throw new UnsupportedOperationException("wireTap does not support these builder methods");
+
+    // Fluent API
+    // -------------------------------------------------------------------------
+
+    /**
+     * Uses a custom thread pool
+     *
+     * @param executorService a custom {@link ExecutorService} to use as thread pool
+     *                        for sending tapped exchanges
+     * @return the builder
+     */
+    public WireTapDefinition executorService(ExecutorService executorService) {
+        setExecutorService(executorService);
+        return this;
+    }
+
+    /**
+     * Uses a custom thread pool
+     *
+     * @param executorServiceRef reference to lookup a custom {@link ExecutorService}
+     *                           to use as thread pool for sending tapped exchanges
+     * @return the builder
+     */
+    public WireTapDefinition executorServiceRef(String executorServiceRef) {
+        setExecutorServiceRef(executorServiceRef);
+        return this;
+    }
+
+    /**
+     * Uses a copy of the original exchange
+     *
+     * @return the builder
+     */
+    public WireTapDefinition copy() {
+        setCopy(true);
+        return this;
+    }
+
+    /**
+     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
+     *
+     * @param expression expression that creates the new body to send
+     * @return the builder
+     */
+    public WireTapDefinition newExchange(Expression expression) {
+        setNewExchangeExpression(expression);
+        return this;
+    }
+
+    /**
+     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
+     *
+     * @param processor  processor preparing the new exchange to send
+     * @return the builder
+     */
+    public WireTapDefinition newExchange(Processor processor) {
+        setNewExchangeProcessor(processor);
+        return this;
+    }
+
+    /**
+     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
+     *
+     * @param ref reference to the processor to lookup in the {@link org.apache.camel.spi.Registry} to
+     *            be used for preparing the new exchange to send
+     * @return the builder
+     */
+    public WireTapDefinition newExchangeRef(String ref) {
+        setNewExchangeProcessorRef(ref);
+        return this;
+    }
+
+    /**
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send.
+     * This can be used to deep-clone messages that should be send, or any custom logic needed before
+     * the exchange is send.
+     *
+     * @param onPrepare the processor
+     * @return the builder
+     */
+    public WireTapDefinition onPrepare(Processor onPrepare) {
+        setOnPrepare(onPrepare);
+        return this;
+    }
+
+    /**
+     * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send.
+     * This can be used to deep-clone messages that should be send, or any custom logic needed before
+     * the exchange is send.
+     *
+     * @param onPrepareRef reference to the processor to lookup in the {@link org.apache.camel.spi.Registry}
+     * @return the builder
+     */
+    public WireTapDefinition onPrepareRef(String onPrepareRef) {
+        setOnPrepareRef(onPrepareRef);
+        return this;
     }
 
     public Processor getNewExchangeProcessor() {
@@ -167,5 +267,21 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> impleme
     public boolean isCopy() {
         // should default to true if not configured
         return copy != null ? copy : true;
+    }
+
+    public String getOnPrepareRef() {
+        return onPrepareRef;
+    }
+
+    public void setOnPrepareRef(String onPrepareRef) {
+        this.onPrepareRef = onPrepareRef;
+    }
+
+    public Processor getOnPrepare() {
+        return onPrepare;
+    }
+
+    public void setOnPrepare(Processor onPrepare) {
+        this.onPrepare = onPrepare;
     }
 }
