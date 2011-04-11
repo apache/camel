@@ -36,6 +36,7 @@
     <module>camel-example-bam</module>
     <module>camel-example-cafe</module>
     <module>camel-example-cxf</module>
+    <module>camel-example-cxf-osgi</module>
     <module>camel-example-cxf-proxy</module>
     <module>camel-example-cxf-tomcat</module>
     <module>camel-example-docs</module>

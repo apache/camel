@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.apache.camel</groupId>
+		<artifactId>examples</artifactId>
+                <version>2.8-SNAPSHOT</version>
+                <relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>camel-example-cxf-osgi</artifactId>
+	<name>Camel :: Example :: CXF :: OSGI</name>
+	<description>An example which use a CXF consumer and the OSGI HTTP Service</description>
+	<packaging>bundle</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-cxf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-core</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>${cxf-version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- CXF wsdl2java generator, will plugin to the compile goal -->
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-codegen-plugin</artifactId>
+				<version>${cxf-version}</version>
+				<executions>
+					<execution>
+						<id>generate-sources</id>
+						<phase>generate-sources</phase>
+						<configuration>
+							<sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
+							<wsdlOptions>
+								<wsdlOption>
+									<wsdl>${basedir}/src/main/resources/META-INF/wsdl/report_incident.wsdl</wsdl>
+								</wsdlOption>
+							</wsdlOptions>
+						</configuration>
+						<goals>
+							<goal>wsdl2java</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- to generate the MANIFEST-FILE of the bundle -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<manifestLocation>target/META-INF</manifestLocation>
+					<instructions>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Export-Package>org.apache.camel.example.reportincident*</Export-Package>
+						<Import-Package>
+							META-INF.cxf,
+							META-INF.cxf.osgi,
+							org.apache.cxf,
+							org.apache.cxf.binding,
+							org.apache.cxf.binding.corba,
+							org.apache.cxf.binding.soap,
+							org.apache.cxf.binding.soap.spring,
+							org.apache.cxf.bus,
+							org.apache.cxf.bus.resource,
+							org.apache.cxf.bus.spring,
+							org.apache.cxf.buslifecycle,
+							org.apache.cxf.catalog,
+							org.apache.cxf.configuration,
+							org.apache.cxf.configuration.spring,
+							org.apache.cxf.endpoint,
+							org.apache.cxf.headers,
+							org.apache.cxf.management,
+							org.apache.cxf.management.jmx,
+							org.apache.cxf.phase,
+							org.apache.cxf.resource,
+							org.apache.cxf.service.factory,
+							org.apache.cxf.transport,
+							org.apache.cxf.transport.http,
+							org.apache.cxf.transport.http.policy,
+							org.apache.cxf.transport.http_jetty,
+							org.apache.cxf.transport.http_osgi,
+							org.apache.cxf.transport.jms,
+							org.apache.cxf.transports.http,
+							org.apache.cxf.workqueue,
+							org.apache.cxf.wsdl,
+							org.apache.cxf.wsdl11,
+							org.apache.ws.security.action,
+							org.apache.ws.security.processor,
+							org.springframework.beans.factory.config,
+							org.springframework.mail.javamail,
+							*
+					    </Import-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
