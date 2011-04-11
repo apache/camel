@@ -27,7 +27,7 @@ import org.apache.camel.util.ServiceHelper;
 
 public class CacheComponent extends DefaultComponent {
     private CacheConfiguration configuration;
-    private CacheManagerFactory cacheManagerFactory = new CacheManagerFactory();
+    private CacheManagerFactory cacheManagerFactory = new DefaultCacheManagerFactory();
     
     public CacheComponent() {
         configuration = new CacheConfiguration();
@@ -46,9 +46,11 @@ public class CacheComponent extends DefaultComponent {
         CacheConfiguration config = configuration.copy();
 
         config.parseURI(new URI(uri));
-        
+
+        setProperties(this, parameters);
+        setProperties(config, parameters);
+
         CacheEndpoint cacheEndpoint = new CacheEndpoint(uri, this, config, cacheManagerFactory);
-        setProperties(cacheEndpoint.getConfig(), parameters);
         return cacheEndpoint;
     }
 

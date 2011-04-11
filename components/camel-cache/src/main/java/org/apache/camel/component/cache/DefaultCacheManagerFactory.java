@@ -17,37 +17,12 @@
 package org.apache.camel.component.cache;
 
 import net.sf.ehcache.CacheManager;
-import org.apache.camel.impl.ServiceSupport;
 
-public abstract class CacheManagerFactory extends ServiceSupport {
-    private CacheManager cacheManager;
-
-    public synchronized CacheManager instantiateCacheManager() {
-        if (cacheManager == null) {
-            cacheManager = createCacheManagerInstance();
-        }
-        
-        return cacheManager;
-    }
-
-    /**
-     * Creates {@link CacheManager}.
-     * <p/>
-     * The default implementation is {@link DefaultCacheManagerFactory}.
-     *
-     * @return {@link CacheManager}
-     */
-    protected abstract CacheManager createCacheManagerInstance();
+public class DefaultCacheManagerFactory extends CacheManagerFactory {
 
     @Override
-    protected void doStart() throws Exception {
+    protected CacheManager createCacheManagerInstance() {
+        return CacheManager.create(getClass().getResourceAsStream("/ehcache.xml"));
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        // shutdown cache manager when stopping
-        if (cacheManager != null) {
-            cacheManager.shutdown();
-        }
-    }
 }

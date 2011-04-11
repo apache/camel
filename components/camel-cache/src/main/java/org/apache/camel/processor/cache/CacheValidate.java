@@ -29,17 +29,12 @@ public class CacheValidate {
         LOG.trace("Cache Name: {}", cacheName);
 
         if (!cacheManager.cacheExists(cacheName)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("No existing Cache found with name: " + cacheName
-                        + ". Please ensure a cache is first instantiated using a Cache Consumer or Cache Producer."
-                        + " Replacement will not be performed since the cache " + cacheName + "does not presently exist");
-            }
+            LOG.debug("No existing Cache found with name: {}"
+                    + ". Please ensure a cache is first instantiated using a Cache Consumer or Cache Producer."
+                    + " Replacement will not be performed since the cache {} does not presently exist", cacheName, cacheName);
             return false;
         }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found an existing cache: " + cacheName);
-        }
+        LOG.debug("Found an existing cache: {}", cacheName);
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Cache {} currently contains {} elements", cacheName, cacheManager.getCache(cacheName).getSize());
@@ -47,11 +42,8 @@ public class CacheValidate {
         Ehcache cache = cacheManager.getCache(cacheName);
 
         if (!cache.isKeyInCache(key)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("No Key with name: " + key
-                        + "presently exists in the cache. It is also possible that the key may have expired in the cache."
-                        + " Replacement will not be performed until an appropriate key/value pair is added to (or) found in the cache.");
-            }
+            LOG.debug("No Key with name: {} presently exists in the cache. It is also possible that the key may have expired in the cache."
+                    + " Replacement will not be performed until an appropriate key/value pair is added to (or) found in the cache.", key);
             return false;
         }
 
