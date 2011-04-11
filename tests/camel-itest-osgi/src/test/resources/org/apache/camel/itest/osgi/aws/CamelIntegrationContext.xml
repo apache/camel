@@ -35,5 +35,15 @@
             <from uri="direct:start-sns"/>
             <to uri="aws-sns://MyTopic?accessKey=xxx&amp;secretKey=yyy"/>
         </route>
+        
+        <route>
+            <from uri="direct:start-s3"/>
+            <to uri="aws-s3://mycamelbucket?accessKey=xxx&amp;secretKey=yyy"/>
+        </route>
+        
+        <route>
+            <from uri="aws-s3://mycamelbucket?accessKey=xxx&amp;secretKey=yyy&amp;maxMessagesPerPoll=5"/>
+            <to uri="mock:result-s3"/>
+        </route>
     </camelContext>
 </beans>

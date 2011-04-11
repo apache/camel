@@ -16,6 +16,12 @@
  */
 package org.apache.camel.itest.osgi.aws;
 
+import static org.ops4j.pax.exam.CoreOptions.equinox;
+import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.OptionUtils.combine;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
+
 import java.io.InputStream;
 
 import org.apache.camel.EndpointInject;
@@ -23,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
@@ -36,18 +41,9 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
-
 @RunWith(JUnit4TestRunner.class)
 @Ignore("Test fails")
 public class AwsS3IntegrationTest extends OSGiIntegrationSpringTestSupport {
-    
-    @EndpointInject(uri = "direct:start")
-    private ProducerTemplate template;
     
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
@@ -61,7 +57,7 @@ public class AwsS3IntegrationTest extends OSGiIntegrationSpringTestSupport {
     public void sendInOnly() throws Exception {
         result.expectedMessageCount(1);
         
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+        Exchange exchange = template.send("direct:start-s3", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.KEY, "CamelUnitTest");
                 exchange.getIn().setBody("This is my bucket content.");
@@ -79,7 +75,7 @@ public class AwsS3IntegrationTest extends OSGiIntegrationSpringTestSupport {
     public void sendInOut() throws Exception {
         result.expectedMessageCount(1);
         
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
+        Exchange exchange = template.send("direct:start-s3", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.KEY, "CamelUnitTest");
                 exchange.getIn().setBody("This is my bucket content.");
