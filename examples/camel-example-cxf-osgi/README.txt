@@ -32,7 +32,7 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
  
   2) Add features required
   features:addUrl mvn:org.apache.camel.karaf/apache-camel/2.8-SNAPSHOT/xml/features
-  features:install http
+  features:install war
   features:install cxf
   features:install camel-jaxb
   features:install camel-cxf
