@@ -27,9 +27,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Test issue with hawtdb file store not growing large
+ * Test issue with hawtdb file store growing to large
  */
-@Ignore("Work in progress")
 public class HawtDBBigPayloadTest extends CamelTestSupport {
 
     private static final long TIME = 60 * 1000;
@@ -55,7 +54,8 @@ public class HawtDBBigPayloadTest extends CamelTestSupport {
         assertTrue(file + " should exists", file.exists());
         long size = file.length();
         log.info(file + " size is " + size);
-        assertTrue(file + " should not be so big in size, was: " + size, size < 32 * 1024 * 1024);
+        // should be about 32mb, so we say 34 just in case
+        assertTrue(file + " should not be so big in size, was: " + size, size < 34 * 1024 * 1024);
     }
 
     @Override
