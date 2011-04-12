@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.spi.IdempotentRepository;
 
 /**
  * @version 
@@ -49,6 +50,74 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         context.start();
 
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
+
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("3", "three");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testNotSkiDuplicate() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
+
+                from("direct:start")
+                    .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
+                    .to("mock:result");
+            }
+        });
+        context.start();
+
+        resultEndpoint.expectedBodiesReceived("one", "two", "one", "two", "one", "three");
+        resultEndpoint.message(0).property(Exchange.DUPLICATE_MESSAGE).isNull();
+        resultEndpoint.message(1).property(Exchange.DUPLICATE_MESSAGE).isNull();
+        resultEndpoint.message(2).property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
+        resultEndpoint.message(3).property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
+        resultEndpoint.message(4).property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
+        resultEndpoint.message(5).property(Exchange.DUPLICATE_MESSAGE).isNull();
+
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("3", "three");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testNotSkiDuplicateWithFilter() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
+
+                // START SNIPPET: e1
+                from("direct:start")
+                    // instruct idempotent consumer to not skip duplicates as we will filter then our self
+                    .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
+                    .filter(property(Exchange.DUPLICATE_MESSAGE).isEqualTo(true))
+                        // filter out duplicate messages by sending them to someplace else and then stop
+                        .to("mock:duplicate")
+                        .stop()
+                    .end()
+                    // and here we process only new messages (no duplicates)
+                    .to("mock:result");
+                // END SNIPPET: e1
+            }
+        });
+        context.start();
+
+        resultEndpoint.expectedBodiesReceived("one", "two", "three");
+
+        getMockEndpoint("mock:duplicate").expectedBodiesReceived("one", "two", "one");
+        getMockEndpoint("mock:duplicate").allMessages().property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
 
         sendMessage("1", "one");
         sendMessage("2", "two");

@@ -1125,7 +1125,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * to avoid duplicate messages
      *
      * @param messageIdExpression  expression to test of duplicate messages
-     * @param idempotentRepository  the repository to use for duplicate chedck
+     * @return the builder
+     */
+    public IdempotentConsumerDefinition idempotentConsumer(Expression messageIdExpression) {
+        IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition();
+        answer.setExpression(new ExpressionDefinition(messageIdExpression));
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
+     * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
+     * to avoid duplicate messages
+     *
+     * @param messageIdExpression  expression to test of duplicate messages
+     * @param idempotentRepository  the repository to use for duplicate check
      * @return the builder
      */
     public IdempotentConsumerDefinition idempotentConsumer(Expression messageIdExpression, IdempotentRepository<?> idempotentRepository) {
@@ -1139,9 +1154,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
      *
-     * @param idempotentRepository the repository to use for duplicate chedck
+     * @param idempotentRepository the repository to use for duplicate check
      * @return the builder used to create the expression
+     * @deprecated use any of the other methods
      */
+    @Deprecated
     public ExpressionClause<IdempotentConsumerDefinition> idempotentConsumer(IdempotentRepository<?> idempotentRepository) {
         IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition();
         answer.setMessageIdRepository(idempotentRepository);

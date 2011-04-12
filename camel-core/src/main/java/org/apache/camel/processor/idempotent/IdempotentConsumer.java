@@ -45,12 +45,14 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     private final AsyncProcessor processor;
     private final IdempotentRepository<String> idempotentRepository;
     private final boolean eager;
+    private final boolean skipDuplicate;
 
     public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository<String> idempotentRepository,
-                              boolean eager, Processor processor) {
+                              boolean eager, boolean skipDuplicate, Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
         this.eager = eager;
+        this.skipDuplicate = skipDuplicate;
         this.processor = AsyncProcessorTypeConverter.convert(processor);
     }
 
@@ -78,11 +80,21 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
             newKey = !idempotentRepository.contains(messageId);
         }
 
+
+        if (!newKey) {
+            // mark the exchange as duplicate
+            exchange.setProperty(Exchange.DUPLICATE_MESSAGE, Boolean.TRUE);
+        }
+
         if (!newKey) {
             // we already have this key so its a duplicate message
             onDuplicateMessage(exchange, messageId);
-            callback.done(true);
-            return true;
+            if (skipDuplicate) {
+                // if we should skip duplicate then we are done
+                LOG.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
+                callback.done(true);
+                return true;
+            }
         }
 
         // register our on completion callback
@@ -138,7 +150,7 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
      * @param messageId the message ID of this exchange
      */
     protected void onDuplicateMessage(Exchange exchange, String messageId) {
-        LOG.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
+        // noop
     }
 
 }

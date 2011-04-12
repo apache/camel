@@ -42,6 +42,8 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     private String messageIdRepositoryRef;
     @XmlAttribute
     private Boolean eager;
+    @XmlAttribute
+    private Boolean skipDuplicate;
     @XmlTransient
     private IdempotentRepository<?> idempotentRepository;
 
@@ -108,6 +110,22 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         return this;
     }
 
+    /**
+     * Sets whether to skip duplicates or not.
+     * <p/>
+     * The default behavior is to skip duplicates.
+     * <p/>
+     * A duplicate message would have the Exchange property {@link org.apache.camel.Exchange#DUPLICATE_MESSAGE} set
+     * to a {@link Boolean#TRUE} value. A none duplicate message will not have this property set.
+     *
+     * @param skipDuplicate  <tt>true</tt> to skip duplicates, <tt>false</tt> to allow duplicates.
+     * @return builder
+     */
+    public IdempotentConsumerDefinition skipDuplicate(boolean skipDuplicate) {
+        setSkipDuplicate(skipDuplicate);
+        return this;
+    }
+
     public String getMessageIdRepositoryRef() {
         return messageIdRepositoryRef;
     }
@@ -137,6 +155,19 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         return eager != null ? eager : true;
     }
 
+    public Boolean getSkipDuplicate() {
+        return skipDuplicate;
+    }
+
+    public void setSkipDuplicate(Boolean skipDuplicate) {
+        this.skipDuplicate = skipDuplicate;
+    }
+
+    public boolean isSkipDuplicate() {
+        // defaults to true if not configured
+        return skipDuplicate != null ? skipDuplicate : true;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
@@ -151,7 +182,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
 
         Expression expression = getExpression().createExpression(routeContext);
 
-        return new IdempotentConsumer(expression, idempotentRepository, isEager(), childProcessor);
+        return new IdempotentConsumer(expression, idempotentRepository, isEager(), isSkipDuplicate(), childProcessor);
     }
 
     /**
@@ -161,7 +192,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
      * @return the repository
      */
     protected IdempotentRepository<?> resolveMessageIdRepository(RouteContext routeContext) {
-        if (idempotentRepository == null && messageIdRepositoryRef != null) {
+        if (messageIdRepositoryRef != null) {
             idempotentRepository = routeContext.lookup(messageIdRepositoryRef, IdempotentRepository.class);
         }
         return idempotentRepository;
