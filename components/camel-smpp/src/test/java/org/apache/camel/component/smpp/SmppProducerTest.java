@@ -184,7 +184,7 @@ public class SmppProducerTest {
                 eq((byte) 0),
                 eq(new GeneralDataCoding(
                         false,
-                        false,
+                        true,
                         MessageClass.CLASS1,
                         Alphabet.ALPHA_DEFAULT)),
                 eq((byte) 0),
@@ -231,7 +231,7 @@ public class SmppProducerTest {
                 eq((byte) 0),
                 eq(new GeneralDataCoding(
                         false,
-                        false,
+                        true,
                         MessageClass.CLASS1,
                         Alphabet.ALPHA_DEFAULT)),
                 eq((byte) 0),
@@ -295,7 +295,7 @@ public class SmppProducerTest {
                 eq((byte) 0),
                 eq(new GeneralDataCoding(
                         false,
-                        false,
+                        true,
                         MessageClass.CLASS1,
                         Alphabet.ALPHA_8_BIT)),
                 eq((byte) 0),

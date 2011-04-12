@@ -143,7 +143,7 @@ public class SmppProducer extends DefaultProducer {
                 submitSm.getReplaceIfPresent(),
                 new GeneralDataCoding(
                         false,
-                        false,
+                        true,
                         MessageClass.CLASS1,
                         Alphabet.valueOf(submitSm.getDataCoding())),
                 (byte) 0,
