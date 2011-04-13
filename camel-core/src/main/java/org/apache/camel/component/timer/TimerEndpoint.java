@@ -42,6 +42,7 @@ public class TimerEndpoint extends DefaultEndpoint implements Service {
     private boolean fixedRate;
     private boolean daemon = true;
     private Timer timer;
+    private long repeatCount;
 
     public TimerEndpoint() {
     }
@@ -127,6 +128,16 @@ public class TimerEndpoint extends DefaultEndpoint implements Service {
     @ManagedAttribute(description = "Timer Period")
     public void setPeriod(long period) {
         this.period = period;
+    }
+
+    @ManagedAttribute(description = "Repeat Count")
+    public long getRepeatCount() {
+        return repeatCount;
+    }
+
+    @ManagedAttribute(description = "Repeat Count")
+    public void setRepeatCount(long repeatCount) {
+        this.repeatCount = repeatCount;
     }
 
     public Date getTime() {

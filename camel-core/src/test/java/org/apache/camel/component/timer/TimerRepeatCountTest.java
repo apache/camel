@@ -24,26 +24,26 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test for fired time exchange property
  */
-public class TimerFiredTimeTest extends ContextTestSupport {
+public class TimerRepeatCountTest extends ContextTestSupport {
 
-    public void testFired() throws Exception {
+    public void testRepeatCount() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
+        mock.expectedMessageCount(3);
+        mock.setAssertPeriod(500);
+        mock.message(0).header(Exchange.TIMER_COUNTER).isEqualTo(1);
+        mock.message(1).header(Exchange.TIMER_COUNTER).isEqualTo(2);
+        mock.message(2).header(Exchange.TIMER_COUNTER).isEqualTo(3);
+
+        // we should only get 3 messages as we have a repeat count limit at 3
 
         assertMockEndpointsSatisfied();
-
-        Exchange exchange = mock.getExchanges().get(0);
-        assertEquals("hello", exchange.getProperty(Exchange.TIMER_NAME));
-        assertNotNull(exchange.getProperty(Exchange.TIMER_FIRED_TIME));
-        assertNotNull(exchange.getIn().getHeader("firedTime"));
-        assertEquals(Long.valueOf(1), exchange.getProperty(Exchange.TIMER_COUNTER));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("timer://hello").to("mock:result");
+                from("timer://hello?repeatCount=3&period=10").to("mock:result");
             }
         };
     }

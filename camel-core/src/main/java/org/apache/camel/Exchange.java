@@ -164,6 +164,7 @@ public interface Exchange {
     String SPLIT_COMPLETE     = "CamelSplitComplete";
     String SPLIT_SIZE         = "CamelSplitSize";
 
+    String TIMER_COUNTER         = "CamelTimerCounter";
     String TIMER_FIRED_TIME      = "CamelTimerFiredTime";
     String TIMER_NAME            = "CamelTimerName";
     String TIMER_PERIOD          = "CamelTimerPeriod";

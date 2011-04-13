@@ -19,6 +19,7 @@ package org.apache.camel.component.timer;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -44,9 +45,21 @@ public class TimerConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         task = new TimerTask() {
+            // counter
+            private final AtomicLong counter = new AtomicLong();
+
             @Override
             public void run() {
-                sendTimerExchange();
+                long count = counter.incrementAndGet();
+
+                boolean fire = endpoint.getRepeatCount() <= 0 || count <= endpoint.getRepeatCount();
+                if (fire) {
+                    sendTimerExchange(count);
+                } else {
+                    // no need to fire anymore as we exceeded repeat count
+                    LOG.debug("Cancelling {} timer as repeat count limit reached after {} counts.", endpoint.getTimerName(), endpoint.getRepeatCount());
+                    cancel();
+                }
             }
         };
 
@@ -86,8 +99,9 @@ public class TimerConsumer extends DefaultConsumer {
         }
     }
 
-    protected void sendTimerExchange() {
+    protected void sendTimerExchange(long counter) {
         Exchange exchange = endpoint.createExchange();
+        exchange.setProperty(Exchange.TIMER_COUNTER, counter);
         exchange.setProperty(Exchange.TIMER_NAME, endpoint.getTimerName());
         exchange.setProperty(Exchange.TIMER_TIME, endpoint.getTime());
         exchange.setProperty(Exchange.TIMER_PERIOD, endpoint.getPeriod());
@@ -97,7 +111,7 @@ public class TimerConsumer extends DefaultConsumer {
         // also set now on in header with same key as quartz to be consistent
         exchange.getIn().setHeader("firedTime", now);
 
-        LOG.trace("Timer {} is firing", endpoint.getTimerName());
+        LOG.trace("Timer {} is firing #{} count", endpoint.getTimerName(), counter);
         try {
             getProcessor().process(exchange);
 
