@@ -32,7 +32,6 @@
   <description>Camel MSV support</description>
 
   <properties>
-    <camel.osgi.import.pkg>org.apache.camel,*</camel.osgi.import.pkg>
     <camel.osgi.export.pkg>org.apache.camel.component.validator.msv.*</camel.osgi.export.pkg>
   </properties>
 
