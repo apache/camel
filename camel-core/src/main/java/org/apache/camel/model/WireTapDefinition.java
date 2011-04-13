@@ -16,11 +16,14 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -47,11 +50,12 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
     protected Endpoint endpoint;
     @XmlTransient
     private Processor newExchangeProcessor;
-    // TODO: Should be named newExchangeRef instead of processorRef (Camel 3.0)
     @XmlAttribute(name = "processorRef")
     private String newExchangeProcessorRef;
     @XmlElement(name = "body")
     private ExpressionSubElementDefinition newExchangeExpression;
+    @XmlElementRef
+    private List<SetHeaderDefinition> headers = new ArrayList<SetHeaderDefinition>();
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
@@ -88,9 +92,17 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
         if (newExchangeProcessorRef != null) {
             newExchangeProcessor = routeContext.lookup(newExchangeProcessorRef, Processor.class);
         }
-        answer.setNewExchangeProcessor(newExchangeProcessor);
+        if (newExchangeProcessor != null) {
+            answer.addNewExchangeProcessor(newExchangeProcessor);
+        }
         if (newExchangeExpression != null) {
             answer.setNewExchangeExpression(newExchangeExpression.createExpression(routeContext));
+        }
+        if (headers != null && !headers.isEmpty()) {
+            for (SetHeaderDefinition header : headers) {
+                Processor processor = header.createProcessor(routeContext);
+                answer.addNewExchangeProcessor(processor);
+            }
         }
         if (onPrepareRef != null) {
             onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
@@ -180,13 +192,34 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
     }
 
     /**
+     * @deprecated use newExchangeBody
+     */
+    @Deprecated
+    public WireTapDefinition<Type> newExchange(Expression expression) {
+        return newExchangeBody(expression);
+    }
+
+    /**
      * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
      *
      * @param expression expression that creates the new body to send
      * @return the builder
+     * @see #newExchangeHeader(String, org.apache.camel.Expression)
      */
-    public WireTapDefinition<Type> newExchange(Expression expression) {
+    public WireTapDefinition<Type> newExchangeBody(Expression expression) {
         setNewExchangeExpression(expression);
+        return this;
+    }
+
+    /**
+     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
+     *
+     * @param ref reference to the {@link Processor} to lookup in the {@link org.apache.camel.spi.Registry} to
+     *            be used for preparing the new exchange to send
+     * @return the builder
+     */
+    public WireTapDefinition<Type> newExchangeRef(String ref) {
+        setNewExchangeProcessorRef(ref);
         return this;
     }
 
@@ -195,6 +228,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
      *
      * @param processor  processor preparing the new exchange to send
      * @return the builder
+     * @see #newExchangeHeader(String, org.apache.camel.Expression)
      */
     public WireTapDefinition<Type> newExchange(Processor processor) {
         setNewExchangeProcessor(processor);
@@ -202,14 +236,17 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
     }
 
     /**
-     * Sends a <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}
+     * Sets a header on the <i>new</i> Exchange, instead of tapping an existing, using {@link ExchangePattern#InOnly}.
+     * <p/>
+     * Use this together with the {@link #newExchange(org.apache.camel.Expression)} or {@link #newExchange(org.apache.camel.Processor)}
+     * methods.
      *
-     * @param ref reference to the processor to lookup in the {@link org.apache.camel.spi.Registry} to
-     *            be used for preparing the new exchange to send
+     * @param headerName  the header name
+     * @param expression  the expression setting the header value
      * @return the builder
      */
-    public WireTapDefinition<Type> newExchangeRef(String ref) {
-        setNewExchangeProcessorRef(ref);
+    public WireTapDefinition<Type> newExchangeHeader(String headerName, Expression expression) {
+        headers.add(new SetHeaderDefinition(headerName, expression));
         return this;
     }
 
@@ -334,5 +371,13 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
 
     public void setOnPrepare(Processor onPrepare) {
         this.onPrepare = onPrepare;
+    }
+
+    public List<SetHeaderDefinition> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(List<SetHeaderDefinition> headers) {
+        this.headers = headers;
     }
 }

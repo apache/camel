@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
@@ -42,7 +44,7 @@ public class WireTapProcessor extends SendProcessor {
     // expression or processor used for populating a new exchange to send
     // as opposed to traditional wiretap that sends a copy of the original exchange
     private Expression newExchangeExpression;
-    private Processor newExchangeProcessor;
+    private List<Processor> newExchangeProcessors;
     private boolean copy;
     private Processor onPrepare;
 
@@ -132,16 +134,20 @@ public class WireTapProcessor extends SendProcessor {
         answer.setProperty(Exchange.TO_ENDPOINT, destination.getEndpointUri());
 
         // prepare the exchange
-        if (newExchangeProcessor != null) {
-            try {
-                newExchangeProcessor.process(answer);
-            } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
-            }
-        } else if (newExchangeExpression != null) {
+        if (newExchangeExpression != null) {
             Object body = newExchangeExpression.evaluate(answer, Object.class);
             if (body != null) {
                 answer.getIn().setBody(body);
+            }
+        }
+
+        if (newExchangeProcessors != null) {
+            for (Processor processor : newExchangeProcessors) {
+                try {
+                    processor.process(answer);
+                } catch (Exception e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
             }
         }
 
@@ -150,7 +156,7 @@ public class WireTapProcessor extends SendProcessor {
             try {
                 onPrepare.process(exchange);
             } catch (Exception e) {
-                exchange.setException(e);
+                throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
 
@@ -169,12 +175,12 @@ public class WireTapProcessor extends SendProcessor {
         return new DefaultExchange(exchange.getFromEndpoint(), ExchangePattern.InOnly);
     }
 
-    public Processor getNewExchangeProcessor() {
-        return newExchangeProcessor;
+    public List<Processor> getNewExchangeProcessors() {
+        return newExchangeProcessors;
     }
 
-    public void setNewExchangeProcessor(Processor newExchangeProcessor) {
-        this.newExchangeProcessor = newExchangeProcessor;
+    public void setNewExchangeProcessors(List<Processor> newExchangeProcessors) {
+        this.newExchangeProcessors = newExchangeProcessors;
     }
 
     public Expression getNewExchangeExpression() {
@@ -183,6 +189,13 @@ public class WireTapProcessor extends SendProcessor {
 
     public void setNewExchangeExpression(Expression newExchangeExpression) {
         this.newExchangeExpression = newExchangeExpression;
+    }
+
+    public void addNewExchangeProcessor(Processor processor) {
+        if (newExchangeProcessors == null) {
+            newExchangeProcessors = new ArrayList<Processor>();
+        }
+        newExchangeProcessors.add(processor);
     }
 
     public boolean isCopy() {
@@ -200,4 +213,5 @@ public class WireTapProcessor extends SendProcessor {
     public void setOnPrepare(Processor onPrepare) {
         this.onPrepare = onPrepare;
     }
+
 }
