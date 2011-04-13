@@ -28,7 +28,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String privateKeyFile;
     private String privateKeyFilePassphrase;
     private String strictHostKeyChecking = "no";
-    private int serverAliveInterval = 0;
+    private int serverAliveInterval;
     private int serverAliveCountMax = 1;
 
     public SftpConfiguration() {
@@ -76,20 +76,20 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         this.strictHostKeyChecking = strictHostKeyChecking;
     }
 
-	public void setServerAliveInterval(int serverAliveInterval) {
-		this.serverAliveInterval = serverAliveInterval;
-	}
+    public void setServerAliveInterval(int serverAliveInterval) {
+        this.serverAliveInterval = serverAliveInterval;
+    }
 
-	public int getServerAliveInterval() {
-		return serverAliveInterval;
-	}
+    public int getServerAliveInterval() {
+        return serverAliveInterval;
+    }
 
-	public void setServerAliveCountMax(int serverAliveCountMax) {
-		this.serverAliveCountMax = serverAliveCountMax;
-	}
+    public void setServerAliveCountMax(int serverAliveCountMax) {
+        this.serverAliveCountMax = serverAliveCountMax;
+    }
 
-	public int getServerAliveCountMax() {
-		return serverAliveCountMax;
-	}
+    public int getServerAliveCountMax() {
+        return serverAliveCountMax;
+    }
 
 }
