@@ -33,7 +33,7 @@
 
     <properties>
         <camel.osgi.export.pkg>
-            org.apache.camel.component.quartz.*,
+            org.apache.camel.component.quartz.*;${camel.osgi.version},
             org.apache.camel.routepolicy.quartz.*
         </camel.osgi.export.pkg>
     </properties>
