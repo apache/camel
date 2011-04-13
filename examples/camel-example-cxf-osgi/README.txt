@@ -1,5 +1,5 @@
 CXF OSGI Example
-=======================
+================
 
 A simple example which receives web service calls (via a CXF consumer, using bean binding)
 and write these requests into the file system. It's not a very useful use case, but the goal
@@ -31,12 +31,15 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
  com.sun.org.apache.xerces.internal.jaxp, \
  
   2) Add features required
-  features:addUrl mvn:org.apache.camel.karaf/apache-camel/2.8-SNAPSHOT/xml/features
+  features:addUrl mvn:org.apache.camel.karaf/apache-camel/2.8.0/xml/features
   features:install war
   features:install cxf
   features:install camel-jaxb
   features:install camel-cxf
-  
+
+  Note: In this example we use Apache Camel 2.8.0 as the version. You should of course use the
+        version number of Camel you are using.
+
   3) Deploy our example
   osgi:install -s mvn:org.apache.camel/camel-example-cxf-osgi
   
