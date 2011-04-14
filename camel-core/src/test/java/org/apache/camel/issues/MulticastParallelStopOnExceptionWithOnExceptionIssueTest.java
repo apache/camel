@@ -45,6 +45,25 @@ public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends Mu
         assertMockEndpointsSatisfied();
     }
 
+    public void testEnd2FailureTest() throws Exception {
+        MockEndpoint end2 = getMockEndpoint("mock:end2");
+        end2.whenAnyExchangeReceived(new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                throw new RuntimeException("Simulated Exception");
+            }
+        });
+
+        // we run in parallel so the task could have been submitted so we either get 0 or 1 messages at mock:end2
+        getMockEndpoint("mock:end1").expectedMinimumMessageCount(0);
+        getMockEndpoint("mock:end3").expectedMessageCount(0);
+        getMockEndpoint("mock:end4").expectedMessageCount(1);
+
+        String result = template.requestBody("direct:start", "Hello World!", String.class);
+        assertEquals("Stop!", result);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
