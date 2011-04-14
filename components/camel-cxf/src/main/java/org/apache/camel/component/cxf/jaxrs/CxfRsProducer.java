@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +36,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.LRUCache;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
@@ -104,12 +108,23 @@ public class CxfRsProducer extends DefaultProducer {
         // check if there is a query map in the message header
         Map<String, String> maps = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, Map.class);
         if (maps == null) {
+            // Get the map from HTTP_QUERY header
+            String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
+            if (queryString != null) {
+                maps = getQueryParametersFromQueryString(queryString, IOConverter.getCharsetName(exchange));
+            }
+        }
+        if (maps == null) {
             maps = cxfRsEndpoint.getParameters();
         }
         if (maps != null) {
             for (Map.Entry<String, String> entry : maps.entrySet()) {
                 client.query(entry.getKey(), entry.getValue());
             }
+        }
+        String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
+        if (queryString != null) {
+            
         }
 
         CxfRsBinding binding = cxfRsEndpoint.getBinding();
@@ -201,6 +216,21 @@ public class CxfRsProducer extends DefaultProducer {
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().setBody(response);
         }
+    }
+    
+    private Map<String, String> getQueryParametersFromQueryString(String queryString, String charset) throws UnsupportedEncodingException {
+        Map<String, String> answer  = new LinkedHashMap<String, String>();
+        for (String param : queryString.split("&")) {
+            String[] pair = param.split("=", 2);
+            if (pair.length == 2) {
+                String name = URLDecoder.decode(pair[0], charset);
+                String value = URLDecoder.decode(pair[1], charset);
+                answer.put(name, value);
+            } else {
+                throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
+            }
+        }
+        return answer;
     }
 
     private Method findRightMethod(List<Class<?>> resourceClasses, String methodName, Class[] parameterTypes) throws NoSuchMethodException {
