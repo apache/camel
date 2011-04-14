@@ -230,19 +230,7 @@ public class JmsMessage extends DefaultMessage {
     }
 
     private String getSanitizedString(Object value) {
-        return value != null ? value.toString().replaceAll("[^a-zA-Z0-9\\.\\_\\-]", "_") : "";
-    }
-
-    @Override
-    public String createExchangeId() {
-        if (jmsMessage != null) {
-            try {
-                return jmsMessage.getJMSMessageID();
-            } catch (JMSException e) {
-                throw new RuntimeExchangeException("Unable to retrieve JMSMessageID from JMS Message", getExchange(), e);
-            }
-        }
-        return super.createExchangeId();
+        return value != null ? value.toString().replaceAll("[^a-zA-Z0-9\\:\\.\\_\\-]", "_") : "";
     }
 
 }
