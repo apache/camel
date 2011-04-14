@@ -44,6 +44,9 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     public Throttler(Processor processor, long maximumRequestsPerPeriod, long timePeriodMillis, ScheduledExecutorService executorService) {
         super(processor, executorService);
         this.maximumRequestsPerPeriod = maximumRequestsPerPeriod;
+        if (maximumRequestsPerPeriod <= 0) {
+            throw new IllegalArgumentException("MaximumRequestsPerPeriod should be a positive number, was: " + maximumRequestsPerPeriod);
+        }
         this.timePeriodMillis = timePeriodMillis;
     }
 

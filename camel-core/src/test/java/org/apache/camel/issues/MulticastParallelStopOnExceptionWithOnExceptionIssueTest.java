@@ -53,7 +53,7 @@ public class MulticastParallelStopOnExceptionWithOnExceptionIssueTest extends Mu
             }
         });
 
-        // we run in parallel so the task could have been submitted so we either get 0 or 1 messages at mock:end2
+        // we run in parallel so the task could have been submitted so we either get 0 or 1 messages at mock:end1
         getMockEndpoint("mock:end1").expectedMinimumMessageCount(0);
         getMockEndpoint("mock:end3").expectedMessageCount(0);
         getMockEndpoint("mock:end4").expectedMessageCount(1);

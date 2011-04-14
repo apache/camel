@@ -44,7 +44,7 @@ public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> imp
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private Long maximumRequestsPerPeriod;
     @XmlAttribute
     private Long timePeriodMillis;
