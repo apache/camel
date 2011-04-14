@@ -19,6 +19,7 @@ package org.apache.camel.builder.script;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.URL;
 
 import javax.script.Compilable;
@@ -33,6 +34,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.spi.ScriptEngineResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -471,6 +473,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
                       + ", please ensure correct JARs is provided on classpath.");
         }
         if (engine == null) {
+            engine = checkForOSGiEngine();
+        }
+        if (engine == null) {
             throw new IllegalArgumentException("No script engine could be created for: " + getScriptEngineName());
         }
         if (isPython()) {
@@ -478,6 +483,24 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             context.setAttribute("com.sun.script.jython.comp.mode", "eval", ScriptContext.ENGINE_SCOPE);
         }
         return engine;
+    }
+
+    private ScriptEngine checkForOSGiEngine() {
+        LOG.debug("No script engine found for " + scriptEngineName + " using standard javax.script auto-registration.  Checking OSGi registry...");
+        try {
+            // Test the OSGi environment with the Activator
+            Class<?> c = Class.forName("org.apache.camel.script.osgi.Activator");
+            Method mth = c.getDeclaredMethod("getBundleContext");
+            Object ctx = mth.invoke(null);
+            LOG.debug("Found OSGi BundleContext " + ctx);
+            if (ctx != null) {
+                Method resolveScriptEngine = c.getDeclaredMethod("resolveScriptEngine", String.class);
+                return (ScriptEngine)resolveScriptEngine.invoke(null, scriptEngineName);
+            }
+        } catch (Throwable t) {
+            LOG.debug("Unable to load OSGi, script engine cannot be found", t);
+        }
+        return null;
     }
 
     protected void compileScript(Compilable compilable) {

@@ -36,6 +36,8 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Converter;
@@ -53,6 +55,7 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.PackageScanFilter;
+import org.apache.camel.spi.ScriptEngineResolver;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.IOHelper;
@@ -74,6 +77,8 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public static final String META_INF_DATAFORMAT = "META-INF/services/org/apache/camel/dataformat/";
     public static final String META_INF_TYPE_CONVERTER = "META-INF/services/org/apache/camel/TypeConverter";
     public static final String META_INF_FALLBACK_TYPE_CONVERTER = "META-INF/services/org/apache/camel/FallbackTypeConverter";
+    public static final String META_INF_SERVICES_DIR = "META-INF/services";
+    public static final String SCRIPT_ENGINE_SERVICE_FILE = "javax.script.ScriptEngineFactory";
 
     private static final transient Logger LOG = LoggerFactory.getLogger(Activator.class);
 
@@ -97,6 +102,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         LOG.debug("Bundle started: {}", bundle.getSymbolicName());
         List<BaseService> r = new ArrayList<BaseService>();
         registerComponents(bundle, r);
+        registerScriptEngines(bundle, r);
         registerLanguages(bundle, r);
         registerDataFormats(bundle, r);
         registerTypeConverterLoader(bundle, r);
@@ -132,6 +138,17 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             if (!components.isEmpty()) {
                 resolvers.add(new BundleComponentResolver(bundle, components));
             }
+        }
+    }
+
+    protected void registerScriptEngines(Bundle bundle, List<BaseService> resolvers) {
+        URL configURL = null;
+        for (Enumeration e = bundle.findEntries(META_INF_SERVICES_DIR, SCRIPT_ENGINE_SERVICE_FILE, false); e != null && e.hasMoreElements();) {
+            configURL = (URL) e.nextElement();
+        }
+        if (configURL != null) {
+            LOG.info("Found ScriptEngineFactory in " + bundle.getSymbolicName());
+            resolvers.add(new BundleScriptEngineResolver(bundle, configURL));
         }
     }
 
@@ -257,6 +274,54 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
         public void register() {
             doRegister(DataFormatResolver.class, "dataformat", dataformats.keySet());
+        }
+    }
+
+    protected static class BundleScriptEngineResolver extends BaseResolver<ScriptEngineFactory> implements ScriptEngineResolver {
+        private final URL configFile;
+
+        public BundleScriptEngineResolver(Bundle bundle, URL configFile) {
+            super(bundle, ScriptEngineFactory.class);
+            this.configFile = configFile;
+        }
+
+        public ScriptEngine resolveScriptEngine(String name) {
+            try {
+                BufferedReader in = new BufferedReader(new InputStreamReader(configFile.openStream()));
+                String className = in.readLine();
+                in.close();
+                Class cls = bundle.loadClass(className);
+                if (!ScriptEngineFactory.class.isAssignableFrom(cls)) {
+                    throw new IllegalStateException("Invalid script engine factory " + cls.getName());
+                }
+                ScriptEngineFactory factory = (ScriptEngineFactory) cls.newInstance();
+                List<String> names = factory.getNames();
+                for (String test : names) {
+                    if (test.equals(name)) {
+                        ClassLoader old = Thread.currentThread().getContextClassLoader();
+                        // JRuby seems to require the correct TCCL to call getScriptEngine
+                        Thread.currentThread().setContextClassLoader(factory.getClass().getClassLoader());
+                        ScriptEngine engine = factory.getScriptEngine();
+                        Thread.currentThread().setContextClassLoader(old);
+                        return engine;
+                    }
+                }
+                LOG.debug("Script Engine Factory for " + factory.getEngineName() + " does not match " + name);
+                return null;
+            } catch (Exception e) {
+                LOG.warn("Unable to create script engine factory: " + e.getClass().getName(), e);
+                return null;
+            }
+        }
+
+        @Override
+        public void register() {
+            doRegister(ScriptEngineResolver.class);
+        }
+
+        @Override
+        public String toString() {
+            return "OSGi script engine resolver for " + bundle.getSymbolicName();
         }
     }
 
