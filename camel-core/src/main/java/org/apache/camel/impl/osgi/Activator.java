@@ -292,24 +292,29 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 in.close();
                 Class cls = bundle.loadClass(className);
                 if (!ScriptEngineFactory.class.isAssignableFrom(cls)) {
-                    throw new IllegalStateException("Invalid script engine factory " + cls.getName());
+                    throw new IllegalStateException("Invalid ScriptEngineFactory: " + cls.getName());
                 }
                 ScriptEngineFactory factory = (ScriptEngineFactory) cls.newInstance();
                 List<String> names = factory.getNames();
                 for (String test : names) {
                     if (test.equals(name)) {
                         ClassLoader old = Thread.currentThread().getContextClassLoader();
-                        // JRuby seems to require the correct TCCL to call getScriptEngine
-                        Thread.currentThread().setContextClassLoader(factory.getClass().getClassLoader());
-                        ScriptEngine engine = factory.getScriptEngine();
-                        Thread.currentThread().setContextClassLoader(old);
+                        ScriptEngine engine;
+                        try {
+                            // JRuby seems to require the correct TCCL to call getScriptEngine
+                            Thread.currentThread().setContextClassLoader(factory.getClass().getClassLoader());
+                            engine = factory.getScriptEngine();
+                        } finally {
+                            Thread.currentThread().setContextClassLoader(old);
+                        }
+                        LOG.trace("Resolved ScriptEngineFactory: {} for expected name: {}", engine, name);
                         return engine;
                     }
                 }
-                LOG.debug("Script Engine Factory for " + factory.getEngineName() + " does not match " + name);
+                LOG.debug("ScriptEngineFactory: {} does not match expected name: {}", factory.getEngineName(), name);
                 return null;
             } catch (Exception e) {
-                LOG.warn("Unable to create script engine factory: " + e.getClass().getName(), e);
+                LOG.warn("Cannot create ScriptEngineFactory: " + e.getClass().getName(), e);
                 return null;
             }
         }
