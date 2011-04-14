@@ -21,13 +21,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
 import org.restlet.Client;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
+import org.restlet.Uniform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +38,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class RestletProducer extends DefaultProducer {
+public class RestletProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(RestletProducer.class);
     private static final Pattern PATTERN = Pattern.compile("\\{([\\w\\.]*)\\}");
     private Client client;
@@ -61,29 +63,46 @@ public class RestletProducer extends DefaultProducer {
         super.doStop();
     }
 
-    public void process(Exchange exchange) throws Exception {
+    @Override
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         RestletEndpoint endpoint = (RestletEndpoint) getEndpoint();
 
-        String resourceUri = buildUri(endpoint, exchange);
-        Request request = new Request(endpoint.getRestletMethod(), resourceUri);
-
-        RestletBinding binding = endpoint.getRestletBinding();
-        binding.populateRestletRequestFromExchange(request, exchange);
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Client sends a request (method: " + request.getMethod() + ", uri: " + resourceUri + ")");
+        final RestletBinding binding = endpoint.getRestletBinding();
+        Request request;
+        try {
+            String resourceUri = buildUri(endpoint, exchange);
+            request = new Request(endpoint.getRestletMethod(), resourceUri);
+            binding.populateRestletRequestFromExchange(request, exchange);
+        } catch (CamelExchangeException e) {
+            // break out in case of exception
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
 
-        Response response = client.handle(request);
-        if (throwException) {
-            if (response != null) {
-                Integer respCode = response.getStatus().getCode();
-                if (respCode > 207) {
-                    throw populateRestletProducerException(exchange, response, respCode);
+        // process the request asynchronously
+        LOG.debug("Sending request: {} for exchangeId: {}", request, exchange.getExchangeId());
+        client.handle(request, new Uniform() {
+            @Override
+            public void handle(Request request, Response response) {
+                LOG.debug("Received response: {} for exchangeId: {}", response, exchange.getExchangeId());
+                try {
+                    if (response != null) {
+                        Integer respCode = response.getStatus().getCode();
+                        if (respCode > 207 && throwException) {
+                            exchange.setException(populateRestletProducerException(exchange, response, respCode));
+                        } else {
+                            binding.populateExchangeFromRestletResponse(exchange, response);
+                        }
+                    }
+                } catch (Exception e) {
+                    exchange.setException(e);
                 }
+                callback.done(false);
             }
-        }
-        binding.populateExchangeFromRestletResponse(exchange, response);
+        });
+
+        return false;
     }
 
     private static String buildUri(RestletEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
@@ -116,14 +135,10 @@ public class RestletProducer extends DefaultProducer {
             }
             uri = addQueryToUri(uri, query);
         }
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Using uri: " + uri);
-        }
 
+        LOG.trace("Using uri: {}", uri);
         return uri;
     }
-
 
     protected static String addQueryToUri(String uri, String query) {
         if (uri == null || uri.length() == 0) {
@@ -139,7 +154,7 @@ public class RestletProducer extends DefaultProducer {
             answer.append(query);
         } else {
             answer.append(uri.substring(0, index));
-            answer.append("?");            
+            answer.append("?");
             answer.append(query);
             String remaining = uri.substring(index + 1);
             if (remaining.length() > 0) {
@@ -148,7 +163,7 @@ public class RestletProducer extends DefaultProducer {
             }
         }
         return answer.toString();
-        
+
     }
 
     protected RestletOperationException populateRestletProducerException(Exchange exchange, Response response, int responseCode) {
