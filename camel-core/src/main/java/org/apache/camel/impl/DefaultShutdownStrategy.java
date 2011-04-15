@@ -211,8 +211,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // it has completed its current task
             ShutdownRunningTask current = order.getRoute().getRouteContext().getShutdownRunningTask();
             if (current != ShutdownRunningTask.CompleteCurrentTaskOnly) {
-                LOG.info("Changing shutdownRunningTask from " + current + " to " +  ShutdownRunningTask.CompleteCurrentTaskOnly
-                    + " on route " + order.getRoute().getId() + " to shutdown faster");
+                LOG.debug("Changing shutdownRunningTask from {} to " +  ShutdownRunningTask.CompleteCurrentTaskOnly
+                    + " on route {} to shutdown faster", current, order.getRoute().getId());
                 order.getRoute().getRouteContext().setShutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly);
             }
 
@@ -250,7 +250,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
 
-        LOG.debug("Shutdown complete for: {}", consumer);
+        LOG.trace("Shutdown complete for: {}", consumer);
     }
 
     /**
@@ -270,7 +270,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
 
-        LOG.debug("Suspend complete for: {}", consumer);
+        LOG.trace("Suspend complete for: {}", consumer);
     }
 
     private ExecutorService getExecutorService() {
@@ -381,22 +381,21 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         }
                     }
 
+                    // log at info level when a route has been shutdown (otherwise log at debug level to not be too noisy)
                     if (suspend) {
                         // only suspend it and then later shutdown it
                         suspendNow(consumer);
                         // add it to the deferred list so the route will be shutdown later
                         deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
-                        LOG.info("Route: " + order.getRoute().getId() + " suspended and shutdown deferred, was consuming from: "
-                                + order.getRoute().getEndpoint());
+                        LOG.debug("Route: {} suspended and shutdown deferred, was consuming from: {}", order.getRoute().getId(), order.getRoute().getEndpoint());
                     } else if (shutdown) {
                         shutdownNow(consumer);
-                        LOG.info("Route: " + order.getRoute().getId() + " shutdown complete, was consuming from: "
-                                + order.getRoute().getEndpoint());
+                        LOG.info("Route: {} shutdown complete, was consuming from: {}", order.getRoute().getId(), order.getRoute().getEndpoint());
                     } else {
                         // we will stop it later, but for now it must run to be able to help all inflight messages
                         // be safely completed
                         deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
-                        LOG.info("Route: " + order.getRoute().getId() + (suspendOnly ? " shutdown deferred." : " suspension deferred."));
+                        LOG.debug("Route: " + order.getRoute().getId() + (suspendOnly ? " shutdown deferred." : " suspension deferred."));
                     }
                 }
             }
@@ -417,7 +416,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         }
                         if (inflight > 0) {
                             size += inflight;
-                            LOG.debug("{} inflight and pending exchanges for consumer: {}", inflight, consumer);
+                            LOG.trace("{} inflight and pending exchanges for consumer: {}", inflight, consumer);
                         }
                     }
                 }
@@ -429,11 +428,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     } catch (InterruptedException e) {
                         if (abortAfterTimeout) {
                             LOG.warn("Interrupted while waiting during graceful shutdown, will abort.");
-                            //Thread.currentThread().interrupt();
                             return;
                         } else {
                             LOG.warn("Interrupted while waiting during graceful shutdown, will force shutdown now.");
-                            Thread.currentThread().interrupt();
                             break;
                         }
                     }
@@ -446,11 +443,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             for (ShutdownDeferredConsumer deferred : deferredConsumers) {
                 Consumer consumer = deferred.getConsumer();
                 if (consumer instanceof ShutdownAware) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Route: {} preparing to shutdown.", deferred.getRoute().getId());
-                    }
+                    LOG.trace("Route: {} preparing to shutdown.", deferred.getRoute().getId());
                     ((ShutdownAware) consumer).prepareShutdown();
-                    LOG.info("Route: " + deferred.getRoute().getId() + " preparing to shutdown complete.");
+                    LOG.debug("Route: {} preparing to shutdown complete.", deferred.getRoute().getId());
                 }
             }
 
@@ -459,10 +454,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 Consumer consumer = deferred.getConsumer();
                 if (suspendOnly) {
                     suspendNow(consumer);
-                    LOG.info("Route: " + deferred.getRoute().getId() + " suspend complete.");
+                    LOG.info("Route: {} suspend complete, was consuming from: {}", deferred.getRoute().getId(), deferred.getConsumer().getEndpoint());
                 } else {
                     shutdownNow(consumer);
-                    LOG.info("Route: " + deferred.getRoute().getId() + " shutdown complete.");
+                    LOG.info("Route: {} shutdown complete, was consuming from: {}", deferred.getRoute().getId(), deferred.getConsumer().getEndpoint());
                 }
             }
         }

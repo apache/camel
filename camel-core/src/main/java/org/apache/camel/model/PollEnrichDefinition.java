@@ -39,6 +39,7 @@ import org.apache.camel.util.ObjectHelper;
 public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinition> {
     @XmlAttribute(name = "uri")
     private String resourceUri;
+    // TODO: For Camel 3.0 we should remove this ref attribute as you can do that in the uri, by prefixing with ref:
     @XmlAttribute(name = "ref")
     private String resourceRef;
     @XmlAttribute
