@@ -47,7 +47,7 @@ fromNode/toNode so you exactly can see how a given Exchange was routed in Camel.
 Using the query:
   select shortExchangeId, previousNode, toNode, body from camel_messagetraced order by id
 
-is a bit more easier to read as it uses the fields we are most interrested in to see how Exchanges
+is a bit more easier to read as it uses the fields we are most interested in to see how Exchanges
 was routed in Camel.
 
 In the console you can enter some words separated with space. Try to enter:
@@ -60,12 +60,6 @@ to return as response in the console.
 
 To stop the example hit ctrl + c
 
-To use log4j as the logging framework add this to the pom.xml:
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-and log4j.properties is located in src/main/resources 
 
 For the latest & greatest documentation on how to use this example please see
   http://camel.apache.org/tracer-example.htmls

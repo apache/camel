@@ -149,15 +149,4 @@
         </plugins>
     </build>
 
-    <reporting>
-        <plugins>
-            <!-- let's generate nice PNG / SVG diagrams from our routes -->
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-maven-plugin</artifactId>
-                <version>${project.version}</version>
-            </plugin>
-        </plugins>
-    </reporting>
-
 </project>

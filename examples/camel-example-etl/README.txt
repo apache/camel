@@ -47,12 +47,6 @@ directory and the Spring XML configuration lives in
 
 To stop the example hit ctrl + c
 
-To use log4j as the logging framework add this to the pom.xml:
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-and log4j.properties is located in src/main/resources 
 
 If you hit any problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html

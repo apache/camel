@@ -29,7 +29,7 @@ restart the timer consumer. So find the timer consumer and invoke the stop and s
 
 Now you should see the messages start to pile up in the JMS queue.
 What we do next is to increase the number of concurrent consumers. To do that you have to set this on the JMS
-endpoint. Set the concrrentConsumers from 1 to 20. And just as the timer consumer this only takes effect when
+endpoint. Set the concurrentConsumers from 1 to 20. And just as the timer consumer this only takes effect when
 the JMS consumer is restarted. So do a stop and start operation.
 
 What you should see is that Camel should be able to process the files much faster now and the logger should
@@ -74,12 +74,6 @@ src/main/resources/META-INF/spring
 
 To stop the example hit ctrl + c
 
-To use log4j as the logging framework add this to the pom.xml:
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-and log4j.properties is located in src/main/resources
 
 For the latest & greatest documentation on how to use this example please see
   http://camel.apache.org/management-example.html

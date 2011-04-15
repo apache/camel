@@ -113,12 +113,15 @@
 
     <build>
         <plugins>
+          
+          <!-- to run the example using mvn jetty:run --> 
 		  <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty-version}</version>
             </plugin>
 
+            <!-- to generate the axis source from the wsdl file --> 
             <plugin>
                <groupId>org.codehaus.mojo</groupId>
                <artifactId>axistools-maven-plugin</artifactId>
@@ -138,14 +141,7 @@
                </executions>
             </plugin>
 
-	      <plugin>
-	        <groupId>org.apache.camel</groupId>
-	        <artifactId>camel-maven-plugin</artifactId>
-                <version>${project.version}</version>
-			<configuration>
-				<fileApplicationContextUri>src/main/resources/*.xml</fileApplicationContextUri>
-			</configuration>
-	      </plugin>
 	  </plugins>
 	</build>
+
 </project>

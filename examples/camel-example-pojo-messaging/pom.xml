@@ -128,6 +128,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<!-- Allows the example to be run via 'mvn camel:run' -->
 			<plugin>
 				<groupId>org.apache.camel</groupId>
@@ -138,14 +139,4 @@
 		</plugins>
 	</build>
 
-	<reporting>
-		<plugins>
-			<!-- let's generate nice PNG / SVG diagrams from our routes -->
-			<plugin>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-maven-plugin</artifactId>
-				<version>${project.version}</version>
-			</plugin>
-		</plugins>
-	</reporting>
 </project>

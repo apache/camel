@@ -21,7 +21,7 @@ To run the example with Ant
   downloaded from the following locations
     Apache ActiveMQ
     http://activemq.apache.org/ 
-    Saxon 8.7 
+    Saxon 
     http://saxon.sourceforge.net/
     
   b. Export / Set home directories for the above as follows 
@@ -39,12 +39,6 @@ at src/main/resources/META-INF/spring
 
 To stop the example hit ctrl + c
 
-To use log4j as the logging framework add this to the pom.xml:
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-and log4j.properties is located in src/main/resources 
 
 For the latest & greatest documentation on how to use this example please see
   http://camel.apache.org/spring-xquery-example.html

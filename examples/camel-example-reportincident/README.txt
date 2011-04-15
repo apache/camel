@@ -22,11 +22,10 @@ To run the example with Ant
   downloaded from the following locations
     Apache CXF
     http://cxf.apache.org/
-    Spring 2.5
+    Spring
     http://www.springframework.org/download
-    Jetty6
-    http://dist.codehaus.org/jetty/
-
+    Jetty
+    http://www.eclipse.org/jetty/
 
   b. Export / Set home directories for the above as follows
     UNIX
@@ -44,15 +43,8 @@ To run the example with Ant
 The webservice WSDL is exposed at:
   http://localhost:9080/webservices/incident?wsdl
 
-
 To stop the example hit ctrl + c
 
-To use log4j as the logging framework add this to the pom.xml:
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-and log4j.properties is located in src/main/resources
 
 For the latest & greatest documentation on how to use this example please see
   http://camel.apache.org/tutorial-example-reportincident.html

@@ -21,12 +21,6 @@ Then you can use the script in the client directory to send the request and chec
 or use browser to access upper urls with the user/password 
 ("jim/jimspassword" with the admin and user role  or "rob/robspassword" with user role).
 
-To use log4j as the logging framework add this to the pom.xml:
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-and log4j.properties is located in src/main/resources 
 
 For the latest & greatest documentation on how to use this example please see
   http://camel.apache.org/spring-security-example.html

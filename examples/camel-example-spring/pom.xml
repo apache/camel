@@ -114,6 +114,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<!-- Allows the routes to be run via 'mvn camel:run' -->
 			<plugin>
 				<groupId>org.apache.camel</groupId>
@@ -121,34 +122,7 @@
 				<version>${project.version}</version>
 			</plugin>
 
-			<!--
-				lets make an executable jar you can then start this up via java -jar
-				target/camel-example-spring-*.one-jar.jar -ac
-				META-INF/spring/camel-context.xml
-			-->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>org.apache.camel.spring.Main</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
 		</plugins>
-
 	</build>
 
-	<reporting>
-		<plugins>
-			<!-- Generates nice PNG / SVG diagrams from our routes -->
-			<plugin>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-maven-plugin</artifactId>
-				<version>${project.version}</version>
-			</plugin>
-		</plugins>
-	</reporting>
 </project>

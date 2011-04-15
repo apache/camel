@@ -5,8 +5,8 @@ This example shows how to use Camel to implement the EIP's loan broker example.
 It can be run using Maven.
 
 The example has two version, one is queue version which leverages the message
-queue to combinate the credit agency and bank loan quote processing and it
-uses the InOnly exchage pattern; the other is web service version which shows
+queue to combine the credit agency and bank loan quote processing and it
+uses the InOnly exchange pattern; the other is web service version which shows
 how to integrate the credit agency and bank web services together and it uses
 the InOut exchange pattern.
 
@@ -31,7 +31,7 @@ To run the example with Ant
     http://activemq.apache.org/
     Apache CXF
     http://cxf.apache.org/
-    Spring 2.5
+    Spring
     http://www.springframework.org/download
 
 
@@ -59,14 +59,6 @@ To run the example with Ant
 
 To stop the example hit ctrl + c
 
-
-
-To use log4j as the logging framework add this to the pom.xml:
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-    </dependency>
-and log4j.properties is located in src/main/resources
 
 If you hit an problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html

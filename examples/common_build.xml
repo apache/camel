@@ -120,7 +120,6 @@
       <include name="**/slf4j-*.jar"/>
       <include name="**/commons-management-*.jar"/>
       <include name="**/spring/*.jar"/>
-      <include name="**/jdk15/*.jar"/>
       <exclude name="**/*-tests.jar"/>
     </fileset>
   </path>

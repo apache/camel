@@ -109,6 +109,7 @@
                     </execution>
                 </executions>
             </plugin>
+
 			<!-- Allows the routes to be run via 'mvn camel:run' -->
 			<plugin>
 				<groupId>org.apache.camel</groupId>
@@ -125,17 +126,8 @@
 					<includePluginDependencies>false</includePluginDependencies>
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 
-	<reporting>
-		<plugins>
-			<!-- Generates nice PNG / SVG diagrams from our routes -->
-			<plugin>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-maven-plugin</artifactId>
-				<version>${project.version}</version>
-			</plugin>
-		</plugins>
-	</reporting>
 </project>
