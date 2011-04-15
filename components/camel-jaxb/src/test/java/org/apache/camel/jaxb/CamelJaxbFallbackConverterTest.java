@@ -21,6 +21,8 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.example.Bar;
+import org.apache.camel.example.Foo;
 import org.apache.camel.foo.bar.PersonType;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -29,13 +31,35 @@ import org.junit.Test;
 public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
     
     @Test
+    public void testFallbackConverterWithoutObjectFactory() throws Exception {
+        TypeConverter converter = context.getTypeConverter();
+        Foo foo = converter.convertTo(Foo.class, 
+            "<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
+        assertNotNull("foo should not be null", foo);
+        assertEquals("value", foo.getBarRefs().get(0).getValue());
+        
+        foo.getBarRefs().clear();
+        Bar bar = new Bar();
+        bar.setName("myName");
+        bar.setValue("myValue");
+        foo.getBarRefs().add(bar);
+        
+        Exchange exchange = new DefaultExchange(context);
+        exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
+       
+        String value = converter.convertTo(String.class, exchange, foo);
+        
+        assertTrue("Should get a right marshalled string", value.indexOf("<bar name=\"myName\" value=\"myValue\"/>") > 0);
+    }
+    
+    @Test
     public void testConvertor() throws Exception {
         TypeConverter converter = context.getTypeConverter();
         PersonType person = converter.convertTo(PersonType.class, 
             "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
         assertNotNull("Person should not be null ", person);
-        assertEquals("Get the wrong first name ", person.getFirstName(), "FOO");
-        assertEquals("Get the wrong second name ", person.getLastName(), "BAR");
+        assertEquals("Get the wrong first name ", "FOO", person.getFirstName());
+        assertEquals("Get the wrong second name ", "BAR", person.getLastName());
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
        
@@ -62,8 +86,8 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
         TypeConverter converter = context.getTypeConverter();
         PersonType person = converter.convertTo(PersonType.class, exchange, is);
         assertNotNull("Person should not be null ", person);
-        assertEquals("Get the wrong first name ", person.getFirstName(), "FOO");
-        assertEquals("Get the wrong second name ", person.getLastName(), "BAR ");
+        assertEquals("Get the wrong first name ", "FOO", person.getFirstName());
+        assertEquals("Get the wrong second name ", "BAR ", person.getLastName());
         
         
         person.setLastName("BAR\u0008\uD8FF");
