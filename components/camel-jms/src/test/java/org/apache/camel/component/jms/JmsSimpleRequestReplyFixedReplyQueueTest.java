@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -29,7 +28,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * A simple request / reply test
  */
-public class JmsSimpleRequestReply2Test extends CamelTestSupport {
+public class JmsSimpleRequestReplyFixedReplyQueueTest extends CamelTestSupport {
 
     protected String componentName = "activemq";
 
@@ -67,7 +66,7 @@ public class JmsSimpleRequestReply2Test extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .inOut("activemq:queue:foo")
+                    .inOut("activemq:queue:foo?replyTo=queue:bar")
                     .to("mock:result");
 
                 from("activemq:queue:foo")
