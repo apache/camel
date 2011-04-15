@@ -22,4 +22,5 @@ http\://camel.apache.org/schema/spring-security/camel-spring-security-2.4.0.xsd=
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.5.0.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.6.0.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-2.7.0.xsd=schema/camel-spring-security.xsd
+http\://camel.apache.org/schema/spring-security/camel-spring-security-2.7.1.xsd=schema/camel-spring-security.xsd
 http\://camel.apache.org/schema/spring-security/camel-spring-security-${pom.version}.xsd=schema/camel-spring-security.xsd
