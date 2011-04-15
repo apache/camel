@@ -33,8 +33,7 @@
 
 	<properties>
 		<camel.osgi.export.pkg>
-		    org.apache.camel.component.routebox.*;${camel.osgi.version},
-		    org.apache.camel.component.routebox.seda.*
+		    org.apache.camel.component.routebox.*
 		</camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
             !org.apache.camel.component.routebox.*,
