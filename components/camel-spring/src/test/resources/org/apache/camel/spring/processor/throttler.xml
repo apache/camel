@@ -52,13 +52,16 @@
             </throttle>
         </route>
 
+        <!-- START SNIPPET: e2 -->
         <route>
             <from uri="direct:expressionHeader"/>
             <throttle timePeriodMillis="500">
+                <!-- use a header to determine how many messages to throttle per 0.5 sec -->
                 <header>throttleValue</header>
                 <to uri="mock:result"/>
             </throttle>
         </route>
+        <!-- END SNIPPET: e2 -->
 
     </camelContext>
 
