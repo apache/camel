@@ -22,6 +22,8 @@ import org.apache.camel.processor.Throttler;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
+import static org.apache.camel.builder.Builder.constant;
+
 /**
  * @version 
  */
@@ -40,12 +42,12 @@ public class ManagedThrottler extends ManagedProcessor {
 
     @ManagedAttribute(description = "Maximum requires per period")
     public long getMaximumRequestsPerPeriod() {
-        return getThrottler().getMaximumRequestsPerPeriod();
+        return getThrottler().getCurrentMaximumRequestsPerPeriod();
     }
 
     @ManagedAttribute(description = "Maximum requires per period")
     public void setMaximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
-        getThrottler().setMaximumRequestsPerPeriod(maximumRequestsPerPeriod);
+        getThrottler().setMaximumRequestsPerPeriodExpression(constant(maximumRequestsPerPeriod));
     }
 
     @ManagedAttribute(description = "Time period in millis")

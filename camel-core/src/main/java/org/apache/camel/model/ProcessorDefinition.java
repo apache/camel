@@ -1805,11 +1805,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ThrottleDefinition throttle(long maximumRequestCount) {
+        return throttle(ExpressionBuilder.constantExpression(maximumRequestCount));
+    }
+
+    /**
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
+     * Creates a throttler allowing you to ensure that a specific endpoint does not get overloaded,
+     * or that we don't exceed an agreed SLA with some external service.
+     * <p/>
+     * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10
+     * will default ensure at most 10 messages per second. 
+     *
+     * @param maximumRequestCount  an expression to calculate the maximum request count 
+     * @return the builder
+     */
+    public ThrottleDefinition throttle(Expression maximumRequestCount) {
         ThrottleDefinition answer = new ThrottleDefinition(maximumRequestCount);
         addOutput(answer);
         return answer;
     }
-
+    
     /**
      * <a href="http://camel.apache.org/loop.html">Loop EIP:</a>
      * Creates a loop allowing to process the a message a number of times and possibly process them
@@ -2994,5 +3009,5 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public String getLabel() {
         return "";
     }
-
+    
 }

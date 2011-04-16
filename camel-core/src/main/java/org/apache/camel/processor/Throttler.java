@@ -19,7 +19,9 @@ package org.apache.camel.processor;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A <a href="http://camel.apache.org/throttler.html">Throttler</a>
@@ -34,47 +36,55 @@ import org.apache.camel.Processor;
  */
 public class Throttler extends DelayProcessorSupport implements Traceable {
     private long maximumRequestsPerPeriod;
-    private long timePeriodMillis;
+    private Expression maxRequestsPerPeriodExpression;
+    private long timePeriodMillis = 1000;
     private volatile TimeSlot slot;
 
-    public Throttler(Processor processor, long maximumRequestsPerPeriod) {
-        this(processor, maximumRequestsPerPeriod, 1000, null);
-    }
-
-    public Throttler(Processor processor, long maximumRequestsPerPeriod, long timePeriodMillis, ScheduledExecutorService executorService) {
+    public Throttler(Processor processor, Expression maxRequestsPerPeriodExpression, long timePeriodMillis, ScheduledExecutorService executorService) {
         super(processor, executorService);
-        this.maximumRequestsPerPeriod = maximumRequestsPerPeriod;
-        if (maximumRequestsPerPeriod <= 0) {
-            throw new IllegalArgumentException("MaximumRequestsPerPeriod should be a positive number, was: " + maximumRequestsPerPeriod);
+
+        ObjectHelper.notNull(maxRequestsPerPeriodExpression, "maxRequestsPerPeriodExpression");
+        this.maxRequestsPerPeriodExpression = maxRequestsPerPeriodExpression;
+
+        if (timePeriodMillis <= 0) {
+            throw new IllegalArgumentException("TimePeriodMillis should be a positive number, was: " + timePeriodMillis);
         }
         this.timePeriodMillis = timePeriodMillis;
     }
 
     @Override
     public String toString() {
-        return "Throttler[requests: " + maximumRequestsPerPeriod + " per: " + timePeriodMillis + " (ms) to: "
+        return "Throttler[requests: " + maxRequestsPerPeriodExpression + " per: " + timePeriodMillis + " (ms) to: "
                + getProcessor() + "]";
     }
 
     public String getTraceLabel() {
-        return "throttle[" + maximumRequestsPerPeriod + " per: " + timePeriodMillis + "]";
+        return "throttle[" + maxRequestsPerPeriodExpression + " per: " + timePeriodMillis + "]";
     }
 
     // Properties
     // -----------------------------------------------------------------------
-    public long getMaximumRequestsPerPeriod() {
-        return maximumRequestsPerPeriod;
+
+    /**
+     * Sets the maximum number of requests per time period expression
+     */
+    public void setMaximumRequestsPerPeriodExpression(Expression maxRequestsPerPeriodExpression) {
+        this.maxRequestsPerPeriodExpression = maxRequestsPerPeriodExpression;
+    }
+
+    public Expression getMaximumRequestsPerPeriodExpression() {
+        return maxRequestsPerPeriodExpression;
+    }
+    
+    public long getTimePeriodMillis() {
+        return timePeriodMillis;
     }
 
     /**
-     * Sets the maximum number of requests per time period
+     * Gets the current maximum request per period value.
      */
-    public void setMaximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
-        this.maximumRequestsPerPeriod = maximumRequestsPerPeriod;
-    }
-
-    public long getTimePeriodMillis() {
-        return timePeriodMillis;
+    public long getCurrentMaximumRequestsPerPeriod() {
+        return maximumRequestsPerPeriod;
     }
 
     /**
@@ -88,6 +98,19 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     // -----------------------------------------------------------------------
 
     protected long calculateDelay(Exchange exchange) {
+        Long longValue = maxRequestsPerPeriodExpression.evaluate(exchange, Long.class);
+        if (longValue != null) {
+            // log if we changed max period after initial setting
+            if (maximumRequestsPerPeriod > 0 && longValue.longValue() != maximumRequestsPerPeriod) {
+                log.debug("Throttler changed maximum requests per period from {} to {}", maximumRequestsPerPeriod, longValue);
+            }
+            maximumRequestsPerPeriod = longValue;
+        }
+
+        if (maximumRequestsPerPeriod <= 0) {
+            throw new IllegalStateException("The maximumRequestsPerPeriod must be a positive number, was: " + maximumRequestsPerPeriod);
+        }
+
         TimeSlot slot = nextSlot();
         if (!slot.isActive()) {
             long delay = slot.startTime - currentSystemTime();
@@ -127,7 +150,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
         protected TimeSlot(long startTime) {
             this.startTime = startTime;
         }
-        
+
         protected void assign() {
             capacity--;
         }

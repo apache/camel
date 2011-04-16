@@ -52,7 +52,9 @@
             <from uri="file://target/inbox"/>
             <split>
                 <xpath>/stocks/stock</xpath>
-                <throttle timePeriodMillis="1000" maximumRequestsPerPeriod="10">
+                <!-- throttle 10 msg/sec being send the the ActiveMQ queue -->
+                <throttle>
+                    <constant>10</constant>
                     <to uri="activemq:queue:stock"/>
                 </throttle>
             </split>

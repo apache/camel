@@ -18,15 +18,20 @@ package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
@@ -36,33 +41,30 @@ import org.apache.camel.util.concurrent.ExecutorServiceHelper;
  */
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
-
-    // TODO: Camel 3.0 Should extend NoOutputDefinition
+public class ThrottleDefinition extends ExpressionNode implements ExecutorServiceAwareDefinition<ThrottleDefinition> {
+    // TODO: Camel 3.0 Should not support outputs
 
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute(required = true)
-    private Long maximumRequestsPerPeriod;
     @XmlAttribute
     private Long timePeriodMillis;
     @XmlAttribute
     private Boolean asyncDelayed;
     @XmlAttribute
     private Boolean callerRunsWhenRejected;
-
+    
     public ThrottleDefinition() {
     }
 
-    public ThrottleDefinition(long maximumRequestsPerPeriod) {
-        this.maximumRequestsPerPeriod = maximumRequestsPerPeriod;
+    public ThrottleDefinition(Expression maximumRequestsPerPeriod) {
+        super(maximumRequestsPerPeriod);
     }
 
     @Override
     public String toString() {
-        return "Throttle[" + getMaximumRequestsPerPeriod() + " request per " + getTimePeriodMillis()
+        return "Throttle[" + getExpression() + " request per " + getTimePeriodMillis()
                + " millis -> " + getOutputs() + "]";
     }
 
@@ -73,7 +75,7 @@ public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> imp
 
     @Override
     public String getLabel() {
-        return "" + getMaximumRequestsPerPeriod() + " per " + getTimePeriodMillis() + " (ms)";
+        return "" + getExpression() + " per " + getTimePeriodMillis() + " (ms)";
     }
 
     @Override
@@ -90,10 +92,14 @@ public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> imp
 
         // should be default 1000 millis
         long period = getTimePeriodMillis() != null ? getTimePeriodMillis() : 1000L;
-        Throttler answer = new Throttler(childProcessor, getMaximumRequestsPerPeriod(), period, scheduled);
+        Expression maxRequestsExpression = createMaxRequestsPerPeriodExpression(routeContext);
+
+        Throttler answer = new Throttler(childProcessor, maxRequestsExpression, period, scheduled);
+
         if (getAsyncDelayed() != null) {
             answer.setAsyncDelayed(getAsyncDelayed());
         }
+        
         if (getCallerRunsWhenRejected() == null) {
             // should be true by default
             answer.setCallerRunsWhenRejected(true);
@@ -103,9 +109,17 @@ public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> imp
         return answer;
     }
 
+    private Expression createMaxRequestsPerPeriodExpression(RouteContext routeContext) {
+        if (getExpression() != null) {
+            if (ObjectHelper.isNotEmpty(getExpression().getExpression()) || getExpression().getExpressionValue() != null) {
+                return getExpression().createExpression(routeContext);
+            } 
+        } 
+        return null;
+    }
+    
     // Fluent API
     // -------------------------------------------------------------------------
-
     /**
      * Sets the time period during which the maximum request count is valid for
      *
@@ -124,7 +138,7 @@ public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> imp
      * @return the builder
      */
     public ThrottleDefinition maximumRequestsPerPeriod(Long maximumRequestsPerPeriod) {
-        setMaximumRequestsPerPeriod(maximumRequestsPerPeriod);
+        setExpression(new ExpressionDefinition(ExpressionBuilder.constantExpression(maximumRequestsPerPeriod)));
         return this;
     }
 
@@ -163,14 +177,6 @@ public class ThrottleDefinition extends OutputDefinition<ThrottleDefinition> imp
 
     // Properties
     // -------------------------------------------------------------------------
-
-    public Long getMaximumRequestsPerPeriod() {
-        return maximumRequestsPerPeriod;
-    }
-
-    public void setMaximumRequestsPerPeriod(Long maximumRequestsPerPeriod) {
-        this.maximumRequestsPerPeriod = maximumRequestsPerPeriod;
-    }
 
     public Long getTimePeriodMillis() {
         return timePeriodMillis;

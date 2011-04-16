@@ -22,24 +22,44 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <camelContext
-    xmlns="http://camel.apache.org/schema/spring">
-    <!-- START SNIPPET: example -->
-    <route>
-      <from uri="seda:a" />
-      <throttle maximumRequestsPerPeriod="3" timePeriodMillis="10000">
-        <to uri="mock:result" />
-      </throttle>
-    </route>
-    <!-- END SNIPPET: example -->
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-    <route>
-      <from uri="direct:a" />
-      <throttle maximumRequestsPerPeriod="1" timePeriodMillis="500">
-        <to uri="mock:result" />
-      </throttle>
-    </route>
+        <!-- START SNIPPET: example -->
+        <route>
+            <from uri="seda:a"/>
+            <!-- throttle 3 messages per 10 sec -->
+            <throttle timePeriodMillis="10000">
+                <constant>3</constant>
+                <to uri="mock:result"/>
+            </throttle>
+        </route>
+        <!-- END SNIPPET: example -->
 
-  </camelContext>
+        <route>
+            <from uri="direct:a"/>
+            <!-- throttle 1 messages per 0.5 sec -->
+            <throttle timePeriodMillis="500">
+                <constant>1</constant>
+                <to uri="mock:result"/>
+            </throttle>
+        </route>
+
+        <route>
+            <from uri="direct:expressionConstant"/>
+            <throttle timePeriodMillis="500">
+                <constant>1</constant>
+                <to uri="mock:result"/>
+            </throttle>
+        </route>
+
+        <route>
+            <from uri="direct:expressionHeader"/>
+            <throttle timePeriodMillis="500">
+                <header>throttleValue</header>
+                <to uri="mock:result"/>
+            </throttle>
+        </route>
+
+    </camelContext>
 
 </beans>
