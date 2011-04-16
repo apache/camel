@@ -46,7 +46,8 @@ public class RouteWithErrorHandlerTest extends CamelTestSupport {
     @Test
     public void testUnmarshalError() throws Exception {
         MockEndpoint error = getMockEndpoint("mock:error");
-        error.expectedBodiesReceived("<foo/>");
+        error.expectedMessageCount(1);
+        error.message(0).body(String.class).contains("<foo/>");
         getMockEndpoint("mock:invalid").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

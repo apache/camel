@@ -43,7 +43,8 @@ public class RecipientListParallelAggregateThreadPoolIssueTest extends ContextTe
         int num2 = context.getTypeConverter().convertTo(int.class, after);
         int diff = num2 - num1;
         // should be 10 + 1 other threads (10 in parallel pool + 1 in aggregate pool)
-        assertTrue("There should be 12 threads in diff, was: " + diff, diff == 12);
+        // we run unit test per jmv fork, so there may be a hanging thread
+        assertTrue("There should be 12 threads in diff, was: " + diff, diff >= 12 && diff <= 13);
     }
 
     @Override
