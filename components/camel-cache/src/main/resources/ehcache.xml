@@ -171,8 +171,9 @@
     Valid properties are:
     * initialContextFactoryName (mandatory) - the name of the factory used to create the message queue initial context.
     * providerURL (mandatory) - the JNDI configuration information for the service provider to use.
-    * topicConnectionFactoryBindingName (mandatory) - the JNDI binding name for the TopicConnectionFactory
-    * topicBindingName (mandatory) - the JNDI binding name for the topic name
+    * replicationTopicConnectionFactoryBindingName (mandatory) - the JNDI binding name for the TopicConnectionFactory
+    * replicationTopicBindingName (mandatory) - the JNDI binding name for the topic name
+    * getQueueConnectionFactoryBindingName (mandatory only if using jmsCacheLoader) - the JNDI binding name for the getQueueConnectionFactory
     * getQueueBindingName (mandatory only if using jmsCacheLoader) - the JNDI binding name for the queue name
     * securityPrincipalName - the JNDI java.naming.security.principal
     * securityCredentials - the JNDI java.naming.security.credentials
