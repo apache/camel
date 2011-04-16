@@ -114,6 +114,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         if (connection != null && connection.isConnected()) {
             connection.disconnect();
         }
+        connection = null;
         super.doStop();
     }
 

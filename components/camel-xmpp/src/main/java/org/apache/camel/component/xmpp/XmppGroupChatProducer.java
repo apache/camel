@@ -93,11 +93,14 @@ public class XmppGroupChatProducer extends DefaultProducer {
         if (chat != null) {
             LOG.info("Leaving room: {}", room);
             chat.leave();
-            chat = null;
         }
+        chat = null;
+
         if (connection != null && connection.isConnected()) {
             connection.disconnect();
         }
+        connection = null;
+
         super.doStop();
     }
 
