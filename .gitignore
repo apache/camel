@@ -5,3 +5,4 @@ target
 .project
 .settings
 .checkstyle
+*.log
