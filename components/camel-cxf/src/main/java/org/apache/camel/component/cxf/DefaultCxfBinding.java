@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.activation.DataHandler;
 import javax.security.auth.Subject;
@@ -519,7 +520,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             Map<String, Object> cxfContext) {
         
         // get cxf transport headers (if any) from camel exchange
-        Map<String, List<String>> transportHeaders = new HashMap<String, List<String>>();
+        // use a treemap to keep ordering and ignore key case
+        Map<String, List<String>> transportHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
         if (camelExchange != null) {
             Map<String, List<String>> h = (Map)camelExchange.getProperty(Message.PROTOCOL_HEADERS);
             if (h != null) {

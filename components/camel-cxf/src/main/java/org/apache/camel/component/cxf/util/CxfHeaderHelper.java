@@ -17,9 +17,9 @@
 package org.apache.camel.component.cxf.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -55,7 +55,8 @@ public final class CxfHeaderHelper {
             CastUtils.cast((Map)message.get(Message.PROTOCOL_HEADERS));
 
         if (cxfHeaders == null) {
-            cxfHeaders = new HashMap<String, List<String>>();
+            // use a treemap to keep ordering and ignore key case
+            cxfHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
             message.put(Message.PROTOCOL_HEADERS, cxfHeaders);
         }
 
