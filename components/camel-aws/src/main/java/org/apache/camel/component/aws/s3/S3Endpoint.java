@@ -156,7 +156,11 @@ public class S3Endpoint extends ScheduledPollEndpoint {
      */
     AmazonS3Client createS3Client() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        return new AmazonS3Client(credentials);
+        AmazonS3Client client = new AmazonS3Client(credentials);
+        if (configuration.getAmazonS3Endpoint() != null) {
+            client.setEndpoint(configuration.getAmazonS3Endpoint());
+        }
+        return client;
     }
     
     public int getMaxMessagesPerPoll() {

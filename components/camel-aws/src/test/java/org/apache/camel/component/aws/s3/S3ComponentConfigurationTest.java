@@ -35,6 +35,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getRegion());
         assertTrue(endpoint.getConfiguration().isDeleteAfterRead());
         assertEquals(10, endpoint.getMaxMessagesPerPoll());
+        assertNull(endpoint.getConfiguration().getAmazonS3Endpoint());
     }
     
     @Test
@@ -53,12 +54,14 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getRegion());
         assertTrue(endpoint.getConfiguration().isDeleteAfterRead());
         assertEquals(10, endpoint.getMaxMessagesPerPoll());
+        assertNull(endpoint.getConfiguration().getAmazonS3Endpoint());
     }
     
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
         S3Component component = new S3Component(context);
-        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?accessKey=xxx&secretKey=yyy&region=us-west-1&deleteAfterRead=false&maxMessagesPerPoll=1");
+        S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?amazonS3Endpoint=sns.eu-west-1.amazonaws.com"
+                + "&accessKey=xxx&secretKey=yyy&region=us-west-1&deleteAfterRead=false&maxMessagesPerPoll=1");
         
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -67,6 +70,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertEquals("us-west-1", endpoint.getConfiguration().getRegion());
         assertFalse(endpoint.getConfiguration().isDeleteAfterRead());
         assertEquals(1, endpoint.getMaxMessagesPerPoll());
+        assertEquals("sns.eu-west-1.amazonaws.com", endpoint.getConfiguration().getAmazonS3Endpoint());
     }
     
     @Test(expected = IllegalArgumentException.class)

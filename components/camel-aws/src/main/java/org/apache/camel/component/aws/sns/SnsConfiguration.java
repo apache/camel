@@ -29,11 +29,20 @@ public class SnsConfiguration implements Cloneable {
     private AmazonSNSClient amazonSNSClient;
     private String accessKey;
     private String secretKey;
+    private String amazonSNSEndpoint;
 
     // Producer only properties
     private String subject;
     private String topicArn;
 
+    public void setAmazonSNSEndpoint(String awsSNSEndpoint) {
+        this.amazonSNSEndpoint = awsSNSEndpoint;
+    }
+    
+    public String getAmazonSNSEndpoint() {
+        return amazonSNSEndpoint;
+    }
+    
     public String getSubject() {
         return subject;
     }

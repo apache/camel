@@ -34,6 +34,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getAmazonSNSClient());
         assertNull(endpoint.getConfiguration().getTopicArn());
         assertNull(endpoint.getConfiguration().getSubject());
+        assertNull(endpoint.getConfiguration().getAmazonSNSEndpoint());
     }
     
     @Test
@@ -50,7 +51,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getSecretKey());
         assertNull(endpoint.getConfiguration().getTopicArn());
         assertNull(endpoint.getConfiguration().getSubject());
-        
+        assertNull(endpoint.getConfiguration().getAmazonSNSEndpoint());
         endpoint.start();
         
         assertEquals("arn:aws:sns:us-east-1:541925086079:MyTopic", endpoint.getConfiguration().getTopicArn());
@@ -61,9 +62,10 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
         SnsComponent component = new SnsComponent(context);
-        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?accessKey=xxx&secretKey=yyy&subject=The+subject+message");
+        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSEndpoint=sns.eu-west-1.amazonaws.com&accessKey=xxx&secretKey=yyy&subject=The+subject+message");
         
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
+        assertEquals("sns.eu-west-1.amazonaws.com", endpoint.getConfiguration().getAmazonSNSEndpoint());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertNull(endpoint.getConfiguration().getTopicArn());

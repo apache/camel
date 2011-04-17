@@ -31,12 +31,21 @@ public class SqsConfiguration {
     private AmazonSQSClient amazonSQSClient;
     private String accessKey;
     private String secretKey;
+    private String amazonSQSEndpoint;
     
     // consumer properties
     private Boolean deleteAfterRead = Boolean.TRUE;
     private Integer visibilityTimeout;
     private Collection<String> attributeNames;
     private Integer defaultVisibilityTimeout;
+    
+    public void setAmazonSQSEndpoint(String amazonSQSEndpoint) {
+        this.amazonSQSEndpoint = amazonSQSEndpoint;
+    }
+    
+    public String getAmazonSQSEndpoint() {
+        return amazonSQSEndpoint;
+    }
 
     public String getQueueName() {
         return queueName;

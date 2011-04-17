@@ -101,6 +101,10 @@ public class SnsEndpoint extends DefaultEndpoint {
      */
     AmazonSNSClient createSNSClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        return new AmazonSNSClient(credentials);
+        AmazonSNSClient client = new AmazonSNSClient(credentials);
+        if (configuration.getAmazonSNSEndpoint() != null) {
+            client.setEndpoint(configuration.getAmazonSNSEndpoint());
+        }
+        return client;
     }
 }

@@ -31,6 +31,15 @@ public class S3Configuration implements Cloneable {
     private String bucketName;
     private String region;
     private boolean deleteAfterRead = true;
+    private String amazonS3Endpoint;
+    
+    public void setAmazonS3Endpoint(String amazonS3Endpoint) {
+        this.amazonS3Endpoint = amazonS3Endpoint;
+    }
+    
+    public String getAmazonS3Endpoint() {
+        return amazonS3Endpoint;
+    }
     
     public String getAccessKey() {
         return accessKey;

@@ -131,7 +131,11 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
      */
     AmazonSQSClient createClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        return new AmazonSQSClient(credentials);
+        AmazonSQSClient client = new AmazonSQSClient(credentials);
+        if (configuration.getAmazonSQSEndpoint() != null) {
+            client.setEndpoint(configuration.getAmazonSQSEndpoint());
+        }
+        return client;
     }
 
     protected String getQueueUrl() {

@@ -38,6 +38,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getAttributeNames());
         assertNull(endpoint.getConfiguration().getDefaultVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getVisibilityTimeout());
+        assertNull(endpoint.getConfiguration().getAmazonSQSEndpoint());
     }
     
     @Test
@@ -56,6 +57,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getAttributeNames());
         assertNull(endpoint.getConfiguration().getDefaultVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getVisibilityTimeout());
+        assertNull(endpoint.getConfiguration().getAmazonSQSEndpoint());
     }
     
     @Test
@@ -67,7 +69,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("attributeNames", attributeNames);
         
         SqsComponent component = new SqsComponent(context);
-        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy&attributeNames=#attributeNames"
+        SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?amazonSQSEndpoint=sns.eu-west-1.amazonaws.com&accessKey=xxx&secretKey=yyy&attributeNames=#attributeNames"
                 + "&DefaultVisibilityTimeout=1000&visibilityTimeout=2000");
         
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
@@ -77,6 +79,7 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertSame(attributeNames, endpoint.getConfiguration().getAttributeNames());
         assertEquals(new Integer(1000), endpoint.getConfiguration().getDefaultVisibilityTimeout());
         assertEquals(new Integer(2000), endpoint.getConfiguration().getVisibilityTimeout());
+        assertEquals("sns.eu-west-1.amazonaws.com", endpoint.getConfiguration().getAmazonSQSEndpoint());
     }
     
     @Test
