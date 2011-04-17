@@ -27,14 +27,12 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * Jetty HTTP producer concurrent test.
  *
- * @version 
+ * @version
  */
 public class JettyHttpProducerConcurrentTest extends BaseJettyTest {
 

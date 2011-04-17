@@ -20,15 +20,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.StopWatch;
-import org.apache.camel.util.TimeUtils;
 import org.junit.Test;
 
 public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
 
     @Test
     public void testHttpProxyWithContentType() throws Exception {
-       
+
         String out = template.requestBodyAndHeader("http://localhost:{{port}}/hello", "test",  "Content-Type", "application/xml", String.class);
 
         assertEquals("Get a wrong response ", "application/xml", out);
@@ -42,13 +40,13 @@ public class HttpProxyRouteContentTypeTest extends BaseJettyTest {
                 from("jetty://http://localhost:{{port}}/bye").process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
-                        
+
                         exchange.getOut().setBody(ExchangeHelper.getContentType(exchange));
                     }
-                    
+
                 });
             }
         };
-    }    
+    }
 
 }

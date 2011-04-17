@@ -28,7 +28,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jetty.http.security.Constraint;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -38,7 +37,7 @@ import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 public class HttpBasicAuthTest extends BaseJettyTest {
 
@@ -60,7 +59,7 @@ public class HttpBasicAuthTest extends BaseJettyTest {
         ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
         sh.setAuthenticator(new BasicAuthenticator());
         sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
-        
+
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
         sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[]{cm}));
