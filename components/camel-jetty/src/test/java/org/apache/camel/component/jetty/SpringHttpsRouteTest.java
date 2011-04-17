@@ -20,6 +20,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import javax.annotation.Resource;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -30,12 +31,12 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.junit4.TestSupport;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -50,13 +51,15 @@ public class SpringHttpsRouteTest {
     protected String expectedBody = "<hello>world!</hello>";
     protected String pwd = "changeit";
     protected Properties originalValues = new Properties();
-    protected transient Logger log = LoggerFactory.getLogger(TestSupport.class);
+    protected transient Log log = LogFactory.getLog(TestSupport.class);
 
     @EndpointInject(uri = "mock:a")
     MockEndpoint mockEndpoint;
     
     @Produce
     private ProducerTemplate template;
+
+    private Integer port;
 
     @Before
     public void setUp() throws Exception {
@@ -92,7 +95,7 @@ public class SpringHttpsRouteTest {
         mockEndpoint.reset();
         mockEndpoint.expectedBodiesReceived(expectedBody);
 
-        template.sendBodyAndHeader("https://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader("https://localhost:" + port + "/test", expectedBody, "Content-Type", "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
@@ -113,11 +116,19 @@ public class SpringHttpsRouteTest {
     public void testEndpointWithoutHttps() {
         mockEndpoint.reset();
         try {
-            template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+            template.sendBodyAndHeader("http://localhost:" + port + "/test", expectedBody, "Content-Type", "application/xml");
             fail("expect exception on access to https endpoint via http");
         } catch (RuntimeCamelException expected) {
         }
         assertTrue("mock endpoint was not called", mockEndpoint.getExchanges().isEmpty());
     }
 
+    public Integer getPort() {
+        return port;
+    }
+
+    @Resource(name = "dynaPort")
+    public void setPort(Integer port) {
+        this.port = port;
+    }
 }

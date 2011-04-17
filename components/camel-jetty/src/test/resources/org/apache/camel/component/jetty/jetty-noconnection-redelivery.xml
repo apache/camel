@@ -22,7 +22,24 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean id="dynaPort" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass">
+            <value>org.apache.camel.test.AvailablePortFinder</value>
+        </property>
+        <property name="targetMethod">
+            <value>getNextAvailable</value>
+        </property>
+        <property name="arguments">
+            <list>
+                <value>9000</value>
+            </list>
+        </property>
+    </bean>
+
+
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <endpoint id="httpEndpoint" uri="http://localhost:#{dynaPort}/hi"/>
+        <endpoint id="jettyEndpoint" uri="jetty:http://localhost:#{dynaPort}/hi"/>
 
         <route>
             <from uri="direct:start"/>
@@ -31,11 +48,12 @@
                 <redeliveryPolicy maximumRedeliveries="4" redeliveryDelay="100" maximumRedeliveryDelay="5000"
                                   backOffMultiplier="2" useExponentialBackOff="true"/>
             </onException>
-            <to uri="http://localhost:9221/hi"/>
+            <to ref="httpEndpoint"/>
         </route>
 
         <route id="jetty">
-            <from uri="jetty:http://localhost:9221/hi"/>
+
+            <from ref="jettyEndpoint"/>
             <transform><simple>Bye ${body}</simple></transform>
         </route>
         

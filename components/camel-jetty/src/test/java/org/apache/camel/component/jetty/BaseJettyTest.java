@@ -25,7 +25,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.commons.logging.impl.AvalonLogger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -42,7 +44,7 @@ public abstract class BaseJettyTest extends CamelTestSupport {
 
         if (!file.exists()) {
             // start from somewhere in the 23xxx range
-            port = 23000 + new Random().nextInt(900);
+            port = AvailablePortFinder.getNextAvailable(23000);
         } else {
             // read port number from file
             String s = IOConverter.toString(file, null);
@@ -86,7 +88,8 @@ public abstract class BaseJettyTest extends CamelTestSupport {
     }
 
     protected int getNextPort() {
-        return ++port;
+        port = AvailablePortFinder.getNextAvailable(port + 1);
+        return port;
     }
 
     protected int getPort() {
