@@ -20,23 +20,30 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Finds currently available server ports.
  *
- * @see <a href="http://www.iana.org/assignments/port-numbers">IANA.org</a>
+ * @see <a href="http://www.iana.org/assignments/currentMinPort-numbers">IANA.org</a>
  */
 public final class AvailablePortFinder {
     /**
-     * The minimum server port number. Set at 1024 to avoid returning privileged
-     * port numbers.
+     * The minimum server currentMinPort number. Set at 1024 to avoid returning privileged
+     * currentMinPort numbers.
      */
     public static final int MIN_PORT_NUMBER = 1024;
 
     /**
-     * The maximum server port number.
+     * The maximum server currentMinPort number.
      */
     public static final int MAX_PORT_NUMBER = 49151;
+
+
+    /**
+     * Incremented to the next lowest available port when getNextAvailable() is called.
+     */
+    private static AtomicInteger currentMinPort = new AtomicInteger(MIN_PORT_NUMBER);
 
     /**
      * Creates a new instance.
@@ -46,23 +53,27 @@ public final class AvailablePortFinder {
     }
 
     /**
-     * Gets the next available port starting at the lowest port number.
+     * Gets the next available currentMinPort starting at the lowest currentMinPort number. This is the preferred
+     * method to use. The port return is immediately marked in use and doesn't rely on the caller actually opening
+     * the port.
      *
      * @throws NoSuchElementException if there are no ports available
      */
     public static int getNextAvailable() {
-        return getNextAvailable(MIN_PORT_NUMBER);
+        int next = getNextAvailable(currentMinPort.get());
+        currentMinPort.set(next + 1);
+        return next;
     }
 
     /**
-     * Gets the next available port starting at a port.
+     * Gets the next available currentMinPort starting at a currentMinPort.
      *
-     * @param fromPort the port to scan for availability
+     * @param fromPort the currentMinPort to scan for availability
      * @throws NoSuchElementException if there are no ports available
      */
     public static int getNextAvailable(int fromPort) {
-        if (fromPort < MIN_PORT_NUMBER || fromPort > MAX_PORT_NUMBER) {
-            throw new IllegalArgumentException("Invalid start port: " + fromPort);
+        if (fromPort < currentMinPort.get() || fromPort > MAX_PORT_NUMBER) {
+            throw new IllegalArgumentException("Invalid start currentMinPort: " + fromPort);
         }
 
         for (int i = fromPort; i <= MAX_PORT_NUMBER; i++) {
@@ -71,17 +82,17 @@ public final class AvailablePortFinder {
             }
         }
 
-        throw new NoSuchElementException("Could not find an available port above " + fromPort);
+        throw new NoSuchElementException("Could not find an available currentMinPort above " + fromPort);
     }
 
     /**
-     * Checks to see if a specific port is available.
+     * Checks to see if a specific currentMinPort is available.
      *
-     * @param port the port to check for availability
+     * @param port the currentMinPort to check for availability
      */
     public static boolean available(int port) {
-        if (port < MIN_PORT_NUMBER || port > MAX_PORT_NUMBER) {
-            throw new IllegalArgumentException("Invalid start port: " + port);
+        if (port < currentMinPort.get() || port > MAX_PORT_NUMBER) {
+            throw new IllegalArgumentException("Invalid start currentMinPort: " + port);
         }
 
         ServerSocket ss = null;
