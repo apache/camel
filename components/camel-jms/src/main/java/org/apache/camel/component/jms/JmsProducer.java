@@ -18,6 +18,8 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -38,9 +40,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
+import org.springframework.jms.support.JmsUtils;
 
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
-
 /**
  * @version 
  */
@@ -402,11 +404,37 @@ public class JmsProducer extends DefaultAsyncProducer {
         this.uuidGenerator = uuidGenerator;
     }
 
+    /**
+     * Pre tests the connection before starting the listening.
+     * <p/>
+     * In case of connection failure the exception is thrown which prevents Camel from starting.
+     *
+     * @throws FailedToCreateProducerException is thrown if testing the connection failed
+     */
+    protected void testConnectionOnStartup() throws FailedToCreateProducerException {
+        try {
+            CamelJmsTemplate template = (CamelJmsTemplate) getInOnlyTemplate();
+
+            if (log.isDebugEnabled()) {
+                log.debug("Testing JMS Connection on startup for destination: " + template.getDefaultDestinationName());
+            }
+
+            Connection conn = template.getConnectionFactory().createConnection();
+            JmsUtils.closeConnection(conn);
+
+            log.info("Successfully tested JMS Connection on startup for destination: " + template.getDefaultDestinationName());
+        } catch (Exception e) {
+            throw new FailedToCreateProducerException(getEndpoint(), e);
+        }
+    }
     protected void doStart() throws Exception {
         super.doStart();
         if (uuidGenerator == null) {
             // use the generator configured on the camel context
             uuidGenerator = getEndpoint().getCamelContext().getUuidGenerator();
+        }
+        if (endpoint.isTestConnectionOnStartup()) {
+            testConnectionOnStartup();
         }
     }
 

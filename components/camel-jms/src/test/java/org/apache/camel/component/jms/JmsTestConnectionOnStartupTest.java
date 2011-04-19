@@ -21,6 +21,7 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateConsumerException;
+import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -33,7 +34,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
 
     @Test
-    public void testConnectionOnStartupTest() throws Exception {
+    public void testConnectionOnStartupConsumerTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -48,6 +49,28 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
             // expected
             assertEquals("Failed to create Consumer for endpoint: Endpoint[activemq://queue:foo?testConnectionOnStartup=true]. "
                 + "Reason: Cannot get JMS Connection on startup for destination foo", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testConnectionOnStartupProducerTest() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("activemq:queue:foo?testConnectionOnStartup=true");
+            }
+        });
+
+        try {
+            context.start();
+            fail("Should have thrown an exception");
+        } catch (FailedToCreateProducerException e) {
+            // expected
+            assertEquals("Failed to create Producer for endpoint: Endpoint[activemq://queue:foo?testConnectionOnStartup=true]. "
+                + "Reason: org.apache.camel.FailedToCreateProducerException: Failed to create Producer for endpoint: "
+                + "Endpoint[activemq://queue:foo?testConnectionOnStartup=true]. Reason: javax.jms.JMSException: "
+                + "Could not connect to broker URL: tcp://localhost:61111. Reason: java.net.ConnectException: Connection refused",
+                    e.getMessage());
         }
     }
 
