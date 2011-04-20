@@ -230,7 +230,7 @@ public class JmsMessage extends DefaultMessage {
     }
 
     private String getSanitizedString(Object value) {
-        return value != null ? value.toString().replaceAll("[^a-zA-Z0-9\\:\\.\\_\\-]", "_") : "";
+        return value != null ? value.toString().replaceAll("[^a-zA-Z0-9\\.\\_\\-]", "_") : "";
     }
 
 }
