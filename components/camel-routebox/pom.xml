@@ -35,12 +35,6 @@
 		<camel.osgi.export.pkg>
 		    org.apache.camel.component.routebox.*
 		</camel.osgi.export.pkg>
-        <camel.osgi.import.pkg>
-            !org.apache.camel.component.routebox.*,
-            !org.apache.camel.routepolicy.routebox.seda.*,
-            ${camel.osgi.import.defaults},
-            *
-        </camel.osgi.import.pkg>
     </properties>
 
 	<dependencies>
