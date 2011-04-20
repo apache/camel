@@ -24,17 +24,16 @@ import java.util.HashSet;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.cometd.Client;
-import org.cometd.Extension;
-import org.cometd.Message;
-import org.cometd.RemoveListener;
+import org.cometd.bayeux.server.BayeuxServer;
+import org.cometd.bayeux.server.ServerMessage;
+import org.cometd.bayeux.server.ServerSession;
 
 public class CometdProducerConsumerInteractiveExtensionMain {
 
-    private static final String URI = "cometd://127.0.0.1:9091/service/test?baseResource=file:./src/test/resources/webapp&"
+    private static final String URI = "cometd://127.0.0.1:9091/channel/test?baseResource=file:./src/test/resources/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-    private static final String URIS = "cometds://127.0.0.1:9443/service/test?baseResource=file:./src/test/resources/webapp&"
+    private static final String URIS = "cometds://127.0.0.1:9443/channel/test?baseResource=file:./src/test/resources/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private CamelContext context;
@@ -72,37 +71,32 @@ public class CometdProducerConsumerInteractiveExtensionMain {
         };
     }
 
-    public static final class Censor implements Extension, RemoveListener {
+    public static final class Censor implements BayeuxServer.Extension, ServerSession.RemoveListener {
 
         private HashSet<String> forbidden = new HashSet<String>(Arrays.asList("one", "two"));
 
-        @Override
-        public void removed(String clientId, boolean timeout) {
+        public void removed(ServerSession session, boolean timeout) {
             // called on remove of client
         }
 
-        @Override
-        public Message rcv(Client from, Message message) {
-            return message;
+        public boolean rcv(ServerSession from, ServerMessage.Mutable message) {
+            return true;
         }
 
-        @Override
-        public Message rcvMeta(Client from, Message message) {
-            return message;
+        public boolean rcvMeta(ServerSession from, ServerMessage.Mutable message) {
+            return true;
         }
 
-        @Override
-        public Message send(Client from, Message message) {
+        public boolean send(ServerSession from, ServerSession to, ServerMessage.Mutable message) {
             Object data = message.getData();
             if (forbidden.contains(data)) {
                 message.put("data", "***");
             }
-            return message;
+            return true;
         }
 
-        @Override
-        public Message sendMeta(Client from, Message message) {
-            return message;
+        public boolean sendMeta(ServerSession from, ServerMessage.Mutable message) {
+            return true;
         }
     }
 }

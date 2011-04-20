@@ -21,17 +21,18 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
-import org.cometd.Bayeux;
-import org.cometd.Client;
-import org.cometd.server.AbstractBayeux;
-import org.cometd.server.BayeuxService;
+import org.apache.camel.util.ExchangeHelper;
+import org.cometd.bayeux.server.ServerMessage;
+import org.cometd.bayeux.server.ServerSession;
+import org.cometd.server.AbstractService;
+import org.cometd.server.BayeuxServerImpl;
 
 /**
  * A Consumer for receiving messages using Cometd and Bayeux protocol.
  */
 public class CometdConsumer extends DefaultConsumer implements CometdProducerConsumer {
 
-    private AbstractBayeux bayeux;
+    private BayeuxServerImpl bayeux;
     private final CometdEndpoint endpoint;
     private ConsumerService service;
 
@@ -43,6 +44,7 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
     @Override
     public void start() throws Exception {
         super.start();
+        // must connect first
         endpoint.connect(this);
         service = new ConsumerService(endpoint.getPath(), bayeux, this);
     }
@@ -53,7 +55,7 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
         super.stop();
     }
 
-    public void setBayeux(AbstractBayeux bayeux) {
+    public void setBayeux(BayeuxServerImpl bayeux) {
         this.bayeux = bayeux;
     }
 
@@ -61,19 +63,25 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
         return endpoint;
     }
 
-    public static class ConsumerService extends BayeuxService {
+    public static class ConsumerService extends AbstractService {
 
         private final CometdEndpoint endpoint;
         private final CometdConsumer consumer;
 
-        public ConsumerService(String channel, Bayeux bayeux, CometdConsumer consumer) {
+        public ConsumerService(String channel, BayeuxServerImpl bayeux, CometdConsumer consumer) {
             super(bayeux, channel);
             this.consumer = consumer;
             this.endpoint = consumer.getEndpoint();
-            subscribe(channel, "push");
+            addService(channel, "push");
         }
 
-        public void push(Client client, Object data) throws Exception {
+        public void push(ServerSession remote, String channelName, ServerMessage cometdMessage, String messageId) throws Exception {
+            Object data = null;
+
+            if (cometdMessage != null) {
+                data = cometdMessage.getData();
+            }
+
             Message message = new DefaultMessage();
             message.setBody(data);
 
@@ -81,6 +89,12 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
             exchange.setIn(message);
 
             consumer.getProcessor().process(exchange);
+
+            if (ExchangeHelper.isOutCapable(exchange)) {
+                Message camelOutMessage = exchange.getOut();
+                remote.deliver(getServerSession(), channelName, camelOutMessage.getBody(), null);
+            }
         }
     }
+
 }

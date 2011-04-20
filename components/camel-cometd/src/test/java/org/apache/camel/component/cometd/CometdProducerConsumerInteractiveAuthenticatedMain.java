@@ -24,19 +24,19 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.cometd.Bayeux;
-import org.cometd.Client;
-import org.cometd.Extension;
-import org.cometd.Message;
-import org.cometd.RemoveListener;
-import org.cometd.server.AbstractBayeux;
+import org.cometd.bayeux.Channel;
+import org.cometd.bayeux.Message;
+import org.cometd.bayeux.server.BayeuxServer;
+import org.cometd.bayeux.server.ServerMessage;
+import org.cometd.bayeux.server.ServerSession;
+import org.cometd.server.DefaultSecurityPolicy;
 
 public class CometdProducerConsumerInteractiveAuthenticatedMain {
 
-    private static final String URI = "cometd://127.0.0.1:9091/service/test?baseResource=file:./src/test/resources/webapp&"
+    private static final String URI = "cometd://127.0.0.1:9091/channel/test?baseResource=file:./src/test/resources/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-    private static final String URIS = "cometds://127.0.0.1:9443/service/test?baseResource=file:./src/test/resources/webapp&"
+    private static final String URIS = "cometds://127.0.0.1:9443/channel/test?baseResource=file:./src/test/resources/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private CamelContext context;
@@ -78,20 +78,21 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
     /**
      * Custom SecurityPolicy, see http://cometd.org/documentation/howtos/authentication for details
      */
-    public static final class BayeuxAuthenticator extends AbstractBayeux.DefaultPolicy implements Extension, RemoveListener {
+    public static final class BayeuxAuthenticator extends DefaultSecurityPolicy implements BayeuxServer.Extension, ServerSession.RemoveListener {
 
         private String user = "changeit";
         private String pwd = "changeit";
 
         @Override
-        public boolean canHandshake(Message message) {
-            Map<String, Object> ext = message.getExt(false);
+        public boolean canHandshake(BayeuxServer server, ServerSession session, ServerMessage message) {
+            if (session.isLocalSession()) {
+                return true;
+            }
+
+            Map<String, Object> ext = message.getExt();
             if (ext == null) {
                 return false;
             }
-
-            // Be sure the client does not cheat us
-            ext.remove("authenticationData");
 
             @SuppressWarnings("unchecked")
             Map<String, Object> authentication = (Map<String, Object>) ext.get("authentication");
@@ -104,8 +105,7 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
                 return false;
             }
 
-            // Store the authentication result in the message for later processing
-            ext.put("authenticationData", authenticationData);
+            session.addListener(this);
 
             return true;
         }
@@ -120,56 +120,36 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
             return "OK";
         }
 
-        @Override
-        public Message sendMeta(Client remote, Message responseMessage) {
-            if (Bayeux.META_HANDSHAKE.equals(responseMessage.getChannel())) {
-                Message requestMessage = responseMessage.getAssociated();
+        public boolean sendMeta(ServerSession to, ServerMessage.Mutable message) {
+            if (Channel.META_HANDSHAKE.equals(message.getChannel())) {
+                if (!message.isSuccessful()) {
+                    Map advice = message.getAdvice(true);
+                    advice.put(Message.RECONNECT_FIELD, Message.RECONNECT_HANDSHAKE_VALUE);
 
-                Map<String, Object> requestExt = requestMessage.getExt(false);
-                if (requestExt != null && requestExt.get("authenticationData") != null) {
-                    Object authenticationData = requestExt.get("authenticationData");
-                    // Authentication successful
-
-                    // Link authentication data to the remote client
-
-                    // Be notified when the remote client disappears
-                    remote.addListener(this);
-                } else {
-                    // Authentication failed
-
-                    // Add extra fields to the response
-                    Map<String, Object> responseExt = responseMessage.getExt(true);
-                    Map<String, Object> authentication = new HashMap<String, Object>();
-                    responseExt.put("authentication", authentication);
+                    Map ext = message.getExt(true);
+                    Map authentication = new HashMap();
+                    ext.put("authentication", authentication);
                     authentication.put("failed", true);
-
-                    // Tell the client to stop any further attempt to handshake
-                    Map<String, Object> advice = new HashMap<String, Object>();
-                    advice.put(Bayeux.RECONNECT_FIELD, Bayeux.NONE_RESPONSE);
-                    responseMessage.put(Bayeux.ADVICE_FIELD, advice);
+                    authentication.put("failureReason", "invalid_credentials");
                 }
             }
-            return responseMessage;
+            return true;
         }
 
-        @Override
-        public void removed(String clientId, boolean timeout) {
+        public void removed(ServerSession session, boolean timeout) {
             // Remove authentication data
         }
 
-        @Override
-        public Message rcv(Client client, Message message) {
-            return message;
+        public boolean rcv(ServerSession from, ServerMessage.Mutable message) {
+            return true;
         }
 
-        @Override
-        public Message rcvMeta(Client client, Message message) {
-            return message;
+        public boolean rcvMeta(ServerSession from, ServerMessage.Mutable message) {
+            return true;
         }
 
-        @Override
-        public Message send(Client client, Message message) {
-            return message;
+        public boolean send(ServerSession from, ServerSession to, ServerMessage.Mutable message) {
+            return true;
         }
     }
 

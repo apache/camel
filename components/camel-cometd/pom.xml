@@ -38,7 +38,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-core</artifactId> 
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -55,18 +55,18 @@
         <dependency>
             <groupId>org.cometd.java</groupId>
             <artifactId>cometd-java-server</artifactId>
-            <version>1.0.1</version>
+            <version>2.1.0</version>
         </dependency>
-        
+
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>            
+            <artifactId>camel-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit</artifactId>            
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -95,6 +95,7 @@
                 <configuration>
                     <mainClass>org.apache.camel.component.cometd.CometdProducerConsumerInteractiveMain</mainClass>
                     <includePluginDependencies>false</includePluginDependencies>
+                    <classpathScope>test</classpathScope>
                 </configuration>
             </plugin>
         </plugins>

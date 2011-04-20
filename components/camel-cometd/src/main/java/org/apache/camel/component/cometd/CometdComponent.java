@@ -18,20 +18,22 @@ package org.apache.camel.component.cometd;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.cometd.Extension;
-import org.cometd.SecurityPolicy;
-import org.cometd.server.AbstractBayeux;
-import org.cometd.server.continuation.ContinuationCometdServlet;
+import org.cometd.bayeux.server.BayeuxServer;
+import org.cometd.bayeux.server.SecurityPolicy;
+import org.cometd.server.BayeuxServerImpl;
+import org.cometd.server.CometdServlet;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.session.HashSessionManager;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -39,13 +41,14 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * Component for Jetty Cometd
  */
 public class CometdComponent extends DefaultComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(CometdComponent.class);
 
-    private final Map<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
+    private final Map<String, ConnectorRef> connectors = new LinkedHashMap<String, ConnectorRef>();
 
     private Server server;
     private String sslKeyPassword;
@@ -53,15 +56,14 @@ public class CometdComponent extends DefaultComponent {
     private String sslKeystore;
     private SslSocketConnector sslSocketConnector;
     private SecurityPolicy securityPolicy;
-    private List<Extension> extensions;
+    private List<BayeuxServer.Extension> extensions;
 
     class ConnectorRef {
         Connector connector;
-        ContinuationCometdServlet servlet;
+        CometdServlet servlet;
         int refCount;
 
-        public ConnectorRef(Connector connector,
-                            ContinuationCometdServlet servlet) {
+        public ConnectorRef(Connector connector, CometdServlet servlet) {
             this.connector = connector;
             this.servlet = servlet;
             increment();
@@ -110,7 +112,7 @@ public class CometdComponent extends DefaultComponent {
                 }
                 getServer().addConnector(connector);
 
-                ContinuationCometdServlet servlet = createServletForConnector(connector, endpoint);
+                CometdServlet servlet = createServletForConnector(connector, endpoint);
                 connectorRef = new ConnectorRef(connector, servlet);
                 getServer().start();
 
@@ -119,14 +121,13 @@ public class CometdComponent extends DefaultComponent {
                 connectorRef.increment();
             }
 
-            AbstractBayeux bayeux = connectorRef.servlet.getBayeux();
-            bayeux.setJSONCommented(endpoint.isJsonCommented());
+            BayeuxServerImpl bayeux = connectorRef.servlet.getBayeux();
 
             if (securityPolicy != null) {
                 bayeux.setSecurityPolicy(securityPolicy);
             }
             if (extensions != null) {
-                for (Extension extension : extensions) {
+                for (BayeuxServer.Extension extension : extensions) {
                     bayeux.addExtension(extension);
                 }
             }
@@ -155,20 +156,23 @@ public class CometdComponent extends DefaultComponent {
         }
     }
 
-    protected ContinuationCometdServlet createServletForConnector(Connector connector, CometdEndpoint endpoint) throws Exception {
-        ContinuationCometdServlet servlet = new ContinuationCometdServlet();
+    protected CometdServlet createServletForConnector(Connector connector, CometdEndpoint endpoint) throws Exception {
+        CometdServlet servlet = new CometdServlet();
 
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
         context.setConnectorNames(new String[]{connector.getName()});
 
         ServletHolder holder = new ServletHolder();
         holder.setServlet(servlet);
+        holder.setAsyncSupported(true);
 
         // Use baseResource to pass as a parameter the url
         // pointing to by example classpath:webapp
         if (endpoint.getBaseResource() != null) {
             String[] resources = endpoint.getBaseResource().split(":");
-            LOG.debug(">>> Protocol found :" + resources[0] + ", and resource : " + resources[1]);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(">>> Protocol found: " + resources[0] + ", and resource: " + resources[1]);
+            }
 
             if (resources[0].equals("file")) {
                 context.setBaseResource(Resource.newResource(resources[1]));
@@ -181,6 +185,7 @@ public class CometdComponent extends DefaultComponent {
 
         context.addServlet(holder, "/cometd/*");
         context.addServlet("org.eclipse.jetty.servlet.DefaultServlet", "/");
+        context.setSessionHandler(new SessionHandler(new HashSessionManager()));
 
         holder.setInitParameter("timeout", Integer.toString(endpoint.getTimeout()));
         holder.setInitParameter("interval", Integer.toString(endpoint.getInterval()));
@@ -197,6 +202,7 @@ public class CometdComponent extends DefaultComponent {
             sslSocketConnector = new SslSocketConnector();
             // with default null values, jetty ssl system properties
             // and console will be read by jetty implementation
+            // TODO: use non @deprecated API from Jetty
             sslSocketConnector.setPassword(sslPassword);
             sslSocketConnector.setKeyPassword(sslKeyPassword);
             if (sslKeystore != null) {
@@ -249,17 +255,17 @@ public class CometdComponent extends DefaultComponent {
         return securityPolicy;
     }
 
-    public List<Extension> getExtensions() {
+    public List<BayeuxServer.Extension> getExtensions() {
         return extensions;
     }
 
-    public void setExtensions(List<Extension> extensions) {
+    public void setExtensions(List<BayeuxServer.Extension> extensions) {
         this.extensions = extensions;
     }
 
-    public void addExtension(Extension extension) {
+    public void addExtension(BayeuxServer.Extension extension) {
         if (extensions == null) {
-            extensions = new ArrayList<Extension>();
+            extensions = new ArrayList<BayeuxServer.Extension>();
         }
         extensions.add(extension);
     }

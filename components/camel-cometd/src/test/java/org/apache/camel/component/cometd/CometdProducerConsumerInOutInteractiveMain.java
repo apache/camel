@@ -20,15 +20,19 @@ import java.io.File;
 import java.net.URI;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultMessage;
 
-public class CometdProducerConsumerInteractiveMain {
+public class CometdProducerConsumerInOutInteractiveMain {
 
-    private static final String URI = "cometd://127.0.0.1:9091/channel/test?baseResource=file:./src/test/resources/webapp&"
+    private static final String URI = "cometd://127.0.0.1:9091/service/test?baseResource=file:./src/test/resources/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-    private static final String URIS = "cometds://127.0.0.1:9443/channel/test?baseResource=file:./src/test/resources/webapp&"
+    private static final String URIS = "cometds://127.0.0.1:9443/service/test?baseResource=file:./src/test/resources/webapp&"
         + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private CamelContext context;
@@ -36,7 +40,7 @@ public class CometdProducerConsumerInteractiveMain {
     private String pwd = "changeit";
 
     public static void main(String[] args) throws Exception {
-        CometdProducerConsumerInteractiveMain me = new CometdProducerConsumerInteractiveMain();
+        CometdProducerConsumerInOutInteractiveMain me = new CometdProducerConsumerInOutInteractiveMain();
         me.testCometdProducerConsumerInteractive();
     }
 
@@ -56,7 +60,13 @@ public class CometdProducerConsumerInteractiveMain {
                 URI keyStoreUrl = file.toURI();
                 component.setSslKeystore(keyStoreUrl.getPath());
 
-                from("stream:in").to(URI).to(URIS);
+                from(URI, URIS).inOut().process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Message out = new DefaultMessage();
+                        out.setBody("reply: " + exchange.getIn().getBody());
+                        exchange.setOut(out);
+                    }
+                });
             }
         };
     }

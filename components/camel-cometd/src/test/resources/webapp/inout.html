@@ -11,7 +11,15 @@
     
         function setupComet(){
           dojox.cometd.init('/cometd');
-          dojox.cometd.subscribe("/channel/test", callback);
+          dojox.cometd.subscribe("/service/test", callback);
+          dojox.cometd.addListener("/meta/handshake", function(message) {
+            if(message.successful) {
+                dojo.byId("send").onclick = function() {
+                    dojox.cometd.publish("/service/test", "Hello");
+                    return false;
+                }
+            }
+          });
         }
            
         dojo.addOnLoad(setupComet);
@@ -26,6 +34,7 @@
 </head>
 <body>
 <h1>CAMEL TEST PAGE</h1>
+<button id="send">Send message</button>
 <pre id="MSG" />
 </body>
 </html>
