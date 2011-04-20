@@ -267,13 +267,13 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // the header name can be an expression too, that should override
             // whatever configured on the endpoint
             if (SimpleLanguage.hasStartToken(name)) {
-                log.debug("{} contains a Simple expression: {}", Exchange.FILE_NAME, name);
+                log.trace("{} contains a Simple expression: {}", Exchange.FILE_NAME, name);
                 Language language = getEndpoint().getCamelContext().resolveLanguage("file");
                 expression = language.createExpression(name);
             }
         }
         if (expression != null) {
-            log.debug("Filename evaluated as expression: {}", expression);
+            log.trace("Filename evaluated as expression: {}", expression);
             name = expression.evaluate(exchange, String.class);
         }
 
