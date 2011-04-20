@@ -418,23 +418,23 @@ public class JettyHttpComponent extends HttpComponent {
 
         String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
         if (keystoreProperty != null) {
-            answer.setKeystore(keystoreProperty);
+            answer.getSslContextFactory().setKeyStore(keystoreProperty);
         } else if (sslKeystore != null) {
-            answer.setKeystore(sslKeystore);
+            answer.getSslContextFactory().setKeyStore(sslKeystore);
         }
 
         String keystorePassword = System.getProperty(JETTY_SSL_KEYPASSWORD);
         if (keystorePassword != null) {
-            answer.setKeyPassword(keystorePassword);
+            answer.getSslContextFactory().setKeyManagerPassword(keystorePassword);
         } else if (sslKeyPassword != null) {
-            answer.setKeyPassword(sslKeyPassword);
+            answer.getSslContextFactory().setKeyManagerPassword(sslKeyPassword);
         }
 
         String password = System.getProperty(JETTY_SSL_PASSWORD);
         if (password != null) {
-            answer.setPassword(password);
+            answer.getSslContextFactory().setKeyStorePassword(password);
         } else if (sslPassword != null) {
-            answer.setPassword(sslPassword);
+            answer.getSslContextFactory().setKeyStorePassword(sslPassword);
         }
 
         if (getSslSocketConnectorProperties() != null) {

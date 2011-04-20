@@ -32,11 +32,11 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
     private SslSelectChannelConnector createSslSocketConnector() throws URISyntaxException {
         // From Camel 2.5.0 Camel-Jetty is using SslSelectChannelConnector instead of SslSocketConnector
         SslSelectChannelConnector sslSocketConnector = new SslSelectChannelConnector();
-        sslSocketConnector.setKeyPassword(pwd);
-        sslSocketConnector.setPassword(pwd);
+        sslSocketConnector.getSslContextFactory().setKeyManagerPassword(pwd);
+        sslSocketConnector.getSslContextFactory().setKeyStorePassword(pwd);
         URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
-        sslSocketConnector.setKeystore(keyStoreUrl.toURI().getPath());
-        sslSocketConnector.setTruststoreType("JKS");
+        sslSocketConnector.getSslContextFactory().setKeyStore(keyStoreUrl.toURI().getPath());
+        sslSocketConnector.getSslContextFactory().setTrustStoreType("JKS");
         return sslSocketConnector;
     }
     // END SNIPPET: e2
