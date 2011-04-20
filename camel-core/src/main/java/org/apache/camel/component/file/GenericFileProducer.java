@@ -113,6 +113,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // should we write to a temporary name and then afterwards rename to real target
             boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(endpoint.getTempFileName());
             String tempTarget = null;
+            // remember if target exists to avoid checking twice
+            Boolean targetExists = null;
             if (writeAsTempAndRename) {
                 // compute temporary name with the temp prefix
                 tempTarget = createTempFileName(exchange, target);
@@ -123,7 +125,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 // the file operations code will work on the temp file
 
                 // if an existing file already exists what should we do?
-                if (operations.existsFile(target)) {
+                targetExists = operations.existsFile(target);
+                if (targetExists) {
                     if (endpoint.getFileExist() == GenericFileExist.Ignore) {
                         // ignore but indicate that the file was written
                         log.trace("An existing file already exists: {}. Ignore and do not override it.", target);
@@ -157,7 +160,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             if (tempTarget != null) {
 
                 // if we should not eager delete the target file then do it now just before renaming
-                if (!endpoint.isEagerDeleteTargetFile() && operations.existsFile(target)
+                if (!endpoint.isEagerDeleteTargetFile() && targetExists
                         && endpoint.getFileExist() == GenericFileExist.Override) {
                     // we override the target so we do this by deleting it so the temp file can be renamed later
                     // with success as the existing target file have been deleted
