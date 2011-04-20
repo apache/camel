@@ -202,11 +202,10 @@ public class CometdComponent extends DefaultComponent {
             sslSocketConnector = new SslSocketConnector();
             // with default null values, jetty ssl system properties
             // and console will be read by jetty implementation
-            // TODO: use non @deprecated API from Jetty
-            sslSocketConnector.setPassword(sslPassword);
-            sslSocketConnector.setKeyPassword(sslKeyPassword);
+            sslSocketConnector.getSslContextFactory().setKeyManagerPassword(sslPassword);
+            sslSocketConnector.getSslContextFactory().setKeyStorePassword(sslKeyPassword);
             if (sslKeystore != null) {
-                sslSocketConnector.setKeystore(sslKeystore);
+                sslSocketConnector.getSslContextFactory().setKeyStore(sslKeystore);;
             }
         }
         return sslSocketConnector;
