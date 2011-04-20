@@ -195,7 +195,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, exchange.getIn().getHeaders(), exchange);
 
             // TODO support different encoding
-            exchange.getIn().setBody(outputStream.getBytes());
+            exchange.getIn().setBody(outputStream.getInputStream());
             LOG.debug("template sending request: ", exchange.getIn());
             Exception exception;
             try {
