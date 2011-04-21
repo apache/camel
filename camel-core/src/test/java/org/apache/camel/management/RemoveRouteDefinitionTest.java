@@ -47,10 +47,34 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         routeDefinitions.add(definition);
         context.shutdownRoute("route1");
 
+        // route is shutdown (= also removed), so its not longer in JMX
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(0, set.size());
     }
     
+    public void testStopAndRemoveRoute() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
+        assertEquals(1, set.size());
+
+        ObjectName on = set.iterator().next();
+
+        boolean registered = mbeanServer.isRegistered(on);
+        assertEquals("Should be registered", true, registered);
+
+        RouteDefinition definition = context.getRouteDefinition("route1");
+        List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
+        routeDefinitions.add(definition);
+        // must stop before we can remove
+        context.stopRoute("route1");
+        context.removeRoute("route1");
+
+        // route is removed, so its not longer in JMX
+        set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
+        assertEquals(0, set.size());
+    }
+
     public void testStopRoute() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
@@ -67,6 +91,7 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         routeDefinitions.add(definition);
         context.stopRoute("route1");
 
+        // route is only stopped so its still in JMX
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());
     }
