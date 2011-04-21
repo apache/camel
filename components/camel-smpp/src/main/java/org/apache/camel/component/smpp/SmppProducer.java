@@ -44,8 +44,6 @@ import org.slf4j.LoggerFactory;
 /**
  * An implementation of @{link Producer} which use the SMPP protocol
  * 
- * @version 
- * @author muellerc
  */
 public class SmppProducer extends DefaultProducer {
 
@@ -54,7 +52,7 @@ public class SmppProducer extends DefaultProducer {
     private SmppConfiguration configuration;
     private SMPPSession session;
     private SessionStateListener sessionStateListener;
-    private final ReentrantLock reconnectLock = new ReentrantLock();
+    private final ReentrantLock connectLock = new ReentrantLock();
 
     public SmppProducer(SmppEndpoint endpoint, SmppConfiguration config) {
         super(endpoint);
@@ -72,15 +70,22 @@ public class SmppProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        LOG.debug("Connecting to: " + getEndpoint().getConnectionString() + "...");
-
         super.doStart();
-        session = createSession();
-
-        LOG.info("Connected to: " + getEndpoint().getConnectionString());
+        
+        if (!getConfiguration().isLazySessionCreation()) {
+            if (connectLock.tryLock()) {
+                try {
+                    session = createSession();
+                } finally {
+                    connectLock.unlock();
+                }
+            }
+        }
     }
     
     private SMPPSession createSession() throws IOException {
+        LOG.debug("Connecting to: " + getEndpoint().getConnectionString() + "...");
+        
         SMPPSession session = createSMPPSession();
         session.setEnquireLinkTimer(this.configuration.getEnquireLinkTimer());
         session.setTransactionTimer(this.configuration.getTransactionTimer());
@@ -96,6 +101,8 @@ public class SmppProducer extends DefaultProducer {
                         TypeOfNumber.valueOf(configuration.getTypeOfNumber()),
                         NumberingPlanIndicator.valueOf(configuration.getNumberingPlanIndicator()),
                         ""));
+        
+        LOG.info("Connected to: " + getEndpoint().getConnectionString());
         
         return session;
     }
@@ -115,6 +122,20 @@ public class SmppProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+        if (session == null) {
+            if (getConfiguration().isLazySessionCreation()) {
+                if (connectLock.tryLock()) {
+                    try {
+                        if (session == null) {
+                            session = createSession();
+                        }
+                    } finally {
+                        connectLock.unlock();
+                    }
+                }
+            }
+        }
+        
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending a short message for exchange id '"
                     + exchange.getExchangeId() + "'...");
@@ -193,7 +214,7 @@ public class SmppProducer extends DefaultProducer {
     }
 
     private void reconnect(final long initialReconnectDelay) {
-        if (reconnectLock.tryLock()) {
+        if (connectLock.tryLock()) {
             try {
                 Runnable r = new Runnable() {
                     public void run() {
@@ -233,7 +254,7 @@ public class SmppProducer extends DefaultProducer {
             } catch (InterruptedException e) {
                 // noop
             }  finally {
-                reconnectLock.unlock();
+                connectLock.unlock();
             }
         }
     }

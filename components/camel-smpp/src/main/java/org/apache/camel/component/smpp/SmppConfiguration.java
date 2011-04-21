@@ -57,6 +57,7 @@ public class SmppConfiguration implements Cloneable {
     private boolean usingSSL;
     private long initialReconnectDelay = 5000;
     private long reconnectDelay = 5000;
+    private boolean lazySessionCreation;
 
     /**
      * A POJO which contains all necessary configuration parameters for the SMPP connection
@@ -279,6 +280,14 @@ public class SmppConfiguration implements Cloneable {
     public void setReconnectDelay(long reconnectDelay) {
         this.reconnectDelay = reconnectDelay;
     }
+    
+    public boolean isLazySessionCreation() {
+        return lazySessionCreation;
+    }
+
+    public void setLazySessionCreation(boolean lazySessionCreation) {
+        this.lazySessionCreation = lazySessionCreation;
+    }
 
     @Override
     public String toString() {
@@ -307,6 +316,7 @@ public class SmppConfiguration implements Cloneable {
             + ", numberingPlanIndicator=" + numberingPlanIndicator
             + ", initialReconnectDelay=" + initialReconnectDelay
             + ", reconnectDelay=" + reconnectDelay
+            + ", lazySessionCreation=" + lazySessionCreation
             + "]";
     }
 }

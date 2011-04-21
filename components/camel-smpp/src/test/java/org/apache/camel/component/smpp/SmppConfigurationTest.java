@@ -168,7 +168,8 @@ public class SmppConfigurationTest {
                 + "typeOfNumber=0, "
                 + "numberingPlanIndicator=0, "
                 + "initialReconnectDelay=5000, "
-                + "reconnectDelay=5000]";
+                + "reconnectDelay=5000, "
+                + "lazySessionCreation=false]";
         assertEquals(expected, configuration.toString());
     }
 
