@@ -291,7 +291,7 @@ public interface Message {
      * of creating one or <tt>null</tt> if not
      *
      * @return the created exchange id, or <tt>null</tt> if not capable of creating
-     * @deprecated it is discouraged for messages to create exchange ids
+     * @deprecated will be removed in Camel 3.0. It is discouraged for messages to create exchange ids
      */
     @Deprecated
     String createExchangeId();

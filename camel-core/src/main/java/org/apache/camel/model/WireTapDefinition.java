@@ -192,7 +192,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
     }
 
     /**
-     * @deprecated use newExchangeBody
+     * @deprecated will be removed in Camel 3.0 Instead use {@link #newExchangeBody(org.apache.camel.Expression)}
      */
     @Deprecated
     public WireTapDefinition<Type> newExchange(Expression expression) {

@@ -363,7 +363,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      *
      * @param routes the routes
      * @throws Exception if the routes could not be created for whatever reason
-     * @deprecated use {@link #includeRoutes(org.apache.camel.RoutesBuilder) includeRoutes} instead.
+     * @deprecated will be removed in Camel 3.0. Instead use {@link #includeRoutes(org.apache.camel.RoutesBuilder) includeRoutes} instead.
      */
     @Deprecated
     protected void addRoutes(RoutesBuilder routes) throws Exception {

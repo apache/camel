@@ -68,7 +68,7 @@ public final class IOHelper {
      * A factory method which creates an {@link IOException} from the given
      * exception and message
      *
-     * @deprecated IOException support nested exception in Java 1.6.
+     * @deprecated IOException support nested exception in Java 1.6. Will be removed in Camel 3.0
      */
     @Deprecated
     public static IOException createIOException(Throwable cause) {
@@ -79,7 +79,7 @@ public final class IOHelper {
      * A factory method which creates an {@link IOException} from the given
      * exception and message
      *
-     * @deprecated IOException support nested exception in Java 1.6.
+     * @deprecated IOException support nested exception in Java 1.6. Will be removed in Camel 3.0
      */
     @Deprecated
     public static IOException createIOException(String message, Throwable cause) {

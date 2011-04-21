@@ -161,6 +161,9 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         return context.stopRoute(getRouteId(), timeout, TimeUnit.SECONDS, abortAfterTimeout);
     }
 
+    /**
+     * @deprecated will be removed in the near future. Use stop and remove instead
+     */
     @ManagedOperation(description = "Shutdown and remove route")
     @Deprecated
     public void shutdown() throws Exception {
@@ -170,6 +173,9 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         context.shutdownRoute(getRouteId());
     }
 
+    /**
+     * @deprecated will be removed in the near future. Use stop and remove instead
+     */
     @ManagedOperation(description = "Shutdown and remove route (using timeout in seconds)")
     @Deprecated
     public void shutdown(long timeout) throws Exception {

@@ -56,7 +56,7 @@ public class RouteService extends ServiceSupport {
     private boolean removingRoutes;
     private final Map<Route, Consumer> inputs = new HashMap<Route, Consumer>();
     private final AtomicBoolean warmUpDone = new AtomicBoolean(false);
-    private final AtomicBoolean endpointpDone = new AtomicBoolean(false);
+    private final AtomicBoolean endpointDone = new AtomicBoolean(false);
 
     public RouteService(DefaultCamelContext camelContext, RouteDefinition routeDefinition, List<RouteContext> routeContexts, List<Route> routes) {
         this.camelContext = camelContext;
@@ -94,19 +94,17 @@ public class RouteService extends ServiceSupport {
     public Map<Route, Consumer> getInputs() {
         return inputs;
     }
-    
-    @Deprecated
+
     public boolean isRemovingRoutes() {
         return removingRoutes;
     }
 
-    @Deprecated
     public void setRemovingRoutes(boolean removingRoutes) {
         this.removingRoutes = removingRoutes;
     }
 
     public synchronized void warmUp() throws Exception {
-        if (endpointpDone.compareAndSet(false, true)) {
+        if (endpointDone.compareAndSet(false, true)) {
             // endpoints should only be started once as they can be reused on other routes
             // and whatnot, thus their lifecycle is to start once, and only to stop when Camel shutdown
             for (Route route : routes) {
@@ -223,7 +221,7 @@ public class RouteService extends ServiceSupport {
         // clear inputs on shutdown
         inputs.clear();
         warmUpDone.set(false);
-        endpointpDone.set(false);
+        endpointDone.set(false);
     }
 
     @Override

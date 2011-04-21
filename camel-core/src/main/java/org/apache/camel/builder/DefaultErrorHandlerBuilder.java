@@ -83,6 +83,9 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    /**
+     * @deprecated will be removed in the near future. Use {@link #redeliveryDelay(long)} instead
+     */
     @Deprecated
     public DefaultErrorHandlerBuilder redeliverDelay(long delay) {
         getRedeliveryPolicy().redeliveryDelay(delay);
@@ -181,6 +184,9 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      *
      * @param handled  handled or not
      * @return the builder
+     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
+     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
+     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
      */
     @Deprecated
     public DefaultErrorHandlerBuilder handled(boolean handled) {
@@ -193,6 +199,9 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      *
      * @param handled  predicate that determines true or false
      * @return the builder
+     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
+     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
+     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
      */
     @Deprecated
     public DefaultErrorHandlerBuilder handled(Predicate handled) {
@@ -205,6 +214,9 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      *
      * @param handled  expression that determines true or false
      * @return the builder
+     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
+     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
+     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
      */
     @Deprecated
     public DefaultErrorHandlerBuilder handled(Expression handled) {
@@ -409,6 +421,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         this.retryWhileRef = retryWhileRef;
     }
 
+    /**
+     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
+     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
+     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
+     */
     @Deprecated
     public Predicate getHandledPolicy() {
         if (handledPolicy == null) {
@@ -417,13 +434,22 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return handledPolicy;
     }
 
+    /**
+     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
+     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
+     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
+     */
     @Deprecated
     public void setHandledPolicy(Predicate handled) {
         this.handledPolicy = handled;
     }
 
     /**
-     * Sets the handled using a boolean and thus easier to use for Spring XML configuration as well
+     * Sets the handled using a boolean and thus easier to use for Spring XML configuration as well.
+     *
+     * @deprecated will be removed in the near future. An exception handler should <b>always</b> handle an exception,
+     * so it was not a good idea to allow end users to change that behavior. Instead of using handled(false) use
+     * the <a href="http://camel.apache.org/exception-clause.html">exception clause</a> instead.
      */
     @Deprecated
     public void setHandled(boolean handled) {

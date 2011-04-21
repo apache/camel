@@ -76,6 +76,9 @@ public final class IOConverter {
         return new BufferedInputStream(new FileInputStream(file));
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static BufferedReader toReader(File file) throws IOException {
         return toReader(file, null);
@@ -96,6 +99,9 @@ public final class IOConverter {
         return new BufferedOutputStream(new FileOutputStream(file));
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static BufferedWriter toWriter(File file) throws IOException {
         return toWriter(file, null);
@@ -106,16 +112,22 @@ public final class IOConverter {
         return new BufferedWriter(new EncodingFileWriter(file, getCharsetName(exchange)));
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static Reader toReader(InputStream in) throws IOException {
         return toReader(in, null);
     }
-        
+
     @Converter
     public static Reader toReader(InputStream in, Exchange exchange) throws IOException {
         return new InputStreamReader(in, getCharsetName(exchange));
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static Writer toWriter(OutputStream out) throws IOException {
         return toWriter(out, null);
@@ -124,6 +136,7 @@ public final class IOConverter {
     @Converter
     @Deprecated
     public static Writer toWriter(OutputStream out, Exchange exchange) throws IOException {
+        // TODO: Why is this method deprecated?
         return new OutputStreamWriter(out, getCharsetName(exchange));
     }
 
@@ -132,6 +145,9 @@ public final class IOConverter {
         return new StringReader(text);
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static InputStream toInputStream(String text) throws IOException {
         return toInputStream(text, null);
@@ -142,6 +158,9 @@ public final class IOConverter {
         return toInputStream(text.getBytes(getCharsetName(exchange)));
     }
     
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static InputStream toInputStream(BufferedReader buffer) throws IOException {
         return toInputStream(buffer, null);
@@ -152,6 +171,9 @@ public final class IOConverter {
         return toInputStream(toString(buffer), exchange);
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static String toString(byte[] data) throws IOException {
         return toString(data, null);
@@ -162,6 +184,9 @@ public final class IOConverter {
         return new String(data, getCharsetName(exchange));
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static String toString(File file) throws IOException {
         return toString(file, null);
@@ -182,6 +207,9 @@ public final class IOConverter {
         }
     }
     
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static byte[] toByteArray(Reader reader) throws IOException {
         return toByteArray(reader, null);
@@ -196,6 +224,9 @@ public final class IOConverter {
         }
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static String toString(URL url) throws IOException {
         return toString(url, null);
@@ -244,6 +275,9 @@ public final class IOConverter {
         return sb.toString();
     }
     
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static byte[] toByteArray(BufferedReader reader) throws IOException {
         return toByteArray(reader, null);
@@ -254,6 +288,9 @@ public final class IOConverter {
         return toByteArray(toString(reader), exchange);
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static byte[] toByteArray(String value) throws IOException {
         return toByteArray(value, null);
@@ -264,6 +301,9 @@ public final class IOConverter {
         return value != null ? value.getBytes(getCharsetName(exchange)) : null;
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static String toString(InputStream in) throws IOException {
         return toString(in, null);
@@ -313,6 +353,9 @@ public final class IOConverter {
         return os.toByteArray();
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public static String toString(ByteArrayOutputStream os) throws IOException {
         return toString(os, null);

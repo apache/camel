@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * A base class for any kind of {@link Processor} which implements some kind of batch processing.
  * 
  * @version 
- * @deprecated may be removed in the future
+ * @deprecated may be removed in the future when we overhaul the resequencer EIP
  */
 @Deprecated
 public class BatchProcessor extends ServiceSupport implements Processor, Navigate<Processor> {

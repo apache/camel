@@ -1063,7 +1063,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Wraps the sub route using AOP allowing you to do before and after work (AOP around).
      *
      * @return the builder
-     * @deprecated (to be removed in the future)
+     * @deprecated to be removed in the near future. Instead you can use interceptors or processors to do AOP with Camel.
      */
     @Deprecated
     public AOPDefinition aop() {
@@ -1157,7 +1157,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param idempotentRepository the repository to use for duplicate check
      * @return the builder used to create the expression
-     * @deprecated use any of the other methods
+     * @deprecated will be removed in Camel 3.0. Instead use any of the other methods
      */
     @Deprecated
     public ExpressionClause<IdempotentConsumerDefinition> idempotentConsumer(IdempotentRepository<?> idempotentRepository) {
@@ -2527,7 +2527,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param name  the header name
      * @return the builder
-     * @deprecated use {@link #removeHeader(String)}
+     * @deprecated will be removed in the near future. Instead use {@link #removeHeader(String)}
      */
     @Deprecated
     public Type removeFaultHeader(String name) {

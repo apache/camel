@@ -1018,7 +1018,7 @@ public final class ObjectHelper {
      * @param closeable the object to close
      * @param name the name of the resource
      * @param log the log to use when reporting closure warnings
-     * @deprecated use {@link org.apache.camel.util.IOHelper#close(java.io.Closeable, String, org.apache.commons.logging.Log)}
+     * @deprecated will be removed in Camel 3.0. Instead use {@link org.apache.camel.util.IOHelper#close(java.io.Closeable, String, org.slf4j.Logger)} instead
      */
     @Deprecated
     public static void close(Closeable closeable, String name, Logger log) {

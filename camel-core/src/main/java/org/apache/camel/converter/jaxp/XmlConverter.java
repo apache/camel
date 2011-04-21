@@ -191,10 +191,11 @@ public class XmlConverter {
     }
 
     /**
-     * Converts the given input Source into text
+     * Converts the given input Source into text.
+     *
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public String toString(Source source) throws TransformerException {
         return toString(source, null);
     }
@@ -241,9 +242,10 @@ public class XmlConverter {
     
     /**
      * Converts the given input Node into text
+     *
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public String toString(Node node) throws TransformerException {
         return toString(node, null);
     }
@@ -305,9 +307,10 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
+     *
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public SAXSource toSAXSource(String source) throws IOException, SAXException, TransformerException {
         return toSAXSource(source, null);
     }
@@ -324,9 +327,10 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
+     *
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter    
     public SAXSource toSAXSource(InputStream source) throws IOException, SAXException, TransformerException {
         return toSAXSource(source, null);
     }
@@ -343,9 +347,10 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
+     *
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public SAXSource toSAXSource(Source source) throws IOException, SAXException, TransformerException {
         return toSAXSource(source, null);
     }
@@ -367,8 +372,10 @@ public class XmlConverter {
         }
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter    
     public StreamSource toStreamSource(Source source) throws TransformerException {
         return toStreamSource(source, null);
     }
@@ -428,8 +435,10 @@ public class XmlConverter {
         return null;
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public StreamSource toStreamSourceFromSAX(SAXSource source) throws TransformerException {
         return toStreamSourceFromSAX(source, null);
     }
@@ -449,8 +458,10 @@ public class XmlConverter {
         return new StringSource(result);
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public StreamSource toStreamSourceFromDOM(DOMSource source) throws TransformerException {
         return toStreamSourceFromDOM(source, null);
     }
@@ -474,8 +485,10 @@ public class XmlConverter {
         return new SAXSource(inputSource);
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public Reader toReaderFromSource(Source src) throws TransformerException {
         return toReaderFromSource(src, null);
     }
@@ -521,8 +534,10 @@ public class XmlConverter {
         return new DOMSource(document, systemId);
     }
     
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public SAXSource toSAXSourceFromDOM(DOMSource source) throws TransformerException {
         return toSAXSourceFromDOM(source, null);
     }
@@ -707,8 +722,10 @@ public class XmlConverter {
         }
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public InputStream toInputStream(DOMSource source) throws TransformerException, IOException {
         return toInputStream(source, null);
     }
@@ -719,8 +736,10 @@ public class XmlConverter {
         return new ByteArrayInputStream(s.getBytes());
     }
 
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
-    //It will be removed in Camel 3.0, please use the method which take the exchange as the parameter
     public InputStream toInputStream(Document dom) throws TransformerException, IOException {
         return toInputStream(dom, null);
     }

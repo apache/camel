@@ -81,7 +81,8 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
     /**
      * Sets the optional {@link ExchangePattern} used to invoke this endpoint
      *
-     * @deprecated
+     * @deprecated will be removed in the near future. Instead use {@link org.apache.camel.model.ProcessorDefinition#inOnly()}
+     * or {@link org.apache.camel.model.ProcessorDefinition#inOnly()}
      */
     @Deprecated
     public ToDefinition pattern(ExchangePattern pattern) {

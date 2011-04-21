@@ -206,7 +206,7 @@ public final class ProcessorBuilder {
 
     /**
      * Removes the header on the FAULT message
-     * @deprecated use {@link #removeHeader(String)}
+     * @deprecated will be removed in the near future. Instead use {@link #removeHeader(String)}
      */
     @Deprecated
     public static Processor removeFaultHeader(final String name) {

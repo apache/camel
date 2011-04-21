@@ -123,24 +123,4 @@ public final class AsyncProcessorHelper {
         }
     }
 
-    /**
-     * Processes the exchange async.
-     *
-     * @param executor  executor service
-     * @param processor the processor
-     * @param exchange  the exchange
-     * @return a future handle for the task being executed asynchronously
-     * @deprecated will be removed in Camel 2.5
-     */
-    @Deprecated
-    public static Future<Exchange> asyncProcess(final ExecutorService executor, final Processor processor, final Exchange exchange) {
-        Callable<Exchange> task = new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                processor.process(exchange);
-                return exchange;
-            }
-        };
-
-        return executor.submit(task);
-    }
 }

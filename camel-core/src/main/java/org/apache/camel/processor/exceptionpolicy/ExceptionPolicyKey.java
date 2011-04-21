@@ -30,6 +30,9 @@ public final class ExceptionPolicyKey {
     private final Class exceptionClass;
     private final WhenDefinition when;
 
+    /**
+     * @deprecated will be removed in the near future, use the other constructor
+     */
     @Deprecated
     public ExceptionPolicyKey(Class exceptionClass, WhenDefinition when) {
         this(null, exceptionClass, when);
@@ -60,11 +63,17 @@ public final class ExceptionPolicyKey {
         return routeId;
     }
 
+    /**
+     * @deprecated will be removed in the near future. Use the constructor instead.
+     */
     @Deprecated
     public static ExceptionPolicyKey newInstance(Class exceptionClass) {
         return new ExceptionPolicyKey(exceptionClass, null);
     }
 
+    /**
+     * @deprecated will be removed in the near future. Use the constructor instead.
+     */
     @Deprecated
     public static ExceptionPolicyKey newInstance(Class exceptionClass, WhenDefinition when) {
         return new ExceptionPolicyKey(exceptionClass, when);

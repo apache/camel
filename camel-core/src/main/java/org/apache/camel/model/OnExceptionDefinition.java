@@ -324,7 +324,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      *
      * @param delay the initial redelivery delay
      * @return the builder
-     * @deprecated
+     * @deprecated will be removed in the near future. Instead use {@link #redeliveryDelay(String)}
      */
     @Deprecated
     public OnExceptionDefinition redeliverDelay(long delay) {

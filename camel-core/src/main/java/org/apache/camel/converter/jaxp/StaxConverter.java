@@ -75,6 +75,9 @@ public class StaxConverter {
         return getOutputFactory().createXMLStreamWriter(result);
     }
     
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public XMLStreamReader createXMLStreamReader(InputStream in) throws XMLStreamException {
         return getInputFactory().createXMLStreamReader(in);
@@ -95,6 +98,9 @@ public class StaxConverter {
         return getInputFactory().createXMLStreamReader(in);
     }
     
+    /**
+     * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
+     */
     @Deprecated
     public XMLEventReader createXMLEventReader(InputStream in) throws XMLStreamException {
         return getInputFactory().createXMLEventReader(in);

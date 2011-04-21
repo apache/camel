@@ -59,7 +59,7 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         policies = new HashMap<ExceptionPolicyKey, OnExceptionDefinition>();
         type1 = new OnExceptionDefinition(CamelExchangeException.class);
         type3 = new OnExceptionDefinition(IOException.class);
-        policies.put(new ExceptionPolicyKey(null, CamelExchangeException.class,null), type1);
+        policies.put(new ExceptionPolicyKey(null, CamelExchangeException.class, null), type1);
         policies.put(new ExceptionPolicyKey(null, IOException.class, null), type3);
     }
 

@@ -74,7 +74,7 @@ public class WhenDefinition extends ExpressionNode {
     /**
      * Set the expression that WhenType will use
      * @return the builder
-     * @deprecated
+     * @deprecated will be removed in the near future. The expression is often already set.
      */
     @Deprecated
     public ExpressionClause<WhenDefinition> expression() {

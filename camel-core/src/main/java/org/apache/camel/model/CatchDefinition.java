@@ -179,7 +179,8 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      *
      * @param handled  handled or not
      * @return the builder
-     * @deprecated will be removed in Camel 3.0
+     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
+     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
     public CatchDefinition handled(boolean handled) {
@@ -192,7 +193,8 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      *
      * @param handled  predicate that determines true or false
      * @return the builder
-     * @deprecated will be removed in Camel 3.0
+     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
+     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
     public CatchDefinition handled(Predicate handled) {
@@ -205,7 +207,8 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      *
      * @param handled  expression that determines true or false
      * @return the builder
-     * @deprecated will be removed in Camel 3.0
+     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
+     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
     public CatchDefinition handled(Expression handled) {
