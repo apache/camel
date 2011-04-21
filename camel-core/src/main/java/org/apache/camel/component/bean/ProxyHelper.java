@@ -36,7 +36,7 @@ public final class ProxyHelper {
     }
 
     /**
-     * Creates a Proxy which sends PojoExchange to the endpoint.
+     * Creates a Proxy which sends the exchange to the endpoint.
      */
     public static Object createProxyObject(Endpoint endpoint, Producer producer, ClassLoader classLoader, Class[] interfaces, MethodInfoCache methodCache) {
         return Proxy.newProxyInstance(classLoader, interfaces.clone(), new CamelInvocationHandler(endpoint, producer, methodCache));
@@ -44,7 +44,7 @@ public final class ProxyHelper {
 
 
     /**
-     * Creates a Proxy which sends PojoExchange to the endpoint.
+     * Creates a Proxy which sends the exchange to the endpoint.
      */
     @SuppressWarnings("unchecked")
     public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class[] interfaces, MethodInfoCache methodCache) throws Exception {
@@ -55,7 +55,7 @@ public final class ProxyHelper {
     }
 
     /**
-     * Creates a Proxy which sends PojoExchange to the endpoint.
+     * Creates a Proxy which sends the exchange to the endpoint.
      */
     @SuppressWarnings("unchecked")
     public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T>... interfaceClasses) throws Exception {
@@ -64,23 +64,14 @@ public final class ProxyHelper {
 
 
     /**
-     * Creates a Proxy which sends PojoExchange to the endpoint.
+     * Creates a Proxy which sends the exchange to the endpoint.
      */
     public static <T> T createProxy(Endpoint endpoint, Class<T>... interfaceClasses) throws Exception {
         return (T) createProxy(endpoint, getClassLoader(interfaceClasses), interfaceClasses);
     }
 
-    
     /**
-     * Creates a Proxy which sends PojoExchange to the endpoint.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, Class<T> interfaceClass) throws Exception {
-        return (T) createProxy(endpoint, getClassLoader(interfaceClass), interfaceClass);
-    }
-
-    /**
-     * Creates a Proxy which sends PojoExchange to the endpoint.
+     * Creates a Proxy which sends the exchange to the endpoint.
      */
     @SuppressWarnings("unchecked")
     public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<T>... interfaceClasses) throws Exception {

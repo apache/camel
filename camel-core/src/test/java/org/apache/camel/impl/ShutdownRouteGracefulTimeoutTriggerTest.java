@@ -30,6 +30,7 @@ public class ShutdownRouteGracefulTimeoutTriggerTest extends ContextTestSupport 
 
     private static String foo = "";
 
+    @SuppressWarnings("deprecation")
     public void testShutdownRouteGraceful() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
@@ -44,7 +45,7 @@ public class ShutdownRouteGracefulTimeoutTriggerTest extends ContextTestSupport 
         // now stop the route before its complete
         foo = foo + "stop";
         // timeout after 2 seconds
-        context.stopRoute("seda", 2, TimeUnit.SECONDS);
+        context.shutdownRoute("seda", 2, TimeUnit.SECONDS);
 
         // should not be able to complete all messages as timeout occurred
         assertNotSame("Should not able able to complete all pending messages", "stopABCDE", foo);

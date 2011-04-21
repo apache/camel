@@ -30,8 +30,8 @@ import org.apache.camel.model.RouteDefinition;
  */
 public class RemoveRouteDefinitionTest extends ManagementTestSupport {
 
+    @SuppressWarnings("deprecation")
     public void testShutdownRoute() throws Exception {
-        
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -45,16 +45,13 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         RouteDefinition definition = context.getRouteDefinition("route1");
         List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
         routeDefinitions.add(definition);
-        context.stopRoute("route1");
-        context.removeRoute("route1");
+        context.shutdownRoute("route1");
 
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(0, set.size());
-        
     }
     
     public void testStopRoute() throws Exception {
-        
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
@@ -72,7 +69,6 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
 
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());
-        
     }
 
     @Override
