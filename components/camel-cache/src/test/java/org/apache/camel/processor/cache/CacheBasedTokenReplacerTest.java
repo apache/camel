@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cache.CacheConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -63,8 +64,8 @@ public class CacheBasedTokenReplacerTest extends CamelTestSupport {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                     Message in = exchange.getIn();
-                    in.setHeader("CACHE_OPERATION", "ADD");
-                    in.setHeader("CACHE_KEY", key);
+                    in.setHeader(CacheConstants.CACHE_OPERATION, CacheConstants.CACHE_OPERATION_ADD);
+                    in.setHeader(CacheConstants.CACHE_KEY, key);
                     if (key.equalsIgnoreCase("novel")) {
                         in.setBody("Rubaiyat");
                     } else if (key.equalsIgnoreCase("author")) {
@@ -87,7 +88,7 @@ public class CacheBasedTokenReplacerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("cache://TestCache1").filter(header("CACHE_KEY").isEqualTo("quote"))
+                from("cache://TestCache1").filter(header(CacheConstants.CACHE_KEY).isEqualTo("quote"))
                     .process(new CacheBasedTokenReplacer("cache://TestCache1", "novel", "#novel#"))
                     .process(new CacheBasedTokenReplacer("cache://TestCache1", "author", "#author#"))
                     .process(new CacheBasedTokenReplacer("cache://TestCache1", "number", "#number#"))
@@ -95,7 +96,7 @@ public class CacheBasedTokenReplacerTest extends CamelTestSupport {
 
                 from("direct:next").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        String key = (String)exchange.getIn().getHeader("CACHE_KEY");
+                        String key = (String)exchange.getIn().getHeader(CacheConstants.CACHE_KEY);
                         Object body = exchange.getIn().getBody();
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
 

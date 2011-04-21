@@ -76,8 +76,8 @@ public class CacheEndpoint extends DefaultEndpoint {
     public Exchange createCacheExchange(String operation, String key, Object value) {
         Exchange exchange = new DefaultExchange(this.getCamelContext(), getExchangePattern());
         Message message = new DefaultMessage();
-        message.setHeader("CACHE_OPERATION", operation);
-        message.setHeader("CACHE_KEY", key);
+        message.setHeader(CacheConstants.CACHE_OPERATION, operation);
+        message.setHeader(CacheConstants.CACHE_KEY, key);
         message.setBody(value);
         exchange.setIn(message);
         return exchange;

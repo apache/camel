@@ -21,6 +21,7 @@ import net.sf.ehcache.Ehcache;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cache.CacheConstants;
 import org.apache.camel.component.cache.DefaultCacheManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class CacheBasedMessageBodyReplacer extends CacheValidate implements Proc
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Replacing Message Body from CacheName " + cacheName + " for key " + key);
             }
-            exchange.getIn().setHeader("CACHE_KEY", key);
+            exchange.getIn().setHeader(CacheConstants.CACHE_KEY, key);
             exchange.getIn().setBody(cache.get(key).getObjectValue());
         }
 

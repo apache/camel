@@ -23,6 +23,7 @@ import net.sf.ehcache.Ehcache;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cache.CacheConstants;
 import org.apache.camel.component.cache.DefaultCacheManagerFactory;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
@@ -59,7 +60,7 @@ public class CacheBasedTokenReplacer extends CacheValidate implements Processor 
                 LOG.debug("Replacing Token " + replacementToken + "in Message with value stored against key "
                          + key + " in CacheName " + cacheName);
             }
-            exchange.getIn().setHeader("CACHE_KEY", key);
+            exchange.getIn().setHeader(CacheConstants.CACHE_KEY, key);
 
             Object body = exchange.getIn().getBody();
             InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);

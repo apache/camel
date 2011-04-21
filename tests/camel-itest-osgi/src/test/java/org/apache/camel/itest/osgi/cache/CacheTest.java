@@ -17,6 +17,7 @@
 package org.apache.camel.itest.osgi.cache;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cache.CacheConstants;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.karaf.testing.Helper;
 import org.junit.Test;
@@ -50,13 +51,13 @@ public class CacheTest extends OSGiIntegrationTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:add")
-                    .setHeader("CACHE_OPERATION", constant("ADD"))
-                    .setHeader("CACHE_KEY", constant("foo"))
+                    .setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD))
+                    .setHeader(CacheConstants.CACHE_KEY, constant("foo"))
                     .to("cache:foo");
 
                 from("direct:get")
-                    .setHeader("CACHE_OPERATION", constant("GET"))
-                    .setHeader("CACHE_KEY", constant("foo"))
+                    .setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_GET))
+                    .setHeader(CacheConstants.CACHE_KEY, constant("foo"))
                     .to("cache:foo")
                     .to("mock:result");
             }

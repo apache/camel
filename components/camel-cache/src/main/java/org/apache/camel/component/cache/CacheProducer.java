@@ -85,13 +85,17 @@ public class CacheProducer extends DefaultProducer {
         String operation = exchange.getIn().getHeader(CacheConstants.CACHE_OPERATION, String.class);
 
         if (operation == null) {
-            throw new CacheException("Operation not specified in the message header [" + CacheConstants.CACHE_KEY + "]");
+            throw new CacheException(CacheConstants.CACHE_OPERATION + " not specified in the message header [" + CacheConstants.CACHE_KEY + "]");
         }
         if ((key == null) && (!operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_DELETEALL))) {
-            throw new CacheException("Cache Key is not specified in message header header or endpoint URL.");
+            throw new CacheException(CacheConstants.CACHE_KEY + " is not specified in message header or endpoint URL.");
         }
 
         performCacheOperation(exchange, operation, key);
+        
+        //cleanup the cache headers
+        exchange.getIn().removeHeader(CacheConstants.CACHE_KEY);
+        exchange.getIn().removeHeader(CacheConstants.CACHE_OPERATION);
     }
 
     private void performCacheOperation(Exchange exchange, String operation, String key) throws Exception {
@@ -139,7 +143,7 @@ public class CacheProducer extends DefaultProducer {
                 exchange.getIn().removeHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND);
             }
         } else {
-            throw new CacheException("Operation " + operation + " is not supported.");
+            throw new CacheException(CacheConstants.CACHE_OPERATION + " " + operation + " is not supported.");
         }
     }
 

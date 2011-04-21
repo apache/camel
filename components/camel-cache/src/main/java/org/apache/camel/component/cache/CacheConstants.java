@@ -21,14 +21,14 @@ package org.apache.camel.component.cache;
  */
 public interface CacheConstants {
 
-    String CACHE_OPERATION = "CACHE_OPERATION";
-    String CACHE_KEY = "CACHE_KEY";
-    String CACHE_ELEMENT_WAS_FOUND = "CACHE_ELEMENT_WAS_FOUND";
+    String CACHE_OPERATION = "CamelCacheOperation";
+    String CACHE_KEY = "CamelCacheKey";
+    String CACHE_ELEMENT_WAS_FOUND = "CamelCacheElementWasFound";
 
-    String CACHE_OPERATION_ADD = "ADD";
-    String CACHE_OPERATION_UPDATE = "UPDATE";
-    String CACHE_OPERATION_DELETE = "DELETE";
-    String CACHE_OPERATION_DELETEALL = "DELETEALL";
-    String CACHE_OPERATION_GET = "GET";
-    String CACHE_OPERATION_CHECK = "CHECK";
+    String CACHE_OPERATION_ADD = "CamelCacheAdd";
+    String CACHE_OPERATION_UPDATE = "CamelCacheUpdate";
+    String CACHE_OPERATION_DELETE = "CamelCacheDelete";
+    String CACHE_OPERATION_DELETEALL = "CamelCacheDeleteAll";
+    String CACHE_OPERATION_GET = "CamelCacheGet";
+    String CACHE_OPERATION_CHECK = "CamelCacheCheck";
 }
