@@ -48,9 +48,9 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         type1 = new OnExceptionDefinition(CamelExchangeException.class);
         type2 = new OnExceptionDefinition(Exception.class);
         type3 = new OnExceptionDefinition(IOException.class);
-        policies.put(ExceptionPolicyKey.newInstance(CamelExchangeException.class), type1);
-        policies.put(ExceptionPolicyKey.newInstance(Exception.class), type2);
-        policies.put(ExceptionPolicyKey.newInstance(IOException.class), type3);
+        policies.put(new ExceptionPolicyKey(null, CamelExchangeException.class, null), type1);
+        policies.put(new ExceptionPolicyKey(null, Exception.class, null), type2);
+        policies.put(new ExceptionPolicyKey(null, IOException.class, null), type3);
     }
 
     private void setupPoliciesNoTopLevelException() {
@@ -59,8 +59,8 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         policies = new HashMap<ExceptionPolicyKey, OnExceptionDefinition>();
         type1 = new OnExceptionDefinition(CamelExchangeException.class);
         type3 = new OnExceptionDefinition(IOException.class);
-        policies.put(ExceptionPolicyKey.newInstance(CamelExchangeException.class), type1);
-        policies.put(ExceptionPolicyKey.newInstance(IOException.class), type3);
+        policies.put(new ExceptionPolicyKey(null, CamelExchangeException.class,null), type1);
+        policies.put(new ExceptionPolicyKey(null, IOException.class, null), type3);
     }
 
     private void setupPoliciesCausedBy() {
@@ -69,9 +69,9 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         type1 = new OnExceptionDefinition(FileNotFoundException.class);
         type2 = new OnExceptionDefinition(ConnectException.class);
         type3 = new OnExceptionDefinition(IOException.class);
-        policies.put(ExceptionPolicyKey.newInstance(FileNotFoundException.class), type1);
-        policies.put(ExceptionPolicyKey.newInstance(IOException.class), type2);
-        policies.put(ExceptionPolicyKey.newInstance(ConnectException.class), type3);
+        policies.put(new ExceptionPolicyKey(null, FileNotFoundException.class, null), type1);
+        policies.put(new ExceptionPolicyKey(null, IOException.class, null), type2);
+        policies.put(new ExceptionPolicyKey(null, ConnectException.class, null), type3);
     }
 
     public void testDirectMatch1() {

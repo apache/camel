@@ -28,6 +28,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFactoryBean<Endpoint> {
+    @SuppressWarnings("unused")
     @XmlAttribute(required = false)
     @Deprecated
     private Boolean singleton;

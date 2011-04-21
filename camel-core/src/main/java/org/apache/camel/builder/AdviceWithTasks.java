@@ -132,7 +132,6 @@ public final class AdviceWithTasks {
         return doRemove(route, new MatchById(id));
     }
 
-    @SuppressWarnings("unchecked")
     private static AdviceWithTask doRemove(final RouteDefinition route, final MatchBy matchBy) {
         return new AdviceWithTask() {
             public void task() throws Exception {

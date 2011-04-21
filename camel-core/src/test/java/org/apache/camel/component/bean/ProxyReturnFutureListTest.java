@@ -34,12 +34,12 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
     public void testFutureList() throws Exception {
         Users service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Users.class);
 
-        Future future = service.getUsers(true);
+        Future<List<String>> future = service.getUsers(true);
         log.info("Got future");
         assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");
 
-        List<String> users = (List<String>) future.get(5, TimeUnit.SECONDS);
+        List<String> users = future.get(5, TimeUnit.SECONDS);
         assertEquals("Claus", users.get(0));
         assertEquals("Jonathan", users.get(1));
     }
@@ -47,12 +47,12 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
     public void testFutureListCallTwoTimes() throws Exception {
         Users service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Users.class);
 
-        Future future = service.getUsers(true);
+        Future<List<String>> future = service.getUsers(true);
         log.info("Got future");
         assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");
 
-        List<String> users = (List<String>) future.get(5, TimeUnit.SECONDS);
+        List<String> users = future.get(5, TimeUnit.SECONDS);
         assertEquals("Claus", users.get(0));
         assertEquals("Jonathan", users.get(1));
 
@@ -61,7 +61,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
         assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");
 
-        users = (List<String>) future.get(5, TimeUnit.SECONDS);
+        users = future.get(5, TimeUnit.SECONDS);
         assertEquals("Claus", users.get(0));
         assertEquals("Jonathan", users.get(1));
     }

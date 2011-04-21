@@ -46,7 +46,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
                                                 Throwable exception) {
             // This is just an example that always forces the exception type configured
             // with MyPolicyException to win.
-            return exceptionPolicices.get(ExceptionPolicyKey.newInstance(MyPolicyException.class));
+            return exceptionPolicices.get(new ExceptionPolicyKey(null, MyPolicyException.class, null));
         }
     }
     // END SNIPPET e2

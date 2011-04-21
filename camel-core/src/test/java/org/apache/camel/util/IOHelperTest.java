@@ -30,13 +30,13 @@ import junit.framework.TestCase;
 public class IOHelperTest extends TestCase {
 
     public void testIOException() {
-        IOException io = IOHelper.createIOException(new IllegalArgumentException("Damn"));
+        IOException io = new IOException("Damn", new IllegalArgumentException("Damn"));
         assertEquals("Damn", io.getMessage());
         assertTrue(io.getCause() instanceof IllegalArgumentException);
     }
 
     public void testIOExceptionWithMessage() {
-        IOException io = IOHelper.createIOException("Not again", new IllegalArgumentException("Damn"));
+        IOException io = new IOException("Not again", new IllegalArgumentException("Damn"));
         assertEquals("Not again", io.getMessage());
         assertTrue(io.getCause() instanceof IllegalArgumentException);
     }

@@ -25,13 +25,11 @@ import org.apache.camel.component.bean.ProxyHelper;
  */
 public class ProxyReturnNullIssueTest extends ContextTestSupport {
 
-    @SuppressWarnings("unchecked")
     public void testEcho() throws Exception {
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
         assertEquals("Hello World", service.echo("Hello World"));
     }
 
-    @SuppressWarnings("unchecked")
     public void testEchoNull() throws Exception {
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
         assertEquals(null, service.echo(null));

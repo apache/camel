@@ -30,7 +30,6 @@ import org.apache.camel.util.jndi.JndiContext;
  */
 public class PojoRouteTest extends TestCase {
 
-    @SuppressWarnings("unchecked")
     public void testPojoRoutes() throws Exception {
         // START SNIPPET: register
         // lets populate the context with the services we need

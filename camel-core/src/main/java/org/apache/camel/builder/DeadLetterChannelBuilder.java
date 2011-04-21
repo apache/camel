@@ -54,6 +54,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         validateDeadLetterUri(routeContext);
 
+        @SuppressWarnings("deprecation")
         DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, getLogger(),
                 getOnRedelivery(), getRedeliveryPolicy(), getHandledPolicy(), getExceptionPolicyStrategy(),
                 getFailureProcessor(), getDeadLetterUri(), isUseOriginalMessage(),

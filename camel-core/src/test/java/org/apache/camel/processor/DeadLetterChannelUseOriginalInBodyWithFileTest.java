@@ -50,7 +50,7 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).useOriginalMessage().handled(true));
+                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).useOriginalMessage());
 
                 from("file://target/originalexchange?noop=true")
                     .transform(body().append(" World"))

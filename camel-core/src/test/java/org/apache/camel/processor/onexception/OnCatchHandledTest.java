@@ -31,7 +31,7 @@ public class OnCatchHandledTest extends OnExceptionHandledTest {
                 from("direct:start")
                     .doTry()
                         .throwException(new IllegalArgumentException("Forced"))
-                    .doCatch(IllegalArgumentException.class).handled(true)
+                    .doCatch(IllegalArgumentException.class)
                         .to("log:foo?showAll=true").to("mock:handled")
                     .end();
             }

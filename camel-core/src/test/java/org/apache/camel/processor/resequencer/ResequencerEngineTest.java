@@ -24,7 +24,8 @@ import junit.framework.TestCase;
 
 public class ResequencerEngineTest extends TestCase {
 
-    private static final boolean IGNORE_LOAD_TESTS = true;
+    private static final boolean IGNORE_LOAD_TESTS 
+        = Boolean.parseBoolean(System.getProperty("ignore.load.tests", "true"));
     
     private ResequencerEngineSync<Integer> resequencer;
     

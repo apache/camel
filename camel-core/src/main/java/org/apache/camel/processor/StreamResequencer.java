@@ -186,7 +186,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         return answer;
     }
 
-    private class Delivery extends Thread {
+    class Delivery extends Thread {
 
         private Lock deliveryRequestLock = new ReentrantLock();
         private Condition deliveryRequestCondition = deliveryRequestLock.newCondition();

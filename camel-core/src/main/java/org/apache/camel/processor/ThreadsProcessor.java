@@ -36,7 +36,6 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
 
-    private final CamelContext camelContext;
     private final ExecutorService executorService;
     private final AtomicBoolean shutdown = new AtomicBoolean(true);
     private boolean callerRunsWhenRejected = true;
@@ -61,7 +60,6 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor {
     public ThreadsProcessor(CamelContext camelContext, ExecutorService executorService) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(executorService, "executorService");
-        this.camelContext = camelContext;
         this.executorService = executorService;
     }
 

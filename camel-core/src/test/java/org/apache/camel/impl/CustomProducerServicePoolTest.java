@@ -108,9 +108,6 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
         public void start() throws Exception {
         }
 
-        public void stop() throws Exception {
-        }
-
         public int size() {
             return producer != null ? 1 : 0;
         }

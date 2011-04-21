@@ -26,6 +26,7 @@ import org.apache.camel.spring.issues.MyHelloBean;
  */
 public class MyHelloRoute extends RouteBuilder {
 
+    @SuppressWarnings("unused")
     @Resource(name = "myHelloBean")
     private MyHelloBean hello;
 

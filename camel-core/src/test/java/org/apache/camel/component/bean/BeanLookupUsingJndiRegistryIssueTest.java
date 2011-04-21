@@ -46,6 +46,7 @@ public class BeanLookupUsingJndiRegistryIssueTest extends TestCase {
         camel.stop();
     }
 
+    @SuppressWarnings("unused")
     private class MyOtherDummyBean {
 
         public String hello(String s) {

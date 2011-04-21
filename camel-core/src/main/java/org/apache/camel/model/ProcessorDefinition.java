@@ -560,6 +560,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param value   the value
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type attribute(QName name, Object value) {
         if (otherAttributes == null) {
             otherAttributes = new HashMap<QName, Object>();

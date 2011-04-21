@@ -747,8 +747,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             boolean completed = getShutdownStrategy().shutdown(this, route, timeout, timeUnit, abortAfterTimeout);
             if (completed) {
                 // must stop route service as well
-                routeService.setRemovingRoutes(false);
-                stopRouteService(routeService);
+                stopRouteService(routeService, false);
             } else {
                 // shutdown was aborted, make sure route is re-started properly
                 startRouteService(routeService, false);
@@ -767,8 +766,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
             getShutdownStrategy().shutdown(this, routes);
             // must stop route service as well
-            routeService.setRemovingRoutes(false);
-            stopRouteService(routeService);
+            stopRouteService(routeService, false);
         }
     }
 
@@ -781,8 +779,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
             getShutdownStrategy().shutdown(this, routes, timeout, timeUnit);
             // must stop route service as well
-            routeService.setRemovingRoutes(false);
-            stopRouteService(routeService);
+            stopRouteService(routeService, false);
         }
     }
 
@@ -795,8 +792,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
             getShutdownStrategy().shutdown(this, routes);
             // must stop route service as well (and remove the routes from management)
-            routeService.setRemovingRoutes(true);
-            stopRouteService(routeService);
+            stopRouteService(routeService, true);
         }
     }
 
@@ -809,11 +805,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
             getShutdownStrategy().shutdown(this, routes, timeout, timeUnit);
             // must stop route service as well (and remove the routes from management)
-            routeService.setRemovingRoutes(true);
-            stopRouteService(routeService);
-        }
+            stopRouteService(routeService, true);
+        } 
     }
 
+    @SuppressWarnings("deprecation")
     public synchronized boolean removeRoute(String routeId) throws Exception {
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
@@ -846,7 +842,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
             getShutdownStrategy().suspend(this, routes);
             // must suspend route service as well
-            routeService.setRemovingRoutes(false);
             suspendRouteService(routeService);
         }
     }
@@ -865,7 +860,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
             getShutdownStrategy().suspend(this, routes, timeout, timeUnit);
             // must suspend route service as well
-            routeService.setRemovingRoutes(false);
             suspendRouteService(routeService);
         }
     }
@@ -1699,6 +1693,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
+    @SuppressWarnings("deprecation")
+    protected synchronized void stopRouteService(RouteService routeService, boolean removingRoutes) throws Exception {
+        routeService.setRemovingRoutes(removingRoutes);
+        stopRouteService(routeService);
+    }
     protected synchronized void stopRouteService(RouteService routeService) throws Exception {
         routeService.stop();
         for (Route route : routeService.getRoutes()) {
@@ -1717,7 +1716,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
+    @SuppressWarnings("deprecation")
     protected synchronized void suspendRouteService(RouteService routeService) throws Exception {
+        routeService.setRemovingRoutes(false);
         routeService.suspend();
         for (Route route : routeService.getRoutes()) {
             if (log.isInfoEnabled()) {

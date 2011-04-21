@@ -77,7 +77,8 @@ public class BeanWithHeadersAndBodyInject3Test extends ContextTestSupport {
 
     public static class MyBean {
 
-        public String doSomething(@Body String body, @Headers Map headers, @OutHeaders Map outHeaders) {
+        public String doSomething(@Body String body, @Headers Map<?, ?> headers,
+                                  @OutHeaders Map<String, Object> outHeaders) {
             if (outHeaders != null) {
                 outHeaders.put("out", 123);
             }

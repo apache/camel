@@ -385,6 +385,7 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
+    @SuppressWarnings("deprecation")
     protected String createExchangeId() {
         String answer = null;
         if (in != null) {

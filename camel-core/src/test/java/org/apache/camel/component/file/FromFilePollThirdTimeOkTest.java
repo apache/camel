@@ -62,7 +62,8 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // no redeliveries as we want the file consumer to try again
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).logStackTrace(false).handled(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0)
+                             .logStackTrace(false).handled(false));
 
                 from("file://target/deletefile?delete=true&initialDelay=0&delay=10").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

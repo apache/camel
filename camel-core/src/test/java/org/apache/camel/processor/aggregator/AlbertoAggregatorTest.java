@@ -38,7 +38,6 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
     private static final String SURNAME_HEADER = "surname";
     private static final String TYPE_HEADER = "type";
     private static final String BROTHERS_TYPE = "brothers";
-    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public void testAggregator() throws Exception {
 

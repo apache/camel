@@ -70,6 +70,15 @@ public final class ProxyHelper {
         return (T) createProxy(endpoint, getClassLoader(interfaceClasses), interfaceClasses);
     }
 
+    
+    /**
+     * Creates a Proxy which sends PojoExchange to the endpoint.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T createProxy(Endpoint endpoint, Class<T> interfaceClass) throws Exception {
+        return (T) createProxy(endpoint, getClassLoader(interfaceClass), interfaceClass);
+    }
+
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
      */

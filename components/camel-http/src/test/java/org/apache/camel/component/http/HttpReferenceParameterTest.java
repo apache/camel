@@ -76,6 +76,9 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
     }
 
     private static class TestHttpBinding extends DefaultHttpBinding {
+        TestHttpBinding() {
+            super(new HttpEndpoint());
+        }
     }
     
     private static class TestClientConfigurer implements HttpClientConfigurer {

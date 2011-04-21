@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class InflightRepositoryRouteTest extends ContextTestSupport {
 
-    private final CountDownLatch latch = new CountDownLatch(1);
 
     public void testInflight() throws Exception {
         context.setInflightRepository(new MyInflightRepo());

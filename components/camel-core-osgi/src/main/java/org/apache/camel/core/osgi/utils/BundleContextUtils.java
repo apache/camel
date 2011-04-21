@@ -42,7 +42,7 @@ public final class BundleContextUtils {
 
         try {
             ClassLoader cl = clazz.getClassLoader();
-            Class clClazz = cl.getClass();
+            Class<?> clClazz = cl.getClass();
             Method mth = null;
             while (clClazz != null) {
                 try {

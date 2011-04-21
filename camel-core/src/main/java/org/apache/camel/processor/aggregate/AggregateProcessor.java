@@ -100,7 +100,6 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     // keep booking about redelivery
     private class RedeliveryData {
         int redeliveryCounter;
-        long redeliveryDelay;
     }
 
     // options

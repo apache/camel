@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 public class CxfRsInvoker extends JAXRSInvoker {
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsInvoker.class);
     private static final String SUSPENED = "org.apache.camel.component.cxf.jaxrs.suspend";
-    private static final String SERVICE_OBJECT_SCOPE = "org.apache.cxf.service.scope";
-    private static final String REQUEST_SCOPE = "request";
     private CxfRsConsumer cxfRsConsumer;
     private CxfRsEndpoint endpoint;
     

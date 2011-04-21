@@ -32,6 +32,7 @@ public class XsltXmlFragmentTest extends AbstractJUnit38SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
     @EndpointInject(uri = "mock:result")
+    @SuppressWarnings("unused")
     private MockEndpoint mock;
 
     public void testFragmentPassedToXslt() throws Exception {

@@ -136,7 +136,6 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     /**
      * Creates the object to be injected for an {@link org.apache.camel.EndpointInject} or {@link org.apache.camel.Produce} injection point
      */
-    @SuppressWarnings("unchecked")
     public Object getInjectionValue(Class<?> type, String endpointUri, String endpointRef, String injectionPointName,
                                     Object bean, String beanName) {
         if (type.isAssignableFrom(ProducerTemplate.class)) {

@@ -110,7 +110,6 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         return f;
     }
 
-    @SuppressWarnings("unchecked")
     public Future<V> take() throws InterruptedException {
         index.incrementAndGet();
         return completionQueue.take();

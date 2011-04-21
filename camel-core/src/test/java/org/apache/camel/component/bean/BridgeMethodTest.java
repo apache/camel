@@ -89,6 +89,7 @@ public class BridgeMethodTest extends ContextTestSupport {
         }
     }
 
+    @SuppressWarnings("unused")
     private static class MyFooBean {
 
         public MyMessageClass source() {

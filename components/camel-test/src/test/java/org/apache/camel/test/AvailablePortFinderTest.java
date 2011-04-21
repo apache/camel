@@ -31,12 +31,12 @@ public class AvailablePortFinderTest {
 
     @Test (expected = IllegalArgumentException.class)
     public void getMinOutOfRangePort() throws Exception {
-        int p1 = AvailablePortFinder.getNextAvailable(AvailablePortFinder.MIN_PORT_NUMBER - 1);
+        AvailablePortFinder.getNextAvailable(AvailablePortFinder.MIN_PORT_NUMBER - 1);
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void getMaxOutOfRangePort() throws Exception {
-        int p1 = AvailablePortFinder.getNextAvailable(AvailablePortFinder.MAX_PORT_NUMBER + 1);
+        AvailablePortFinder.getNextAvailable(AvailablePortFinder.MAX_PORT_NUMBER + 1);
     }
 
 

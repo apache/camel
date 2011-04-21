@@ -48,6 +48,7 @@ public class MessageHelperTest extends TestCase {
         // handle StreamCache
         final ValueHolder<Boolean> reset = new ValueHolder<Boolean>(Boolean.FALSE);
         message.setBody(new StreamCache() {
+            @SuppressWarnings("deprecation")
             public void reset() {
                 reset.set(Boolean.TRUE);
             }

@@ -157,10 +157,6 @@ public class InterceptSendToEndpoint implements Endpoint {
         };
     }
 
-    private static boolean hasExceptionBeenHandledByErrorHandler(Exchange nextExchange) {
-        return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
-    }
-
     public Consumer createConsumer(Processor processor) throws Exception {
         return delegate.createConsumer(processor);
     }

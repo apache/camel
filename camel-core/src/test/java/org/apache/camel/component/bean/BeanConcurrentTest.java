@@ -81,6 +81,7 @@ public class BeanConcurrentTest extends ContextTestSupport {
         };
     }
 
+    @SuppressWarnings("unused")
     private class MyBean {
 
         private String foo;

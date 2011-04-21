@@ -340,10 +340,6 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         return sync;
     }
 
-    private static boolean hasExceptionBeenHandledByErrorHandler(Exchange nextExchange) {
-        return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.ERRORHANDLER_HANDLED));
-    }
-
     protected void doStart() throws Exception {
         if (producerCache == null) {
             producerCache = new ProducerCache(this, camelContext);

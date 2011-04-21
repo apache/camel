@@ -56,6 +56,7 @@ public class AOPAroundFinallyTest extends ContextTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @SuppressWarnings("deprecation")
             @Override
             public void configure() throws Exception {
                 from("direct:start")

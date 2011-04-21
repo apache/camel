@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-@SuppressWarnings("unchecked")
 public class BeanProxyTest extends ContextTestSupport {
 
     public void testBeanProxyStringReturnString() throws Exception {

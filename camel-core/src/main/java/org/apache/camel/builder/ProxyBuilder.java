@@ -68,5 +68,16 @@ public final class ProxyBuilder {
         ObjectHelper.notNull(endpoint, "endpoint");
         return ProxyHelper.createProxy(endpoint, interfaceClasses);
     }
+    /**
+     * Builds the proxy.
+     *
+     * @param interfaceClass  the service interface(s)
+     * @return the proxied bean
+     * @throws Exception is thrown if error creating the proxy
+     */
+    public <T> T build(Class<T> interfaceClass) throws Exception {
+        ObjectHelper.notNull(endpoint, "endpoint");
+        return ProxyHelper.createProxy(endpoint, interfaceClass);
+    }
 
 }

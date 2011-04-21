@@ -49,6 +49,7 @@ public class FromBeanTest extends ContextTestSupport {
         };
     }
 
+    @SuppressWarnings("unused")
     private static class MyFooBean {
 
         public String hello() {

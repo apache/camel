@@ -34,6 +34,7 @@ import org.apache.camel.util.ExpressionListComparator;
  *
  * @version 
  */
+@SuppressWarnings("deprecation")
 public class Resequencer extends BatchProcessor implements Traceable {
 
     // TODO: Rework to avoid using BatchProcessor

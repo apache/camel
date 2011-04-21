@@ -30,7 +30,6 @@ import org.apache.camel.model.RouteDefinition;
  */
 public class RemoveRouteDefinitionTest extends ManagementTestSupport {
 
-    @SuppressWarnings("unchecked")
     public void testShutdownRoute() throws Exception {
         
         MBeanServer mbeanServer = getMBeanServer();
@@ -46,7 +45,8 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         RouteDefinition definition = context.getRouteDefinition("route1");
         List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
         routeDefinitions.add(definition);
-        context.shutdownRoute("route1");
+        context.stopRoute("route1");
+        context.removeRoute("route1");
 
         set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(0, set.size());

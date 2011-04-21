@@ -41,6 +41,7 @@ public class BeanParameterInfoTest extends ContextTestSupport {
         assertNotNull(info.getAnnotations());
     }
 
+    @SuppressWarnings("unused")
     private class Foo {
 
         public String hello(@Body String body) {

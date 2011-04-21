@@ -264,6 +264,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         // normally you will use a shared executor service with pools
         ExecutorService executor = Executors.newSingleThreadExecutor();
         // send it async with the help of this helper
+        @SuppressWarnings("deprecation")
         Future<Exchange> future = AsyncProcessorHelper.asyncProcess(executor, producer, exchange);
 
         // you can do other stuff
@@ -291,6 +292,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         // normally you will use a shared executor service with pools
         ExecutorService executor = Executors.newSingleThreadExecutor();
         // send it async with the help of this helper
+        @SuppressWarnings("deprecation")
         Future<Exchange> future = AsyncProcessorHelper.asyncProcess(executor, producer, exchange);
 
         // you can do other stuff

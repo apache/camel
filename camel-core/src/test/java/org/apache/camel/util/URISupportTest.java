@@ -131,7 +131,7 @@ public class URISupportTest extends ContextTestSupport {
         String uri = "http://localhost:23271/myapp/mytest?columns=name%2Ctotalsens%2Cupsens&username=apiuser";
 
         // these are the parameters which is tricky to encode
-        Map map = new LinkedHashMap();
+        Map<Object, Object> map = new LinkedHashMap<Object, Object>();
         map.put("foo", "abc def");
         map.put("bar", "123,456");
         map.put("name", "S\u00F8ren"); // danish letter

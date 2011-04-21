@@ -28,6 +28,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.util.CastUtils;
+
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -96,7 +98,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         });
      
         // get the response message 
-        List<Customer> response = (List<Customer>) exchange.getOut().getBody();
+        List<Customer> response = CastUtils.cast((List) exchange.getOut().getBody());
         
         assertNotNull("The response should not be null ", response);
         assertEquals("Get a wrong customer id ", String.valueOf(response.get(0).getId()), "113");
