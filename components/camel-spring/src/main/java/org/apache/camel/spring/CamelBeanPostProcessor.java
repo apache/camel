@@ -157,7 +157,8 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     protected boolean canPostProcessBean(Object bean, String beanName) {
         // the JMXAgent is a bit strange and causes Spring issues if we let it being
         // post processed by this one. It does not need it anyway so we are good to go.
-        if (bean instanceof CamelJMXAgentDefinition) {
+        // We should also avoid to process the null object bean (in Spring 2.5.x) 
+        if (bean == null || bean instanceof CamelJMXAgentDefinition) {
             return false;
         }
 
