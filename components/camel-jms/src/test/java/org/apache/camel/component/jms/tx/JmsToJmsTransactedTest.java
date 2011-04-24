@@ -73,7 +73,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         bar.expectedMessageCount(0);
 
         MockEndpoint start = getMockEndpoint("mock:start");
-        start.expectedMessageCount(6); // default number of redeliveries by AMQ
+        start.expectedMessageCount(7); // default number of redeliveries by AMQ is 6 so we get 6+1
 
         template.sendBody("activemq:queue:foo", "Hello World");
 
@@ -100,7 +100,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         bar.expectedMessageCount(0);
 
         MockEndpoint start = getMockEndpoint("mock:start");
-        start.expectedMessageCount(6); // default number of redeliveries by AMQ
+        start.expectedMessageCount(7); // default number of redeliveries by AMQ is 6 so we get 6+1
 
         template.sendBody("activemq:queue:foo", "Hello World");
 
@@ -131,7 +131,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         bar.expectedMessageCount(0);
 
         MockEndpoint start = getMockEndpoint("mock:start");
-        start.expectedMessageCount(6);
+        start.expectedMessageCount(7); // default number of redeliveries by AMQ is 6 so we get 6+1
 
         template.sendBody("activemq:queue:foo", "Hello World");
 
