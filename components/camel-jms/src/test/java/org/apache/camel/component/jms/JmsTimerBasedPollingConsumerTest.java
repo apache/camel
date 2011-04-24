@@ -65,9 +65,9 @@ public class JmsTimerBasedPollingConsumerTest extends CamelTestSupport {
                 cool.setProducer(template);
                 cool.setConsumer(consumer);
 
-                from("timer://foo?period=5000").bean(cool, "someBusinessLogic");
-
                 from("activemq:queue.foo").to("mock:result");
+
+                from("timer://foo?period=5000").bean(cool, "someBusinessLogic");
                 // END SNIPPET: e1
             }
         };
