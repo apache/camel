@@ -46,6 +46,12 @@ public final class CamelJmsTestHelper {
             url = url + "&" + options;
         }
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+        // optimize AMQ to be as fast as possible so unit testing is quicker
+        connectionFactory.setCopyMessageOnSend(false);
+        connectionFactory.setOptimizeAcknowledge(true);
+        connectionFactory.setOptimizedMessageDispatch(true);
+        connectionFactory.setUseAsyncSend(true);
+        connectionFactory.setAlwaysSessionAsync(false);
         // use a pooled connection factory
         PooledConnectionFactory pooled = new PooledConnectionFactory(connectionFactory);
         pooled.setMaxConnections(8);
@@ -64,6 +70,12 @@ public final class CamelJmsTestHelper {
             url = url + "&" + options;
         }
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+        // optimize AMQ to be as fast as possible so unit testing is quicker
+        connectionFactory.setCopyMessageOnSend(false);
+        connectionFactory.setOptimizeAcknowledge(true);
+        connectionFactory.setOptimizedMessageDispatch(true);
+        connectionFactory.setUseAsyncSend(true);
+        connectionFactory.setAlwaysSessionAsync(false);
 
         // use a pooled connection factory
         PooledConnectionFactory pooled = new PooledConnectionFactory(connectionFactory);
