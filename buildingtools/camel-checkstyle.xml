@@ -131,7 +131,7 @@ lengths, if/try depths, etc...
             <property name="max" value="200"/>
         </module>
         <module name="MethodLength">
-            <property name="max" value="150"/>
+            <property name="max" value="200"/>
             <property name="countEmpty" value="false"/>
         </module>
         <!-- We should try to get this enabled soon..

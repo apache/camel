@@ -92,6 +92,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     public void testProperty() throws Exception {
+        exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
 
         exchange.setProperty("fruit", "apple");

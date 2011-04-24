@@ -124,6 +124,85 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("sysenv.PATH", path);
         }
     }
+    
+    public void testOGNLPropertyList() throws Exception {
+        List<String> lines = new ArrayList<String>();
+        lines.add("Camel in Action");
+        lines.add("ActiveMQ in Action");
+        exchange.setProperty("wicket", lines);
+
+        assertExpression("${property.wicket[0]}", "Camel in Action");
+        assertExpression("${property.wicket[1]}", "ActiveMQ in Action");
+        try {
+            assertExpression("${property.wicket[2]}", "");
+            fail("Should have thrown an exception");
+        } catch (Exception e) {
+            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+            assertEquals("Index: 2, Size: 2", cause.getMessage());
+        }
+        assertExpression("${property.unknown[cool]}", null);
+    }
+    
+    public void testOGNLPropertyLinesList() throws Exception {
+        List<OrderLine> lines = new ArrayList<OrderLine>();
+        lines.add(new OrderLine(123, "Camel in Action"));
+        lines.add(new OrderLine(456, "ActiveMQ in Action"));
+        exchange.setProperty("wicket", lines);
+
+        assertExpression("${property.wicket[0].getId}", 123);
+        assertExpression("${property.wicket[1].getName}", "ActiveMQ in Action");
+        try {
+            assertExpression("${property.wicket[2]}", "");
+            fail("Should have thrown an exception");
+        } catch (Exception e) {
+            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+            assertEquals("Index: 2, Size: 2", cause.getMessage());
+        }
+        assertExpression("${property.unknown[cool]}", null);
+    }
+    
+    public void testOGNLPropertyMap() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("cool", "Camel rocks");
+        map.put("dude", "Hey dude");
+        map.put("code", 4321);
+        exchange.setProperty("wicket", map);
+
+        assertExpression("${property.wicket[cool]}", "Camel rocks");
+        assertExpression("${property.wicket[dude]}", "Hey dude");
+        assertExpression("${property.wicket[unknown]}", null);
+        assertExpression("${property.wicket[code]}", 4321);
+        // no header named unknown
+        assertExpression("${property?.unknown[cool]}", null);
+        assertExpression("${property.unknown[cool]}", null);
+    }
+   
+    public void testOGNLPropertyMapWithDot() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("this.code", "This code");
+        exchange.setProperty("wicket", map);
+
+        assertExpression("${property.wicket[this.code]}", "This code");
+    }
+    
+    public void testOGNLPropertyMapNotMap() throws Exception {
+        try {
+            assertExpression("${property.foobar[bar]}", null);
+            fail("Should have thrown an exception");
+        } catch (RuntimeBeanExpressionException e) {
+            IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
+            assertEquals("Key: bar not found in bean: cba of type: java.lang.String using OGNL path [[bar]]", cause.getMessage());
+        }
+    }
+    
+    public void testOGNLPropertyMapIllegalSyntax() throws Exception {
+        try {
+            assertExpression("${property.foobar[bar}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertEquals("Illegal syntax: Valid syntax: ${property.OGNL} was: property.foobar[bar", e.getMessage());
+        }
+    }
 
     public void testDateExpressions() throws Exception {
         Calendar cal = GregorianCalendar.getInstance();

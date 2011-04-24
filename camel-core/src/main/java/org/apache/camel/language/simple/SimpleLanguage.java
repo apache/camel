@@ -41,6 +41,7 @@ import org.apache.camel.util.StringHelper;
  * <li>in.header.foo.OGNL or header.OGNL to access an inbound header called 'foo' using an OGNL expression</li>
  * <li>out.header.foo to access an outbound header called 'foo'</li>
  * <li>property.foo to access the exchange property called 'foo'</li>
+ * <li>property.foo.OGNL to access the exchange property called 'foo' using an OGNL expression</li>
  * <li>sys.foo to access the system property called 'foo'</li>
  * <li>sysenv.foo to access the system environment called 'foo'</li>
  * <li>exception.messsage to access the exception message</li>
@@ -86,7 +87,7 @@ import org.apache.camel.util.StringHelper;
  * <br/>
  * The <b>only</b> file is the filename only with all paths clipped.
  *
- * @version 
+ * @version
  */
 public class SimpleLanguage extends SimpleLanguageSupport {
 
@@ -109,7 +110,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
     public static Expression simple(String expression) {
         return SIMPLE.createExpression(expression);
     }
-    
+
     protected Expression createSimpleExpressionDirectly(String expression) {
 
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
@@ -134,13 +135,13 @@ public class SimpleLanguage extends SimpleLanguageSupport {
     }
 
     protected Expression createSimpleExpression(String expression, boolean strict) {
-        
+
         // return the expression directly if we can create expression without analyzing the prefix
         Expression answer = createSimpleExpressionDirectly(expression);
         if (answer != null) {
             return answer;
         }
-        
+
         // bodyAs
         String remainder = ifStartsWithReturnRemainder("bodyAs", expression);
         if (remainder != null) {
@@ -174,7 +175,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             }
             return ExpressionBuilder.bodyOgnlExpression(remainder);
         }
-        
+
         // Exception OGNL
         remainder = ifStartsWithReturnRemainder("exception", expression);
         if (remainder != null) {
@@ -182,7 +183,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             if (invalid) {
                 throw new ExpressionIllegalSyntaxException("Valid syntax: ${exception.OGNL} was: " + expression);
             }
-            return ExpressionBuilder.exchangeExceptionOgnlExpression(remainder);        
+            return ExpressionBuilder.exchangeExceptionOgnlExpression(remainder);
         }
 
         // headerAs
@@ -215,7 +216,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             remainder = ifStartsWithReturnRemainder("header", expression);
         }
         if (remainder != null) {
-            // remove leading dot
+            // remove leading character (dot or ?)
             remainder = remainder.substring(1);
 
             // validate syntax
@@ -243,9 +244,24 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         }
 
         // property
-        remainder = ifStartsWithReturnRemainder("property.", expression);
+        remainder = ifStartsWithReturnRemainder("property", expression);
         if (remainder != null) {
-            return ExpressionBuilder.propertyExpression(remainder);
+            // remove leading character (dot or ?)
+            remainder = remainder.substring(1);
+
+            // validate syntax
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            if (invalid) {
+                throw new ExpressionIllegalSyntaxException("Valid syntax: ${property.OGNL} was: " + expression);
+            }
+
+            if (OgnlHelper.isValidOgnlExpression(remainder)) {
+                // ognl based property
+                return ExpressionBuilder.propertyOgnlExpression(remainder);
+            } else {
+                // regular property
+                return ExpressionBuilder.propertyExpression(remainder);
+            }
         }
 
         // system property
@@ -316,7 +332,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.constantExpression(expression);
         }
     }
-    
+
     protected Expression createSimpleFileExpression(String remainder) {
         if (ObjectHelper.equal(remainder, "name")) {
             return ExpressionBuilder.fileNameExpression();

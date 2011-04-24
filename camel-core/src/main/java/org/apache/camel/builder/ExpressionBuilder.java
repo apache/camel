@@ -174,41 +174,12 @@ public final class ExpressionBuilder {
      * @param ognl  methods to invoke on the header in a simple OGNL syntax
      */
     public static Expression headersOgnlExpression(final String ognl) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                // try with full name first
-                Object header = exchange.getIn().getHeader(ognl);
-                if (header != null) {
-                    return header;
+        return new KeyedOgnlExpressionAdapter(ognl, "headerOgnl(" + ognl + ")",
+            new KeyedOgnlExpressionAdapter.KeyedEntityRetrievalStrategy() {
+                public Object getKeyedEntity(Exchange exchange, String key) {
+                    return exchange.getIn().getHeader(key);
                 }
-
-                // Split ognl except when this is not a Map, Array
-                // and we would like to keep the dots within the key name
-                List<String> methods;
-                if (ognl.startsWith("[") && ognl.endsWith("]")) {
-                    methods = new ArrayList<String>();
-                    methods.add(ognl);
-                } else {
-                    methods = OgnlHelper.splitOgnl(ognl);
-                }
-
-                // remove any OGNL operators so we got the pure key name
-                String key = OgnlHelper.removeOperators(methods.get(0));
-
-                header = exchange.getIn().getHeader(key);
-                if (header == null) {
-                    return null;
-                }
-                // the remainder is the rest of the ognl without the key
-                String remainder = ObjectHelper.after(ognl, key);
-                return new MethodCallExpression(header, remainder).evaluate(exchange);
-            }
-
-            @Override
-            public String toString() {
-                return "headerOgnl(" + ognl + ")";
-            }
-        };
+            });
     }
 
     /**
@@ -504,6 +475,21 @@ public final class ExpressionBuilder {
                 return "property(" + propertyName + ")";
             }
         };
+    }
+    
+    /**
+     * Returns an expression for the property value of exchange with the given name invoking methods defined
+     * in a simple OGNL notation
+     *
+     * @param ognl  methods to invoke on the property in a simple OGNL syntax
+     */
+    public static Expression propertyOgnlExpression(final String ognl) {
+        return new KeyedOgnlExpressionAdapter(ognl, "propertyOgnl(" + ognl + ")",
+            new KeyedOgnlExpressionAdapter.KeyedEntityRetrievalStrategy() {
+                public Object getKeyedEntity(Exchange exchange, String key) {
+                    return exchange.getProperty(key);
+                }
+            });
     }
 
     /**
@@ -1532,5 +1518,62 @@ public final class ExpressionBuilder {
             }
         };
     }
+
+    /**
+     * Expression adapter for OGNL expression from Message Header or Exchange property
+     */
+    private static class KeyedOgnlExpressionAdapter extends ExpressionAdapter {
+        private final String ognl;
+        private final String toStringValue;
+        private final KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy;
+
+        public KeyedOgnlExpressionAdapter(String ognl, String toStringValue, 
+                                          KeyedEntityRetrievalStrategy keyedEntityRetrievalStrategy) {
+            this.ognl = ognl;
+            this.toStringValue = toStringValue;
+            this.keyedEntityRetrievalStrategy = keyedEntityRetrievalStrategy;
+        }
+
+        public Object evaluate(Exchange exchange) {
+            // try with full name first
+            Object property = keyedEntityRetrievalStrategy.getKeyedEntity(exchange, ognl);
+            if (property != null) {
+                return property;
+            }
+
+            // Split ognl except when this is not a Map, Array
+            // and we would like to keep the dots within the key name
+            List<String> methods;
+            if (ognl.startsWith("[") && ognl.endsWith("]")) {
+                methods = new ArrayList<String>();
+                methods.add(ognl);
+            } else {
+                methods = OgnlHelper.splitOgnl(ognl);
+            }
+
+            // remove any OGNL operators so we got the pure key name
+            String key = OgnlHelper.removeOperators(methods.get(0));
+
+            property = keyedEntityRetrievalStrategy.getKeyedEntity(exchange, key);
+            if (property == null) {
+                return null;
+            }
+            // the remainder is the rest of the ognl without the key
+            String remainder = ObjectHelper.after(ognl, key);
+            return new MethodCallExpression(property, remainder).evaluate(exchange);
+        }
+
+        @Override
+        public String toString() {
+            return toStringValue;
+        }
+
+        /**
+         * Strategy to retrieve the value based on the key
+         */
+        public interface KeyedEntityRetrievalStrategy {
+            Object getKeyedEntity(Exchange exchange, String key);
+        }
+    };
 
 }

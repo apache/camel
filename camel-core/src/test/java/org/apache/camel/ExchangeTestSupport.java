@@ -43,6 +43,8 @@ public abstract class ExchangeTestSupport extends ContextTestSupport {
         in.setHeader("foo", "abc");
         in.setHeader("bar", 123);
         in.setBody("<hello id='m123'>world!</hello>");
+        
+        exchange.setProperty("foobar", "cba");
     }
 
     @Override
