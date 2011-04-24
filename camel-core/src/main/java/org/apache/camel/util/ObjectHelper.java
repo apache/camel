@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -1118,6 +1119,14 @@ public final class ObjectHelper {
             } else if ("false".equalsIgnoreCase((String)value)) {
                 return false;
             }
+        } else if (value instanceof NodeList) {
+            // is it an empty dom
+            NodeList list = (NodeList) value;
+            return list.getLength() > 0;
+        } else if (value instanceof Collection) {
+            // is it an empty collection
+            Collection col = (Collection) value;
+            return col.size() > 0;
         }
         return value != null;
     }
