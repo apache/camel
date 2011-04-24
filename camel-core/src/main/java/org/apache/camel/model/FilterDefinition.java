@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
@@ -62,13 +62,11 @@ public class FilterDefinition extends ExpressionNode {
         return createFilterProcessor(routeContext);
     }
     
-    // Fluent API
-    //-------------------------------------------------------------------------
-    /**
-     * Set the expression that this FilterType will use
-     * @return the builder
-     */
-    public ExpressionClause<? extends FilterDefinition> expression() {
-        return ExpressionClause.createAndSetExpression(this);
+    @Override
+    protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
+        // filter EIP should have child outputs
+        Processor childProcessor = this.createChildProcessor(routeContext, true);
+        return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
     }
+
 }
