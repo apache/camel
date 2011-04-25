@@ -18,7 +18,6 @@ package org.apache.camel
 package scala
 package dsl.builder
 
-import org.apache.camel.model.{ChoiceDefinition, ProcessorDefinition}
 import org.apache.camel.model.DataFormatDefinition
 import org.apache.camel.{Exchange, RoutesBuilder}
 import org.apache.camel.builder.{DeadLetterChannelBuilder, ErrorHandlerBuilder}
@@ -40,7 +39,7 @@ import java.util.Comparator
 class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages with Functions {
 
   val builder = new org.apache.camel.builder.RouteBuilder {
-    override def configure() =  {
+    override def configure() = {
       onJavaBuilder(this)
     }
   }

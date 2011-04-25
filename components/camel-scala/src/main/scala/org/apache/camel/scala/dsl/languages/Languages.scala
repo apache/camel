@@ -17,8 +17,6 @@
 package org.apache.camel
 package scala.dsl.languages
 
-import org.apache.camel.builder.Builder
-
 /**
  * Trait to support the different expression languages available in Camel 
  */
@@ -28,32 +26,38 @@ trait Languages {
    * Implicitly make a method for every language available on the Camel Exchange
    */
   implicit def addLanguageMethodsToExchange(exchange: Exchange) = new {
-    def bean(ref: String) =          Builder.bean(ref).evaluate(exchange, classOf[Any])
-    def el(expression: String) =     Languages.this.el(expression)(exchange)
-    def groovy(expression: String) = Languages.this.groovy(expression)(exchange)
-    def jxpath(expression: String) = Languages.this.jxpath(expression)(exchange)
-    def mvel(expression: String) =   Languages.this.mvel(expression)(exchange)
-    def ognl(expression: String) =   Languages.this.ognl(expression)(exchange) 
-    def php(expression: String) =    Languages.this.php(expression)(exchange)
-    def python(expression: String) = Languages.this.python(expression)(exchange)
-    def ruby(expression: String) =   Languages.this.ruby(expression)(exchange)
-    def simple(expression: String) = Languages.this.simple(expression)(exchange)
-    def sql(expression: String) =    Languages.this.sql(expression)(exchange)
-    def xpath(expression: String) =  Languages.this.xpath(expression)(exchange)
-    def xquery(expression: String) = Languages.this.xquery(expression)(exchange)
+    def el(expression: String) =         Languages.this.el(expression)(exchange)
+    def groovy(expression: String) =     Languages.this.groovy(expression)(exchange)
+    def header(headerName: String) =     Languages.this.header(headerName)(exchange)
+    def javascript(expression: String) = Languages.this.javascript(expression)(exchange)
+    def jxpath(expression: String) =     Languages.this.jxpath(expression)(exchange)
+    def mvel(expression: String) =       Languages.this.mvel(expression)(exchange)
+    def ognl(expression: String) =       Languages.this.ognl(expression)(exchange)
+    def php(expression: String) =        Languages.this.php(expression)(exchange)
+    def property(propertyName: String) = Languages.this.property(propertyName)(exchange)
+    def python(expression: String) =     Languages.this.python(expression)(exchange)
+    def ruby(expression: String) =       Languages.this.ruby(expression)(exchange)
+    def simple(expression: String) =     Languages.this.simple(expression)(exchange)
+    def spel(expression: String) =       Languages.this.spel(expression)(exchange)
+    def sql(expression: String) =        Languages.this.sql(expression)(exchange)
+    def xpath(expression: String) =      Languages.this.xpath(expression)(exchange)
+    def xquery(expression: String) =     Languages.this.xquery(expression)(exchange)
   }
   
   // a set of methods to allow direct use of the language as an expression
   def el(expression: String)(exchange: Exchange) =         Languages.evaluate(expression)(exchange)("el")
   def groovy(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("groovy")
+  def header(headerName: String)(exchange: Exchange) =     Languages.evaluate(headerName)(exchange)("header")
   def javascript(expression: String)(exchange: Exchange) = Languages.evaluate(expression)(exchange)("javascript")
   def jxpath(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("jxpath")
   def mvel(expression: String)(exchange: Exchange) =       Languages.evaluate(expression)(exchange)("mvel")
   def ognl(expression: String)(exchange: Exchange) =       Languages.evaluate(expression)(exchange)("ognl")
   def php(expression: String)(exchange: Exchange) =        Languages.evaluate(expression)(exchange)("php")
+  def property(propertyName: String)(exchange: Exchange) = Languages.evaluate(propertyName)(exchange)("property")
   def python(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("python")
   def ruby(expression: String)(exchange: Exchange) =       Languages.evaluate(expression)(exchange)("ruby")
   def simple(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("simple")
+  def spel(expression: String)(exchange: Exchange) =       Languages.evaluate(expression)(exchange)("spel")
   def sql(expression: String)(exchange: Exchange) =        Languages.evaluate(expression)(exchange)("sql")
   def xpath(expression: String)(exchange: Exchange) =      Languages.evaluate(expression)(exchange)("xpath")
   def xquery(expression: String)(exchange: Exchange) =     Languages.evaluate(expression)(exchange)("xquery")
@@ -65,7 +69,7 @@ trait Languages {
  */
 object Languages {
 
-  def evaluate(expression: String)(exchange: Exchange)(lang: String) : Any = { 
+  def evaluate(expression: String)(exchange: Exchange)(lang: String) : Any = {
     val language = exchange.getContext().resolveLanguage(lang)
     language.createExpression(expression).evaluate(exchange, classOf[Object])
   }
