@@ -14,39 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl.builder;
- 
-import org.apache.camel.scala.Wrapper
-import org.apache.camel.scala.test.{Person,Adult}
-import junit.framework.TestCase
-import junit.framework.Assert._
+package org.apache.camel
+package scala.dsl
 
-class RouteBuilderUnwrapTest extends TestCase {
+import builder.RouteBuilder
+import junit.framework.Assert.assertEquals
 
-  def builder = new RouteBuilder {
-    
-    val person = new PersonWrapper
-    
-    def testUnwrap = {
-      //access the wrapper
-      assertEquals("Apache Camel", person.vote)
-      
-      //unwrap when necessary
-      assertTrue(person.canVote)
+class RouteIdTest extends ScalaTestSupport {
+
+  def testRouteA = {
+    "mock:a" expect { _.expectedMessageCount(1)}
+
+    test {
+      "direct:a" ! "Hello World"
     }
-    
+
+    assertMockEndpointsSatisfied
+
+    assertEquals("route-a", context.getRouteDefinitions.get(0).getId());
   }
 
-  
-  def testUnwrapWhenNecessary() = builder.testUnwrap
-  
-  class PersonWrapper extends Wrapper[Person] {
-    
-    val person = new Adult("Gert")
-    val unwrap = person
-    
-    def vote = "Apache Camel"
-    
+  def testRouteB = {
+    "mock:b" expect { _.expectedMessageCount(1)}
+
+    test {
+      "direct:b" ! "Hello World"
+    }
+
+    assertMockEndpointsSatisfied
+
+    assertEquals("route-b", context.getRouteDefinitions.get(1).getId());
   }
-  
+
+  val builder = new RouteBuilder {
+
+    // java DSL
+    from("direct:a").routeId("route-a").to("mock:a")
+
+    // scala DSL
+    "direct:b" routeId "route-b" to "mock:b"
+
+  }
+
 }

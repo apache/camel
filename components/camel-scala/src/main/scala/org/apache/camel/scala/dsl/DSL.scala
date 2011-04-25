@@ -47,6 +47,7 @@ trait DSL {
 
   def handle[E](block: => Unit)(implicit manifest: Manifest[E]) : SOnExceptionDefinition
 
+  def id(id : String): DSL
   def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerDefinition
   def inOnly(): DSL with Block
   def inOut(): DSL with Block

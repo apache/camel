@@ -50,14 +50,14 @@ class SPipelineTest extends ScalaTestSupport {
   }  
 
   def testIncrementSimple = {
-    "mock:result" expect { _.received(new Integer(4))}
+    "mock:result" expect { _.received(new java.lang.Integer(4))}
     test {
       "direct:a" ! 1
     }
   }
 
   def testIncrementBlock = {
-    "mock:result" expect { _.received(new Integer(4))}
+    "mock:result" expect { _.received(new java.lang.Integer(4))}
     test {
       "direct:b" ! 1
     }

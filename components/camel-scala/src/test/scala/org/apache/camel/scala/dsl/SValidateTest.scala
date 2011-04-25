@@ -42,7 +42,7 @@ class SValidateSimpleTest extends ValidateSimpleTest with RouteBuilderSupport {
         assertIsInstanceOf(classOf[PredicateValidationException], e.getCause())
         // as the Expression could be different between the DSL and simple language, here we just check part of the message
         assertTrue("Get a wrong exception message",
-                   e.getCause().getMessage().startsWith("Validation failed for Predicate[org.apache.camel.scala.dsl.ScalaPredicate"));
+                   e.getCause().getMessage().startsWith("Validation failed for Predicate[org.apache.camel.scala.ScalaPredicate"));
         assertTrue("Get a wrong exception message",
                    e.getCause().getMessage().endsWith("Exchange[Message: 1.1.2010]"));
       }
@@ -74,7 +74,7 @@ class SValidateRegExpTest extends ValidateRegExpTest with RouteBuilderSupport {
         assertIsInstanceOf(classOf[PredicateValidationException], e.getCause())
         // as the Expression could be different between the DSL and simple language, here we just check part of the message
         assertTrue("Get a wrong exception message",
-                   e.getCause().getMessage().startsWith("Validation failed for Predicate[org.apache.camel.scala.dsl.ScalaPredicate"));
+                   e.getCause().getMessage().startsWith("Validation failed for Predicate[org.apache.camel.scala.ScalaPredicate"));
         assertTrue("Get a wrong exception message",
                    e.getCause().getMessage().endsWith("Exchange[Message: 1.1.2010]"));
       }

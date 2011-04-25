@@ -118,6 +118,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
 
   def filter(predicate: Exchange => Any) = stack.top.filter(predicate)
 
+  def id(id : String) = stack.top.id(id)
   def idempotentconsumer(expression: Exchange => Any) = stack.top.idempotentconsumer(expression)
   def inOnly = stack.top.inOnly
   def inOut = stack.top.inOut
@@ -176,7 +177,6 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def threads = stack.top.threads
   def throttle(frequency: Frequency) = stack.top.throttle(frequency)
   def throwException(exception: Exception) = stack.top.throwException(exception)
-  def to(uris: String*) = stack.top.to(uris: _*)
   def transacted = stack.top.transacted
   def transacted(uri: String) = stack.top.transacted
   def transform(expression: Exchange => Any) = stack.top.transform(expression)
@@ -189,6 +189,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def wiretap(uri: String) = stack.top.wiretap(uri)
   def wiretap(uri: String, expression: Exchange => Any) = stack.top.wiretap(uri, expression)
 
+  def to(uris: String*) = stack.top.to(uris: _*)
   def -->(uris: String*) = stack.top.to(uris: _*)
 
 }
