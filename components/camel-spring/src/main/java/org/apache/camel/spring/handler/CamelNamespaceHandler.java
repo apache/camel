@@ -50,6 +50,9 @@ import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.spring.KeyStoreParametersFactoryBean;
+import org.apache.camel.util.spring.SSLContextParametersFactoryBean;
+import org.apache.camel.util.spring.SecureRandomParametersFactoryBean;
 import org.apache.camel.view.ModelFileGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +75,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class, false);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class, false);
     protected Set<String> parserElementNames = new HashSet<String>();
+    protected Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
+    
     private JAXBContext jaxbContext;
-    private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
     private Map<String, BeanDefinition> autoRegisterMap = new HashMap<String, BeanDefinition>();
 
     public static void renameNamespaceRecursive(Node node) {
@@ -96,6 +100,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     public void init() {
         // register routeContext parser
         registerParser("routeContext", new RouteContextDefinitionParser());
+        
+        addBeanDefinitionParser("keyStoreParameters", KeyStoreParametersFactoryBean.class, true, true);
+        addBeanDefinitionParser("secureRandomParameters", SecureRandomParametersFactoryBean.class, true, true);
+        registerBeanDefinitionParser("sslContextParameters", new SSLContextParametersFactoryBeanBeanDefinitionBarser());
 
         addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class, true, false);
         addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, true, false);
@@ -140,7 +148,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }
 
-    private void addBeanDefinitionParser(String elementName, Class<?> type, boolean register, boolean assignId) {
+    protected void addBeanDefinitionParser(String elementName, Class<?> type, boolean register, boolean assignId) {
         BeanDefinitionParser parser = new BeanDefinitionParser(type, assignId);
         if (register) {
             registerParser(elementName, parser);
@@ -189,7 +197,50 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
         classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
         classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
+        classes.add(org.apache.camel.util.spring.SSLContextParametersFactoryBean.class);
         return classes;
+    }
+    
+    protected class SSLContextParametersFactoryBeanBeanDefinitionBarser extends BeanDefinitionParser {
+
+        public SSLContextParametersFactoryBeanBeanDefinitionBarser() {
+            super(SSLContextParametersFactoryBean.class, true);
+        }
+
+        @Override
+        protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
+            super.doParse(element, builder);
+            
+            // Note: prefer to use doParse from parent and postProcess; however, parseUsingJaxb requires 
+            // parserContext for no apparent reason.
+            Binder<Node> binder;
+            try {
+                binder = getJaxbContext().createBinder();
+            } catch (JAXBException e) {
+                throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
+            }
+            
+            Object value = parseUsingJaxb(element, parserContext, binder);
+            
+            if (value instanceof SSLContextParametersFactoryBean) {
+                SSLContextParametersFactoryBean bean = (SSLContextParametersFactoryBean)value;
+                
+                builder.addPropertyValue("cipherSuites", bean.getCipherSuites());
+                builder.addPropertyValue("cipherSuitesFilter", bean.getCipherSuitesFilter());
+                builder.addPropertyValue("secureSocketProtocols", bean.getSecureSocketProtocols());
+                builder.addPropertyValue("secureSocketProtocolsFilter", bean.getSecureSocketProtocolsFilter());
+                builder.addPropertyValue("keyManagers", bean.getKeyManagers());
+                builder.addPropertyValue("trustManagers", bean.getTrustManagers());
+                builder.addPropertyValue("secureRandom", bean.getSecureRandom());
+                
+                builder.addPropertyValue("clientParameters", bean.getClientParameters());
+                builder.addPropertyValue("serverParameters", bean.getServerParameters());
+            } else {
+                throw new BeanDefinitionStoreException("Parsed type is not of the expected type.  Expected "
+                                                       + SSLContextParametersFactoryBean.class.getName() + " but found "
+                                                       + value.getClass().getName());
+            }
+        }
     }
 
     protected class RouteContextDefinitionParser extends BeanDefinitionParser {

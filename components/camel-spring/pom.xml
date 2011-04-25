@@ -51,6 +51,7 @@
       <camel.osgi.export>
         org.apache.camel.spring.*;${camel.osgi.version},
         org.apache.camel.osgi.*;${camel.osgi.version},
+        org.apache.camel.util.spring.*;${camel.osgi.version},
         org.apache.camel.component;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
         org.apache.camel.component.test;${camel.osgi.split.pkg};${camel.osgi.version},
@@ -398,10 +399,12 @@
                                 <fileset dir="${basedir}/src/main/java">
                                   <include name="org/apache/camel/spring/Camel*.java" />
 			                      <include name="org/apache/camel/spring/ErrorHandler*.java" />
-				                  <include name="org/apache/camel/spring/package-info.java" />
+			                      <include name="org/apache/camel/spring/package-info.java" />
+			                      <include name="org/apache/camel/util/spring/**/*.java"/>
                                 </fileset>
                                 <fileset dir="${basedir}/../camel-core-xml/src/main/java">
                                   <include name="org/apache/camel/core/xml/*.java" />
+                                  <include name="org/apache/camel/core/xml/util/**/*.java"/>
                                 </fileset>
                                 <fileset dir="${basedir}/../../camel-core/src/main/java">
                                   <include name="org/apache/camel/model/**/*.java" />
@@ -424,7 +427,7 @@
                               </schemagen>
                               <copy file="${project.build.directory}/schema/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" />
                               <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/spring/v${camel.schema.version}" />
-
+                            
                           </tasks>
                       </configuration>
                       <goals>
