@@ -5,9 +5,6 @@ import java.util.Map
 import java.lang.{Class, String}
 import javax.activation.DataHandler
 
-/**
- */
-
 class RichMessage(val message: Message) extends Message {
 
   // Delegate methods

@@ -18,11 +18,11 @@ package org.apache.camel.scala.converter;
 
 import _root_.scala.xml.Elem
 
-import org.apache.camel.Converter
 import org.apache.camel.converter.jaxp.XmlConverter
 import scala.xml.XML
 import org.w3c.dom.Document
 import org.w3c.dom.Node
+import org.apache.camel.{Exchange, Converter}
 
 /**
  * Converter implementation for supporting some common Scala types within Apache Camel
@@ -38,8 +38,8 @@ import org.w3c.dom.Node
    def convertToElem(xmlString: String) = XML.loadString(xmlString)
 
    @Converter
-   def domDocumentToElem(doc: Document) = XML.load(converter.toInputStream(doc))
+   def domDocumentToElem(doc: Document, exchange : Exchange) = XML.load(converter.toInputStream(doc, exchange))
 
    @Converter
-   def domNodeToElem(node: Node) = XML.loadString(converter.toString(node, null))
+   def domNodeToElem(node: Node, exchange : Exchange) = XML.loadString(converter.toString(node, exchange))
 }

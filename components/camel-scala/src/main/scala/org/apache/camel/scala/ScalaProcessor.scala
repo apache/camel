@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel
-package scala.dsl
+package scala
 
 /**
  * Scala implementation for an Apache Camel Processor

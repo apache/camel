@@ -35,7 +35,7 @@ class ExceptionHandlerTest extends ScalaTestSupport {
       test {
        "direct:a" ! ("any given message", 'Symbol, 256)
       }
-    } catch { case _ => System.out.println("get the exception here")}
+    } catch { case _ => log.info("get the exception here")}
   }
 
   val builder =

@@ -18,6 +18,7 @@ package org.apache.camel.scala
 
 /**
  * Represents a frequency (count per period)
+ *
  * @param count the number of occurrences
  * @param period the time period for this frequency
  */

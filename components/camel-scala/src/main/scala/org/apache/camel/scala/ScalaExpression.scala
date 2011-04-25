@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel
-package scala.dsl
+package scala
 
 /**
  * Scala implementation for an Apache Camel Expression
@@ -25,7 +25,7 @@ class ScalaExpression(val expression: Exchange => Any) extends Expression {
   def evaluate(exchange: Exchange) = expression(exchange).asInstanceOf[Object]
 
   def evaluate[Target](exchange: Exchange, toType: Class[Target]) = {
-    var value = expression(exchange)
+    val value = expression(exchange)
     exchange.getContext().getTypeConverter().convertTo(toType, value)
   }
 

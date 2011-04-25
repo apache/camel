@@ -46,6 +46,16 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
 
   val stack = new Stack[DSL];
 
+  val serialization = new org.apache.camel.model.dataformat.SerializationDataFormat
+
+  val failureOnly = new Config[SOnCompletionDefinition] {
+    def configure(target: SOnCompletionDefinition) = target.onFailureOnly()
+  }
+
+  val completeOnly = new Config[SOnCompletionDefinition] {
+    def configure(target: SOnCompletionDefinition) = target.onCompleteOnly()
+  }
+
   /**
    * Callback method to allow people to interact with the Java DSL builder directly
    */
@@ -79,35 +89,60 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
     }
   }
 
-  def attempt = stack.top.attempt
-  def bean(bean: Any) = stack.top.bean(bean)
-  def choice = stack.top.choice
-  def -->(uris: String*) = stack.top.to(uris: _*)
-  def to(uris: String*) = stack.top.to(uris: _*)
-  
-  def when(filter: Exchange => Any) = stack.top.when(filter)
-  def as[Target](toType: Class[Target]) = stack.top.as(toType)
+  def getContext = builder.getContext
 
-  def recipients(expression: Exchange => Any) = stack.top.recipients(expression)
+  // implementing the Routes interface to allow RouteBuilder to be discovered by Spring
+  def addRoutesToCamelContext(context: CamelContext) = builder.addRoutesToCamelContext(context)
+
+  // EIPs
+  //-----------------------------------------------------------------
+  def aggregate(expression: Exchange => Any, strategy: AggregationStrategy) = stack.top.aggregate(expression, strategy)
+  def as[Target](toType: Class[Target]) = stack.top.as(toType)
+  def attempt = stack.top.attempt
+
+  def bean(bean: Any) = stack.top.bean(bean)
+
+  def choice = stack.top.choice
+
+  def delay(delay: Period) = stack.top.delay(delay)
+  def dynamicRouter(expression: Exchange => Any) = stack.top.dynamicRouter(expression)
+
+  def enrich(uri: String, strategy: AggregationStrategy) = stack.top.enrich(uri, strategy)
+  def errorHandler(error: ErrorHandlerBuilder) = builder.setErrorHandlerBuilder(error)
+  def deadLetterChannel(uri: String) = {
+    val dlc = new DeadLetterChannelBuilder
+    dlc.setDeadLetterUri(uri)
+    dlc
+  }
+  def defaultErrorHandler = builder.defaultErrorHandler
+
   def filter(predicate: Exchange => Any) = stack.top.filter(predicate)
+
   def idempotentconsumer(expression: Exchange => Any) = stack.top.idempotentconsumer(expression)
   def inOnly = stack.top.inOnly
   def inOut = stack.top.inOut
+  def interceptFrom(expression: Exchange => Boolean) = {
+    val interceptFrom = builder.interceptFrom
+    interceptFrom.when(new ScalaPredicate(expression))
+    new SInterceptFromDefinition(interceptFrom)(this)
+  }
+  def interceptFrom = new SInterceptFromDefinition(builder.interceptFrom)(this)
+  def interceptFrom(uri: String) = new SInterceptFromDefinition(builder.interceptFrom(uri))(this)
+  def interceptSendTo(uri: String) = {
+    val intercept = builder.interceptSendToEndpoint(uri)
+    new SInterceptSendToEndpointDefinition(intercept)(this)
+  }
+  def intercept = new SInterceptDefinition(builder.intercept)(this)
 
+  def loadbalance = stack.top.loadbalance
   def log(message: String) = stack.top.log(message)
   def log(level: LoggingLevel, message: String) = stack.top.log(level, message)
   def log(level: LoggingLevel, logName: String, message: String) = stack.top.log(level, logName, message)
-
   def loop(expression: Exchange => Any) = stack.top.loop(expression)
-  def split(expression: Exchange => Any) = stack.top.split(expression)
-  def otherwise = stack.top.otherwise
+
   def marshal(format: DataFormatDefinition) = stack.top.marshal(format)
   def multicast = stack.top.multicast
 
-  def throttle(frequency: Frequency) = stack.top.throttle(frequency)
-  def loadbalance = stack.top.loadbalance
-  def delay(delay: Period) = stack.top.delay(delay)
-  def enrich(uri: String, strategy: AggregationStrategy) = stack.top.enrich(uri, strategy)
   def onCompletion = {
     stack.size match {
       case 0 => SOnCompletionDefinition(builder.onCompletion)(this)
@@ -116,71 +151,44 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   }
   def onCompletion(predicate: Exchange => Boolean) = stack.top.onCompletion(predicate)
   def onCompletion(config: Config[SOnCompletionDefinition]) = stack.top.onCompletion(config)
+  def otherwise = stack.top.otherwise
+
   def pipeline = stack.top.pipeline
   def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = 0) = stack.top.pollEnrich(uri, strategy, timeout)
   def policy(policy: Policy) = stack.top.policy(policy)
   def process(function: Exchange => Unit) = stack.top.process(function)
   def process(processor: Processor) = stack.top.process(processor)
+
+  def recipients(expression: Exchange => Any) = stack.top.recipients(expression)
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
   def rollback = stack.top.rollback
   def routingSlip(header: String) = stack.top.routingSlip(header)
   def routingSlip(header: String, separator: String) = stack.top.routingSlip(header, separator)
   def routingSlip(expression: Exchange => Any) = stack.top.routingSlip(expression)
-  def dynamicRouter(expression: Exchange => Any) = stack.top.dynamicRouter(expression)
+
   def setbody(expression : Exchange => Any) = stack.top.setbody(expression)
   def setfaultbody(expression: Exchange => Any) = stack.top.setfaultbody(expression)
   def setheader(name: String, expression: Exchange => Any) = stack.top.setheader(name, expression)
   def sort[T](expression: (Exchange) => Any, comparator: Comparator[T] = null) = stack.top.sort(expression, comparator)
+  def split(expression: Exchange => Any) = stack.top.split(expression)
   def stop = stack.top.stop
+
   def threads = stack.top.threads
+  def throttle(frequency: Frequency) = stack.top.throttle(frequency)
   def throwException(exception: Exception) = stack.top.throwException(exception)
+  def to(uris: String*) = stack.top.to(uris: _*)
   def transacted = stack.top.transacted
   def transacted(uri: String) = stack.top.transacted
   def transform(expression: Exchange => Any) = stack.top.transform(expression)
+
   def unmarshal(format: DataFormatDefinition) = stack.top.unmarshal(format)
+
   def validate(expression: (Exchange) => Any) = stack.top.validate(expression)
+
+  def when(filter: Exchange => Any) = stack.top.when(filter)
   def wiretap(uri: String) = stack.top.wiretap(uri)
   def wiretap(uri: String, expression: Exchange => Any) = stack.top.wiretap(uri, expression)
-  def aggregate(expression: Exchange => Any, strategy: AggregationStrategy) = stack.top.aggregate(expression, strategy)
 
-  // delegate to Java builder
-  def errorHandler(error: ErrorHandlerBuilder) = builder.setErrorHandlerBuilder(error) 
-  def deadLetterChannel(uri: String) = {
-    val dlc = new DeadLetterChannelBuilder
-    dlc.setDeadLetterUri(uri)
-    dlc
-  }
-  def defaultErrorHandler = builder.defaultErrorHandler
-  def getContext = builder.getContext
-
-  // interceptor methods
-  def interceptFrom(expression: Exchange => Boolean) = {
-    val interceptFrom = builder.interceptFrom
-    interceptFrom.when(new ScalaPredicate(expression))
-    new SInterceptFromDefinition(interceptFrom)(this)
-  }
-
-  def interceptFrom = new SInterceptFromDefinition(builder.interceptFrom)(this)
-  def interceptFrom(uri: String) = new SInterceptFromDefinition(builder.interceptFrom(uri))(this)
-
-  def interceptSendTo(uri: String) = {
-    val intercept = builder.interceptSendToEndpoint(uri)
-    new SInterceptSendToEndpointDefinition(intercept)(this)
-  }
-
-  def intercept = new SInterceptDefinition(builder.intercept)(this)
-
-  // implementing the Routes interface to allow RouteBuilder to be discovered by Spring
-  def addRoutesToCamelContext(context: CamelContext) = builder.addRoutesToCamelContext(context)
-  
-  val serialization = new org.apache.camel.model.dataformat.SerializationDataFormat
-
-  val failureOnly = new Config[SOnCompletionDefinition] {
-    def configure(target: SOnCompletionDefinition) = target.onFailureOnly()
-  }
-
-  val completeOnly = new Config[SOnCompletionDefinition] {
-    def configure(target: SOnCompletionDefinition) = target.onCompleteOnly()
-  }
+  def -->(uris: String*) = stack.top.to(uris: _*)
 
 }

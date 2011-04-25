@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel
-package scala.dsl
+package scala
 
 import org.apache.camel.Predicate
 import org.apache.camel.util.ObjectHelper.evaluateValuePredicate

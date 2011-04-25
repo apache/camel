@@ -20,7 +20,7 @@ package scala
 import reflect.Manifest
 import org.apache.camel.spi.{UnitOfWork, Synchronization}
 import org.apache.camel.{ExchangePattern, Message, Endpoint, Exchange}
-import java.lang.{Exception, String, Class}
+import java.lang.{String, Class}
 
 /**
  * Rich wrapper for Camel's Exchange implementations
