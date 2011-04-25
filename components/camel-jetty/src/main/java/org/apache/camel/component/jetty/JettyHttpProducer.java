@@ -67,9 +67,10 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
     }
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {
-        HttpClient client = getEndpoint().getClient();
-
         try {
+            // TODO - Why does this use the endpoint client and not the one we were handed during construction?
+            HttpClient client = getEndpoint().getClient();
+            
             JettyContentExchange httpExchange = createHttpExchange(exchange, callback);
             doSendExchange(client, httpExchange);
         } catch (Exception e) {

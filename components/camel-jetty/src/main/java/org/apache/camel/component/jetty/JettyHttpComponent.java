@@ -39,8 +39,10 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.Address;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.http.ssl.SslContextFactory;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -96,6 +98,8 @@ public class JettyHttpComponent extends HttpComponent {
     protected JettyHttpBinding jettyHttpBinding;
     protected Long continuationTimeout;
     protected boolean useContinuation = true;
+    protected SSLContextParameters sslContextParameters;
+    protected boolean isExplicitHttpClient;
 
     class ConnectorRef {
         Server server;
@@ -142,17 +146,45 @@ public class JettyHttpComponent extends HttpComponent {
         Filter multipartFilter = resolveAndRemoveReferenceParameter(parameters, "multipartFilterRef", Filter.class);
         Long continuationTimeout = getAndRemoveParameter(parameters, "continuationTimeout", Long.class);
         Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
-
+        SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
+        
+        
         // configure http client if we have url configuration for it
         // http client is only used for jetty http producer (hence not very commonly used)
         HttpClient client = null;
-        if (IntrospectionSupport.hasProperties(parameters, "httpClient.")) {
-            // set additional parameters on http client
-            // only create client when needed
+        if (IntrospectionSupport.hasProperties(parameters, "httpClient.") || sslContextParameters != null) {
+            client = getNewHttpClient();
+            
+            if (IntrospectionSupport.hasProperties(parameters, "httpClient.")) {
+                if (isExplicitHttpClient) {
+                    LOG.warn("The user explicitly set an HttpClient instance on the component, "
+                             + "but this endpoint provides HttpClient configuration.  Are you sure that "
+                             + "this is what was intended?  Applying endpoint configuration to a new HttpClient instance "
+                             + "to avoid altering existing HttpClient instances.");
+                }
+            
+                // set additional parameters on http client
+                IntrospectionSupport.setProperties(client, parameters, "httpClient.");
+                // validate that we could resolve all httpClient. parameters as this component is lenient
+                validateParameters(uri, parameters, "httpClient.");
+            }
+            
+            // Note that the component level instance is already configured in getNewHttpClient.
+            // We replace it here for endpoint level config.
+            if (sslContextParameters != null) {
+                if (isExplicitHttpClient) {
+                    LOG.warn("The user explicitly set an HttpClient instance on the component, "
+                             + "but this endpoint provides SSLContextParameters configuration.  Are you sure that "
+                             + "this is what was intended?  Applying endpoint configuration to a new HttpClient instance "
+                             + "to avoid altering existing HttpClient instances.");
+                }
+                
+                ((CamelHttpClient) client).setSSLContext(sslContextParameters.createSSLContext());
+            }
+        } else {
+            // Either we use the default one created by the component or we are using
+            // one explicitly set by the end user, either way, we just use it as is.
             client = getHttpClient();
-            IntrospectionSupport.setProperties(client, parameters, "httpClient.");
-            // validate that we could resolve all httpClient. parameters as this component is lenient
-            validateParameters(uri, parameters, "httpClient.");
         }
         // keep the configure parameters for the http client
         for (String key : parameters.keySet()) {
@@ -224,6 +256,11 @@ public class JettyHttpComponent extends HttpComponent {
         if (useContinuation != null) {
             endpoint.setUseContinuation(useContinuation);
         }
+        
+        if (sslContextParameters == null) {
+            sslContextParameters = this.sslContextParameters;
+        }
+        endpoint.setSslContextParameters(sslContextParameters);
 
         setProperties(endpoint, parameters);
         return endpoint;
@@ -243,7 +280,7 @@ public class JettyHttpComponent extends HttpComponent {
             if (connectorRef == null) {
                 Connector connector;
                 if ("https".equals(endpoint.getProtocol())) {
-                    connector = getSslSocketConnector(endpoint.getPort());
+                    connector = getSslSocketConnector(endpoint);
                 } else {
                     connector = getSocketConnector(endpoint.getPort());
                 }
@@ -400,44 +437,81 @@ public class JettyHttpComponent extends HttpComponent {
         return sslKeystore;
     }
 
-    protected SslSelectChannelConnector getSslSocketConnector(int port) throws Exception {
+    protected SslSelectChannelConnector getSslSocketConnector(JettyHttpEndpoint endpoint) throws Exception {
         SslSelectChannelConnector answer = null;
         if (sslSocketConnectors != null) {
-            answer = sslSocketConnectors.get(port);
+            answer = sslSocketConnectors.get(endpoint.getPort());
         }
         if (answer == null) {
-            answer = createSslSocketConnector();
+            answer = createSslSocketConnector(endpoint);
         }
         return answer;
     }
     
-    protected SslSelectChannelConnector createSslSocketConnector() throws Exception {
-        SslSelectChannelConnector answer = new SslSelectChannelConnector();
-        // with default null values, jetty ssl system properties
-        // and console will be read by jetty implementation
-
-        String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
-        if (keystoreProperty != null) {
-            answer.getSslContextFactory().setKeyStore(keystoreProperty);
-        } else if (sslKeystore != null) {
-            answer.getSslContextFactory().setKeyStore(sslKeystore);
+    protected SslSelectChannelConnector createSslSocketConnector(JettyHttpEndpoint endpoint) throws Exception {
+        SslSelectChannelConnector answer = null;
+        
+        // Note that this was set on the endpoint when it was constructed.  It was
+        // either explicitly set at the component or on the endpoint, but either way,
+        // the value is already set.  We therefore do not need to look at the component
+        // level SSLContextParameters again in this method.
+        SSLContextParameters endpointSslContextParameters = endpoint.getSslContextParameters();
+        
+        if (endpointSslContextParameters != null) {
+            SslContextFactory contextFact = new SslContextFactory() {
+                /**
+                 * We are going to provide the context so none of the configuration options
+                 * matter in the factory.  This method does not account for this scenario so
+                 * we short-circuit it here to just let things go when the context is already
+                 * provided.
+                 */
+                @Override
+                public boolean checkConfig() {
+                    if (getSslContext() == null) {
+                        return super.checkConfig();
+                    } else {
+                        return true;
+                    }
+                }
+                
+            };
+            contextFact.setSslContext(endpointSslContextParameters.createSSLContext());
+            answer = new SslSelectChannelConnector(contextFact);
+        } else {
+            answer = new SslSelectChannelConnector();
+            // with default null values, jetty ssl system properties
+            // and console will be read by jetty implementation
+    
+            String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
+            if (keystoreProperty != null) {
+                answer.getSslContextFactory().setKeyStore(keystoreProperty);
+            } else if (sslKeystore != null) {
+                answer.getSslContextFactory().setKeyStore(sslKeystore);
+            }
+    
+            String keystorePassword = System.getProperty(JETTY_SSL_KEYPASSWORD);
+            if (keystorePassword != null) {
+                answer.getSslContextFactory().setKeyManagerPassword(keystorePassword);
+            } else if (sslKeyPassword != null) {
+                answer.getSslContextFactory().setKeyManagerPassword(sslKeyPassword);
+            }
+    
+            String password = System.getProperty(JETTY_SSL_PASSWORD);
+            if (password != null) {
+                answer.getSslContextFactory().setKeyStorePassword(password);
+            } else if (sslPassword != null) {
+                answer.getSslContextFactory().setKeyStorePassword(sslPassword);
+            }
         }
-
-        String keystorePassword = System.getProperty(JETTY_SSL_KEYPASSWORD);
-        if (keystorePassword != null) {
-            answer.getSslContextFactory().setKeyManagerPassword(keystorePassword);
-        } else if (sslKeyPassword != null) {
-            answer.getSslContextFactory().setKeyManagerPassword(sslKeyPassword);
-        }
-
-        String password = System.getProperty(JETTY_SSL_PASSWORD);
-        if (password != null) {
-            answer.getSslContextFactory().setKeyStorePassword(password);
-        } else if (sslPassword != null) {
-            answer.getSslContextFactory().setKeyStorePassword(sslPassword);
-        }
-
+        
         if (getSslSocketConnectorProperties() != null) {
+            if (endpointSslContextParameters != null) {
+                LOG.warn("An SSLContextParameters instance is configured "
+                         + "in addition to SslSocketConnectorProperties.  Any SslSocketConnector properties"
+                         + "related to the SSLContext will be ignored in favor of the settings provided through"
+                         + "SSLContextParameters.");
+            }
+            
             // must copy the map otherwise it will be deleted
             Map<String, Object> properties = new HashMap<String, Object>(getSslSocketConnectorProperties());
             IntrospectionSupport.setProperties(answer, properties);
@@ -490,43 +564,58 @@ public class JettyHttpComponent extends HttpComponent {
         this.socketConnectors = socketConnectors;
     }
 
-    public synchronized HttpClient getHttpClient() {
+    public synchronized HttpClient getHttpClient() throws Exception {
         if (httpClient == null) {
-            httpClient = new HttpClient();
-            httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
-
-            if (System.getProperty("http.proxyHost") != null && System.getProperty("http.proxyPort") != null) {
-                String host = System.getProperty("http.proxyHost");
-                int port = Integer.parseInt(System.getProperty("http.proxyPort"));
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Java System Property http.proxyHost and http.proxyPort detected. Using http proxy host: "
-                            + host + " port: " + port);
-                }
-                httpClient.setProxy(new Address(host, port));
-            }
-
-            // use QueueThreadPool as the default bounded is deprecated (see SMXCOMP-157)
-            if (getHttpClientThreadPool() == null) {
-                QueuedThreadPool qtp = new QueuedThreadPool();
-                if (httpClientMinThreads != null) {
-                    qtp.setMinThreads(httpClientMinThreads.intValue());
-                }
-                if (httpClientMaxThreads != null) {
-                    qtp.setMaxThreads(httpClientMaxThreads.intValue());
-                }
-                try {
-                    qtp.start();
-                } catch (Exception e) {
-                    throw new RuntimeCamelException("Error starting JettyHttpClient thread pool: " + qtp, e);
-                }
-                setHttpClientThreadPool(qtp);
-            }
-            httpClient.setThreadPool(getHttpClientThreadPool());
+            httpClient = this.getNewHttpClient();
         }
+        return httpClient;
+    }
+    
+    public CamelHttpClient getNewHttpClient() throws Exception {
+        CamelHttpClient httpClient = new CamelHttpClient();
+        httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
+
+        if (System.getProperty("http.proxyHost") != null && System.getProperty("http.proxyPort") != null) {
+            String host = System.getProperty("http.proxyHost");
+            int port = Integer.parseInt(System.getProperty("http.proxyPort"));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Java System Property http.proxyHost and http.proxyPort detected. Using http proxy host: "
+                        + host + " port: " + port);
+            }
+            httpClient.setProxy(new Address(host, port));
+        }
+
+        // use QueueThreadPool as the default bounded is deprecated (see SMXCOMP-157)
+        if (getHttpClientThreadPool() == null) {
+            QueuedThreadPool qtp = new QueuedThreadPool();
+            if (httpClientMinThreads != null) {
+                qtp.setMinThreads(httpClientMinThreads.intValue());
+            }
+            if (httpClientMaxThreads != null) {
+                qtp.setMaxThreads(httpClientMaxThreads.intValue());
+            }
+            try {
+                qtp.start();
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Error starting JettyHttpClient thread pool: " + qtp, e);
+            }
+            setHttpClientThreadPool(qtp);
+        }
+        httpClient.setThreadPool(getHttpClientThreadPool());
+        
+        if (this.sslContextParameters != null) {
+            ((CamelHttpClient) httpClient).setSSLContext(this.sslContextParameters.createSSLContext());
+        }
+        
         return httpClient;
     }
 
     public void setHttpClient(HttpClient httpClient) {
+        if (httpClient != null) {
+            this.isExplicitHttpClient = true;
+        } else {
+            this.isExplicitHttpClient = false;
+        }
         this.httpClient = httpClient;
     }
 
@@ -664,6 +753,14 @@ public class JettyHttpComponent extends HttpComponent {
 
     public void setUseContinuation(boolean useContinuation) {
         this.useContinuation = useContinuation;
+    }
+    
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     // Implementation methods

@@ -28,6 +28,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.server.Handler;
 
@@ -45,6 +46,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private Filter multipartFilter;
     private Long continuationTimeout;
     private Boolean useContinuation;
+    private SSLContextParameters sslContextParameters;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
@@ -87,7 +89,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
         this.handlers = handlers;
     }
 
-    public HttpClient getClient() {
+    public HttpClient getClient() throws Exception {
         if (client == null) {
             return getComponent().getHttpClient();
         }
@@ -150,5 +152,13 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     public void setUseContinuation(Boolean useContinuation) {
         this.useContinuation = useContinuation;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 }

@@ -17,7 +17,6 @@
 package org.apache.camel.component.http4;
 
 import java.net.URI;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +26,7 @@ import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.auth.params.AuthParamBean;
 import org.apache.http.client.params.ClientParamBean;
 import org.apache.http.conn.ClientConnectionManager;
@@ -48,7 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Defines the <a href="http://camel.apache.org/http.html">HTTP
+ * Defines the <a href="http://camel.apache.org/http4.html">HTTP4
  * Component</a>
  *
  * @version 
@@ -59,6 +59,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected HttpClientConfigurer httpClientConfigurer;
     protected ClientConnectionManager clientConnectionManager;
     protected HttpBinding httpBinding;
+    protected SSLContextParameters sslContextParameters;
     protected X509HostnameVerifier x509HostnameVerifier = new BrowserCompatHostnameVerifier();
 
     // options to the default created http connection manager
@@ -173,6 +174,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             x509HostnameVerifier = this.x509HostnameVerifier;
         }
         
+        SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
+        if (sslContextParameters == null) {
+            sslContextParameters = this.sslContextParameters;
+        }
+        
         // create the configurer to use for this endpoint
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
@@ -192,7 +198,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // register port on schema registry
         boolean secure = isSecureConnection(uri);
         int port = getPort(httpUri);
-        registerPort(secure, x509HostnameVerifier, port);
+        registerPort(secure, x509HostnameVerifier, port, sslContextParameters);
         
         // create the endpoint
         HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, httpUri, clientParams, clientConnectionManager, configurer);
@@ -222,18 +228,22 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         return port;
     }
-
-    protected void registerPort(boolean secure, X509HostnameVerifier x509HostnameVerifier, int port) throws NoSuchAlgorithmException {
+    
+    protected void registerPort(boolean secure, X509HostnameVerifier x509HostnameVerifier, int port, SSLContextParameters sslContextParams) throws Exception {
         SchemeRegistry registry = clientConnectionManager.getSchemeRegistry();
         if (secure) {
-            // must register both https and https4
-            SSLSocketFactory socketFactory = SSLSocketFactory.getSocketFactory();
+            SSLSocketFactory socketFactory = null;
+            if (sslContextParams == null) {
+                socketFactory = SSLSocketFactory.getSocketFactory();
+            } else {
+                socketFactory = new SSLSocketFactory(sslContextParams.createSSLContext());
+            }
+            
             socketFactory.setHostnameVerifier(x509HostnameVerifier);
+            // must register both https and https4
             registry.register(new Scheme("https", port, socketFactory));
             LOG.info("Registering SSL scheme https on port " + port);
             
-            socketFactory = SSLSocketFactory.getSocketFactory();
-            socketFactory.setHostnameVerifier(x509HostnameVerifier);
             registry.register(new Scheme("https4", port, socketFactory));
             LOG.info("Registering SSL scheme https4 on port " + port);
         } else {
@@ -318,6 +328,14 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
     public void setHttpBinding(HttpBinding httpBinding) {
         this.httpBinding = httpBinding;
+    }
+    
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public int getMaxTotalConnections() {
