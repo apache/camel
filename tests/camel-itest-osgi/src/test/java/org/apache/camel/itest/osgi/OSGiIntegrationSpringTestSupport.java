@@ -27,6 +27,7 @@ public abstract class OSGiIntegrationSpringTestSupport extends OSGiIntegrationTe
     
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        setThreadContextClassLoader();
         applicationContext = createApplicationContext();        
         assertNotNull("Should have created a valid spring context", applicationContext);
         applicationContext.setBundleContext(bundleContext);
