@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

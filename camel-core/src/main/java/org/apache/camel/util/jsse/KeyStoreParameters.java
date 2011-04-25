@@ -28,7 +28,6 @@ import java.security.Security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A representation of configuration options for creating and loading a
  * {@link KeyStore} instance.
@@ -151,9 +150,7 @@ public class KeyStoreParameters {
      */
     public KeyStore createKeyStore() throws GeneralSecurityException, IOException {
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating KeyStore instance from KeyStoreParameters: " + this);
-        }
+        LOG.debug("Creating KeyStore instance from KeyStoreParameters: {}", this);
 
         String ksType = this.type;
         if (ksType == null) {
@@ -165,7 +162,7 @@ public class KeyStoreParameters {
             ksPassword = this.password.toCharArray();
         }
 
-        KeyStore ks = null;
+        KeyStore ks;
         if (this.provider == null) {
             ks = KeyStore.getInstance(ksType);
         } else {

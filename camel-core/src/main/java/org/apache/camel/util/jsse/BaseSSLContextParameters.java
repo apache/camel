@@ -87,7 +87,7 @@ public abstract class BaseSSLContextParameters {
     private FilterParameters secureSocketProtocolsFilter;
     
     /**
-     * The optional {@link SSLSessionContext} timeout time for {@link SSLSession}s.
+     * The optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s.
      * TODO provide a time unit here and on the getter/setter.
      */
     private Integer sessionTimeout;
@@ -199,14 +199,14 @@ public abstract class BaseSSLContextParameters {
     }
 
     /**
-     * Returns the optional {@link SSLSessionContext} timeout time for {@link SSLSession}s.
+     * Returns the optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s.
      */
     public Integer getSessionTimeout() {
         return sessionTimeout;
     }
 
     /**
-     * Sets the optional {@link SSLSessionContext} timeout time for {@link SSLSession}s.
+     * Sets the optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s.
      *
      * @param sessionTimeout the timeout value or {@code null} to use the default
      */
@@ -224,15 +224,15 @@ public abstract class BaseSSLContextParameters {
      * @throws GeneralSecurityException if there is an error configuring the context
      */
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
-        LOG.debug("Configuring client and server side SSLContext parameters...");
-        
+        LOG.trace("Configuring client and server side SSLContext parameters...");
+
         if (this.getSessionTimeout() != null) {
-            LOG.debug("Configuring client and server side SSLContext session timeout: " + this.getSessionTimeout());
+            LOG.debug("Configuring client and server side SSLContext session timeout: {}", this.getSessionTimeout());
             this.configureSessionContext(context.getClientSessionContext(), this.getSessionTimeout());
             this.configureSessionContext(context.getServerSessionContext(), this.getSessionTimeout());
         }
         
-        LOG.debug("Configured client and server side SSLContext parameters.");
+        LOG.trace("Configured client and server side SSLContext parameters.");
     }
     
     protected FilterParameters getDefaultCipherSuitesFilter() {
@@ -536,7 +536,7 @@ public abstract class BaseSSLContextParameters {
     }
     
     /**
-     * Configures a {@link SessionContext}, client or server, with the supplied session timeout.
+     * Configures a {@link SSLSessionContext}, client or server, with the supplied session timeout.
      *
      * @param sessionContext the context to configure
      * @param sessionTimeout the timeout time period
@@ -550,7 +550,7 @@ public abstract class BaseSSLContextParameters {
         } else {
             throw new GeneralSecurityException(
                     "The SSLContext does not support SSLSessionContext, "
-                            + "but a session timeout is configured.  Set sessionTimeout to null "
+                            + "but a session timeout is configured. Set sessionTimeout to null "
                             + "to avoid this error.");
         }
     }
@@ -610,8 +610,6 @@ public abstract class BaseSSLContextParameters {
      * @param excludePatterns the patterns to use for exclusion filtering, required if {@code explicitValues} is {@code null}
      *
      * @return the filtered values
-     *
-     * @see #filter(Collection, FilterParameters, FilterParameters, Collection)
      */
     protected Collection<String> filter(Collection<String> explicitValues, Collection<String> availableValues, 
                                         List<Pattern> includePatterns, List<Pattern> excludePatterns) {
@@ -656,15 +654,19 @@ public abstract class BaseSSLContextParameters {
     }
     
     /**
-     * Configures a {@code T} based on the related configuration
-     * options. The return value from this method may be {@code object} or it
-     * may be a decorated instance there of. Consequently, any subsequent
-     * actions on {@code object} must be performed using the returned value.
-     * 
-     * @param object the object to configure
-     * @return {@code object} or a decorated instance there of
+     * Configures a {@code T} based on the related configuration options.
      */
     interface Configurer<T> {
+
+        /**
+         * Configures a {@code T} based on the related configuration options.
+         * The return value from this method may be {@code object} or it
+         * may be a decorated instance there of. Consequently, any subsequent
+         * actions on {@code object} must be performed using the returned value.
+         *
+         * @param object the object to configure
+         * @return {@code object} or a decorated instance there of
+         */
         T configure(T object);
     }
     
@@ -681,7 +683,7 @@ public abstract class BaseSSLContextParameters {
     /**
      * Class needed to provide decoration of an existing {@link SSLContext}.
      * Since {@code SSLContext} is an abstract class and requires an instance of
-     * {@Link SSLContextSpi}, this class effectively wraps an
+     * {@link SSLContextSpi}, this class effectively wraps an
      * {@code SSLContext} as if it were an {@code SSLContextSpi}, allowing us to
      * achieve decoration.
      */
@@ -741,8 +743,7 @@ public abstract class BaseSSLContextParameters {
         }
 
         @Override
-        protected void engineInit(
-                                  KeyManager[] km, 
+        protected void engineInit(KeyManager[] km,
                                   TrustManager[] tm, 
                                   SecureRandom random) throws KeyManagementException {
             this.context.init(km, tm, random);
@@ -762,7 +763,6 @@ public abstract class BaseSSLContextParameters {
          * @return {@code engine} or a decorated instance there of
          */
         protected SSLEngine configureSSLEngine(SSLEngine engine) {
-            
             SSLEngine workingEngine = engine;
             
             for (Configurer<SSLEngine> configurer : this.sslEngineConfigurers) {
@@ -948,4 +948,5 @@ public abstract class BaseSSLContextParameters {
             return workingSocket;
         }
     }
+
 }

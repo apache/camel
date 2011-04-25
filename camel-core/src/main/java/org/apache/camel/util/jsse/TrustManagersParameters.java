@@ -71,14 +71,11 @@ public class TrustManagersParameters {
      */
     public TrustManager[] createTrustManagers() throws GeneralSecurityException, IOException {
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating TrustManager[] from TrustManagersParameters: " + this);
-        }
-        
+        LOG.trace("Creating TrustManager[] from TrustManagersParameters: {}", this);
+
         TrustManager[] trustManagers = null;
 
         if (this.getKeyStore() != null) {
-        
             String tmfAlgorithm = this.getAlgorithm();
             if (tmfAlgorithm == null) {
                 tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
@@ -95,15 +92,11 @@ public class TrustManagersParameters {
     
             tmf.init(ks);
             trustManagers = tmf.getTrustManagers();
-           
         }
         
         return trustManagers;
     }
 
-    /**
-     * @see #setKeyStore(KeyStoreParameters)
-     */
     public KeyStoreParameters getKeyStore() {
         return keyStore;
     }
@@ -118,9 +111,6 @@ public class TrustManagersParameters {
         this.keyStore = value;
     }
 
-    /**
-     * @see #setProvider(String)
-     */
     public String getProvider() {
         return provider;
     }
@@ -139,9 +129,6 @@ public class TrustManagersParameters {
         this.provider = value;
     }
 
-    /**
-     * @see KeyManagersParametersTest#setAlgorithm(String)
-     */
     public String getAlgorithm() {
         return algorithm;
     }

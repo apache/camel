@@ -93,9 +93,6 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      */
     private String secureSocketProtocol;    
 
-    /**
-     * @see #setKeyManagers(KeyManager)
-     */
     public KeyManagersParameters getKeyManagers() {
         return keyManagers;
     }
@@ -111,9 +108,6 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         this.keyManagers = keyManagers;
     }
 
-    /**
-     * @see #setTrustManagers(TrustManagersParameters)
-     */
     public TrustManagersParameters getTrustManagers() {
         return trustManagers;
     }
@@ -129,9 +123,6 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         this.trustManagers = trustManagers;
     }
 
-    /**
-     * @see #setSecureRandom(SecureRandomParameters)
-     */
     public SecureRandomParameters getSecureRandom() {
         return secureRandom;
     }
@@ -146,9 +137,6 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         this.secureRandom = secureRandom;
     }
     
-    /**
-     * @see #setClientParameters(SSLContextClientParameters)
-     */
     public SSLContextClientParameters getClientParameters() {
         return clientParameters;
     }
@@ -166,9 +154,6 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         this.clientParameters = clientParameters;
     }
 
-    /**
-     * @see #setServerParameters(SSLContextServerParameters)
-     */
     public SSLContextServerParameters getServerParameters() {
         return serverParameters;
     }
@@ -186,9 +171,6 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         this.serverParameters = serverParameters;
     }
 
-    /**
-     * @see #setProvider(String)
-     */
     public String getProvider() {
         return provider;
     }
@@ -197,7 +179,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      * Sets the optional provider identifier to use when constructing an
      * {@link SSLContext}.
      * 
-     * @param the provider identifier (from the list of available providers
+     * @param provider the identifier (from the list of available providers
      *            returned by {@link Security#getProviders()}) or {@code null}
      *            to use the highest priority provider implementing the secure
      *            socket protocol
@@ -209,9 +191,6 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         this.provider = provider;
     }
 
-    /**
-     * @see #setSecureSocketProtocol(String)
-     */
     public String getSecureSocketProtocol() {
         if (this.secureSocketProtocol == null) {
             return DEFAULT_SECURE_SOCKET_PROTOCOL;
@@ -250,15 +229,13 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      */
     public SSLContext createSSLContext() throws GeneralSecurityException, IOException {
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating SSLContext from SSLContextParameters: " + this);
-        }
+        LOG.debug("Creating SSLContext from SSLContextParameters: {}", this);
 
         KeyManager[] keyManagers = this.keyManagers == null ? null : this.keyManagers.createKeyManagers();
         TrustManager[] trustManagers = this.trustManagers == null ? null : this.trustManagers.createTrustManagers();
         SecureRandom secureRandom = this.secureRandom == null ? null : this.secureRandom.createSecureRandom();
 
-        SSLContext context = null;
+        SSLContext context;
         if (this.getProvider() == null) {
             context = SSLContext.getInstance(this.getSecureSocketProtocol());
         } else {
@@ -282,7 +259,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     
     @Override
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
-        LOG.debug("Configuring client and server side SSLContext parameters...");
+        LOG.trace("Configuring client and server side SSLContext parameters...");
         super.configureSSLContext(context);
         
         if (this.getClientParameters() != null) {
@@ -295,13 +272,12 @@ public class SSLContextParameters extends BaseSSLContextParameters {
             this.getServerParameters().configureSSLContext(context);
         }        
         
-        LOG.debug("Configured client and server side SSLContext parameters.");
+        LOG.trace("Configured client and server side SSLContext parameters.");
     }
     
     @Override
     protected List<Configurer<SSLEngine>> getSSLEngineConfigurers(SSLContext context) {
-        
-        LOG.debug("Collecting client and server side SSLEngine configurers...");
+        LOG.trace("Collecting client and server side SSLEngine configurers...");
         List<Configurer<SSLEngine>> configurers = super.getSSLEngineConfigurers(context);
         
         if (this.getClientParameters() != null) {
@@ -314,14 +290,14 @@ public class SSLContextParameters extends BaseSSLContextParameters {
             configurers.addAll(this.getServerParameters().getSSLEngineConfigurers(context));
         }
         
-        LOG.debug("Collected client and server side SSLEngine configurers.");
+        LOG.trace("Collected client and server side SSLEngine configurers.");
         
         return configurers;
     }
     
     @Override
     protected List<Configurer<SSLSocketFactory>> getSSLSocketFactoryConfigurers(SSLContext context) {
-        LOG.debug("Collecting SSLSocketFactory configurers...");
+        LOG.trace("Collecting SSLSocketFactory configurers...");
         List<Configurer<SSLSocketFactory>> configurers = super.getSSLSocketFactoryConfigurers(context);
         
         if (this.getClientParameters() != null) {
@@ -329,14 +305,14 @@ public class SSLContextParameters extends BaseSSLContextParameters {
             configurers.addAll(this.getClientParameters().getSSLSocketFactoryConfigurers(context));
         }
         
-        LOG.debug("Collected SSLSocketFactory configurers.");
+        LOG.trace("Collected SSLSocketFactory configurers.");
         
         return configurers;
     }
 
     @Override
     protected List<Configurer<SSLServerSocketFactory>> getSSLServerSocketFactoryConfigurers(SSLContext context) {
-        LOG.debug("Collecting SSLServerSocketFactory configurers...");
+        LOG.trace("Collecting SSLServerSocketFactory configurers...");
         List<Configurer<SSLServerSocketFactory>> configurers = super.getSSLServerSocketFactoryConfigurers(context);
         
         if (this.getServerParameters() != null) {
@@ -344,7 +320,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
             configurers.addAll(this.getServerParameters().getSSLServerSocketFactoryConfigurers(context));
         }
         
-        LOG.debug("Collected client and server side SSLServerSocketFactory configurers.");
+        LOG.trace("Collected client and server side SSLServerSocketFactory configurers.");
         
         return configurers;
     }

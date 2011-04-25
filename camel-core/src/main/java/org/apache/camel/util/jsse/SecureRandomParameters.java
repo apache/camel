@@ -56,12 +56,9 @@ public class SecureRandomParameters {
      *             not exist.
      */
     public SecureRandom createSecureRandom() throws GeneralSecurityException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating SecureRandom from SecureRandomParameters: " + this);
-        }
-        
-        SecureRandom secureRandom = null;
-        
+        LOG.debug("Creating SecureRandom from SecureRandomParameters: {}", this);
+
+        SecureRandom secureRandom;
         if (this.getProvider() != null) {
             secureRandom = SecureRandom.getInstance(this.getAlgorithm(), this.getProvider());
         } else {

@@ -36,12 +36,12 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
 
     @Override
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
-        LOG.debug("Configuring client-side SSLContext parameters...");
+        LOG.trace("Configuring client-side SSLContext parameters...");
         if (this.getSessionTimeout() != null) {
             LOG.debug("Configuring client-side SSLContext session timeout: " + this.getSessionTimeout());
             this.configureSessionContext(context.getClientSessionContext(), this.getSessionTimeout());
         }
-        LOG.debug("Configured client-side SSLContext parameters.");
+        LOG.trace("Configured client-side SSLContext parameters.");
     }
 
     /**

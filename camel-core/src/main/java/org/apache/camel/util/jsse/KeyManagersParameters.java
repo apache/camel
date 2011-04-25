@@ -43,14 +43,14 @@ public class KeyManagersParameters {
     
     /**
      * The optional password for recovering keys in the key store. Used by the
-     * {@link KeyManagerFactory} that creates the {@link KeyManagers}s
+     * {@link KeyManagerFactory} that creates the {@link KeyManager}s
      * represented by this object's configuration.
      */
     protected String keyPassword;
     
     /**
      * The optional provider identifier for the {@link KeyManagerFactory} used to create
-     * the {@link KeyManagers}s represented by this object's configuration.
+     * the {@link KeyManager}s represented by this object's configuration.
      */
     protected String provider;
     
@@ -81,11 +81,9 @@ public class KeyManagersParameters {
      */
     public KeyManager[] createKeyManagers() throws GeneralSecurityException, IOException {
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating KeyManager[] from KeyManagersParameters: " + this);
-        }
+        LOG.debug("Creating KeyManager[] from KeyManagersParameters: {}", this);
 
-        KeyManager[] keyManagers = null;
+        KeyManager[] keyManagers;
 
         String kmfAlgorithm = this.getAlgorithm();
         if (kmfAlgorithm == null) {
@@ -139,7 +137,7 @@ public class KeyManagersParameters {
 
     /**
      * Sets the optional password for recovering keys in the key store. Used by the
-     * {@link KeyManagerFactory} that creates the {@link KeyManagers}s
+     * {@link KeyManagerFactory} that creates the {@link KeyManager}s
      * represented by this object's configuration.
      *
      * @param value the value to use
@@ -169,7 +167,7 @@ public class KeyManagersParameters {
     }
 
     /**
-     * @see KeyManagersParametersTest#setAlgorithm(String)
+     * @see KeyManagerFactory#getDefaultAlgorithm()
      */
     public String getAlgorithm() {
         return algorithm;
