@@ -38,6 +38,7 @@ public class JdbcStatementParametersTest extends CamelTestSupport {
     private String user = "sa";
     private String password = "";
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testMax2Rows() throws Exception {
         List rows = template.requestBody("direct:hello", "select * from customer order by id", List.class);
@@ -46,6 +47,7 @@ public class JdbcStatementParametersTest extends CamelTestSupport {
         assertEquals(2, context.getEndpoints().size());
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testMax5Rows() throws Exception {
         List rows = template.requestBody("jdbc:testdb?statement.maxRows=5&statement.fetchSize=50", "select * from customer order by id", List.class);
@@ -54,6 +56,7 @@ public class JdbcStatementParametersTest extends CamelTestSupport {
         assertEquals(3, context.getEndpoints().size());
     }
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testNoParameters() throws Exception {
         List rows = template.requestBody("jdbc:testdb", "select * from customer order by id", List.class);

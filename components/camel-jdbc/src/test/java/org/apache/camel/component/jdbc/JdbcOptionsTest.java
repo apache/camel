@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -39,6 +40,7 @@ public class JdbcOptionsTest extends CamelTestSupport {
     private String password = "";
     private DataSource ds;
 
+    @SuppressWarnings("rawtypes")
     @Test
     public void testReadSize() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -50,6 +52,58 @@ public class JdbcOptionsTest extends CamelTestSupport {
 
         List list = mock.getExchanges().get(0).getIn().getBody(ArrayList.class);
         assertEquals(1, list.size());
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testInsertCommitO() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:resultTx");
+        mock.expectedMessageCount(1);
+        // insert 2 recs into table
+        template.sendBody("direct:startTx", "insert into customer values ('cust3', 'johnsmith');insert into customer values ('cust4', 'hkesler') ");
+
+        mock.assertIsSatisfied();
+
+        String body = mock.getExchanges().get(0).getIn().getBody(String.class);
+        assertNull(body);
+
+        // now test to see that they were inserted and committed properly
+        MockEndpoint mockTest = getMockEndpoint("mock:retrieve");
+        mockTest.expectedMessageCount(1);
+
+        template.sendBody("direct:retrieve", "select * from customer");
+
+        mockTest.assertIsSatisfied();
+
+        List list = mockTest.getExchanges().get(0).getIn().getBody(ArrayList.class);
+        // both records were committed
+        assertEquals(4, list.size());
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testInsertRollback() throws Exception {
+        // insert 2 records
+        try{
+            template.sendBody("direct:startTx", "insert into customer values ('cust3', 'johnsmith');insert into customer values ('cust3', 'hkesler')");
+            fail("Should have thrown a CamelExecutionException");
+        } catch (CamelExecutionException e) {
+            if (!e.getCause().getMessage().contains("Violation of unique constraint")) {
+                fail("Test did not throw the expected Constraint Violation Exception");
+            }
+        }
+
+        // check to see that they failed by getting a rec count from table
+        MockEndpoint mockTest = getMockEndpoint("mock:retrieve");
+        mockTest.expectedMessageCount(1);
+
+        template.sendBody("direct:retrieve", "select * from customer");
+
+        mockTest.assertIsSatisfied();
+
+        List list = mockTest.getExchanges().get(0).getIn().getBody(ArrayList.class);
+        // all recs failed to insert
+        assertEquals(2, list.size());
     }
 
     @Test
@@ -73,6 +127,8 @@ public class JdbcOptionsTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").to("jdbc:testdb?readSize=1").to("mock:result");
+                from("direct:retrieve").to("jdbc:testdb").to("mock:retrieve");
+                from("direct:startTx").to("jdbc:testdb?transacted=true").to("mock:resultTx");
             }
         };
     }
@@ -84,7 +140,7 @@ public class JdbcOptionsTest extends CamelTestSupport {
         ds = dataSource;
 
         JdbcTemplate jdbc = new JdbcTemplate(ds);
-        jdbc.execute("create table customer (id varchar(15), name varchar(10))");
+        jdbc.execute("create table customer (id varchar(15) PRIMARY KEY, name varchar(10))");
         jdbc.execute("insert into customer values('cust1','jstrachan')");
         jdbc.execute("insert into customer values('cust2','nsandhu')");
         super.setUp();

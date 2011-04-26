@@ -30,6 +30,7 @@ import org.apache.camel.impl.DefaultEndpoint;
  */
 public class JdbcEndpoint extends DefaultEndpoint {
     private int readSize;
+    private boolean transacted;
     private DataSource dataSource;
     private Map<String, Object> parameters;
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;
@@ -51,7 +52,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new JdbcProducer(this, dataSource, readSize, parameters);
+        return new JdbcProducer(this, dataSource, readSize,  parameters);
     }
 
     public int getReadSize() {
@@ -60,6 +61,14 @@ public class JdbcEndpoint extends DefaultEndpoint {
 
     public void setReadSize(int readSize) {
         this.readSize = readSize;
+    }
+
+    public boolean isTransacted() {
+        return transacted;
+    }
+
+    public void setTransacted(boolean transacted) {
+        this.transacted = transacted;
     }
 
     public DataSource getDataSource() {

@@ -55,14 +55,15 @@ public class JdbcProducerConcurrenctTest extends CamelTestSupport {
         doSendMessages(10, 5);
     }
 
+    @SuppressWarnings("rawtypes")
     private void doSendMessages(int files, int poolSize) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future> responses = new ConcurrentHashMap<Integer, Future>();
+        Map<Integer, Future<Object>> responses = new ConcurrentHashMap<Integer, Future<Object>>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future out = executor.submit(new Callable<Object>() {
+            Future<Object> out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     int id = index % 2;
                     return template.requestBody("direct:start", "select * from customer where id = " + id);

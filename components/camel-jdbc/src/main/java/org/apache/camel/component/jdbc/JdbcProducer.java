@@ -62,10 +62,13 @@ public class JdbcProducer extends DefaultProducer {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
+        
         try {
             conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            
             stmt = conn.createStatement();
-
+            
             if (parameters != null && !parameters.isEmpty()) {
                 IntrospectionSupport.setProperties(stmt, parameters);
             }
@@ -81,24 +84,52 @@ public class JdbcProducer extends DefaultProducer {
                 int updateCount = stmt.getUpdateCount();
                 exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
             }
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stmt != null) {
-                    stmt.close();
-                }
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                LOG.warn("Error closing JDBC resource: " + e, e);
+            conn.commit();
+        } catch (Exception e){
+            try{
+                conn.rollback();
+            } catch (SQLException sqle){
+                LOG.warn("Error on jdbc component rollback: " + sqle, sqle);
             }
+            throw e;
+        } finally {
+            closeQuietly(rs);
+            closeQuietly(stmt);
+            closeQuietly(conn);
         }
 
         // populate headers
         exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+    }
+
+    private void closeQuietly(ResultSet rs) {
+        if (rs != null) {
+            try{
+                rs.close();
+            } catch (SQLException sqle){
+                LOG.warn("Error by closing result set: " + sqle, sqle);
+            }
+        }
+    }
+    
+    private void closeQuietly(Statement stmt) {
+        if (stmt != null) {
+            try{
+                stmt.close();
+            } catch (SQLException sqle){
+                LOG.warn("Error by closing statement: " + sqle, sqle);
+            }
+        }
+    }
+    
+    private void closeQuietly(Connection con) {
+        if (con != null) {
+            try{
+                con.close();
+            } catch (SQLException sqle){
+                LOG.warn("Error by closing connection: " + sqle, sqle);
+            }
+        }
     }
 
     /**
