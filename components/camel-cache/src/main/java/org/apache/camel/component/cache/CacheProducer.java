@@ -85,7 +85,7 @@ public class CacheProducer extends DefaultProducer {
         String operation = exchange.getIn().getHeader(CacheConstants.CACHE_OPERATION, String.class);
 
         if (operation == null) {
-            throw new CacheException(CacheConstants.CACHE_OPERATION + " not specified in the message header [" + CacheConstants.CACHE_KEY + "]");
+            throw new CacheException(CacheConstants.CACHE_OPERATION + " header not specified in message");
         }
         if ((key == null) && (!operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_DELETEALL))) {
             throw new CacheException(CacheConstants.CACHE_KEY + " is not specified in message header or endpoint URL.");
