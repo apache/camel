@@ -62,9 +62,11 @@ public class JdbcProducer extends DefaultProducer {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
+        Boolean autoCommit = null;
         
         try {
             conn = dataSource.getConnection();
+            autoCommit = conn.getAutoCommit();
             conn.setAutoCommit(false);
             
             stmt = conn.createStatement();
@@ -95,6 +97,7 @@ public class JdbcProducer extends DefaultProducer {
         } finally {
             closeQuietly(rs);
             closeQuietly(stmt);
+            resetAutoCommit(conn, autoCommit);
             closeQuietly(conn);
         }
 
@@ -118,6 +121,16 @@ public class JdbcProducer extends DefaultProducer {
                 stmt.close();
             } catch (SQLException sqle){
                 LOG.warn("Error by closing statement: " + sqle, sqle);
+            }
+        }
+    }
+    
+    private void resetAutoCommit(Connection con, Boolean autoCommit) {
+        if (con != null && autoCommit != null) {
+            try{
+                con.setAutoCommit(autoCommit);
+            } catch (SQLException sqle){
+                LOG.warn("Error by resetting auto commit to its original value: " + sqle, sqle);
             }
         }
     }

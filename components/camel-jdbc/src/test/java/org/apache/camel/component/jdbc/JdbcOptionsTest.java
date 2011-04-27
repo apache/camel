@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.jdbc;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.sql.DataSource;
 
@@ -32,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 public class JdbcOptionsTest extends CamelTestSupport {
     private String driverClass = "org.hsqldb.jdbcDriver";
@@ -56,7 +59,7 @@ public class JdbcOptionsTest extends CamelTestSupport {
 
     @SuppressWarnings("rawtypes")
     @Test
-    public void testInsertCommitO() throws Exception {
+    public void testInsertCommit() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultTx");
         mock.expectedMessageCount(1);
         // insert 2 recs into table
@@ -116,6 +119,19 @@ public class JdbcOptionsTest extends CamelTestSupport {
                 e.getCause().getMessage());
         }
     }
+    
+    @Test
+    public void testResettingAutoCommitOption() throws Exception {
+        Connection connection = ds.getConnection();
+        assertTrue(connection.getAutoCommit());
+        connection.close();
+        
+        template.sendBody("direct:retrieve", "select * from customer");
+        
+        connection = ds.getConnection();
+        assertTrue(connection.getAutoCommit());
+        connection.close();
+    }
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry reg = super.createRegistry();
@@ -135,8 +151,12 @@ public class JdbcOptionsTest extends CamelTestSupport {
 
     @Before
     public void setUp() throws Exception {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource(url, user, password);
+        Properties connectionProperties = new Properties();
+        connectionProperties.put("autoCommit", Boolean.TRUE);
+        
+        DriverManagerDataSource dataSource = new SingleConnectionDataSource(url, user, password, true);
         dataSource.setDriverClassName(driverClass);
+        dataSource.setConnectionProperties(connectionProperties);
         ds = dataSource;
 
         JdbcTemplate jdbc = new JdbcTemplate(ds);
