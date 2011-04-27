@@ -20,6 +20,7 @@ import javax.jms.Message;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.PollingConsumerSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 
@@ -51,9 +52,9 @@ public class JmsPollingConsumer extends PollingConsumerSupport {
 
     public Exchange receive(long timeout) {
         setReceiveTimeout(timeout);
-        Message message = null;
+        Message message;
         // using the selector
-        if (jmsEndpoint.getSelector() != null && jmsEndpoint.getSelector().length() > 0) {
+        if (ObjectHelper.isNotEmpty(jmsEndpoint.getSelector())) {
             message = template.receiveSelected(jmsEndpoint.getSelector());
         } else {
             message = template.receive();

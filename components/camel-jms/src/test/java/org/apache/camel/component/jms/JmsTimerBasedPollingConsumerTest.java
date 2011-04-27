@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
@@ -67,7 +66,7 @@ public class JmsTimerBasedPollingConsumerTest extends CamelTestSupport {
 
                 from("activemq:queue.foo").to("mock:result");
 
-                from("timer://foo?period=5000").bean(cool, "someBusinessLogic");
+                from("timer://foo?period=1000").bean(cool, "someBusinessLogic");
                 // END SNIPPET: e1
             }
         };
@@ -76,7 +75,7 @@ public class JmsTimerBasedPollingConsumerTest extends CamelTestSupport {
     // START SNIPPET: e2
     public static class MyCoolBean {
 
-        private int count;
+        private volatile int count;
         private ConsumerTemplate consumer;
         private ProducerTemplate producer;
 
@@ -91,8 +90,8 @@ public class JmsTimerBasedPollingConsumerTest extends CamelTestSupport {
         public void someBusinessLogic() {
             // loop to empty queue
             while (true) {
-                // receive the message from the queue, wait at most 3 sec
-                String msg = consumer.receiveBody("activemq:queue.inbox", 3000, String.class);
+                // receive the message from the queue
+                String msg = consumer.receiveBodyNoWait("activemq:queue.inbox", String.class);
                 if (msg == null) {
                     // no more messages in queue
                     break;
