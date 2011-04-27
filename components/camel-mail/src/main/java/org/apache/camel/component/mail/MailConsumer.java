@@ -44,7 +44,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  * A {@link org.apache.camel.Consumer Consumer} which consumes messages from JavaMail using a
  * {@link javax.mail.Transport Transport} and dispatches them to the {@link Processor}
  *
- * @version 
+ * @version
  */
 public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
@@ -93,7 +93,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Polling mailfolder: " + getEndpoint().getConfiguration().getMailStoreLogInformation());
+            LOG.debug("Polling mailbox folder: " + getEndpoint().getConfiguration().getMailStoreLogInformation());
         }
 
         if (getEndpoint().getConfiguration().getFetchSize() == 0) {
@@ -266,11 +266,15 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
     /**
      * Strategy to flag the message after being processed.
      *
-     * @param mail the mail message
+     * @param mail     the mail message
      * @param exchange the exchange
      */
     protected void processCommit(Message mail, Exchange exchange) {
         try {
+            // ensure folder is open
+            if (!folder.isOpen()) {
+                folder.open(Folder.READ_WRITE);
+            }
             if (getEndpoint().getConfiguration().isDelete()) {
                 LOG.debug("Exchange processed, so flagging message as DELETED");
                 mail.setFlag(Flags.Flag.DELETED, true);
@@ -287,7 +291,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
     /**
      * Strategy when processing the exchange failed.
      *
-     * @param mail the mail message
+     * @param mail     the mail message
      * @param exchange the exchange
      */
     protected void processRollback(Message mail, Exchange exchange) {
