@@ -27,6 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.component.cxf.CxfPayload;
@@ -37,6 +38,7 @@ import org.junit.Test;
 public class CxfPayloadConverterTest extends ExchangeTestSupport {
     private Document document;
     private CxfPayload<String[]> payload;
+    private CxfPayload<String[]> emptyPayload;
     private FileInputStream inputStream;
 
     @Override
@@ -51,6 +53,7 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         List<Element> body = new ArrayList<Element>();
         body.add(document.getDocumentElement());
         payload = new CxfPayload<String[]>(new ArrayList<String[]>(), body);
+        emptyPayload = new CxfPayload<String[]>(new ArrayList<String[]>(), new ArrayList<Element>());
         inputStream = new FileInputStream(file);
     }
 
@@ -90,6 +93,24 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         exchange.getIn().setBody(payload);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
         assertTrue(inputStream instanceof InputStream);       
+    }
+
+    @Test
+    public void testCxfPayloadToNode() {
+        // call the payload conversion that works
+        exchange.getIn().setBody(payload);
+        Node node = exchange.getIn().getBody(Node.class);
+        assertNotNull(node);
+        
+        // do the empty conversion
+        exchange.getIn().setBody(emptyPayload);
+        node = exchange.getIn().getBody(Node.class);
+        assertNull(node);
+
+        // do the same one that worked before
+        exchange.getIn().setBody(payload);
+        node = exchange.getIn().getBody(Node.class);
+        assertNotNull(node);
     }
 
 }

@@ -32,12 +32,13 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.spi.TypeConverterRegistry;
 
-
 @Converter
 public final class CxfPayloadConverter {
+
     private CxfPayloadConverter() {
         // Helper class
     }
+
     @Converter
     public static <T> CxfPayload<T> documentToCxfPayload(Document doc, Exchange exchange) {
         return elementToCxfPayload(doc.getDocumentElement(), exchange);
@@ -87,7 +88,7 @@ public final class CxfPayloadConverter {
                 return (T) documentToCxfPayload(document, exchange);
             }
             // maybe we can convert via an InputStream
-            CxfPayload<?> p = null;
+            CxfPayload<?> p;
             p = convertVia(InputStream.class, exchange, value, registry);
             if (p != null) {
                 return (T) p;
@@ -97,6 +98,8 @@ public final class CxfPayloadConverter {
             if (p != null) {
                 return (T) p;
             }
+            // no we could not do it currently
+            return (T) Void.TYPE;
         }
         // Convert a CxfPayload into something else
         if (CxfPayload.class.isAssignableFrom(value.getClass())) {
@@ -111,6 +114,9 @@ public final class CxfPayloadConverter {
                 NodeList nodeList = cxfPayloadToNodeList((CxfPayload<?>) value, exchange);
                 if (nodeList.getLength() > 0) {
                     return tc.convertTo(type, nodeList.item(0));
+                } else {
+                    // no we could not do it currently
+                    return (T) Void.TYPE;
                 }
             }
         }
