@@ -22,7 +22,7 @@
     "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 
 <!--
-Checks to make sure the code meets the ActiveMQ coding guidelines which
+Checks to make sure the code meets the Camel coding guidelines which
 
 It also enforces a bunch of other "BestPractices like method
 lengths, if/try depths, etc...
@@ -69,6 +69,8 @@ lengths, if/try depths, etc...
 	 -->
 
     <module name="TreeWalker">
+        <!-- Enable FileContentsHolder to allow us to in turn turn on suppression comments -->
+        <module name="FileContentsHolder" />
 
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
@@ -100,6 +102,7 @@ lengths, if/try depths, etc...
         <!-- See http://checkstyle.sf.net/config_import.html -->
         <module name="AvoidStarImport">
             <property name="excludes" value="java.io,java.util,java.net,java.nio,java.nio.channels,java.lang.reflect,org.w3c.dom,org.xml.sax,java.awt,javax.swing,junit.framework"/>
+            <property name="allowStaticMemberImports" value="true"/>
         </module>
         <!-- 
         <module name="ConstantName"/>

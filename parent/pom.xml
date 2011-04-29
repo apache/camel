@@ -1509,11 +1509,11 @@
           <configuration>
             <buildcommands>
               <java.lang.String>org.eclipse.jdt.core.javabuilder</java.lang.String>
-              <java.lang.String>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</java.lang.String>
+              <java.lang.String>net.sf.eclipsecs.core.CheckstyleBuilder</java.lang.String>
             </buildcommands>
             <projectnatures>
               <nature>org.eclipse.jdt.core.javanature</nature>
-              <nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
+              <nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
             </projectnatures>
             <additionalConfig>
               <file>
@@ -1528,6 +1528,17 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
           <dependencies>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>5.3</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>com.sun</groupId>
+                  <artifactId>tools</artifactId>
+                </exclusion>
+              </exclusions>
+            </dependency>
             <dependency>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-buildtools</artifactId>
@@ -1544,6 +1555,7 @@
                 <failsOnError>true</failsOnError>
                 <linkXRef>false</linkXRef>
                 <suppressionsLocation>camel-checkstyle-suppressions.xml</suppressionsLocation>
+                <encoding>UTF-8</encoding>
                 <sourceDirectory>${basedir}/src</sourceDirectory>
                 <excludes>**/archetype-resources/**/*.java</excludes>
               </configuration>

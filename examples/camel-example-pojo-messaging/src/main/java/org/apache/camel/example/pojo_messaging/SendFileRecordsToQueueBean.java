@@ -31,3 +31,4 @@ public class SendFileRecordsToQueueBean {
     }
 }
 //END SNIPPET: ex
+

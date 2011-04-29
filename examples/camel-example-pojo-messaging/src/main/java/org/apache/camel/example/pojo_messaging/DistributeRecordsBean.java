@@ -35,3 +35,4 @@ public class DistributeRecordsBean {
     }
 }
 //END SNIPPET: ex
+

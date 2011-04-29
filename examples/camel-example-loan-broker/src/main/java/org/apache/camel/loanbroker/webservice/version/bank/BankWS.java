@@ -30,3 +30,4 @@ public interface BankWS {
 
 }
 //END SNIPPET: bank
+

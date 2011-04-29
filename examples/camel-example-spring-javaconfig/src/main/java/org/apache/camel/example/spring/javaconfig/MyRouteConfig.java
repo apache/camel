@@ -117,3 +117,4 @@ public class MyRouteConfig extends SingleRouteCamelConfiguration implements Init
     }
 }
 //END SNIPPET: RouteConfig
+

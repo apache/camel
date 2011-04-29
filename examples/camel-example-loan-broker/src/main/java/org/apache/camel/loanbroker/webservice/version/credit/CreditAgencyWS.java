@@ -28,3 +28,4 @@ public interface CreditAgencyWS {
 
 }
 //END SNIPPET: creditAgency
+
