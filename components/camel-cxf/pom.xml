@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -32,9 +33,9 @@
   <description>Camel CXF support</description>
 
   <properties>
-     <camel.osgi.import>
+    <camel.osgi.import>
       !org.apache.camel.component.cxf.*,
-      !META-INF.cxf.camel, 
+      !META-INF.cxf.camel,
       javax.activation*;version="[0.0,2)",
       javax.annotation*;version="[0.0,2)",
       javax.jws*;version="[0.0,3)",
@@ -44,16 +45,26 @@
       org.apache.camel.*;${camel.osgi.import.camel.version},
       ${camel.osgi.import.defaults},
       ${camel.osgi.import.additional},
+      org.osgi.service.blueprint;resolution:=optional,
+      org.osgi.service.blueprint.container;resolution:=optional,
+      org.osgi.service.blueprint.reflect;resolution:=optional,
+      org.apache.aries.blueprint;resolution:=optional,
+      org.apache.aries.blueprint.reflect ;resolution:=optional,
+      org.apache.aries.blueprint.mutable;resolution:=optional,
+      org.apache.camel.blueprint;resolution:=optional,
+      org.osgi.framework;resolution:=optional,
       *
-     </camel.osgi.import>
-     <camel.osgi.export>        
-     	org.apache.camel.component.cxf.*;${camel.osgi.version};-split-package:=merge-first,
-        '=META-INF.cxf.camel'
-     </camel.osgi.export>
-     <camel.osgi.failok>true</camel.osgi.failok>
+    </camel.osgi.import>
+
+    <camel.osgi.export>
+      org.apache.camel.component.cxf.*;${camel.osgi.version};-split-package:=merge-first,
+      '=META-INF.cxf.camel'
+    </camel.osgi.export>
+    <camel.osgi.failok>true</camel.osgi.failok>
+
   </properties>
 
-  <dependencies>  
+  <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -61,33 +72,53 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
-    </dependency>   
- 
+    </dependency>
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
       <version>${cxf-version}</version>
     </dependency>
-        
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxws</artifactId>
       <version>${cxf-version}</version>
     </dependency>
-    
+
     <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-core</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
     </dependency>
 
     <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-beans</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
     </dependency>
 
     <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-context</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+
+    <!-- OSGi, BLueprint -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-blueprint</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.aries.blueprint</groupId>
+      <artifactId>org.apache.aries.blueprint</artifactId>
     </dependency>
 
     <!--  Test Dependencies -->
@@ -96,33 +127,33 @@
       <artifactId>camel-core-xml</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-jbi</artifactId>
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jetty</artifactId>
@@ -135,13 +166,13 @@
       <version>${httpclient4-version}</version>
       <scope>test</scope>
     </dependency>
-    
-     <dependency>
+
+    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -154,23 +185,23 @@
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>
-     
-     <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-test</artifactId>
-       <scope>test</scope>
-     </dependency>
 
     <dependency>
-       <groupId>org.springframework</groupId>
-       <artifactId>spring-web</artifactId>
-       <scope>test</scope>
-     </dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
-       <groupId>junit</groupId>
-       <artifactId>junit</artifactId>
-       <scope>test</scope>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -226,52 +257,52 @@
         </executions>
       </plugin>
       <plugin>
-      	<groupId>org.apache.cxf</groupId>
-      	<artifactId>cxf-codegen-plugin</artifactId>
-      	<version>${cxf-version}</version>
-      	<executions>
-      		<execution>
-      			<id>generate-test-sources</id>
-      			<phase>generate-sources</phase>
-      			<configuration>
-      				<sourceRoot>${basedir}/target/generated</sourceRoot>
-      				<wsdlOptions>
-      				    <wsdlOption>
-      						<wsdl>${basedir}/src/test/resources/mtom.wsdl</wsdl>      						
-      					</wsdlOption>
-      					<wsdlOption>
-      						<wsdl>${basedir}/src/test/resources/MultiPartTest.wsdl</wsdl>      						
-      					</wsdlOption>
-      					<wsdlOption>
-      						<wsdl>${basedir}/src/test/resources/person.wsdl</wsdl>      						
-      					</wsdlOption>
-      					<wsdlOption>
-      						<wsdl>${basedir}/src/test/resources/person-non-wrapper.wsdl</wsdl>
-      						<extraargs>
-      							<extraarg>-b</extraarg>
-      							<extraarg>${basedir}/src/test/resources/person-non-wrapper-binding.xml</extraarg>
-      						</extraargs>
-      					</wsdlOption>
-      					<wsdlOption>
-      						<wsdl>${basedir}/src/test/resources/soap_header.wsdl</wsdl>
-      						<extraargs>
-      							<extraarg>-verbose</extraarg>
-      						</extraargs>
-      					</wsdlOption>
-      					<wsdlOption>
-      						<wsdl>${basedir}/src/test/resources/pizza_service.wsdl</wsdl>
-      						<extraargs>
-      							<extraarg>-exsh</extraarg>
-      							<extraarg>true</extraarg>
-      						</extraargs>
-      					</wsdlOption>
-      				</wsdlOptions>
-      			</configuration>
-      			<goals>
-      				<goal>wsdl2java</goal>
-      			</goals>
-      		</execution>
-      	</executions>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-codegen-plugin</artifactId>
+        <version>${cxf-version}</version>
+        <executions>
+          <execution>
+            <id>generate-test-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <sourceRoot>${basedir}/target/generated</sourceRoot>
+              <wsdlOptions>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/test/resources/mtom.wsdl</wsdl>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/test/resources/MultiPartTest.wsdl</wsdl>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/test/resources/person.wsdl</wsdl>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/test/resources/person-non-wrapper.wsdl</wsdl>
+                  <extraargs>
+                    <extraarg>-b</extraarg>
+                    <extraarg>${basedir}/src/test/resources/person-non-wrapper-binding.xml</extraarg>
+                  </extraargs>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/test/resources/soap_header.wsdl</wsdl>
+                  <extraargs>
+                    <extraarg>-verbose</extraarg>
+                  </extraargs>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/test/resources/pizza_service.wsdl</wsdl>
+                  <extraargs>
+                    <extraarg>-exsh</extraarg>
+                    <extraarg>true</extraarg>
+                  </extraargs>
+                </wsdlOption>
+              </wsdlOptions>
+            </configuration>
+            <goals>
+              <goal>wsdl2java</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
