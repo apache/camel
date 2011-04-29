@@ -135,8 +135,8 @@ public abstract class TestSupport extends Assert {
 
     public static <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
         assertNotNull(value, "Expected an instance of type: " + expectedType.getName() + " but was null");
-        assertTrue(expectedType.isInstance(value), "object should be a " + expectedType.getName() +
-        		" but was: " + value + " with type: " + value.getClass().getName());
+        assertTrue(expectedType.isInstance(value), "object should be a " + expectedType.getName() 
+            + " but was: " + value + " with type: " + value.getClass().getName());
         return expectedType.cast(value);
     }
 

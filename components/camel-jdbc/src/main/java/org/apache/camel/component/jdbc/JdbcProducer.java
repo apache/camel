@@ -87,10 +87,10 @@ public class JdbcProducer extends DefaultProducer {
                 exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
             }
             conn.commit();
-        } catch (Exception e){
-            try{
+        } catch (Exception e) {
+            try {
                 conn.rollback();
-            } catch (SQLException sqle){
+            } catch (SQLException sqle) {
                 LOG.warn("Error on jdbc component rollback: " + sqle, sqle);
             }
             throw e;
@@ -107,9 +107,9 @@ public class JdbcProducer extends DefaultProducer {
 
     private void closeQuietly(ResultSet rs) {
         if (rs != null) {
-            try{
+            try {
                 rs.close();
-            } catch (SQLException sqle){
+            } catch (SQLException sqle) {
                 LOG.warn("Error by closing result set: " + sqle, sqle);
             }
         }
@@ -117,9 +117,9 @@ public class JdbcProducer extends DefaultProducer {
     
     private void closeQuietly(Statement stmt) {
         if (stmt != null) {
-            try{
+            try {
                 stmt.close();
-            } catch (SQLException sqle){
+            } catch (SQLException sqle) {
                 LOG.warn("Error by closing statement: " + sqle, sqle);
             }
         }
@@ -127,9 +127,9 @@ public class JdbcProducer extends DefaultProducer {
     
     private void resetAutoCommit(Connection con, Boolean autoCommit) {
         if (con != null && autoCommit != null) {
-            try{
+            try {
                 con.setAutoCommit(autoCommit);
-            } catch (SQLException sqle){
+            } catch (SQLException sqle) {
                 LOG.warn("Error by resetting auto commit to its original value: " + sqle, sqle);
             }
         }
@@ -137,9 +137,9 @@ public class JdbcProducer extends DefaultProducer {
     
     private void closeQuietly(Connection con) {
         if (con != null) {
-            try{
+            try {
                 con.close();
-            } catch (SQLException sqle){
+            } catch (SQLException sqle) {
                 LOG.warn("Error by closing connection: " + sqle, sqle);
             }
         }

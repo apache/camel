@@ -809,7 +809,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         } 
     }
 
-    @SuppressWarnings("deprecation")
     public synchronized boolean removeRoute(String routeId) throws Exception {
         RouteService routeService = routeServices.get(routeId);
         if (routeService != null) {
@@ -1693,7 +1692,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected synchronized void stopRouteService(RouteService routeService, boolean removingRoutes) throws Exception {
         routeService.setRemovingRoutes(removingRoutes);
         stopRouteService(routeService);
@@ -1716,7 +1714,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected synchronized void suspendRouteService(RouteService routeService) throws Exception {
         routeService.setRemovingRoutes(false);
         routeService.suspend();

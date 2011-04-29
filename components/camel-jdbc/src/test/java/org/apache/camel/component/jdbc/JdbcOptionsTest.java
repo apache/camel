@@ -87,7 +87,7 @@ public class JdbcOptionsTest extends CamelTestSupport {
     @Test
     public void testInsertRollback() throws Exception {
         // insert 2 records
-        try{
+        try {
             template.sendBody("direct:startTx", "insert into customer values ('cust3', 'johnsmith');insert into customer values ('cust3', 'hkesler')");
             fail("Should have thrown a CamelExecutionException");
         } catch (CamelExecutionException e) {
