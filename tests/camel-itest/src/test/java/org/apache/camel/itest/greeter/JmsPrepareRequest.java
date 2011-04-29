@@ -22,7 +22,8 @@ import org.apache.camel.Processor;
 public class JmsPrepareRequest implements Processor {
 
     public void process(Exchange exchange) throws Exception {
-        String request = exchange.getIn().getBody(String.class);       
+        String request = exchange.getIn().getBody(String.class);
+        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
         exchange.getOut().setBody(request);
     }
 

@@ -52,10 +52,10 @@
     <route>        
         <from uri="cxf://bean:serviceEndpoint"/>
         <process ref="jmsPrepareRequest"/>
-        <to uri="jms:responseQueue"/>              
+        <to uri="jms:responseQueue?transferException=true&amp;jmsMessageType=Object"/>              
     </route>
     <route>
-        <from uri="jms:responseQueue"/>
+        <from uri="jms:responseQueue?transferException=true&amp;jmsMessageType=Object"/>
         <process ref="jmsPrepareResponse"/>
     </route>    
   </camelContext>

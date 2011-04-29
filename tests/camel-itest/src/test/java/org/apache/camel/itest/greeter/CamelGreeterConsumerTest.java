@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.hello_world_soap_http.PingMeFault;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,6 +33,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @ContextConfiguration
 public class CamelGreeterConsumerTest extends AbstractJUnit4SpringContextTests {
@@ -39,7 +42,7 @@ public class CamelGreeterConsumerTest extends AbstractJUnit4SpringContextTests {
     protected CamelContext camelContext;
 
     @Test
-    public void testMocksAreValid() throws Exception {
+    public void testInvokeServers() throws Exception {
         assertNotNull(camelContext);
 
         ProducerTemplate template = camelContext.createProducerTemplate();
@@ -49,7 +52,14 @@ public class CamelGreeterConsumerTest extends AbstractJUnit4SpringContextTests {
                                                    params, CxfConstants.OPERATION_NAME, "greetMe");
         assertTrue("Result is a list instance ", result instanceof List);
         assertEquals("Get the wrong response", ((List)result).get(0), "HelloWillem");
-
+        try {
+            template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut , 
+                                            params, CxfConstants.OPERATION_NAME, "pingMe");
+            fail("Expect exception here.");
+        } catch (Exception ex) {
+            assertTrue("Get a wrong exception.", ex instanceof CamelExecutionException);
+            assertTrue("Get a wrong exception cause. ", ex.getCause() instanceof PingMeFault);
+        }
         template.stop();
     }
 

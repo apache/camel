@@ -17,12 +17,27 @@
 package org.apache.camel.itest.greeter;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.hello_world_soap_http.PingMeFault;
+import org.apache.hello_world_soap_http.types.FaultDetail;
 
 public class JmsPrepareResponse implements Processor {
 
     public void process(Exchange exchange) throws Exception {
-        String request = exchange.getIn().getBody(String.class);               
-        exchange.getOut().setBody("Hello" + request);
+        Message in = exchange.getIn();
+        if ("greetMe".equals(in.getHeader(CxfConstants.OPERATION_NAME))) {
+            String request = in.getBody(String.class);               
+            exchange.getOut().setBody("Hello" + request);
+        } else {
+            // throw the Exception
+            FaultDetail faultDetail = new FaultDetail();
+            faultDetail.setMajor((short)2);
+            faultDetail.setMinor((short)1);
+            exchange.getOut().setBody(new PingMeFault("PingMeFault raised by server", faultDetail));
+            exchange.getOut().setFault(true);
+            
+        }
     }
 }

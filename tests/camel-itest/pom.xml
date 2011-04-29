@@ -322,6 +322,9 @@
                                     <wsdl>
                                         ${basedir}/src/test/resources/wsdl/hello_world.wsdl
                                     </wsdl>
+                                    <bindingFiles>
+                                        <bindingFile>${basedir}/src/test/resources/wsdl/binding.xml</bindingFile>
+                                    </bindingFiles>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>
