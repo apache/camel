@@ -74,10 +74,7 @@ public class SoapCxfServerTest extends RouteBuilder {
         ElementNameStrategy elNameStrat = new ServiceInterfaceStrategy(CustomerService.class, true);
         SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(jaxbPackage, elNameStrat);
         from("direct:camelClient") //
-            .onException(NoSuchCustomerException.class) //
-                .handled(true) //
-                .unmarshal(soapDataFormat) //
-            .end().marshal(soapDataFormat) //
+            .marshal(soapDataFormat) //
             .to("direct:cxfEndpoint") //
             .unmarshal(soapDataFormat);
     }
