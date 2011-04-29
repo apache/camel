@@ -106,8 +106,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <!-- we had some issues testing with junit 4.x. so we stuck with 3.8.x -->
-      <version>3.8.2</version>
+      <version>${junit-version}</version>
       <scope>test</scope>
     </dependency>
 
