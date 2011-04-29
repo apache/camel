@@ -40,5 +40,28 @@
     <module>camel-archetype-web</module>
     <module>camel-archetype-webconsole</module>
   </modules>
-
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-eclipse-plugin</artifactId>
+          <configuration>
+            <buildcommands>
+                <java.lang.String>com.atlassw.tools.eclipse.checkstyle.CheckstyleBuilder</java.lang.String>
+            </buildcommands>
+            <projectnatures>
+                <nature>com.atlassw.tools.eclipse.checkstyle.CheckstyleNature</nature>
+            </projectnatures>
+            <additionalConfig>
+              <file>
+                <name>.checkstyle</name>
+                <location>/camel-eclipse-checkstyle</location>
+              </file>
+            </additionalConfig>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
