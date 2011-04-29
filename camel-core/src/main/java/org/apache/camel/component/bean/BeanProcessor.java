@@ -105,13 +105,20 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
 
         Message in = exchange.getIn();
 
-        // Now it gets a bit complicated as ProxyHelper can proxy beans which we later
-        // intend to invoke (for example to proxy and invoke using spring remoting).
-        // and therefore the message body contains a BeanInvocation object.
-        // However this can causes problem if we in a Camel route invokes another bean,
-        // so we must test whether BeanHolder and BeanInvocation is the same bean or not
-        BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
+        // is the message proxied using a BeanInvocation?
+        BeanInvocation beanInvoke = null;
+        if (in.getBody() != null && in.getBody() instanceof BeanInvocation) {
+            // BeanInvocation would be stored directly as the message body
+            // do not force any type conversion attempts as it would just be unnecessary and cost a bit performance
+            // so a regular instanceof check is sufficient
+            beanInvoke = (BeanInvocation) in.getBody();
+        }
         if (beanInvoke != null) {
+            // Now it gets a bit complicated as ProxyHelper can proxy beans which we later
+            // intend to invoke (for example to proxy and invoke using spring remoting).
+            // and therefore the message body contains a BeanInvocation object.
+            // However this can causes problem if we in a Camel route invokes another bean,
+            // so we must test whether BeanHolder and BeanInvocation is the same bean or not
             LOG.trace("Exchange IN body is a BeanInvocation instance: {}", beanInvoke);
             Class<?> clazz = beanInvoke.getMethod().getDeclaringClass();
             boolean sameBean = clazz.isInstance(bean);
