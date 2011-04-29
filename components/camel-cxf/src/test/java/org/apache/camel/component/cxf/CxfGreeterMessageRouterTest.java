@@ -18,6 +18,7 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -38,6 +39,5 @@ public class CxfGreeterMessageRouterTest extends CXFGreeterRouterTest {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointBeans.xml");
     }
-
-
+  
 }

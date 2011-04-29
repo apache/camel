@@ -18,6 +18,8 @@ package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.component.cxf.transport.CamelTransportFactory;
 import org.apache.cxf.Bus;
+import org.apache.cxf.binding.soap.SoapBindingFactory;
+import org.apache.cxf.version.Version;
 import org.junit.Test;
 
 public class SpringBusFactoryBeanTest extends AbstractSpringBeanTestSupport {
@@ -29,15 +31,20 @@ public class SpringBusFactoryBeanTest extends AbstractSpringBeanTestSupport {
     
     @Test
     public void getTheBusInstance() {
-        Bus bus = (Bus)ctx.getBean("cxf");
+        Bus bus = (Bus)ctx.getBean("cxfBus");
         assertNotNull("The bus should not be null", bus);
-        CamelTransportFactory factory = bus.getExtension(CamelTransportFactory.class);
-        assertNull("You should find the factory here", factory);
+        if (!Version.getCurrentVersion().startsWith("2.4")) {
+            // This test just for the CXF 2.3.x, we skip this test with CXF 2.4.x
+            CamelTransportFactory factory = bus.getExtension(CamelTransportFactory.class);
+            assertNull("You should not find the factory here", factory);
+        }
         
         bus = (Bus)ctx.getBean("myBus");
         assertNotNull("The bus should not be null", bus);
-        factory = bus.getExtension(CamelTransportFactory.class);
+        CamelTransportFactory factory = bus.getExtension(CamelTransportFactory.class);
         assertNotNull("You should find the factory here", factory);
+        SoapBindingFactory soapBindingFactory = bus.getExtension(SoapBindingFactory.class);
+        assertNotNull("You should find the factory here", soapBindingFactory);
     }
 
 }

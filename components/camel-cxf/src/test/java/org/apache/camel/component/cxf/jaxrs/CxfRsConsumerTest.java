@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 
 import javax.ws.rs.WebApplicationException;
@@ -32,10 +31,10 @@ import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
-import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -100,11 +99,19 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     
     @Test
     public void testGetCustomer() throws Exception {
-        URL url = new URL("http://localhost:9000/rest/customerservice/customers/126");
+        HttpGet get = new HttpGet("http://localhost:9000/rest/customerservice/customers/126");
+        get.addHeader("Accept" , "application/json");
+        HttpClient httpclient = new DefaultHttpClient();
 
-        InputStream in = url.openStream();
-        assertEquals("{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}", CxfUtils.getStringFromInputStream(in));
-       
+        try {
+            HttpResponse response = httpclient.execute(get);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}",
+                         EntityUtils.toString(response.getEntity()));
+        } finally {
+            httpclient.getConnectionManager().shutdown();
+        }
+        
     }
     
     @Test

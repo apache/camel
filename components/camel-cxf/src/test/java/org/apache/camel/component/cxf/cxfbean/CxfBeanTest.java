@@ -29,6 +29,7 @@ import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
@@ -82,68 +83,62 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         assertTrue(testedEndpointWithProviders);
     }
     
+    private void invokeRsService(String getUrl, String expected) throws Exception {
+        HttpGet get = new HttpGet(getUrl);
+        get.addHeader("Accept" , "application/json");
+        HttpClient httpclient = new DefaultHttpClient();
+
+        try {
+            HttpResponse response = httpclient.execute(get);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals(expected,
+                         EntityUtils.toString(response.getEntity()));
+        } finally {
+            httpclient.getConnectionManager().shutdown();
+        }
+    }
+    
     @Test
     public void testGetConsumer() throws Exception {
-        URL url = new URL("http://localhost:9000/customerservice/customers/123");
-
-        InputStream in = url.openStream();
-        assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", CxfUtils.getStringFromInputStream(in));
-
-        // START SNIPPET: clientInvocation
-        url = new URL("http://localhost:9000/customerservice/orders/223/products/323");
-        in = url.openStream();
-        assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", CxfUtils.getStringFromInputStream(in));
-        // END SNIPPET: clientInvocation
+        invokeRsService("http://localhost:9000/customerservice/customers/123",
+                        "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");
+        
+        invokeRsService("http://localhost:9000/customerservice/orders/223/products/323",
+                         "{\"Product\":{\"description\":\"product 323\",\"id\":323}}");
+       
+         
     }
     
     @Test
     public void testGetConsumerWithQueryParam() throws Exception {
-        URL url = new URL("http://localhost:9000/customerservice/customers?id=123");
-
-        try {
-            InputStream in = url.openStream();
-            assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", CxfUtils.getStringFromInputStream(in));
-        } catch (Exception ex) {
-            Thread.sleep(3000000);
-        }
+        invokeRsService("http://localhost:9000/customerservice/customers?id=123",
+                        "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");
+        
     }
 
     @Test
     public void testGetConsumerAfterReStartCamelContext() throws Exception {
-        URL url = new URL("http://localhost:9000/customerservice/customers/123");
-
-        InputStream in = url.openStream();
-        assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", CxfUtils.getStringFromInputStream(in));
-        in.close();
+        invokeRsService("http://localhost:9000/customerservice/customers/123",
+                        "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");
 
         camelContext.stop();
         camelContext.start();
 
-        url = new URL("http://localhost:9000/customerservice/orders/223/products/323");
-        in = url.openStream();
-        
-        assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", 
-                     CxfUtils.getStringFromInputStream(in));
-        in.close();
+        invokeRsService("http://localhost:9000/customerservice/orders/223/products/323",
+                        "{\"Product\":{\"description\":\"product 323\",\"id\":323}}"); 
+     
     }
     
     @Test
     public void testGetConsumerAfterResumingCamelContext() throws Exception {
-        URL url = new URL("http://localhost:9000/customerservice/customers/123");
-
-        InputStream in = url.openStream();
-        assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", CxfUtils.getStringFromInputStream(in));
-        in.close();
-
+        invokeRsService("http://localhost:9000/customerservice/customers/123",
+                        "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");
+        
         camelContext.suspend();
         camelContext.resume();
 
-        url = new URL("http://localhost:9000/customerservice/orders/223/products/323");
-        in = url.openStream();
-
-        assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}",
-                     CxfUtils.getStringFromInputStream(in));
-        in.close();
+        invokeRsService("http://localhost:9000/customerservice/orders/223/products/323",
+                        "{\"Product\":{\"description\":\"product 323\",\"id\":323}}"); 
     }
 
     @Test

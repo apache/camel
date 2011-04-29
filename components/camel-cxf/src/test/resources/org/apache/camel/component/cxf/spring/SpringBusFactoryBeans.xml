@@ -23,13 +23,13 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
     ">
     
-  <bean id="cxf" class="org.apache.camel.component.cxf.spring.SpringBusFactoryBean">
+  <bean id="cxfBus" class="org.apache.camel.component.cxf.spring.SpringBusFactoryBean">
      <property name="cfgFiles" value="META-INF/cxf/cxf.xml;META-INF/cxf/cxf-extension-soap.xml;META-INF/cxf/cxf-extension-http-jetty.xml" />
      <property name="includeDefaultBus" value="false" />
   </bean>
   
   <bean id="myBus" class="org.apache.camel.component.cxf.spring.SpringBusFactoryBean">
-     <property name="cfgFiles" value="META-INF/cxf/cxf-extension-soap.xml;META-INF/cxf/cxf-extension-http-jetty.xml" />
+     <property name="cfgFiles" value="META-INF/cxf/cxf-extension-soap.xml" />
      <property name="includeDefaultBus" value="true" />
   </bean>
 

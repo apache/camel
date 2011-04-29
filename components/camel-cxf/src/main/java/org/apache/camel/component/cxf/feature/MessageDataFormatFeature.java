@@ -17,11 +17,17 @@
 
 package org.apache.camel.component.cxf.feature;
 
+import java.util.List;
+
 import org.apache.camel.component.cxf.interceptors.RawMessageContentRedirectInterceptor;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
+import org.apache.cxf.version.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,9 +71,18 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
     public void initialize(Server server, Bus bus) {
         // currently we do not filter the bus
         // remove the interceptors
+        
+        // Find the WSDLGetInterceptor
+        Interceptor<? extends Message> wsdlGetInterceptor = getInterceptorByName(server.getEndpoint().getInInterceptors(), "org.apache.cxf.frontend.WSDLGetInterceptor");
+        
         removeInterceptorWhichIsOutThePhases(server.getEndpoint().getService().getInInterceptors(), REMAINING_IN_PHASES);
         removeInterceptorWhichIsOutThePhases(server.getEndpoint().getInInterceptors(), REMAINING_IN_PHASES);
 
+        // For CXF 2.4.x we need to add the WSDLGetInterceptor back
+        if (wsdlGetInterceptor != null) {
+            server.getEndpoint().getInInterceptors().add(wsdlGetInterceptor);
+        }
+        
         // Do not using the binding interceptor any more
         server.getEndpoint().getBinding().getInInterceptors().clear();
 
@@ -82,6 +97,15 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
     @Override
     protected Logger getLogger() {
         return LOG;
+    }
+    
+    private Interceptor<? extends Message> getInterceptorByName(List<Interceptor<? extends Message>> interceptors, String name) {
+        for (Interceptor<? extends Message> interceptor : interceptors) {
+            if (name.equals(interceptor.getClass().getName())) {
+                return interceptor;
+            }
+        } 
+        return null;
     }
 
 }
