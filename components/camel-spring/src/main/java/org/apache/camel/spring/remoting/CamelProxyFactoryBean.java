@@ -44,7 +44,6 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
     private Producer producer;
 
     @Override
-    @SuppressWarnings("unchecked")
     public void afterPropertiesSet() {
         if (endpoint == null) {
             if (camelContext == null && camelContextId != null) {

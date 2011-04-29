@@ -64,9 +64,10 @@ public final class ProxyBuilder {
      * @return the proxied bean
      * @throws Exception is thrown if error creating the proxy
      */
-    public <T> T build(Class<T>... interfaceClasses) throws Exception {
+    @SuppressWarnings("unchecked")
+    public <T> T build(Class<?>... interfaceClasses) throws Exception {
         ObjectHelper.notNull(endpoint, "endpoint");
-        return ProxyHelper.createProxy(endpoint, interfaceClasses);
+        return (T)ProxyHelper.createProxy(endpoint, interfaceClasses);
     }
 
 }

@@ -58,7 +58,7 @@ public final class ProxyHelper {
      * Creates a Proxy which sends the exchange to the endpoint.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T>... interfaceClasses) throws Exception {
+    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<?>... interfaceClasses) throws Exception {
         return (T) createProxy(endpoint, cl, interfaceClasses, createMethodInfoCache(endpoint));
     }
 
@@ -66,7 +66,8 @@ public final class ProxyHelper {
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    public static <T> T createProxy(Endpoint endpoint, Class<T>... interfaceClasses) throws Exception {
+    @SuppressWarnings("unchecked")
+    public static <T> T createProxy(Endpoint endpoint, Class<?>... interfaceClasses) throws Exception {
         return (T) createProxy(endpoint, getClassLoader(interfaceClasses), interfaceClasses);
     }
 
@@ -74,7 +75,7 @@ public final class ProxyHelper {
      * Creates a Proxy which sends the exchange to the endpoint.
      */
     @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<T>... interfaceClasses) throws Exception {
+    public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<?>... interfaceClasses) throws Exception {
         return (T) createProxyObject(endpoint, producer, getClassLoader(interfaceClasses), interfaceClasses, createMethodInfoCache(endpoint));
     }
 
