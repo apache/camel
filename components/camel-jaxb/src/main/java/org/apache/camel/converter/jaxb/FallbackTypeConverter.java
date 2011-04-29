@@ -40,8 +40,10 @@ import javax.xml.transform.Source;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.util.IOHelper;
@@ -50,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
@@ -79,6 +81,13 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
     }
 
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        // do not convert to stream cache
+        if (BeanInvocation.class.isAssignableFrom(type) || Processor.class.isAssignableFrom(type)) {
+            // JAXB cannot convert to a BeanInvocation / Processor, so we need to indicate this
+            // to avoid Camel trying to do this when using beans with JAXB payloads
+            return null;
+        }
+
         try {
             if (isJaxbType(type)) {
                 return unmarshall(type, exchange, value);
@@ -92,7 +101,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         } catch (Exception e) {
             throw ObjectHelper.wrapCamelExecutionException(exchange, e);
         }
-        
+
     }
 
     public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
@@ -116,6 +125,8 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
      * Lets try parse via JAXB
      */
     protected <T> T unmarshall(Class<T> type, Exchange exchange, Object value) throws Exception {
+        LOG.trace("Unmarshal to {} with value {}", type, value);
+
         if (value == null) {
             throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
         }
@@ -154,6 +165,8 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
     }
 
     protected <T> T marshall(Class<T> type, Exchange exchange, Object value) throws JAXBException, XMLStreamException, FactoryConfigurationError {
+        LOG.trace("Marshal from value {} to type {}", value, type);
+
         T answer = null;
         if (parentTypeConverter != null) {
             // lets convert the object to a JAXB source and try convert that to
@@ -179,18 +192,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return answer;
     }
 
-    /**
-     * Unmarshals the given value with the unmarshaller
-     *
-     * @param unmarshaller  the unmarshaller
-     * @param exchange the exchange 
-     * @param value  the stream to unmarshal (will close it after use, also if exception is thrown)
-     * @return  the value
-     * @throws JAXBException is thrown if an exception occur while unmarshalling
-     * @throws UnsupportedEncodingException 
-     */
-    protected Object unmarshal(Unmarshaller unmarshaller, Exchange exchange, Object value)
-        throws JAXBException, UnsupportedEncodingException {
+    protected Object unmarshal(Unmarshaller unmarshaller, Exchange exchange, Object value) throws JAXBException, UnsupportedEncodingException {
         try {
             if (value instanceof InputStream) {
                 if (needFiltering(exchange)) {
@@ -215,7 +217,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         }
         return null;
     }
-    
+
     protected boolean needFiltering(Exchange exchange) {
         // exchange property takes precedence over data format property
         return exchange != null && exchange.getProperty(Exchange.FILTER_NON_XML_CHARS, Boolean.FALSE, Boolean.class);
