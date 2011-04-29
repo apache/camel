@@ -70,22 +70,25 @@ public class EndpointMessageListener implements MessageListener {
             LOG.debug(endpoint + " consumer received JMS message: " + message);
         }
 
+        boolean sendReply;
         RuntimeCamelException rce = null;
         try {
             Object replyDestination = getReplyToDestination(message);
+            // we can only send back a reply if there was a reply destination configured
+            // and disableReplyTo hasn't been explicit enabled
+            sendReply = replyDestination != null && !disableReplyTo;
+
             final Exchange exchange = createExchange(message, replyDestination);
             if (eagerLoadingOfProperties) {
                 exchange.getIn().getHeaders();
             }
-
-            // process the exchange
-            LOG.trace("onMessage.process START");
-
             String correlationId = message.getJMSCorrelationID();
             if (correlationId != null) {
                 LOG.debug("Received Message has JMSCorrelationID [" + correlationId + "]");
             }
 
+            // process the exchange
+            LOG.trace("onMessage.process START");
             try {
                 processor.process(exchange);
             } catch (Throwable e) {
@@ -93,39 +96,44 @@ public class EndpointMessageListener implements MessageListener {
             }
             LOG.trace("onMessage.process END");
 
-            // get the correct jms message to send as reply
-            JmsMessage body = null;
+            // now we evaluate the processing of the exchange and determine if it was a success or failure
+            // we also grab information from the exchange to be used for sending back a reply (if we are to do so)
+            // so the following logic seems a bit complicated at first glance
+
+            // if we send back a reply it can either be the message body or transferring a caused exception
+            org.apache.camel.Message body = null;
             Exception cause = null;
-            boolean sendReply = false;
+
             if (exchange.isFailed() || exchange.isRollbackOnly()) {
-                if (exchange.getException() != null) {
+                if (exchange.isRollbackOnly()) {
+                    // rollback only so wrap an exception so we can rethrow the exception to cause rollback
+                    rce = wrapRuntimeCamelException(new RollbackExchangeException(exchange));
+                } else if (exchange.getException() != null) {
                     // an exception occurred while processing
                     if (endpoint.isTransferException()) {
-                        // send the exception as reply
+                        // send the exception as reply, so null body and set the exception as the cause
                         body = null;
                         cause = exchange.getException();
-                        sendReply = true;
                     } else {
                         // only throw exception if endpoint is not configured to transfer exceptions back to caller
                         // do not send a reply but wrap and rethrow the exception
                         rce = wrapRuntimeCamelException(exchange.getException());
                     }
-                } else if (exchange.isRollbackOnly()) {
-                    // rollback only so wrap an exception so we can rethrow the exception to cause rollback
-                    rce = wrapRuntimeCamelException(new RollbackExchangeException(exchange));
-                } else if (exchange.getOut().getBody() != null) {
+                } else if (exchange.hasOut() && exchange.getOut().isFault()) {
                     // a fault occurred while processing
-                    body = (JmsMessage) exchange.getOut();
-                    sendReply = true;
+                    body = exchange.getOut();
+                    cause = null;
                 }
-            } else if (exchange.hasOut()) {
-                // process OK so get the reply
-                body = (JmsMessage) exchange.getOut();
-                sendReply = true;
+            } else {
+                // process OK so get the reply body if we are InOut and has a body
+                if (sendReply && exchange.getPattern().isOutCapable() && exchange.hasOut()) {
+                    body = exchange.getOut();
+                    cause = null;
+                }
             }
 
-            // send the reply if we got a response and the exchange is out capable
-            if (rce == null && sendReply && !disableReplyTo && exchange.getPattern().isOutCapable()) {
+            // send back reply if there was no error and we are supposed to send back a reply
+            if (rce == null && sendReply && (body != null || cause != null)) {
                 LOG.trace("onMessage.sendReply START");
                 if (replyDestination instanceof Destination) {
                     sendReply((Destination)replyDestination, message, exchange, body, cause);
@@ -139,6 +147,7 @@ public class EndpointMessageListener implements MessageListener {
             rce = wrapRuntimeCamelException(e);
         }
 
+        // an exception occurred so rethrow to trigger rollback on JMS listener
         if (rce != null) {
             handleException(rce);
             LOG.trace("onMessage END throwing exception: {}", rce.getMessage());
@@ -264,7 +273,7 @@ public class EndpointMessageListener implements MessageListener {
     }
 
     protected void sendReply(Destination replyDestination, final Message message, final Exchange exchange,
-                             final JmsMessage out, final Exception cause) {
+                             final org.apache.camel.Message out, final Exception cause) {
         if (replyDestination == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Cannot send reply message as there is no replyDestination for: " + out);
@@ -286,7 +295,7 @@ public class EndpointMessageListener implements MessageListener {
     }
 
     protected void sendReply(String replyDestination, final Message message, final Exchange exchange,
-                             final JmsMessage out, final Exception cause) {
+                             final org.apache.camel.Message out, final Exception cause) {
         if (replyDestination == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Cannot send reply message as there is no replyDestination for: " + out);
