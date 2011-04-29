@@ -23,10 +23,6 @@
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
         http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 
-    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-    <import resource="classpath:META-INF/cxf/cxf-extension-jaxrs-binding.xml"/>
-    <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
-
     <!-- setup REST server -->
     <jaxrs:server id="domainServiceRest" address="http://localhost:9000/">
         <jaxrs:serviceBeans>

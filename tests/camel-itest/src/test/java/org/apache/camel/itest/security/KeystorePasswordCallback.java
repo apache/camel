@@ -57,8 +57,14 @@ public class KeystorePasswordCallback implements CallbackHandler {
                 }
             } 
             if (WSConstants.PASSWORD_TEXT.equals(type)) {
-                // As the PasswordType is PasswordDigest, we need to do the authentication in the call back
-                if (!pc.getPassword().equals(pass)) {
+                // Code for CXF 2.4.X
+                if (pc.getPassword() == null) {
+                    pc.setPassword(pass);
+                    return;
+                }
+                // Code for CXF 2.3.x
+                // As the PasswordType is not PasswordDigest, we need to do the authentication in the call back
+                if (!pass.equals(pc.getPassword())) {
                     throw new IOException("Wrong password!");
                 }
             }
@@ -85,7 +91,9 @@ public class KeystorePasswordCallback implements CallbackHandler {
             if (getType == null) {
                 getType = pc.getClass().getMethod("getType", new Class[0]);
             }
-            return (String)getType.invoke(pc, new Object[0]);
+            String result = (String)getType.invoke(pc, new Object[0]);
+            return result;
+            
         } catch (Exception ex) {
             return null;
         }
