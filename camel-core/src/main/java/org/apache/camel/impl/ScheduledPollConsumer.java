@@ -46,7 +46,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private boolean useFixedDelay;
     private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
 
-    public ScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
+    public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
 
         // we only need one thread in the pool to schedule this task
