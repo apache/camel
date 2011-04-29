@@ -81,7 +81,6 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
     }
 
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        // do not convert to stream cache
         if (BeanInvocation.class.isAssignableFrom(type) || Processor.class.isAssignableFrom(type)) {
             // JAXB cannot convert to a BeanInvocation / Processor, so we need to indicate this
             // to avoid Camel trying to do this when using beans with JAXB payloads
