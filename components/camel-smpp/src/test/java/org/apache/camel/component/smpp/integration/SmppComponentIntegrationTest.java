@@ -22,6 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.smpp.SmppBinding;
+import org.apache.camel.component.smpp.SmppMessageType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -39,10 +40,10 @@ import org.junit.Test;
  * @version 
  * @author muellerc
  */
+@Ignore("Must be manually tested")
 public class SmppComponentIntegrationTest extends CamelTestSupport {
     
     @Test
-    @Ignore("Must be manually tested")
     public void sendInOut() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -56,6 +57,7 @@ public class SmppComponentIntegrationTest extends CamelTestSupport {
         
         assertMockEndpointsSatisfied();
         Exchange resultExchange = result.getExchanges().get(0);
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppBinding.MESSAGE_TYPE));
         assertEquals("Hello SMPP World!", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(SmppBinding.ID));
         assertEquals(1, resultExchange.getIn().getHeader(SmppBinding.SUBMITTED));
@@ -68,7 +70,6 @@ public class SmppComponentIntegrationTest extends CamelTestSupport {
     }
     
     @Test
-    @Ignore("Must be manually tested")
     public void sendInOnly() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -82,6 +83,7 @@ public class SmppComponentIntegrationTest extends CamelTestSupport {
         
         assertMockEndpointsSatisfied();
         Exchange resultExchange = result.getExchanges().get(0);
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppBinding.MESSAGE_TYPE));
         assertEquals("Hello SMPP World!", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(SmppBinding.ID));
         assertEquals(1, resultExchange.getIn().getHeader(SmppBinding.SUBMITTED));
