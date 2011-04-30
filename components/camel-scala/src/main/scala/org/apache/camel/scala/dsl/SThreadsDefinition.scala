@@ -18,8 +18,6 @@ package org.apache.camel.scala.dsl
 
 import builder.RouteBuilder
 import org.apache.camel.model.ThreadsDefinition
-import java.util.concurrent.ExecutorService
-import org.apache.camel.WaitForTaskToComplete;
 
 /**
  * Scala enrichment for Camel's ThreadsDefinition
