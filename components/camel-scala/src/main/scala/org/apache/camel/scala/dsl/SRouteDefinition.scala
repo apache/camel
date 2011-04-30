@@ -24,7 +24,7 @@ case class SRouteDefinition(override val target: RouteDefinition, val builder: R
   def ==> (block: => Unit) : SRouteDefinition = this.apply(block).asInstanceOf[SRouteDefinition]
 
   def ::(id: String) : SRouteDefinition = {
-    target.setId(id)
+    target.routeId(id)
     this
   }
 

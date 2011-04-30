@@ -140,7 +140,9 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def wiretap(uri: String) = wrap(target.wireTap(uri))
   def wiretap(uri: String, expression: Exchange => Any) = wrap(target.wireTap(uri).newExchangeBody(expression))
 
+  def -->(pattern: ExchangePattern, uri: String) = wrap(target.to(pattern, uri))
   def -->(uris: String*) = to(uris:_*)
+  def to(pattern: ExchangePattern, uri: String) = wrap(target.to(pattern, uri))
   def to(uris: String*) = {
     uris.length match {
       case 1 => target.to(uris(0))
