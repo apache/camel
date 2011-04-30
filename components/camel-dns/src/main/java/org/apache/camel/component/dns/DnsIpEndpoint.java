@@ -45,7 +45,7 @@ public class DnsIpEndpoint extends DefaultEndpoint {
                 ObjectHelper.notEmpty(domain, "Header " + DnsConstants.DNS_DOMAIN);
 
                 InetAddress address = Address.getByName(domain);
-                exchange.getOut().setBody(address);
+                exchange.getIn().setBody(address);
             }
         };
     }
@@ -57,5 +57,4 @@ public class DnsIpEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return false;
     }
-
 }
