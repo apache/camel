@@ -18,7 +18,7 @@ package org.apache.camel.scala
 package dsl;
  
 import builder.RouteBuilder
-import org.apache.camel.scala.test.{Cat, Kitten}
+import org.apache.camel.scala.test.Cat
 
 /**
  * Test for setting the message header from the Scala DSL
@@ -42,7 +42,7 @@ class SetHeaderTest extends ScalaTestSupport {
   def doTestExpression(from: String, mock: String) = {
     mock expect {_.headerReceived("genus", "felis")}
     test {
-      from ! (new Cat("Duchess"), new Kitten("Toulouse"))
+      from ! (new Cat("Duchess"), new Cat("Toulouse"))
     }    
   }
     

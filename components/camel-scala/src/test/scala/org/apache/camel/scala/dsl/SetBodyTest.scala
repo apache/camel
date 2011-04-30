@@ -17,7 +17,7 @@
 package org.apache.camel.scala.dsl;
  
 import builder.RouteBuilder
-import org.apache.camel.scala.test.{Cat, Kitten}
+import org.apache.camel.scala.test.Cat
 
 /**
  * Test for setting the message body from the Scala DSL
@@ -41,7 +41,7 @@ class SetBodyTest extends ScalaTestSupport {
   def doTestExpression(from: String, mock: String) = {
     mock expect {_.received("Duchess", "Toulouse")}
     test {
-      from ! (new Cat("Duchess"), new Kitten("Toulouse"))
+      from ! (new Cat("Duchess"), new Cat("Toulouse"))
     }    
   }
     

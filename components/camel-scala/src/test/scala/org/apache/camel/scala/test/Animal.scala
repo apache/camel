@@ -24,7 +24,5 @@ import _root_.scala.reflect.BeanProperty
 abstract class Animal(@BeanProperty val name: String, @BeanProperty val genus: String)
 
 case class Cat(override val name: String) extends Animal(name, "felis") 
-case class Kitten(override val name: String) extends Cat(name)
 
 case class Dog(override val name: String) extends Animal(name, "canis")
-case class Puppy(override val name: String) extends Dog(name)
