@@ -138,7 +138,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def when(filter: Exchange => Any): DSL with Block = SChoiceDefinition(target.choice).when(filter)
   def wiretap(uri: String) = wrap(target.wireTap(uri))
-  def wiretap(uri: String, expression: Exchange => Any) = wrap(target.wireTap(uri, expression))
+  def wiretap(uri: String, expression: Exchange => Any) = wrap(target.wireTap(uri).newExchangeBody(expression))
 
   def -->(uris: String*) = to(uris:_*)
   def to(uris: String*) = {
