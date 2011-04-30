@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
@@ -535,6 +536,37 @@ public class MockEndpointTest extends ContextTestSupport {
             assertEquals("Assertion error at index 1 on mock mock://result with predicate: header(bar) instanceof"
                     + " java.lang.String on Exchange[Message: Hello World]", e.getMessage());
         }
+    }
+
+    public void testExchangePattern() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.message(0).exchangePattern().isEqualTo(ExchangePattern.InOnly);
+        mock.message(1).exchangePattern().isEqualTo(ExchangePattern.InOut);
+
+        template.sendBody("direct:a", "Hello World");
+        template.requestBody("direct:a", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testExpectedExchangePattern() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedExchangePattern(ExchangePattern.InOnly);
+
+        template.sendBody("direct:a", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // reset and try with InOut this time
+        resetMocks();
+        mock.expectedMessageCount(1);
+        mock.expectedExchangePattern(ExchangePattern.InOut);
+
+        template.requestBody("direct:a", "Bye World");
+
+        assertMockEndpointsSatisfied();
     }
 
     protected void sendMessages(int... counters) {

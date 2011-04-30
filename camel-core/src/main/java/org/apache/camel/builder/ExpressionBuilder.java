@@ -256,6 +256,25 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for the exchange pattern
+     *
+     * @see org.apache.camel.Exchange#getPattern()
+     * @return an expression object which will return the exchange pattern
+     */
+    public static Expression exchangePatternExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getPattern();
+            }
+
+            @Override
+            public String toString() {
+                return "exchangePattern";
+            }
+        };
+    }   
+    
+    /**
      * Returns an expression for an exception set on the exchange
      *
      * @see Exchange#getException()
@@ -276,8 +295,8 @@ public final class ExpressionBuilder {
                 return "exchangeException";
             }
         };
-    }   
-    
+    }
+
     /**
      * Returns an expression for an exception set on the exchange
      * <p/>

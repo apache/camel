@@ -36,6 +36,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Handler;
 import org.apache.camel.Message;
@@ -661,6 +662,17 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                     String body = getCamelContext().getTypeConverter().convertTo(String.class, file);
                     assertEquals("Content of file: " + name, content, body);
                 }
+            }
+        });
+    }
+
+    /**
+     * Adds an expectation that messages received should have the given exchange pattern
+     */
+    public void expectedExchangePattern(final ExchangePattern exchangePattern) {
+        expectedMessagesMatches(new Predicate() {
+            public boolean matches(Exchange exchange) {
+                return exchange.getPattern().equals(exchangePattern);
             }
         });
     }

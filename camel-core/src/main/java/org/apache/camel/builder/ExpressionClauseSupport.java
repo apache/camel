@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -140,6 +141,13 @@ public class ExpressionClauseSupport<T> {
      */
     public T outHeaders() {
         return expression(ExpressionBuilder.outHeadersExpression());
+    }
+
+    /**
+     * An expression of the exchange pattern
+     */
+    public T exchangePattern() {
+        return expression(ExpressionBuilder.exchangePatternExpression());
     }
 
     /**
