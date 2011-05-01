@@ -17,27 +17,21 @@
 package org.apache.camel
 package scala.dsl
  
-import org.w3c.dom.Document
 import builder.RouteBuilder
+import org.w3c.dom.Document
 
 /**
  * Test case for Splitter
  */
 class SplitterRouteBuilderTest extends ScalaTestSupport {
 
-  def testDummy = {
-    // noop
-  }
-
-  // TODO: Fixme, fails on Linux
-  def xxxtestSimpleSplitter = {
+  def testSimpleSplitter = {
     "mock:a" expect { _.count = 3}
     "direct:a" ! <persons><person id="1"/><person id="2"/><person id="3"/></persons>
     "mock:a" assert()
   }
   
-  // TODO: Fixme, fails on Linux
-  def xxxtestBlockSplitter = {
+  def testBlockSplitter = {
     "mock:b" expect { _.count = 3}
     "mock:c" expect { _.count = 3}
     "direct:b" ! <persons><person id="1"/><person id="2"/><person id="3"/></persons>
@@ -46,9 +40,7 @@ class SplitterRouteBuilderTest extends ScalaTestSupport {
   }
 
   val builder =
-    //START SNIPPET: xpath
     new RouteBuilder {
-    //END SNIPPET: xpath
        //START SNIPPET: simple
        "direct:a" as(classOf[Document]) split(xpath("/persons/person")) to "mock:a"
        //END SNIPPET: simple

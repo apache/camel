@@ -76,7 +76,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def handle[E](block: => Unit)(implicit manifest: Manifest[E]) = SOnExceptionDefinition(target.onException(manifest.erasure)).apply(block)
 
   def id(id : String) = wrap(target.id(id))
-  def idempotentconsumer(expression: Exchange => Any) = SIdempotentConsumerDefinition(target.idempotentConsumer(expression, null))
+  def idempotentConsumer(expression: Exchange => Any) = SIdempotentConsumerDefinition(target.idempotentConsumer(expression, null))
   def inOnly = wrap(target.inOnly)
   def inOut = wrap(target.inOut)
 
@@ -118,9 +118,9 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def routingSlip(header: String, separator: String) = wrap(target.routingSlip(header, separator))
   def routingSlip(expression: Exchange => Any) = wrap(target.routingSlip(expression))
 
-  def setbody(expression: Exchange => Any) = wrap(target.setBody(expression))
-  def setfaultbody(expression: Exchange => Any) = wrap(target.setFaultBody(expression))
-  def setheader(name: String, expression: Exchange => Any) = wrap(target.setHeader(name, expression))
+  def setBody(expression: Exchange => Any) = wrap(target.setBody(expression))
+  def setFaultBody(expression: Exchange => Any) = wrap(target.setFaultBody(expression))
+  def setHeader(name: String, expression: Exchange => Any) = wrap(target.setHeader(name, expression))
   def sort[T](expression: (Exchange) => Any, comparator: Comparator[T] = null) = wrap(target.sort(expression, comparator))
   def split(expression: Exchange => Any) = SSplitDefinition(target.split(expression))
   def stop = wrap(target.stop)
@@ -137,8 +137,8 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def validate(expression: Exchange => Any) = wrap(target.validate(predicateBuilder(expression)))
 
   def when(filter: Exchange => Any): DSL with Block = SChoiceDefinition(target.choice).when(filter)
-  def wiretap(uri: String) = wrap(target.wireTap(uri))
-  def wiretap(uri: String, expression: Exchange => Any) = wrap(target.wireTap(uri).newExchangeBody(expression))
+  def wireTap(uri: String) = wrap(target.wireTap(uri))
+  def wireTap(uri: String, expression: Exchange => Any) = wrap(target.wireTap(uri).newExchangeBody(expression))
 
   def -->(pattern: ExchangePattern, uri: String) = wrap(target.to(pattern, uri))
   def -->(uris: String*) = to(uris:_*)

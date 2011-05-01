@@ -48,7 +48,7 @@ trait DSL {
   def handle[E](block: => Unit)(implicit manifest: Manifest[E]) : SOnExceptionDefinition
 
   def id(id : String): DSL
-  def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerDefinition
+  def idempotentConsumer(expression: Exchange => Any): SIdempotentConsumerDefinition
   def inOnly(): DSL with Block
   def inOut(): DSL with Block
 
@@ -79,9 +79,9 @@ trait DSL {
   def routingSlip(header: String, separator: String) : DSL
   def routingSlip(expression: Exchange => Any) : DSL
 
-  def setbody(expression: Exchange => Any) : DSL
-  def setfaultbody(expression: Exchange => Any) : DSL
-  def setheader(header: String, expression: Exchange => Any) : DSL
+  def setBody(expression: Exchange => Any) : DSL
+  def setFaultBody(expression: Exchange => Any) : DSL
+  def setHeader(header: String, expression: Exchange => Any) : DSL
   def sort[T](expression: Exchange => Any, comparator: Comparator[T] = null) : DSL
   def split(expression: Exchange => Any) : SSplitDefinition
   def stop : DSL
@@ -99,8 +99,8 @@ trait DSL {
   def validate(expression: Exchange => Any) : DSL
 
   def when(filter: Exchange => Any) : DSL with Block
-  def wiretap(uri: String) : DSL
-  def wiretap(uri: String, expression: Exchange => Any) : DSL
+  def wireTap(uri: String) : DSL
+  def wireTap(uri: String, expression: Exchange => Any) : DSL
   
   def -->(uris: String*) : DSL
 }

@@ -115,7 +115,7 @@ class InterceptSendToSkipOriginalTest extends ScalaTestSupport {
 class SInterceptSendToFaultTest extends InterceptSendToFaultTest with RouteBuilderSupport {
 
   override def createRouteBuilder = new RouteBuilder {
-    interceptSendTo("mock:foo").setfaultbody("Damn")
+    interceptSendTo("mock:foo").setFaultBody("Damn")
 
     "direct:start" to "mock:foo" transform "Bye World" to "mock:result"
   }

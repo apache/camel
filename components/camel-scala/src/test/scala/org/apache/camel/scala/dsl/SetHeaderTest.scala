@@ -48,18 +48,18 @@ class SetHeaderTest extends ScalaTestSupport {
     
   val builder = new RouteBuilder {
      //START SNIPPET: simple
-     "direct:a" setheader("response", "pong?") to "mock:a"
-     "direct:c" setheader("genus",el("${in.body.genus}")) to "mock:c"
+     "direct:a" setHeader("response", "pong?") to "mock:a"
+     "direct:c" setHeader("genus",el("${in.body.genus}")) to "mock:c"
      //END SNIPPET: simple
      
      //START SNIPPET: block
      "direct:b" ==> {
-       setheader("response", "pong?")
+       setHeader("response", "pong?")
        to ("mock:b")
      }
      
      "direct:d" ==> {
-       setheader("genus", el("${in.body.genus}"))
+       setHeader("genus", el("${in.body.genus}"))
        to ("mock:d")
      }
      //END SNIPPET: block

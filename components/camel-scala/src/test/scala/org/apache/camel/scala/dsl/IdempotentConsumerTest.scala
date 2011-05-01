@@ -55,12 +55,12 @@ class IdempotentConsumerTest extends ScalaTestSupport {
 
   val builder = new RouteBuilder {
      //START SNIPPET: simple
-     "direct:a" idempotentconsumer(_.in("messageId")) memory(200) to ("mock:a")
+     "direct:a" idempotentConsumer(_.in("messageId")) memory(200) to ("mock:a")
      //END SNIPPET: simple
      
      //START SNIPPET: block
      "direct:b" ==> {
-       idempotentconsumer(_.in("messageId")) memory(200) apply {
+       idempotentConsumer(_.in("messageId")) memory(200) apply {
          to ("mock:b")
        }
      }
@@ -99,7 +99,7 @@ class IdempotentConsumerEagerTest extends ScalaTestSupport {
 
 
     "direct:start" ==> {
-      idempotentconsumer(_.getIn().getHeader("messageId")).repository(repo).eager(true) {
+      idempotentConsumer(_.getIn().getHeader("messageId")).repository(repo).eager(true) {
         process((exchange : Exchange) =>
           if (repo.contains(exchange.getIn().getHeader("messageId").asInstanceOf[String])) {
             // this is OK with the eager = true

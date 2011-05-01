@@ -119,7 +119,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def filter(predicate: Exchange => Any) = stack.top.filter(predicate)
 
   def id(id : String) = stack.top.id(id)
-  def idempotentconsumer(expression: Exchange => Any) = stack.top.idempotentconsumer(expression)
+  def idempotentConsumer(expression: Exchange => Any) = stack.top.idempotentConsumer(expression)
   def inOnly = stack.top.inOnly
   def inOut = stack.top.inOut
   def interceptFrom(expression: Exchange => Boolean) = {
@@ -167,9 +167,9 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def routingSlip(header: String, separator: String) = stack.top.routingSlip(header, separator)
   def routingSlip(expression: Exchange => Any) = stack.top.routingSlip(expression)
 
-  def setbody(expression : Exchange => Any) = stack.top.setbody(expression)
-  def setfaultbody(expression: Exchange => Any) = stack.top.setfaultbody(expression)
-  def setheader(name: String, expression: Exchange => Any) = stack.top.setheader(name, expression)
+  def setBody(expression : Exchange => Any) = stack.top.setBody(expression)
+  def setFaultBody(expression: Exchange => Any) = stack.top.setFaultBody(expression)
+  def setHeader(name: String, expression: Exchange => Any) = stack.top.setHeader(name, expression)
   def sort[T](expression: (Exchange) => Any, comparator: Comparator[T] = null) = stack.top.sort(expression, comparator)
   def split(expression: Exchange => Any) = stack.top.split(expression)
   def stop = stack.top.stop
@@ -186,8 +186,8 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def validate(expression: (Exchange) => Any) = stack.top.validate(expression)
 
   def when(filter: Exchange => Any) = stack.top.when(filter)
-  def wiretap(uri: String) = stack.top.wiretap(uri)
-  def wiretap(uri: String, expression: Exchange => Any) = stack.top.wiretap(uri, expression)
+  def wireTap(uri: String) = stack.top.wireTap(uri)
+  def wireTap(uri: String, expression: Exchange => Any) = stack.top.wireTap(uri, expression)
 
   def to(uris: String*) = stack.top.to(uris: _*)
   def -->(uris: String*) = stack.top.to(uris: _*)

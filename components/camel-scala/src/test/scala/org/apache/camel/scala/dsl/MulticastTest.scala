@@ -70,7 +70,7 @@ class SMulticastParallelTest extends MulticastParallelTest with RouteBuilderSupp
       to("mock:result")
     }
 
-    "direct:a" delay(100 ms) setbody("A")
-    "direct:b" setbody("B")
+    "direct:a" delay(100 ms) setBody("A")
+    "direct:b" setBody("B")
   }
 }
