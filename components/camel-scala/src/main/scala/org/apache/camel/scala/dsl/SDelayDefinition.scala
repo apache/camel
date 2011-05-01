@@ -16,9 +16,7 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.builder.ExpressionBuilder
 import org.apache.camel.model.DelayDefinition
-import org.apache.camel.model.language.ExpressionDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
@@ -26,22 +24,4 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
  */
 case class SDelayDefinition(override val target: DelayDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[DelayDefinition] {
  
-  def ms = this
-  def milliseconds = ms
-    
-  def sec = {
-    valueInMs *= 1000
-    this
-  }
-  def seconds = sec
-  
-  def min = {
-    valueInMs *= (60 * 1000)
-    this
-  }
-  def minutes = min
-
-  // we need this to match the valueInMs_= for now, can be removed once Scala 2.8.0 is out
-  def valueInMs : Long = 0
-  def valueInMs_=(period: Long) = target.delay(period)
 }

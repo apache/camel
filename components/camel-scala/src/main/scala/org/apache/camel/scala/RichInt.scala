@@ -21,10 +21,6 @@ package org.apache.camel.scala
  */
 class RichInt(val int: Int) {
 
-  def ms = new Period(int)
-
-  def seconds = new Period(int).seconds
-  
-  def per(period: Int) = new Frequency(int, new Period(period))
+  def per(period: Period) = new Frequency(int, period)
 
 }

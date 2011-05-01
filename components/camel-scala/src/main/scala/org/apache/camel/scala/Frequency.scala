@@ -23,10 +23,7 @@ package org.apache.camel.scala
  * @param period the time period for this frequency
  */
 class Frequency(val count: Int, val period: Period) {
-  
-  def seconds = {
-    period.seconds
-    this
-  }
-  
+
+
+
 }

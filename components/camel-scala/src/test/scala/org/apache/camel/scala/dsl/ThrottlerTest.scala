@@ -17,7 +17,6 @@
 package org.apache.camel
 package scala.dsl
  
-import org.w3c.dom.Document
 import builder.RouteBuilder
 
 /**
@@ -25,17 +24,17 @@ import builder.RouteBuilder
  */
 class ThrottlerTest extends ScalaTestSupport {
   
-  def testSimpleTrottler = {
+  def testSimpleThrottler = {
     "mock:a" expect { _.count = 3 } 
-    "mock:a" expect { _.setResultWaitTime(1000) }  
+    "mock:a" expect { _.setResultWaitTime(1000) }
     for (id <- 1 to 6) "seda:a" ! id   
     "mock:a" assert()
   }
   
-  def testBlockTrottler = {
+  def testBlockThrottler = {
     "mock:b" expect { _.count = 6 }
     "mock:c" expect { _.count = 3 } 
-    "mock:c" expect { _.setResultWaitTime(1000) }  
+    "mock:c" expect { _.setResultWaitTime(1000) }
     for (id <- 1 to 6) "seda:b" ! id   
     "mock:b" assert()
   }
@@ -43,13 +42,13 @@ class ThrottlerTest extends ScalaTestSupport {
   val builder =
     new RouteBuilder {
        //START SNIPPET: simple
-       "seda:a" throttle (3 per 2 seconds) to ("mock:a")
+       "seda:a" throttle (3 per (2 seconds)) to ("mock:a")
        //END SNIPPET: simple
        
        //START SNIPPET: block
        "seda:b" ==> {
          to ("mock:b")
-         throttle (3 per 2 seconds) {
+         throttle (3 per (2 seconds)) {
            to ("mock:c")
          }
        }

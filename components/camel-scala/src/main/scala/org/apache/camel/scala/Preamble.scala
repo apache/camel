@@ -24,5 +24,6 @@ trait Preamble {
 
   implicit def exchangeWrapper(exchange: Exchange) = new RichExchange(exchange)
   implicit def enrichInt(int: Int) = new RichInt(int)
+  implicit def int2Period(value: Int) = new SimplePeriod(value)
 
 }

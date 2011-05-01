@@ -24,29 +24,4 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
  */
 case class SThrottleDefinition(override val target: ThrottleDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ThrottleDefinition] {
  
-  /**
-   * Time period in milliseconds
-   */
-  def per(period: Long) = {
-    target.setTimePeriodMillis(period)
-    this
-  }
-  
-  def ms = this
-  def milliseconds = ms
-    
-  def sec = {
-    valueInMs = valueInMs.longValue * 1000
-    this
-  }
-  def seconds = sec
-  
-  def min = {
-    valueInMs = valueInMs.longValue * (60 * 1000)
-    this
-  }
-  def minutes = min
-
-  def valueInMs = target.getTimePeriodMillis()
-  def valueInMs_=(period: Long) = target.setTimePeriodMillis(period)
 }
