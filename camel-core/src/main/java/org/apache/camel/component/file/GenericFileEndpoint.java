@@ -61,7 +61,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected boolean autoCreate = true;
     protected boolean startingDirectoryMustExist;
     protected boolean directoryMustExist;
-    protected int bufferSize = 128 * 1024;
+    protected int bufferSize = FileUtil.BUFFER_SIZE;
     protected GenericFileExist fileExist = GenericFileExist.Override;
     protected boolean noop;
     protected boolean recursive;

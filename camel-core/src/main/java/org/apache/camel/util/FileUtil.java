@@ -17,7 +17,10 @@
 package org.apache.camel.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Random;
@@ -31,6 +34,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class FileUtil {
     
+    public static final int BUFFER_SIZE = 128 * 1024;
+
     private static final transient Logger LOG = LoggerFactory.getLogger(FileUtil.class);
     private static final int RETRY_SLEEP_MILLIS = 10;
     private static File defaultTempDir;
@@ -326,10 +331,46 @@ public final class FileUtil {
             count++;
         }
 
+        // we could not rename using renameTo, so lets fallback and do a copy/delete approach.
+        // for example if you move files between different file systems (linux -> windows etc.)
+        if (!renamed) {
+            // now do a copy and delete as all rename attempts failed
+            try {
+                LOG.debug("Cannot rename file from: {} to: {}, will now use a copy/delete approach instead", from, to);
+                copyFile(from, to);
+                if (!deleteFile(from)) {
+                    LOG.warn("Renaming file from: {} to: {} failed due cannot delete from file: {} after copy succeeded", new Object[]{from, to, from});
+                    renamed = false;
+                }
+                renamed = true;
+            } catch (IOException e) {
+                LOG.debug("Error renaming file from: " + from + " to: " + to + " using copy/delete", e);
+            }
+        }
+
         if (LOG.isDebugEnabled() && count > 0) {
             LOG.debug("Tried {} to rename file: {} to: {} with result: {}", new Object[]{count, from, to, renamed});
         }
         return renamed;
+    }
+
+    public static void copyFile(File from, File to) throws IOException {
+        FileChannel in = new FileInputStream(from).getChannel();
+        FileChannel out = new FileOutputStream(to).getChannel();
+        try {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Using FileChannel to copy from: " + in + " to: " + out);
+            }
+
+            long size = in.size();
+            long position = 0;
+            while (position < size) {
+                position += in.transferTo(position, BUFFER_SIZE, out);
+            }
+        } finally {
+            IOHelper.close(in, from.getName(), LOG);
+            IOHelper.close(out, to.getName(), LOG);
+        }
     }
 
     public static boolean deleteFile(File file) {

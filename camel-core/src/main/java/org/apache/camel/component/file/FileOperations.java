@@ -261,7 +261,7 @@ public class FileOperations implements GenericFileOperations<File> {
             }
         } finally {
             IOHelper.close(in, source.getName(), LOG);
-            IOHelper.close(out, source.getName(), LOG);
+            IOHelper.close(out, target.getName(), LOG);
         }
     }
 
