@@ -17,10 +17,8 @@
 package org.apache.camel
 package scala.dsl
 
-import org.apache.camel.processor.OnCompletionGlobalTest.MyProcessor
 import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, RouteBuilder}
 import processor.OnCompletionWhenTest
-import reflect.Manifest
 
 class SOnCompletionWhenTest extends OnCompletionWhenTest with RouteBuilderSupport {
 

@@ -17,8 +17,6 @@
 package org.apache.camel.scala.dsl
 
 import builder.{RouteBuilder, RouteBuilderSupport}
-import org.apache.camel.processor.LogProcessorTest
-import org.apache.camel.LoggingLevel
 import org.apache.camel.processor.enricher.{SampleAggregator, PollEnricherTest}
 
 /**

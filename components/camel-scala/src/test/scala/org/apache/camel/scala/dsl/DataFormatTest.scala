@@ -17,7 +17,6 @@
 package org.apache.camel.scala
 package dsl;
  
-import org.w3c.dom.Document
 import builder.RouteBuilder
 import test.Adult
 

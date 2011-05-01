@@ -20,8 +20,6 @@ import builder.{RouteBuilderSupport, RouteBuilder}
 import org.apache.camel.Exchange
 
 import junit.framework.Assert.{assertEquals, assertTrue}
-import org.apache.camel.processor.interceptor.Tracer
-import org.apache.commons.logging.LogFactory
 import org.apache.camel.processor.onexception._
 
 /**

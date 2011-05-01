@@ -18,7 +18,6 @@ package org.apache.camel
 package scala.dsl
  
 import org.apache.camel.scala.test.Adult
-import org.w3c.dom.Document
 import builder.RouteBuilder
 
 /**

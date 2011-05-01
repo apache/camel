@@ -21,7 +21,6 @@ package dsl
 import org.apache.camel.ContextTestSupport
 import org.apache.camel.component.mock.MockEndpoint
 import builder.{RouteBuilder,RouteBuilderSupport}
-import org.apache.camel.scala.dsl._
 import _root_.scala.collection.mutable.ArrayBuffer
 
 abstract class ScalaTestSupport extends ContextTestSupport with RouteBuilderSupport with Preamble {

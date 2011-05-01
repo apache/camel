@@ -17,7 +17,6 @@
 package org.apache.camel
 package scala.dsl
  
-import org.w3c.dom.Document
 import builder.RouteBuilder
 import junit.framework.Assert._
 
