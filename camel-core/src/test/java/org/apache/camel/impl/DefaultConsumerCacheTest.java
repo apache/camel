@@ -26,7 +26,7 @@ import org.apache.camel.PollingConsumer;
 public class DefaultConsumerCacheTest extends ContextTestSupport {
 
     public void testCacheConsumers() throws Exception {
-        ConsumerCache cache = new ConsumerCache(context);
+        ConsumerCache cache = new ConsumerCache(this, context);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());

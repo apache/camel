@@ -24,8 +24,9 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,9 +39,9 @@ import org.slf4j.LoggerFactory;
 public class PropertyEditorTypeConverter implements TypeConverter, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertyEditorTypeConverter.class);
-    // use a bound cache to avoid using too much memory in case a lot of different classes
+    // use a soft bound cache to avoid using too much memory in case a lot of different classes
     // is being converted to string
-    private final Map<Class, Class> misses = new LRUCache<Class, Class>(1000);
+    private final Map<Class, Class> misses = new LRUSoftCache<Class, Class>(1000);
     // we don't anticipate so many property editors so we have unbounded map
     private final Map<Class, PropertyEditor> cache = new HashMap<Class, PropertyEditor>();
 
@@ -116,11 +117,12 @@ public class PropertyEditorTypeConverter implements TypeConverter, Service {
     }
 
     public void start() throws Exception {
+        ServiceHelper.startService(misses);
     }
 
     public void stop() throws Exception {
         cache.clear();
-        misses.clear();
+        ServiceHelper.stopService(misses);
     }
 
 }

@@ -626,8 +626,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Creates a new {@link ProducerTemplate} which is <b>started</b> and therefore ready to use right away.
      * <p/>
-     * You <b>must</b> start the template before its being used.
-     * <p/>
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a>
      *

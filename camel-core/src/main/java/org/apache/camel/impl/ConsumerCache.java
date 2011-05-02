@@ -26,6 +26,7 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,18 +40,33 @@ public class ConsumerCache extends ServiceSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(ConsumerCache.class);
     private final CamelContext camelContext;
     private final Map<String, PollingConsumer> consumers;
+    private final Object source;
 
-    public ConsumerCache(CamelContext camelContext) {
-        this(camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));
+    public ConsumerCache(Object source, CamelContext camelContext) {
+        this(source, camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));
     }
 
-    public ConsumerCache(CamelContext camelContext, int maximumCacheSize) {
-        this(camelContext, new LRUCache<String, PollingConsumer>(maximumCacheSize));
+    public ConsumerCache(Object source, CamelContext camelContext, int cacheSize) {
+        this(source, camelContext, createLRUCache(cacheSize));
     }
 
-    public ConsumerCache(CamelContext camelContext, Map<String, PollingConsumer> cache) {
+    public ConsumerCache(Object source, CamelContext camelContext, Map<String, PollingConsumer> cache) {
         this.camelContext = camelContext;
         this.consumers = cache;
+        this.source = source;
+    }
+
+    /**
+     * Creates the {@link LRUCache} to be used.
+     * <p/>
+     * This implementation returns a {@link org.apache.camel.util.LRUSoftCache} instance.
+
+     * @param cacheSize the cache size
+     * @return the cache
+     */
+    protected static LRUCache<String, PollingConsumer> createLRUCache(int cacheSize) {
+        // We use a soft reference cache to allow the JVM to re-claim memory if it runs low on memory.
+        return new LRUSoftCache<String, PollingConsumer>(cacheSize);
     }
 
     public synchronized PollingConsumer getConsumer(Endpoint endpoint) {
@@ -104,6 +120,49 @@ public class ConsumerCache extends ServiceSupport {
         return camelContext;
     }
 
+    /**
+     * Gets the source which uses this cache
+     *
+     * @return the source
+     */
+    public Object getSource() {
+        return source;
+    }
+
+    /**
+     * Returns the current size of the cache
+     *
+     * @return the current size
+     */
+    public int size() {
+        int size = consumers.size();
+        LOG.trace("size = {}", size);
+        return size;
+    }
+
+    /**
+     * Gets the maximum cache size (capacity).
+     * <p/>
+     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
+     *
+     * @return the capacity
+     */
+    public int getCapacity() {
+        int capacity = -1;
+        if (consumers instanceof LRUCache) {
+            LRUCache cache = (LRUCache) consumers;
+            capacity = cache.getMaxCacheSize();
+        }
+        return capacity;
+    }
+
+    /**
+     * Purges this cache
+     */
+    public synchronized void purge() {
+        consumers.clear();
+    }
+
     protected void doStart() throws Exception {
         ServiceHelper.startServices(consumers);
     }
@@ -111,15 +170,6 @@ public class ConsumerCache extends ServiceSupport {
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(consumers);
         consumers.clear();
-    }
-
-    /**
-     * Returns the current size of the consumer cache
-     *
-     * @return the current size
-     */
-    int size() {
-        return consumers.size();
     }
 
 }

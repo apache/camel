@@ -21,14 +21,16 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUSoftCache;
 
 /**
- * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUCache}.
+ * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUSoftCache}.
+ * <p/>
+ * We use a soft reference cache to allow the JVM to re-claim memory if it runs low on memory.
  *
  * @version 
  */
-public class EndpointRegistry extends LRUCache<EndpointKey, Endpoint> {
+public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> {
 
     private final CamelContext context;
 

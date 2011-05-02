@@ -21,11 +21,11 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUSoftCache;
 
 /**
  * Represents a cache of {@link MethodInfo} objects to avoid the expense of introspection for each
- * invocation of a method via a proxy,
+ * invocation of a method via a proxy.
  *
  * @version 
  */
@@ -77,7 +77,8 @@ public class MethodInfoCache {
     }
 
     protected static Map<Object, Object> createLruCache(int size) {
-        return new LRUCache<Object, Object>(size);
+        // use a soft cache
+        return new LRUSoftCache<Object, Object>(size);
     }
 
     private static Map<Class<?>, BeanInfo> createClassCache(int size) {

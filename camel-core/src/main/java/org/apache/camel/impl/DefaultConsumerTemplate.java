@@ -254,9 +254,9 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     protected void doStart() throws Exception {
         if (consumerCache == null) {
             if (maximumCacheSize > 0) {
-                consumerCache = new ConsumerCache(context, maximumCacheSize);
+                consumerCache = new ConsumerCache(this, context, maximumCacheSize);
             } else {
-                consumerCache = new ConsumerCache(context);
+                consumerCache = new ConsumerCache(this, context);
             }
         }
         ServiceHelper.startService(consumerCache);
