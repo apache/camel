@@ -29,9 +29,11 @@ import java.util.TreeMap;
 import javax.activation.DataHandler;
 import javax.security.auth.Subject;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.Holder;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -648,8 +650,13 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 part = ((Holder)part).value;
             }
                         
-            if (part instanceof DOMSource) {
-                Element element = getFirstElement(((DOMSource)part).getNode());
+            if (part instanceof Source) {
+                Element element;
+                if (part instanceof DOMSource) {
+                    element = getFirstElement(((DOMSource)part).getNode());
+                } else {
+                    element = getFirstElement((Source)part);
+                }
 
                 if (element != null) {
                     answer.add(element);
@@ -659,7 +666,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                     LOG.trace("Extract body element {}",
                               element == null ? "null" : XMLUtils.toString(element));
                 }
-                
             } else if (part instanceof Element) {
                 answer.add((Element)part);
             } else {
@@ -692,6 +698,15 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         } 
         
         return DOMUtils.getFirstElement(node);
+    }
+    
+    private static Element getFirstElement(Source source) {
+        try {
+            return ((Document)XMLUtils.fromSource(source)).getDocumentElement();
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
     }
     
     public void copyJaxWsContext(org.apache.cxf.message.Exchange cxfExchange, Map<String, Object> context) {
