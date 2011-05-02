@@ -17,7 +17,6 @@
 package org.apache.camel.scala.converter;
 
 import org.junit.Assert._
-import org.junit.Ignore
 
 import org.apache.camel.ContextTestSupport
 import scala.xml.Elem
@@ -28,40 +27,47 @@ import org.w3c.dom.Document
 /**
  * Test case for ScalaTypeConverter
  */
-@Ignore("Fails on CI servers")
 class ScalaTypeConverterTest extends ContextTestSupport {
   
   def testDocumentConverter = {
-    val result = context.getTypeConverter.convertTo(classOf[Document], <persons/>)
+    val exchange = context.getEndpoint("direct:start").createExchange
+
+    val result = context.getTypeConverter.convertTo(classOf[Document], exchange, <persons/>)
     assertNotNull(result)
     assertNotNull(result.getElementsByTagName("persons"))
   }
 
   def testXmlStringToElemConverter = {
-    val result = context.getTypeConverter.convertTo(classOf[Elem], "<persons/>")
+    val exchange = context.getEndpoint("direct:start").createExchange
+
+    val result = context.getTypeConverter.convertTo(classOf[Elem], exchange, "<persons/>")
     assertNotNull(result)
     assertEquals(<persons/>, result)
   }
 
   def testDomDocumentToElemConverter = {
+    val exchange = context.getEndpoint("direct:start").createExchange
+
     val factory = DocumentBuilderFactory.newInstance()
     val parser = factory.newDocumentBuilder()
     val doc = parser.newDocument()
     val root = doc.createElement("persons")
     doc.appendChild(root)
 
-    val result = context.getTypeConverter.convertTo(classOf[Elem], doc)
+    val result = context.getTypeConverter.convertTo(classOf[Elem], exchange, doc)
     assertNotNull(result)
     assertEquals(<persons/>, result)
   }
 
   def testDomNodeToElemConverter = {
+    val exchange = context.getEndpoint("direct:start").createExchange
+
     val factory = DocumentBuilderFactory.newInstance()
     val parser = factory.newDocumentBuilder()
     val doc = parser.newDocument()
     val node = doc.createElement("persons")
 
-    val result = context.getTypeConverter.convertTo(classOf[Elem], node)
+    val result = context.getTypeConverter.convertTo(classOf[Elem], exchange, node)
     assertNotNull(result)
     assertEquals(<persons/>, result)
   }

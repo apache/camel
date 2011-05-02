@@ -16,10 +16,11 @@
  */
 package org.apache.camel.scala.converter;
 
-import _root_.scala.xml.Elem
+import java.io.InputStream
 
-import org.apache.camel.converter.jaxp.XmlConverter
+import scala.xml.Elem
 import scala.xml.XML
+
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.apache.camel.{Exchange, Converter}
@@ -27,19 +28,29 @@ import org.apache.camel.{Exchange, Converter}
 /**
  * Converter implementation for supporting some common Scala types within Apache Camel
  */
-@Converter object ScalaTypeConverter {
-  
-   val converter = new XmlConverter()
-  
-   @Converter
-   def convertToDocument(xml: Elem) = converter.toDOMDocument(xml.toString)
+@Converter
+class ScalaTypeConverter {
+
+  // static classes in Scala don't work on linux with Camel type converter as for some reason
+  // camel-core cannot see the methods have static modifiers
 
    @Converter
-   def convertToElem(xmlString: String) = XML.loadString(xmlString)
+   def convertToDocument(xml: Elem, exchange : Exchange) : Document = {
+     exchange.getContext.getTypeConverter.convertTo(classOf[Document], exchange, xml.toString)
+   }
 
    @Converter
-   def domDocumentToElem(doc: Document, exchange : Exchange) = XML.load(converter.toInputStream(doc, exchange))
+   def convertToElem(xmlString: String) : Elem = {
+     XML.loadString(xmlString)
+   }
 
    @Converter
-   def domNodeToElem(node: Node, exchange : Exchange) = XML.loadString(converter.toString(node, exchange))
+   def domDocumentToElem(doc: Document, exchange : Exchange) : Elem = {
+     XML.load(exchange.getContext.getTypeConverter.convertTo(classOf[InputStream], exchange, doc))
+   }
+
+   @Converter
+   def domNodeToElem(node: Node, exchange : Exchange) : Elem = {
+     XML.loadString(exchange.getContext.getTypeConverter.convertTo(classOf[String], exchange, node))
+   }
 }
