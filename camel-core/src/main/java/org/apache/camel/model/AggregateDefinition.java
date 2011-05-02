@@ -222,6 +222,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             if (strategy != null || strategyRef != null) {
                 throw new IllegalArgumentException("Options groupExchanges and AggregationStrategy cannot be enabled at the same time");
             }
+            if (eagerCheckCompletion != null && !eagerCheckCompletion) {
+                throw new IllegalArgumentException("Option eagerCheckCompletion cannot be false when groupExchanges has been enabled");
+            }
+            // set eager check to enabled by default when using grouped exchanges
+            setEagerCheckCompletion(true);
             // if grouped exchange is enabled then use special strategy for that
             strategy = new GroupedExchangeAggregationStrategy();
         }
@@ -607,6 +612,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition groupExchanges() {
         setGroupExchanges(true);
+        // must use eager check when using grouped exchanges
+        setEagerCheckCompletion(true);
         return this;
     }
 
