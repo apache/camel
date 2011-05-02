@@ -19,32 +19,21 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:u="http://www.springframework.org/schema/util"
+       xmlns:broker="http://activemq.apache.org/schema/core"
        xsi:schemaLocation="
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+            http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd">
 
-    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" depends-on="camel">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
-    </bean>
-
-    <bean id="stock" class="org.apache.camel.example.management.StockService" depends-on="camel">
-        <property name="symbols" ref="symbols"/>
-    </bean>
-
-    <u:list id="symbols" value-type="java.lang.String">
-        <value>IBM</value>
-        <value>APPLE</value>
-        <value>JAVA</value>
-    </u:list>
-
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <!-- create a CamelContext -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" depends-on="broker">
         <!-- Default JMX connector url: "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel" -->
         <jmxAgent id="agent" createConnector="true"/>
 
         <route>
             <from uri="timer://inbox?period=5000"/>
-            <bean ref="stock" method="createRandomStocks"/>
+            <bean beanType="org.apache.camel.example.management.StockService" method="createRandomStocks"/>
             <to uri="file://target/inbox"/>
         </route>
 
@@ -63,10 +52,23 @@
         <route>
             <from uri="activemq:queue:stock"/>
             <delay><constant>100</constant></delay>
-            <bean ref="stock" method="transform"/>
+            <bean beanType="org.apache.camel.example.management.StockService" method="transform"/>
             <to uri="log:stocks?groupSize=100"/>
         </route>
 
     </camelContext>
+
+    <!-- create a Camel ActiveMQ component to use -->
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" depends-on="broker">
+        <property name="brokerURL" value="vm://myBroker?create=false&amp;waitForStart=5000"/>
+    </bean>
+
+    <!-- create an ActiveMQ broker -->
+    <!-- do not use the shutdown hook as it would cause the broker to shutdown when you press ctrl + c -->
+    <broker:broker id="broker" useJmx="true" persistent="false" brokerName="myBroker" useShutdownHook="false">
+        <broker:transportConnectors>
+            <broker:transportConnector name="vm" uri="vm://myBroker"/>
+        </broker:transportConnectors>
+    </broker:broker>
 
 </beans>

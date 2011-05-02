@@ -53,6 +53,12 @@
             <artifactId>activemq-camel</artifactId>
         </dependency>
 
+        <!-- xbean is required for ActiveMQ broker configuration in the spring xml file -->
+        <dependency>
+            <groupId>org.apache.xbean</groupId>
+            <artifactId>xbean-spring</artifactId>
+        </dependency>
+
         <!-- logging -->
         <dependency>
             <groupId>org.slf4j</groupId>

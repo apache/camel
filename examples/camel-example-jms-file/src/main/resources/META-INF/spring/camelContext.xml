@@ -23,7 +23,7 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd">
     
     <!-- lets configure the ActiveMQ JMS broker server to listen on TCP 51616 -->
     <broker:broker id="broker" useJmx="false" persistent="false" brokerName="localhost">
