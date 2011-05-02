@@ -224,6 +224,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     }
 
+    @SuppressWarnings("unchecked")
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
@@ -239,15 +240,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
 
         for (Class clazz : models) {
-
             if (model.containsKey(clazz.getName())) {
 
                 Object obj = model.get(clazz.getName());
-
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Model object : " + obj + ", class : " + obj.getClass().getName());
                 }
-
                 if (obj != null) {
 
                     // Generate Csv table
@@ -259,21 +257,16 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
         // Transpose result
         List<List> l = new ArrayList<List>();
-
         if (isOneToMany) {
-
             l = product(results);
-
         } else {
-
             // Convert Map<Integer, List> into List<List>
             TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
             List<String> temp = new ArrayList<String>();
 
             for (Entry<Integer, List> entry : sortValues.entrySet()) {
-
                 // Get list of values
-                List<String> val = entry.getValue();
+                List<String> val = (List<String>)entry.getValue();
 
                 // For one to one relation
                 // There is only one item in the list
@@ -291,61 +284,45 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
 
         if (l != null) {
-
             Iterator it = l.iterator();
             while (it.hasNext()) {
-
                 List<String> tokens = (ArrayList<String>)it.next();
                 Iterator itx = tokens.iterator();
 
                 while (itx.hasNext()) {
-
                     String res = (String)itx.next();
-
                     if (res != null) {
                         buffer.append(res);
-                    } else {
-                        buffer.append("");
                     }
 
                     if (itx.hasNext()) {
                         buffer.append(separator);
                     }
-
                 }
 
                 if (it.hasNext()) {
                     buffer.append(Converter.getStringCarriageReturn(getCarriageReturn()));
                 }
-
             }
-
         }
 
         return buffer.toString();
-
     }
 
     private List<List> product(Map<Integer, List> values) {
-
         TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(values);
 
         List<List> product = new ArrayList<List>();
         Map<Integer, Integer> index = new HashMap<Integer, Integer>();
 
-        boolean cont = true;
         int idx = 0;
-        int idxSize;
-
+        int idxSize = 0;
         do {
-
             idxSize = 0;
             List v = new ArrayList();
 
             for (int ii = 1; ii <= sortValues.lastKey(); ii++) {
-
                 List l = values.get(ii);
-
                 if (l == null) {
                     v.add("");
                     ++idxSize;
@@ -358,7 +335,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Value : " + l.get(idx) + ", pos : " + ii + ", at :" + idx);
                     }
-
                 } else {
                     v.add(l.get(0));
                     index.put(ii, 0);
@@ -367,7 +343,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         LOG.debug("Value : " + l.get(0) + ", pos : " + ii + ", at index : " + 0);
                     }
                 }
-
             }
 
             if (idxSize != sortValues.lastKey()) {

@@ -152,7 +152,6 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         int pos = 1;
         int counterMandatoryFields = 0;
         DataField dataField;
-        StringBuilder result = new StringBuilder();
         String token;
         int offset;
         int length;
