@@ -47,6 +47,31 @@ public class LRUSoftCacheTest extends TestSupport {
         cache.stop();
     }
 
+    public void testLRUSoftCacheHitsAndMisses() throws Exception {
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        cache.start();
+
+        cache.put(1, "foo");
+        cache.put(2, "bar");
+
+        assertEquals(0, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.get(1);
+        assertEquals(1, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.get(3);
+        assertEquals(1, cache.getHits());
+        assertEquals(1, cache.getMisses());
+
+        cache.get(2);
+        assertEquals(2, cache.getHits());
+        assertEquals(1, cache.getMisses());
+
+        cache.stop();
+    }
+
     public void testLRUSoftCachePutOverride() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
         cache.start();
@@ -204,10 +229,10 @@ public class LRUSoftCacheTest extends TestSupport {
         log.info("Cache size {}", size);
         assertTrue("Cache size should not be max, was: " + size, size < cache.getMaxCacheSize());
 
-        // should be the last keys
         List<Integer> list = new ArrayList<Integer>(cache.keySet());
         log.info("Keys: " + list);
 
+        // we cannot store all 1000 in the cache as the JVM have re-claimed some values from the soft cache
         assertTrue("Cache size should not be max, was: " + list.size(), list.size() < cache.getMaxCacheSize());
 
         // first key should not be 0

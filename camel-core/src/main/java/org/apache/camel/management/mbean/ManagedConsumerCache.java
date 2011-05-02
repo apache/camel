@@ -56,6 +56,21 @@ public class ManagedConsumerCache extends ManagedService {
         return consumerCache.getCapacity();
     }
 
+    @ManagedAttribute(description = "Cache hits")
+    public Long getHits() {
+        return consumerCache.getHits();
+    }
+
+    @ManagedAttribute(description = "Cache misses")
+    public Long getMisses() {
+        return consumerCache.getMisses();
+    }
+
+    @ManagedOperation(description = "Reset cache statistics")
+    public void resetStatistics() {
+        consumerCache.resetCacheStatistics();
+    }
+
     @ManagedOperation(description = "Purges the cache")
     public void purge() {
         consumerCache.purge();

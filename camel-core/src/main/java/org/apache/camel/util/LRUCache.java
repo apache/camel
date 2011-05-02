@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.Service;
 
@@ -27,8 +28,10 @@ import org.apache.camel.Service;
  * @version 
  */
 public class LRUCache<K, V> extends LinkedHashMap<K, V> implements Service {
-    private static final long serialVersionUID = -342098639681884413L;
+    private static final long serialVersionUID = -342098639681884414L;
     private int maxCacheSize = 10000;
+    private final AtomicLong hits = new AtomicLong();
+    private final AtomicLong misses = new AtomicLong();
 
     public LRUCache(int maximumCacheSize) {
         this(maximumCacheSize, maximumCacheSize, 0.75f, true);
@@ -51,11 +54,44 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> implements Service {
         this.maxCacheSize = maximumCacheSize;
     }
 
+    @Override
+    public V get(Object o) {
+        V answer = super.get(o);
+        if (answer != null) {
+            hits.incrementAndGet();
+        } else {
+            misses.incrementAndGet();
+        }
+        return answer;
+    }
+
+    /**
+     * Gets the number of cache hits
+     */
+    public long getHits() {
+        return hits.get();
+    }
+
+    /**
+     * Gets the number of cache misses.
+     */
+    public long getMisses() {
+        return misses.get();
+    }
+
     /**
      * Returns the maxCacheSize.
      */
     public int getMaxCacheSize() {
         return maxCacheSize;
+    }
+
+    /**
+     * Rest the cache statistics such as hits and misses.
+     */
+    public void resetStatistics() {
+        hits.set(0);
+        misses.set(0);
     }
 
     protected boolean removeEldestEntry(Map.Entry<K, V> entry) {
@@ -71,6 +107,8 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> implements Service {
         if (!isEmpty()) {
             ServiceHelper.stopServices(values());
             clear();
+            hits.set(0);
+            misses.set(0);
         }
     }
 

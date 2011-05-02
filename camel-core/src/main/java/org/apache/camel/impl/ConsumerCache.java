@@ -157,10 +157,57 @@ public class ConsumerCache extends ServiceSupport {
     }
 
     /**
+     * Gets the cache hits statistic
+     * <p/>
+     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
+     *
+     * @return the hits
+     */
+    public long getHits() {
+        long hits = -1;
+        if (consumers instanceof LRUCache) {
+            LRUCache cache = (LRUCache) consumers;
+            hits = cache.getHits();
+        }
+        return hits;
+    }
+
+    /**
+     * Gets the cache misses statistic
+     * <p/>
+     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
+     *
+     * @return the misses
+     */
+    public long getMisses() {
+        long misses = -1;
+        if (consumers instanceof LRUCache) {
+            LRUCache cache = (LRUCache) consumers;
+            misses = cache.getMisses();
+        }
+        return misses;
+    }
+
+    /**
+     * Resets the cache statistics
+     */
+    public void resetCacheStatistics() {
+        if (consumers instanceof LRUCache) {
+            LRUCache cache = (LRUCache) consumers;
+            cache.resetStatistics();
+        }
+    }
+
+    /**
      * Purges this cache
      */
     public synchronized void purge() {
         consumers.clear();
+    }
+
+    @Override
+    public String toString() {
+        return "ConsumerCache for source: " + source + ", capacity: " + getCapacity();
     }
 
     protected void doStart() throws Exception {

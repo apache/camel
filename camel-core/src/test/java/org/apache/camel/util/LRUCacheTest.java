@@ -44,6 +44,80 @@ public class LRUCacheTest extends TestCase {
         assertSame(service2, cache.get("B"));
     }
 
+    public void testLRUCacheHitsAndMisses() {
+        MyService service1 = new MyService();
+        MyService service2 = new MyService();
+
+        cache.put("A", service1);
+        cache.put("B", service2);
+
+        assertEquals(0, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.get("A");
+        assertEquals(1, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.get("A");
+        assertEquals(2, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.get("B");
+        assertEquals(3, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.get("C");
+        assertEquals(3, cache.getHits());
+        assertEquals(1, cache.getMisses());
+
+        cache.get("D");
+        assertEquals(3, cache.getHits());
+        assertEquals(2, cache.getMisses());
+
+        cache.resetStatistics();
+        assertEquals(0, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.get("B");
+        assertEquals(1, cache.getHits());
+        assertEquals(0, cache.getMisses());
+    }
+
+    public void testLRUCacheHitsAndMissesStop() throws Exception {
+        MyService service1 = new MyService();
+        MyService service2 = new MyService();
+
+        cache.put("A", service1);
+        cache.put("B", service2);
+
+        assertEquals(0, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.get("A");
+        assertEquals(1, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.get("A");
+        assertEquals(2, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.get("B");
+        assertEquals(3, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.stop();
+        assertEquals(0, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.start();
+        assertEquals(0, cache.getHits());
+        assertEquals(0, cache.getMisses());
+
+        cache.get("B");
+        assertEquals(0, cache.getHits());
+        assertEquals(1, cache.getMisses());
+    }
+
     public void testLRUCacheStop() throws Exception {
         MyService service1 = new MyService();
         MyService service2 = new MyService();

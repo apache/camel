@@ -426,6 +426,48 @@ public class ProducerCache extends ServiceSupport {
     }
 
     /**
+     * Gets the cache hits statistic
+     * <p/>
+     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
+     *
+     * @return the hits
+     */
+    public long getHits() {
+        long hits = -1;
+        if (producers instanceof LRUCache) {
+            LRUCache cache = (LRUCache) producers;
+            hits = cache.getHits();
+        }
+        return hits;
+    }
+
+    /**
+     * Gets the cache misses statistic
+     * <p/>
+     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
+     *
+     * @return the misses
+     */
+    public long getMisses() {
+        long misses = -1;
+        if (producers instanceof LRUCache) {
+            LRUCache cache = (LRUCache) producers;
+            misses = cache.getMisses();
+        }
+        return misses;
+    }
+
+    /**
+     * Resets the cache statistics
+     */
+    public void resetCacheStatistics() {
+        if (producers instanceof LRUCache) {
+            LRUCache cache = (LRUCache) producers;
+            cache.resetStatistics();
+        }
+    }
+
+    /**
      * Purges this cache
      */
     public synchronized void purge() {

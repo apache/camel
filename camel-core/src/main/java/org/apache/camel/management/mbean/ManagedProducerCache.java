@@ -56,6 +56,21 @@ public class ManagedProducerCache extends ManagedService {
         return producerCache.getCapacity();
     }
 
+    @ManagedAttribute(description = "Cache hits")
+    public Long getHits() {
+        return producerCache.getHits();
+    }
+
+    @ManagedAttribute(description = "Cache misses")
+    public Long getMisses() {
+        return producerCache.getMisses();
+    }
+
+    @ManagedOperation(description = "Reset cache statistics")
+    public void resetStatistics() {
+        producerCache.resetCacheStatistics();
+    }
+
     @ManagedOperation(description = "Purges the cache")
     public void purge() {
         producerCache.purge();
