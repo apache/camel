@@ -28,6 +28,7 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
+import org.apache.cxf.version.Version;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -87,15 +88,19 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
             super(factory);
         }
         
+        @SuppressWarnings("deprecation")
         public void setApplicationContext(ApplicationContext ctx) throws BeansException {
             applicationContext = ctx;
-            if (getBus() == null) {
-                // Don't relate on the DefaultBus
-                BusFactory factory = new SpringBusFactory(ctx);
-                Bus bus = factory.createBus();               
-                setBus(bus);
+            if (bus == null) {
+                if (Version.getCurrentVersion().startsWith("2.3")) {
+                    // Don't relate on the DefaultBus
+                    BusFactory factory = new SpringBusFactory(ctx);
+                    bus = factory.createBus();               
+                    BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(bus, ctx);
+                } else {
+                    bus = BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx);
+                }
             }
-            BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(getBus(), ctx);
         }
         
         public ApplicationContext getApplicationContext() {

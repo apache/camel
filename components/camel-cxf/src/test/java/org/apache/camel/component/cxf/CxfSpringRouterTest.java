@@ -39,10 +39,9 @@ public class CxfSpringRouterTest extends CxfSimpleRouterTest {
 
     @After
     public void tearDown() throws Exception {
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        // Don't close the application context, as it will cause some trouble on the bus shutdown
         super.tearDown();
+        
     }
 
     @Override

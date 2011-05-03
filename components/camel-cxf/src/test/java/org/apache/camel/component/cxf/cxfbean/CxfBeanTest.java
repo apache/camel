@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.cxfbean;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
@@ -105,15 +106,12 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         
         invokeRsService("http://localhost:9000/customerservice/orders/223/products/323",
                          "{\"Product\":{\"description\":\"product 323\",\"id\":323}}");
-       
-         
     }
     
     @Test
     public void testGetConsumerWithQueryParam() throws Exception {
         invokeRsService("http://localhost:9000/customerservice/customers?id=123",
-                        "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");
-        
+                        "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");        
     }
 
     @Test
@@ -126,7 +124,6 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
 
         invokeRsService("http://localhost:9000/customerservice/orders/223/products/323",
                         "{\"Product\":{\"description\":\"product 323\",\"id\":323}}"); 
-     
     }
     
     @Test

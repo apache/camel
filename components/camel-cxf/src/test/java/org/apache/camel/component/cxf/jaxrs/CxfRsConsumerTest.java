@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;

@@ -30,18 +30,23 @@ import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
+import org.apache.cxf.BusFactory;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
 
-    private Endpoint endpoint1;
-    private Endpoint endpoint2;
+    private static Endpoint endpoint1;
+    private static Endpoint endpoint2;
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
+        // When the Application is closed, the camel-cxf endpoint will be shutdown,
+        // this will cause the issue of the new http server doesn't send the response back. 
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlOnlyBeans.xml");
     }
 
@@ -49,8 +54,8 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         assertNotNull("No context found!", context);
     }
 
-    @Before
-    public void startServices() {
+    @BeforeClass
+    public static void startServices() {
         Object implementor = new PersonImpl();
         String address = "http://localhost:9000/PersonService/";
         endpoint1 = Endpoint.publish(address, implementor);
@@ -59,8 +64,8 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         endpoint2 = Endpoint.publish(address, implementor);
     }
     
-    @After
-    public void stopServices() {
+    @AfterClass
+    public static void stopServices() {
         if (endpoint1 != null) {
             endpoint1.stop();
         }
@@ -71,7 +76,7 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testRoutes() throws Exception {
+    public void testRoutesWithFault() throws Exception {
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first",
                                                                 "PersonService"));
@@ -82,27 +87,10 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         Holder<String> name = new Holder<String>();
         client.getPerson(personId, ssn, name);
         assertEquals("Bonjour", name.value);
-
-        Person client2 = ss.getSoap2();
-        Holder<String> personId2 = new Holder<String>();
-        personId2.value = "hello";
-        Holder<String> ssn2 = new Holder<String>();
-        Holder<String> name2 = new Holder<String>();
-        client2.getPerson(personId2, ssn2, name2);
-        assertEquals("Bonjour", name2.value);
-    }
-    
-    @Test
-    public void testSoapFaultRoutes() {
-        URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
-        PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first",
-                                                                "PersonService"));
-        // test message mode
-        Person client = ss.getSoap();
-        Holder<String> personId = new Holder<String>();
+        
         personId.value = "";
-        Holder<String> ssn = new Holder<String>();
-        Holder<String> name = new Holder<String>();
+        ssn = new Holder<String>();
+        name = new Holder<String>();
         Throwable t = null;
         try {
             client.getPerson(personId, ssn, name);
@@ -112,13 +100,17 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         }
         assertTrue(t instanceof UnknownPersonFault);
 
-        
-        // test PAYLOAD mode
         Person client2 = ss.getSoap2();
         Holder<String> personId2 = new Holder<String>();
-        personId2.value = "";
+        personId2.value = "hello";
         Holder<String> ssn2 = new Holder<String>();
         Holder<String> name2 = new Holder<String>();
+        client2.getPerson(personId2, ssn2, name2);
+        assertEquals("Bonjour", name2.value);
+        
+        personId2.value = "";
+        ssn2 = new Holder<String>();
+        name2 = new Holder<String>();
         try {
             client2.getPerson(personId2, ssn2, name2);
             fail("Expect exception");
@@ -127,5 +119,6 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         }
         assertTrue(t instanceof UnknownPersonFault);
     }
-
+    
+   
 }
