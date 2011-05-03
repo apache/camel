@@ -129,7 +129,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                     String update = "UPDATE " + getRepositoryName() + " SET " + EXCHANGE + " = ? WHERE " + ID + " = ?";
 
                     boolean present = jdbcTemplate.queryForInt(
-                            "SELECT COUNT (*) FROM " + getRepositoryName() + " WHERE " + ID + " = ?", key) != 0;
+                            "SELECT COUNT(*) FROM " + getRepositoryName() + " WHERE " + ID + " = ?", key) != 0;
                     sql = present ? update : insert;
 
                     // Recover existing exchange with that ID
