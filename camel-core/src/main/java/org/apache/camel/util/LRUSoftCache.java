@@ -95,7 +95,7 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
     public Collection<V> values() {
         // return a copy of all the active values
         Collection<SoftReference<V>> col = (Collection<SoftReference<V>>) super.values();
-        Collection<V> answer = new ArrayList<V>(col.size());
+        Collection<V> answer = new ArrayList<V>();
         for (SoftReference<V> ref : col) {
             V value = ref.get();
             if (value != null) {

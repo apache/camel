@@ -78,7 +78,7 @@ public class ServicePoolTest extends ContextTestSupport {
     protected void tearDown() throws Exception {
         pool.stop();
         super.tearDown();
-        assertEquals("Should have stopped the produers", true, cleanup);
+        assertEquals("Should have stopped the producers", true, cleanup);
     }
 
     public void testSingleEntry() throws Exception {
