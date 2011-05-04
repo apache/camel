@@ -210,15 +210,8 @@
     <bundle>mvn:org.apache.camel/camel-bindy/${pom.version}</bundle>
   </feature>
   <feature name='camel-cometd' version='${pom.version}' resolver='(obr)'>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-util/${jetty-version}</bundle>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-io/${jetty-version}</bundle>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-http/${jetty-version}</bundle>
+    <feature>jetty</feature>
     <bundle dependency="true">mvn:org.eclipse.jetty/jetty-client/${jetty-version}</bundle>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-continuation/${jetty-version}</bundle>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-server/${jetty-version}</bundle>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-security/${jetty-version}</bundle>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-servlet/${jetty-version}</bundle>
     <bundle dependency="true">mvn:org.eclipse.jetty/jetty-jmx/${jetty-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cometd-java-server/${cometd-java-server-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
