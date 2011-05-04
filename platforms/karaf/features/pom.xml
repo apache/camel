@@ -96,7 +96,7 @@
       <lucene-bundle-version>3.0.3_1</lucene-bundle-version>
       <mvel-bundle-version>2.0.8_4</mvel-bundle-version>
       <mina-bundle-version>1.1.7_3</mina-bundle-version>
-      <neethi-bundle-version>2.0.4_2</neethi-bundle-version>
+      <neethi-bundle-version>3.0.0</neethi-bundle-version>
       <oro-bundle-version>2.0.8_3</oro-bundle-version>
       <openjpa-bundle-version>1.2.1_2</openjpa-bundle-version>
       <opensaml-version>1.1_3</opensaml-version>
@@ -125,7 +125,7 @@
       <xalan-bundle-version>2.7.1_2</xalan-bundle-version>
       <xerces-bundle-version>2.9.1_3</xerces-bundle-version>
       <xmlbeans-bundle-version>2.5.0_1</xmlbeans-bundle-version>
-      <xmlschema-version>1.4.5</xmlschema-version>
+      <xmlschema-version>2.0</xmlschema-version>
       <xmlsec-bundle-version>1.4.4_1</xmlsec-bundle-version>
       <xmlresolver-bundle-version>1.2_2</xmlresolver-bundle-version>
       <xpp3-bundle-version>1.1.4c_3</xpp3-bundle-version>
@@ -135,7 +135,7 @@
       <stax2-api-bundle-version>3.0.1</stax2-api-bundle-version>
       <saaj-impl-version>1.3.2_1</saaj-impl-version>
       <wsdl4j-bundle-version>1.6.2_2</wsdl4j-bundle-version>
-      <wss4j-version>1.5.11</wss4j-version>
+      <wss4j-version>1.6.0</wss4j-version>
     </properties>
     
     <!-- The validate plugin will export these provided dependencies bundles' export packages first -->  
