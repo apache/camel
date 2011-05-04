@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.cometd.java</groupId>
             <artifactId>cometd-java-server</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.1</version>
         </dependency>
 
         <!-- Test Dependencies -->
