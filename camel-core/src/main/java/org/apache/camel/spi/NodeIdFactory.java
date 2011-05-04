@@ -26,9 +26,10 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 public interface NodeIdFactory {
 
     /**
-     * Creates an id for the given model definiton.
+     * Creates an id for the given model definition.
      *
      * @param definition model definition
+     *        (its most likely a {@link org.apache.camel.model.OutputDefinition OutputDefinition} instance)
      * @return the id created
      */
     String createId(OptionalIdentifiedDefinition<?> definition);

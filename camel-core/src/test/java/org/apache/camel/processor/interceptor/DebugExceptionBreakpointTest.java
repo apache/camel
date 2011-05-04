@@ -75,7 +75,7 @@ public class DebugExceptionBreakpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(2, logs.size());
-        assertEquals("Breakpoint at when caused by: IllegalArgumentException[Damn]", logs.get(0));
+        assertEquals("Breakpoint at throwException caused by: IllegalArgumentException[Damn]", logs.get(0));
         assertEquals("Breakpoint at choice caused by: IllegalArgumentException[Damn]", logs.get(1));
     }
 
