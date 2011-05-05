@@ -27,6 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.component.cxf.CxfHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.Bus;
@@ -45,7 +46,7 @@ import org.apache.cxf.ws.addressing.EndpointReferenceType;
  * @version 
  */
 @NoJSR250Annotations(unlessNull = "bus")
-public class CamelTransportFactory extends AbstractTransportFactory implements ConduitInitiator, DestinationFactory {
+public class CamelTransportFactory extends AbstractTransportFactory implements ConduitInitiator, DestinationFactory, CamelContextAware {
 
     public static final String TRANSPORT_ID = "http://cxf.apache.org/transports/camel";
     public static final List<String> DEFAULT_NAMESPACES = Arrays.asList(TRANSPORT_ID);
