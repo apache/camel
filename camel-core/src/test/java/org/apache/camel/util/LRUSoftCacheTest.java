@@ -246,8 +246,8 @@ public class LRUSoftCacheTest extends TestSupport {
     }
 
     private Object createData() {
-        // 1mb data
-        byte[] buf = new byte[1 * 1024 * 1024];
+        // 5mb data
+        byte[] buf = new byte[5 * 1024 * 1024];
         return buf;
     }
 }
