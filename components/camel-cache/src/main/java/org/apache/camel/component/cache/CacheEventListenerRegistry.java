@@ -16,12 +16,34 @@
  */
 package org.apache.camel.component.cache;
 
-import java.util.Properties;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CacheEventListenerFactory extends net.sf.ehcache.event.CacheEventListenerFactory {
+import net.sf.ehcache.event.CacheEventListener;
 
-    public CacheEventListener createCacheEventListener(Properties properties) {
-        return new CacheEventListener();
+public class CacheEventListenerRegistry {
+
+    private List<CacheEventListener> eventListeners;
+
+    public CacheEventListenerRegistry() {
     }
-    
+
+    public CacheEventListenerRegistry(List<CacheEventListener> eventListeners) {
+        this.eventListeners = eventListeners;
+    }
+
+    public void addCacheEventListener(CacheEventListener listener) {
+        getEventListeners().add(listener);
+    }
+
+    public synchronized List<CacheEventListener> getEventListeners() {
+        if (eventListeners == null) {
+            eventListeners = new ArrayList<CacheEventListener>();
+        }
+        return eventListeners;
+    }
+
+    public int size() {
+        return eventListeners.size();
+    }
 }

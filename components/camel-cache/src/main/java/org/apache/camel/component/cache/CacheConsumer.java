@@ -16,22 +16,13 @@
  */
 package org.apache.camel.component.cache;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CacheConsumer extends DefaultConsumer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CacheConsumer.class);
     private CacheConfiguration config;
-    private Ehcache cache;
-    private CacheManager cacheManager;
 
     public CacheConsumer(Endpoint endpoint, Processor processor, CacheConfiguration config) {
         super(endpoint, processor);
@@ -45,47 +36,17 @@ public class CacheConsumer extends DefaultConsumer {
     }
 
     @Override
-    protected void doStop() throws Exception {
-        removeConsumerCacheConnection();
-        super.doStop();
-    }
-
-    @Override
     public CacheEndpoint getEndpoint() {
         return (CacheEndpoint) super.getEndpoint();
     }
-    
+
     protected void createConsumerCacheConnection() {
-        cacheManager = getEndpoint().getCacheManagerFactory().instantiateCacheManager();
-        CacheEventListener cacheEventListener = new CacheEventListenerFactory().createCacheEventListener(null);
+        CacheEventListener cacheEventListener = new CacheEventListener();
         cacheEventListener.setCacheConsumer(this);
 
-        if (cacheManager.cacheExists(config.getCacheName())) {
-            cache = cacheManager.getCache(config.getCacheName());
-            cache.getCacheEventNotificationService().registerListener(cacheEventListener);
-        } else {
-            cache = new Cache(config.getCacheName(), 
-                    config.getMaxElementsInMemory(),
-                    config.getMemoryStoreEvictionPolicy(), 
-                    config.isOverflowToDisk(), 
-                    config.getDiskStorePath(), 
-                    config.isEternal(), 
-                    config.getTimeToLiveSeconds(), 
-                    config.getTimeToIdleSeconds(), 
-                    config.isDiskPersistent(), 
-                    config.getDiskExpiryThreadIntervalSeconds(), 
-                    null);
-            cache.getCacheEventNotificationService().registerListener(cacheEventListener);
-            cacheManager.addCache(cache);
+        config.getEventListenerRegistry().addCacheEventListener(cacheEventListener);
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Added a new cache: " + cache.getName());
-            }
-        }
-    }
-    
-    protected void removeConsumerCacheConnection() {
-        cacheManager.removeCache(config.getCacheName());
+        getEndpoint().initializeCache();
     }
 
 }

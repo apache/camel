@@ -64,7 +64,7 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
 
     public void process(Exchange exchange) throws Exception {
         // Cache the buffer to the specified Cache against the specified key
-        cacheManager = new DefaultCacheManagerFactory().instantiateCacheManager();
+        cacheManager = new DefaultCacheManagerFactory().getInstance();
 
         if (isValid(cacheManager, cacheName, key)) {
             cache = cacheManager.getCache(cacheName);

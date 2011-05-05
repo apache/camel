@@ -19,11 +19,10 @@ package org.apache.camel.component.cache;
 import java.io.InputStream;
 import java.io.Serializable;
 
-import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -34,7 +33,6 @@ import org.slf4j.LoggerFactory;
 public class CacheProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(CacheProducer.class);
     private CacheConfiguration config;
-    private CacheManager cacheManager;
     private Ehcache cache;
 
     public CacheProducer(Endpoint endpoint, CacheConfiguration config) throws Exception {
@@ -44,7 +42,6 @@ public class CacheProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        cacheManager = getEndpoint().getCacheManagerFactory().instantiateCacheManager();
         super.doStart();
     }
 
@@ -56,30 +53,7 @@ public class CacheProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         LOG.trace("Cache Name: {}", config.getCacheName());
 
-        if (cacheManager.cacheExists(config.getCacheName())) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Found an existing cache: {}", config.getCacheName());
-                LOG.trace("Cache {} currently contains {} elements",
-                        config.getCacheName(), cacheManager.getCache(config.getCacheName()).getSize());
-            }
-            cache = cacheManager.getCache(config.getCacheName());
-        } else {
-            cache = new Cache(config.getCacheName(),
-                    config.getMaxElementsInMemory(),
-                    config.getMemoryStoreEvictionPolicy(),
-                    config.isOverflowToDisk(),
-                    config.getDiskStorePath(),
-                    config.isEternal(),
-                    config.getTimeToLiveSeconds(),
-                    config.getTimeToIdleSeconds(),
-                    config.isDiskPersistent(),
-                    config.getDiskExpiryThreadIntervalSeconds(),
-                    null);
-            cacheManager.addCache(cache);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Added a new cache: " + cache.getName());
-            }
-        }
+        cache = getEndpoint().initializeCache();
 
         String key = exchange.getIn().getHeader(CacheConstants.CACHE_KEY, String.class);
         String operation = exchange.getIn().getHeader(CacheConstants.CACHE_OPERATION, String.class);

@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.Map;
 
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.URISupport;
 
@@ -34,6 +35,8 @@ public class CacheConfiguration implements Cloneable {
     private long timeToIdleSeconds = 300;
     private boolean diskPersistent;
     private long diskExpiryThreadIntervalSeconds;
+    private CacheEventListenerRegistry eventListenerRegistry = new CacheEventListenerRegistry();
+    private CacheLoaderRegistry cacheLoaderRegistry = new CacheLoaderRegistry();
 
     public CacheConfiguration() {
     }
@@ -174,5 +177,21 @@ public class CacheConfiguration implements Cloneable {
     public void setDiskExpiryThreadIntervalSeconds(long diskExpiryThreadIntervalSeconds) {
         this.diskExpiryThreadIntervalSeconds = diskExpiryThreadIntervalSeconds;
     }
-   
+
+    public void setEventListenerRegistry(CacheEventListenerRegistry eventListenerRegistry) {
+        this.eventListenerRegistry = eventListenerRegistry;
+    }
+
+    public CacheEventListenerRegistry getEventListenerRegistry() {
+        return eventListenerRegistry;
+    }
+
+    public void setCacheLoaderRegistry(CacheLoaderRegistry cacheLoaderRegistry) {
+        this.cacheLoaderRegistry = cacheLoaderRegistry;
+    }
+
+    public CacheLoaderRegistry getCacheLoaderRegistry() {
+        return cacheLoaderRegistry;
+    }
+
 }

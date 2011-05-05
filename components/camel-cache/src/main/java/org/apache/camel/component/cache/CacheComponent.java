@@ -39,7 +39,7 @@ public class CacheComponent extends DefaultComponent {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         // must use copy as each endpoint can have different options
         ObjectHelper.notNull(configuration, "configuration");

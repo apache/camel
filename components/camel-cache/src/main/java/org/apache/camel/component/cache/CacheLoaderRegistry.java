@@ -16,38 +16,32 @@
  */
 package org.apache.camel.component.cache;
 
-import net.sf.ehcache.CacheManager;
-import org.apache.camel.impl.ServiceSupport;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class CacheManagerFactory extends ServiceSupport {
-    private CacheManager cacheManager;
+public class CacheLoaderRegistry {
 
-    public synchronized CacheManager getInstance() {
-        if (cacheManager == null) {
-            cacheManager = createCacheManagerInstance();
-        }
-        
-        return cacheManager;
+    private List<CacheLoaderWrapper> registeredCacheLoaders;
+
+    public CacheLoaderRegistry() {
     }
 
-    /**
-     * Creates {@link CacheManager}.
-     * <p/>
-     * The default implementation is {@link DefaultCacheManagerFactory}.
-     *
-     * @return {@link CacheManager}
-     */
-    protected abstract CacheManager createCacheManagerInstance();
-
-    @Override
-    protected void doStart() throws Exception {
+    public CacheLoaderRegistry(List<CacheLoaderWrapper> registeredCacheLoaders) {
+        this.registeredCacheLoaders = registeredCacheLoaders;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        // shutdown cache manager when stopping
-        if (cacheManager != null) {
-            cacheManager.shutdown();
+    public void addCacheLoader(CacheLoaderWrapper cacheLoader) {
+        getCacheLoaders().add(cacheLoader);
+    }
+
+    public synchronized List<CacheLoaderWrapper> getCacheLoaders() {
+        if (registeredCacheLoaders == null) {
+            registeredCacheLoaders = new ArrayList<CacheLoaderWrapper>();
         }
+        return registeredCacheLoaders;
+    }
+
+    public int size() {
+        return registeredCacheLoaders.size();
     }
 }

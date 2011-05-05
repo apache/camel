@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.cache;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.event.CacheEventListener;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -26,16 +31,19 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CacheEndpoint extends DefaultEndpoint {
+    private static final transient Logger LOG = LoggerFactory.getLogger(CacheEndpoint.class);
     private CacheConfiguration config;
     private CacheManagerFactory cacheManagerFactory;
 
     public CacheEndpoint() {
     }
 
-    public CacheEndpoint(String endpointUri, Component component, CacheConfiguration config,
-                         CacheManagerFactory cacheManagerFactory) {
+    public CacheEndpoint(String endpointUri, Component component,
+            CacheConfiguration config, CacheManagerFactory cacheManagerFactory) {
         super(endpointUri, component);
         this.config = config;
         this.cacheManagerFactory = cacheManagerFactory;
@@ -73,8 +81,10 @@ public class CacheEndpoint extends DefaultEndpoint {
         this.cacheManagerFactory = cacheManagerFactory;
     }
 
-    public Exchange createCacheExchange(String operation, String key, Object value) {
-        Exchange exchange = new DefaultExchange(this.getCamelContext(), getExchangePattern());
+    public Exchange createCacheExchange(String operation, String key,
+            Object value) {
+        Exchange exchange = new DefaultExchange(this.getCamelContext(),
+                getExchangePattern());
         Message message = new DefaultMessage();
         message.setHeader(CacheConstants.CACHE_OPERATION, operation);
         message.setHeader(CacheConstants.CACHE_KEY, key);
@@ -82,5 +92,58 @@ public class CacheEndpoint extends DefaultEndpoint {
         exchange.setIn(message);
         return exchange;
     }
-    
+
+    /**
+     * Returns {@link Cache} instance or create new one if not exists.
+     * 
+     * @return {@link Cache}
+     */
+    public Ehcache initializeCache() {
+        CacheManager cacheManager = getCacheManagerFactory().getInstance();
+        Cache cache;
+        if (cacheManager.cacheExists(config.getCacheName())) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Found an existing cache: {}", config.getCacheName());
+                LOG.trace("Cache {} currently contains {} elements",
+                        config.getCacheName(),
+                        cacheManager.getCache(config.getCacheName()).getSize());
+            }
+            cache = cacheManager.getCache(config.getCacheName());
+        } else {
+            cache = new Cache(config.getCacheName(),
+                    config.getMaxElementsInMemory(),
+                    config.getMemoryStoreEvictionPolicy(),
+                    config.isOverflowToDisk(),
+                    config.getDiskStorePath(),
+                    config.isEternal(),
+                    config.getTimeToLiveSeconds(),
+                    config.getTimeToIdleSeconds(),
+                    config.isDiskPersistent(),
+                    config.getDiskExpiryThreadIntervalSeconds(),
+                    null);
+
+            for (CacheEventListener listener : config.getEventListenerRegistry().getEventListeners()) {
+                cache.getCacheEventNotificationService().registerListener(listener);
+            }
+
+            for (CacheLoaderWrapper loader : config.getCacheLoaderRegistry().getCacheLoaders()) {
+                loader.init(cache);
+                cache.registerCacheLoader(loader);
+            }
+
+            cacheManager.addCache(cache);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Added a new cache: " + cache.getName());
+            }
+        }
+
+        return cache;
+    }
+
+    @Override
+    public void stop() {
+        CacheManager cacheManager = getCacheManagerFactory().getInstance();
+        cacheManager.removeCache(config.getCacheName());
+    }
 }
