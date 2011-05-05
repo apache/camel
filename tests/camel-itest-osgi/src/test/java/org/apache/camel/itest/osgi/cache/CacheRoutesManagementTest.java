@@ -20,10 +20,10 @@ import javax.naming.Context;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Status;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cache.CacheConstants;
-import org.apache.camel.component.cache.CacheEndpoint;
 import org.apache.camel.component.cache.CacheManagerFactory;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.karaf.testing.Helper;
@@ -40,8 +40,10 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
-public class CacheManagerFactoryRefTest extends OSGiIntegrationTestSupport {
+public class CacheRoutesManagementTest extends OSGiIntegrationTestSupport {
     private static final String CACHE_URI = "cache:foo?cacheManagerFactory=#cacheManagerFactory";
+    private static final String ROUTE1_ID = "TEST_ROUTE_1";
+    private static final String ROUTE2_ID = "TEST_ROUTE_2";
     private TestingCacheManagerFactory cmfRef = new TestingCacheManagerFactory("ehcache_test.xml");
 
     @Override
@@ -53,28 +55,47 @@ public class CacheManagerFactoryRefTest extends OSGiIntegrationTestSupport {
 
     @Test
     public void testCache() throws Exception {
-        CacheEndpoint endpoint = (CacheEndpoint) context.getEndpoint(CACHE_URI);
+        // Is cache manager initialized before doing any routing?
+        CacheManager cacheManager = cmfRef.getCacheManager();
+        assertNull("CacheManager initialized", cacheManager);
 
-        // do some routes to let everything be initialized
-        template.sendBody("direct:add", "Hello World");
+        // Now do some routes to let endpoints be initialized
+        template.sendBody("direct:add1", "Hello World");
+        template.sendBody("direct:add2", "Hello World");
 
-        // Is CacheManagerFactory really referenced?
-        CacheManagerFactory cmf = endpoint.getCacheManagerFactory();
-        assertEquals("Cache Manager Factory Referenced", cmfRef, cmf);
+        //Now should not be null
+        cacheManager = cmfRef.getCacheManager();
+        assertNotNull("CacheManager initialized", cacheManager);
 
-        // Is the right ehcache_test.xml config. loaded?
-        Cache cache = cmfRef.getCacheManager().getCache("testingOne");
-        assertNotNull("Is ehcache_test.xml loaded", cache);
+        Cache cache = cmfRef.getCacheManager().getCache("foo");
+
+        // Is cache alive
+        assertEquals("Is cache still alive", Status.STATUS_ALIVE, cache.getStatus());
+
+        context.stopRoute(ROUTE1_ID);
+
+        // Is cache still alive
+        assertEquals("Is cache still alive", Status.STATUS_ALIVE, cache.getStatus());
+
+        context.stop();
+
+        // Was the cache shutdowned with context?
+        assertEquals("Is cache still alive", Status.STATUS_SHUTDOWN, cache.getStatus());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:add")
-                    .setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD))
-                    .setHeader(CacheConstants.CACHE_KEY, constant("foo"))
-                    .to(CACHE_URI);
+                from("direct:add1")
+                .setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD))
+                .setHeader(CacheConstants.CACHE_KEY, constant("foo"))
+                .to(CACHE_URI).setId(ROUTE1_ID);
+
+                from("direct:add2")
+                .setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD))
+                .setHeader(CacheConstants.CACHE_KEY, constant("foo"))
+                .to(CACHE_URI).setId(ROUTE2_ID);
             }
         };
     }
