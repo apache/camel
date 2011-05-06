@@ -29,7 +29,7 @@ import org.apache.camel.impl.SynchronousDelegateProducer;
 public class MyAsyncEndpoint extends DefaultEndpoint {
 
     private String reply;
-    private long delay = 1000;
+    private long delay = 500;
     private int failFirstAttempts;
 
     public MyAsyncEndpoint(String endpointUri, Component component) {
