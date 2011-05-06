@@ -22,8 +22,8 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.StreamCache;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -44,6 +44,7 @@ public class LogFormatter implements ExchangeFormatter {
     private boolean showAll;
     private boolean multiline;
     private boolean showFuture;
+    private boolean showStreams;
     private int maxChars;
 
     public String format(Exchange exchange) {
@@ -291,6 +292,19 @@ public class LogFormatter implements ExchangeFormatter {
         this.showExchangePattern = showExchangePattern;
     }
 
+    public boolean isShowStreams() {
+        return showStreams;
+    }
+
+    /**
+     * If enabled Camel will output stream objects
+     * <p/>
+     * Is default disabled.
+     */
+    public void setShowStreams(boolean showStreams) {
+        this.showStreams = showStreams;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Object getBodyAsString(Message message) {
@@ -301,21 +315,8 @@ public class LogFormatter implements ExchangeFormatter {
             }
         }
 
-        StreamCache newBody = message.getBody(StreamCache.class);
-        if (newBody != null) {
-            message.setBody(newBody);
-        }
-
-        Object answer = message.getBody(String.class);
-        if (answer == null) {
-            answer = message.getBody();
-        }
-
-        if (newBody != null) {
-            // Reset the StreamCache
-            newBody.reset();
-        }
-        return answer;
+        // is the body a stream cache then we can log it
+        return MessageHelper.extractBodyForLogging(message, "", isShowStreams(), -1);
     }
 
     protected Object getBodyTypeAsString(Message message) {

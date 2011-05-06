@@ -125,18 +125,29 @@ public final class MessageHelper {
      * Extracts the body for logging purpose.
      * <p/>
      * Will clip the body if its too big for logging.
+     * Will prepend the message with <tt>Message: </tt>
      *
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
      * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      * @param message the message
      * @return the logging message
      */
     public static String extractBodyForLogging(Message message) {
-        Object obj = message.getBody();
-        if (obj == null) {
-            return "Message: [Body is null]";
-        }
+        return extractBodyForLogging(message, "Message: ");
+    }
 
-        // do not log streams by default
+    /**
+     * Extracts the body for logging purpose.
+     * <p/>
+     * Will clip the body if its too big for logging.
+     *
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param message the message
+     * @param prepend a message to prepend
+     * @return the logging message
+     */
+    public static String extractBodyForLogging(Message message, String prepend) {
         boolean streams = false;
         if (message.getExchange() != null) {
             String property = message.getExchange().getContext().getProperties().get(Exchange.LOG_DEBUG_BODY_STREAMS);
@@ -145,41 +156,83 @@ public final class MessageHelper {
             }
         }
 
-        if (obj instanceof StringSource || obj instanceof BytesSource) {
-            // these two are okay
-        } else if (!streams && obj instanceof StreamSource) {
-            return "Message: [Body is instance of java.xml.transform.StreamSource]";
-        } else if (!streams && obj instanceof InputStream) {
-            return "Message: [Body is instance of java.io.InputStream]";
-        } else if (!streams && obj instanceof OutputStream) {
-            return "Message: [Body is instance of java.io.OutputStream]";
-        } else if (!streams && obj instanceof Reader) {
-            return "Message: [Body is instance of java.io.Reader]";
-        } else if (!streams && obj instanceof Writer) {
-            return "Message: [Body is instance of java.io.Writer]";
-        }
-
         // default to 1000 chars
-        int length = 1000;
+        int maxChars = 1000;
 
         if (message.getExchange() != null) {
             String property = message.getExchange().getContext().getProperties().get(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
             if (property != null) {
-                length = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
+                maxChars = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
             }
         }
+        return extractBodyForLogging(message, prepend, streams, maxChars);
+    }
 
-        String body = obj.toString();
+    /**
+     * Extracts the body for logging purpose.
+     * <p/>
+     * Will clip the body if its too big for logging.
+     *
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param message the message
+     * @param prepend a message to prepend
+     * @param allowStreams whether or not streams is allowed
+     * @param maxChars limit to maximum number of chars. Use 0 or negative value to not limit at all.
+     * @return the logging message
+     */
+    public static String extractBodyForLogging(Message message, String prepend, boolean allowStreams, int maxChars) {
+        Object obj = message.getBody();
+        if (obj == null) {
+            return prepend + "[Body is null]";
+        }
+
+        if (obj instanceof StringSource || obj instanceof BytesSource) {
+            // these two are okay
+        } else if (!allowStreams && obj instanceof StreamCache) {
+            return prepend + "[Body is instance of org.apache.camel.StreamCache]";
+        } else if (!allowStreams && obj instanceof StreamSource) {
+            return prepend + "[Body is instance of java.xml.transform.StreamSource]";
+        } else if (!allowStreams && obj instanceof InputStream) {
+            return prepend + "[Body is instance of java.io.InputStream]";
+        } else if (!allowStreams && obj instanceof OutputStream) {
+            return prepend + "[Body is instance of java.io.OutputStream]";
+        } else if (!allowStreams && obj instanceof Reader) {
+            return prepend + "[Body is instance of java.io.Reader]";
+        } else if (!allowStreams && obj instanceof Writer) {
+            return prepend + "[Body is instance of java.io.Writer]";
+        }
+
+        // is the body a stream cache
+        StreamCache cache;
+        if (obj instanceof StreamCache) {
+            cache = (StreamCache) obj;
+        } else {
+            cache = null;
+        }
+
+        // grab the message body as a string
+        String body;
+        if (message.getExchange() != null) {
+            body = message.getExchange().getContext().getTypeConverter().convertTo(String.class, obj);
+        } else {
+            body = obj.toString();
+        }
+
+        // reset stream cache after use
+        if (cache != null) {
+            cache.reset();
+        }
+
         if (body == null) {
-            return "Message: [Body is null]";
+            return prepend + "[Body is null]";
         }
 
         // clip body if length enabled and the body is too big
-        if (length > 0 && body.length() > length) {
-            body = body.substring(0, length) + "... [Body clipped after " + length + " chars, total length is " + body.length() + "]";
+        if (maxChars > 0 && body.length() > maxChars) {
+            body = body.substring(0, maxChars) + "... [Body clipped after " + maxChars + " chars, total length is " + body.length() + "]";
         }
 
-        return "Message: " + body;
+        return prepend + body;
     }
 
 }

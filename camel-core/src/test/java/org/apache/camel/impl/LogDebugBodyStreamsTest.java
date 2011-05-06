@@ -44,7 +44,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
 
         // should be logged anyway
         String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: StringSource[<?xml version=\"1.0\"?><person><name>Claus</name></person>]", msg);
+        assertEquals("Message: <?xml version=\"1.0\"?><person><name>Claus</name></person>", msg);
     }
 
     public void testLogBodyStreamStringSourceDisabledByDefault() throws Exception {
@@ -61,7 +61,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
 
         // should be logged anyway
         String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: StringSource[<?xml version=\"1.0\"?><person><name>Claus</name></person>]", msg);
+        assertEquals("Message: <?xml version=\"1.0\"?><person><name>Claus</name></person>", msg);
     }
 
     public void testLogBodyStreamStringSourceEnabled() throws Exception {
@@ -78,7 +78,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
 
         // should be logged anyway
         String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: StringSource[<?xml version=\"1.0\"?><person><name>Claus</name></person>]", msg);
+        assertEquals("Message: <?xml version=\"1.0\"?><person><name>Claus</name></person>", msg);
     }
 
     public void testLogBodyStreamDisabled() throws Exception {

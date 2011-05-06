@@ -77,7 +77,6 @@ public class DefaultMessage extends MessageSupport {
     @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Class<T> type) {
         Object value = getHeader(name);
-
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class.isAssignableFrom(type)) {
@@ -100,8 +99,16 @@ public class DefaultMessage extends MessageSupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T getHeader(String name, Object defaultValue, Class<T> type) {
         Object value = getHeader(name, defaultValue);
+        if (value == null) {
+            // lets avoid NullPointerException when converting to boolean for null values
+            if (boolean.class.isAssignableFrom(type)) {
+                return (T) Boolean.FALSE;
+            }
+            return null;
+        }
 
         // eager same instance type test to avoid the overhead of invoking the type converter
         // if already same type
