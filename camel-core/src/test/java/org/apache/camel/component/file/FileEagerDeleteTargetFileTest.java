@@ -37,8 +37,6 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=true",
                 "Bye World", Exchange.FILE_NAME, "world.txt");
 
-        oneExchangeDone.matchesMockWaitTime();
-
         File file = new File("target/eagerdelete/world.txt").getAbsoluteFile();
         assertTrue("File should exist", file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
@@ -47,8 +45,6 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
     public void testEagerDeleteTargetFileFalse() throws Exception {
         template.sendBodyAndHeader("file://target/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=false",
                 "Bye World", Exchange.FILE_NAME, "world.txt");
-
-        oneExchangeDone.matchesMockWaitTime();
 
         File file = new File("target/eagerdelete/world.txt").getAbsoluteFile();
         assertTrue("File should exist", file.exists());
@@ -59,10 +55,13 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/eagerdelete?tempFileName=inprogress-${file:name}",
                 "Bye World", Exchange.FILE_NAME, "world.txt");
 
-        oneExchangeDone.matchesMockWaitTime();
-
         File file = new File("target/eagerdelete/world.txt").getAbsoluteFile();
         assertTrue("File should exist", file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
+    }
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 }
