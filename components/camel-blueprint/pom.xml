@@ -125,7 +125,7 @@
                         <phase>package</phase>
                         <configuration>
                             <tasks>
-                                <echo>Including source code from camel-core-xml in the camel-blueprint-sources.ar</echo>
+                                <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
                                 <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
                                   <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
                                   <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
