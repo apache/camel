@@ -16,28 +16,12 @@
  */
 package org.apache.camel.component.jms.remoting;
 
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 /**
- * @version 
+ *
  */
-public class JmsRemotingTest extends CamelSpringTestSupport {
-
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/remoting/spring.xml");
-    }
-
-    @Override
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
-    @Test
-    public void testRemoting() throws Exception {
-        ISay proxy = (ISay) applicationContext.getBean("sayProxy");
-        String rc = proxy.say();
-        assertEquals("Hello", rc);
-    }
+public interface ISay extends Remote {
+    String say() throws RemoteException;
 }

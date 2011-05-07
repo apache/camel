@@ -16,44 +16,32 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import static org.junit.Assert.assertTrue;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Unit test for issue CAMEL-706
  */
-@ContextConfiguration
-public class TransactionErrorHandlerRedeliveryDelayTest extends AbstractJUnit4SpringContextTests {
+public class TransactionErrorHandlerRedeliveryDelayTest extends CamelSpringTestSupport {
 
-    private static int counter;
+    private static volatile int counter;
 
-    @Autowired
-    protected CamelContext context;
-
-    @Autowired
-    protected ProducerTemplate producer;
-
-    @EndpointInject(uri = "mock:result")
-    protected MockEndpoint result;
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/issues/TransactionErrorHandlerRedeliveryDelayTest-context.xml");
+    }
 
     @Test
     public void testTransactedRedeliveryDelay() throws Exception {
-        result.expectedMessageCount(1);
-        result.expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        producer.sendBody("activemq:queue:in", "Hello World");
+        template.sendBody("activemq:queue:in", "Hello World");
 
-        result.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     public static class MyFailureProcessor implements Processor {

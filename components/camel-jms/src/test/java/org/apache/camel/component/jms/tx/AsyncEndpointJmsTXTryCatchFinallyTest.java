@@ -19,7 +19,7 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.async.MyAsyncComponent;
+import org.apache.camel.component.jms.async.MyAsyncComponent;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;

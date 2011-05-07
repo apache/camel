@@ -17,43 +17,35 @@
 package org.apache.camel.component.jms.config;
 
 import org.apache.activemq.command.ActiveMQQueue;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 /**
  * @version 
  */
-@ContextConfiguration
-public class JmsEndpointWithCustomDestinationTest extends AbstractJUnit4SpringContextTests {
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate template;
-    @EndpointInject(uri = "mock:result")
-    protected MockEndpoint result;
-    @Autowired
-    protected ActiveMQQueue jmsQueue;
+public class JmsEndpointWithCustomDestinationTest extends CamelSpringTestSupport {
 
     private Object expectedBody = "<hello>world!</hello>";
 
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/config/JmsEndpointWithCustomDestinationTest-context.xml");
+    }
+
     @Test
     public void testMessageSentToCustomEndpoint() throws Exception {
+        ActiveMQQueue jmsQueue = context.getRegistry().lookup("jmsQueue", ActiveMQQueue.class);
         assertNotNull("jmsQueue", jmsQueue);
         assertEquals("jmsqueue.getPhysicalName()", "Test.Camel.CustomEndpoint", jmsQueue.getPhysicalName());
 
-        result.expectedBodiesReceived(expectedBody);
+        getMockEndpoint("mock:result").expectedBodiesReceived(expectedBody);
 
-        template.sendBody(expectedBody);
+        template.sendBody("direct:start", expectedBody);
 
-        result.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
 }

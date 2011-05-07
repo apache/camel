@@ -254,10 +254,7 @@
             <phase>package</phase>
             <configuration>
               <tasks>
-                <echo>Deleting unwanted resources from the test-jar</echo>
-                <delete file="${project.build.directory}/test-classes/log4j.properties" verbose="true" />
-                <delete file="${project.build.directory}/test-classes/META-INF/spring/*" verbose="true" />
-
+                <echo>Including source code from camel-core-xml in the camel-spring-sources.ar</echo>
                 <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
                   <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
                   <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
@@ -294,24 +291,6 @@
         </executions>
       </plugin>
         
-        <!-- generate the attached tests jar -->
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <!-- TODO: this doesn't work - if ever we can figure out the maven ninja to get it working -->
-          <!-- TODO: we can zap the Ant package phase stuff above -->
-          <excludes>
-            <exclude>**/*/log4j.properties</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
     </plugins>
 
     <pluginManagement>

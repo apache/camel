@@ -14,30 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.remoting;
+package org.apache.camel.component.jms.async;
 
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import java.util.Map;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
- * @version 
+ *
  */
-public class JmsRemotingTest extends CamelSpringTestSupport {
-
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/remoting/spring.xml");
-    }
+public class MyAsyncComponent extends DefaultComponent {
 
     @Override
-    protected int getExpectedRouteCount() {
-        return 0;
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        MyAsyncEndpoint answer = new MyAsyncEndpoint(uri, this);
+        answer.setReply(remaining);
+        setProperties(answer, parameters);
+        return answer;
     }
 
-    @Test
-    public void testRemoting() throws Exception {
-        ISay proxy = (ISay) applicationContext.getBean("sayProxy");
-        String rc = proxy.say();
-        assertEquals("Hello", rc);
-    }
 }

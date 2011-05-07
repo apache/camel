@@ -14,29 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.remoting;
+package org.apache.camel.component.jms.issues;
 
-import javax.annotation.Resource;
-
-import org.apache.camel.spring.remoting.ISay;
-import org.junit.Assert;
-import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
 /**
- * @version 
+ *
  */
-@ContextConfiguration
-public class RemotingTest extends AbstractJUnit4SpringContextTests {
-    @Resource
-    protected ISay sayProxy;
+public class MyFailureProcessor implements Processor {
 
-    @Test
-    public void testInvokeRemoteClient() throws Exception {
-        String rc = sayProxy.say();
-        Assert.assertEquals("Hello", rc);
+    public void process(Exchange exchange) throws Exception {
+        throw new IllegalArgumentException("Unit test - this is thrown by intention");
     }
+
 }

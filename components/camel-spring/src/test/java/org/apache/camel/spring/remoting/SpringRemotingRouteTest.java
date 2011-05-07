@@ -29,12 +29,6 @@ public class SpringRemotingRouteTest extends TestCase {
     
     public void testBeanRoutes() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
-/*
-        Object service = applicationContext.getBean("say");
-        log.info("Found service!: " + service);
-        assertTrue("not an ISay!", service instanceof ISay);
-*/
-
         CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
 
         // START SNIPPET: invoke

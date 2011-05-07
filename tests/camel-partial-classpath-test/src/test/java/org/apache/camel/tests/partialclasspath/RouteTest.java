@@ -16,15 +16,17 @@
  */
 package org.apache.camel.tests.partialclasspath;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class RouteTest extends ContextTestSupport {
+public class RouteTest extends CamelTestSupport {
 
+    @Test
     public void testRoute() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(new MyBean("foo", "bar"));
@@ -33,7 +35,6 @@ public class RouteTest extends ContextTestSupport {
 
         resultEndpoint.assertIsSatisfied();
     }
-
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

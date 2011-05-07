@@ -14,12 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.component.jms.remoting;
 
-package org.apache.camel.component.jms.issues;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.springframework.test.context.ContextConfiguration;
+/**
+ *
+ */
+public class SayService implements ISay {
 
-@ContextConfiguration(inheritLocations = false)
-public class JmsSpringResequencerTest extends JmsResequencerTest {
+    private static final Logger LOG = LoggerFactory.getLogger(SayService.class);
 
+    String message = "Hello";
+
+    public SayService() {
+    }
+
+    public SayService(String message) {
+        this.message = message;
+    }
+
+    public String say() {
+        LOG.info("Invoking say() method with message: " + message);
+
+        return message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

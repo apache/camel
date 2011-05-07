@@ -45,7 +45,7 @@
         <property name="handled" value="false"/>
     </bean>
 
-    <bean id="myFailureProcessor" class="org.apache.camel.spring.config.MyFailureProcessor"/>
+    <bean id="myFailureProcessor" class="org.apache.camel.component.jms.issues.MyFailureProcessor"/>
 
     <bean id="myRedeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
         <property name="maximumRedeliveries" value="4"/>

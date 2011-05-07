@@ -23,18 +23,17 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <bean id="sayService" class="org.apache.camel.spring.remoting.SayService" scope="singleton"/>
+  <bean id="sayService" class="org.apache.camel.component.jms.remoting.SayService" scope="singleton"/>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
       <jmxAgent id="agent" disabled="true"/>
     <!-- create the client proxy -->
     <proxy id="sayProxy" serviceUrl="activemq:test.serviceQueue"
-           serviceInterface="org.apache.camel.spring.remoting.ISay"/>
+           serviceInterface="org.apache.camel.component.jms.remoting.ISay"/>
 
     <!-- export the service -->
     <export id="say" uri="activemq:test.serviceQueue" serviceRef="sayService"
-            serviceInterface="org.apache.camel.spring.remoting.ISay"/>
-
+            serviceInterface="org.apache.camel.component.jms.remoting.ISay"/>
   </camelContext>
 
   <!-- configure the ActiveMQ component -->

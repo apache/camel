@@ -16,36 +16,22 @@
  */
 package org.apache.camel.component.jms.issues;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.After;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Unit test for issues CAMEL-1034 and CAMEL-1037
  */
-@ContextConfiguration
-public class JmsResequencerTest extends AbstractJUnit4SpringContextTests {
+public class JmsResequencerTest extends CamelSpringTestSupport {
 
-    @Autowired
-    protected CamelContext context;
-
-    @EndpointInject(uri = "mock:result")
-    protected MockEndpoint result;
-
-    @Autowired
-    protected ProducerTemplate template;
-    
-    @After
-    public void tearDown() {
-        result.reset();
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/issues/JmsResequencerTest-context.xml");
     }
-    
+
     @Test
     public void testBatchResequencer() throws Exception {
         testResequencer("activemq:queue:in1");
@@ -57,14 +43,18 @@ public class JmsResequencerTest extends AbstractJUnit4SpringContextTests {
     }
     
     private void testResequencer(String endpoint) throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(100);
+
         for (int i = 0; i < 100; i++) {
             result.message(i).body().isEqualTo(Integer.valueOf(i + 1));
         }
+
         for (int i = 100; i > 0; i--) {
             template.sendBodyAndHeader(endpoint, Integer.valueOf(i), "num", Long.valueOf(i));
         }
-        result.assertIsSatisfied();
+
+        assertMockEndpointsSatisfied();
     }
 
 }
