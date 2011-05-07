@@ -16,33 +16,63 @@
  */
 package org.apache.camel.component.jackson;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Service;
-import org.apache.camel.spring.SpringCamelContext;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version 
  */
-public class SpringJacksonJsonDataFormatTest extends JacksonJsonDataFormatTest {
+public class SpringJacksonJsonDataFormatTest extends CamelSpringTestSupport {
 
-    protected CamelContext createCamelContext() throws Exception {
-        setUseRouteBuilder(false);
+    @Test
+    public void testMarshalAndUnmarshalMap() throws Exception {
 
-        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/jackson/SpringJacksonJsonDataFormatTest.xml");
-        setCamelContextService(new Service() {
-            public void start() throws Exception {
-                applicationContext.start();
+        Map<String, Object> in = new HashMap<String, Object>();
+        in.put("name", "Camel");
 
-            }
+        MockEndpoint mock = getMockEndpoint("mock:reverse");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(Map.class);
+        mock.message(0).body().equals(in);
 
-            public void stop() throws Exception {
-                applicationContext.stop();
-            }
-        });
+        Object marshalled = template.requestBody("direct:in", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        assertEquals("{\"name\":\"Camel\"}", marshalledAsString);
 
-        return SpringCamelContext.springCamelContext(applicationContext);       
+        template.sendBody("direct:back", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testMarshalAndUnmarshalPojo() throws Exception {
+
+        TestPojo in = new TestPojo();
+        in.setName("Camel");
+
+        MockEndpoint mock = getMockEndpoint("mock:reversePojo");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(TestPojo.class);
+        mock.message(0).body().equals(in);
+
+        Object marshalled = template.requestBody("direct:inPojo", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        assertEquals("{\"name\":\"Camel\"}", marshalledAsString);
+
+        template.sendBody("direct:backPojo", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jackson/SpringJacksonJsonDataFormatTest.xml");
     }
 
 }
