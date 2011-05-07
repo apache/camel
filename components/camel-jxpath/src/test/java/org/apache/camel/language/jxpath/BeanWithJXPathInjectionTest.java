@@ -16,30 +16,31 @@
  */
 package org.apache.camel.language.jxpath;
 
-
 import javax.naming.Context;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @version 
  */
-public class BeanWithJXPathInjectionTest extends ContextTestSupport {
+public class BeanWithJXPathInjectionTest extends CamelTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(BeanWithJXPathInjectionTest.class);
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
-
         template.sendBody("direct:in", new PersonBean("James", "London"));
 
         assertEquals("bean foo: " + myBean, "James", myBean.name);
         assertNotNull("Should pass body as well", myBean.body);
     }
 
+    @Test
     public void testSendNullMessage() throws Exception {
         template.sendBody("direct:in", new PersonBean(null, "London"));
 

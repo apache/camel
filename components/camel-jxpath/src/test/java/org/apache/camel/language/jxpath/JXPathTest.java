@@ -17,7 +17,8 @@
 package org.apache.camel.language.jxpath;
 
 import org.apache.camel.ExpressionEvaluationException;
-import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.test.junit4.LanguageTestSupport;
+import org.junit.Test;
 
 /**
  * Test for {@link JXPathExpression} and {@link JXPathLanguage}
@@ -26,9 +27,7 @@ public class JXPathTest extends LanguageTestSupport {
 
     protected PersonBean body = new PersonBean("James", "London");
 
-    /**
-     * Test JXPath expressions
-     */
+    @Test
     public void testJXPathExpressions() throws Exception {
         assertExpression(".", exchange);
         assertExpression("./in/body", "<hello id='m123'>world!</hello>");
@@ -37,17 +36,13 @@ public class JXPathTest extends LanguageTestSupport {
         assertExpression("in/headers/@foo", "abc");
     }
 
-    /**
-     * Test JXPath predicates
-     */
+    @Test
     public void testJXPathPredicates() throws Exception {
         assertPredicate("in/headers/@foo = 'abc'");
         assertInvalidPredicate("in/headders/@foo = 'abc'");
     }
 
-    /**
-     * Test exceptions being thrown appropriately
-     */
+    @Test
     public void testExceptions() throws Exception {
         assertInvalidExpression(".@.");
         assertInvalidExpression("ins/body");

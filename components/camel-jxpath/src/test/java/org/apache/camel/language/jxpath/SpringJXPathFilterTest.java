@@ -16,33 +16,36 @@
  */
 package org.apache.camel.language.jxpath;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version 
  */
-@ContextConfiguration
-public class SpringJXPathFilterTest extends AbstractJUnit38SpringContextTests {
-    @Autowired
-    protected ProducerTemplate template;
-    @EndpointInject(uri = "mock:results")
-    protected MockEndpoint endpoint;
+public class SpringJXPathFilterTest extends CamelSpringTestSupport {
 
-    @Override
-    protected void setUp() throws Exception {
-        endpoint.reset();
-    }
-    
-    public void testFilterWithJXPath() throws Exception {
-        endpoint.expectedMessageCount(1);
+    @Test
+    public void testMatching() throws Exception {
+        getMockEndpoint("mock:results").expectedMessageCount(1);
 
         template.sendBody("direct:start", new PersonBean("James", "London"));
 
-        endpoint.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testNotMatching() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        template.sendBody("direct:start", new PersonBean("Hiram", "Tampa"));
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/language/jxpath/SpringJXPathFilterTest-context.xml");
     }
 }

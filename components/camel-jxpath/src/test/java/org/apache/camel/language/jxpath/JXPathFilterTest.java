@@ -16,14 +16,16 @@
  */
 package org.apache.camel.language.jxpath;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class JXPathFilterTest extends ContextTestSupport {
+public class JXPathFilterTest extends CamelTestSupport {
 
+    @Test
     public void testSendMatchingMessage() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -32,6 +34,7 @@ public class JXPathFilterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
@@ -40,6 +43,7 @@ public class JXPathFilterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testSendNullMessage() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

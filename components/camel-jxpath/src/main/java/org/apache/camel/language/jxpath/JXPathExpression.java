@@ -24,7 +24,7 @@ import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.JXPathException;
 
 /**
- * <a href="http://commons.apache.org/jxpath/">JXPath</a> {@link Expression} support 
+ * <a href="http://commons.apache.org/jxpath/">JXPath</a> {@link org.apache.camel.Expression} support
  */
 public class JXPathExpression extends ExpressionSupport {
 
