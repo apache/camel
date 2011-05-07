@@ -16,30 +16,62 @@
  */
 package org.apache.camel.dataformat.castor;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Service;
-import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringMarshalDomainObjectTest extends MarshalDomainObjectTest {
+public class SpringMarshalDomainObjectTest extends CamelSpringTestSupport {
 
-    protected CamelContext createCamelContext() throws Exception {
-        setUseRouteBuilder(false);
+    @Test
+    public void testMarshalDomainObject() throws Exception {
+        // some platform cannot test using Castor as it uses a SUN dependent Xerces
+        if (isJavaVendor("IBM")) {
+            return;
+        }
 
-        final AbstractXmlApplicationContext applicationContext =
-                new ClassPathXmlApplicationContext("org/apache/camel/dataformat/castor/SpringMarshalDomainObjectTest.xml");
-        setCamelContextService(new Service() {
-            public void start() throws Exception {
-                applicationContext.start();
-            }
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
 
-            public void stop() throws Exception {
-                applicationContext.stop();
-            }
-        });
+        PurchaseOrder order = new PurchaseOrder();
+        order.setName("Tiger");
+        order.setAmount(1);
+        order.setPrice(99.95);
 
-        return SpringCamelContext.springCamelContext(applicationContext);
+        template.sendBody("direct:in", order);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testMarshalDomainObjectTwice() throws Exception {
+        // some platform cannot test using Castor as it uses a SUN dependent Xerces
+        if (isJavaVendor("IBM")) {
+            return;
+        }
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+
+        PurchaseOrder order = new PurchaseOrder();
+        order.setName("Tiger");
+        order.setAmount(1);
+        order.setPrice(99.95);
+
+        template.sendBody("direct:in", order);
+        template.sendBody("direct:in", order);
+
+        mock.assertIsSatisfied();
+
+        String body1 = mock.getExchanges().get(0).getIn().getBody(String.class);
+        String body2 = mock.getExchanges().get(1).getIn().getBody(String.class);
+        assertEquals("The body should marshalled to the same", body1, body2);
+    }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/castor/SpringMarshalDomainObjectTest.xml");
     }
 
 }
