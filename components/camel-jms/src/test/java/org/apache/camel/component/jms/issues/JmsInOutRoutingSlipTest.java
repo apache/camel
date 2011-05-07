@@ -35,6 +35,7 @@ public class JmsInOutRoutingSlipTest extends CamelTestSupport {
     public void testJmsInOutRoutingSlip() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+        getMockEndpoint("mock:end").expectedBodiesReceived("Bye World");
 
         template.sendBodyAndHeader("activemq:queue:start", "World", "slip", "activemq:queue:foo,activemq:queue:result");
 
@@ -55,13 +56,17 @@ public class JmsInOutRoutingSlipTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("activemq:queue:start")
                     .inOut()
-                    .routingSlip("slip");
+                    .routingSlip("slip")
+                    .to("log:end")
+                    .to("mock:end");
 
                 from("activemq:queue:foo")
                     .to("mock:foo")
+                    .to("log:foo")
                     .transform(body().prepend("Bye "));
 
                 from("activemq:queue:result")
+                    .to("log:result")
                     .to("mock:result");
             }
         };
