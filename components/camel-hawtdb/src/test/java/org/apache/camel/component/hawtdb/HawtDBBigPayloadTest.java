@@ -29,6 +29,7 @@ import org.junit.Test;
 /**
  * Test issue with hawtdb file store growing to large
  */
+@Ignore("Run this test manually")
 public class HawtDBBigPayloadTest extends CamelTestSupport {
 
     private static final long TIME = 60 * 1000;
