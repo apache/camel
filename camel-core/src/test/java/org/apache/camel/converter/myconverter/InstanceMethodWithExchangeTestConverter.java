@@ -14,27 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter;
-
-import java.util.Currency;
+package org.apache.camel.converter.myconverter;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
-import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.converter.MyBean;
 
-/**
- * @version 
- */
 @Converter
-public class InstanceDummyFallbackConverter {
+public class InstanceMethodWithExchangeTestConverter {
 
-    @FallbackConverter
-    public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
-        if (Currency.class.isAssignableFrom(value.getClass())) {
-            return "Money talks";
-        }
-        return null;
+    @Converter
+    public MyBean fromArray(String[] values, Exchange exchange) {
+        return new MyBean(Integer.parseInt(values[0]), 
+            exchange.getProperty("prefix", String.class) + values[1]);
     }
-
 }

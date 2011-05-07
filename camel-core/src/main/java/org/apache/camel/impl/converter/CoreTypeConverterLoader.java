@@ -14,17 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter;
+package org.apache.camel.impl.converter;
 
-import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
-@Converter
-public class InstanceMethodWithExchangeTestConverter {
+/**
+ * Will load all type converters from camel-core without classpath scanning, which makes
+ * it much faster.
+ * <p/>
+ * The {@link CorePackageScanClassResolver} contains a hardcoded list of the type converter classes to load.
+ */
+public class CoreTypeConverterLoader extends AnnotationTypeConverterLoader {
 
-    @Converter
-    public MyBean fromArray(String[] values, Exchange exchange) {
-        return new MyBean(Integer.parseInt(values[0]), 
-            exchange.getProperty("prefix", String.class) + values[1]);
+    public CoreTypeConverterLoader() {
+        super(new CorePackageScanClassResolver());
     }
+
+    @Override
+    protected String[] findPackageNames() throws IOException, URISyntaxException {
+        return new String[]{"org.apache.camel.converter", "org.apache.camel.component.bean", "org.apache.camel.component.file"};
+    }
+
 }

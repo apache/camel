@@ -18,7 +18,6 @@ package org.apache.camel.language.juel.issues;
 
 import javax.xml.transform.TransformerConfigurationException;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -26,12 +25,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.StringSource;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
+
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
  * @version 
  */
-public class XsltLosesHeaderTest extends ContextTestSupport {
+public class XsltLosesHeaderTest extends CamelTestSupport {
     protected String xslt = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"
             + "<xsl:stylesheet version=\"2.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">"
             + "<xsl:template match=\"/cats\">"
@@ -39,6 +41,7 @@ public class XsltLosesHeaderTest extends ContextTestSupport {
             + "</xsl:template>"
             + "</xsl:stylesheet>";
 
+    @Test
     public void testXsltLosesHeader() throws Exception {
 
         MockEndpoint endpointAfter = getMockEndpoint("mock:After");

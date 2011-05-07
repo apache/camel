@@ -46,14 +46,17 @@ public class OsgiComponentResolver implements ComponentResolver {
         } catch (Exception e) {
             LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
         }
-        if (bean instanceof Component) {
-            return (Component)bean;
-        } else {
-            // lets use Camel's type conversion mechanism to convert things like CamelContext
-            // and other types into a valid Component
-            Component component = CamelContextHelper.convertTo(context, Component.class, bean);
-            if (component != null) {
-                return component;
+
+        if (bean != null) {
+            if (bean instanceof Component) {
+                return (Component)bean;
+            } else {
+                // lets use Camel's type conversion mechanism to convert things like CamelContext
+                // and other types into a valid Component
+                Component component = CamelContextHelper.convertTo(context, Component.class, bean);
+                if (component != null) {
+                    return component;
+                }
             }
         }
 

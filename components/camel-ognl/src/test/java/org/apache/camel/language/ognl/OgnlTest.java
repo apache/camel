@@ -16,12 +16,15 @@
  */
 package org.apache.camel.language.ognl;
 
-import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.test.junit4.LanguageTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class OgnlTest extends LanguageTestSupport {
+
+    @Test
     public void testOgnlExpressions() throws Exception {
         assertExpression("exchange", exchange);
         assertExpression("exchange.getIn().body", "<hello id='m123'>world!</hello>");
@@ -32,11 +35,13 @@ public class OgnlTest extends LanguageTestSupport {
         assertExpression("request.headers.foo", "abc");
     }
 
+    @Test
     public void testGetOutFalseKeepsNullOutMessage() throws Exception {
         assertExpression("exchange.hasOut()", false);
         assertFalse(exchange.hasOut());
     }
 
+    @Test
     public void testResponseCreatesOutMessage() throws Exception {
         assertExpression("response.body", null);
         assertTrue(exchange.hasOut());

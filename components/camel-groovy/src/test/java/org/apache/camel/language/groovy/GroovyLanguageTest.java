@@ -16,13 +16,15 @@
  */
 package org.apache.camel.language.groovy;
 
-import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.test.junit4.LanguageTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class GroovyLanguageTest extends LanguageTestSupport {
 
+    @Test
     public void testGroovyExpressions() throws Exception {
         assertExpression("exchange.in.headers.foo", "abc");
         assertExpression("request.headers.foo", "abc");

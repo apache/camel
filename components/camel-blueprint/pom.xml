@@ -86,12 +86,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-log4j12</artifactId>
           <scope>test</scope>
@@ -121,22 +115,6 @@
         </resources>
 
         <plugins>
-
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <childDelegation>false</childDelegation>
-                    <useFile>true</useFile>
-                    <forkMode>pertest</forkMode>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                    <excludes>
-                        <!-- TODO FIXME ASAP -->
-                        <exclude>**/XXXTest.*</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -185,26 +163,6 @@
                   </configuration>
                 </execution>
               </executions>
-            </plugin>
-
-
-            <!-- generate the attached tests jar -->
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- TODO: this doesn't work - if ever we can figure out the maven ninja to get it working -->
-                    <!-- TODO: we can zap the Ant package phase stuff above -->
-                    <excludes>
-                        <exclude>**/*/log4j.properties</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
 
         </plugins>

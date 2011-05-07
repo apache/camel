@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter;
+package org.apache.camel.processor;
 
-import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
+/**
+ * @version 
+ */
+public class SimpleMockNoLazyTypeConverterTest extends SimpleMockTest {
 
-@Converter
-public class StaticMethodWithExchangeTestConverter {
-
-    @Converter
-    public MyBean fromString(String text, Exchange exchange) {
-        String[] values = ObjectHelper.splitOnCharacter(text, ":", 2);
-        return new MyBean(Integer.parseInt(values[0]), exchange.getProperty("prefix", String.class) + values[1]);
+    @Override
+    protected boolean isLazyLoadingTypeConverter() {
+        return false;
     }
+
 }

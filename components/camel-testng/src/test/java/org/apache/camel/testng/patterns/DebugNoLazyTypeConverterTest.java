@@ -26,7 +26,12 @@ import org.testng.annotations.Test;
 /**
  * @version $Revision$
  */
-public class DebugTest extends CamelTestSupport {
+public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
+
+    @Override
+    protected boolean isLazyLoadingTypeConverter() {
+        return false;
+    }
 
     @Override
     protected void debugBefore(Exchange exchange, Processor processor,

@@ -22,6 +22,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.testng.CamelTestSupport;
+import org.testng.annotations.Test;
 
 /**
  * Tests filtering using Camel Test
@@ -36,6 +37,7 @@ public class FilterTest extends CamelTestSupport {
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
 
+    @Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
 
@@ -46,6 +48,7 @@ public class FilterTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 

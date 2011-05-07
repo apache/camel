@@ -154,7 +154,9 @@ public abstract class SpringTestSupport extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
+        CamelContext context = SpringCamelContext.springCamelContext(applicationContext);
+        context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());
+        return context;
     }
 
 }

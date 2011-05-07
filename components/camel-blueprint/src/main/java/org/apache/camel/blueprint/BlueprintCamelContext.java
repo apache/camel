@@ -25,6 +25,7 @@ import org.apache.camel.core.osgi.OsgiPackageScanClassResolver;
 import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
@@ -93,7 +94,8 @@ public class BlueprintCamelContext extends DefaultCamelContext {
         if (ctx == null) {
             ctx = bundleContext;
         }
-        return new OsgiTypeConverter(ctx, getInjector());
+        FactoryFinder finder = new OsgiFactoryFinderResolver(bundleContext).resolveDefaultFactoryFinder(getClassResolver());
+        return new OsgiTypeConverter(ctx, getInjector(), finder);
     }
 
     @Override

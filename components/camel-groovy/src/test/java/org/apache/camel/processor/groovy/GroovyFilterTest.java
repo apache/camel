@@ -16,24 +16,37 @@
  */
 package org.apache.camel.processor.groovy;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.XPathFilterTest;
-import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version 
  */
-public class GroovyFilterTest extends XPathFilterTest {
+public class GroovyFilterTest extends CamelSpringTestSupport {
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/processor/groovy/groovyFilter.xml");
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/processor/groovy/groovyFilter.xml"));
+    @Test
+    public void testSendMatchingMessage() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", 123);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testSendNotMatchingMessage() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
     }
 
 }

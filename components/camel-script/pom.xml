@@ -83,15 +83,6 @@
         </dependency>
 
         <!-- testing -->
-        <!-- TODO: use by language test, which we should refactor into camel-test JAR -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-            <type>test-jar</type>
-            <optional>true</optional>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>

@@ -20,16 +20,17 @@ import javax.el.ELContext;
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 
-import junit.framework.TestCase;
-
 import de.odysseus.el.ExpressionFactoryImpl;
 import de.odysseus.el.util.SimpleContext;
+import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @version 
  */
 public class JuelTest extends TestCase {
 
+    @Test
     public void testJuel() throws Exception {
         ExpressionFactory factory = new ExpressionFactoryImpl();
         ELContext context  = new SimpleContext();

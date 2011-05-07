@@ -16,37 +16,33 @@
  */
 package org.apache.camel.builder.script.example;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ScriptTestHelper;
-import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
- * @version 
+ *
  */
-public class BeanShellFilterTest extends XPathFilterTest {
+public abstract class XPathFilterTest extends CamelTestSupport {
 
-    @Override
+    protected String matchingBody = "<person name='James' city='London'/>";
+    protected String notMatchingBody = "<person name='Hiram' city='Tampa'/>";
+
+    @Test
     public void testSendMatchingMessage() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
+        getMockEndpoint("mock:result").expectedBodiesReceived(matchingBody);
 
-        super.testSendMatchingMessage();
+        template.sendBodyAndHeader("direct:start", matchingBody, "testCase", "testSendMatchingMessage");
+
+        assertMockEndpointsSatisfied();
     }
 
-    @Override
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        super.testSendNotMatchingMessage();
-    }
+        template.sendBodyAndHeader("direct:start", notMatchingBody, "testCase", "testSendNotMatchingMessage");
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/builder/script/example/beanShellFilter.xml"));
+        assertMockEndpointsSatisfied();
     }
 
 }

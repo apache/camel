@@ -14,28 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.script;
+package org.apache.camel.converter.myconverter;
 
-import org.apache.camel.ScriptTestHelper;
-import org.apache.camel.test.junit4.LanguageTestSupport;
-import org.junit.Test;
+import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.converter.MyBean;
+import org.apache.camel.util.ObjectHelper;
 
-/**
- * @version 
- */
-public class JavaScriptLanguageTest extends LanguageTestSupport {
+@Converter
+public class StaticMethodWithExchangeTestConverter {
 
-    @Test
-    public void testLanguageExpressions() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
-        assertExpression("exchange.getIn().body", "<hello id='m123'>world!</hello>");
-        assertExpression("request.headers.get('foo')", "abc");
-    }
-
-    protected String getLanguageName() {
-        return "js";
+    @Converter
+    public MyBean fromString(String text, Exchange exchange) {
+        String[] values = ObjectHelper.splitOnCharacter(text, ":", 2);
+        return new MyBean(Integer.parseInt(values[0]), exchange.getProperty("prefix", String.class) + values[1]);
     }
 }

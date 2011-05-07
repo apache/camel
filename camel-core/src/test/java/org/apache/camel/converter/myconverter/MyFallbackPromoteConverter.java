@@ -14,32 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.script;
+package org.apache.camel.converter.myconverter;
 
-import org.apache.camel.ScriptTestHelper;
-import org.apache.camel.test.junit4.LanguageTestSupport;
-import org.junit.Test;
+import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.FallbackConverter;
+import org.apache.camel.converter.MyCoolBean;
+import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * @version 
  */
-public class PythonLanguageTest extends LanguageTestSupport {
+@Converter
+public class MyFallbackPromoteConverter {
 
-    @Test
-    public void testLanguageExpressions() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
+    @FallbackConverter(canPromote = true)
+    public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+        if (MyCoolBean.class.isAssignableFrom(value.getClass())) {
+            return "This is cool: " + value.toString();
         }
-
-        // the properties are stored in a set so ordering is not known
-        assertExpression("exchange.in.headers", "{foo=abc, bar=123}", "{bar=123, foo=abc}");
-        
-        assertExpression("exchange.in.body", "<hello id='m123'>world!</hello>");
-        assertExpression("exchange.in.headers.get('foo')", "abc");
-        assertExpression("request.headers['foo']", "abc");
-    }
-
-    protected String getLanguageName() {
-        return "jython";
+        return null;
     }
 }

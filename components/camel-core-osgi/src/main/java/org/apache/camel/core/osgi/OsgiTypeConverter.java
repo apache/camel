@@ -21,14 +21,17 @@ import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -41,12 +44,14 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
 
     private final BundleContext bundleContext;
     private final Injector injector;
+    private final FactoryFinder factoryFinder;
     private final ServiceTracker tracker;
     private volatile DefaultTypeConverter delegate;
 
-    public OsgiTypeConverter(BundleContext bundleContext, Injector injector) {
+    public OsgiTypeConverter(BundleContext bundleContext, Injector injector, FactoryFinder factoryFinder) {
         this.bundleContext = bundleContext;
         this.injector = injector;
+        this.factoryFinder = factoryFinder;
         this.tracker = new ServiceTracker(bundleContext, TypeConverterLoader.class.getName(), this);
     }
 
@@ -68,6 +73,12 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
 
     public void removedService(ServiceReference serviceReference, Object o) {
         LOG.trace("RemovedService: {}", serviceReference);
+        try {
+            ServiceHelper.stopService(this.delegate);
+        } catch (Exception e) {
+            // ignore
+            LOG.debug("Error stopping service due: " + e.getMessage() + ". This exception will be ignored.", e);
+        }
         this.delegate = null;
     }
 
@@ -79,6 +90,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     @Override
     protected void doStop() throws Exception {
         this.tracker.close();
+        ServiceHelper.stopService(this.delegate);
         this.delegate = null;
     }
 
@@ -118,40 +130,42 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         return getDelegate().getInjector();
     }
 
-    public DefaultTypeConverter getDelegate() {
+    public synchronized DefaultTypeConverter getDelegate() {
         if (delegate == null) {
-            synchronized (this) {
-                if (delegate != null) {
-                    return delegate;
-                } else {
-                    delegate = createRegistry();
-                }
-            }
+            delegate = createRegistry();
         }
         return delegate;
     }
 
     protected DefaultTypeConverter createRegistry() {
         // base the osgi type converter on the default type converter
-        // TODO: Why is it based on the DefaultPackageScanClassResolver and not OsgiPackageScanClassResolver?
-        DefaultTypeConverter reg = new DefaultTypeConverter(new DefaultPackageScanClassResolver() {
+        DefaultTypeConverter answer = new DefaultTypeConverter(new DefaultPackageScanClassResolver() {
             @Override
             public Set<ClassLoader> getClassLoaders() {
+                // we don't need any classloaders as we use osgi service tracker instead
                 return Collections.emptySet();
             }
-        }, injector, null);
+        }, injector, factoryFinder);
+
+        // load the type converters the tracker has been tracking
         Object[] services = this.tracker.getServices();
         if (services != null) {
             for (Object o : services) {
                 try {
-                    ((TypeConverterLoader) o).load(reg);
+                    ((TypeConverterLoader) o).load(answer);
                 } catch (Throwable t) {
-                    throw ObjectHelper.wrapRuntimeCamelException(t);
+                    throw new RuntimeCamelException("Error loading type converters from service: " + o + " due: " + t.getMessage(), t);
                 }
             }
         }
 
-        LOG.trace("Created TypeConverter: {}", reg);
-        return reg;
+        try {
+            ServiceHelper.startService(answer);
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Error staring OSGiTypeConverter due: " + e.getMessage(), e);
+        }
+
+        LOG.trace("Created TypeConverter: {}", answer);
+        return answer;
     }
 }

@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.converter;
+package org.apache.camel.converter.myconverter;
 
 import java.math.BigDecimal;
 
 import org.apache.camel.Converter;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.PurchaseOrder;
 import org.apache.camel.spi.TypeConverterAware;
 
 /**

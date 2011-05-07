@@ -16,15 +16,19 @@
  */
 package org.apache.camel.language.juel;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
+
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
  * @version 
  */
-public class NullBodyTest extends ContextTestSupport {
+public class NullBodyTest extends CamelTestSupport {
+
+    @Test
     public void testNullBody() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:After");
 

@@ -36,7 +36,7 @@ public class EnumTypeConverter implements TypeConverter {
     public <T> T convertTo(Class<T> type, Object value) {
         if (type.isEnum() && value != null) {
             String text = value.toString();
-            Method method = null;
+            Method method;
             try {
                 method = type.getMethod("valueOf", String.class);
             } catch (NoSuchMethodException e) {

@@ -18,21 +18,22 @@ package org.apache.camel.processor.juel;
 
 import javax.naming.Context;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
  * @version 
  */
-public class SimulatorTest extends ContextTestSupport {
+public class SimulatorTest extends CamelTestSupport {
 
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
@@ -41,10 +42,12 @@ public class SimulatorTest extends ContextTestSupport {
         return answer;
     }
 
+    @Test
     public void testReceivesFooResponse() throws Exception {
         assertRespondsWith("foo", "Bye said foo");
     }
 
+    @Test
     public void testReceivesBarResponse() throws Exception {
         assertRespondsWith("bar", "Bye said bar");
     }

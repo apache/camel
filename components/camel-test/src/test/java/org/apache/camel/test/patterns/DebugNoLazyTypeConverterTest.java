@@ -14,20 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.testng.patterns;
+package org.apache.camel.test.patterns;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.testng.CamelTestSupport;
-import org.testng.annotations.Test;
+import org.apache.camel.test.CamelTestSupport;
 
 /**
- * @version $Revision$
+ * @version 
  */
-public class DebugTest extends CamelTestSupport {
+public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
 
+    @Override
+    protected boolean isLazyLoadingTypeConverter() {
+        return false;
+    }
+
+    // START SNIPPET: e1
     @Override
     protected void debugBefore(Exchange exchange, Processor processor,
                                ProcessorDefinition definition, String id, String shortName) {
@@ -35,8 +40,8 @@ public class DebugTest extends CamelTestSupport {
         // from your Java editor you can just add a breakpoint in the code line below
         log.info("Before " + definition + " with body " + exchange.getIn().getBody());
     }
+    // END SNIPPET: e1
 
-    @Test
     public void testDebugger() throws Exception {
         // set mock expectations
         getMockEndpoint("mock:a").expectedMessageCount(1);
@@ -49,7 +54,6 @@ public class DebugTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
     public void testTwo() throws Exception {
         // set mock expectations
         getMockEndpoint("mock:a").expectedMessageCount(2);
@@ -63,6 +67,7 @@ public class DebugTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    // START SNIPPET: e2
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -76,5 +81,5 @@ public class DebugTest extends CamelTestSupport {
             }
         };
     }
-
+    // END SNIPPET: e2
 }

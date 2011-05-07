@@ -214,6 +214,8 @@ public final class ObjectConverter {
         }
     }
 
+    // add fast type converters from most common used
+
     @Converter
     public static String toString(Integer value) {
         return value.toString();
@@ -237,6 +239,31 @@ public final class ObjectConverter {
     @Converter
     public static String toString(StringBuilder value) {
         return value.toString();
+    }
+
+    @Converter
+    public static Integer toInteger(String value) {
+        return Integer.valueOf(value);
+    }
+
+    @Converter
+    public static Long toLong(String value) {
+        return Long.valueOf(value);
+    }
+
+    @Converter
+    public static Float toFloat(String value) {
+        return Float.valueOf(value);
+    }
+
+    @Converter
+    public static Double toDouble(String value) {
+        return Double.valueOf(value);
+    }
+
+    @Converter
+    public static Boolean toBoolean(String value) {
+        return "true".equalsIgnoreCase(value.toString()) ? Boolean.TRUE : Boolean.FALSE;
     }
 
 }

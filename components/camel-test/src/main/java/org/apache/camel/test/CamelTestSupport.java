@@ -183,6 +183,17 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
+     * Whether or not type converters should be lazy loaded (notice core converters is always loaded)
+     * <p/>
+     * We enabled lazy by default as it would speedup unit testing.
+     *
+     * @return <tt>true</tt> by default.
+     */
+    protected boolean isLazyLoadingTypeConverter() {
+        return true;
+    }
+
+    /**
      * Lets post process this test instance to process any Camel annotations.
      * Note that using Spring Test or Guice is a more powerful approach.
      */
@@ -218,7 +229,9 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext(createRegistry());
+        CamelContext context = new DefaultCamelContext(createRegistry());
+        context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());
+        return context;
     }
 
     protected JndiRegistry createRegistry() throws Exception {

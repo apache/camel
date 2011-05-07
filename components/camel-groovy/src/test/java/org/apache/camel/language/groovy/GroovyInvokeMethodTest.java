@@ -16,15 +16,17 @@
  */
 package org.apache.camel.language.groovy;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class GroovyInvokeMethodTest extends ContextTestSupport {
+public class GroovyInvokeMethodTest extends CamelTestSupport {
 
+    @Test
     public void testInvokeMethod() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

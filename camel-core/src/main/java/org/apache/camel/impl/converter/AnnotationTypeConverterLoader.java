@@ -74,6 +74,16 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             throw new TypeConverterLoaderException("Cannot find package names to be used for classpath scanning for annotated type converters.", e);
         }
 
+        // if we only have camel-core on the classpath then we have already pre-loaded all its type converters
+        // but we exposed the "org.apache.camel.core" package in camel-core. This ensures there is at least one
+        // packageName to scan, which triggers the scanning process. That allows us to ensure that we look for
+        // type converters in all the JARs.
+        if (packageNames.length == 1 && "org.apache.camel.core".equals(packageNames[0])) {
+            LOG.debug("No additional package names found in classpath for annotated type converters.");
+            // no additional package names found to load type converters so break out
+            return;
+        }
+
         Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);
         if (classes == null || classes.isEmpty()) {
             throw new TypeConverterLoaderException("Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));

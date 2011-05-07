@@ -64,6 +64,8 @@ public class JettyMinMaxThreadPoolTest extends BaseJettyTest {
         latch.await(30, TimeUnit.SECONDS);
         log.info("All messages done");
 
+        assertEquals(10, replies.size());
+
         // sort replies
         Collections.sort(replies);
 

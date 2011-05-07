@@ -18,8 +18,10 @@ package org.apache.camel.osgi;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
+import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
 import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.osgi.framework.BundleContext;
@@ -42,7 +44,8 @@ public class OsgiSpringCamelContext extends SpringCamelContext {
         if (ctx == null) {
             ctx = bundleContext;
         }
-        return new OsgiTypeConverter(ctx, getInjector());
+        FactoryFinder finder = new OsgiFactoryFinderResolver(bundleContext).resolveDefaultFactoryFinder(getClassResolver());
+        return new OsgiTypeConverter(ctx, getInjector(), finder);
     }
 
     @Override

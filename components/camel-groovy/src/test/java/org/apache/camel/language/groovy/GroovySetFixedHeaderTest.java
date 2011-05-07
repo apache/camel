@@ -16,17 +16,19 @@
  */
 package org.apache.camel.language.groovy;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 import static org.apache.camel.language.groovy.GroovyLanguage.groovy;
 
 /**
  * @version 
  */
-public class GroovySetFixedHeaderTest extends ContextTestSupport {
+public class GroovySetFixedHeaderTest extends CamelTestSupport {
 
+    @Test
     public void testSetHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

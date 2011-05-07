@@ -18,7 +18,6 @@ package org.apache.camel.builder.script.example;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ScriptTestHelper;
-import org.apache.camel.processor.XPathFilterTest;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -26,11 +25,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version 
  */
 public class RubyFilterTest extends XPathFilterTest {
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
 
     @Override
     public void testSendMatchingMessage() throws Exception {

@@ -27,7 +27,7 @@
     <route>
       <from uri="direct:start"/>
       <filter>
-        <groovy>exchange.in.headers.testCase == 'testSendMatchingMessage'</groovy>
+        <groovy>exchange.in.headers.foo == 123</groovy>
         <to uri="mock:result"/>
       </filter>
     </route>

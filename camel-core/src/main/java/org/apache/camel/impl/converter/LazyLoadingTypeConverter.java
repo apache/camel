@@ -44,38 +44,59 @@ public class LazyLoadingTypeConverter extends BaseTypeConverterRegistry {
 
     @Override
     protected Object doConvertTo(final Class type, final Exchange exchange, final Object value) {
-        ensureLoaded();
-        return super.doConvertTo(type, exchange, value);
+        Object answer = super.doConvertTo(type, exchange, value);
+        if (answer == null && !loaded.get()) {
+            // okay we could not convert, so try again, but load the converters up front
+            ensureLoaded();
+            answer = super.doConvertTo(type, exchange, value);
+        }
+        return answer;
     }
 
     @Override
     public TypeConverter getTypeConverter(Class<?> toType, Class<?> fromType) {
-        ensureLoaded();
-        return super.getTypeConverter(toType, fromType);
+        TypeConverter answer = super.getTypeConverter(toType, fromType);
+        if (answer == null && !loaded.get()) {
+            // okay we could not convert, so try again, but load the converters up front
+            ensureLoaded();
+            answer = super.getTypeConverter(toType, fromType);
+        }
+        return answer;
     }
 
     @Override
     public Set<Class<?>> getFromClassMappings() {
-        ensureLoaded();
+        if (!loaded.get()) {
+            ensureLoaded();
+        }
         return super.getFromClassMappings();
     }
 
     @Override
     public Map<Class<?>, TypeConverter> getToClassMappings(Class<?> fromClass) {
-        ensureLoaded();
+        if (!loaded.get()) {
+            ensureLoaded();
+        }
         return super.getToClassMappings(fromClass);
     }
 
     @Override
     public Map<TypeMapping, TypeConverter> getTypeMappings() {
-        ensureLoaded();
+        if (!loaded.get()) {
+            ensureLoaded();
+        }
         return super.getTypeMappings();
     }
 
     @Override
     protected TypeConverter doLookup(Class<?> toType, Class<?> fromType, boolean isSuper) {
-        ensureLoaded();
-        return super.doLookup(toType, fromType, isSuper);
+        TypeConverter answer = super.doLookup(toType, fromType, isSuper);
+        if (answer == null && !loaded.get()) {
+            // okay we could not convert, so try again, but load the converters up front
+            ensureLoaded();
+            answer = super.doLookup(toType, fromType, isSuper);
+        }
+        return answer;
     }
 
     private synchronized void ensureLoaded() {
@@ -89,9 +110,17 @@ public class LazyLoadingTypeConverter extends BaseTypeConverterRegistry {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // must load core type converters
+        loadCoreTypeConverters();
+    }
+
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
         // reset loaded flag
         loaded.set(false);
     }
 }
+

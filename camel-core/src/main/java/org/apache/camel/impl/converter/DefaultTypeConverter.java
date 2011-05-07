@@ -38,6 +38,7 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
     protected void doStart() throws Exception {
         super.doStart();
         // load type converters up front
+        loadCoreTypeConverters();
         loadTypeConverters();
     }
 

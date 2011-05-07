@@ -19,15 +19,17 @@ package org.apache.camel.language.groovy;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class GroovySetHeaderTest extends ContextTestSupport {
+public class GroovySetHeaderTest extends CamelTestSupport {
 
+    @Test
     public void testSetHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -36,7 +38,7 @@ public class GroovySetHeaderTest extends ContextTestSupport {
         mock.expectedHeaderReceived("two", "twei");
         mock.expectedHeaderReceived("beer", "Carlsberg");
         mock.expectedHeaderReceived("drink", "Carlsberg");
-        mock.expectedHeaderReceived("camelId", "camel-1");
+        mock.expectedHeaderReceived("camelId", context.getName());
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("one", "einz");
@@ -53,14 +55,11 @@ public class GroovySetHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                
                 from("direct:start")
                     .setHeader("drink").groovy("request.headers.beer")
                     // shows how to access the camelContext value
                     .setHeader("camelId").groovy("camelContext.name")
                     .to("mock:result");
-                
-                
             }
         };
     }

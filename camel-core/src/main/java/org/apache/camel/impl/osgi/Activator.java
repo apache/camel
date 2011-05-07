@@ -26,7 +26,6 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -368,7 +367,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 Set<String> packages = getConverterPackages(bundle.getEntry(META_INF_TYPE_CONVERTER));
                 for (String pkg : packages) {
                     Enumeration<URL> e = bundle.findEntries("/" + pkg.replace('.', '/'), "*.class", true);
-                    while (e.hasMoreElements()) {
+                    while (e != null && e.hasMoreElements()) {
                         String path = e.nextElement().getPath();
                         String externalName = path.substring(path.charAt(0) == '/' ? 1 : 0, path.indexOf('.')).replace('/', '.');
                         try {
@@ -497,7 +496,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     }
 
     protected static Set<String> getConverterPackages(URL resource) {
-        Set<String> packages = new HashSet<String>();
+        Set<String> packages = new LinkedHashSet<String>();
         if (resource != null) {
             BufferedReader reader = null;
             try {

@@ -24,7 +24,7 @@ import org.apache.camel.WaitForTaskToComplete;
  */
 public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
 
-    public void testNoHeder() throws Exception {
+    public void testNoHeader() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(0);
         getMockEndpoint("mock:456").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
@@ -34,7 +34,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testHederAsNumber123() throws Exception {
+    public void testHeaderAsNumber123() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(1);
         getMockEndpoint("mock:456").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -44,7 +44,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testHederAsNumber456() throws Exception {
+    public void testHeaderAsNumber456() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(0);
         getMockEndpoint("mock:456").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -54,7 +54,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testHederAsNumber999() throws Exception {
+    public void testHeaderAsNumber999() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(0);
         getMockEndpoint("mock:456").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
@@ -64,7 +64,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testHederAsString123() throws Exception {
+    public void testHeaderAsString123() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(1);
         getMockEndpoint("mock:456").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -74,7 +74,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testHederAsString456() throws Exception {
+    public void testHeaderAsString456() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(0);
         getMockEndpoint("mock:456").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -84,7 +84,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testHederAsString999() throws Exception {
+    public void testHeaderAsString999() throws Exception {
         getMockEndpoint("mock:123").expectedMessageCount(0);
         getMockEndpoint("mock:456").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
@@ -94,7 +94,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testHederAsEnum() throws Exception {
+    public void testHeaderAsEnum() throws Exception {
         getMockEndpoint("mock:enum").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", WaitForTaskToComplete.Always);
@@ -102,7 +102,7 @@ public class PredicateBinaryCoerceRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testHederAsEnumString() throws Exception {
+    public void testHeaderAsEnumString() throws Exception {
         getMockEndpoint("mock:enum").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "Always");
