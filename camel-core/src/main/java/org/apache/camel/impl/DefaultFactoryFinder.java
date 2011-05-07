@@ -109,7 +109,6 @@ public class DefaultFactoryFinder implements FactoryFinder {
     }
 
     private List<Class<?>> findClasses(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
-        // TODO change to support finding multiple classes on the classpath!
         Class<?> type = findClass(key, propertyPrefix);
         return CastUtils.cast(Collections.singletonList(type));
     }
