@@ -96,6 +96,11 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> extends IdentifiedType implements RouteContainer {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContextFactoryBean.class);
 
+    /**
+     * JVM system property to control lazy loading of type converters.
+     */
+    public static final String LAZY_LOAD_TYPE_CONVERTERS = "CamelLazyLoadTypeConverters";
+
     @XmlTransient
     private List<RoutesBuilder> builders = new ArrayList<RoutesBuilder>();
     @XmlTransient
@@ -133,6 +138,17 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // set the type converter mode first
         if (getLazyLoadTypeConverters() != null) {
             getContext().setLazyLoadTypeConverters(getLazyLoadTypeConverters());
+        } else if (System.getProperty(LAZY_LOAD_TYPE_CONVERTERS) != null) {
+            // suppose a JVM property to control it so we can use that for example for unit testing
+            // to speedup testing by enabling lazy loading of type converters
+            String lazy = System.getProperty(LAZY_LOAD_TYPE_CONVERTERS);
+            if ("true".equalsIgnoreCase(lazy)) {
+                getContext().setLazyLoadTypeConverters(true);
+            } else if ("false".equalsIgnoreCase(lazy)) {
+                getContext().setLazyLoadTypeConverters(true);
+            } else {
+                throw new IllegalArgumentException("System property with key " + LAZY_LOAD_TYPE_CONVERTERS + " has unknown value: " + lazy);
+            }
         }
 
         PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);

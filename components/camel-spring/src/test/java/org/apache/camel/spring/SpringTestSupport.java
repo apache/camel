@@ -25,6 +25,7 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
+import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
@@ -44,6 +45,12 @@ public abstract class SpringTestSupport extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        if (isLazyLoadingTypeConverter()) {
+            System.setProperty(AbstractCamelContextFactoryBean.LAZY_LOAD_TYPE_CONVERTERS, "true");
+        } else {
+            System.setProperty(AbstractCamelContextFactoryBean.LAZY_LOAD_TYPE_CONVERTERS, "false");
+        }
+
         applicationContext = createApplicationContext();
         assertNotNull("Should have created a valid spring context", applicationContext);
         super.setUp();
