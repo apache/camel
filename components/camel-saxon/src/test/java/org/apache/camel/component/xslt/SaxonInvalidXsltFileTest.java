@@ -16,10 +16,31 @@
  */
 package org.apache.camel.component.xslt;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.TestSupport;
+import org.junit.Test;
 
-public class SaxonInvalidXsltFileTest extends InvalidXsltFileTest {
-    
+public class SaxonInvalidXsltFileTest extends TestSupport {
+
+    @Test
+    public void testInvalidStylesheet() throws Exception {
+        try {
+            RouteBuilder builder = createRouteBuilder();
+            CamelContext context = new DefaultCamelContext();
+            context.addRoutes(builder);
+            context.start();
+
+            fail("Should have thrown an exception due XSL compilation error");
+        } catch (FailedToCreateRouteException e) {
+            // expected
+            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+        }
+    }
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -59,8 +59,10 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
                 from("file:target/xquery")
                     .choice()
                         .when().xquery("/mail/@from = 'davsclaus@apache.org'")
+                            .convertBodyTo(String.class)
                             .to("mock:davsclaus")
                         .otherwise()
+                            .convertBodyTo(String.class)
                             .to("mock:other");
             }
         };
