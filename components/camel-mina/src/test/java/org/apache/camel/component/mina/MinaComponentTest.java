@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * For testing various minor holes that hasn't been covered by other unit tests.
  *
  * @version 
  */
-public class MinaComponentTest extends ContextTestSupport {
+public class MinaComponentTest extends CamelTestSupport {
 
+    @Test
     public void testUnknownProtocol() {
         try {
             template.sendBody("mina:xxx://localhost:8080", "mina:xxx://localhost:8080");
@@ -36,6 +38,7 @@ public class MinaComponentTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMistypedProtocol() {
         try {
             // the protocol is mistyped as a colon is missing after tcp

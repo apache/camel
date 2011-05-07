@@ -18,18 +18,20 @@ package org.apache.camel.component.mina;
 
 import java.net.SocketAddress;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test to check if the message of an exchange send from the MinaConsumer
  * is a MinaMessage.
  */
-public class MessageIOSessionTest extends ContextTestSupport {
+public class MessageIOSessionTest extends CamelTestSupport {
 
+    @Test
     public void testIoSession() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -42,6 +44,7 @@ public class MessageIOSessionTest extends ContextTestSupport {
         
     }
     
+    @Test
     public void testLocalAndRemoteAddressHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

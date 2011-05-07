@@ -17,21 +17,23 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * To unit test CAMEL-364.
  */
-public class MinaTcpWithIoOutProcessorExceptionTest extends ContextTestSupport {
+public class MinaTcpWithIoOutProcessorExceptionTest extends CamelTestSupport {
     private static final int PORT = 6334;
     protected CamelContext container = new DefaultCamelContext();
     // use parameter sync=true to force InOut pattern of the MinaExchange
     protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
 
+    @Test
     public void testExceptionThrownInProcessor() {
         String body = "Hello World";
         Object result = template.requestBody(uri, body);

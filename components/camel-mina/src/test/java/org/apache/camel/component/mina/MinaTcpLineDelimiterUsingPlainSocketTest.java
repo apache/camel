@@ -22,23 +22,25 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * To test camel-mina component using a TCP client that communicates using TCP socket communication.
  *
  * @version 
  */
-public class MinaTcpLineDelimiterUsingPlainSocketTest extends ContextTestSupport {
+public class MinaTcpLineDelimiterUsingPlainSocketTest extends CamelTestSupport {
 
     private static final int PORT = 6334;
     // use parameter sync=true to force InOut pattern of the MinaExchange
     // use MAC textline delimiter
     protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&textlineDelimiter=MAC&sync=true";
 
+    @Test
     public void testSendAndReceiveOnce() throws Exception {
         String response = sendAndReceive("World");
 
@@ -46,6 +48,7 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends ContextTestSupport
         assertEquals("Hello World", response);
     }
 
+    @Test
     public void testSendAndReceiveTwice() throws Exception {
         String london = sendAndReceive("London");
         String paris = sendAndReceive("Paris");
@@ -56,11 +59,13 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends ContextTestSupport
         assertEquals("Hello Paris", paris);
     }
 
+    @Test
     public void testReceiveNoResponseSinceOutBodyIsNull() throws Exception {
         String out = sendAndReceive("force-null-out-body");
         assertNull("no data should be recieved", out);
     }
 
+    @Test
     public void testReceiveNoResponseSinceOutBodyIsNullTwice() throws Exception {
         String out = sendAndReceive("force-null-out-body");
         assertNull("no data should be recieved", out);
@@ -69,6 +74,7 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends ContextTestSupport
         assertNull("no data should be recieved", out);
     }
 
+    @Test
     public void testExchangeFailedOutShouldBeNull() throws Exception {
         String out = sendAndReceive("force-exception");
         assertTrue("out should not be the same as in when the exchange has failed", !"force-exception".equals(out));

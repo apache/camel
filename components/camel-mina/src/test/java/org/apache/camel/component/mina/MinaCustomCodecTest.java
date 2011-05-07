@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
@@ -29,16 +29,18 @@ import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
+import org.junit.Test;
 
 /**
  * Unit test with custom codec.
  */
-public class MinaCustomCodecTest extends ContextTestSupport {
+public class MinaCustomCodecTest extends CamelTestSupport {
 
     protected String uri = "mina:tcp://localhost:9130?sync=true&codec=#myCodec";
    
     protected String badUri = "mina:tcp://localhost:9130?sync=true&codec=#XXX";
 
+    @Test
     public void testMyCodec() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -50,6 +52,7 @@ public class MinaCustomCodecTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
     
+    @Test
     public void testTCPEncodeUTF8InputIsString() throws Exception {
         final String myUri = "mina:tcp://localhost:9085?encoding=UTF-8&sync=false";
         this.context.addRoutes(new RouteBuilder() {
@@ -70,6 +73,7 @@ public class MinaCustomCodecTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBadConfiguration() throws Exception {
         try {
             template.sendBody(badUri, "Hello World");

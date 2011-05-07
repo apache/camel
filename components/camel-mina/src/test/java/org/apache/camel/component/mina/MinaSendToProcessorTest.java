@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.mina;
 
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class MinaSendToProcessorTest extends ContextTestSupport {
-    
+public class MinaSendToProcessorTest extends CamelTestSupport {
+
+    @Test
     public void testConnectionOnStartupTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -41,7 +41,8 @@ public class MinaSendToProcessorTest extends ContextTestSupport {
                          + " Reason: org.apache.mina.common.RuntimeIOException: Failed to get the session.", e.getMessage());
         }
     }
-    
+
+    @Test
     public void testConnectionOnSendMessage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -57,7 +58,6 @@ public class MinaSendToProcessorTest extends ContextTestSupport {
         }
                 
     }
-
 
     @Override
     public boolean isUseRouteBuilder() {

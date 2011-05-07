@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for close session when complete test.
  */
-public class MinaDisconnectTest extends ContextTestSupport {
+public class MinaDisconnectTest extends CamelTestSupport {
 
     private String uri = "mina:tcp://localhost:8080?sync=true&textline=true&disconnect=true";
 
+    @Test
     public void testCloseSessionWhenComplete() throws Exception {
         Object out = template.requestBody(uri, "Claus");
         assertEquals("Bye Claus", out);

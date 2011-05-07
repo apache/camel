@@ -18,19 +18,21 @@ package org.apache.camel.component.mina;
 
 import java.lang.reflect.Field;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.mina.common.IoSession;
+import org.junit.Test;
 
 /**
  * For unit testing the <tt>logger</tt> option.
  */
-public class MinaLoggerOptionTest extends ContextTestSupport {
+public class MinaLoggerOptionTest extends CamelTestSupport {
 
+    @Test
     public void testLoggerOptionTrue() throws Exception {
         final String uri = "mina:tcp://localhost:6321?textline=true&minaLogger=true&sync=false";
         context.addRoutes(new RouteBuilder() {
@@ -61,6 +63,7 @@ public class MinaLoggerOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLoggerOptionFalse() throws Exception {
         final String uri = "mina:tcp://localhost:6321?textline=true&minaLogger=false&sync=false";
         context.addRoutes(new RouteBuilder() {
@@ -91,6 +94,7 @@ public class MinaLoggerOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNoLoggerOption() throws Exception {
         final String uri = "mina:tcp://localhost:6321?textline=true&sync=false";
         context.addRoutes(new RouteBuilder() {

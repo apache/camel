@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaClientServerTest extends ContextTestSupport {
+public class MinaClientServerTest extends CamelTestSupport {
 
+    @Test
     public void testSendToServer() {
         // START SNIPPET: e3
         String out = (String) template.requestBody("mina:tcp://localhost:5555?sync=true&textline=true", "Claus");

@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaMaxLineLengthTest extends ContextTestSupport {
+public class MinaMaxLineLengthTest extends CamelTestSupport {
 
+    @Test
     public void testSendToServer() {
         String request = "";
         for (int c = 0; c < 4000; c++) {

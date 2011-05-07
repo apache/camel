@@ -16,24 +16,26 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * To test timeout.
  *
  * @version 
  */
-public class MinaExchangeTimeOutTest extends ContextTestSupport {
+public class MinaExchangeTimeOutTest extends CamelTestSupport {
 
     private static final int PORT = 6336;
     protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
 
+    @Test
     public void testUsingTimeoutParameter() throws Exception {
 
         // use a timeout value of 2 seconds (timeout is in millis) so we should actually get a response in this test

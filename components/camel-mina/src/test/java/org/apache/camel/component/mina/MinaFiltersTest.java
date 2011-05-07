@@ -21,32 +21,37 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.naming.Context;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.mina.common.IoFilter;
 import org.apache.mina.common.IoFilterAdapter;
 import org.apache.mina.common.IoSession;
+import org.junit.Test;
 
 /**
  * For unit testing the <tt>filters</tt> option.
  */
-public class MinaFiltersTest extends ContextTestSupport {
+public class MinaFiltersTest extends CamelTestSupport {
 
+    @Test
     public void testFilterListRef() throws Exception {
         testFilter("mina:tcp://localhost:6321?textline=true&minaLogger=true&sync=false&filters=#myFilters");
     }
-    
+
+    @Test
     public void testFilterElementRef() throws Exception {
         testFilter("mina:tcp://localhost:6322?textline=true&minaLogger=true&sync=false&filters=#myFilter");
     }
-    
-    protected void tearDown() {
+
+    @Override
+    public void tearDown() throws Exception {
         TestFilter.called = 0;
+        super.tearDown();
     }
     
     private void testFilter(final String uri) throws Exception {
@@ -96,7 +101,7 @@ public class MinaFiltersTest extends ContextTestSupport {
 
 class TestFilter extends IoFilterAdapter {
 
-    public static int called;
+    public static volatile int called;
 
     @Override
     public void sessionCreated(NextFilter nextFilter, IoSession session) throws Exception {

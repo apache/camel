@@ -18,18 +18,20 @@ package org.apache.camel.component.mina;
 
 import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaUdpUsingTemplateTest extends ContextTestSupport {
+public class MinaUdpUsingTemplateTest extends CamelTestSupport {
 
     private int messageCount = 3;
 
+    @Test
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(3);
@@ -48,6 +50,7 @@ public class MinaUdpUsingTemplateTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSendingByteMessages() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);

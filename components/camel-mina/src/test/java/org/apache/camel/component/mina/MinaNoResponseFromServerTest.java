@@ -17,11 +17,11 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.CamelExchangeException;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
@@ -29,14 +29,16 @@ import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
+import org.junit.Test;
 
 /**
  * Unit test to test what happens if remote server closes session but doesn't reply
  */
-public class MinaNoResponseFromServerTest extends ContextTestSupport {
+public class MinaNoResponseFromServerTest extends CamelTestSupport {
 
     private String uri = "mina:tcp://localhost:11300?sync=true&codec=#myCodec";
 
+    @Test
     public void testNoResponse() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

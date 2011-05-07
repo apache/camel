@@ -20,21 +20,23 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * To test InOut exchange for the UDP protocol.
  */
-public class MinaUdpWithInOutUsingPlainSocketTest extends ContextTestSupport {
+public class MinaUdpWithInOutUsingPlainSocketTest extends CamelTestSupport {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(MinaUdpWithInOutUsingPlainSocketTest.class);
     private static final int PORT = 4445;
 
+    @Test
     public void testSendAndReceiveOnce() throws Exception {
         String out = sendAndReceiveUdpMessages("World");
         assertNotNull("should receive data", out);

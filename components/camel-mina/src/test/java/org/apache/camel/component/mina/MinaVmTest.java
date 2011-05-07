@@ -16,16 +16,18 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaVmTest extends ContextTestSupport {
+public class MinaVmTest extends CamelTestSupport {
     protected String uri = "mina:vm://localhost:8080?sync=false&minaLogger=true";
 
+    @Test
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         Object body = "Hello there!";

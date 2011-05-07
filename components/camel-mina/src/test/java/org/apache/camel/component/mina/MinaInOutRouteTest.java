@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test to verify that MINA can be used with an InOut MEP but still use sync to send and receive data
  * from a remote server.
  */
-public class MinaInOutRouteTest extends ContextTestSupport {
+public class MinaInOutRouteTest extends CamelTestSupport {
 
+    @Test
     public void testInOutUsingMina() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Claus");

@@ -16,20 +16,22 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test to verify that MINA can be used with an InOut MEP but still use sync to send and receive data
  * from a remote server and using MAC textline delimiter.
  */
-public class MinaInOutRouteTextLineDelimiterTest extends ContextTestSupport {
+public class MinaInOutRouteTextLineDelimiterTest extends CamelTestSupport {
 
     private String uri = "mina:tcp://localhost:8080?sync=true&textline=true&textlineDelimiter=MAC";
 
+    @Test
     public void testInOutUsingMina() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Claus");

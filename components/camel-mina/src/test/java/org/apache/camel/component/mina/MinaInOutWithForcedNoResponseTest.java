@@ -16,21 +16,24 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test with InOut however we want sometimes to not send a response.
  */
-public class MinaInOutWithForcedNoResponseTest extends ContextTestSupport {
+public class MinaInOutWithForcedNoResponseTest extends CamelTestSupport {
 
+    @Test
     public void testResponse() throws Exception {
         Object out = template.requestBody("mina:tcp://localhost:4444?sync=true", "Copenhagen");
         assertEquals("Hello Claus", out);
     }
 
+    @Test
     public void testNoResponse() throws Exception {
         try {
             template.requestBody("mina:tcp://localhost:4444?sync=true", "London");
@@ -40,6 +43,7 @@ public class MinaInOutWithForcedNoResponseTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNoResponseDisconnectOnNoReplyFalse() throws Exception {
         try {
             template.requestBody("mina:tcp://localhost:4445?sync=true&timeout=3000", "London");

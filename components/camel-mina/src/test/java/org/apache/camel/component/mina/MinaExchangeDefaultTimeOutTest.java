@@ -16,22 +16,24 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * To test timeout.
  *
  * @version 
  */
-public class MinaExchangeDefaultTimeOutTest extends ContextTestSupport {
+public class MinaExchangeDefaultTimeOutTest extends CamelTestSupport {
 
     private static final int PORT = 6338;
     protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
 
+    @Test
     public void testDefaultTimeOut() {
         try {
             String result = (String)template.requestBody(uri, "Hello World");

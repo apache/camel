@@ -16,13 +16,15 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaComponentWithConfigurationTest extends ContextTestSupport {
+public class MinaComponentWithConfigurationTest extends CamelTestSupport {
 
+    @Test
     public void testMinaComponentWithConfiguration() throws Exception {
         MinaComponent comp = context.getComponent("mina", MinaComponent.class);
 

@@ -23,25 +23,29 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaProducerAnotherConcurrentTest extends ContextTestSupport {
+public class MinaProducerAnotherConcurrentTest extends CamelTestSupport {
 
+    @Test
     public void testSimple() throws Exception {
         String out = template.requestBody("direct:start", "A", String.class);
         assertEquals("Bye A", out);
     }
 
+    @Test
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
     }
 
+    @Test
     public void testConcurrentProducers() throws Exception {
         doSendMessages(200, 5);
     }

@@ -20,17 +20,19 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaUdpTest extends ContextTestSupport {
+public class MinaUdpTest extends CamelTestSupport {
     protected int messageCount = 3;
     protected int port = 4445;
 
+    @Test
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedBodiesReceived("Hello Message: 0", "Hello Message: 1", "Hello Message: 2");

@@ -18,13 +18,14 @@ package org.apache.camel.component.mina;
 
 import java.lang.reflect.Field;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.mina.transport.socket.nio.SocketConnector;
+import org.junit.Test;
 
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
@@ -33,10 +34,11 @@ import static org.easymock.classextension.EasyMock.verify;
 /**
  * Unit testing for using a MinaProducer that it can shutdown properly (CAMEL-395)
  */
-public class MinaProducerShutdownMockTest extends ContextTestSupport {
+public class MinaProducerShutdownMockTest extends CamelTestSupport {
 
     private static final String URI = "mina:tcp://localhost:6321?textline=true&sync=false";
 
+    @Test
     public void testProducerShutdownTestingWithMock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

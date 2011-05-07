@@ -18,15 +18,17 @@ package org.apache.camel.component.mina;
 
 import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.mina.common.IoFilterChain.Entry;
+import org.junit.Test;
 
 /**
  * For unit testing the <tt>noDefaultCodec</tt> option.
  */
-public class MinaNoDefaultCodecTest extends ContextTestSupport {
+public class MinaNoDefaultCodecTest extends CamelTestSupport {
 
+    @Test
     public void testFilter() throws Exception {
         final String uri1 = "mina:tcp://localhost:6321?allowDefaultCodec=false";
         final String uri2 = "mina:tcp://localhost:6322";

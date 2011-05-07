@@ -20,8 +20,9 @@ package org.apache.camel.component.mina;
  * @version 
  */
 public class MinaVMTextlineProtocolTest extends MinaVmTest {
+
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         uri = "mina:vm://localhost:6124?textline=true&sync=false";
         super.setUp();
     }

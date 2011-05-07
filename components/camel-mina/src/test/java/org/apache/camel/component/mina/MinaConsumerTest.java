@@ -17,17 +17,19 @@
 
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for wiki documentation
  */
-public class MinaConsumerTest extends ContextTestSupport {
+public class MinaConsumerTest extends CamelTestSupport {
 
+    @Test
     public void testSendTextlineText() throws Exception {
         // START SNIPPET: e2
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -39,6 +41,7 @@ public class MinaConsumerTest extends ContextTestSupport {
         // END SNIPPET: e2
     }
 
+    @Test
     public void testSendTextlineSyncText() throws Exception {
         // START SNIPPET: e4
         String response = (String)template.requestBody("mina:tcp://localhost:9201?textline=true&sync=true", "World");

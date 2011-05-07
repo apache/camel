@@ -19,8 +19,6 @@ package org.apache.camel.component.mina;
 import java.nio.charset.Charset;
 
 import junit.framework.Assert;
-
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -28,21 +26,25 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * Unit test for the <tt>transferExchange=true</tt> option.
  *
  * @version 
  */
-public class MinaTransferExchangeOptionTest extends ContextTestSupport {
+public class MinaTransferExchangeOptionTest extends CamelTestSupport {
 
     protected String uri = "mina:tcp://localhost:6321?sync=true&encoding=UTF-8&transferExchange=true";
 
+    @Test
     public void testMinaTransferExchangeOptionWithoutException() throws Exception {
         Exchange exchange = sendExchange(false);
         assertExchange(exchange, false);
     }
 
+    @Test
     public void testMinaTransferExchangeOptionWithException() throws Exception {
         Exchange exchange = sendExchange(true);
         assertExchange(exchange, true);

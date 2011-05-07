@@ -24,7 +24,7 @@ package org.apache.camel.component.mina;
 public class MinaVMTransferExchangeOptionTest extends MinaTransferExchangeOptionTest {
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         uri = "mina:vm://localhost:6321?sync=true&encoding=UTF-8&transferExchange=true";
         super.setUp();
     }
