@@ -45,7 +45,7 @@ public class PollEnricherTest extends ContextTestSupport {
     // -------------------------------------------------------------
 
     public void testPollEnrichInOnly() throws InterruptedException {
-        template.sendBody("direct:foo1", "blah");
+        template.sendBody("seda:foo1", "blah");
 
         mock.expectedBodiesReceived("test:blah");
         template.sendBody("direct:enricher-test-1", "test");
@@ -61,7 +61,7 @@ public class PollEnricherTest extends ContextTestSupport {
 
         // now send it and try again
         mock.reset();
-        template.sendBody("direct:foo2", "blah");
+        template.sendBody("seda:foo2", "blah");
         template.sendBody("direct:enricher-test-2", "test");
         mock.assertIsSatisfied();
     }
@@ -75,7 +75,7 @@ public class PollEnricherTest extends ContextTestSupport {
                 } catch (InterruptedException e) {
                     // ignore
                 }
-                template.sendBody("direct:foo3", "blah");
+                template.sendBody("seda:foo3", "blah");
             }
         });
 
@@ -94,14 +94,16 @@ public class PollEnricherTest extends ContextTestSupport {
     // -------------------------------------------------------------
 
     public void testPollEnrichInOut() throws InterruptedException {
-        template.sendBody("direct:foo4", "blah");
+        template.sendBody("seda:foo4", "blah");
+
+        Thread.sleep(100);
 
         String result = (String) template.sendBody("direct:enricher-test-4", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
     }
 
     public void testPollEnrichInOutPlusHeader() throws InterruptedException {
-        template.sendBody("direct:foo4", "blah");
+        template.sendBody("seda:foo4", "blah");
 
         Exchange exchange = template.request("direct:enricher-test-4", new Processor() {
             public void process(Exchange exchange) {
@@ -123,15 +125,15 @@ public class PollEnricherTest extends ContextTestSupport {
                 // -------------------------------------------------------------
 
                 from("direct:enricher-test-1")
-                    .pollEnrich("direct:foo1", aggregationStrategy)
+                    .pollEnrich("seda:foo1", aggregationStrategy)
                     .to("mock:mock");
 
                 from("direct:enricher-test-2")
-                    .pollEnrich("direct:foo2", 1000, aggregationStrategy)
+                    .pollEnrich("seda:foo2", 1000, aggregationStrategy)
                     .to("mock:mock");
 
                 from("direct:enricher-test-3")
-                    .pollEnrich("direct:foo3", -1, aggregationStrategy)
+                    .pollEnrich("seda:foo3", -1, aggregationStrategy)
                     .to("mock:mock");
 
                 // -------------------------------------------------------------
@@ -139,7 +141,7 @@ public class PollEnricherTest extends ContextTestSupport {
                 // -------------------------------------------------------------
 
                 from("direct:enricher-test-4")
-                    .pollEnrich("direct:foo4", aggregationStrategy);
+                    .pollEnrich("seda:foo4", aggregationStrategy);
             }
         };
     }

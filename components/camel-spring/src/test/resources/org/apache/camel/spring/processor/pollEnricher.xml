@@ -26,26 +26,26 @@
         <!-- START SNIPPET: e1 -->
         <route>
             <from uri="direct:enricher-test-1"/>
-            <pollEnrich uri="direct:foo1" strategyRef="sampleAggregator"/>
+            <pollEnrich uri="seda:foo1" strategyRef="sampleAggregator"/>
             <to uri="mock:mock"/>
         </route>
         <!-- END SNIPPET: e1 -->
 
         <route>
             <from uri="direct:enricher-test-2"/>
-            <pollEnrich uri="direct:foo2" timeout="1000" strategyRef="sampleAggregator"/>
+            <pollEnrich uri="seda:foo2" timeout="1000" strategyRef="sampleAggregator"/>
             <to uri="mock:mock"/>
         </route>
 
         <route>
             <from uri="direct:enricher-test-3"/>
-            <pollEnrich uri="direct:foo3" timeout="-1" strategyRef="sampleAggregator"/>
+            <pollEnrich uri="seda:foo3" timeout="-1" strategyRef="sampleAggregator"/>
             <to uri="mock:mock"/>
         </route>
 
         <route>
             <from uri="direct:enricher-test-4"/>
-            <pollEnrich uri="direct:foo4" strategyRef="sampleAggregator"/>
+            <pollEnrich uri="seda:foo4" strategyRef="sampleAggregator"/>
             <to uri="mock:mock"/>
         </route>
     </camelContext>

@@ -24,10 +24,10 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-        <endpoint id="foo1" uri="direct:foo1"/>
-        <endpoint id="foo2" uri="direct:foo2"/>
-        <endpoint id="foo3" uri="direct:foo3"/>
-        <endpoint id="foo4" uri="direct:foo4"/>
+        <endpoint id="foo1" uri="seda:foo1"/>
+        <endpoint id="foo2" uri="seda:foo2"/>
+        <endpoint id="foo3" uri="seda:foo3"/>
+        <endpoint id="foo4" uri="seda:foo4"/>
 
         <!-- START SNIPPET: e1 -->
         <route>

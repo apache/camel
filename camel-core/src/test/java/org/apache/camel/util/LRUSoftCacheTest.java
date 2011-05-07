@@ -215,10 +215,10 @@ public class LRUSoftCacheTest extends TestSupport {
     public void testLRUSoftCacheNotRunOutOfMemory() throws Exception {
         // we should not run out of memory using the soft cache
         // if you run this test with LRUCache then you will run out of memory
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(250);
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(500);
         cache.start();
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 500; i++) {
             Object data = createData();
             Integer key = new Integer(i);
             log.info("Putting {}", key);
@@ -239,8 +239,8 @@ public class LRUSoftCacheTest extends TestSupport {
         int first = list.get(0).intValue();
         assertTrue("First key should not be 0, was: " + first, first != 0);
 
-        // last key should be 999
-        assertEquals(999, list.get(list.size() - 1).intValue());
+        // last key should be 499
+        assertEquals(499, list.get(list.size() - 1).intValue());
 
         cache.stop();
     }

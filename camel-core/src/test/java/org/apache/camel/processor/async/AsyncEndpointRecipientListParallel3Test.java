@@ -57,7 +57,7 @@ public class AsyncEndpointRecipientListParallel3Test extends ContextTestSupport 
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         })
-                        .recipientList(constant("async:Hi Camel?delay=2000,direct:foo")).parallelProcessing();
+                        .recipientList(constant("async:Hi Camel?delay=200,direct:foo")).parallelProcessing();
 
                 from("direct:foo")
                         .process(new Processor() {

@@ -51,7 +51,7 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay3Test extends Con
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(1000).asyncDelayedRedelivery());
+                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(100).asyncDelayedRedelivery());
 
                 from("seda:start")
                     .to("log:before")
