@@ -27,18 +27,18 @@ class SPollEnricherTest extends PollEnricherTest with RouteBuilderSupport {
   val strategy = new SampleAggregator
 
   override def createRouteBuilder = new RouteBuilder {
-    "direct:enricher-test-1" pollEnrich("direct:foo1", strategy) to("mock:mock")
+    "direct:enricher-test-1" pollEnrich("seda:foo1", strategy) to("mock:mock")
 
     "direct:enricher-test-2" ==> {
-      pollEnrich("direct:foo2", strategy, 1000)
+      pollEnrich("seda:foo2", strategy, 1000)
       to("mock:mock")
     }
 
     "direct:enricher-test-3" ==> {
-      pollEnrich("direct:foo3", strategy, -1)
+      pollEnrich("seda:foo3", strategy, -1)
       to("mock:mock")
     }
 
-    "direct:enricher-test-4" pollEnrich("direct:foo4", strategy)
+    "direct:enricher-test-4" pollEnrich("seda:foo4", strategy)
   }
 }

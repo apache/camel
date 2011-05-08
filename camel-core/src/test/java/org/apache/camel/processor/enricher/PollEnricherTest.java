@@ -96,7 +96,7 @@ public class PollEnricherTest extends ContextTestSupport {
     public void testPollEnrichInOut() throws InterruptedException {
         template.sendBody("seda:foo4", "blah");
 
-        Thread.sleep(100);
+        Thread.sleep(200);
 
         String result = (String) template.sendBody("direct:enricher-test-4", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
