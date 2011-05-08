@@ -69,10 +69,10 @@ public class RouteStatusResource {
     public Response setStatus(String status) throws Exception {
         if (status != null) {
             if (status.equalsIgnoreCase("start")) {
-                getCamelContext().startRoute(getRoute());
+                getCamelContext().startRoute(getRoute().getId());
                 return Response.ok().build();
             } else if (status.equalsIgnoreCase("stop")) {
-                getCamelContext().stopRoute(getRoute());
+                getCamelContext().stopRoute(getRoute().getId());
                 return Response.ok().build();
             }
         }

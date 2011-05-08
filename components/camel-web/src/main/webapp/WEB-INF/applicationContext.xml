@@ -17,21 +17,16 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-    ">
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <description>This is an example route which you can start, stop and modify</description>
-      
-      <from uri="seda:foo"/>
-      <to uri="mock:results"/>
-    </route>
-  </camelContext>
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <description>This is an example route which you can start, stop and modify</description>
+            <from uri="seda:foo"/>
+            <to uri="mock:results"/>
+        </route>
+    </camelContext>
 
 </beans>
