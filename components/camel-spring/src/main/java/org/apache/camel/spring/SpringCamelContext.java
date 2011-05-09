@@ -199,11 +199,19 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     private void maybeStart() throws Exception {
-        if (!isStarted() && !isStarting()) {
-            start();
+        // for example from unit testing we want to start Camel later and not when Spring framework
+        // publish a ContextRefreshedEvent
+        String maybeStart = System.getProperty("maybeStartCamelContext", "true");
+
+        if ("true".equals(maybeStart)) {
+            if (!isStarted() && !isStarting()) {
+                start();
+            } else {
+                // ignore as Camel is already started
+                LOG.trace("Ignoring maybeStart() as Apache Camel is already started");
+            }
         } else {
-            // ignore as Camel is already started
-            LOG.trace("Ignoring maybeStart() as Apache Camel is already started");
+            LOG.trace("Ignoring maybeStart() as System property maybeStartCamelContext is false");
         }
     }
 

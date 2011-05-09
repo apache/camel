@@ -115,7 +115,7 @@ public abstract class CamelTestSupport extends TestSupport {
         }
 
         context = createCamelContext();
-        assertValidContext(context);
+        assertNotNull("No context found!", context);
 
         // reduce default shutdown timeout to avoid waiting for 300 seconds
         context.getShutdownStrategy().setTimeout(getShutdownTimeout());
@@ -150,6 +150,8 @@ public abstract class CamelTestSupport extends TestSupport {
             log.debug("Using route builder from the created context: " + context);
         }
         log.debug("Routing Rules are: " + context.getRoutes());
+
+        assertValidContext(context);
     }
 
     @After
