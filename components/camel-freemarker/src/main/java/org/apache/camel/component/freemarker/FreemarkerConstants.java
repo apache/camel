@@ -21,8 +21,6 @@ package org.apache.camel.component.freemarker;
  */
 public final class FreemarkerConstants {
 
-    public static final String FREEMARKER_RESOURCE = "CamelFreemarkerResource";
-
     public static final String FREEMARKER_RESOURCE_URI = "CamelFreemarkerResourceUri";
 
     public static final String FREEMARKER_TEMPLATE = "CamelFreemarkerTemplate";
