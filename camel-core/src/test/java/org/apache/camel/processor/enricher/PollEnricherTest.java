@@ -47,6 +47,8 @@ public class PollEnricherTest extends ContextTestSupport {
     public void testPollEnrichInOnly() throws InterruptedException {
         template.sendBody("seda:foo1", "blah");
 
+        Thread.sleep(250);
+
         mock.expectedBodiesReceived("test:blah");
         template.sendBody("direct:enricher-test-1", "test");
         mock.assertIsSatisfied();
@@ -96,7 +98,7 @@ public class PollEnricherTest extends ContextTestSupport {
     public void testPollEnrichInOut() throws InterruptedException {
         template.sendBody("seda:foo4", "blah");
 
-        Thread.sleep(200);
+        Thread.sleep(250);
 
         String result = (String) template.sendBody("direct:enricher-test-4", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
@@ -104,6 +106,8 @@ public class PollEnricherTest extends ContextTestSupport {
 
     public void testPollEnrichInOutPlusHeader() throws InterruptedException {
         template.sendBody("seda:foo4", "blah");
+
+        Thread.sleep(250);
 
         Exchange exchange = template.request("direct:enricher-test-4", new Processor() {
             public void process(Exchange exchange) {
