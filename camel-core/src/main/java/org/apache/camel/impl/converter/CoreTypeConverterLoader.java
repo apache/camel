@@ -32,7 +32,7 @@ public class CoreTypeConverterLoader extends AnnotationTypeConverterLoader {
     }
 
     @Override
-    protected String[] findPackageNames() throws IOException, URISyntaxException {
+    protected String[] findPackageNames() throws IOException {
         return new String[]{"org.apache.camel.converter", "org.apache.camel.component.bean", "org.apache.camel.component.file"};
     }
 
