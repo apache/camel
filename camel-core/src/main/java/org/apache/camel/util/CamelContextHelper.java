@@ -319,7 +319,7 @@ public final class CamelContextHelper {
         if (s != null) {
             s = s.trim().toLowerCase();
             if (s.equals("true") || s.equals("false")) {
-                return camelContext.getTypeConverter().mandatoryConvertTo(Boolean.class, s);
+                return "true".equals(s) ? Boolean.TRUE : Boolean.FALSE;
             } else {
                 if (s.equals(text)) {
                     throw new IllegalArgumentException("Error parsing [" + s + "] as a Boolean.");
