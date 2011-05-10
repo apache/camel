@@ -22,7 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-public class TracingTestBase extends ContextTestSupport {
+public abstract class TracingTestBase extends ContextTestSupport {
     protected List<StringBuilder> tracedMessages;
     private TraceTestProcessor processor = new TraceTestProcessor();
 

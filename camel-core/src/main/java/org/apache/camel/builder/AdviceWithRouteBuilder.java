@@ -122,4 +122,24 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
         return new AdviceWithBuilder<T>(this, null, null, type);
     }
 
+    /**
+     * Weaves by adding the nodes to the start of the route.
+     *
+     * @return the builder
+     */
+    public <T extends ProcessorDefinition> ProcessorDefinition weaveAddFirst() {
+        ObjectHelper.notNull(originalRoute, "originalRoute", this);
+        return new AdviceWithBuilder<T>(this, "*", null, null).selectFirst().before();
+    }
+
+    /**
+     * Weaves by adding the nodes to the end of the route.
+     *
+     * @return the builder
+     */
+    public <T extends ProcessorDefinition> ProcessorDefinition weaveAddLast() {
+        ObjectHelper.notNull(originalRoute, "originalRoute", this);
+        return new AdviceWithBuilder<T>(this, "*", null, null).selectLast().after();
+    }
+
 }

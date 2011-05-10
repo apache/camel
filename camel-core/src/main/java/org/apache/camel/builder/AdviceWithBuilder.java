@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
 
 /**
  * A builder when using the <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
@@ -28,6 +29,10 @@ public class AdviceWithBuilder<T extends ProcessorDefinition> {
     private final String id;
     private final String toString;
     private final Class<T> type;
+    private boolean selectFirst;
+    private boolean selectLast;
+    private int selectFrom = -1;
+    private int selectTo = -1;
 
     public AdviceWithBuilder(AdviceWithRouteBuilder builder, String id, String toString, Class<T> type) {
         this.builder = builder;
@@ -41,18 +46,75 @@ public class AdviceWithBuilder<T extends ProcessorDefinition> {
     }
 
     /**
+     * Will only apply the first node matched.
+     *
+     * @return the builder to build the nodes.
+     */
+    public AdviceWithBuilder<T> selectFirst() {
+        selectFirst = true;
+        selectLast = false;
+        return this;
+    }
+
+    /**
+     * Will only apply the last node matched.
+     *
+     * @return the builder to build the nodes.
+     */
+    public AdviceWithBuilder<T> selectLast() {
+        selectLast = true;
+        selectFirst = false;
+        return this;
+    }
+
+    /**
+     * Will only apply the n'th node matched.
+     *
+     * @param index index of node to match (is 0-based)
+     * @return the builder to build the nodes.
+     */
+    public AdviceWithBuilder<T> selectIndex(int index) {
+        if (index < 0) {
+            throw new IllegalArgumentException("Index must be a non negative number, was: " + index);
+        }
+        selectFrom = index;
+        selectTo = index;
+        return this;
+    }
+
+    /**
+     * Will only apply the node in the index range matched.
+     *
+     * @param from from index of node to start matching (inclusive)
+     * @param to to index of node to stop matching (inclusive)
+     * @return the builder to build the nodes.
+     */
+    public AdviceWithBuilder<T> selectRange(int from, int to) {
+        if (from < 0) {
+            throw new IllegalArgumentException("From must be a non negative number, was: " + from);
+        }
+        if (from > to) {
+            throw new IllegalArgumentException("From must be equal or lower than to. from: " + from + ", to: " + to);
+        }
+        selectFrom = from;
+        selectTo = to;
+        return this;
+    }
+
+    /**
      * Replaces the matched node(s) with the following nodes.
      *
      * @return the builder to build the nodes.
      */
     public ProcessorDefinition replace() {
+        RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceById(builder.getOriginalRoute(), id, answer));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByToString(builder.getOriginalRoute(), toString, answer));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByToString(route, toString, answer, selectFirst, selectLast, selectFrom, selectTo));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByType(builder.getOriginalRoute(), type, answer));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo));
         }
         return answer;
     }
@@ -61,12 +123,13 @@ public class AdviceWithBuilder<T extends ProcessorDefinition> {
      * Removes the matched node(s)
      */
     public void remove() {
+        RouteDefinition route = builder.getOriginalRoute();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.removeById(builder.getOriginalRoute(), id));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.removeById(route, id, selectFirst, selectLast, selectFrom, selectTo));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByToString(builder.getOriginalRoute(), toString));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByToString(route, toString, selectLast, selectFirst, selectFrom, selectTo));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByType(builder.getOriginalRoute(), type));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByType(route, type, selectFirst, selectFirst, selectFrom, selectTo));
         }
     }
 
@@ -76,13 +139,14 @@ public class AdviceWithBuilder<T extends ProcessorDefinition> {
      * @return the builder to build the nodes.
      */
     public ProcessorDefinition before() {
+        RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeById(builder.getOriginalRoute(), id, answer));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByToString(builder.getOriginalRoute(), toString, answer));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByToString(route, toString, answer, selectLast, selectFirst, selectFrom, selectTo));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByType(builder.getOriginalRoute(), type, answer));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo));
         }
         return answer;
     }
@@ -93,13 +157,14 @@ public class AdviceWithBuilder<T extends ProcessorDefinition> {
      * @return the builder to build the nodes.
      */
     public ProcessorDefinition after() {
+        RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.afterById(builder.getOriginalRoute(), id, answer));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.afterById(route, id, answer, selectFirst, selectLast, selectFrom, selectTo));
         } else if (toString != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByToString(builder.getOriginalRoute(), toString, answer));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByToString(route, toString, answer, selectLast, selectFirst, selectFrom, selectTo));
         } else if (type != null) {
-            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByType(builder.getOriginalRoute(), type, answer));
+            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByType(route, type, answer, selectFirst, selectLast, selectFrom, selectTo));
         }
         return answer;
     }
