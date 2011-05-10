@@ -137,7 +137,7 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
                 @Override
                 public void configure() throws Exception {
                     // should be out of bounds
-                    weaveById("gold*").selectIndex(4).replace().multicast().to("mock:a").to("mock:b");
+                    weaveById("gold*").selectIndex(3).replace().multicast().to("mock:a").to("mock:b");
                 }
             });
             fail("Should hve thrown exception");

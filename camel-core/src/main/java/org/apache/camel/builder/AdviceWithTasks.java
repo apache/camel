@@ -16,7 +16,9 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -321,119 +323,66 @@ public final class AdviceWithTasks {
                                                                final boolean selectFirst, final boolean selectLast,
                                                                final int selectFrom, final int selectTo) {
 
-        // iterator to walk all nodes
-        final Iterator<ProcessorDefinition> itAll = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
-
-        // iterator to only walk nodes which matchBy matches
-        final Iterator<ProcessorDefinition> itMatchBy = new Iterator<ProcessorDefinition>() {
-            private ProcessorDefinition next;
-
-            @Override
-            public boolean hasNext() {
-                if (next == null) {
-                    // compute next
-                    next = next();
-                }
-                return next != null;
+        // first iterator and apply match by
+        List<ProcessorDefinition> matched = new ArrayList<ProcessorDefinition>();
+        Iterator<ProcessorDefinition> itAll = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
+        while (itAll.hasNext()) {
+            ProcessorDefinition next = itAll.next();
+            if (matchBy.match(next)) {
+                matched.add(next);
             }
+        }
 
-            @Override
-            public ProcessorDefinition next() {
-                // grab the next if its ready
-                if (next != null) {
-                    ProcessorDefinition answer = next;
-                    next = null;
-                    return answer;
-                }
+        // and then apply the selector iterator
+        return createSelectorIterator(matched, selectFirst, selectLast, selectFrom, selectTo);
+    }
 
-                // find the next which matchBy matches
-                boolean found = false;
-                while (!found && itAll.hasNext()) {
-                    ProcessorDefinition def = itAll.next();
-                    if (matchBy.match(def)) {
-                        found = true;
-                        next = def;
-                    }
-                }
-
-                ProcessorDefinition answer = next;
-                next = null;
-                return answer;
-            }
-
-            @Override
-            public void remove() {
-            }
-        };
-
-        // iterator to only walk which selectXXX matches
+    private static Iterator<ProcessorDefinition> createSelectorIterator(final List<ProcessorDefinition> list, final boolean selectFirst,
+                                                                        final boolean selectLast, final int selectFrom, final int selectTo) {
         return new Iterator<ProcessorDefinition>() {
             private int current;
-            private ProcessorDefinition next;
+            private boolean done;
 
             @Override
             public boolean hasNext() {
-                if (next == null) {
-                    // compute next
-                    next = next();
+                if (list.isEmpty() || done) {
+                    return false;
                 }
-                return next != null;
+
+                if (selectFirst) {
+                    done = true;
+                    // spool to first
+                    current = 0;
+                    return true;
+                }
+
+                if (selectLast) {
+                    done = true;
+                    // spool to last
+                    current = list.size() - 1;
+                    return true;
+                }
+
+                if (selectFrom >= 0 && selectTo >= 0) {
+                    // check for out of bounds
+                    if (selectFrom >= list.size() || selectTo >= list.size()) {
+                        return false;
+                    }
+                    if (current < selectFrom) {
+                        // spool to beginning of range
+                        current = selectFrom;
+                    }
+                    return current >= selectFrom && current <= selectTo;
+                }
+
+                return current < list.size();
             }
 
+            @Override
             public ProcessorDefinition next() {
-                // grab the next if its ready
-                if (next != null) {
-                    ProcessorDefinition answer = next;
-                    next = null;
-                    return answer;
-                }
-
-                // a bit complicated logic to ensure selectFirst/selectLast,selectFrom/selectTo
-                // filter out unwanted nodes
-                // we use the matchBy iterator as the nodes mush at first match this iterator
-                // before we can do any selection
-
-                if (selectFrom >= 0 && current <= selectFrom) {
-                    // spool until we should start
-                    while (current <= selectFrom) {
-                        current++;
-                        if (itMatchBy.hasNext()) {
-                            next = itMatchBy.next();
-                        } else {
-                            next = null;
-                        }
-                    }
-                } else if (selectTo >= 0 && current <= selectTo) {
-                    // are we in range
-                    current++;
-                    if (itMatchBy.hasNext()) {
-                        next = itMatchBy.next();
-                    } else {
-                        next = null;
-                    }
-                } else if (selectLast) {
-                    // spool until the last matching
-                    while (itMatchBy.hasNext()) {
-                        current++;
-                        next = itMatchBy.next();
-                    }
-                } else if (selectFirst) {
-                    // only match the first
-                    current++;
-                    if (itMatchBy.hasNext() && current == 1) {
-                        next = itMatchBy.next();
-                    } else {
-                        next = null;
-                    }
-                } else if (!selectFirst && !selectLast && selectFrom < 0 && selectTo < 0) {
-                    // regular without any selectFirst,selectLast,selectFrom/selectTo stuff
-                    current++;
-                    if (itMatchBy.hasNext()) {
-                        next = itMatchBy.next();
-                    }
-                }
-
-                return next;
+                ProcessorDefinition answer = list.get(current);
+                current++;
+                return answer;
             }
 
             @Override
