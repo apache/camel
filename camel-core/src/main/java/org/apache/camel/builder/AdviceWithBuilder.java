@@ -22,19 +22,21 @@ import org.apache.camel.model.ProcessorDefinition;
 /**
  * A builder when using the <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
  */
-public class AdviceWithBuilder {
+public class AdviceWithBuilder<T extends ProcessorDefinition> {
 
     private final AdviceWithRouteBuilder builder;
     private final String id;
     private final String toString;
+    private final Class<T> type;
 
-    public AdviceWithBuilder(AdviceWithRouteBuilder builder, String id, String toString) {
+    public AdviceWithBuilder(AdviceWithRouteBuilder builder, String id, String toString, Class<T> type) {
         this.builder = builder;
         this.id = id;
         this.toString = toString;
+        this.type = type;
 
-        if (id == null && toString == null) {
-            throw new IllegalArgumentException("Either id or toString must be specified");
+        if (id == null && toString == null && type == null) {
+            throw new IllegalArgumentException("Either id, toString or type must be specified");
         }
     }
 
@@ -49,6 +51,8 @@ public class AdviceWithBuilder {
             builder.getAdviceWithTasks().add(AdviceWithTasks.replaceById(builder.getOriginalRoute(), id, answer));
         } else if (toString != null) {
             builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByToString(builder.getOriginalRoute(), toString, answer));
+        } else if (type != null) {
+            builder.getAdviceWithTasks().add(AdviceWithTasks.replaceByType(builder.getOriginalRoute(), type, answer));
         }
         return answer;
     }
@@ -61,6 +65,8 @@ public class AdviceWithBuilder {
             builder.getAdviceWithTasks().add(AdviceWithTasks.removeById(builder.getOriginalRoute(), id));
         } else if (toString != null) {
             builder.getAdviceWithTasks().add(AdviceWithTasks.removeByToString(builder.getOriginalRoute(), toString));
+        } else if (type != null) {
+            builder.getAdviceWithTasks().add(AdviceWithTasks.removeByType(builder.getOriginalRoute(), type));
         }
     }
 
@@ -75,6 +81,8 @@ public class AdviceWithBuilder {
             builder.getAdviceWithTasks().add(AdviceWithTasks.beforeById(builder.getOriginalRoute(), id, answer));
         } else if (toString != null) {
             builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByToString(builder.getOriginalRoute(), toString, answer));
+        } else if (type != null) {
+            builder.getAdviceWithTasks().add(AdviceWithTasks.beforeByType(builder.getOriginalRoute(), type, answer));
         }
         return answer;
     }
@@ -90,6 +98,8 @@ public class AdviceWithBuilder {
             builder.getAdviceWithTasks().add(AdviceWithTasks.afterById(builder.getOriginalRoute(), id, answer));
         } else if (toString != null) {
             builder.getAdviceWithTasks().add(AdviceWithTasks.afterByToString(builder.getOriginalRoute(), toString, answer));
+        } else if (type != null) {
+            builder.getAdviceWithTasks().add(AdviceWithTasks.afterByType(builder.getOriginalRoute(), type, answer));
         }
         return answer;
     }

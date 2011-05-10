@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.util.ObjectHelper;
 
@@ -91,9 +92,9 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @return the builder
      * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
      */
-    public AdviceWithBuilder weaveById(String pattern) {
+    public <T extends ProcessorDefinition> AdviceWithBuilder weaveById(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder(this, pattern, null);
+        return new AdviceWithBuilder<T>(this, pattern, null, null);
     }
 
     /**
@@ -105,9 +106,20 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @return the builder
      * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
      */
-    public AdviceWithBuilder weaveByToString(String pattern) {
+    public <T extends ProcessorDefinition> AdviceWithBuilder weaveByToString(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        return new AdviceWithBuilder(this, null, pattern);
+        return new AdviceWithBuilder<T>(this, null, pattern, null);
+    }
+
+    /**
+     * Weaves by matching type of the nodes in the route.
+     *
+     * @param type the processor type
+     * @return the builder
+     */
+    public <T extends ProcessorDefinition> AdviceWithBuilder weaveByType(Class<T> type) {
+        ObjectHelper.notNull(originalRoute, "originalRoute", this);
+        return new AdviceWithBuilder<T>(this, null, null, type);
     }
 
 }

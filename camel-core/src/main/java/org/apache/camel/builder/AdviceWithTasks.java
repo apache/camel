@@ -86,6 +86,26 @@ public final class AdviceWithTasks {
         }
     }
 
+    /**
+     * Will match by the type of the processor.
+     */
+    private static final class MatchByType implements MatchBy {
+
+        private final Class type;
+
+        private MatchByType(Class<?> type) {
+            this.type = type;
+        }
+
+        public String getId() {
+            return type.getSimpleName();
+        }
+
+        public boolean match(ProcessorDefinition processor) {
+            return type.isAssignableFrom(processor.getClass());
+        }
+    }
+
 
     public static AdviceWithTask replaceByToString(final RouteDefinition route, final String toString, final ProcessorDefinition replace) {
         return doReplace(route, new MatchByToString(toString), replace);
@@ -93,6 +113,10 @@ public final class AdviceWithTasks {
 
     public static AdviceWithTask replaceById(final RouteDefinition route, final String id, final ProcessorDefinition replace) {
         return doReplace(route, new MatchById(id), replace);
+    }
+
+    public static AdviceWithTask replaceByType(final RouteDefinition route, final Class type, final ProcessorDefinition replace) {
+        return doReplace(route, new MatchByType(type), replace);
     }
 
     @SuppressWarnings("unchecked")
@@ -132,6 +156,10 @@ public final class AdviceWithTasks {
         return doRemove(route, new MatchById(id));
     }
 
+    public static AdviceWithTask removeByType(final RouteDefinition route, final Class type) {
+        return doRemove(route, new MatchByType(type));
+    }
+
     private static AdviceWithTask doRemove(final RouteDefinition route, final MatchBy matchBy) {
         return new AdviceWithTask() {
             public void task() throws Exception {
@@ -165,6 +193,10 @@ public final class AdviceWithTasks {
 
     public static AdviceWithTask beforeById(final RouteDefinition route, final String id, final ProcessorDefinition before) {
         return doBefore(route, new MatchById(id), before);
+    }
+
+    public static AdviceWithTask beforeByType(final RouteDefinition route, final Class type, final ProcessorDefinition before) {
+        return doBefore(route, new MatchByType(type), before);
     }
 
     @SuppressWarnings("unchecked")
@@ -202,6 +234,10 @@ public final class AdviceWithTasks {
 
     public static AdviceWithTask afterById(final RouteDefinition route, final String id, final ProcessorDefinition after) {
         return doAfter(route, new MatchById(id), after);
+    }
+
+    public static AdviceWithTask afterByType(final RouteDefinition route, final Class type, final ProcessorDefinition after) {
+        return doAfter(route, new MatchByType(type), after);
     }
 
     @SuppressWarnings("unchecked")
