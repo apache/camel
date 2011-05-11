@@ -34,16 +34,16 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * Jms with JDBC idempotent consumer test.
+ * Jms with JDBC idempotent consumer using XA test.
  */
-public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSupport {
+public class FromJmsToJdbcIdempotentConsumerToJmsXaTest extends CamelSpringTestSupport {
 
     protected JdbcTemplate jdbcTemplate;
     protected DataSource dataSource;
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/itest/sql/FromJmsToJdbcIdempotentConsumerToJmsTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/itest/sql/FromJmsToJdbcIdempotentConsumerToJmsXaTest.xml");
     }
 
     @Override
@@ -51,7 +51,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
     public void setUp() throws Exception {
         super.setUp();
 
-        dataSource = context.getRegistry().lookup("dataSource", DataSource.class);
+        dataSource = context.getRegistry().lookup("myNonXADataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
 
