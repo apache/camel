@@ -27,6 +27,7 @@ JaxbDataFormat
 JsonDataFormat
 JsonLibrary
 ProtobufDataFormat
+RefDataFormat
 RssDataFormat
 SerializationDataFormat
 StringDataFormat

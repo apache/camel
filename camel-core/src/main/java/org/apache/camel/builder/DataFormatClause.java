@@ -32,6 +32,7 @@ import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
+import org.apache.camel.model.dataformat.RefDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
@@ -227,6 +228,13 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T rss() {
         return dataFormat(new RssDataFormat());
+    }
+
+    /**
+     * Uses the ref data format
+     */
+    public T ref(String ref) {
+        return dataFormat(new RefDataFormat(ref));
     }
 
     /**
