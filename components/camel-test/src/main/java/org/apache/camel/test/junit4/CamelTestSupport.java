@@ -126,13 +126,16 @@ public abstract class CamelTestSupport extends TestSupport {
 
         boolean first = INIT.compareAndSet(false, true);
         if (isCreateCamelContextPerClass()) {
+            // test is per class, so only setup once (the first time)
             if (first) {
                 doSetUp();
+            } else {
+                // and in between tests we must do IoC and reset mocks
+                postProcessTest();
+                resetMocks();
             }
-            // must always post process to do IoC and reset mocks between tests
-            postProcessTest();
-            resetMocks();
         } else {
+            // test is per test so always setup
             doSetUp();
         }
     }
