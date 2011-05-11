@@ -30,13 +30,21 @@ import org.junit.Test;
  * @version 
  */
 // START SNIPPET: example
-public class FilterJUnit4Test extends CamelTestSupport {
+public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
+
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        // we override this method and return true, to tell Camel test-kit that
+        // it should only create CamelContext once (per class), so we will
+        // re-use the CamelContext between each test method in this class
+        return true;
+    }
 
     @Test
     public void testSendMatchingMessage() throws Exception {
@@ -67,4 +75,3 @@ public class FilterJUnit4Test extends CamelTestSupport {
         };
     }
 }
-// END SNIPPET: example

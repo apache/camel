@@ -19,8 +19,12 @@ package org.apache.camel.test;
 import org.apache.camel.impl.DefaultNodeIdFactory;
 
 public class TestSupportNodeIdFactory extends DefaultNodeIdFactory {
-    // start tests with fresh counters
+
+    /**
+     * Start tests with fresh counters
+     */
     public static void resetCounters() {
         resetAllCounters();
     }
+
 }

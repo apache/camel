@@ -21,6 +21,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -46,7 +47,10 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes
@@ -56,21 +60,34 @@ import org.junit.Before;
  */
 public abstract class CamelTestSupport extends TestSupport {    
     
-    protected volatile CamelContext context;
-    protected volatile ProducerTemplate template;
-    protected volatile ConsumerTemplate consumer;
+    protected static volatile CamelContext context;
+    protected static volatile ProducerTemplate template;
+    protected static volatile ConsumerTemplate consumer;
+    protected static volatile Service camelContextService;
+    private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
+    private static final AtomicBoolean INIT = new AtomicBoolean();
     private boolean useRouteBuilder = true;
-    private Service camelContextService;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
 
     /**
      * Use the RouteBuilder or not
-     * @return 
-     *  If the return value is true, the camel context will be started in the setup method.
-     *  If the return value is false, the camel context will not be started in the setup method.
+     * @return <tt>true</tt> then {@link CamelContext} will be auto started,
+     *        <tt>false</tt> then {@link CamelContext} will <b>not</b> be auto started (you will have to start it manually)
      */
     public boolean isUseRouteBuilder() {
         return useRouteBuilder;
+    }
+
+    /**
+     * Override to control whether {@link CamelContext} should be setup per test or per class.
+     * <p/>
+     * By default it will be setup/teardown per test (per test method). If you want to re-use
+     * {@link CamelContext} between test methods you can override this method and return <tt>true</tt>
+     *
+     * @return <tt>true</tt> per class, <tt>false</tt> per test.
+     */
+    public boolean isCreateCamelContextPerClass() {
+        return false;
     }
 
     /**
@@ -97,8 +114,8 @@ public abstract class CamelTestSupport extends TestSupport {
      * and stop the context; such as for Spring when the ApplicationContext is
      * started and stopped, rather than directly stopping the CamelContext
      */
-    public void setCamelContextService(Service camelContextService) {
-        this.camelContextService = camelContextService;
+    public void setCamelContextService(Service service) {
+        camelContextService = service;
     }
 
     @Before
@@ -107,6 +124,20 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("Testing: " + getTestMethodName() + "(" + getClass().getName() + ")");
         log.info("********************************************************************************");
 
+        boolean first = INIT.compareAndSet(false, true);
+        if (isCreateCamelContextPerClass()) {
+            if (first) {
+                doSetUp();
+            }
+            // must always post process to do IoC and reset mocks between tests
+            postProcessTest();
+            resetMocks();
+        } else {
+            doSetUp();
+        }
+    }
+
+    protected void doSetUp() throws Exception {
         log.debug("setUp test");
         if (!useJmx()) {
             disableJMX();
@@ -152,20 +183,32 @@ public abstract class CamelTestSupport extends TestSupport {
         log.debug("Routing Rules are: " + context.getRoutes());
 
         assertValidContext(context);
+
+        INIT.set(true);
     }
 
     @After
     public void tearDown() throws Exception {
-        log.info("Testing done: " + this);
+        log.info("********************************************************************************");
+        log.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
+        log.info("********************************************************************************");
 
-        log.debug("tearDown test");
-        if (consumer != null) {
-            consumer.stop();
+        if (isCreateCamelContextPerClass()) {
+            // we tear down in after class
+            return;
         }
-        if (template != null) {
-            template.stop();
-        }
+
+        LOG.debug("tearDown test");
+        doStopTemplates();
         stopCamelContext();
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+        INIT.set(false);
+        LOG.debug("tearDownAfterClass test");
+        doStopTemplates();
+        doStopCamelContext();
     }
 
     /**
@@ -208,14 +251,31 @@ public abstract class CamelTestSupport extends TestSupport {
         processor.setCamelContext(context);
         processor.postProcessBeforeInitialization(this, "this");
     }
-    
+
     protected void stopCamelContext() throws Exception {
+        doStopCamelContext();
+    }
+
+    private static void doStopCamelContext() throws Exception {
         if (camelContextService != null) {
             camelContextService.stop();
+            camelContextService = null;
         } else {
             if (context != null) {
                 context.stop();
-            }    
+                context = null;
+            }
+        }
+    }
+
+    private static void doStopTemplates() throws Exception {
+        if (consumer != null) {
+            consumer.stop();
+            consumer = null;
+        }
+        if (template != null) {
+            template.stop();
+            template = null;
         }
     }
 

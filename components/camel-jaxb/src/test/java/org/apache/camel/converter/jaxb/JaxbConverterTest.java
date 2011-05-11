@@ -16,7 +16,6 @@
  */
 package org.apache.camel.converter.jaxb;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.parsers.ParserConfigurationException;

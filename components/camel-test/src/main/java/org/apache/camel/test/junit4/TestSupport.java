@@ -40,6 +40,8 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.PredicateAssertHelper;
 import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,9 +51,15 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class TestSupport extends Assert {
-    private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);    
-    protected transient Logger log = LoggerFactory.getLogger(getClass());    
-    
+
+    private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
+    protected transient Logger log = LoggerFactory.getLogger(getClass());
+
+    // CHECKSTYLE:OFF
+    @Rule
+    public TestName testName = new TestName();
+    // CHECKSTYLE:ON
+
     // Builder methods for expressions used when testing
     // -------------------------------------------------------------------------
 
@@ -482,7 +490,9 @@ public abstract class TestSupport extends Assert {
      * Is this Java 1.5
      *
      * @return <tt>true</tt> if its Java 1.5, <tt>false</tt> if its not (for example Java 1.6 or better)
+     * @deprecated will be removed in the near future as Camel now requires JDK1.6+
      */
+    @Deprecated
     public static boolean isJava15() {
         String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
         return javaVersion.startsWith("1.5");
@@ -494,9 +504,7 @@ public abstract class TestSupport extends Assert {
      * @return the method name
      */
     public String getTestMethodName() {
-        // TODO: When using latest junit we can use @Rule to remember the test name
-        // http://kentbeck.github.com/junit/javadoc/latest/org/junit/rules/TestName.html
-        return "";
+        return testName.getMethodName();
     }
 
 }
