@@ -38,6 +38,10 @@
             <name>Public online Restlet repository</name>
             <url>http://maven.restlet.org</url>
         </repository>
+         <repository>
+             <id>atomikos</id>
+             <url>http://repo.atomikos.com</url>
+         </repository>
     </repositories>
 
     <dependencies>
@@ -130,6 +134,11 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-saxon</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-sql</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -282,6 +291,35 @@
     		<classifier>tests</classifier>
     		<scope>test</scope>
     	</dependency>
+
+        <!-- atomikos XA TX manager -->
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions</artifactId>
+            <version>3.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jta</artifactId>
+            <version>3.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jms</artifactId>
+            <version>3.6.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-jdbc</artifactId>
+            <version>3.6.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -293,6 +331,7 @@
                     <excludes>
                       <!-- TODO FIXME ASAP -->
                       <exclude>**/XXXTest.*</exclude>
+                      <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsTest.*</exclude>
                     </excludes>
                     <systemProperties>
                			<property>
