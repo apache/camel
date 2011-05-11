@@ -51,13 +51,13 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
     public void setUp() throws Exception {
         super.setUp();
 
-        dataSource = context.getRegistry().lookup("dataSource", DataSource.class);
+        dataSource = context.getRegistry().lookup("myNonXADataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
 
         setupRepository();
     }
-
+    
     protected void setupRepository() {
         try {
             jdbcTemplate.execute("DROP TABLE CAMEL_MESSAGEPROCESSED");
@@ -215,7 +215,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertEquals("DONE-F", consumer.receiveBody("activemq:queue:outbox", 3000));
     }
     
-    private void checkInitialState() {
+    protected void checkInitialState() {
         // check there are no messages in the database and JMS queue
         assertEquals(0, jdbcTemplate.queryForInt("select count(*) from  CAMEL_MESSAGEPROCESSED"));
         assertNull(consumer.receiveBody("activemq:queue:outbox", 2000));
