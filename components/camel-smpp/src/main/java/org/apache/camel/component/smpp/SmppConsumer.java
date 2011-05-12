@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
  * An implementation of @{link Consumer} which use the SMPP protocol
  * 
  * @version 
- * @author muellerc
  */
 public class SmppConsumer extends DefaultConsumer {
 
@@ -73,9 +72,9 @@ public class SmppConsumer extends DefaultConsumer {
         this.sessionStateListener = new SessionStateListener() {
             public void onStateChange(SessionState newState, SessionState oldState, Object source) {
                 if (newState.equals(SessionState.CLOSED)) {
-                    LOG.warn("Loost connection to: " + getEndpoint().getConnectionString()
+                    LOG.warn("Lost connection to: " + getEndpoint().getConnectionString()
                             + " - trying to reconnect...");
-                    closeSession(session);
+                    closeSession();
                     reconnect(configuration.getInitialReconnectDelay());
                 }
             }
@@ -185,12 +184,12 @@ public class SmppConsumer extends DefaultConsumer {
         LOG.debug("Disconnecting from: " + getEndpoint().getConnectionString() + "...");
 
         super.doStop();
-        closeSession(session);
+        closeSession();
 
         LOG.info("Disconnected from: " + getEndpoint().getConnectionString());
     }
 
-    private void closeSession(SMPPSession session) {
+    private void closeSession() {
         if (session != null) {
             session.removeSessionStateListener(this.sessionStateListener);
             // remove this hack after http://code.google.com/p/jsmpp/issues/detail?id=93 is fixed
@@ -225,7 +224,7 @@ public class SmppConsumer extends DefaultConsumer {
                                 reconnected = true;
                             } catch (IOException e) {
                                 LOG.info("Failed to reconnect to " + getEndpoint().getConnectionString());
-                                closeSession(session);
+                                closeSession();
                                 try {
                                     Thread.sleep(configuration.getReconnectDelay());
                                 } catch (InterruptedException ee) {

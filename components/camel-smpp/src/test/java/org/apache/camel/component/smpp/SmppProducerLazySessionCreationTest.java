@@ -47,7 +47,6 @@ import static org.easymock.classextension.EasyMock.verify;
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppProducer</code>
  * 
  * @version 
- * @author muellerc
  */
 public class SmppProducerLazySessionCreationTest {
     

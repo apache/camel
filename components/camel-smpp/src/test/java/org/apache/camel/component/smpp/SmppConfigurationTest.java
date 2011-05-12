@@ -31,7 +31,6 @@ import static org.junit.Assert.assertEquals;
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConfiguration</code>
  * 
  * @version 
- * @author muellerc
  */
 public class SmppConfigurationTest {
     

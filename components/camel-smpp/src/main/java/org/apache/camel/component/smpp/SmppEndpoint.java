@@ -31,7 +31,6 @@ import org.jsmpp.bean.DeliverSm;
  * A SMPP Endpoint
  * 
  * @version 
- * @author muellerc
  */
 public class SmppEndpoint extends DefaultEndpoint {
 

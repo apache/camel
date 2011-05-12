@@ -44,7 +44,6 @@ import static org.junit.Assert.assertSame;
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppBinding</code>
  * 
  * @version 
- * @author muellerc
  */
 public class SmppBindingTest {
     
