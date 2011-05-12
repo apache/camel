@@ -142,8 +142,11 @@ public abstract class CamelTestSupport extends TestSupport {
                 log.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
-            startCamelContext();
-            log.debug("Routing Rules are: " + context.getRoutes());
+            if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
+                startCamelContext();
+            } else {
+                log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+            }
         } else {
             log.debug("Using route builder from the created context: " + context);
         }
