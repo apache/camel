@@ -30,28 +30,31 @@ import org.slf4j.LoggerFactory;
  */
 public class BeanWithJXPathInjectionTest extends CamelTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(BeanWithJXPathInjectionTest.class);
-    protected MyBean myBean = new MyBean();
 
     @Test
     public void testSendMessage() throws Exception {
         template.sendBody("direct:in", new PersonBean("James", "London"));
 
-        assertEquals("bean foo: " + myBean, "James", myBean.name);
-        assertNotNull("Should pass body as well", myBean.body);
+        MyBean myBean = context.getRegistry().lookup("myBean", MyBean.class);
+
+        assertEquals("bean foo: " + myBean, "James", myBean.getName());
+        assertNotNull("Should pass body as well", myBean.getBody());
     }
 
     @Test
     public void testSendNullMessage() throws Exception {
         template.sendBody("direct:in", new PersonBean(null, "London"));
 
-        assertEquals("bean foo: " + myBean, null, myBean.name);
-        assertNotNull("Should pass body as well", myBean.body);
+        MyBean myBean = context.getRegistry().lookup("myBean", MyBean.class);
+
+        assertEquals("bean foo: " + myBean, null, myBean.getName());
+        assertNotNull("Should pass body as well", myBean.getBody());
     }
 
     @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
-        answer.bind("myBean", myBean);
+        answer.bind("myBean", new MyBean());
         return answer;
     }
 
@@ -63,9 +66,9 @@ public class BeanWithJXPathInjectionTest extends CamelTestSupport {
         };
     }
 
-    public static class MyBean {
-        public PersonBean body;
-        public String name;
+    public static final class MyBean {
+        private PersonBean body;
+        private String name;
 
         @Override
         public String toString() {
@@ -73,9 +76,17 @@ public class BeanWithJXPathInjectionTest extends CamelTestSupport {
         }
 
         public void read(PersonBean body, @JXPath("in/body/name") String name) {
-            this.name = name;
             this.body = body;
+            this.name = name;
             LOG.info("read() method called on " + this);
+        }
+
+        public PersonBean getBody() {
+            return body;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }
