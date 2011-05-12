@@ -132,18 +132,21 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         if (ObjectHelper.isEmpty(getId())) {
             throw new IllegalArgumentException("Id must be set");
         }
-        if (getProperties() != null) {
-            getContext().setProperties(getProperties().asMap());
-        }
 
-        // set the type converter mode first
-        initLazyLoadTypeConverteres();
-
+        // set the package scan resolver as soon as possible
         PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);
         if (packageResolver != null) {
             LOG.info("Using custom PackageScanClassResolver: " + packageResolver);
             getContext().setPackageScanClassResolver(packageResolver);
         }
+
+        // then set custom properties
+        if (getProperties() != null) {
+            getContext().setProperties(getProperties().asMap());
+        }
+        // and enable lazy loading of type converters if applicable
+        initLazyLoadTypeConverteres();
+
         ClassResolver classResolver = getBeanForType(ClassResolver.class);
         if (classResolver != null) {
             LOG.info("Using custom ClassResolver: " + classResolver);
