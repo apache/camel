@@ -98,11 +98,12 @@ public class IBatisQueueTest extends CamelTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        super.tearDown();
         IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
         Connection connection = endpoint.getSqlMapClient().getDataSource().getConnection();
         Statement statement = connection.createStatement();
         statement.execute("drop table ACCOUNT");
         connection.close();
+
+        super.tearDown();
     }
 }
