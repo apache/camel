@@ -480,10 +480,16 @@ public abstract class TestSupport extends Assert {
      * Is this Java 1.5
      *
      * @return <tt>true</tt> if its Java 1.5, <tt>false</tt> if its not (for example Java 1.6 or better)
+     * @deprecated will be removed in the near future as Camel now requires JDK1.6+
      */
+    @Deprecated
     public static boolean isJava15() {
         String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
         return javaVersion.startsWith("1.5");
+    }
+
+    public String getTestMethodName() {
+        return "";
     }
 
 }
