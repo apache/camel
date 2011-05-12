@@ -78,6 +78,10 @@ public abstract class CamelTestSupport extends TestSupport {
         return useRouteBuilder;
     }
 
+    public void setUseRouteBuilder(boolean useRouteBuilder) {
+        this.useRouteBuilder = useRouteBuilder;
+    }
+
     /**
      * Override to control whether {@link CamelContext} should be setup per test or per class.
      * <p/>
@@ -102,10 +106,6 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     public String isMockEndpoints() {
         return null;
-    }
-
-    public void setUseRouteBuilder(boolean useRouteBuilder) {
-        this.useRouteBuilder = useRouteBuilder;
     }
 
     public Service getCamelContextService() {
