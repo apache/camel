@@ -25,7 +25,6 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceException;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
@@ -40,17 +39,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstTest extends CamelSpringTestSupport {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstBeans.xml");
-    }
-
-    protected void assertValidContext(CamelContext context) {
-        assertNotNull("No context found!", context);
     }
 
     @BeforeClass

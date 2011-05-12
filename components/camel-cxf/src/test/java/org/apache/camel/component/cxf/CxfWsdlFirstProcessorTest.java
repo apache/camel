@@ -21,7 +21,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstProcessorTest extends CxfWsdlFirstTest {
 
-
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstProcessor.xml");
     }

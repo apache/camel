@@ -48,11 +48,6 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
         + "</soap:Body></soap:Envelope>";
     private static DocumentBuilderFactory documentBuilderFactory;
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     @BeforeClass
     public static void startService() {
         Object implementor = new GreeterImpl();
