@@ -46,7 +46,7 @@ public class ManagedCamelContextSuspendStartTest extends ManagementTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
+        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.Object"});
         assertEquals("Bye World", reply);
 
         // suspend Camel
@@ -61,7 +61,7 @@ public class ManagedCamelContextSuspendStartTest extends ManagementTestSupport {
         status = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Started", status);
 
-        reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello Camel"}, new String[]{"java.lang.String", "java.lang.String"});
+        reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello Camel"}, new String[]{"java.lang.String", "java.lang.Object"});
         assertEquals("Bye World", reply);
     }
 

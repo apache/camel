@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -45,13 +47,36 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         // invoke operations
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-
-        mbeanServer.invoke(on, "sendBody", new Object[]{"direct:start", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
-
+        mbeanServer.invoke(on, "sendBody", new Object[]{"direct:start", "Hello World"}, new String[]{"java.lang.String", "java.lang.Object"});
         assertMockEndpointsSatisfied();
 
-        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
+        resetMocks();
+        mock.expectedBodiesReceived("Hello World");
+        mbeanServer.invoke(on, "sendStringBody", new Object[]{"direct:start", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
+        assertMockEndpointsSatisfied();
+
+        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.Object"});
         assertEquals("Bye World", reply);
+
+        reply = mbeanServer.invoke(on, "requestStringBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
+        assertEquals("Bye World", reply);
+
+        resetMocks();
+        mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        mock.expectedHeaderReceived("foo", 123);
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("foo", 123);
+        mbeanServer.invoke(on, "sendBodyAndHeaders", new Object[]{"direct:start", "Hello World", headers}, new String[]{"java.lang.String", "java.lang.Object", "java.util.Map"});
+        assertMockEndpointsSatisfied();
+
+        resetMocks();
+        mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+        mock.expectedHeaderReceived("foo", 123);
+        reply = mbeanServer.invoke(on, "requestBodyAndHeaders", new Object[]{"direct:start", "Hello World", headers}, new String[]{"java.lang.String", "java.lang.Object", "java.util.Map"});
+        assertEquals("Hello World", reply);
+        assertMockEndpointsSatisfied();
 
         // stop Camel
         mbeanServer.invoke(on, "stop", null, null);

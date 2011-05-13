@@ -159,7 +159,7 @@ public class ManagedCamelContext {
     }
 
     @ManagedOperation(description = "Send body (in only)")
-    public void sendBody(String endpointUri, String body) throws Exception {
+    public void sendBody(String endpointUri, Object body) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         try {
             template.sendBody(endpointUri, body);
@@ -168,12 +168,44 @@ public class ManagedCamelContext {
         }
     }
 
+    @ManagedOperation(description = "Send body (String type) (in only)")
+    public void sendStringBody(String endpointUri, String body) throws Exception {
+        sendBody(endpointUri, body);
+    }
+
+    @ManagedOperation(description = "Send body and headers (in only)")
+    public void sendBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws Exception {
+        ProducerTemplate template = context.createProducerTemplate();
+        try {
+            template.sendBodyAndHeaders(endpointUri, body, headers);
+        } finally {
+            template.stop();
+        }
+    }
+
     @ManagedOperation(description = "Request body (in out)")
-    public Object requestBody(String endpointUri, String body) throws Exception {
+    public Object requestBody(String endpointUri, Object body) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         Object answer = null;
         try {
             answer = template.requestBody(endpointUri, body);
+        } finally {
+            template.stop();
+        }
+        return answer;
+    }
+
+    @ManagedOperation(description = "Request body (String type) (in out)")
+    public Object requestStringBody(String endpointUri, String body) throws Exception {
+        return requestBody(endpointUri, body);
+    }
+
+    @ManagedOperation(description = "Request body and headers (in out)")
+    public Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws Exception {
+        ProducerTemplate template = context.createProducerTemplate();
+        Object answer = null;
+        try {
+            answer = template.requestBodyAndHeaders(endpointUri, body, headers);
         } finally {
             template.stop();
         }

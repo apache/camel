@@ -46,7 +46,7 @@ public class ManagedCamelContextAutoStartupTest extends ManagementTestSupport {
         state = (String) mbeanServer.getAttribute(onRoute, "State");
         assertEquals("Started", state);
 
-        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.String"});
+        Object reply = mbeanServer.invoke(on, "requestBody", new Object[]{"direct:foo", "Hello World"}, new String[]{"java.lang.String", "java.lang.Object"});
         assertEquals("Bye World", reply);
 
         // stop Camel
