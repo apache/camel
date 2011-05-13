@@ -24,7 +24,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.util.ModelHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -192,4 +194,27 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         }
         return context.removeRoute(getRouteId());
     }
+
+    @ManagedOperation(description = "Dumps the route as XML")
+    public String dumpRouteAsXml() throws Exception {
+        String id = route.getId();
+        RouteDefinition def = context.getRouteDefinition(id);
+        if (def != null) {
+            return ModelHelper.dumpModelAsXml(def);
+        }
+        return null;
+    }
+
+    @ManagedOperation(description = "Updates the route from XML")
+    public void updateRouteFromXml(String xml) throws Exception {
+        // convert to model from xml
+        RouteDefinition def = ModelHelper.createModelFromXml(xml, RouteDefinition.class);
+        if (def == null) {
+            return;
+        }
+
+        // add will remove existing route first
+        context.addRouteDefinition(def);
+    }
+
 }

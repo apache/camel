@@ -16,13 +16,18 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ModelHelper;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
@@ -173,6 +178,32 @@ public class ManagedCamelContext {
             template.stop();
         }
         return answer;
+    }
+
+    @ManagedOperation(description = "Dumps the routes as XML")
+    public String dumpRoutesAsXml() throws Exception {
+        List<RouteDefinition> routes = context.getRouteDefinitions();
+        if (routes.isEmpty()) {
+            return null;
+        }
+
+        // use a routes definition to dump the routes
+        RoutesDefinition def = new RoutesDefinition();
+        def.setRoutes(routes);
+        return ModelHelper.dumpModelAsXml(def);
+    }
+
+    @ManagedOperation(description = "Adds or updates existing routes from XML")
+    public void addOrUpdateRoutesFromXml(String xml) throws Exception {
+        // convert to model from xml
+        InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, xml);
+        RoutesDefinition def = context.loadRoutesDefinition(is);
+        if (def == null) {
+            return;
+        }
+
+        // add will remove existing route first
+        context.addRouteDefinitions(def.getRoutes());
     }
 
 }

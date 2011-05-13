@@ -614,7 +614,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public synchronized RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception {
         // load routes using JAXB
         if (jaxbContext == null) {
-            jaxbContext = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES);
+            // must use classloader from CamelContext to have JAXB working
+            jaxbContext = JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES, CamelContext.class.getClassLoader());
         }
 
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
