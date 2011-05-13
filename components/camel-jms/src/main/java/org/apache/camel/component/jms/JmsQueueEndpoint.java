@@ -22,7 +22,9 @@ import javax.jms.JMSException;
 import javax.jms.Queue;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.util.MessageHelper;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -102,12 +104,55 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
 
     @ManagedOperation(description = "Get Exchange from queue by index")
     public String browseExchange(Integer index) {
-        Exchange exchange = getExchanges().get(index);
+        List<Exchange> exchanges = getExchanges();
+        if (index >= exchanges.size()) {
+            return null;
+        }
+        Exchange exchange = exchanges.get(index);
         if (exchange == null) {
             return null;
         }
         // must use java type with JMX such as java.lang.String
         return exchange.toString();
+    }
+
+    @ManagedOperation(description = "Get message body from queue by index")
+    public String browseMessageBody(Integer index) {
+        List<Exchange> exchanges = getExchanges();
+        if (index >= exchanges.size()) {
+            return null;
+        }
+        Exchange exchange = exchanges.get(index);
+        if (exchange == null) {
+            return null;
+        }
+
+        Object body;
+        if (exchange.hasOut()) {
+            body = exchange.getOut().getBody();
+        } else {
+            body = exchange.getIn().getBody();
+        }
+
+        // must use java type with JMX such as java.lang.String
+        return body != null ? body.toString() : null;
+    }
+
+    @ManagedOperation(description = "Get message as XML from queue by index")
+    public String browseMessageAsXml(Integer index) {
+        List<Exchange> exchanges = getExchanges();
+        if (index >= exchanges.size()) {
+            return null;
+        }
+        Exchange exchange = exchanges.get(index);
+        if (exchange == null) {
+            return null;
+        }
+
+        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        String xml = MessageHelper.dumpAsXml(msg);
+
+        return xml;
     }
 
     protected QueueBrowseStrategy createQueueBrowseStrategy() {

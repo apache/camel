@@ -26,6 +26,7 @@ import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.StringHelper.xmlEncode;
 
 /**
  * @version 
@@ -60,7 +61,7 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
     }
 
     protected void printRoutes(PrintWriter writer, String group, List<RouteDefinition> routes) {
-        group = encode(group);
+        group = xmlEncode(group);
         if (group != null) {
             int idx = group.lastIndexOf('.');
             String name = group;
@@ -78,7 +79,7 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
                 if (first) {
                     first = false;
                     if (group != null) {
-                        writer.println("<Edge fromID='" + group + "' toID='" + encode(nodeData.id) + "'/>");
+                        writer.println("<Edge fromID='" + group + "' toID='" + xmlEncode(nodeData.id) + "'/>");
                     }
                 }
                 printRoute(writer, route, nodeData);
@@ -115,13 +116,13 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
 
         if (fromData != null) {
             writer.print("<Edge fromID=\"");
-            writer.print(encode(fromData.id));
+            writer.print(xmlEncode(fromData.id));
             writer.print("\" toID=\"");
-            writer.print(encode(toData.id));
+            writer.print(xmlEncode(toData.id));
             String association = toData.edgeLabel;
             if (isEmpty(association)) {
                 writer.print("\" association=\"");
-                writer.print(encode(association));
+                writer.print(xmlEncode(association));
             }
             writer.println("\"/>");
         }
@@ -145,13 +146,13 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
 
             writer.println();
             writer.print("<Node id=\"");
-            writer.print(encode(data.id));
+            writer.print(xmlEncode(data.id));
             writer.print("\" name=\"");
             String name = data.label;
             if (isEmpty(name)) {
                 name = data.tooltop;
             }
-            writer.print(encode(name));
+            writer.print(xmlEncode(name));
             writer.print("\" nodeType=\"");
             String nodeType = data.image;
             if (isEmpty(nodeType)) {
@@ -160,22 +161,15 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
                     nodeType = "node";
                 }
             }
-            writer.print(encode(nodeType));
+            writer.print(xmlEncode(nodeType));
             writer.print("\" description=\"");
-            writer.print(encode(data.tooltop));
+            writer.print(xmlEncode(data.tooltop));
             if (addUrl) {
                 writer.print("\" url=\"");
-                writer.print(encode(data.url));
+                writer.print(xmlEncode(data.url));
             }
             writer.println("\"/>");
         }
     }
 
-    protected String encode(String text) {
-        if (text == null) {
-            return "";
-        }
-        return text.replaceAll("\"", "&quot;").replaceAll("<", "&lt;").
-                replaceAll(">", "&gt;").replaceAll("&", "&amp;");
-    }
 }

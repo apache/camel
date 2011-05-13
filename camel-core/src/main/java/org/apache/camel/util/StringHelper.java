@@ -75,5 +75,19 @@ public final class StringHelper {
         s = s.replaceAll("\"", "");
         return s;
     }
-    
+
+    /**
+     * Encodes the text into safe XML by replacing < > and & with XML tokens
+     *
+     * @param text  the text
+     * @return the encoded text
+     */
+    public static String xmlEncode(String text) {
+        if (text == null) {
+            return "";
+        }
+        // must replace amp first, so we dont replace &lt; to amp later
+        return text.replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+    }
+
 }

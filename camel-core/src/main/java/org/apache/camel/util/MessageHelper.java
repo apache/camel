@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Map;
+import java.util.TreeMap;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
@@ -233,6 +235,74 @@ public final class MessageHelper {
         }
 
         return prepend + body;
+    }
+
+    /**
+     * Dumps the message as a generic XML structure.
+     *
+     * @param message  the message
+     * @return the XML
+     */
+    public static String dumpAsXml(Message message) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<message>\n");
+
+        // headers
+        if (message.hasHeaders()) {
+            sb.append("<headers>\n");
+            // sort the headers so they are listed A..Z
+            Map<String, Object> headers = new TreeMap<String, Object>(message.getHeaders());
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                Object value = entry.getValue();
+                String type = ObjectHelper.classCanonicalName(value);
+                sb.append("<header key=\"" + entry.getKey() + "\"");
+                if (type != null) {
+                    sb.append(" type=\"" + type + "\"");
+                }
+                sb.append(">");
+
+                // dump header value as XML, use Camel type converter to convert to String
+                if (value != null) {
+                    String xml = message.getExchange().getContext().getTypeConverter().convertTo(String.class, value);
+                    if (xml != null) {
+                        // is the header value already XML
+                        if (xml.startsWith("<") && xml.endsWith(">")) {
+                            sb.append(xml);
+                        } else {
+                            // no its not xml so xml encode it
+                            sb.append(StringHelper.xmlEncode(xml));
+                        }
+                    }
+                }
+
+                sb.append("</header>\n");
+            }
+            sb.append("</headers>\n");
+        }
+
+        sb.append("<body");
+        String type = ObjectHelper.classCanonicalName(message.getBody());
+        if (type != null) {
+            sb.append(" type=\"" + type + "\"");
+        }
+        sb.append(">");
+
+        // dump body value as XML, use Camel type converter to convert to String
+        String xml = message.getBody(String.class);
+        if (xml != null) {
+            // is the body already XML
+            if (xml.startsWith("<") && xml.endsWith(">")) {
+                sb.append(xml);
+            } else {
+                // no its not xml so xml encode it
+                sb.append(StringHelper.xmlEncode(xml));
+            }
+        }
+
+        sb.append("</body>\n");
+
+        sb.append("</message>");
+        return sb.toString();
     }
 
 }

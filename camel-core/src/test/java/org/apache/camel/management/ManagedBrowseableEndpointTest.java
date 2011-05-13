@@ -50,6 +50,10 @@ public class ManagedBrowseableEndpointTest extends ManagementTestSupport {
         out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{1}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
         assertTrue(out.contains("Bye World"));
+
+        out = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[]{1}, new String[]{"java.lang.Integer"});
+        assertNotNull(out);
+        assertEquals("Bye World", out);
     }
 
     @Override

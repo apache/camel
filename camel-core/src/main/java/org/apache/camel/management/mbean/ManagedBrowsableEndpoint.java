@@ -17,7 +17,9 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.util.MessageHelper;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -54,6 +56,43 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint {
         }
         // must use java type with JMX such as java.lang.String
         return exchange.toString();
+    }
+
+    @ManagedOperation(description = "Get message body from queue by index")
+    public String browseMessageBody(Integer index) {
+        if (index >= endpoint.getExchanges().size()) {
+            return null;
+        }
+        Exchange exchange = endpoint.getExchanges().get(index);
+        if (exchange == null) {
+            return null;
+        }
+
+        Object body;
+        if (exchange.hasOut()) {
+            body = exchange.getOut().getBody();
+        } else {
+            body = exchange.getIn().getBody();
+        }
+
+        // must use java type with JMX such as java.lang.String
+        return body != null ? body.toString() : null;
+    }
+
+    @ManagedOperation(description = "Get message as XML from queue by index")
+    public String browseMessageAsXml(Integer index) {
+        if (index >= endpoint.getExchanges().size()) {
+            return null;
+        }
+        Exchange exchange = endpoint.getExchanges().get(index);
+        if (exchange == null) {
+            return null;
+        }
+
+        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        String xml = MessageHelper.dumpAsXml(msg);
+
+        return xml;
     }
 
 }
