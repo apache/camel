@@ -141,7 +141,7 @@ public abstract class AbstractFeatureTest {
     }
     
     public static UrlReference getKarafFeatureUrl() {
-        String karafVersion = "2.2.0";
+        String karafVersion = "2.2.1";
         System.out.println("*** The karaf version is " + karafVersion + " ***");
 
         String type = "xml/features";
