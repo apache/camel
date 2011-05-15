@@ -94,12 +94,14 @@ public class SqsComponentTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            final String sqsURI = String.format("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&messageRetentionPeriod=%s&maximumMessageSize=%s&policy=%s",
+                    "1209600", "65536", "");
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient");
+                    .to(sqsURI);
                 
-                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient")
+                from(sqsURI)
                     .to("mock:result");
             }
         };

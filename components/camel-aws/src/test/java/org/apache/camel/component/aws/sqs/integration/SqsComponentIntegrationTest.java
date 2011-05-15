@@ -28,7 +28,11 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SqsComponentIntegrationTest extends CamelTestSupport {
+    
+    private String accessKey = "xxx";
+    private String secretKey = "yyy";
     
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
@@ -37,7 +41,6 @@ public class SqsComponentIntegrationTest extends CamelTestSupport {
     private MockEndpoint result;
     
     @Test
-    @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
     public void sendInOnly() throws Exception {
         result.expectedMessageCount(1);
         
@@ -61,7 +64,6 @@ public class SqsComponentIntegrationTest extends CamelTestSupport {
     }
     
     @Test
-    @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
     public void sendInOut() throws Exception {
         result.expectedMessageCount(1);
         
@@ -85,13 +87,15 @@ public class SqsComponentIntegrationTest extends CamelTestSupport {
     }
     
     protected RouteBuilder createRouteBuilder() throws Exception {
+        final String sqsURI = String.format("aws-sqs://MyQueue?accessKey=%s&secretKey=%s&messageRetentionPeriod=%s&maximumMessageSize=%s&policy=%s",
+                accessKey, secretKey, "1209600", "65536", "");
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy");
+                    .to(sqsURI);
                 
-                from("aws-sqs://MyQueue?accessKey=xxx&secretKey=yyy")
+                from(sqsURI)
                     .to("mock:result");
             }
         };

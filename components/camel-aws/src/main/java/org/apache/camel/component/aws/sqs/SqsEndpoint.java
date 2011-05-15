@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-import java.util.HashMap;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
+import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -34,6 +33,8 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
@@ -74,7 +75,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         
         // creates a new queue, or returns the URL of an existing one
         CreateQueueRequest request = new CreateQueueRequest(configuration.getQueueName());
-        request.setDefaultVisibilityTimeout(getConfiguration().getDefaultVisibilityTimeout() != null ? getConfiguration().getDefaultVisibilityTimeout() : null);
+        if (getConfiguration().getDefaultVisibilityTimeout() != null) {
+            request.setDefaultVisibilityTimeout(getConfiguration().getDefaultVisibilityTimeout());
+        }
         
         LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
         
@@ -82,6 +85,29 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         queueUrl = queueResult.getQueueUrl();
         
         LOG.trace("Queue created and available at: {}", queueUrl);
+
+        // According to the documentation, only one setting can be made at a time, even though they go into a Map.
+        if (getConfiguration().getMaximumMessageSize() != null) {
+            updateAttribute("MaximumMessageSize", getConfiguration().getMaximumMessageSize());
+        }
+        if (getConfiguration().getMessageRetentionPeriod() != null) {
+            updateAttribute("MessageRetentionPeriod", getConfiguration().getMessageRetentionPeriod());
+        }
+        if (getConfiguration().getPolicy() != null) {
+            updateAttribute("Policy", getConfiguration().getPolicy());
+        }
+    }
+
+    protected void updateAttribute(String attribute, Object value) {
+        SetQueueAttributesRequest setQueueAttributesRequest = new SetQueueAttributesRequest();
+        setQueueAttributesRequest.setQueueUrl(queueUrl);
+        setQueueAttributesRequest.getAttributes().put(attribute, String.valueOf(value));
+        
+        LOG.trace("Updating queue [{}] with request: {}", configuration.getQueueName(), setQueueAttributesRequest);
+        
+        client.setQueueAttributes(setQueueAttributesRequest);
+        
+        LOG.trace("Queue updated");
     }
 
     @Override

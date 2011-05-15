@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SqsComponentConfigurationTest extends CamelTestSupport {
     
@@ -39,6 +39,9 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getDefaultVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getAmazonSQSEndpoint());
+        assertNull(endpoint.getConfiguration().getMaximumMessageSize());
+        assertNull(endpoint.getConfiguration().getMessageRetentionPeriod());
+        assertNull(endpoint.getConfiguration().getPolicy());
     }
     
     @Test
@@ -58,6 +61,9 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getDefaultVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getVisibilityTimeout());
         assertNull(endpoint.getConfiguration().getAmazonSQSEndpoint());
+        assertNull(endpoint.getConfiguration().getMaximumMessageSize());
+        assertNull(endpoint.getConfiguration().getMessageRetentionPeriod());
+        assertNull(endpoint.getConfiguration().getPolicy());
     }
     
     @Test
@@ -70,7 +76,9 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         
         SqsComponent component = new SqsComponent(context);
         SqsEndpoint endpoint = (SqsEndpoint) component.createEndpoint("aws-sqs://MyQueue?amazonSQSEndpoint=sns.eu-west-1.amazonaws.com&accessKey=xxx&secretKey=yyy&attributeNames=#attributeNames"
-                + "&DefaultVisibilityTimeout=1000&visibilityTimeout=2000");
+                + "&DefaultVisibilityTimeout=1000&visibilityTimeout=2000&maximumMessageSize=65536&messageRetentionPeriod=1209600&policy="
+                + "%7B%22Version%22%3A%222008-10-17%22%2C%22Id%22%3A%22%2F195004372649%2FMyQueue%2FSQSDefaultPolicy%22%2C%22Statement%22%3A%5B%7B%22Sid%22%3A%22Queue1ReceiveMessage%22%2C%22"
+                + "Effect%22%3A%22Allow%22%2C%22Principal%22%3A%7B%22AWS%22%3A%22*%22%7D%2C%22Action%22%3A%22SQS%3AReceiveMessage%22%2C%22Resource%22%3A%22%2F195004372649%2FMyQueue%22%7D%5D%7D");
         
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -80,6 +88,11 @@ public class SqsComponentConfigurationTest extends CamelTestSupport {
         assertEquals(new Integer(1000), endpoint.getConfiguration().getDefaultVisibilityTimeout());
         assertEquals(new Integer(2000), endpoint.getConfiguration().getVisibilityTimeout());
         assertEquals("sns.eu-west-1.amazonaws.com", endpoint.getConfiguration().getAmazonSQSEndpoint());
+        assertEquals(new Integer(65536), endpoint.getConfiguration().getMaximumMessageSize());
+        assertEquals(new Integer(1209600), endpoint.getConfiguration().getMessageRetentionPeriod());
+        assertEquals("{\"Version\":\"2008-10-17\",\"Id\":\"/195004372649/MyQueue/SQSDefaultPolicy\",\"Statement\":[{\"Sid\":\"Queue1ReceiveMessage\",\"Effect\":\"Allow\",\"Principal\":"
+                + "{\"AWS\":\"*\"},\"Action\":\"SQS:ReceiveMessage\",\"Resource\":\"/195004372649/MyQueue\"}]}",
+                endpoint.getConfiguration().getPolicy());
     }
     
     @Test
