@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.idempotent.jpa;
 
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -79,6 +80,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
                     MessageProcessed processed = new MessageProcessed();
                     processed.setProcessorName(processorName);
                     processed.setMessageId(messageId);
+                    processed.setCreatedAt(new Date());
                     jpaTemplate.persist(processed);
                     jpaTemplate.flush();
                     return Boolean.TRUE;

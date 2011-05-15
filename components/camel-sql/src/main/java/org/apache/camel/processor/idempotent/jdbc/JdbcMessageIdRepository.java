@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.idempotent.jdbc;
 
+import java.sql.Timestamp;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.impl.ServiceSupport;
@@ -37,7 +39,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class JdbcMessageIdRepository extends ServiceSupport implements IdempotentRepository<String> {
     
     protected static final String QUERY_STRING = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
-    protected static final String INSERT_STRING = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId) VALUES (?, ?)";
+    protected static final String INSERT_STRING = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
     protected static final String DELETE_STRING = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
     
     private final JdbcTemplate jdbcTemplate;
@@ -74,7 +76,7 @@ public class JdbcMessageIdRepository extends ServiceSupport implements Idempoten
             public Object doInTransaction(TransactionStatus status) {
                 int count = jdbcTemplate.queryForInt(QUERY_STRING, processorName, messageId);
                 if (count == 0) {
-                    jdbcTemplate.update(INSERT_STRING, processorName, messageId);
+                    jdbcTemplate.update(INSERT_STRING, processorName, messageId, new Timestamp(System.currentTimeMillis()));
                     return Boolean.TRUE;
                 } else {
                     return Boolean.FALSE;

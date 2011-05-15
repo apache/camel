@@ -82,7 +82,7 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         transactionTemplate.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus status) {
                 try {
-                    jdbcTemplate.execute("CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(20), messageId VARCHAR(10))");
+                    jdbcTemplate.execute("CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(20), messageId VARCHAR(10), createdAt timestamp)");
                 } catch (DataAccessException e) {
                     // noop if table already exists 
                 }

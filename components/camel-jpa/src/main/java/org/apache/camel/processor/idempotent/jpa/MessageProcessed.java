@@ -17,10 +17,14 @@
 package org.apache.camel.processor.idempotent.jpa;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 /**
@@ -32,13 +36,14 @@ import javax.persistence.UniqueConstraint;
     uniqueConstraints = @UniqueConstraint(columnNames = {"processorName", "messageId"})
 )
 public class MessageProcessed implements Serializable {
+    protected Date createdAt;
     private Long id;
     private String messageId;
     private String processorName;
 
     @Override
     public String toString() {
-        return "MessageProcessed[processorName: " + getProcessorName() + " messageId: " + getMessageId() + "]";
+        return "MessageProcessed[processorName: " + getProcessorName() + " messageId: " + getMessageId() + " createdAt: " + getCreatedAt() + "]";
     }
 
     @Id
@@ -65,5 +70,14 @@ public class MessageProcessed implements Serializable {
 
     public void setProcessorName(String processorName) {
         this.processorName = processorName;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 }
