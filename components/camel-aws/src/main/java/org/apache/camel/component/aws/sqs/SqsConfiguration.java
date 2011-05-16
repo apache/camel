@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-import com.amazonaws.services.sqs.AmazonSQSClient;
-
 import java.util.Collection;
+
+import com.amazonaws.services.sqs.AmazonSQSClient;
 
 /**
  * The AWS SQS component configuration properties

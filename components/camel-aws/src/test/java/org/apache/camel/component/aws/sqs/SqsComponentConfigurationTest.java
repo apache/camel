@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SqsComponentConfigurationTest extends CamelTestSupport {
     

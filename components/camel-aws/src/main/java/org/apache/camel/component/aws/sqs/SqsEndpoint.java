@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import java.util.HashMap;
+
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSClient;
@@ -34,7 +36,7 @@ import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
+
 
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SQS Endpoint</a>.  
