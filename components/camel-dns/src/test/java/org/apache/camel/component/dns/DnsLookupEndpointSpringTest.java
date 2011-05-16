@@ -26,6 +26,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -66,6 +67,7 @@ public class DnsLookupEndpointSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
+    @Ignore("Testing behind nat produces timeouts")
     public void testDNSWithNameHeader() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {
@@ -81,6 +83,7 @@ public class DnsLookupEndpointSpringTest extends CamelSpringTestSupport {
     }
 
     @Test
+    @Ignore("Testing behind nat produces timeouts")
     public void testDNSWithNameHeaderAndType() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedMessagesMatches(new Predicate() {

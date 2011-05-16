@@ -26,7 +26,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.xbill.DNS.Address;
 
 /**
  * An endpoint to conduct IP address lookup from the host name.
@@ -44,7 +43,7 @@ public class DnsIpEndpoint extends DefaultEndpoint {
                 String domain = exchange.getIn().getHeader(DnsConstants.DNS_DOMAIN, String.class);
                 ObjectHelper.notEmpty(domain, "Header " + DnsConstants.DNS_DOMAIN);
 
-                InetAddress address = Address.getByName(domain);
+                InetAddress address = InetAddress.getByName(domain);
                 exchange.getIn().setBody(address);
             }
         };

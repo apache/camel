@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.dns;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -26,6 +27,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Lookup;
+import org.xbill.DNS.SimpleResolver;
 import org.xbill.DNS.Type;
 
 /**
@@ -58,22 +60,15 @@ public class DnsLookupEndpoint extends DefaultEndpoint {
                     dnsClass = DClass.value(String.valueOf(dclass));
                 }
 
-                Lookup lookup;
-                if (dnsType != null && dnsClass != null) {
-                    lookup = new Lookup(dnsName, dnsType, dnsClass);
-                } else {
-                    if (dnsType != null) {
-                        lookup = new Lookup(dnsName, dnsType);
-                    } else {
-                        lookup = new Lookup(dnsName);
-                    }
-                }
+                Lookup lookup = (dnsClass == null) ? 
+                    (dnsType == null ? new Lookup(dnsName) : new Lookup(dnsName, dnsType)) : 
+                    new Lookup(dnsName, dnsType, dnsClass);
 
                 lookup.run();
                 if (lookup.getAnswers() != null) {
                     exchange.getIn().setBody(lookup.getAnswers());
                 } else {
-                    exchange.getIn().setBody(lookup.getErrorString());
+                    throw new CamelException(lookup.getErrorString());
                 }
             }
         };
