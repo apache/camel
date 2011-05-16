@@ -55,7 +55,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
         assertEquals(6, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
-        assertEquals("Size of list", 2, endpoint.qeueSize());
+        assertEquals("Size of list", 2, endpoint.queueSize());
 
         // for JMX stuff
         for (int i = 0; i < 2; i++) {

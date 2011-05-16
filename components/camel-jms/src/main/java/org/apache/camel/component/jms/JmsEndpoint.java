@@ -38,11 +38,13 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.jms.reply.PersistentQueueReplyManager;
 import org.apache.camel.component.jms.reply.ReplyManager;
 import org.apache.camel.component.jms.reply.TemporaryQueueReplyManager;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -945,6 +947,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @Override
     public String getEndpointUri() {
         return super.getEndpointUri();
+    }
+
+    @ManagedAttribute(description = "Service State")
+    public String getState() {
+        ServiceStatus status = this.getStatus();
+        // if no status exists then its stopped
+        if (status == null) {
+            status = ServiceStatus.Stopped;
+        }
+        return status.name();
     }
 
     // Implementation methods

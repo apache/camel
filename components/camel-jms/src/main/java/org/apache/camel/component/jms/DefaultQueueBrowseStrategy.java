@@ -30,18 +30,17 @@ import org.springframework.jms.core.BrowserCallback;
 import org.springframework.jms.core.JmsOperations;
 
 /**
- * A default implementation of queue browsing using the Spring 2.5.x {@link BrowserCallback}
+ * A default implementation of queue browsing using the Spring {@link BrowserCallback}
+ *
  * @version 
  */
 public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
 
     public List<Exchange> browse(JmsOperations template, String queue, final JmsQueueEndpoint endpoint) {
-        return  (List<Exchange>) template.browse(queue, new BrowserCallback() {
-
-            public Object doInJms(Session session, QueueBrowser browser) throws JMSException {
-                // TODO not the best implementation in the world as we have to browse
+        return  template.browse(queue, new BrowserCallback<List<Exchange>>() {
+            public List<Exchange> doInJms(Session session, QueueBrowser browser) throws JMSException {
+                // not the best implementation in the world as we have to browse
                 // the entire queue, which could be massive
-
                 List<Exchange> answer = new ArrayList<Exchange>();
                 Enumeration iter = browser.getEnumeration();
                 while (iter.hasMoreElements()) {

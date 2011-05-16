@@ -98,7 +98,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
     }
 
     @ManagedOperation(description = "Current number of Exchanges in Queue")
-    public long qeueSize() {
+    public long queueSize() {
         return getExchanges().size();
     }
 
