@@ -34,6 +34,7 @@
     <name>Camel :: Platforms :: Apache Karaf</name>
 
     <modules>
+      <module>commands</module>
       <module>features</module>
     </modules>
 
