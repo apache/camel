@@ -208,13 +208,12 @@
   <dependencyManagement>
     <dependencies>
 
-      <!-- Camel jars -->
+      <!-- camel components -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core</artifactId>
         <version>${project.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-amqp</artifactId>
@@ -707,6 +706,14 @@
         <version>${project.version}</version>
       </dependency>
 
+      <!-- camel karaf -->
+      <dependency>
+        <groupId>org.apache.camel.karaf</groupId>
+        <artifactId>camel-karaf-commands</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- camel examples -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-example-aggregate</artifactId>
@@ -832,12 +839,13 @@
         <artifactId>camel-example-tracer</artifactId>
         <version>${project.version}</version>
       </dependency>
+
+      <!-- camel misc -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-manual</artifactId>
         <version>${project.version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.camel.tests</groupId>
         <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
@@ -859,7 +867,6 @@
         <version>${fuse-commons-management-version}</version>
       </dependency>
 
-
       <!-- optional dependencies -->
       <dependency>
         <groupId>javax.xml.bind</groupId>
@@ -877,7 +884,6 @@
         <artifactId>stax-api</artifactId>
         <version>${stax-api-version}</version>
       </dependency>
-
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
         <artifactId>jaxb-impl</artifactId>
@@ -947,54 +953,47 @@
         <version>${xbean-spring-version}</version>
       </dependency>
 
+      <!-- spec jars -->
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
         <version>${geronimo-j2ee-connector-spec-version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-jacc_1.0_spec</artifactId>
         <version>${geronimo-j2ee-jacc-spec-version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-j2ee-management_1.0_spec</artifactId>
         <version>${geronimo-j2ee-management-spec-version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jms_1.1_spec</artifactId>
         <version>${geronimo-jms-spec-version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jpa_3.0_spec</artifactId>
         <version>${geronimo-jpa-spec-version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.servicemix.specs</groupId>
         <artifactId>org.apache.servicemix.specs.java-persistence-api-1.1.1</artifactId>
         <version>${servicemix-specs-version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jsp_2.1_spec</artifactId>
         <version>${geronimo-jsp-spec-version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jta_1.1_spec</artifactId>
         <version>${geronimo-jta-spec-version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-servlet_2.4_spec</artifactId>
@@ -1057,13 +1056,11 @@
         <artifactId>spring-tx</artifactId>
         <version>${spring-version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.springframework.osgi</groupId>
         <artifactId>spring-osgi-core</artifactId>
         <version>${spring-osgi-version}</version>
       </dependency>
-
       <dependency>
         <groupId>org.springframework.osgi</groupId>
         <artifactId>spring-osgi-mock</artifactId>
@@ -1203,6 +1200,7 @@
         <artifactId>pax-swissbox-tinybundles</artifactId>
         <version>${pax-tiny-bundle-version}</version>
       </dependency>
+
       <!-- optional Saxon support-->
       <dependency>
         <groupId>net.sf.saxon</groupId>
@@ -1271,6 +1269,7 @@
         <version>${openjpa-version}</version>
       </dependency>
 
+      <!-- optional EHCache -->
       <dependency>
         <groupId>org.apache.servicemix.bundles</groupId>
         <artifactId>org.apache.servicemix.bundles.ehcache</artifactId>
@@ -1324,12 +1323,14 @@
         <version>${xstream-version}</version>
       </dependency>
 
+      <!-- optional Jettison -->
       <dependency>
         <groupId>org.codehaus.jettison</groupId>
         <artifactId>jettison</artifactId>
         <version>${jettison-version}</version>
       </dependency>
 
+      <!-- optional Tagsoup -->
       <dependency>
         <groupId>org.ccil.cowan.tagsoup</groupId>
         <artifactId>tagsoup</artifactId>
@@ -1343,6 +1344,7 @@
         <version>1.2.8</version>
       </dependency>
 
+      <!-- optional misc -->
       <dependency>
         <groupId>org.jruby</groupId>
         <artifactId>jruby</artifactId>
@@ -1441,7 +1443,7 @@
                 <echo file="target/camel.osgi.version.txt">
                   camel.osgi.version.clean = ${ov}
                   camel.schema.version = ${os}
-                              </echo>
+                 </echo>
               </tasks>
             </configuration>
             <goals>

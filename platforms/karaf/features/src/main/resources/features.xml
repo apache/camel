@@ -30,7 +30,7 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/${jaxb-bundle-version}</bundle>
     <bundle>mvn:org.fusesource.commonman/commons-management/${commons-management-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core/${pom.version}</bundle>
-    <bundle>mvn:org.apache.camel.karaf/org.apache.camel.karaf.commands/${pom.version}</bundle>
+    <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${pom.version}</bundle>
   </feature>
   <feature name='camel-spring' version='${pom.version}' resolver='(obr)'>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
