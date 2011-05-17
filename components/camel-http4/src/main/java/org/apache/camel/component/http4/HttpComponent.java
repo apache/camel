@@ -110,37 +110,34 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     }
 
     private HttpClientConfigurer configureBasicAuthentication(Map<String, Object> parameters, HttpClientConfigurer configurer) {
-        String username = getAndRemoveParameter(parameters, "username", String.class);
-        String password = getAndRemoveParameter(parameters, "password", String.class);
+        String authUsername = getAndRemoveParameter(parameters, "authUsername", String.class);
+        String authPassword = getAndRemoveParameter(parameters, "authPassword", String.class);
 
-        if (username != null && password != null) {
-            String domain = getAndRemoveParameter(parameters, "domain", String.class);
-            String host = getAndRemoveParameter(parameters, "host", String.class);
+        if (authUsername != null && authPassword != null) {
+            String authDomain = getAndRemoveParameter(parameters, "authDomain", String.class);
+            String authHost = getAndRemoveParameter(parameters, "authHost", String.class);
             
-            return CompositeHttpConfigurer.combineConfigurers(
-                    configurer,
-                    new BasicAuthenticationHttpClientConfigurer(username, password, domain, host));
+            return CompositeHttpConfigurer.combineConfigurers(configurer, new BasicAuthenticationHttpClientConfigurer(authUsername, authPassword, authDomain, authHost));
         }
         
         return configurer;
     }
 
     private HttpClientConfigurer configureHttpProxy(Map<String, Object> parameters, HttpClientConfigurer configurer) {
-        String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
-        Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
+        String proxyAuthHost = getAndRemoveParameter(parameters, "proxyAuthHost", String.class);
+        Integer proxyAuthPort = getAndRemoveParameter(parameters, "proxyAuthPort", Integer.class);
         
-        if (proxyHost != null && proxyPort != null) {
-            String proxyUsername = getAndRemoveParameter(parameters, "proxyUsername", String.class);
-            String proxyPassword = getAndRemoveParameter(parameters, "proxyPassword", String.class);
-            String proxyDomain = getAndRemoveParameter(parameters, "proxyDomain", String.class);
-            String proxyNtHost = getAndRemoveParameter(parameters, "proxyNtHost", String.class);
+        if (proxyAuthHost != null && proxyAuthPort != null) {
+            String proxyAuthUsername = getAndRemoveParameter(parameters, "proxyAuthUsername", String.class);
+            String proxyAuthPassword = getAndRemoveParameter(parameters, "proxyAuthPassword", String.class);
+            String proxyAuthDomain = getAndRemoveParameter(parameters, "proxyAuthDomain", String.class);
+            String proxyAuthNtHost = getAndRemoveParameter(parameters, "proxyAuthNtHost", String.class);
             
-            if (proxyUsername != null && proxyPassword != null) {
+            if (proxyAuthUsername != null && proxyAuthPassword != null) {
                 return CompositeHttpConfigurer.combineConfigurers(
-                        configurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort, proxyUsername, proxyPassword, proxyDomain, proxyNtHost));
+                    configurer, new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort, proxyAuthUsername, proxyAuthPassword, proxyAuthDomain, proxyAuthNtHost));
             } else {
-                return CompositeHttpConfigurer.combineConfigurers(
-                        configurer, new ProxyHttpClientConfigurer(proxyHost, proxyPort));
+                return CompositeHttpConfigurer.combineConfigurers(configurer, new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort));
             }
         }
         

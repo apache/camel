@@ -85,8 +85,8 @@ public class HttpProxyServerTest extends BaseHttpTest {
     
     @Test
     public void testDifferentHttpProxyConfigured() throws Exception {
-        HttpEndpoint http1 = context.getEndpoint("http4://www.google.com?proxyHost=myproxy&proxyPort=1234", HttpEndpoint.class);
-        HttpEndpoint http2 = context.getEndpoint("http4://www.google.com?test=parameter&proxyHost=myotherproxy&proxyPort=2345", HttpEndpoint.class);
+        HttpEndpoint http1 = context.getEndpoint("http4://www.google.com?proxyAuthHost=myproxy&proxyAuthPort=1234", HttpEndpoint.class);
+        HttpEndpoint http2 = context.getEndpoint("http4://www.google.com?test=parameter&proxyAuthHost=myotherproxy&proxyAuthPort=2345", HttpEndpoint.class);
 
         
         HttpClient client1 = http1.createHttpClient();
@@ -100,8 +100,8 @@ public class HttpProxyServerTest extends BaseHttpTest {
         assertEquals(2345, proxy2.getPort());
         
       //As the endpointUri is recreated, so the parameter could be in different place, so we use the URISupport.normalizeUri
-        assertEquals("Get a wrong endpoint uri of http1", "http4://www.google.com?proxyHost=myproxy&proxyPort=1234", URISupport.normalizeUri(http1.getEndpointUri()));
-        assertEquals("Get a wrong endpoint uri of http2", "http4://www.google.com?proxyHost=myotherproxy&proxyPort=2345&test=parameter", URISupport.normalizeUri(http2.getEndpointUri()));
+        assertEquals("Get a wrong endpoint uri of http1", "http4://www.google.com?proxyAuthHost=myproxy&proxyAuthPort=1234", URISupport.normalizeUri(http1.getEndpointUri()));
+        assertEquals("Get a wrong endpoint uri of http2", "http4://www.google.com?proxyAuthHost=myotherproxy&proxyAuthPort=2345&test=parameter", URISupport.normalizeUri(http2.getEndpointUri()));
 
         assertEquals("Should get the same EndpointKey", http1.getEndpointKey(), http2.getEndpointKey());
     }
@@ -113,7 +113,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
         expectedHeaders.put("Proxy-Connection", "Keep-Alive");
         proxy.register("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders));
 
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?proxyHost=" + getProxyHost() + "&proxyPort=" + getProxyPort(), new Processor() {
+        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?proxyAuthHost=" + getProxyHost() + "&proxyAuthPort=" + getProxyPort(), new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
@@ -157,8 +157,8 @@ public class HttpProxyServerTest extends BaseHttpTest {
         try {
             proxy.register("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders));
 
-            Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?proxyHost="
-                    + getProxyHost() + "&proxyPort=" + getProxyPort(), new Processor() {
+            Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?proxyAuthHost="
+                    + getProxyHost() + "&proxyAuthPort=" + getProxyPort(), new Processor() {
                         public void process(Exchange exchange) throws Exception {
                         }
                     });
@@ -174,8 +174,8 @@ public class HttpProxyServerTest extends BaseHttpTest {
     public void httpGetWithProxyAndWithUser() throws Exception {
         proxy.register("*", new ProxyAuthenticationValidationHandler("GET", null, null, getExpectedContent(), user, password));
 
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?proxyHost="
-                + getProxyHost() + "&proxyPort=" + getProxyPort() + "&proxyUsername=camel&proxyPassword=password", new Processor() {
+        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?proxyAuthHost="
+                + getProxyHost() + "&proxyAuthPort=" + getProxyPort() + "&proxyAuthUsername=camel&proxyAuthPassword=password", new Processor() {
                     public void process(Exchange exchange) throws Exception {
                     }
                 });

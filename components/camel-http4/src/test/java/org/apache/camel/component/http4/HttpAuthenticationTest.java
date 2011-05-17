@@ -41,7 +41,7 @@ public class HttpAuthenticationTest extends BaseHttpTest {
 
     @Test
     public void basicAuthenticationShouldSuccess() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/search?username=" + user + "&password=" + password, new Processor() {
+        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/search?authUsername=" + user + "&authPassword=" + password, new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
@@ -61,7 +61,7 @@ public class HttpAuthenticationTest extends BaseHttpTest {
 
     @Test
     public void basicAuthenticationShouldFailWithWrongCreds() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/search?throwExceptionOnFailure=false&username=camel&password=wrong", new Processor() {
+        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/search?throwExceptionOnFailure=false&authUsername=camel&authPassword=wrong", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });

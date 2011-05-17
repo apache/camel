@@ -48,7 +48,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     public void httpsGetWithAuthentication() throws Exception {
         localServer.register("/", new AuthenticationValidationHandler("GET", null, null, getExpectedContent(), user, password));
 
-        Exchange exchange = template.request("https4://127.0.0.1:" + getPort() + "/?username=camel&password=password&x509HostnameVerifier=x509HostnameVerifier", new Processor() {
+        Exchange exchange = template.request("https4://127.0.0.1:" + getPort() + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=x509HostnameVerifier", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
