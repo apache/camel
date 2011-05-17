@@ -222,16 +222,13 @@ public class SplitterTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(0).handled(false));
+                errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(0));
+                onException(CamelException.class).handled(false);
 
                 from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
-
                 from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().to("mock:result");
-
                 from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:result");
-
                 from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().streaming().to("mock:result");
-
                 from("direct:exception")
                         .split(body().tokenize(","))
                         .aggregationStrategy(new MyAggregationStrategy())
@@ -245,7 +242,6 @@ public class SplitterTest extends ContextTestSupport {
 
                             }
                         }).to("mock:result");
-
                 from("direct:simple").split(body()).to("mock:result");
             }
         };

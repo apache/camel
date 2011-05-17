@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -62,8 +63,8 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // no redeliveries as we want the file consumer to try again
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0)
-                             .logStackTrace(false).handled(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).logStackTrace(false));
+                onException(IllegalArgumentException.class).handled(false);
 
                 from("file://target/deletefile?delete=true&initialDelay=0&delay=10").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

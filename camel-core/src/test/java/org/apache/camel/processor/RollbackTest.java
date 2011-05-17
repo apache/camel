@@ -80,7 +80,8 @@ public class RollbackTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).redeliveryDelay(0).handled(false));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).redeliveryDelay(0));
+                onException(RollbackExchangeException.class).handled(false);
 
                 from("direct:start")
                     .choice()

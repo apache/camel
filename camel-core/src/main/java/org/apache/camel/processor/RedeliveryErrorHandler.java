@@ -58,7 +58,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final AsyncProcessor outputAsync;
     protected final Processor redeliveryProcessor;
     protected final RedeliveryPolicy redeliveryPolicy;
-    protected final Predicate handledPolicy;
     protected final Predicate retryWhilePolicy;
     protected final CamelLogger logger;
     protected final boolean useOriginalMessagePolicy;
@@ -78,7 +77,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Processor deadLetterProcessor = deadLetter;
         Processor failureProcessor;
         Processor onRedeliveryProcessor = redeliveryProcessor;
-        Predicate handledPredicate = handledPolicy;
+        Predicate handledPredicate = getDefaultHandledPredicate();
         Predicate continuedPredicate;
         boolean useOriginalInMessage = useOriginalMessagePolicy;
         boolean asyncDelayedRedelivery = redeliveryPolicy.isAsyncDelayedRedelivery();
@@ -168,9 +167,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
     }
 
-    public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor,
-                                  RedeliveryPolicy redeliveryPolicy, Predicate handledPolicy, Processor deadLetter,
-                                  String deadLetterUri, boolean useOriginalMessagePolicy, Predicate retryWhile, String executorServiceRef) {
+    public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, 
+            Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter, 
+            String deadLetterUri, boolean useOriginalMessagePolicy, Predicate retryWhile, String executorServiceRef) {
+
         ObjectHelper.notNull(camelContext, "CamelContext", this);
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
 
@@ -182,7 +182,6 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.redeliveryPolicy = redeliveryPolicy;
         this.logger = logger;
         this.deadLetterUri = deadLetterUri;
-        this.handledPolicy = handledPolicy;
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
         this.retryWhilePolicy = retryWhile;
         this.executorServiceRef = executorServiceRef;
@@ -462,6 +461,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     public CamelLogger getLogger() {
         return logger;
+    }
+
+    protected Predicate getDefaultHandledPredicate() {
+        // Default is not not handle errors
+        return null;
     }
 
     protected void prepareExchangeForContinue(Exchange exchange, RedeliveryData data) {

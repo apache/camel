@@ -20,6 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 
 /**
@@ -40,7 +42,6 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
      * @param logger                    logger to use for logging failures and redelivery attempts
      * @param redeliveryProcessor       an optional processor to run before redelivery attempt
      * @param redeliveryPolicy          policy for redelivery
-     * @param handledPolicy             policy for handling failed exception that are moved to the dead letter queue
      * @param exceptionPolicyStrategy   strategy for onException handling
      * @param deadLetter                the failure processor to send failed exchanges to
      * @param deadLetterUri             an optional uri for logging purpose
@@ -49,9 +50,9 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
      * @param executorServiceRef        reference to a {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
      */
     public DeadLetterChannel(CamelContext camelContext, Processor output, CamelLogger logger, Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy,
-                             Predicate handledPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy, Processor deadLetter,
-                             String deadLetterUri, boolean useOriginalBodyPolicy, Predicate retryWhile, String executorServiceRef) {
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, handledPolicy, deadLetter, deadLetterUri, useOriginalBodyPolicy, retryWhile, executorServiceRef);
+            ExceptionPolicyStrategy exceptionPolicyStrategy, Processor deadLetter, String deadLetterUri, boolean useOriginalBodyPolicy, Predicate retryWhile, String executorServiceRef) {
+
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, deadLetter, deadLetterUri, useOriginalBodyPolicy, retryWhile, executorServiceRef);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
@@ -69,4 +70,9 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
         return "DeadLetterChannel[" + output + ", " + (deadLetterUri != null ? deadLetterUri : deadLetter) + "]";
     }
 
+    @Override
+    protected Predicate getDefaultHandledPredicate() {
+        // DeadLetterChannel handles errors before sending to DLQ
+        return PredicateBuilder.toPredicate(ExpressionBuilder.constantExpression(true));
+    }
 }

@@ -65,8 +65,7 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0)
-                        .logStackTrace(false).handled(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
                 from("direct:start").idempotentConsumer(header("messageId"),
                         MemoryIdempotentRepository.memoryIdempotentRepository(200))

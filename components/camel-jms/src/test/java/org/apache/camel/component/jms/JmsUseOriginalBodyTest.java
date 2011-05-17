@@ -59,21 +59,23 @@ public class JmsUseOriginalBodyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // will use original
-                ErrorHandlerBuilder a = deadLetterChannel("mock:a")
-                    .maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false).useOriginalMessage().handled(true);
-
-                // will NOT use original
-                ErrorHandlerBuilder b = deadLetterChannel("mock:b")
-                    .maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false).handled(true);
-
                 from("activemq:queue:a")
-                    .errorHandler(a)
+                    .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .useOriginalMessage()
+                        .maximumRedeliveries(2)
+                        .to("mock:a")
+                        .end()
                     .setBody(body().append(" World"))
                     .process(new MyThrowProcessor());
 
                 from("activemq:queue:b")
-                    .errorHandler(b)
+                    .onException(IllegalArgumentException.class)
+                        .handled(true)
+                        .maximumRedeliveries(2)
+                        // this route does not .useOriginalMessage()
+                        .to("mock:b")
+                        .end()
                     .setBody(body().append(" World"))
                     .process(new MyThrowProcessor());
             }

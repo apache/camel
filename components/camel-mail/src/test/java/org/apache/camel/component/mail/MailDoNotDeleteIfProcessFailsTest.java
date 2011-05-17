@@ -81,7 +81,8 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // no redelivery for unit test as we want it to be polled next time
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).logStackTrace(false).handled(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).logStackTrace(false));
+                onException(IllegalArgumentException.class).handled(false); // DLC should not handle
 
                 from("imap://localhost?username=claus&password=secret&unseen=true&delay=250")
                         .process(new Processor() {

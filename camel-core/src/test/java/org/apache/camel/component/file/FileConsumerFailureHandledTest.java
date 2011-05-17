@@ -108,10 +108,10 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // make sure mock:error is the dead letter channel
                 // use no delay for fast unit testing
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2)
-                                 .redeliveryDelay(0).logStackTrace(false).handled(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
                 // special for not handled when we got beer
+                onException(RuntimeCamelException.class).handled(false);
                 onException(ValidationException.class).onWhen(exceptionMessage().contains("beer"))
                     .handled(false).to("mock:beer");
 

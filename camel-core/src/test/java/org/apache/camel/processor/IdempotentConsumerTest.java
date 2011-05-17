@@ -167,10 +167,10 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").handled(false).maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
                 from("direct:start").idempotentConsumer(
-                        header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
+                    header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
                 ).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("messageId", String.class);

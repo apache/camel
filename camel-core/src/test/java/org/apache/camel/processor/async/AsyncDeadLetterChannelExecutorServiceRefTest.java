@@ -46,7 +46,12 @@ public class AsyncDeadLetterChannelExecutorServiceRefTest extends ContextTestSup
                 context.getExecutorServiceStrategy().registerThreadPoolProfile(profile);
 
                 errorHandler(deadLetterChannel("mock:dead")
-                        .maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false).handled(false).executorServiceRef("myAsyncPool"));
+                    .maximumRedeliveries(2)
+                    .redeliveryDelay(0)
+                    .logStackTrace(false)
+                    .executorServiceRef("myAsyncPool"));
+                // we don't want the DLC to handle the exception
+                onException(Exception.class).handled(false);
 
                 from("direct:in")
                     .threads(2)

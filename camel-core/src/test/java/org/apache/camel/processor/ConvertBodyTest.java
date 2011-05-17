@@ -135,16 +135,14 @@ public class ConvertBodyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().handled(false));
+                errorHandler(deadLetterChannel("mock:dead").disableRedelivery());
+                // we don't want the DLC to handle the exception
+                onException(InvalidPayloadException.class).handled(false);
 
                 from("direct:start").convertBodyTo(Integer.class).to("mock:result");
-
                 from("direct:invalid").convertBodyTo(Date.class).to("mock:result");
-
                 from("direct:charset").convertBodyTo(byte[].class, "iso-8859-1").to("mock:result");
-
                 from("direct:charset2").convertBodyTo(byte[].class, "utf-16").to("mock:result");
-                
                 from("direct:charset3").convertBodyTo(String.class, "utf-16").to("mock:result");
             }
         };

@@ -51,7 +51,6 @@ public class AdviceWithContextScopedErrorHandlerIssueTest extends ContextTestSup
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("direct:start").routeId("route-a").to("direct:bar");
-
                 from("direct:bar").routeId("route-b").to("mock:bar");
             }
         };

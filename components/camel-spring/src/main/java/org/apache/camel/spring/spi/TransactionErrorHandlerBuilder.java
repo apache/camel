@@ -110,10 +110,9 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
         ObjectHelper.notNull(transactionTemplate, "transactionTemplate", this);
 
-        @SuppressWarnings("deprecation")
         TransactionErrorHandler answer = new TransactionErrorHandler(routeContext.getCamelContext(), processor,
-                getLogger(), getOnRedelivery(), getRedeliveryPolicy(), getHandledPolicy(),
-                getExceptionPolicyStrategy(), transactionTemplate, getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorServiceRef());
+            getLogger(), getOnRedelivery(), getRedeliveryPolicy(), getExceptionPolicyStrategy(), transactionTemplate, 
+            getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorServiceRef());
         // configure error handler before we can use it
         configure(answer);
         return answer;

@@ -85,13 +85,16 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // we don't want the DLC to handle the Exception
+                onException(IllegalArgumentException.class).handled(false);
+
                 from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).handled(false).redeliveryDelay(0))
+                    .errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).redeliveryDelay(0))
                     .process(outer)
                     .to("direct:outer");
 
                 from("direct:outer")
-                    .errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2).handled(false).redeliveryDelay(0))
+                    .errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2).redeliveryDelay(0))
                     .process(inner)
                     .to("mock:end");
             }

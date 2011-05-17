@@ -60,9 +60,10 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // will not use original exchange
-                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).redeliveryDelay(0).handled(false));
+                errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).redeliveryDelay(0));
 
                 // will use original exchange
+                onException(CamelExchangeException.class).handled(false);
                 onException(IllegalArgumentException.class)
                     .maximumRedeliveries(2).useOriginalMessage().handled(true)
                     .to("mock:a");

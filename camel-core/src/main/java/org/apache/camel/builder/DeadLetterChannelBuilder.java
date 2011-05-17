@@ -55,9 +55,8 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
         validateDeadLetterUri(routeContext);
 
         @SuppressWarnings("deprecation")
-        DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, getLogger(),
-                getOnRedelivery(), getRedeliveryPolicy(), getHandledPolicy(), getExceptionPolicyStrategy(),
-                getFailureProcessor(), getDeadLetterUri(), isUseOriginalMessage(),
+        DeadLetterChannel answer = new DeadLetterChannel(routeContext.getCamelContext(), processor, getLogger(), getOnRedelivery(), 
+                getRedeliveryPolicy(), getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(), isUseOriginalMessage(),
                 getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorServiceRef());
         // configure error handler before we can use it
         configure(answer);
@@ -87,11 +86,6 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
                 throw new NoSuchEndpointException(deadLetterUri);
             }
         }
-    }
-
-    protected Predicate createHandledPolicy() {
-        // should be handled by default for dead letter channel
-        return PredicateBuilder.toPredicate(ExpressionBuilder.constantExpression(true));
     }
 
     @Override

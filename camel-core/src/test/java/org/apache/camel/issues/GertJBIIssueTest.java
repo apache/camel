@@ -41,12 +41,13 @@ public class GertJBIIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dlc").maximumRedeliveries(0).handled(false));
+                errorHandler(deadLetterChannel("mock:dlc").maximumRedeliveries(0));
+                onException(IllegalArgumentException.class).handled(false);
 
                 from("direct:start")
-                        .threads(2)
-                        .to("mock:done")
-                        .throwException(new IllegalArgumentException("Forced"));
+                    .threads(2)
+                    .to("mock:done")
+                    .throwException(new IllegalArgumentException("Forced"));
 
             }
         });
@@ -72,12 +73,13 @@ public class GertJBIIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dlc").maximumRedeliveries(0).handled(false));
+                errorHandler(deadLetterChannel("mock:dlc").maximumRedeliveries(0));
+                onException(IllegalArgumentException.class).handled(false);
 
                 from("direct:start")
-                        .threads(2)
-                        .to("mock:done")
-                        .throwException(new IllegalArgumentException("Forced"));
+                    .threads(2)
+                    .to("mock:done")
+                    .throwException(new IllegalArgumentException("Forced"));
 
             }
         });
