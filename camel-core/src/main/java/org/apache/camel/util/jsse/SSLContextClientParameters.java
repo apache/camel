@@ -35,6 +35,11 @@ public class SSLContextClientParameters extends BaseSSLContextParameters {
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextClientParameters.class);
 
     @Override
+    protected boolean getAllowPassthrough() {
+        return true;
+    }
+
+    @Override
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
         LOG.trace("Configuring client-side SSLContext parameters...");
         if (this.getSessionTimeout() != null) {

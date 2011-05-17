@@ -57,6 +57,11 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     }
     
     @Override
+    protected boolean getAllowPassthrough() {
+        return true;
+    }
+    
+    @Override
     protected void configureSSLContext(SSLContext context) throws GeneralSecurityException {
         LOG.debug("Configuring server-side SSLContext parameters...");
         if (this.getSessionTimeout() != null) {

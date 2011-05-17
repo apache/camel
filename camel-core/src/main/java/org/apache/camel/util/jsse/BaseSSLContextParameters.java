@@ -87,10 +87,10 @@ public abstract class BaseSSLContextParameters {
     private FilterParameters secureSocketProtocolsFilter;
     
     /**
-     * The optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s.
-     * TODO provide a time unit here and on the getter/setter.
+     * The optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s in seconds.
      */
     private Integer sessionTimeout;
+    
 
     /**
      * Returns the optional explicitly configured cipher suites for this configuration.
@@ -199,19 +199,35 @@ public abstract class BaseSSLContextParameters {
     }
 
     /**
-     * Returns the optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s.
+     * Returns the optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s 
+     * in seconds.
      */
     public Integer getSessionTimeout() {
         return sessionTimeout;
     }
 
     /**
-     * Sets the optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s.
+     * Sets the optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s
+     * in seconds.
      *
      * @param sessionTimeout the timeout value or {@code null} to use the default
      */
     public void setSessionTimeout(Integer sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
+    }
+    
+    /**
+     * Returns a flag indicating if default values should be applied in the event that no other property
+     * of the instance configures a particular aspect of the entity produced by the instance.
+     * This flag is used to allow instances of this class to produce a configurer that simply
+     * passes through the current configuration of a configured entity when the instance of this
+     * class would otherwise only apply some default configuration.
+     *
+     * @see SSLContextClientParameters
+     * @see SSLContextServerParameters
+     */
+    protected boolean getAllowPassthrough() {
+        return false;
     }
     
     /**
@@ -290,6 +306,10 @@ public abstract class BaseSSLContextParameters {
             enabledSecureSocketProtocolsPatterns = null;
         }
         
+        //
+        
+        final boolean allowPassthrough = getAllowPassthrough();
+        
         //////
         
         Configurer<SSLEngine> sslEngineConfigurer = new Configurer<SSLEngine>() {
@@ -299,13 +319,17 @@ public abstract class BaseSSLContextParameters {
                 
                 Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
                     .filter(enabledCipherSuites, Arrays.asList(engine.getSSLParameters().getCipherSuites()),
-                            enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns);
+                            Arrays.asList(engine.getEnabledCipherSuites()),
+                            enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
+                            !allowPassthrough);
                  
                 engine.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
 
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
                     .filter(enabledSecureSocketProtocols, Arrays.asList(engine.getSSLParameters().getProtocols()),
-                            enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns);
+                            Arrays.asList(engine.getEnabledProtocols()),
+                            enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
+                            !allowPassthrough);
                 
                 engine.setEnabledProtocols(filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
                 return engine;
@@ -437,6 +461,10 @@ public abstract class BaseSSLContextParameters {
             enabledSecureSocketProtocolsPatterns = null;
         }
         
+        //
+        
+        final boolean allowPassthrough = getAllowPassthrough();
+        
         //////
         
         Configurer<SSLSocket> sslSocketConfigurer = new Configurer<SSLSocket>() {
@@ -446,13 +474,17 @@ public abstract class BaseSSLContextParameters {
                 
                 Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
                     .filter(enabledCipherSuites, Arrays.asList(socket.getSSLParameters().getCipherSuites()),
-                            enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns);
+                            Arrays.asList(socket.getEnabledCipherSuites()),
+                            enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
+                            !allowPassthrough);
                  
                 socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
         
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
                     .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSSLParameters().getProtocols()),
-                            enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns);
+                            Arrays.asList(socket.getEnabledProtocols()),
+                            enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
+                            !allowPassthrough);
                 
                 socket.setEnabledProtocols(filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
                 return socket;
@@ -507,6 +539,10 @@ public abstract class BaseSSLContextParameters {
             enabledSecureSocketProtocolsPatterns = null;
         }
         
+        //
+        
+        final boolean allowPassthrough = getAllowPassthrough();
+        
         //////
         
         Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<SSLServerSocket>() {
@@ -516,13 +552,17 @@ public abstract class BaseSSLContextParameters {
                 
                 Collection<String> filteredCipherSuites = BaseSSLContextParameters.this
                     .filter(enabledCipherSuites, Arrays.asList(socket.getSupportedCipherSuites()),
-                            enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns);
+                            Arrays.asList(socket.getEnabledCipherSuites()),
+                            enabledCipherSuitePatterns, defaultEnabledCipherSuitePatterns,
+                            !allowPassthrough);
                  
                 socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
         
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
                     .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSupportedProtocols()),
-                            enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns);
+                            Arrays.asList(socket.getEnabledProtocols()),
+                            enabledSecureSocketProtocolsPatterns, defaultEnabledSecureSocketProtocolsPatterns,
+                            !allowPassthrough);
                 
                 socket.setEnabledProtocols(filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
                 return socket;
@@ -559,30 +599,38 @@ public abstract class BaseSSLContextParameters {
      * Filters the values in {@code availableValues} returning only the values that
      * are explicitly listed in {@code explicitValues} (returns them regardless
      * of if they appear in {@code availableValues} or not) if {@code explicitValues} is not
-     * {@code null} or as match the provided filters according to the following rules:
+     * {@code null} or according to the following rules:
      * <ol>
      * <li>Match the include patterns in {@code patterns} and don't match the exclude patterns in {@code patterns}
      * if patterns is not {@code null}.</li>
      * <li>Match the include patterns in {@code defaultPatterns} and don't match the exclude patterns in {@code defaultPatterns}
-     * if patterns is {@code null}.</li>
+     * if patterns is {@code null} and {@code applyDefaults} is true.</li>
+     * <li>Are provided in currentValues if if patterns is {@code null} and {@code applyDefaults} is false.</li>
      * </ol>
      * 
      * @param explicitValues the optional explicit values to use
      * @param availableValues the available values to filter from
      * @param patterns the optional patterns to use when {@code explicitValues} is not used
      * @param defaultPatterns the required patterns to use when {@code explicitValues} and {@code patterns} are not used
+     * @param applyDefaults flag indicating whether or not to apply defaults in the event that no explicit values and no
+     *              patterns apply
      * 
      * @return the filtered values
      *
      * @see #filter(Collection, Collection, List, List)
      */
     protected Collection<String> filter(
-            Collection<String> explicitValues, Collection<String> availableValues,
-            Patterns patterns, Patterns defaultPatterns) {
+            Collection<String> explicitValues, Collection<String> availableValues, 
+            Collection<String> currentValues, Patterns patterns, Patterns defaultPatterns,
+            boolean applyDefaults) {
 
         final List<Pattern> enabledIncludePatterns;
         final List<Pattern> enabledExcludePatterns;
 
+        if (explicitValues == null && patterns == null && !applyDefaults) {
+            return currentValues;
+        }
+        
         if (patterns != null) {
             enabledIncludePatterns = patterns.getIncludes();
             enabledExcludePatterns = patterns.getExcludes();

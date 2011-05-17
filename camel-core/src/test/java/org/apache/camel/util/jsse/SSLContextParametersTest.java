@@ -39,8 +39,9 @@ public class SSLContextParametersTest extends TestCase {
         SSLContextParameters scp = new SSLContextParameters();
         SSLContextServerParameters scsp = new SSLContextServerParameters();
         
-        SSLContext context = scp.createSSLContext();
         scp.setServerParameters(scsp);
+        SSLContext context = scp.createSSLContext();
+        
         
         SSLEngine engine = context.createSSLEngine();
         SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -95,8 +96,8 @@ public class SSLContextParametersTest extends TestCase {
         SSLContextParameters scp = new SSLContextParameters();
         SSLContextServerParameters scsp = new SSLContextServerParameters();
         
-        SSLContext context = scp.createSSLContext();
         scp.setServerParameters(scsp);
+        SSLContext context = scp.createSSLContext();
         
         SSLEngine engine = context.createSSLEngine();
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
@@ -108,7 +109,17 @@ public class SSLContextParametersTest extends TestCase {
         assertEquals(controlServerSocket.getWantClientAuth(), serverSocket.getWantClientAuth());
         assertEquals(controlServerSocket.getNeedClientAuth(), serverSocket.getNeedClientAuth());
         
+        // No csp or filter on server params passes through shared config
+        scp.setCipherSuites(new CipherSuitesParameters());
+        context = scp.createSSLContext();
+        engine = context.createSSLEngine();
+        socket = (SSLSocket) context.getSocketFactory().createSocket();
+        serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
+        
+        assertEquals(0, serverSocket.getEnabledCipherSuites().length);
+        
         // Csp on server params
+        scp.setCipherSuites(null);
         CipherSuitesParameters csp = new CipherSuitesParameters();
         scsp.setCipherSuites(csp);
         context = scp.createSSLContext();
@@ -207,8 +218,8 @@ public class SSLContextParametersTest extends TestCase {
         SSLContextParameters scp = new SSLContextParameters();
         SSLContextClientParameters sccp = new SSLContextClientParameters();
         
-        SSLContext context = scp.createSSLContext();
         scp.setClientParameters(sccp);
+        SSLContext context = scp.createSSLContext();
         
         SSLEngine engine = context.createSSLEngine();
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
@@ -218,7 +229,17 @@ public class SSLContextParametersTest extends TestCase {
         assertTrue(Arrays.equals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites()));
         assertTrue(Arrays.equals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()), serverSocket.getEnabledCipherSuites()));
         
+        // No csp or filter on client params passes through shared config
+        scp.setCipherSuites(new CipherSuitesParameters());
+        context = scp.createSSLContext();
+        engine = context.createSSLEngine();
+        socket = (SSLSocket) context.getSocketFactory().createSocket();
+        serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
+        
+        assertEquals(0, socket.getEnabledCipherSuites().length);
+        
         // Csp on client params
+        scp.setCipherSuites(null);
         CipherSuitesParameters csp = new CipherSuitesParameters();
         sccp.setCipherSuites(csp);
         context = scp.createSSLContext();
