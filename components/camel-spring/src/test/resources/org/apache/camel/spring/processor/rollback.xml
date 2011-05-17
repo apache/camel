@@ -25,7 +25,6 @@
     <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:dead"/>
         <property name="redeliveryPolicy" ref="policy"/>
-        <property name="handled" value="false"/>
     </bean>
 
     <bean id="policy" class="org.apache.camel.processor.RedeliveryPolicy">
@@ -35,6 +34,10 @@
 
     <!-- START SNIPPET: e1 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <onException>
+            <exception>org.apache.camel.RollbackExchangeException</exception>
+            <handled><constant>false</constant></handled>
+        </onException>
         <route errorHandlerRef="errorHandler">
             <from uri="direct:start"/>
             <choice>

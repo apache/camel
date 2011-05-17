@@ -60,7 +60,6 @@
     <bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:dead"/>
         <property name="redeliveryPolicy" ref="redeliveryPolicy"/>
-        <property name="handled" value="false"/>
     </bean>
 
     <bean id="redeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">

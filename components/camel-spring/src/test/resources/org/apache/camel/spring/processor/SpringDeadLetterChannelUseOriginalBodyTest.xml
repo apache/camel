@@ -28,7 +28,6 @@
         <property name="deadLetterUri" value="mock:a"/>
         <!-- we mark all exchanges as handled when they are moved to the dead letter queue, so the client
              does not receive an exception -->
-        <property name="handled" value="true"/>
         <!-- use the original input message when moving to dead letter queue -->
         <property name="useOriginalMessage" value="true"/>
         <property name="redeliveryPolicy" ref="myRedelivery"/>
@@ -46,7 +45,6 @@
         <property name="deadLetterUri" value="mock:b"/>
         <!-- we mark all exchanges as handled when they are moved to the dead letter queue, so the client
              does not receive an exception -->
-        <property name="handled" value="true"/>
         <!-- do NOT use the original input message when moving to dead letter queue -->
         <property name="useOriginalMessage" value="false"/>
         <property name="redeliveryPolicy" ref="myRedelivery"/>

@@ -26,7 +26,6 @@
         <property name="deadLetter" ref="dead"/>
         <property name="onRedelivery" ref="myRedeliveryProcessor"/>
         <property name="redeliveryPolicy" ref="redeliveryPolicy"/>
-        <property name="handled" value="false"/>
     </bean>
     
     <bean id="dead" class="org.apache.camel.component.mock.MockEndpoint">

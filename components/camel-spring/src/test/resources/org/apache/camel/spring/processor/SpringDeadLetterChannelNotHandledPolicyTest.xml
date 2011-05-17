@@ -28,7 +28,6 @@
         <property name="deadLetterUri" value="mock:dead"/>
         <!-- we mark all exchanges as NOT handled when they are moved to the dead letter queue, so the client
              wil receive the caused exception (this is also the default behaviour) -->
-        <property name="handled" value="false"/>
         <property name="redeliveryPolicy" ref="myRedelivery"/>
     </bean>
 

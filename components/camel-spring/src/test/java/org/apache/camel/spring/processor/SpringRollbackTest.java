@@ -25,5 +25,4 @@ public class SpringRollbackTest extends RollbackTest {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/rollback.xml");
     }
-
 }

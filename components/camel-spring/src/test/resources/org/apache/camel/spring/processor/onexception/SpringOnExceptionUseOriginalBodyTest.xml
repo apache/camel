@@ -25,7 +25,6 @@
     <bean id="deadLetter" class="org.apache.camel.builder.DeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:dead"/>
         <property name="redeliveryPolicy" ref="myRedeliveryPolicy"/>
-        <property name="handled" value="false"/>
     </bean>
 
     <bean id="myRedeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
