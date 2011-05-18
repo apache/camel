@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-	<!--
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
 		Licensed to the Apache Software Foundation (ASF) under one or more
 		contributor license agreements. See the NOTICE file distributed with
 		this work for additional information regarding copyright ownership.
@@ -12,66 +11,43 @@
 		CONDITIONS OF ANY KIND, either express or implied. See the License for
 		the specific language governing permissions and limitations under the
 		License.
-	-->
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://camel.apache.org/schema/cxf"
-	xmlns:camel="http://camel.apache.org/schema/spring"
-	xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-    ">
-	<cxf:cxfEndpoint id="routerEndpoint"
-		serviceClass="org.apache.camel.wsdl_first.Person"
-		endpointName="person:soap" serviceName="person:PersonService" wsdlURL="person.wsdl"
-		xmlns:person="http://camel.apache.org/wsdl-first">
+	--><beans xmlns="http://www.springframework.org/schema/beans" xmlns:camel="http://camel.apache.org/schema/spring" xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     ">
+	<cxf:cxfEndpoint xmlns:person="http://camel.apache.org/wsdl-first" endpointName="person:soap" id="routerEndpoint" serviceClass="org.apache.camel.wsdl_first.Person" serviceName="person:PersonService" wsdlURL="person.wsdl">
 		<cxf:properties>
-			<entry key="schema-validation-enabled" value="true" />
+			<entry key="schema-validation-enabled" value="true"/>
 		</cxf:properties>
 		<cxf:handlers>
-          <ref bean="fromEndpointJaxwsHandler" /> 
+          <ref bean="fromEndpointJaxwsHandler"/> 
         </cxf:handlers>
 		<cxf:inInterceptors>
-      	<bean class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+      	<bean class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
       </cxf:inInterceptors>
 		<cxf:outInterceptors>
-      	<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
+      	<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
       </cxf:outInterceptors>
 	</cxf:cxfEndpoint>
 	
-	<cxf:cxfEndpoint id="serviceEndpoint"
-		address="http://localhost:9000/PersonService/" serviceClass="org.apache.camel.wsdl_first.Person"
-		endpointName="person:soap" serviceName="person:PersonService"
-		xmlns:person="http://camel.apache.org/wsdl-first">
+	<cxf:cxfEndpoint xmlns:person="http://camel.apache.org/wsdl-first" address="http://localhost:9000/PersonService/" endpointName="person:soap" id="serviceEndpoint" serviceClass="org.apache.camel.wsdl_first.Person" serviceName="person:PersonService">
 		<cxf:handlers>
-          <ref bean="toEndpointJaxwsHandler" /> 
+          <ref bean="toEndpointJaxwsHandler"/> 
         </cxf:handlers>
 		<cxf:inInterceptors>
-      	<bean class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+      	<bean class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
       </cxf:inInterceptors>
 		<cxf:outInterceptors>
-      	<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
+      	<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
       </cxf:outInterceptors>
 	</cxf:cxfEndpoint>
 
     <!-- setup our error handler as the deal letter channel -->
-    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-        <property name="deadLetterUri" value="mock:error"/>
-        <property name="redeliveryPolicy" ref="myRedeliveryPolicy"/>
-        <property name="handled" value="false"/>
-    </bean>
-
-    <bean id="myRedeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
-        <property name="maximumRedeliveries" value="5"/>
-        <property name="redeliveryDelay" value="0"/>
-    </bean>
-
-	<camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
-		<route>
-			<from uri="cxf:bean:routerEndpoint?dataFormat=PAYLOAD" />
-			<to uri="cxf:bean:serviceEndpoint?dataFormat=PAYLOAD" />
-		</route>
-	</camelContext>
-	<bean id="fromEndpointJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler" />
-	<bean id="toEndpointJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler" />
+    <bean class="org.apache.camel.builder.NoErrorHandlerBuilder" id="noErrorHandler"/>
+    
+	<camelContext xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="noErrorHandler" id="camel">
+    <route id="route22">
+        <from uri="cxf:bean:routerEndpoint?dataFormat=PAYLOAD"/>
+        <to uri="cxf:bean:serviceEndpoint?dataFormat=PAYLOAD"/>
+    </route>
+</camelContext>
+	<bean class="org.apache.camel.wsdl_first.JaxwsTestHandler" id="fromEndpointJaxwsHandler"/>
+	<bean class="org.apache.camel.wsdl_first.JaxwsTestHandler" id="toEndpointJaxwsHandler"/>
 </beans>
