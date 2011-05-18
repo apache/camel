@@ -32,6 +32,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -43,6 +44,22 @@ import org.springframework.context.support.GenericApplicationContext;
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
     protected static AbstractApplicationContext applicationContext;
     protected abstract AbstractApplicationContext createApplicationContext();
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
+            // tell camel-spring it should not trigger starting CamelContext, since we do that later
+            // after we are finished setting up the unit test
+            System.setProperty("maybeStartCamelContext", "false");
+            applicationContext = createApplicationContext();
+            assertNotNull("Should have created a valid spring context", applicationContext);
+            super.setUp();
+            System.clearProperty("maybeStartCamelContext");
+        } else {
+            log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+        }
+    }
 
     @Override
     public void doSetUp() throws Exception {
