@@ -14,35 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.util;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
+ *
  */
-public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSupport {
+public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
 
-    public void testDumpAsXml() throws Exception {
-        MBeanServer mbeanServer = getMBeanServer();
-
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
-
-        String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
+    public void testDumpModelAsXml() throws Exception {
+        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue(xml.contains("route"));
-        assertTrue(xml.contains("myRoute"));
-        assertTrue(xml.contains("myOtherRoute"));
-        assertTrue(xml.contains("direct:start"));
-        assertTrue(xml.contains("mock:result"));
-        assertTrue(xml.contains("seda:bar"));
-        assertTrue(xml.contains("mock:bar"));
-        assertTrue(xml.contains("<header>bar</header>"));
+        assertTrue(xml.contains("<header>gold</header>"));
+        assertTrue(xml.contains("<header>extra-gold</header>"));
+        assertTrue(xml.contains("<simple>${body} contains Camel</simple>"));
     }
 
     @Override
@@ -51,15 +40,20 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("myRoute")
-                    .log("Got ${body}")
+                    .to("log:input")
+                    .choice()
+                        .when().header("gold")
+                            .to("mock:gold")
+                            .filter().header("extra-gold")
+                                .to("mock:extra-gold")
+                            .endChoice()
+                        .when().simple("${body} contains Camel")
+                            .to("mock:camel")
+                        .otherwise()
+                            .to("mock:other")
+                    .end()
                     .to("mock:result");
-
-                from("seda:bar").routeId("myOtherRoute")
-                    .filter().header("bar")
-                        .to("mock:bar")
-                    .end();
             }
         };
     }
-
 }

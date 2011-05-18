@@ -30,7 +30,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.RouteContext;
@@ -145,31 +144,6 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
             doCatch.setOnWhen(new WhenDefinition(predicate));
         }
         return this;
-    }
-
-    /**
-     * Creates an expression to configure an additional predicate that should be true before the
-     * onCatch is triggered.
-     * <p/>
-     * To be used for fine grained controlling whether a thrown exception should be intercepted
-     * by this exception type or not.
-     *
-     * @return the expression clause to configure
-     */
-    public ExpressionClause<TryDefinition> onWhen() {
-        // we must use a delegate so we can use the fluent builder based on TryDefinition
-        // to configure all with try .. catch .. finally
-        WhenDefinition answer = new WhenDefinition();
-        // set the onWhen definition on all the catch definitions
-        Iterator<CatchDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
-        while (it.hasNext()) {
-            CatchDefinition doCatch = it.next();
-            doCatch.setOnWhen(answer);
-        }
-        // return a expression clause as builder to set the predicate on the onWhen definition
-        ExpressionClause<TryDefinition> clause = new ExpressionClause<TryDefinition>(this);
-        answer.setExpression(clause);
-        return clause;
     }
 
     /**

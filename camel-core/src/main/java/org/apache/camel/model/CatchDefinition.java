@@ -30,7 +30,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CastUtils;
@@ -156,22 +155,6 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     public CatchDefinition onWhen(Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
-    }
-
-    /**
-     * Creates an expression to configure an additional predicate that should be true before the
-     * onCatch is triggered.
-     * <p/>
-     * To be used for fine grained controlling whether a thrown exception should be intercepted
-     * by this exception type or not.
-     *
-     * @return the expression clause to configure
-     */
-    public ExpressionClause<CatchDefinition> onWhen() {
-        onWhen = new WhenDefinition();
-        ExpressionClause<CatchDefinition> clause = new ExpressionClause<CatchDefinition>(this);
-        onWhen.setExpression(clause);
-        return clause;
     }
 
     /**

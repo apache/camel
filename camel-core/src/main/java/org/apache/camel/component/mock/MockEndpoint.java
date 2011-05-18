@@ -565,23 +565,21 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     /**
      * Adds an expectation that the given body value are received by this endpoint
      */
-    public ExpressionClause<?> expectedBodyReceived() {
-        final ExpressionClause<?> clause = new ExpressionClause<MockEndpoint>(this);
-
+    public AssertionClause expectedBodyReceived() {
         expectedMessageCount(1);
-
-        expects(new Runnable() {
+        final AssertionClause clause = new AssertionClause(this) {
             public void run() {
                 Exchange exchange = getReceivedExchanges().get(0);
                 assertTrue("No exchange received for counter: " + 0, exchange != null);
 
                 Object actualBody = exchange.getIn().getBody();
-                Object expectedBody = clause.evaluate(exchange, Object.class);
+                Expression exp = createExpression(getCamelContext());
+                Object expectedBody = exp.evaluate(exchange, Object.class);
 
                 assertEquals("Body of message: " + 0, expectedBody, actualBody);
             }
-        });
-
+        };
+        expects(clause);
         return clause;
     }
 
@@ -693,13 +691,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that messages received should have ascending values
      * of the given expression such as a user generated counter value
      */
-    public ExpressionClause<?> expectsAscending() {
-        final ExpressionClause<?> clause = new ExpressionClause<MockEndpoint>(this);
-        expects(new Runnable() {
+    public AssertionClause expectsAscending() {
+        final AssertionClause clause = new AssertionClause(this) {
             public void run() {
-                assertMessagesAscending(clause.getExpressionValue());
+                assertMessagesAscending(createExpression(getCamelContext()));
             }
-        });
+        };
+        expects(clause);
         return clause;
     }
 
@@ -719,13 +717,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that messages received should have descending values
      * of the given expression such as a user generated counter value
      */
-    public ExpressionClause<?> expectsDescending() {
-        final ExpressionClause<?> clause = new ExpressionClause<MockEndpoint>(this);
-        expects(new Runnable() {
+    public AssertionClause expectsDescending() {
+        final AssertionClause clause = new AssertionClause(this) {
             public void run() {
-                assertMessagesDescending(clause.getExpressionValue());
+                assertMessagesDescending(createExpression(getCamelContext()));
             }
-        });
+        };
+        expects(clause);
         return clause;
     }
 
@@ -751,13 +749,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that no duplicate messages should be received using
      * the expression to determine the message ID
      */
-    public ExpressionClause<?> expectsNoDuplicates() {
-        final ExpressionClause<?> clause = new ExpressionClause<MockEndpoint>(this);
-        expects(new Runnable() {
+    public AssertionClause expectsNoDuplicates() {
+        final AssertionClause clause = new AssertionClause(this) {
             public void run() {
-                assertNoDuplicates(clause.getExpressionValue());
+                assertNoDuplicates(createExpression(getCamelContext()));
             }
-        });
+        };
+        expects(clause);
         return clause;
     }
 

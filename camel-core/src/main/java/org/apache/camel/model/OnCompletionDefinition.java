@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.RouteContext;
@@ -177,21 +176,6 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     public OnCompletionDefinition onWhen(Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
-    }
-
-    /**
-     * Creates an expression to configure an additional predicate that should be true before the
-     * onCompletion is triggered.
-     * <p/>
-     * To be used for fine grained controlling whether a completion callback should be invoked or not
-     *
-     * @return the expression clause to configure
-     */
-    public ExpressionClause<OnCompletionDefinition> onWhen() {
-        onWhen = new WhenDefinition();
-        ExpressionClause<OnCompletionDefinition> clause = new ExpressionClause<OnCompletionDefinition>(this);
-        onWhen.setExpression(clause);
-        return clause;
     }
 
     /**

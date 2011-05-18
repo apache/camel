@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
@@ -69,15 +68,4 @@ public class WhenDefinition extends ExpressionNode {
         return createFilterProcessor(routeContext);
     }
     
-    // Fluent API
-    //-------------------------------------------------------------------------
-    /**
-     * Set the expression that WhenType will use
-     * @return the builder
-     * @deprecated will be removed in the near future. The expression is often already set.
-     */
-    @Deprecated
-    public ExpressionClause<WhenDefinition> expression() {
-        return ExpressionClause.createAndSetExpression(this);
-    }
 }

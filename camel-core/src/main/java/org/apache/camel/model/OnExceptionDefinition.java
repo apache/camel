@@ -35,7 +35,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.RouteContext;
@@ -275,22 +274,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     public OnExceptionDefinition onWhen(Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
-    }
-
-    /**
-     * Creates an expression to configure an additional predicate that should be true before the
-     * onException is triggered.
-     * <p/>
-     * To be used for fine grained controlling whether a thrown exception should be intercepted
-     * by this exception type or not.
-     *
-     * @return the expression clause to configure
-     */
-    public ExpressionClause<OnExceptionDefinition> onWhen() {
-        onWhen = new WhenDefinition();
-        ExpressionClause<OnExceptionDefinition> clause = new ExpressionClause<OnExceptionDefinition>(this);
-        onWhen.setExpression(clause);
-        return clause;
     }
 
     /**

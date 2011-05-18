@@ -26,6 +26,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ExpressionClauseSupport;
 import org.apache.camel.builder.ValueBuilder;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.util.PredicateAssertHelper;
 
 /**
@@ -48,9 +49,17 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
 
     // Builder methods
     // -------------------------------------------------------------------------
+
     public ValueBuilder expression(Expression expression) {
+        // must override this method as we provide null in the constructor
         super.expression(expression);
         return new PredicateValueBuilder(getExpressionValue());
+    }
+
+    public ValueBuilder expression(ExpressionDefinition expression) {
+        // must override this method as we provide null in the constructor
+        super.expression(expression);
+        return new PredicateValueBuilder(expression.createExpression(mock.getCamelContext()));
     }
 
     /**

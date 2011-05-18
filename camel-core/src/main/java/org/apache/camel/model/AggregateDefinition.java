@@ -138,12 +138,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         return createAggregator(routeContext);
     }
 
-    public ExpressionClause<AggregateDefinition> createAndSetExpression() {
-        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<AggregateDefinition>(this);
-        this.setExpression(clause);
-        return clause;
-    }
-
     protected AggregateProcessor createAggregator(RouteContext routeContext) throws Exception {
         Processor processor = this.createChildProcessor(routeContext, true);
         // wrap the aggregated route in a unit of work processor
@@ -210,6 +204,24 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
 
         return answer;
+    }
+
+    @Override
+    protected void configureChild(ProcessorDefinition output) {
+        if (expression != null && expression instanceof ExpressionClause) {
+            ExpressionClause clause = (ExpressionClause) expression;
+            if (clause.getExpressionType() != null) {
+                // if using the Java DSL then the expression may have been set using the
+                // ExpressionClause which is a fancy builder to define expressions and predicates
+                // using fluent builders in the DSL. However we need afterwards a callback to
+                // reset the expression to the expression type the ExpressionClause did build for us
+                expression = clause.getExpressionType();
+                // set the correlation expression from the expression type, as the model definition
+                // would then be accurate
+                correlationExpression = new ExpressionSubElementDefinition();
+                correlationExpression.setExpressionType(clause.getExpressionType());
+            }
+        }
     }
 
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
@@ -615,18 +627,6 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         // must use eager check when using grouped exchanges
         setEagerCheckCompletion(true);
         return this;
-    }
-
-    /**
-     * Sets the predicate used to determine if the aggregation is completed
-     *
-     * @return the clause used to create the predicate
-     */
-    public ExpressionClause<AggregateDefinition> completionPredicate() {
-        checkNoCompletedPredicate();
-        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<AggregateDefinition>(this);
-        setCompletionPredicate(new ExpressionSubElementDefinition((Expression)clause));
-        return clause;
     }
 
     /**

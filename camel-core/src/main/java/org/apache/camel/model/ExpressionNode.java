@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.Required;
@@ -99,6 +100,20 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
     protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, false);
         return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
+    }
+
+    @Override
+    protected void configureChild(ProcessorDefinition output) {
+        if (expression instanceof ExpressionClause) {
+            ExpressionClause clause = (ExpressionClause) expression;
+            if (clause.getExpressionType() != null) {
+                // if using the Java DSL then the expression may have been set using the
+                // ExpressionClause which is a fancy builder to define expressions and predicates
+                // using fluent builders in the DSL. However we need afterwards a callback to
+                // reset the expression to the expression type the ExpressionClause did build for us
+                expression = clause.getExpressionType();
+            }
+        }
     }
 
 }

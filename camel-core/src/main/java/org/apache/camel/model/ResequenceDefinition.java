@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.ResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
@@ -224,12 +223,6 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         }
         streamConfig.setComparator(comparator);
         return this;
-    }
-
-    public ExpressionClause<ResequenceDefinition> createAndSetExpression() {
-        ExpressionClause<ResequenceDefinition> clause = new ExpressionClause<ResequenceDefinition>(this);
-        this.setExpression(clause);
-        return clause;
     }
 
     @Override

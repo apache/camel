@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -124,14 +123,6 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     // Fluent API
     // -------------------------------------------------------------------------
 
-    /**
-     * Set the expression that the splitter will use
-     *
-     * @return the builder
-     */
-    public ExpressionClause<SplitDefinition> expression() {
-        return ExpressionClause.createAndSetExpression(this);
-    }
     /**
      * Set the aggregationStrategy
      *

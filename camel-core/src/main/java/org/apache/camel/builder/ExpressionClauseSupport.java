@@ -19,11 +19,25 @@ package org.apache.camel.builder;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.xml.Namespaces;
+import org.apache.camel.model.language.ConstantExpression;
+import org.apache.camel.model.language.ELExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.model.language.GroovyExpression;
+import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.model.language.JXPathExpression;
+import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.MethodCallExpression;
+import org.apache.camel.model.language.MvelExpression;
+import org.apache.camel.model.language.OgnlExpression;
+import org.apache.camel.model.language.PhpExpression;
+import org.apache.camel.model.language.PropertyExpression;
+import org.apache.camel.model.language.PythonExpression;
+import org.apache.camel.model.language.RubyExpression;
+import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.model.language.SpELExpression;
+import org.apache.camel.model.language.SqlExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.spi.Language;
@@ -57,11 +71,20 @@ public class ExpressionClauseSupport<T> {
         return result;
     }
 
+    public T expression(ExpressionDefinition expression) {
+        setExpressionType(expression);
+        return result;
+    }
+
     /**
      * Specify the constant expression value
      */
     public T constant(Object value) {
-        return expression(ExpressionBuilder.constantExpression(value));
+        if (value instanceof String) {
+            return expression(new ConstantExpression((String) value));
+        } else {
+            return expression(ExpressionBuilder.constantExpression(value));
+        }
     }
 
     /**
@@ -119,7 +142,7 @@ public class ExpressionClauseSupport<T> {
      * An expression of an inbound message header of the given name
      */
     public T header(String name) {
-        return expression(ExpressionBuilder.headerExpression(name));
+        return expression(new HeaderExpression(name));
     }
 
     /**
@@ -154,7 +177,7 @@ public class ExpressionClauseSupport<T> {
      * An expression of an exchange property of the given name
      */
     public T property(String name) {
-        return expression(ExpressionBuilder.propertyExpression(name));
+        return expression(new PropertyExpression(name));
     }
 
     /**
@@ -177,9 +200,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T method(String bean) {
-        MethodCallExpression expression = new MethodCallExpression(bean);
-        setExpressionType(expression);
-        return result;
+        return expression(new MethodCallExpression(bean));
     }
 
     /**
@@ -192,9 +213,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T method(Object instance) {
-        MethodCallExpression expression = new MethodCallExpression(instance);
-        setExpressionType(expression);
-        return result;
+        return expression(new MethodCallExpression(instance));
     }
 
     /**
@@ -207,9 +226,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T method(Class<?> beanType) {
-        MethodCallExpression expression = new MethodCallExpression(beanType);
-        setExpressionType(expression);
-        return result;
+        return expression(new MethodCallExpression(beanType));
     }
 
     /**
@@ -223,9 +240,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T method(String bean, String method) {
-        MethodCallExpression expression = new MethodCallExpression(bean, method);
-        setExpressionType(expression);
-        return result;
+        return expression(new MethodCallExpression(bean, method));
     }
 
     /**
@@ -239,9 +254,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T method(Object instance, String method) {
-        MethodCallExpression expression = new MethodCallExpression(instance, method);
-        setExpressionType(expression);
-        return result;
+        return expression(new MethodCallExpression(instance, method));
     }
 
     /**
@@ -255,9 +268,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T method(Class<?> beanType, String method) {
-        MethodCallExpression expression = new MethodCallExpression(beanType, method);
-        setExpressionType(expression);
-        return result;
+        return expression(new MethodCallExpression(beanType, method));
     }
 
     /**
@@ -269,7 +280,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T el(String text) {
-        return language("el", text);
+        return expression(new ELExpression(text));
     }
 
     /**
@@ -280,7 +291,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T groovy(String text) {
-        return language("groovy", text);
+        return expression(new GroovyExpression(text));
     }
 
     /**
@@ -292,7 +303,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T javaScript(String text) {
-        return language("js", text);
+        return expression(new JavaScriptExpression(text));
     }
 
     /**
@@ -302,7 +313,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T jxpath(String text) {
-        return language("jxpath", text);
+        return expression(new JXPathExpression(text));
     }
 
     /**
@@ -313,7 +324,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T ognl(String text) {
-        return language("ognl", text);
+        return expression(new OgnlExpression(text));
     }
 
     /**
@@ -324,7 +335,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T mvel(String text) {
-        return language("mvel", text);
+        return expression(new MvelExpression(text));
     }
 
     /**
@@ -335,7 +346,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T php(String text) {
-        return language("php", text);
+        return expression(new PhpExpression(text));
     }
 
     /**
@@ -346,7 +357,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T python(String text) {
-        return language("python", text);
+        return expression(new PythonExpression(text));
     }
 
     /**
@@ -357,7 +368,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T ruby(String text) {
-        return language("ruby", text);
+        return expression(new RubyExpression(text));
     }
 
     /**
@@ -368,7 +379,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T spel(String text) {
-        return language("spel", text);
+        return expression(new SpELExpression(text));
     }
     
     /**
@@ -379,7 +390,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T sql(String text) {
-        return language("sql", text);
+        return expression(new SqlExpression(text));
     }
 
     /**
@@ -390,7 +401,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T simple(String text) {
-        return language("simple", text);
+        return expression(new SimpleExpression(text));
     }
 
     /**
@@ -401,7 +412,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T xpath(String text) {
-        return language("xpath", text);
+        return expression(new XPathExpression(text));
     }
 
     /**
@@ -486,7 +497,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T xquery(String text) {
-        return language("xquery", text);
+        return expression(new XQueryExpression(text));
     }
 
     /**
@@ -495,7 +506,7 @@ public class ExpressionClauseSupport<T> {
      * with the specified result type
      *
      * @param text the expression to be evaluated
-     * @param resultType the return type expected by the expressiopn
+     * @param resultType the return type expected by the expression
      * @return the builder to continue processing the DSL
      */
     public T xquery(String text, Class<?> resultType) {
@@ -578,6 +589,8 @@ public class ExpressionClauseSupport<T> {
         setExpression(expression);
         return result;
     }
+
+    // TODO: Add support for TokenizerExpression
 
     // Properties
     // -------------------------------------------------------------------------
