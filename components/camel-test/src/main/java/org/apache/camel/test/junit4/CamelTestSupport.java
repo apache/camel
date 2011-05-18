@@ -90,6 +90,9 @@ public abstract class CamelTestSupport extends TestSupport {
      * <p/>
      * <b>Important:</b> Use this with care as the {@link CamelContext} will carry over state
      * from previous tests, such as endpoints, components etc. So you cannot use this in all your tests.
+     * <p/>
+     * Setting up {@link CamelContext} uses the {@link #doPreSetup()}, {@link #doSetUp()}, and {@link #doPostSetup()}
+     * methods in that given order.
      *
      * @return <tt>true</tt> per class, <tt>false</tt> per test.
      */
@@ -131,7 +134,9 @@ public abstract class CamelTestSupport extends TestSupport {
         if (isCreateCamelContextPerClass()) {
             // test is per class, so only setup once (the first time)
             if (first) {
+                doPreSetup();
                 doSetUp();
+                doPostSetup();
             } else {
                 // and in between tests we must do IoC and reset mocks
                 postProcessTest();
@@ -139,11 +144,27 @@ public abstract class CamelTestSupport extends TestSupport {
             }
         } else {
             // test is per test so always setup
+            doPreSetup();
             doSetUp();
+            doPostSetup();
         }
     }
 
-    protected void doSetUp() throws Exception {
+    /**
+     * Strategy to perform any pre setup, before {@link CamelContext} is created
+     */
+    protected void doPreSetup() throws Exception {
+        // noop
+    }
+
+    /**
+     * Strategy to perform any post setup after {@link CamelContext} is createt.
+     */
+    protected void doPostSetup() throws Exception {
+        // noop
+    }
+
+    private void doSetUp() throws Exception {
         log.debug("setUp test");
         if (!useJmx()) {
             disableJMX();

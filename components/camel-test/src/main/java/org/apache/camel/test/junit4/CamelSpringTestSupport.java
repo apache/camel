@@ -46,25 +46,17 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
     protected abstract AbstractApplicationContext createApplicationContext();
 
     @Override
-    @Before
-    public void setUp() throws Exception {
+    public void doPreSetup() throws Exception {
         if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
             // tell camel-spring it should not trigger starting CamelContext, since we do that later
             // after we are finished setting up the unit test
             System.setProperty("maybeStartCamelContext", "false");
             applicationContext = createApplicationContext();
             assertNotNull("Should have created a valid spring context", applicationContext);
-            super.setUp();
             System.clearProperty("maybeStartCamelContext");
         } else {
             log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
         }
-    }
-
-    @Override
-    public void doSetUp() throws Exception {
-        applicationContext = createApplicationContext();
-        super.doSetUp();
     }
 
     @Override
