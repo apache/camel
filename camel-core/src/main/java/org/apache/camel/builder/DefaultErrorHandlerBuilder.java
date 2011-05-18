@@ -41,7 +41,6 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     protected CamelLogger logger;
-    protected ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
     protected RedeliveryPolicy redeliveryPolicy;
     protected Processor onRedelivery;
     protected Predicate retryWhile;
@@ -231,16 +230,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Sets the exception policy to use
-     *
-     * @return the builder
-     */
-    public DefaultErrorHandlerBuilder exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        setExceptionPolicyStrategy(exceptionPolicyStrategy);
-        return this;
-    }
-
-    /**
      * Sets a processor that should be processed <b>before</b> a redelivery attempt.
      * <p/>
      * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
@@ -324,18 +313,6 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
     public void setLogger(CamelLogger logger) {
         this.logger = logger;
-    }
-
-    /**
-     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
-     * to use for a given thrown exception
-     */
-    public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
-        return exceptionPolicyStrategy;
-    }
-
-    public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        this.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
 
     public Processor getOnRedelivery() {
