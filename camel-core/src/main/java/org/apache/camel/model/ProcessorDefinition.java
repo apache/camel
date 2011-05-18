@@ -119,14 +119,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Executes any custom preparation logic before the runtime routes is being built using the
-     * model definitions.
-     */
-    public void prepare() {
-        // noop
-    }
-
-    /**
      * Override this in definition class and implement logic to create the processor
      * based on the definition model.
      */
