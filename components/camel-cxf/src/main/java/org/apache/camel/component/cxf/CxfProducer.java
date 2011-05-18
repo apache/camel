@@ -135,11 +135,6 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
                 camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
                         responseContext);
-                if (camelExchange.getException() != null) {
-                    // set the camelExchange outbody with the exception
-                    camelExchange.getOut().setFault(true);
-                    camelExchange.getOut().setBody(camelExchange.getException());
-                }
             }
         }
     }

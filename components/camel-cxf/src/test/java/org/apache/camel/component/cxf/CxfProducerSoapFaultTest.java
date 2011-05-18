@@ -81,8 +81,6 @@ public class CxfProducerSoapFaultTest extends Assert {
         // assert we got the exception first
         assertNotNull("except to get the exception", exception);
         assertTrue("Get a wrong soap fault", exception instanceof BadRecordLitFault);
-        // check out the message body with the fault message, now we just put the Exception as the fault message
-        assertEquals("Get a wrong message body", exception, exchange.getOut().getBody());
         // check out the message header which is copied from in message
         String fileName = exchange.getOut().getHeader(Exchange.FILE_NAME, String.class);
         assertEquals("Should get the file name from out message header", "testFile", fileName);

@@ -75,9 +75,6 @@ public class CxfClientCallback extends ClientCallback {
                 camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
                                                                          ctx);
-                // set the camelExchange outbody with the exception
-                camelExchange.getOut().setFault(true);
-                camelExchange.getOut().setBody(ex);
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(Thread.currentThread().getName() + " calling handleException");
