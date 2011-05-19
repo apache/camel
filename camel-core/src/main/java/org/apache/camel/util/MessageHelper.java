@@ -205,7 +205,7 @@ public final class MessageHelper {
         } else if (!allowStreams && obj instanceof Writer) {
             return prepend + "[Body is instance of java.io.Writer]";
         } else if (obj instanceof GenericFile || obj instanceof File) {
-            return prepend + "[Body is instance file based: " + obj + "]";
+            return prepend + "[Body is file based: " + obj + "]";
         }
 
         // is the body a stream cache
