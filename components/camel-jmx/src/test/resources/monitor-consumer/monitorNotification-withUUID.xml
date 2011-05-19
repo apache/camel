@@ -16,11 +16,10 @@
   limitations under the License.
 -->
 <MonitorNotification xmlns="urn:org.apache.camel.component:jmx">
-    <source>TestDomain:name=counter</source>
+    <source>TestDomain:name=camel-jmx-monitor-12345678-1234-1234-1234-123456789012</source>
     <message/>
     <sequence>0</sequence>
     <type>jmx.monitor.counter.threshold</type>
-    <derivedGauge>2</derivedGauge>  
     <observedAttribute>MonitorNumber</observedAttribute>
     <observedObject>TestDomain:name=simpleBean</observedObject>
     <trigger>1</trigger>

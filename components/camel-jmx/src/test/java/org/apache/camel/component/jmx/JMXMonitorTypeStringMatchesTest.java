@@ -16,49 +16,31 @@
  */
 package org.apache.camel.component.jmx;
 
-import java.net.URI;
+import java.io.File;
 
-import org.apache.camel.Message;
 import org.apache.camel.component.jmx.beans.ISimpleMXBean;
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertSame;
-
-
-/**
- * Tests that we get the handback object in the message header
- */
-public class JMXHandbackTest extends SimpleBeanFixture {
-
-    URI hb;
-
-    @Before
-    public void setUp() throws Exception {
-        hb = new URI("urn:some:handback:object");
-        super.setUp();
-    }
-
+public class JMXMonitorTypeStringMatchesTest extends SimpleBeanFixture {
+    
     @Test
-    public void test() throws Exception {
+    public void matches() throws Exception {
+
         ISimpleMXBean simpleBean = getSimpleMXBean();
-        simpleBean.userData("myUserData");
-
+        
+        simpleBean.setStringValue("bogus");
+        Thread.sleep(600);
+        simpleBean.setStringValue("initial");
         getMockFixture().waitForMessages();
-
-        Message m = getMockFixture().getMessage(0);
-        URI uri = (URI) m.getHeader("jmx.handback");
-        assertSame(hb, uri);
+        getMockFixture().assertMessageReceived(new File("src/test/resources/monitor-consumer/stringMatches.xml"));
     }
 
     @Override
     protected JMXUriBuilder buildFromURI() {
-        return super.buildFromURI().withHandback("#hb").withFormat("raw");
-    }
-
-    @Override
-    protected void initRegistry() {
-        super.initRegistry();
-        getRegistry().put("hb", hb);
+        return super.buildFromURI().withMonitorType("string")
+                                   .withGranularityPeriod(500)
+                                   .withObservedAttribute("StringValue")
+                                   .withStringToCompare("initial")
+                                   .withNotifyMatch(true);
     }
 }

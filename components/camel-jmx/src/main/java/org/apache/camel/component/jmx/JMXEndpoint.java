@@ -25,6 +25,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Endpoint that describes a connection to an mbean.
@@ -43,6 +44,85 @@ import org.apache.camel.impl.DefaultEndpoint;
  */
 public class JMXEndpoint extends DefaultEndpoint {
 
+    // error messages as constants so they can be asserted on from unit tests
+    protected static final String ERR_PLATFORM_SERVER = "Monitor type consumer only supported on platform server.";
+    protected static final String ERR_THRESHOLD_LOW = "ThresholdLow must be set when monitoring a gauge attribute.";
+    protected static final String ERR_THRESHOLD_HIGH = "ThresholdHigh must be set when monitoring a gauge attribute.";
+    protected static final String ERR_GAUGE_NOTIFY = "One or both of NotifyHigh and NotifyLow must be true when monitoring a gauge attribute.";
+    protected static final String ERR_STRING_NOTIFY = "One or both of NotifyDiffer and NotifyMatch must be true when monitoring a string attribute.";
+    protected static final String ERR_STRING_TO_COMPARE = "StringToCompare must be specified when monitoring a string attribute.";
+    protected static final String ERR_OBSERVED_ATTRIBUTE = "Observed attribute must be specified";
+
+    /**
+     * URI Property: [monitor types only] The attribute to observe for the monitor bean.  
+     */
+    private String mObservedAttribute;
+
+    /**
+     * URI Property: [monitor types only] The frequency to poll the bean to check the monitor.  
+     */
+    private long mGranularityPeriod;
+
+    /**
+     * URI Property: [monitor types only] The type of monitor to create. One of string, gauge, counter.  
+     */
+    private String mMonitorType;
+
+    /**
+     * URI Property: [counter monitor only] Initial threshold for the monitor. The value must exceed this before notifications are fired.  
+     */
+    private int mInitThreshold;
+
+    /**
+     * URI Property: [counter monitor only] The amount to increment the threshold after it's been exceeded.  
+     */
+    private int mOffset;
+
+    /**
+     * URI Property: [counter monitor only] The value at which the counter is reset to zero  
+     */
+    private int mModulus;
+
+    /**
+     * URI Property: [counter + gauge monitor only] If true, then the value reported in the notification is the difference from the threshold as opposed to the value itself.  
+     */
+    private boolean mDifferenceMode;
+
+    /**
+     * URI Property: [gauge monitor only] If true, the gauge will fire a notification when the high threshold is exceeded  
+     */
+    private boolean mNotifyHigh;
+
+    /**
+     * URI Property: [gauge monitor only] If true, the gauge will fire a notification when the low threshold is exceeded  
+     */
+    private boolean mNotifyLow;
+
+    /**
+     * URI Property: [gauge monitor only] Value for the gauge's high threshold  
+     */
+    private Double mThresholdHigh;
+
+    /**
+     * URI Property: [gauge monitor only] Value for the gauge's low threshold  
+     */
+    private Double mThresholdLow;
+
+    /**
+     * URI Property: [string monitor only] If true, the string monitor will fire a notification when the string attribute differs from the string to compare.  
+     */
+    private boolean mNotifyDiffer;
+
+    /**
+     * URI Property: [string monitor only] If true, the string monitor will fire a notification when the string attribute matches the string to compare.  
+     */
+    private boolean mNotifyMatch;
+
+    /**
+     * URI Property: [string monitor only] Value for the string monitor's string to compare.  
+     */
+    private String mStringToCompare;
+    
     /**
      * URI Property: Format for the message body. Either "xml" or "raw". If xml, the notification is serialized to xml. If raw, then the raw java object is set as the body.
      */
@@ -97,7 +177,39 @@ public class JMXEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor aProcessor) throws Exception {
-        return new JMXConsumer(this, aProcessor);
+        // validate that all of the endpoint is configured properly
+        if (getMonitorType() != null) {
+            
+            if (!isPlatformServer()) {
+                throw new IllegalArgumentException(ERR_PLATFORM_SERVER);
+            }
+            
+            if (ObjectHelper.isEmpty(getObservedAttribute())) {
+                throw new IllegalArgumentException(ERR_OBSERVED_ATTRIBUTE);
+            }
+            if (getMonitorType().equals("string")) {
+                if (ObjectHelper.isEmpty(getStringToCompare())) {
+                    throw new IllegalArgumentException(ERR_STRING_TO_COMPARE);
+                }
+                if (!isNotifyDiffer() && !isNotifyMatch()) {
+                    throw new IllegalArgumentException(ERR_STRING_NOTIFY);
+                }
+            } else if (getMonitorType().equals("gauge")) {
+                if (!isNotifyHigh() && !isNotifyLow()) {
+                    throw new IllegalArgumentException(ERR_GAUGE_NOTIFY);
+                }
+                if (getThresholdHigh() == null) {
+                    throw new IllegalArgumentException(ERR_THRESHOLD_HIGH);
+                }
+                if (getThresholdLow() == null) {
+                    throw new IllegalArgumentException(ERR_THRESHOLD_LOW);
+                }
+            }
+            return new JMXMonitorConsumer(this, aProcessor);
+        } else {
+            // shouldn't need any other validation.
+            return new JMXConsumer(this, aProcessor);
+        }
     }
 
     public Producer createProducer() throws Exception {
@@ -214,6 +326,118 @@ public class JMXEndpoint extends DefaultEndpoint {
 
     protected void setJMXObjectName(ObjectName aCachedObjectName) {
         mJMXObjectName = aCachedObjectName;
+    }
+
+    public String getObservedAttribute() {
+        return mObservedAttribute;
+    }
+
+    public void setObservedAttribute(String aObservedAttribute) {
+        mObservedAttribute = aObservedAttribute;
+    }
+
+    public long getGranularityPeriod() {
+        return mGranularityPeriod;
+    }
+
+    public void setGranularityPeriod(long aGranularityPeriod) {
+        mGranularityPeriod = aGranularityPeriod;
+    }
+
+    public String getMonitorType() {
+        return mMonitorType;
+    }
+
+    public void setMonitorType(String aMonitorType) {
+        mMonitorType = aMonitorType;
+    }
+
+    public int getInitThreshold() {
+        return mInitThreshold;
+    }
+
+    public void setInitThreshold(int aInitThreshold) {
+        mInitThreshold = aInitThreshold;
+    }
+
+    public int getOffset() {
+        return mOffset;
+    }
+
+    public void setOffset(int aOffset) {
+        mOffset = aOffset;
+    }
+
+    public int getModulus() {
+        return mModulus;
+    }
+
+    public void setModulus(int aModulus) {
+        mModulus = aModulus;
+    }
+
+    public boolean isDifferenceMode() {
+        return mDifferenceMode;
+    }
+
+    public void setDifferenceMode(boolean aDifferenceMode) {
+        mDifferenceMode = aDifferenceMode;
+    }
+
+    public boolean isNotifyHigh() {
+        return mNotifyHigh;
+    }
+
+    public void setNotifyHigh(boolean aNotifyHigh) {
+        mNotifyHigh = aNotifyHigh;
+    }
+
+    public boolean isNotifyLow() {
+        return mNotifyLow;
+    }
+
+    public void setNotifyLow(boolean aNotifyLow) {
+        mNotifyLow = aNotifyLow;
+    }
+
+    public Double getThresholdHigh() {
+        return mThresholdHigh;
+    }
+
+    public void setThresholdHigh(Double aThresholdHigh) {
+        mThresholdHigh = aThresholdHigh;
+    }
+
+    public Double getThresholdLow() {
+        return mThresholdLow;
+    }
+
+    public void setThresholdLow(Double aThresholdLow) {
+        mThresholdLow = aThresholdLow;
+    }
+
+    public boolean isNotifyDiffer() {
+        return mNotifyDiffer;
+    }
+
+    public void setNotifyDiffer(boolean aNotifyDiffer) {
+        mNotifyDiffer = aNotifyDiffer;
+    }
+
+    public boolean isNotifyMatch() {
+        return mNotifyMatch;
+    }
+
+    public void setNotifyMatch(boolean aNotifyMatch) {
+        mNotifyMatch = aNotifyMatch;
+    }
+
+    public String getStringToCompare() {
+        return mStringToCompare;
+    }
+
+    public void setStringToCompare(String aStringToCompare) {
+        mStringToCompare = aStringToCompare;
     }
 
     private ObjectName buildObjectName() throws MalformedObjectNameException {

@@ -15,13 +15,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<MonitorNotification xmlns="urn:org.apache.camel.component:jmx">
-    <source>TestDomain:name=counter</source>
-    <message/>
-    <sequence>0</sequence>
-    <type>jmx.monitor.counter.threshold</type>
-    <derivedGauge>2</derivedGauge>  
-    <observedAttribute>MonitorNumber</observedAttribute>
-    <observedObject>TestDomain:name=simpleBean</observedObject>
-    <trigger>1</trigger>
-</MonitorNotification>
+<xsl:stylesheet version="2.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:jmx="urn:org.apache.camel.component:jmx"
+    exclude-result-prefixes="jmx fn"
+    xmlns:fn="http://www.w3.org/2005/xpath-functions">
+    
+    <xsl:import href="copy.xsl"/>
+
+    <xsl:template match="jmx:source[contains(., 'camel-jmx-monitor')]">
+        <jmx:source>
+            <xsl:value-of select='substring(., 0, string-length(.)-36)'/>
+        </jmx:source>
+    </xsl:template>
+</xsl:stylesheet>

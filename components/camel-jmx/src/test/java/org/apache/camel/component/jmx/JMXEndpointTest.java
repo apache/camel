@@ -17,9 +17,11 @@
 package org.apache.camel.component.jmx;
 
 import java.util.Hashtable;
+
 import javax.management.ObjectName;
 
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -36,12 +38,19 @@ import static org.junit.Assert.fail;
  */
 public class JMXEndpointTest {
 
-    DefaultCamelContext context = new DefaultCamelContext();
+    DefaultCamelContext context;
+    
+    @Before
+    public void setUp() throws Exception {
+        context = new DefaultCamelContext();
+        // saves 5 seconds on this unit test
+        context.setLazyLoadTypeConverters(true);
+    }
 
     @Test
     public void setObjectNameThrowsWhenObjectPropertiesIsSet() throws Exception {
         JMXEndpoint ep = new JMXEndpoint("urn:ignored", new JMXComponent());
-        ep.setObjectProperties(new Hashtable());
+        ep.setObjectProperties(new Hashtable<String, String>());
         try {
             // should fault since objectName is mutex with objectProperties
             ep.setObjectName("foo");
@@ -121,5 +130,82 @@ public class JMXEndpointTest {
         JMXEndpoint ep = (JMXEndpoint) context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.name=theObjectName&user=user1&password=1234");
         assertEquals("user1", ep.getUser());
         assertEquals("1234", ep.getPassword());
+    }
+    
+    @Test
+    public void noObservedAttribute() throws Exception {
+        JMXEndpoint ep = (JMXEndpoint) context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&monitorType=string");
+        try {
+            ep.createConsumer(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals(JMXEndpoint.ERR_OBSERVED_ATTRIBUTE, e.getMessage());
+        }
+    }
+
+    @Test
+    public void noStringToCompare() throws Exception {
+        JMXEndpoint ep = (JMXEndpoint) context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&monitorType=string&observedAttribute=foo");
+        try {
+            ep.createConsumer(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals(JMXEndpoint.ERR_STRING_TO_COMPARE, e.getMessage());
+        }
+    }
+
+    @Test
+    public void noNotifyDifferOrNotifyMatch() throws Exception {
+        JMXEndpoint ep = (JMXEndpoint) context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&monitorType=string&observedAttribute=foo&stringToCompare=foo");
+        try {
+            ep.createConsumer(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals(JMXEndpoint.ERR_STRING_NOTIFY, e.getMessage());
+        }
+    }
+
+    @Test
+    public void noNotifyHighOrNotifyLow() throws Exception {
+        JMXEndpoint ep = (JMXEndpoint) context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&monitorType=gauge&observedAttribute=foo");
+        try {
+            ep.createConsumer(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals(JMXEndpoint.ERR_GAUGE_NOTIFY, e.getMessage());
+        }
+    }
+
+    @Test
+    public void noThresholdHigh() throws Exception {
+        JMXEndpoint ep = (JMXEndpoint) context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&monitorType=gauge&observedAttribute=foo&thresholdLow=100&notifyHigh=true");
+        try {
+            ep.createConsumer(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals(JMXEndpoint.ERR_THRESHOLD_HIGH, e.getMessage());
+        }
+    }
+
+    @Test
+    public void noThresholdLow() throws Exception {
+        JMXEndpoint ep = (JMXEndpoint) context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName&monitorType=gauge&observedAttribute=foo&thresholdHigh=100&notifyHigh=true");
+        try {
+            ep.createConsumer(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals(JMXEndpoint.ERR_THRESHOLD_LOW, e.getMessage());
+        }
+    }
+    
+    @Test
+    public void remoteServerWithMonitor() throws Exception {
+        JMXEndpoint ep = (JMXEndpoint) context.getEndpoint("jmx:service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi?objectDomain=FooDomain&key.name=theObjectName&monitorType=gauge");
+        try {
+            ep.createConsumer(null);
+            fail("expected exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals(JMXEndpoint.ERR_PLATFORM_SERVER, e.getMessage());
+        }
     }
 }

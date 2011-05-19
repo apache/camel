@@ -44,12 +44,12 @@ public class JMXNotificationFilterTest extends SimpleBeanFixture {
 
         // we should only get 5 messages, which is 1/2 the number of times we touched the object.
         // The 1/2 is due to the behavior of the test NotificationFilter implemented below 
-        getMockEndpoint().setExpectedMessageCount(5);
+        getMockFixture().getMockEndpoint().setExpectedMessageCount(5);
         for (int i = 0; i < 10; i++) {
             bean.touch();
         }
 
-        waitForMessages();
+        getMockFixture().waitForMessages();
         assertEquals("5 notifications should have been filtered", 5, mRejected.size());
 
         // assert that all of the rejected ones are odd and accepted ones even
@@ -57,7 +57,7 @@ public class JMXNotificationFilterTest extends SimpleBeanFixture {
             assertEquals(1, rejected.getSequenceNumber() % 2);
         }
 
-        for (Exchange received : getMockEndpoint().getReceivedExchanges()) {
+        for (Exchange received : getMockFixture().getMockEndpoint().getReceivedExchanges()) {
             Notification n = (Notification) received.getIn().getBody();
             assertEquals(0, n.getSequenceNumber() % 2);
         }

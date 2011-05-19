@@ -69,6 +69,76 @@ public class JMXUriBuilder {
         addProperty("handback", aHandback);
         return this;
     }
+    
+    public JMXUriBuilder withMonitorType(String aMonitorType) {
+        addProperty("monitorType", aMonitorType);
+        return this;
+    }
+
+    public JMXUriBuilder withInitThreshold(int aInitThreshold) {
+        addProperty("initThreshold", String.valueOf(aInitThreshold));
+        return this;
+    }
+    
+    public JMXUriBuilder withOffset(int aOffset) {
+        addProperty("offset", String.valueOf(aOffset));
+        return this;
+    }
+
+    public JMXUriBuilder withModulus(int aModulus) {
+        addProperty("modulus", String.valueOf(aModulus));
+        return this;
+    }
+
+    public JMXUriBuilder withDifferenceMode(boolean aDifferenceMode) {
+        addProperty("differenceMode", String.valueOf(aDifferenceMode));
+        return this;
+    }
+
+    public JMXUriBuilder withGranularityPeriod(long aPeriod) {
+        addProperty("granularityPeriod", String.valueOf(aPeriod));
+        return this;
+    }
+
+    public JMXUriBuilder withObservedAttribute(String aObservedAttribute) {
+        addProperty("observedAttribute", aObservedAttribute);
+        return this;
+    }
+    
+    public JMXUriBuilder withNotifyHigh(boolean aNotifyHigh) {
+        addProperty("notifyHigh", String.valueOf(aNotifyHigh));
+        return this;
+    }
+
+    public JMXUriBuilder withNotifyLow(boolean aNotifyLow) {
+        addProperty("notifyLow", String.valueOf(aNotifyLow));
+        return this;
+    }
+
+    public JMXUriBuilder withThresholdHigh(Number aThresholdHigh) {
+        addProperty("thresholdHigh", String.valueOf(aThresholdHigh));
+        return this;
+    }
+
+    public JMXUriBuilder withThresholdLow(Number aThresholdLow) {
+        addProperty("thresholdLow", String.valueOf(aThresholdLow));
+        return this;
+    }
+
+    public JMXUriBuilder withNotifyDiffer(boolean aNotifyDiffer) {
+        addProperty("notifyDiffer", String.valueOf(aNotifyDiffer));
+        return this;
+    }
+
+    public JMXUriBuilder withNotifyMatch(boolean aNotifyMatch) {
+        addProperty("notifyMatch", String.valueOf(aNotifyMatch));
+        return this;
+    }
+
+    public JMXUriBuilder withStringToCompare(String aStringToCompare) {
+        addProperty("stringToCompare", aStringToCompare);
+        return this;
+    }
 
     /**
      * Converts all of the values to params with the "key." prefix so the

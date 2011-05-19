@@ -31,6 +31,9 @@ import javax.management.timer.TimerNotification;
  * Simple bean that is used for testing.
  */
 public class SimpleBean extends NotificationBroadcasterSupport implements ISimpleMXBean {
+
+    private static final long serialVersionUID = -1230507995730071242L;
+    
     private int mSequence;
     /**
      * Use the same timestamp every time so the assertions are easier
@@ -38,6 +41,7 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
     private long mTimestamp;
 
     private String mStringValue;
+    private int mMonitorNumber;
 
     public String getStringValue() {
         return mStringValue;
@@ -52,8 +56,11 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
         sendNotification(acn);
     }
 
-    public int getMonitorNumber() {
-        return getSequence();
+    public Integer getMonitorNumber() {
+        return mMonitorNumber;
+    }
+    public void setMonitorNumber(Integer aNumber) {
+        mMonitorNumber = aNumber;
     }
 
 

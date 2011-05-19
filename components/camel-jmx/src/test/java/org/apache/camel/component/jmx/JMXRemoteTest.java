@@ -49,6 +49,7 @@ public class JMXRemoteTest extends SimpleBeanFixture {
         connector.stop();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void initServer() throws Exception {
         registry = LocateRegistry.createRegistry(61000);
@@ -70,7 +71,7 @@ public class JMXRemoteTest extends SimpleBeanFixture {
     @Test
     public void notification() throws Exception {
         getSimpleMXBean().touch();
-        waitForMessages();
-        assertMessageReceived(new File("src/test/resources/consumer-test/touched.xml"));
+        getMockFixture().waitForMessages();
+        getMockFixture().assertMessageReceived(new File("src/test/resources/consumer-test/touched.xml"));
     }
 }

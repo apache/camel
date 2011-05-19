@@ -163,7 +163,7 @@ public class NotificationXmlFormatter {
     }
 
     private List<String> toStringList(List<ObjectName> objectNames) {
-        List<String> roles = new ArrayList(objectNames.size());
+        List<String> roles = new ArrayList<String>(objectNames.size());
         for (ObjectName on : objectNames) {
             roles.add(on.toString());
         }

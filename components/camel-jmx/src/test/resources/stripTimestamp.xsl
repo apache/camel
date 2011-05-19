@@ -20,14 +20,9 @@
     xmlns:jmx="urn:org.apache.camel.component:jmx"
     exclude-result-prefixes="jmx">
     
-    <xsl:template match="@*|node()">
-        <xsl:copy>
-            <xsl:apply-templates select="@*|node()"/>
-        </xsl:copy>
-    </xsl:template>
-    
+    <xsl:import href="copy.xsl"/>
+
     <xsl:template match="jmx:timestamp"/>
     <xsl:template match="jmx:dateTime"/>
-    <xsl:template match="jmx:derivedGauge"/>
 
 </xsl:stylesheet>

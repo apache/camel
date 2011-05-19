@@ -39,16 +39,16 @@ public class JMXConsumerTest extends SimpleBeanFixture {
 
     @Test
     public void attributeChange() throws Exception {
-        getMockEndpoint().setExpectedMessageCount(1);
+        getMockFixture().getMockEndpoint().setExpectedMessageCount(1);
         simpleBean.setStringValue("foo");
         waitAndAssertMessageReceived("src/test/resources/consumer-test/attributeChange-0.xml");
 
-        getMockEndpoint().setExpectedMessageCount(1);
+        getMockFixture().getMockEndpoint().setExpectedMessageCount(1);
         simpleBean.setStringValue("bar");
         waitAndAssertMessageReceived("src/test/resources/consumer-test/attributeChange-1.xml");
 
         // set the string to null
-        getMockEndpoint().setExpectedMessageCount(1);
+        getMockFixture().getMockEndpoint().setExpectedMessageCount(1);
         simpleBean.setStringValue(null);
         waitAndAssertMessageReceived("src/test/resources/consumer-test/attributeChange-2.xml");
     }
@@ -90,8 +90,8 @@ public class JMXConsumerTest extends SimpleBeanFixture {
     }
 
     private void waitAndAssertMessageReceived(String aExpectedFilePath) throws InterruptedException, Exception {
-        waitForMessages();
-        assertMessageReceived(new File(aExpectedFilePath));
+        getMockFixture().waitForMessages();
+        getMockFixture().assertMessageReceived(new File(aExpectedFilePath));
     }
 
 }

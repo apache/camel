@@ -95,12 +95,24 @@ public final class XmlFixture {
     }
 
     public static Document stripTimestamp(Document aDocument) throws Exception {
+        String resourcePath = "/stripTimestamp.xsl";
+        return transform(aDocument, resourcePath);
+    }
+
+    public static Document stripUUID(Document aDocument) throws Exception {
+        String resourcePath = "/stripUUID.xsl";
+        return transform(aDocument, resourcePath);
+    }
+
+    protected static Document transform(Document aDocument, String aResourcePath) throws Exception {
         TransformerFactory tf = TransformerFactory.newInstance();
-        InputStream in = XmlFixture.class.getResourceAsStream("/stripTimestamp.xsl");
+        InputStream in = XmlFixture.class.getResourceAsStream(aResourcePath);
         Source src = new StreamSource(in);
+        src.setSystemId(XmlFixture.class.getResource(aResourcePath).toExternalForm());
         Transformer t = tf.newTransformer(src);
         DOMResult result = new DOMResult();
         t.transform(new DOMSource(aDocument), result);
         return (Document) result.getNode();
     }
+
 }

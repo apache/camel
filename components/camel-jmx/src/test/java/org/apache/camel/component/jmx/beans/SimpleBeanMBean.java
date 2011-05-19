@@ -36,5 +36,6 @@ public interface SimpleBeanMBean extends Serializable {
 
     void triggerTimerNotification();
 
-    int getMonitorNumber();
+    Integer getMonitorNumber();
+    void setMonitorNumber(Integer aMonitorNumber);
 }

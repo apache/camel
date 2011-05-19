@@ -21,6 +21,8 @@ package org.apache.camel.component.jmx;
  */
 public class NotificationFormatException extends Exception {
 
+    private static final long serialVersionUID = -3460338958670572299L;
+
     public NotificationFormatException(Exception aCausedBy) {
         super(aCausedBy);
     }

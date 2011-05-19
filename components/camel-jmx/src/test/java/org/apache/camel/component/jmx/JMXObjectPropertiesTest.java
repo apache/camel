@@ -30,7 +30,7 @@ public class JMXObjectPropertiesTest extends SimpleBeanFixture {
     public void testObjectProperties() throws Exception {
         ISimpleMXBean bean = getSimpleMXBean();
         bean.touch();
-        waitForMessages();
+        getMockFixture().waitForMessages();
     }
 
     @Override
@@ -38,7 +38,6 @@ public class JMXObjectPropertiesTest extends SimpleBeanFixture {
         return new JMXUriBuilder().withObjectDomain(DOMAIN).withObjectPropertiesReference("#myTable");
     }
 
-    @SuppressWarnings("serial")
     @Override
     protected void initRegistry() {
         Hashtable<String, String> ht = new Hashtable<String, String>();

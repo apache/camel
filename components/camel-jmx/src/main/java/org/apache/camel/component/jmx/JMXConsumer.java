@@ -72,11 +72,20 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
         } else {
             JMXServiceURL url = new JMXServiceURL(ep.getServerURL());
             String[] creds = {ep.getUser(), ep.getPassword()};
-            Map map = Collections.singletonMap(JMXConnector.CREDENTIALS, creds);
+            Map<String, String[]> map = Collections.singletonMap(JMXConnector.CREDENTIALS, creds);
             JMXConnector connector = JMXConnectorFactory.connect(url, map);
             setServerConnection(connector.getMBeanServerConnection());
         }
         // subscribe
+        addNotificationListener();
+    }
+
+    /**
+     * Adds a notification listener to the target bean.
+     * @throws Exception
+     */
+    protected void addNotificationListener() throws Exception {
+        JMXEndpoint ep = (JMXEndpoint) getEndpoint();
         NotificationFilter nf = ep.getNotificationFilter();
 
         ObjectName objectName = ep.getJMXObjectName();
@@ -90,6 +99,13 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        removeNotificationListener();
+    }
+
+    /**
+     * Removes the consumer as a listener from the bean. 
+     */
+    protected void removeNotificationListener() throws Exception {
         JMXEndpoint ep = (JMXEndpoint) getEndpoint();
         getServerConnection().removeNotificationListener(ep.getJMXObjectName(), this);
     }
@@ -119,7 +135,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
         message.setHeader("jmx.handback", aHandback);
         try {
             if (ep.isXML()) {
-                message.setBody(mFormatter.format(aNotification));
+                message.setBody(getFormatter().format(aNotification));
             } else {
                 message.setBody(aNotification);
             }
@@ -131,4 +147,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
         }
     }
 
+    protected NotificationXmlFormatter getFormatter() {
+        return mFormatter;
+    }
 }

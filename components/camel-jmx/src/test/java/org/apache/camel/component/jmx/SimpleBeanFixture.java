@@ -16,14 +16,10 @@
  */
 package org.apache.camel.component.jmx;
 
-import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanRegistrationException;
@@ -31,14 +27,7 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Document;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.apache.camel.component.jmx.beans.SimpleBean;
@@ -47,9 +36,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.junit.After;
 import org.junit.Before;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * MBean that is registered for the unit tests. The fixture will register a bean
@@ -80,7 +66,7 @@ public class SimpleBeanFixture {
     /**
      * destination for the simple route created.
      */
-    private MockEndpoint mMockEndpoint;
+    private MockEndpointFixture mMockEndpoint;
 
 
     @Before
@@ -102,15 +88,6 @@ public class SimpleBeanFixture {
             mContext.stop();
         }
         unregisterBean(makeObjectName("simpleBean"));
-    }
-
-    protected void waitForMessages() throws InterruptedException {
-        waitForMessages(mMockEndpoint);
-    }
-
-    protected void waitForMessages(MockEndpoint aMockEndpoint) throws InterruptedException {
-        mMockEndpoint.await(10, TimeUnit.SECONDS);
-        assertEquals("Expected number of messages didn't arrive before timeout", aMockEndpoint.getExpectedCount(), aMockEndpoint.getReceivedCounter());
     }
 
     protected void initServer() throws Exception {
@@ -160,33 +137,6 @@ public class SimpleBeanFixture {
         return objectName;
     }
 
-    /**
-     * Gets the body of the received message at the specified index
-     */
-    protected <T> T getBody(int aIndex, Class<T> aType) {
-        Message in = getMessage(aIndex);
-        T body = in.getBody(aType);
-        assertNotNull(body);
-        return body;
-    }
-
-    /**
-     * Gets the received message at the specified index
-     */
-    protected Message getMessage(int aIndex) {
-        Exchange exchange = getExchange(aIndex);
-        Message in = exchange.getIn();
-        return in;
-    }
-
-    /**
-     * Gets the received exchange at the specified index
-     */
-    protected Exchange getExchange(int aIndex) {
-        List<Exchange> exchanges = mMockEndpoint.getReceivedExchanges();
-        Exchange exchange = exchanges.get(aIndex);
-        return exchange;
-    }
 
     /**
      * Creates the bean and registers it within the mbean server.
@@ -210,13 +160,15 @@ public class SimpleBeanFixture {
      * to the mock endpoint.
      */
     protected void initContext() throws Exception {
-        mMockEndpoint = (MockEndpoint) mContext.getEndpoint("mock:sink");
-        mMockEndpoint.setExpectedMessageCount(1);
+        mContext.setLazyLoadTypeConverters(true);
+        final MockEndpoint mock = (MockEndpoint) mContext.getEndpoint("mock:sink");
+        mock.setExpectedMessageCount(1);
+        mMockEndpoint = new MockEndpointFixture(mock);
         mContext.setRegistry(getRegistry());
         mContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(buildFromURI().toString()).to(mMockEndpoint);
+                from(buildFromURI().toString()).to(mock);
             }
         });
     }
@@ -253,49 +205,7 @@ public class SimpleBeanFixture {
         mRegistry = aRegistry;
     }
 
-    protected MockEndpoint getMockEndpoint() {
+    protected MockEndpointFixture getMockFixture() {
         return mMockEndpoint;
-    }
-
-    protected void setMockEndpoint(MockEndpoint aMockEndpoint) {
-        mMockEndpoint = aMockEndpoint;
-    }
-
-    /**
-     * Assert that we've received the message and resets the mock endpoint
-     */
-    protected void assertMessageReceived(File aExpectedFile) throws Exception {
-        Document actual = XmlFixture.toDoc(getBody(0, String.class));
-        Document noTime = XmlFixture.stripTimestamp(actual);
-        XmlFixture.assertXMLIgnorePrefix("failed to match",
-                XmlFixture.toDoc(aExpectedFile),
-                noTime);
-        // assert that we have a timestamp and datetime
-        // can't rely on the datetime being the same due to timezone differences
-        // instead, we'll assert that the values exist.
-        XPathFactory xpf = XPathFactory.newInstance();
-        XPath xp = xpf.newXPath();
-        xp.setNamespaceContext(new NamespaceContext() {
-            public String getNamespaceURI(String aArg0) {
-                return "urn:org.apache.camel.component:jmx";
-            }
-            public String getPrefix(String aArg0) {
-                return "jmx";
-            }
-            public Iterator getPrefixes(String aArg0) {
-                return null;
-            }
-        });
-        assertEquals("1", xp.evaluate("count(//jmx:timestamp)", actual));
-        assertEquals("1", xp.evaluate("count(//jmx:dateTime)", actual));
-        resetMockEndpoint();
-    }
-
-    /**
-     * Resets the mock endpoint so we can run another test. This will clear out any
-     * previously received messages.
-     */
-    protected void resetMockEndpoint() {
-        getMockEndpoint().reset();
     }
 }
