@@ -87,7 +87,7 @@
     <httpclient4-version>4.1</httpclient4-version>
     <httpclient-version>3.1</httpclient-version>
     <icu4j-version>4.0.1</icu4j-version>
-    <jackson-version>1.7.5</jackson-version>
+    <jackson-version>1.8.1</jackson-version>
     <jain-sip-ri-bundle-version>1.2.154_1</jain-sip-ri-bundle-version>
     <jasypt-version>1.7</jasypt-version>
     <javassist-bundle-version>3.9.0.GA_1</javassist-bundle-version>
@@ -133,7 +133,7 @@
     <smack-version>3.1.0</smack-version>
     <snmp4j-version>1.8.1_3</snmp4j-version>
     <smpp-version>2.1.0_1</smpp-version>
-    <spring-integration-version>2.0.3.RELEASE</spring-integration-version>
+    <spring-integration-version>2.0.4.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-version>3.0.5.RELEASE</spring-version>
     <spring-osgi-version>1.2.0</spring-osgi-version>
