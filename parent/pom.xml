@@ -98,7 +98,7 @@
     <jettison-version>1.2</jettison-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jibx-version>1.2.2</jibx-version>
-    <jruby-version>1.5.2</jruby-version>
+    <jruby-version>1.5.6</jruby-version>
     <jsch-version>0.1.44-1</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
