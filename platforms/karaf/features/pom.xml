@@ -36,7 +36,7 @@
     <!-- some of the bundles is located at: http://repo1.maven.org/maven2/org/apache/servicemix/bundles/ -->
     <properties>
       <abdera-bundle-version>0.4.0-incubating_3</abdera-bundle-version>
-      <ant-bundle-version>1.7.0_3</ant-bundle-version>
+      <ant-bundle-version>1.7.0_4</ant-bundle-version>
       <antlr-bundle-version>2.7.7_2</antlr-bundle-version>
       <aopalliance-bundle-version>1.0_3</aopalliance-bundle-version>
       <asm-bundle-version>2.2.3_3</asm-bundle-version>
@@ -58,7 +58,7 @@
       <dom4j-bundle-version>1.6.1_2</dom4j-bundle-version>
       <dozer-bundle-version>5.3.1</dozer-bundle-version>
       <el-api-1.0-version>1.0.1</el-api-1.0-version>
-      <fastinfoset-version>1.2.7_2</fastinfoset-version>
+      <fastinfoset-version>1.2.7_3</fastinfoset-version>
       <features.file>features.xml</features.file>
       <flatpack-bundle-version>3.2.0_1</flatpack-bundle-version>
       <felix.configadmin.version>1.2.4</felix.configadmin.version>
@@ -82,7 +82,7 @@
       <jexcelapi-bundle-version>2.4.2_2</jexcelapi-bundle-version>
       <javax.el-bundle-version>2.1.0</javax.el-bundle-version>
       <jcr-bundle-version>1.0_2</jcr-bundle-version>
-      <jdom-bundle-version>1.1_2</jdom-bundle-version>
+      <jdom-bundle-version>1.1_3</jdom-bundle-version>
       <jettison-bundle-version>1.2</jettison-bundle-version>
       <jing-bundle-version>20030619_1</jing-bundle-version>
       <jibx-bundle-version>1.2.2_1</jibx-bundle-version>
