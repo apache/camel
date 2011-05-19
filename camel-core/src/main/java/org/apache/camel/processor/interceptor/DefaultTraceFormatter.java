@@ -72,7 +72,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
             sb.append(", BodyType:").append(MessageHelper.getBodyTypeName(in));
         }
         if (showBody) {
-            sb.append(", Body:").append(MessageHelper.extractBodyAsString(in));
+            sb.append(", Body:").append(MessageHelper.extractBodyForLogging(in, ""));
         }
         if (showOutHeaders && out != null) {
             sb.append(", OutHeaders:").append(out.getHeaders());
@@ -81,7 +81,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
             sb.append(", OutBodyType:").append(MessageHelper.getBodyTypeName(out));
         }
         if (showOutBody && out != null) {
-            sb.append(", OutBody:").append(MessageHelper.extractBodyAsString(out));
+            sb.append(", OutBody:").append(MessageHelper.extractBodyForLogging(out, ""));
         }        
         if (showException && exchange.getException() != null) {
             sb.append(", Exception:").append(exchange.getException());

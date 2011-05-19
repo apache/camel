@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -27,6 +28,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
 
@@ -202,6 +204,8 @@ public final class MessageHelper {
             return prepend + "[Body is instance of java.io.Reader]";
         } else if (!allowStreams && obj instanceof Writer) {
             return prepend + "[Body is instance of java.io.Writer]";
+        } else if (obj instanceof GenericFile || obj instanceof File) {
+            return prepend + "[Body is instance file based: " + obj + "]";
         }
 
         // is the body a stream cache
