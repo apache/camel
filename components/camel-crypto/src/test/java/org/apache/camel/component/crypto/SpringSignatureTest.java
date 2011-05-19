@@ -26,8 +26,8 @@ import java.security.cert.Certificate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spring.SpringCamelContext;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringSignatureTest extends SignatureTests {
 
@@ -35,7 +35,7 @@ public class SpringSignatureTest extends SignatureTests {
 
     protected CamelContext createCamelContext() throws Exception {
         rsaPair = getKeyPair("RSA");
-        return createSpringCamelContext(this, "org/apache/camel/component/crypto/SpringSignatureTests.xml");
+        return SpringCamelContext.springCamelContext("org/apache/camel/component/crypto/SpringSignatureTests.xml");
     }
 
     public static KeyStore keystore() throws Exception {

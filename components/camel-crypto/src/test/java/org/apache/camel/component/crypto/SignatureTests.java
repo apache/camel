@@ -29,19 +29,21 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.KEYSTORE_ALIAS;
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY;
 import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT;
 
-public class SignatureTests extends ContextTestSupport {
+public class SignatureTests extends CamelTestSupport {
 
     private KeyPair keyPair;
     private String payload = "Dear Alice, Rest assured it's me, signed Bob";
@@ -136,30 +138,35 @@ public class SignatureTests extends ContextTestSupport {
         }};
     }
 
+    @Test
     public void testBasicSignatureRoute() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:keypair", payload);
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSetAlgorithmInRouteDefinition() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:algorithm", payload);
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSetBufferInRouteDefinition() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:buffersize", payload);
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSetRandomInRouteDefinition() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:random", payload);
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSetProviderInRouteDefinition() throws Exception {
         if (isJavaVendor("ibm")) {
             return;
@@ -170,18 +177,21 @@ public class SignatureTests extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSetCertificateInRouteDefinition() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:certificate", payload);
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSetKeystoreInRouteDefinition() throws Exception {
         MockEndpoint mock = setupMock();
         sendBody("direct:keystore", payload);
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSignatureHeaderInRouteDefinition() throws Exception {
         MockEndpoint mock = setupMock();
         Exchange signed = getMandatoryEndpoint("direct:signature-header").createExchange();
@@ -192,6 +202,7 @@ public class SignatureTests extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testProvideAliasInHeader() throws Exception {
         MockEndpoint mock = setupMock();
 
@@ -211,6 +222,7 @@ public class SignatureTests extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testProvideKeysInHeader() throws Exception {
         MockEndpoint mock = setupMock();
         Exchange unsigned = getMandatoryEndpoint("direct:headerkey-sign").createExchange();
@@ -232,6 +244,7 @@ public class SignatureTests extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testProvideCertificateInHeader() throws Exception {
         MockEndpoint mock = setupMock();
         Exchange unsigned = getMandatoryEndpoint("direct:signature-property").createExchange();
@@ -288,8 +301,8 @@ public class SignatureTests extends ContextTestSupport {
         }
     }
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         setUpKeys("DSA");
         disableJMX();
         super.setUp();

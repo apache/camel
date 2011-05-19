@@ -24,36 +24,43 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ExchangeHelper;
+import org.junit.Test;
 
-public class CryptoDataFormatTest extends ContextTestSupport {
-
+public class CryptoDataFormatTest extends CamelTestSupport {
+    
+    @Test
     public void testBasicSymmetric() throws Exception {
         doRoundTripEncryptionTests("direct:basic-encryption");
     }
 
+    @Test
     public void testSymmetricWithInitVector() throws Exception {
         doRoundTripEncryptionTests("direct:init-vector");
     }
 
+    @Test
     public void testSymmetricWithInlineInitVector() throws Exception {
         doRoundTripEncryptionTests("direct:inline");
     }
 
+    @Test
     public void testSymmetricWithHMAC() throws Exception {
         doRoundTripEncryptionTests("direct:hmac");
     }
 
+    @Test
     public void testSymmetricWithMD5HMAC() throws Exception {
         doRoundTripEncryptionTests("direct:hmac-algorithm");
     }
 
+    @Test
     public void testKeySuppliedAsHeader() throws Exception {
         KeyGenerator generator = KeyGenerator.getInstance("DES");
         Key key = generator.generateKey();
