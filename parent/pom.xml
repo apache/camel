@@ -78,7 +78,7 @@
     <hamcrest-version>1.2-dev1</hamcrest-version>
     <hawtbuf-version>1.2</hawtbuf-version>
     <hawtdb-version>1.5</hawtdb-version>
-    <hazelcast-version>1.9.2</hazelcast-version>
+    <hazelcast-version>1.9.3</hazelcast-version>
     <hibernate-version>3.2.6.ga</hibernate-version>
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
     <hsqldb-version>1.8.0.7</hsqldb-version>

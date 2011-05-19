@@ -20,7 +20,6 @@ import java.util.List;
 
 import com.hazelcast.core.Hazelcast;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -31,28 +30,21 @@ public class HazelcastListProducerTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
+        super.setUp();
+        
         list = Hazelcast.getList("bar");
         list.clear();
-
-        super.setUp();
     }
 
-    // @Test
-    public void add() throws InterruptedException {
-        List<Object> list = Hazelcast.getList("bar");
-        list.clear();
+    @Test
+    public void addValue() throws InterruptedException {
 
         template.sendBody("direct:add", "bar");
-
         assertTrue(list.contains("bar"));
-
-        list.clear();
     }
 
-    // @Test
+    @Test
     public void removeValue() throws InterruptedException {
-        List<String> list = Hazelcast.getList("bar");
-        list.clear();
 
         list.add("foo1");
         list.add("foo2");
@@ -65,16 +57,11 @@ public class HazelcastListProducerTest extends CamelTestSupport {
 
         assertEquals(2, list.size());
         assertTrue(list.contains("foo1") && list.contains("foo3"));
-
-        list.clear();
     }
 
-    @Test(expected = CamelExecutionException.class)
-    public void get() {
-        // unsupported operation
-
-        List<String> list = Hazelcast.getList("bar");
-        list.clear();
+    @Test
+    public void getValueWithIdx() {
+        // unsupported operation --> supported since 1.9.3
 
         list.add("foo1");
         list.add("foo2");
@@ -83,16 +70,13 @@ public class HazelcastListProducerTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:get", "test", HazelcastConstants.OBJECT_POS, 1);
 
-        assertEquals("test", consumer.receiveBody("seda:out", 5000, String.class));
+        assertEquals("foo2", consumer.receiveBody("seda:out", 5000, String.class));
 
     }
 
-    @Test(expected = CamelExecutionException.class)
+    @Test
     public void setValueWithIdx() {
-        // unsupported operation
-
-        List<String> list = Hazelcast.getList("bar");
-        list.clear();
+        // unsupported operation --> supported since 1.9.3
 
         list.add("foo1");
         list.add("foo2");
@@ -106,12 +90,9 @@ public class HazelcastListProducerTest extends CamelTestSupport {
 
     }
 
-    // @Test(expected=CamelExecutionException.class)
+    @Test
     public void removeValueWithIdx() {
-        // unsupported operation
-
-        List<String> list = Hazelcast.getList("bar");
-        list.clear();
+        // unsupported operation --> supported since 1.9.3
 
         list.add("foo1");
         list.add("foo2");
@@ -162,3 +143,4 @@ public class HazelcastListProducerTest extends CamelTestSupport {
     }
 
 }
+
