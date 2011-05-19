@@ -22,6 +22,7 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Generic remote file producer for all the FTP variations.
@@ -207,4 +208,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "RemoteFileProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+    }
 }

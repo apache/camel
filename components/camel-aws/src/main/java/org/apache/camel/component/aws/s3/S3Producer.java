@@ -25,8 +25,8 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +88,7 @@ public class S3Producer extends DefaultProducer {
     
     @Override
     public String toString() {
-        return "S3Producer[" + DefaultEndpoint.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        return "S3Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
     }
     
     @Override

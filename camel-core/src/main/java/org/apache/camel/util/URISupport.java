@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * URI utilities.
@@ -34,10 +35,26 @@ import java.util.Map;
  */
 public final class URISupport {
 
+    // Match any key-value pair in the URI query string whose key contains
+    // "passphrase" or "password" or secret key (case-insensitive).
+    // First capture group is the key, second is the value.
+    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=([^&]*)",
+            Pattern.CASE_INSENSITIVE);
     private static final String CHARSET = "UTF-8";
 
     private URISupport() {
         // Helper class
+    }
+
+    /**
+     * Removes detected sensitive information (such as passwords) from the URI and returns the result.
+     * @param uri The uri to sanitize.
+     * @see #SECRETS for the matched pattern
+     *
+     * @return Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey sanitized.
+     */
+    public static String sanitizeUri(String uri) {
+        return uri == null ? null : SECRETS.matcher(uri).replaceAll("$1=******");
     }
 
     public static Map<String, Object> parseQuery(String uri) throws URISyntaxException {

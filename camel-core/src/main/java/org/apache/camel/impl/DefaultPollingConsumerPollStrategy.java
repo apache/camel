@@ -49,7 +49,7 @@ public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollSt
 
         // only log warn if we are running, otherwise we are just stopping which we should not log the issue in the logs
         if (runAllowed) {
-            log.warn("Consumer " + consumer +  " could not poll endpoint: " + endpoint.getEndpointUri() + " caused by: " + e.getMessage(), e);
+            log.warn("Consumer " + consumer +  " could not poll endpoint: " + endpoint + " caused by: " + e.getMessage(), e);
         }
 
         // we do not want to retry

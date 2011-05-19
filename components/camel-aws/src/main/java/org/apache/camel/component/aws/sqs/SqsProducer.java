@@ -23,8 +23,8 @@ import com.amazonaws.services.sqs.model.SendMessageResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoFactoryAvailableException;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +81,6 @@ public class SqsProducer extends DefaultProducer {
     
     @Override
     public String toString() {
-        return "SqsProducer[" + DefaultEndpoint.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        return "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
     }
 }

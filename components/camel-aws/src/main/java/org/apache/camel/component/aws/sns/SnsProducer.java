@@ -22,8 +22,8 @@ import com.amazonaws.services.sns.model.PublishResult;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.UriUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +81,7 @@ public class SnsProducer extends DefaultProducer {
     
     @Override
     public String toString() {
-        return "SnsProducer[" + DefaultEndpoint.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+        return "SnsProducer[" + UriUtils.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
     }
     
     @Override

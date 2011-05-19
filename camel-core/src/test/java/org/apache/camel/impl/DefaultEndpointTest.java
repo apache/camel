@@ -17,29 +17,35 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.util.URISupport;
 
 /**
- * @version 
+ * @version
  */
 public class DefaultEndpointTest extends ContextTestSupport {
 
     public void testSanitizeUri() {
-        assertNull(DefaultEndpoint.sanitizeUri(null));
-        assertEquals("", DefaultEndpoint.sanitizeUri(""));
+        assertNull(URISupport.sanitizeUri(null));
+        assertEquals("", URISupport.sanitizeUri(""));
         assertSanitizedUriUnchanged("http://camel.apache.org");
         assertSanitizedUriUnchanged("irc://irc.codehaus.org/camel");
         assertSanitizedUriUnchanged("direct:foo?bar=123&cheese=yes");
         assertSanitizedUriUnchanged("https://issues.apache.org/activemq/secure/AddComment!default.jspa?id=33239");
         assertEquals("ftp://host.mysite.com/records?passiveMode=true&user=someuser&password=******",
-                DefaultEndpoint.sanitizeUri("ftp://host.mysite.com/records?passiveMode=true&user=someuser&password=superSecret"));
+            URISupport.sanitizeUri("ftp://host.mysite.com/records?passiveMode=true&user=someuser&password=superSecret"));
         assertEquals("sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=******&knownHostsFile=hosts.list",
-                DefaultEndpoint.sanitizeUri("sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=superSecret&knownHostsFile=hosts.list"));
+            URISupport.sanitizeUri("sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=superSecret&knownHostsFile=hosts.list"));
         assertEquals("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=******",
-                DefaultEndpoint.sanitizeUri("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=qi472qfberu33dqjncq"));
+            URISupport.sanitizeUri("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=qi472qfberu33dqjncq"));
     }
 
-    public void assertSanitizedUriUnchanged(String uri) {
-        assertEquals(uri, DefaultEndpoint.sanitizeUri(uri));
+    /**
+     * Ensures that the Uri was not changed because no password was found.
+     *
+     * @param uri The uri to test.
+     */
+    private void assertSanitizedUriUnchanged(String uri) {
+        assertEquals(uri, URISupport.sanitizeUri(uri));
     }
 
 }

@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
@@ -172,4 +173,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return config.isStepwise();
     }
 
+    @Override
+    public String toString() {
+        return "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+    }
 }

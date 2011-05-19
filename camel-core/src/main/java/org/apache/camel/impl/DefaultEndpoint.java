@@ -19,7 +19,6 @@ package org.apache.camel.impl;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -31,6 +30,7 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * A default endpoint useful for implementation inheritance.
@@ -43,10 +43,6 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
-
-    //Match any key-value pair in the URI query string whose key contains "passphrase" or "password" (case-insensitive).
-    //First capture group is the key, second is the value.
-    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=([^&]*)", Pattern.CASE_INSENSITIVE);
 
     private String endpointUri;
     private CamelContext camelContext;
@@ -121,7 +117,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public String toString() {
-        return String.format("Endpoint[%s]", sanitizeUri(getEndpointUri()));
+        return String.format("Endpoint[%s]", URISupport.sanitizeUri(getEndpointUri()));
     }
 
     /**
@@ -295,12 +291,4 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     protected void doStop() throws Exception {
         // noop
     }
-
-    /**
-     * Removes detected sensitive information (such as passwords) from the URI and returns the result.
-     */
-    public static String sanitizeUri(String uri) {
-        return uri == null ? null : SECRETS.matcher(uri).replaceAll("$1=******");
-    }
-
 }
