@@ -63,7 +63,7 @@
       <flatpack-bundle-version>3.2.0_1</flatpack-bundle-version>
       <felix.configadmin.version>1.2.4</felix.configadmin.version>
       <felix.framework.version>2.0.5</felix.framework.version>
-      <freemarker-bundle-version>2.3.15_3</freemarker-bundle-version>
+      <freemarker-bundle-version>2.3.17_1-SNAPSHOT</freemarker-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
       <geronimo-jsp-version>1.0.1</geronimo-jsp-version>
       <geronimo-ws-metadata-spec-version>1.1.2</geronimo-ws-metadata-spec-version>
