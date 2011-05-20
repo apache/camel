@@ -39,7 +39,7 @@ public class MinaExchangeTimeOutTest extends CamelTestSupport {
     public void testUsingTimeoutParameter() throws Exception {
 
         // use a timeout value of 2 seconds (timeout is in millis) so we should actually get a response in this test
-        Endpoint endpoint = this.context.getEndpoint("mina:tcp://localhost:" + PORT + "?textline=true&sync=true&timeout=2000");
+        Endpoint endpoint = context.getEndpoint("mina:tcp://localhost:" + PORT + "?textline=true&sync=true&timeout=2000");
         Producer producer = endpoint.createProducer();
         producer.start();
         Exchange exchange = producer.createExchange();

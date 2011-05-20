@@ -55,7 +55,7 @@ public class MinaCustomCodecTest extends CamelTestSupport {
     @Test
     public void testTCPEncodeUTF8InputIsString() throws Exception {
         final String myUri = "mina:tcp://localhost:9085?encoding=UTF-8&sync=false";
-        this.context.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(myUri).to("mock:result");
             }

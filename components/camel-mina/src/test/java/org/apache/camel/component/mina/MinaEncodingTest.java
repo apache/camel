@@ -37,7 +37,7 @@ public class MinaEncodingTest extends CamelTestSupport {
     @Test
     public void testTCPEncodeUTF8InputIsBytes() throws Exception {
         final String uri = "mina:tcp://localhost:9083?encoding=UTF-8&sync=false";
-        this.context.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");
             }
@@ -58,7 +58,7 @@ public class MinaEncodingTest extends CamelTestSupport {
     @Test
     public void testTCPEncodeUTF8InputIsString() throws Exception {
         final String uri = "mina:tcp://localhost:9084?encoding=UTF-8&sync=false";
-        this.context.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");
             }
@@ -79,7 +79,7 @@ public class MinaEncodingTest extends CamelTestSupport {
     @Test
     public void testTCPEncodeUTF8TextLineInputIsString() throws Exception {
         final String uri = "mina:tcp://localhost:9085?textline=true&encoding=UTF-8&sync=false";
-        this.context.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");
             }
@@ -103,7 +103,7 @@ public class MinaEncodingTest extends CamelTestSupport {
     @Test
     public void testUDPEncodeUTF8InputIsBytes() throws Exception {
         final String uri = "mina:udp://localhost:9080?encoding=UTF-8&sync=false";
-        this.context.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");
             }
@@ -124,7 +124,7 @@ public class MinaEncodingTest extends CamelTestSupport {
     @Test
     public void testUDPEncodeUTF8InputIsString() throws Exception {
         final String uri = "mina:udp://localhost:9080?encoding=UTF-8&sync=false";
-        this.context.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");
             }
@@ -152,7 +152,7 @@ public class MinaEncodingTest extends CamelTestSupport {
         final String bye = "Hello Thai Elephant \u0E08";
 
         final String uri = "mina:udp://localhost:9080?sync=true&encoding=UTF-8";
-        this.context.addRoutes(new RouteBuilder() {
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -182,7 +182,7 @@ public class MinaEncodingTest extends CamelTestSupport {
         final String uri = "mina:tcp://localhost:9080?textline=true&encoding=XXX&sync=false";
 
         try {
-            this.context.addRoutes(new RouteBuilder() {
+            context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     from(uri).to("mock:result");
                 }
