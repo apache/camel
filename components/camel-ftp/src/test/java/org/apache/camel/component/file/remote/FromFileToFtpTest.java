@@ -25,7 +25,7 @@ import org.junit.Test;
  */
 public class FromFileToFtpTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=3000";
     }
 

@@ -51,7 +51,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version 
  */
 public abstract class ProcessBuilder extends RouteBuilder {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ProcessBuilder.class);
     private static int processCounter;
     private JpaTemplate jpaTemplate;
     private TransactionTemplate transactionTemplate;

@@ -61,6 +61,7 @@ public class RouteboxConfiguration {
         this.uri = uri;
     }
 
+    @SuppressWarnings("unchecked")
     public void parseURI(URI uri, Map<String, Object> parameters, RouteboxComponent component) throws Exception {
         String protocol = uri.getScheme();
         

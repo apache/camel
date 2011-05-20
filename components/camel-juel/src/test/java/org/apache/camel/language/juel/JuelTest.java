@@ -22,13 +22,15 @@ import javax.el.ValueExpression;
 
 import de.odysseus.el.ExpressionFactoryImpl;
 import de.odysseus.el.util.SimpleContext;
-import junit.framework.TestCase;
+
+import org.junit.Assert;
 import org.junit.Test;
+
 
 /**
  * @version 
  */
-public class JuelTest extends TestCase {
+public class JuelTest extends Assert {
 
     @Test
     public void testJuel() throws Exception {

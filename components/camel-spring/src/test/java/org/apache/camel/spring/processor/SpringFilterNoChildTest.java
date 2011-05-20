@@ -30,7 +30,7 @@ public class SpringFilterNoChildTest extends SpringTestSupport {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         try {
-            ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/filterNoChild.xml");
+            new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/filterNoChild.xml");
             fail("Should thrown an exception");
         } catch (RuntimeCamelException e) {
             FailedToCreateRouteException cause = assertIsInstanceOf(FailedToCreateRouteException.class, e.getCause());

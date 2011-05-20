@@ -79,42 +79,39 @@ public class JavaSpaceProducer extends DefaultProducer {
         } else {
             entry = (Entry) body;
         }
-
-        if (entry == null) {
-            LOG.warn("No payload for exchange: " + exchange);
-        } else {
-            Transaction tnx = null;
-            if (transactionHelper != null) {
-                tnx = transactionHelper.getJiniTransaction(transactionTimeout).transaction;
-            }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing body : " + entry);
-            }
-            javaSpace.write(entry, tnx, Lease.FOREVER);
-
-            if (ExchangeHelper.isOutCapable(exchange)) {
-                OutEntry tmpl = new OutEntry();
-                tmpl.correlationId = ((InEntry) entry).correlationId;
-
-                OutEntry replyCamelEntry = null;
-                while (replyCamelEntry == null) {
-                    replyCamelEntry = (OutEntry) javaSpace.take(tmpl, tnx, 100);
-                }
-
-                Object obj;
-                if (replyCamelEntry.binary) {
-                    obj = replyCamelEntry.buffer;
-                } else {
-                    ByteArrayInputStream bis = new ByteArrayInputStream(replyCamelEntry.buffer);
-                    ObjectInputStream ois = new ObjectInputStream(bis);
-                    obj = ois.readObject();
-                }
-                exchange.getOut().setBody(obj);
-            }
-            if (tnx != null) {
-                tnx.commit();
-            }
+ 
+        Transaction tnx = null;
+        if (transactionHelper != null) {
+            tnx = transactionHelper.getJiniTransaction(transactionTimeout).transaction;
         }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Writing body : " + entry);
+        }
+        javaSpace.write(entry, tnx, Lease.FOREVER);
+
+        if (ExchangeHelper.isOutCapable(exchange)) {
+            OutEntry tmpl = new OutEntry();
+            tmpl.correlationId = ((InEntry)entry).correlationId;
+
+            OutEntry replyCamelEntry = null;
+            while (replyCamelEntry == null) {
+                replyCamelEntry = (OutEntry)javaSpace.take(tmpl, tnx, 100);
+            }
+
+            Object obj;
+            if (replyCamelEntry.binary) {
+                obj = replyCamelEntry.buffer;
+            } else {
+                ByteArrayInputStream bis = new ByteArrayInputStream(replyCamelEntry.buffer);
+                ObjectInputStream ois = new ObjectInputStream(bis);
+                obj = ois.readObject();
+            }
+            exchange.getOut().setBody(obj);
+        }
+        if (tnx != null) {
+            tnx.commit();
+        }
+        
     }
 
     @Override

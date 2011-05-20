@@ -35,7 +35,6 @@ import static org.mockito.Mockito.when;
 public class IrcProducerTest {
 
     private IRCConnection connection;
-    private Processor processor;
     private IrcEndpoint endpoint;
     private IrcConfiguration configuration;
     private IrcProducer producer;
@@ -47,7 +46,6 @@ public class IrcProducerTest {
     public void doSetup() {
         connection = mock(IRCConnection.class);
         endpoint = mock(IrcEndpoint.class);
-        processor = mock(Processor.class);
         configuration = mock(IrcConfiguration.class);
         listener = mock(IRCEventAdapter.class);
         exchange = mock(Exchange.class);

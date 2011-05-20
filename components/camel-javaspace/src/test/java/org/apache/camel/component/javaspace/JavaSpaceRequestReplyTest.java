@@ -38,8 +38,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class JavaSpaceRequestReplyTest extends CamelTestSupport {
 
     private ClassPathXmlApplicationContext spring;
-
-    @SuppressWarnings("unchecked")
+    
     @Test
     public void testJavaSpaceRequestReply() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:input");
@@ -55,7 +54,6 @@ public class JavaSpaceRequestReplyTest extends CamelTestSupport {
         System.out.println(stop - start);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testJavaSpaceConcurrentRequestReply() throws Exception {
         Vector<FutureTask<Reply>> tasks = new Vector<FutureTask<Reply>>();

@@ -29,7 +29,7 @@ public class InvalidConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testSMTPCanNotBeUsedForConsumingMails() throws Exception {
-        Endpoint endpoint = this.context.getEndpoint("smtp://localhost?username=james");
+        Endpoint endpoint = context.getEndpoint("smtp://localhost?username=james");
         PollingConsumer consumer = endpoint.createPollingConsumer();
         try {
             consumer.start();
@@ -41,7 +41,7 @@ public class InvalidConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testSMTPSCanNotBeUsedForConsumingMails() throws Exception {
-        Endpoint endpoint = this.context.getEndpoint("smtps://localhost?username=james");
+        Endpoint endpoint = context.getEndpoint("smtps://localhost?username=james");
         PollingConsumer consumer = endpoint.createPollingConsumer();
         try {
             consumer.start();
@@ -54,7 +54,7 @@ public class InvalidConfigurationTest extends CamelTestSupport {
     @Test
     public void testNNTPNotSupported() throws Exception {
         try {
-            this.context.getEndpoint("nntp://localhost?username=james");
+            context.getEndpoint("nntp://localhost?username=james");
             fail("Should have thrown UnsupportedOperationException");
         } catch (ResolveEndpointFailedException e) {
             // expected

@@ -23,8 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.example.model.Report;
 
 public class Reporting implements Processor {
-
-    private static Integer count;
+    
 
     public void process(Exchange exchange) throws Exception {
     }

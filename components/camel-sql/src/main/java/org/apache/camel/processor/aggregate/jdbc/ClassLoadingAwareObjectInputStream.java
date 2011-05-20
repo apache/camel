@@ -39,13 +39,13 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
     }
 
     @Override
-    protected Class resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
+    protected Class<?> resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         return load(classDesc.getName(), cl);
     }
 
     @Override
-    protected Class resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
+    protected Class<?> resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Class[] cinterfaces = new Class[interfaces.length];
         for (int i = 0; i < interfaces.length; i++) {

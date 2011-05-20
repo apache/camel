@@ -29,8 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PublishSubscribeTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(PublishSubscribeTest.class);
-
+    
     @EndpointInject(uri = "mock:neverland")
     protected MockEndpoint unreachableEndpoint;
 

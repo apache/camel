@@ -22,7 +22,7 @@ package org.apache.camel.component.file.remote;
  */
 public class FromFtpDirectoryToBinaryFilesNotStepwiseTest extends FromFtpDirectoryToBinaryFilesTest {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin"
                 + "&binary=true&useFixedDelay=false&recursive=false&delay=5000&stepwise=false";
     }

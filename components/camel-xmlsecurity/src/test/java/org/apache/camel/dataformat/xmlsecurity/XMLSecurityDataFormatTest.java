@@ -221,10 +221,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
             Document d = createDocumentfromInputStream(new ByteArrayInputStream(body));
 
-            // write to a string
-            XmlConverter converter = new XmlConverter();
-            String xmlStr = converter.toString(d, exchange);
-
             NodeList nodeList = d.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
             if (nodeList.getLength() >= 0) {
                 assertTrue(true);
@@ -240,10 +236,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
             byte[] body = exchange.getIn().getBody(byte[].class);
 
             Document d = createDocumentfromInputStream(new ByteArrayInputStream(body));
-
-            // write to a string
-            XmlConverter converter = new XmlConverter();
-            String xmlStr = converter.toString(d, exchange);
 
             NodeList nodeList = d.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
             if (nodeList.getLength() == 0) {

@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MultiplePoliciesOnRouteTest.class);
     private String url = "seda:foo?concurrentConsumers=20";
     private int size = 100;
     

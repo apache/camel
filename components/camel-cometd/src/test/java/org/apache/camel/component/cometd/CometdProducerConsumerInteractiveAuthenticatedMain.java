@@ -123,11 +123,11 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
         public boolean sendMeta(ServerSession to, ServerMessage.Mutable message) {
             if (Channel.META_HANDSHAKE.equals(message.getChannel())) {
                 if (!message.isSuccessful()) {
-                    Map advice = message.getAdvice(true);
+                    Map<String, Object> advice = message.getAdvice(true);
                     advice.put(Message.RECONNECT_FIELD, Message.RECONNECT_HANDSHAKE_VALUE);
 
-                    Map ext = message.getExt(true);
-                    Map authentication = new HashMap();
+                    Map<String, Object> ext = message.getExt(true);
+                    Map<String, Object> authentication = new HashMap<String, Object>();
                     ext.put("authentication", authentication);
                     authentication.put("failed", true);
                     authentication.put("failureReason", "invalid_credentials");

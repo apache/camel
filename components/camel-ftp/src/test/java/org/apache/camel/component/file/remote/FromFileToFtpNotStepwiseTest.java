@@ -21,7 +21,7 @@ package org.apache.camel.component.file.remote;
  */
 public class FromFileToFtpNotStepwiseTest extends FromFileToFtpTest {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=3000&stepwise=false";
     }
 

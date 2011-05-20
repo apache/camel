@@ -52,7 +52,7 @@ public class JettyHttpProducerSuspendWhileInProgressTest extends BaseJettyTest {
             public void run() {
                 try {
                     Thread.sleep(2000);
-                    JettyHttpProducerSuspendWhileInProgressTest.this.context.stop();
+                    context.stop();
                 } catch (Exception e) {
                     // ignore
                 }

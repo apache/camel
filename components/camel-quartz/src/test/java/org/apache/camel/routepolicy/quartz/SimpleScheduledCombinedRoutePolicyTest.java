@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SimpleScheduledCombinedRoutePolicyTest.class);
     
     /* (non-Javadoc)
      * @see org.apache.camel.test.junit4.CamelTestSupport#s;etUp()

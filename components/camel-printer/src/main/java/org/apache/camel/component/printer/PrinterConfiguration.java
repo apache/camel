@@ -28,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PrinterConfiguration {
-    private static final transient Logger LOG = LoggerFactory.getLogger(PrinterConfiguration.class);
     private URI uri;
     private String hostname;
     private int port;

@@ -37,8 +37,7 @@ public class RmiRouteTest extends Assert {
     protected int getPort() {
         return 37541;
     }
-
-    @SuppressWarnings("unchecked")
+    
     @Test
     public void testPojoRoutes() throws Exception {
         if (classPathHasSpaces()) {

@@ -58,6 +58,6 @@ public class HazelcastSedaConfigurationTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutEmptyName() throws Exception {
         HazelcastComponent hzlqComponent = new HazelcastComponent(context);
-        final HazelcastSedaEndpoint hzlqEndpoint = (HazelcastSedaEndpoint) hzlqComponent.createEndpoint("hazelcast:seda: ?concurrentConsumers=4");
+        hzlqComponent.createEndpoint("hazelcast:seda: ?concurrentConsumers=4");
     }
 }

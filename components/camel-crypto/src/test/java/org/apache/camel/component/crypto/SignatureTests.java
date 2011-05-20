@@ -140,28 +140,28 @@ public class SignatureTests extends CamelTestSupport {
 
     @Test
     public void testBasicSignatureRoute() throws Exception {
-        MockEndpoint mock = setupMock();
+        setupMock();
         sendBody("direct:keypair", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSetAlgorithmInRouteDefinition() throws Exception {
-        MockEndpoint mock = setupMock();
+        setupMock();
         sendBody("direct:algorithm", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSetBufferInRouteDefinition() throws Exception {
-        MockEndpoint mock = setupMock();
+        setupMock();
         sendBody("direct:buffersize", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSetRandomInRouteDefinition() throws Exception {
-        MockEndpoint mock = setupMock();
+        setupMock();
         sendBody("direct:random", payload);
         assertMockEndpointsSatisfied();
     }
@@ -172,28 +172,28 @@ public class SignatureTests extends CamelTestSupport {
             return;
         }
         // can only be run on SUN JDK
-        MockEndpoint mock = setupMock();
+        setupMock();
         sendBody("direct:provider", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSetCertificateInRouteDefinition() throws Exception {
-        MockEndpoint mock = setupMock();
+        setupMock();
         sendBody("direct:certificate", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSetKeystoreInRouteDefinition() throws Exception {
-        MockEndpoint mock = setupMock();
+        setupMock();
         sendBody("direct:keystore", payload);
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSignatureHeaderInRouteDefinition() throws Exception {
-        MockEndpoint mock = setupMock();
+        setupMock();
         Exchange signed = getMandatoryEndpoint("direct:signature-header").createExchange();
         signed.getIn().setBody(payload);
         template.send("direct:signature-header", signed);
@@ -204,7 +204,7 @@ public class SignatureTests extends CamelTestSupport {
 
     @Test
     public void testProvideAliasInHeader() throws Exception {
-        MockEndpoint mock = setupMock();
+        setupMock();
 
         // START SNIPPET: alias-send
         Exchange unsigned = getMandatoryEndpoint("direct:alias-sign").createExchange();
@@ -224,7 +224,7 @@ public class SignatureTests extends CamelTestSupport {
 
     @Test
     public void testProvideKeysInHeader() throws Exception {
-        MockEndpoint mock = setupMock();
+        setupMock();
         Exchange unsigned = getMandatoryEndpoint("direct:headerkey-sign").createExchange();
         unsigned.getIn().setBody(payload);
 
@@ -246,7 +246,7 @@ public class SignatureTests extends CamelTestSupport {
 
     @Test
     public void testProvideCertificateInHeader() throws Exception {
-        MockEndpoint mock = setupMock();
+        setupMock();
         Exchange unsigned = getMandatoryEndpoint("direct:signature-property").createExchange();
         unsigned.getIn().setBody(payload);
 

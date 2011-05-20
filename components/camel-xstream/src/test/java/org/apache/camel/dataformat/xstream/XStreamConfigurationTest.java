@@ -68,8 +68,8 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         String ordereString = "<?xml version='1.0' encoding='UTF-8'?>" + "<purchase-order name=\"Tiger\" price=\"99.95\" amount=\"1.0\"/>";
         mock.expectedBodiesReceived(new Object[] {ordereString, order});
 
-        this.template.sendBody("direct:marshal", order);
-        this.template.sendBody("direct:unmarshal", ordereString);
+        template.sendBody("direct:marshal", order);
+        template.sendBody("direct:unmarshal", ordereString);
 
         mock.assertIsSatisfied();
     }
@@ -89,8 +89,8 @@ public class XStreamConfigurationTest extends CamelTestSupport {
                 + "<double>11.5</double><double>97.5</double>" + "</org.apache.camel.dataformat.xstream.PurchaseHistory>";
         mock.expectedBodiesReceived(new Object[] {ordereString, history});
 
-        this.template.sendBody("direct:marshal", history);
-        this.template.sendBody("direct:unmarshal", ordereString);
+        template.sendBody("direct:marshal", history);
+        template.sendBody("direct:unmarshal", ordereString);
 
         mock.assertIsSatisfied();
     }
@@ -108,8 +108,8 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         String ordereString = "{\"purchase-order\":{\"@name\":\"Tiger\",\"@price\":\"99.95\",\"@amount\":\"1.0\"}}";
         mock.expectedBodiesReceived(new Object[] {ordereString, order});
 
-        this.template.sendBody("direct:marshal-json", order);
-        this.template.sendBody("direct:unmarshal-json", ordereString);
+        template.sendBody("direct:marshal-json", order);
+        template.sendBody("direct:unmarshal-json", ordereString);
 
         mock.assertIsSatisfied();
     }
@@ -124,7 +124,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
         order.setAmount(1);
         order.setPrice(99.95);
                 
-        this.template.sendBody("direct:myDriver", order);
+        template.sendBody("direct:myDriver", order);
         mock.assertIsSatisfied();
         String result = mock.getExchanges().get(0).getIn().getBody(String.class);
         // make sure the result is start with "{"
