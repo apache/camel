@@ -36,6 +36,7 @@ public class CxfNamespaceHandler implements NamespaceHandler {
         return getClass().getClassLoader().getResource("schema/blueprint/camel-cxf.xsd");
     }
 
+    @SuppressWarnings("unchecked")
     public Set<Class> getManagedClasses() {
         return new HashSet<Class>(Arrays.asList(CxfNamespaceHandler.class));
     }

@@ -70,13 +70,10 @@ public class EndpointDefinitionParser extends AbstractBPBeanDefinitionParser {
         } else {
             endpointConfig.setId("camel.cxf.endpoint." + context.generateId());
         }
-
-        boolean isAbstract = false;
-        boolean publish = true;
+      
         NamedNodeMap atts = element.getAttributes();
 
         String bus = null;
-        Metadata impl = null;
         String address = null;
 
         for (int i = 0; i < atts.getLength(); i++) {
@@ -84,12 +81,7 @@ public class EndpointDefinitionParser extends AbstractBPBeanDefinitionParser {
             String val = node.getValue();
             String pre = node.getPrefix();
             String name = node.getLocalName();
-            if ("createdFromAPI".equals(name) || "abstract".equals(name)) {
-                endpointConfig.setScope(MutableBeanMetadata.SCOPE_PROTOTYPE);
-                isAbstract = true;
-            } else if ("publish".equals(name)) {
-                publish = Boolean.parseBoolean(val);
-            } else if ("bus".equals(name)) {
+            if ("bus".equals(name)) {
                 bus = val;
             } else if ("address".equals(name)) {
                 address = val;
@@ -99,12 +91,6 @@ public class EndpointDefinitionParser extends AbstractBPBeanDefinitionParser {
                     endpointConfig.addProperty(name, createValue(context, q));
                 } else if ("depends-on".equals(name)) {
                     endpointConfig.addDependsOn(val);
-                } else if ("implementor".equals(name)) {
-                    if (val.startsWith("#")) {
-                        impl = createRef(context, val.substring(1));
-                    } else {
-                        impl = createObjectOfClass(context, val);
-                    }
                 } else if (!"name".equals(name)) {
                     endpointConfig.addProperty(name, AbstractBPBeanDefinitionParser.createValue(context, val));
                 }
@@ -194,6 +180,7 @@ public class EndpointDefinitionParser extends AbstractBPBeanDefinitionParser {
             this.blueprintContainer = blueprintContainer;
         }
 
+        @SuppressWarnings("unchecked")
         public void process(ComponentDefinitionRegistry componentDefinitionRegistry) {
             MutableBeanMetadata bean = (MutableBeanMetadata) blueprintContainer.getComponentMetadata(cxfEndpointName);
 
