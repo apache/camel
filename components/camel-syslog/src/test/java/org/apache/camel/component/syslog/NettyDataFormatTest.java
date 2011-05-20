@@ -45,7 +45,6 @@ public class NettyDataFormatTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock2.expectedMessageCount(1);
         mock2.expectedBodiesReceived(message);
-        DatagramSocket ds = new DatagramSocket();
 
         DatagramSocket socket = new DatagramSocket();
         try {
