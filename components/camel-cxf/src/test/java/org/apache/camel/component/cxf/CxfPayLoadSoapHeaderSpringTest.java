@@ -16,31 +16,10 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.net.URL;
-import java.util.List;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.Endpoint;
-
-import org.w3c.dom.Element;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.pizza.Pizza;
-import org.apache.camel.pizza.PizzaService;
-import org.apache.camel.pizza.types.CallerIDHeaderType;
-import org.apache.camel.pizza.types.OrderPizzaResponseType;
-import org.apache.camel.pizza.types.OrderPizzaType;
-import org.apache.camel.pizza.types.ToppingsListType;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.cxf.binding.soap.SoapHeader;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

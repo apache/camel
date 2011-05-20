@@ -24,13 +24,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 
 public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";

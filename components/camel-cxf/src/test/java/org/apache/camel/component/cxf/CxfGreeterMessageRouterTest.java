@@ -18,7 +18,6 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

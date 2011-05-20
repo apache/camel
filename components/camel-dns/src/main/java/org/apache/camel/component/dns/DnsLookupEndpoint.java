@@ -60,9 +60,9 @@ public class DnsLookupEndpoint extends DefaultEndpoint {
                     dnsClass = DClass.value(String.valueOf(dclass));
                 }
 
-                Lookup lookup = (dnsClass == null) ? 
-                    (dnsType == null ? new Lookup(dnsName) : new Lookup(dnsName, dnsType)) : 
-                    new Lookup(dnsName, dnsType, dnsClass);
+                Lookup lookup = (dnsClass == null) 
+                    ? (dnsType == null ? new Lookup(dnsName) : new Lookup(dnsName, dnsType)) 
+                        : new Lookup(dnsName, dnsType, dnsClass);
 
                 lookup.run();
                 if (lookup.getAnswers() != null) {

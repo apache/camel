@@ -17,8 +17,6 @@
 package org.apache.camel.component.cxf;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
@@ -30,12 +28,8 @@ import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
-import org.apache.cxf.BusFactory;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

@@ -16,17 +16,10 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;

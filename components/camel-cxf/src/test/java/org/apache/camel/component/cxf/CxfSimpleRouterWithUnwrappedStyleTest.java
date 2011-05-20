@@ -17,16 +17,10 @@
 
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.CamelContext;
-
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

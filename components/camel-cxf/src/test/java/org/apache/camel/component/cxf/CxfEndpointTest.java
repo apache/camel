@@ -20,7 +20,6 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.component.cxf.CxfEndpoint.CamelCxfClientImpl;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.CXFBusImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
