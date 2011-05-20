@@ -93,7 +93,9 @@ public abstract class ErrorHandlerSupport extends ServiceSupport implements Erro
      * for handling thrown exceptions.
      */
     public void setExceptionPolicy(ExceptionPolicyStrategy exceptionPolicy) {
-        this.exceptionPolicy = exceptionPolicy;
+        if (exceptionPolicy != null) {
+            this.exceptionPolicy = exceptionPolicy;
+        }
     }
 
     /**

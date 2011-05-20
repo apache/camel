@@ -23,6 +23,7 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Base class for builders of error handling.
@@ -31,7 +32,7 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
     private List<OnExceptionDefinition> exceptions = new ArrayList<OnExceptionDefinition>();
-    private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
+    private ExceptionPolicyStrategy exceptionPolicyStrategy; // = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
 
     public void addErrorHandlers(OnExceptionDefinition exception) {
         // only add if we not already have it
@@ -72,6 +73,7 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
     }
 
     public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
+        ObjectHelper.notNull(exceptionPolicyStrategy, "ExceptionPolicyStrategy");
         this.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
 }
