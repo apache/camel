@@ -28,6 +28,7 @@ OgnlExpression
 PhpExpression
 PropertyExpression
 PythonExpression
+RefExpression
 RubyExpression
 SimpleExpression
 SpELExpression

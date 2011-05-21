@@ -34,6 +34,7 @@ import org.apache.camel.model.language.OgnlExpression;
 import org.apache.camel.model.language.PhpExpression;
 import org.apache.camel.model.language.PropertyExpression;
 import org.apache.camel.model.language.PythonExpression;
+import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.RubyExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
@@ -358,6 +359,17 @@ public class ExpressionClauseSupport<T> {
      */
     public T python(String text) {
         return expression(new PythonExpression(text));
+    }
+
+    /**
+     * Evaluates a {@link Expression} by looking up existing {@link Expression}
+     * from the {@link org.apache.camel.spi.Registry}
+     *
+     * @param ref refers to the expression to be evaluated
+     * @return the builder to continue processing the DSL
+     */
+    public T ref(String ref) {
+        return expression(new RefExpression(ref));
     }
 
     /**
