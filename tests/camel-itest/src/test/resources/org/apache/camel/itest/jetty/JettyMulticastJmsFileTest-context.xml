@@ -28,7 +28,7 @@
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring" trace="true">
-        <route>
+        <route streamCache="true">
             <from uri="jetty:http://localhost:9000/test"/>
             <multicast>
                 <to uri="jms:queue:foo" pattern="InOnly"/>
