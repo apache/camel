@@ -36,7 +36,13 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
     @Override
     public Expression createExpression(CamelContext camelContext, Annotation annotation, LanguageAnnotation languageAnnotation, Class<?> expressionReturnType) {
         String xpath = getExpressionFromAnnotation(annotation);
-        XPathBuilder builder = XPathBuilder.xpath(xpath, getResultType(annotation));
+        
+        Class<?> resultType = getResultType(annotation);
+        if (resultType.equals(Object.class)) {
+            resultType = expressionReturnType;
+        }
+        
+        XPathBuilder builder = XPathBuilder.xpath(xpath, resultType);        
         NamespacePrefix[] namespaces = getExpressionNameSpacePrefix(annotation);
         if (namespaces != null) {
             for (NamespacePrefix namespacePrefix : namespaces) {

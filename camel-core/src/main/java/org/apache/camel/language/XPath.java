@@ -22,8 +22,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.w3c.dom.NodeList;
-
 import org.apache.camel.component.bean.XPathAnnotationExpressionFactory;
 
 /**
@@ -43,5 +41,5 @@ public @interface XPath {
     @NamespacePrefix(prefix = "soap", uri = "http://www.w3.org/2003/05/soap-envelope"),
     @NamespacePrefix(prefix = "xsd", uri = "http://www.w3.org/2001/XMLSchema")};
     
-    Class<?> resultType() default NodeList.class;
+    Class<?> resultType() default Object.class;
 }
