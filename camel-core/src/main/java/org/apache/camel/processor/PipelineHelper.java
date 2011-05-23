@@ -44,6 +44,15 @@ public final class PipelineHelper {
         // check for error if so we should break out
         boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(exchange);
         if (exchange.isFailed() || exchange.isRollbackOnly() || exceptionHandled) {
+            // We need to write a warning message when the exception and fault message be set at the same time
+            if (exchange.hasOut() && exchange.getOut().isFault() && exchange.getException() != null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Message exchange has failed " + message + " for exchange: ").append(exchange);
+                sb.append("As the Exception: ").append(exchange.getException());
+                sb.append(" Fault: ").append(exchange.getOut());
+                sb.append(" both exit in the Exchange. Camel pipeline stop to process the exchange.");
+                log.warn(sb.toString());
+            }
             // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
             // by the error handler. It's still an exception, the exchange still failed.
             if (log.isDebugEnabled()) {
@@ -63,6 +72,7 @@ public final class PipelineHelper {
                 }
                 log.debug(sb.toString());
             }
+            
 
             return false;
         }
