@@ -342,12 +342,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         ReplyManager answer = replyToReplyManager.get(replyTo);
         if (answer == null) {
             // use a persistent queue
-            answer = new PersistentQueueReplyManager();
-            answer.setEndpoint(this);
-            answer.setScheduledExecutorService(getReplyManagerExecutorService());
-            ServiceHelper.startService(answer);
+            PersistentQueueReplyManager replyManager = new PersistentQueueReplyManager();
+            replyManager.setEndpoint(this);
+            replyManager.setReplyToName(replyTo);
+            replyManager.setScheduledExecutorService(getReplyManagerExecutorService());
+            ServiceHelper.startService(replyManager);
             // remember this manager so we can re-use it
-            replyToReplyManager.put(replyTo, answer);
+            replyToReplyManager.put(replyTo, replyManager);
+            answer = replyManager;
         }
         return answer;
     }

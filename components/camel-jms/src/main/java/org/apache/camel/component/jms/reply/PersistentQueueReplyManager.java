@@ -36,8 +36,17 @@ import org.springframework.jms.support.destination.DestinationResolver;
  */
 public class PersistentQueueReplyManager extends ReplyManagerSupport {
 
+    private String replyToName;
     private String replyToSelectorValue;
     private MessageSelectorCreator dynamicMessageSelector;
+    
+    public void setReplyToName(String replyToName) {
+        this.replyToName = replyToName;
+    }
+    
+    public String getReplyToName() {
+        return replyToName;
+    }
 
     public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout) {
@@ -170,7 +179,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
             resolver = answer.getDestinationResolver();
         }
         answer.setDestinationResolver(new DestinationResolverDelegate(resolver));
-        answer.setDestinationName(endpoint.getReplyTo());
+        answer.setDestinationName(getReplyToName());
 
         answer.setAutoStartup(true);
         answer.setMessageListener(this);
