@@ -91,6 +91,10 @@ public final class GTaskTestUtils {
 
                 public void waitForServerToStart() {
                 }
+
+                public boolean enforceApiDeadlines() {
+                    return false;
+                }
             };
         }
     }
