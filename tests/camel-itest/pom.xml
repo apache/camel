@@ -38,10 +38,6 @@
             <name>Public online Restlet repository</name>
             <url>http://maven.restlet.org</url>
         </repository>
-         <repository>
-             <id>atomikos</id>
-             <url>http://repo.atomikos.com</url>
-         </repository>
     </repositories>
 
     <dependencies>
@@ -296,17 +292,17 @@
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions</artifactId>
-            <version>3.6.2</version>
+            <version>3.7.0</version>
         </dependency>
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jta</artifactId>
-            <version>3.6.2</version>
+            <version>3.7.0</version>
         </dependency>
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jms</artifactId>
-            <version>3.6.2</version>
+            <version>3.7.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.jms</groupId>
@@ -317,7 +313,7 @@
         <dependency>
             <groupId>com.atomikos</groupId>
             <artifactId>transactions-jdbc</artifactId>
-            <version>3.6.2</version>
+            <version>3.7.0</version>
         </dependency>
 
     </dependencies>
