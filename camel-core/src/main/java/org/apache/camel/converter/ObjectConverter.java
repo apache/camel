@@ -137,7 +137,7 @@ public final class ObjectConverter {
         if (value instanceof Short) {
             return (Short) value;
         } else if (value instanceof Number) {
-            if (value.equals(Double.NaN)) {
+            if (value.equals(Float.NaN) || value.equals(Double.NaN)) {
                 return null;
             }
             Number number = (Number) value;
@@ -157,7 +157,7 @@ public final class ObjectConverter {
         if (value instanceof Integer) {
             return (Integer) value;
         } else if (value instanceof Number) {
-            if (value.equals(Double.NaN)) {
+            if (value.equals(Float.NaN) || value.equals(Double.NaN)) {
                 return null;
             }
             Number number = (Number) value;
@@ -177,7 +177,7 @@ public final class ObjectConverter {
         if (value instanceof Long) {
             return (Long) value;
         } else if (value instanceof Number) {
-            if (value.equals(Double.NaN)) {
+            if (value.equals(Float.NaN) || value.equals(Double.NaN)) {
                 return null;
             }
             Number number = (Number) value;
@@ -217,6 +217,9 @@ public final class ObjectConverter {
         if (value instanceof Double) {
             return (Double) value;
         } else if (value instanceof Number) {
+            if (value.equals(Float.NaN)) {
+                return null;
+            }
             Number number = (Number) value;
             return number.doubleValue();
         } else if (value instanceof String) {
