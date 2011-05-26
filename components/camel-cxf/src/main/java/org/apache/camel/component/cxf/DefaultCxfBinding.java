@@ -155,10 +155,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         // propagate protocol headers
         propagateHeadersFromCxfToCamel(cxfMessage, camelExchange.getOut(), camelExchange);
-        
-        if (cxfMessage.getAttachments() != null) {
-            cxfMessage.getAttachments().size();
-           
+        DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,  
+                                                          DataFormat.class);
+        // propagate attachments if the data format is not POJO   
+        if (cxfMessage.getAttachments() != null && !DataFormat.POJO.equals(dataFormat)) {
             // propagate attachments
             for (Attachment attachment : cxfMessage.getAttachments()) {
                 camelExchange.getOut().addAttachment(attachment.getId(), attachment.getDataHandler());
