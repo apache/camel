@@ -60,6 +60,7 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Integer.valueOf("4")));
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort("4"));
         assertEquals(null, ObjectConverter.toShort(new Date()));
+        assertEquals(null, ObjectConverter.toShort(Double.NaN));
     }
 
     public void testToInteger() {
@@ -67,6 +68,7 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Long.valueOf("4")));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger("4"));
         assertEquals(null, ObjectConverter.toInteger(new Date()));
+        assertEquals(null, ObjectConverter.toInteger(Double.NaN));
     }
 
     public void testToLong() {
@@ -74,6 +76,7 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Integer.valueOf("4")));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong("4"));
         assertEquals(null, ObjectConverter.toLong(new Date()));
+        assertEquals(null, ObjectConverter.toLong(Double.NaN));
     }
 
     public void testToFloat() {
@@ -81,6 +84,7 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat(Integer.valueOf("4")));
         assertEquals(Float.valueOf("4"), ObjectConverter.toFloat("4"));
         assertEquals(null, ObjectConverter.toFloat(new Date()));
+        assertEquals(null, ObjectConverter.toFloat(Double.NaN));
     }
 
     public void testToDouble() {
@@ -88,6 +92,7 @@ public class ObjectConverterTest extends TestCase {
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble(Integer.valueOf("4")));
         assertEquals(Double.valueOf("4"), ObjectConverter.toDouble("4"));
         assertEquals(null, ObjectConverter.toDouble(new Date()));
+        assertEquals(Double.NaN, ObjectConverter.toDouble(Double.NaN));
     }
 
     public void testToString() {
