@@ -1080,11 +1080,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.lifecycleStrategies.add(lifecycleStrategy);
     }
 
-    public List<RouteDefinition> getRouteDefinitions() {
+    public synchronized List<RouteDefinition> getRouteDefinitions() {
         return routeDefinitions;
     }
 
-    public RouteDefinition getRouteDefinition(String id) {
+    public synchronized RouteDefinition getRouteDefinition(String id) {
         for (RouteDefinition route : routeDefinitions) {
             if (route.getId().equals(id)) {
                 return route;
