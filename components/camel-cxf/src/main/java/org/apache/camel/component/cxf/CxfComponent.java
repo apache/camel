@@ -24,6 +24,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.URISupport;
 import org.apache.cxf.message.Message;
 
 /**
@@ -80,6 +82,14 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         }
         
         setEndpointHeaderFilterStrategy(result);
+        setProperties(result, parameters);
+
+        // extract the properties.xxx and set them as properties
+        Map<String, Object> properties = IntrospectionSupport.extractProperties(parameters, "properties.");
+        if (properties != null) {
+            result.setProperties(properties);
+        }
+
         return result;
     }
     
