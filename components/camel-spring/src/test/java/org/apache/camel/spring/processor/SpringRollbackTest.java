@@ -17,10 +17,29 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RollbackExchangeException;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.RollbackTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringRollbackTest extends RollbackTest {
+
+    public void testRollback() throws Exception {
+//        MockEndpoint mock = getMockEndpoint("mock:dead");
+//        mock.expectedMessageCount(1);
+
+        getMockEndpoint("mock:rollback").expectedMessageCount(1);
+
+        try {
+            template.requestBody("direct:start", "bad");
+            fail("Should have thrown a RollbackExchangeException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof RollbackExchangeException);
+        }
+
+        assertMockEndpointsSatisfied();
+    }
 
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/rollback.xml");

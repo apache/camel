@@ -17,7 +17,6 @@
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.CamelExchangeException;
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -44,12 +43,7 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
         MockEndpoint dead = getMockEndpoint("mock:dead");
         dead.expectedBodiesReceived("Hello World");
 
-        try {
-            template.sendBody("direct:b", "Hello");
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertTrue(e.getCause().getMessage().startsWith("I cannot do it"));
-        }
+        template.sendBody("direct:b", "Hello");
 
         assertMockEndpointsSatisfied();
     }
@@ -62,8 +56,6 @@ public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
                 // will not use original exchange
                 errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).redeliveryDelay(0));
 
-                // will use original exchange
-                onException(CamelExchangeException.class).handled(false);
                 onException(IllegalArgumentException.class)
                     .maximumRedeliveries(2).useOriginalMessage().handled(true)
                     .to("mock:a");

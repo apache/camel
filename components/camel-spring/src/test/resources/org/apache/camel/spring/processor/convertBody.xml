@@ -31,7 +31,7 @@
             <to uri="mock:result"/>
         </route>
 
-        <route errorHandlerRef="deadLetterErrorHandler">
+        <route>
             <from uri="direct:invalid"/>
             <convertBodyTo type="java.util.Date"/>
             <to uri="mock:result"/>
@@ -56,14 +56,5 @@
         </route>
 
     </camelContext>
-
-    <bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-        <property name="deadLetterUri" value="mock:dead"/>
-        <property name="redeliveryPolicy" ref="redeliveryPolicy"/>
-    </bean>
-
-    <bean id="redeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
-        <property name="maximumRedeliveries" value="0"/>
-    </bean>
     <!-- END SNIPPET: example -->
 </beans>

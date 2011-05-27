@@ -22,29 +22,31 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <bean id="dlc" class="org.apache.camel.builder.DeadLetterChannelBuilder">
         <property name="deadLetterUri" value="mock:dead"/>
         <property name="redeliveryPolicy" ref="policy"/>
     </bean>
 
     <bean id="policy" class="org.apache.camel.processor.RedeliveryPolicy">
         <property name="redeliveryDelay" value="0"/>
-        <property name="maximumRedeliveries" value="1"/>
+        <property name="maximumRedeliveries" value="4"/>
     </bean>
 
     <!-- START SNIPPET: e1 -->
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <camelContext errorHandlerRef="dlc" xmlns="http://camel.apache.org/schema/spring">
+
         <onException>
             <exception>org.apache.camel.RollbackExchangeException</exception>
             <handled><constant>false</constant></handled>
         </onException>
-        <route errorHandlerRef="errorHandler">
+
+        <route>
             <from uri="direct:start"/>
             <choice>
                 <when>
                     <simple>${body} != 'ok'</simple>
                     <to uri="mock:rollback"/>
-                    <rollback message="This is an optional message"/>
+                    <rollback message="That do not work"/>
                 </when>
                 <otherwise>
                     <to uri="mock:result"/>

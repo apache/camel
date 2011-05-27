@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
     private List<OnExceptionDefinition> exceptions = new ArrayList<OnExceptionDefinition>();
-    private ExceptionPolicyStrategy exceptionPolicyStrategy; // = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
+    private ExceptionPolicyStrategy exceptionPolicyStrategy;
 
     public void addErrorHandlers(OnExceptionDefinition exception) {
         // only add if we not already have it

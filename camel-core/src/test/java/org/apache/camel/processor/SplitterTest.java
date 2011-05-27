@@ -223,6 +223,7 @@ public class SplitterTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(0));
+                // we don't want the DLC to handle the Exception
                 onException(CamelException.class).handled(false);
 
                 from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");

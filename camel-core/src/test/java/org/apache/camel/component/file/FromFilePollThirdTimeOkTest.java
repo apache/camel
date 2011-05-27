@@ -21,7 +21,6 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -45,8 +44,6 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/deletefile", body, Exchange.FILE_NAME, "hello.txt");
 
         getMockEndpoint("mock:result").expectedBodiesReceived(body);
-        // 2 first attempt should fail
-        getMockEndpoint("mock:error").expectedMessageCount(2);
 
         assertMockEndpointsSatisfied();
         notify.matchesMockWaitTime();
@@ -62,10 +59,6 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // no redeliveries as we want the file consumer to try again
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).logStackTrace(false));
-                onException(IllegalArgumentException.class).handled(false);
-
                 from("file://target/deletefile?delete=true&initialDelay=0&delay=10").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         counter++;

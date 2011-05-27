@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.seda;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -29,13 +28,7 @@ public class SedaInOutWithErrorDeadLetterChannelTest extends ContextTestSupport 
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
 
-        try {
-            template.requestBody("direct:start", "Hello World", String.class);
-            fail("Should have thrown an exception");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Damn I cannot do this", e.getCause().getMessage());
-        }
+        template.requestBody("direct:start", "Hello World", String.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -46,7 +39,6 @@ public class SedaInOutWithErrorDeadLetterChannelTest extends ContextTestSupport 
             @Override
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0));
-                onException(IllegalArgumentException.class).handled(false);
 
                 from("direct:start").to("seda:foo");
 

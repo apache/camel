@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
+ * @version
  */
 public class RollbackTest extends ContextTestSupport {
 
@@ -81,6 +81,7 @@ public class RollbackTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).redeliveryDelay(0));
+                // we don't want the DLC to handle the Exception
                 onException(RollbackExchangeException.class).handled(false);
 
                 from("direct:start")

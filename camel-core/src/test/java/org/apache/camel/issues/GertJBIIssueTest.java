@@ -42,7 +42,6 @@ public class GertJBIIssueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dlc").maximumRedeliveries(0));
-                onException(IllegalArgumentException.class).handled(false);
 
                 from("direct:start")
                     .threads(2)
@@ -56,13 +55,7 @@ public class GertJBIIssueTest extends ContextTestSupport {
         getMockEndpoint("mock:done").expectedMessageCount(1);
         getMockEndpoint("mock:dlc").expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should thrown exception");
-        } catch (Exception e) {
-            Exception cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Forced", cause.getMessage());
-        }
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -73,20 +66,15 @@ public class GertJBIIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dlc").maximumRedeliveries(0));
-                onException(IllegalArgumentException.class).handled(false);
-
                 from("direct:start")
                     .threads(2)
                     .to("mock:done")
                     .throwException(new IllegalArgumentException("Forced"));
-
             }
         });
         context.start();
 
         getMockEndpoint("mock:done").expectedMessageCount(1);
-        getMockEndpoint("mock:dlc").expectedMessageCount(1);
 
         final CountDownLatch latch = new CountDownLatch(1);
 

@@ -63,8 +63,6 @@ public class ConvertBodyTest extends ContextTestSupport {
     }
 
     public void testConvertFailed() throws Exception {
-        MockEndpoint dead = getMockEndpoint("mock:dead");
-        dead.expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
@@ -135,10 +133,6 @@ public class ConvertBodyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:dead").disableRedelivery());
-                // we don't want the DLC to handle the exception
-                onException(InvalidPayloadException.class).handled(false);
-
                 from("direct:start").convertBodyTo(Integer.class).to("mock:result");
                 from("direct:invalid").convertBodyTo(Date.class).to("mock:result");
                 from("direct:charset").convertBodyTo(byte[].class, "iso-8859-1").to("mock:result");

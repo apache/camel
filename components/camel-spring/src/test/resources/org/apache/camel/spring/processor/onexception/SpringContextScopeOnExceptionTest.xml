@@ -17,25 +17,37 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:camel = "http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: e1 -->
-    <camel:errorHandler id="myDLC" type="DeadLetterChannel" deadLetterUri="mock:dead">
-       <camel:redeliveryPolicy maximumRedeliveries="2" redeliveryDelay="0" logStackTrace="false" />
-    </camel:errorHandler>
+  <bean id="deadLetter" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <property name="deadLetterUri" value="mock:dead"/>
+  </bean>
 
-    <!-- END SNIPPET: e1 -->
+  <bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService"/>
 
-    <bean id="myThrowProcessor" class="org.apache.camel.processor.DeadLetterChannelHandledPolicyTest$MyThrowExceptionProcessor"/>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-    <camelContext errorHandlerRef="myDLC" xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <from uri="direct:start"/>
-            <process ref="myThrowProcessor"/>
-        </route>
-    </camelContext>
+    <!-- context scoped on exception -->
+    <onException>
+      <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
+      <redeliveryPolicy maximumRedeliveries="1"/>
+      <handled>
+        <constant>true</constant>
+      </handled>
+      <bean ref="orderService" method="orderFailed"/>
+      <to uri="mock:error"/>
+    </onException>
+
+    <!-- route using dead letter error handler -->
+    <route errorHandlerRef="deadLetter">
+      <from uri="direct:start"/>
+      <bean ref="orderService" method="handleOrder"/>
+      <to uri="mock:result"/>
+    </route>
+
+  </camelContext>
+
 </beans>

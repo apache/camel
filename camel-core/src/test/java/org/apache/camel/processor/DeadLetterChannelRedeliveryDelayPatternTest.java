@@ -33,20 +33,11 @@ public class DeadLetterChannelRedeliveryDelayPatternTest extends ContextTestSupp
     public void testDelayPatternTest() throws Exception {
         counter = 0;
 
-        // We expect the exchange here after 1 delivery and 2 re-deliveries
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
-        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.TRUE);
-        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(3);
 
         long start = System.currentTimeMillis();
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
-            assertEquals("Forced exception by unit test", e.getCause().getMessage());
-        }
+        template.sendBody("direct:start", "Hello World");
         long delta = System.currentTimeMillis() - start;
         assertTrue("Should be slower", delta > 1000);
 
@@ -65,8 +56,6 @@ public class DeadLetterChannelRedeliveryDelayPatternTest extends ContextTestSupp
                             counter++;
                         }
                     }));
-                // we don't want DLC to handle the Exception
-                onException(Exception.class).handled(false);
 
                 from("direct:start").process(throwException(new Exception("Forced exception by unit test")));
             }

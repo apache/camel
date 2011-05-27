@@ -88,8 +88,8 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
 
         oneExchangeDone.matchesMockWaitTime();
 
-        // madrid should NOT be deleted, but should be retired on next consumer
-        assertFiles("madrid.txt", false);
+        // madrid should be deleted as the DLC handles it
+        assertFiles("madrid.txt", true);
     }
 
     private static void assertFiles(String filename, boolean deleted) throws InterruptedException {
@@ -111,7 +111,6 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
                 // special for not handled when we got beer
-                onException(RuntimeCamelException.class).handled(false);
                 onException(ValidationException.class).onWhen(exceptionMessage().contains("beer"))
                     .handled(false).to("mock:beer");
 

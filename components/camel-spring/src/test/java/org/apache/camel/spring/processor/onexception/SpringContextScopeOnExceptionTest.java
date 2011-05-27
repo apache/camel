@@ -25,7 +25,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 /**
  * Unit test for onException with the spring DSL.
  */
-public class SpringOnExceptionSubRouteTest extends ContextTestSupport {
+public class SpringContextScopeOnExceptionTest extends ContextTestSupport {
 
     public void testOrderOk() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
@@ -61,27 +61,7 @@ public class SpringOnExceptionSubRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testOrderErrorWithNoExceptionClause() throws Exception {
-        MockEndpoint error = getMockEndpoint("mock:error");
-        error.expectedMessageCount(0);
-
-        MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedMessageCount(0);
-
-        MockEndpoint dead = getMockEndpoint("mock:dead");
-        dead.expectedMessageCount(0);
-
-        try {
-            template.requestBodyAndHeader("direct:start_with_no_handler", "Order: kaboom", "customerid", "555");
-            fail("Should throw an Exception");
-        } catch (Exception e) {
-            assertEquals("Cannot order: kaboom", e.getCause().getMessage());
-        }        
-
-        assertMockEndpointsSatisfied();
-    }    
-    
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "/org/apache/camel/spring/processor/onexception/onExceptionSubRouteTest.xml");
+        return createSpringCamelContext(this, "/org/apache/camel/spring/processor/onexception/SpringContextScopeOnExceptionTest.xml");
     }
 }
