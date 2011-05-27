@@ -241,7 +241,6 @@
           <excludes>            
             <!-- TODO FIXME ASAP -->
             <exclude>**/XXXTest.*</exclude>
-            <exclude>**/SpringRollbackTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>

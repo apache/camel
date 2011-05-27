@@ -53,10 +53,11 @@ public class RollbackProcessor implements Processor, Traceable {
             return;
         }
 
+        // throw exception to rollback
         if (message != null) {
-            exchange.setException(new RollbackExchangeException(message, exchange));
+            throw new RollbackExchangeException(message, exchange);
         } else {
-            exchange.setException(new RollbackExchangeException(exchange));
+            throw new RollbackExchangeException(exchange);
         }
     }
 

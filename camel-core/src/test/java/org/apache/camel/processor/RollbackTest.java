@@ -22,7 +22,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version
@@ -30,8 +29,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class RollbackTest extends ContextTestSupport {
 
     public void testOk() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:rollback").expectedMessageCount(0);
 
         template.requestBody("direct:start", "ok");
 
@@ -39,9 +38,7 @@ public class RollbackTest extends ContextTestSupport {
     }
 
     public void testRollback() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:dead");
-        mock.expectedMessageCount(1);
-
+        getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:rollback").expectedMessageCount(1);
 
         try {
@@ -55,10 +52,8 @@ public class RollbackTest extends ContextTestSupport {
     }
 
     public void testRollbackWithExchange() throws Exception {
-        getMockEndpoint("mock:dead").expectedMessageCount(1);
-
-        MockEndpoint mock = getMockEndpoint("mock:rollback");
-        mock.expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+        getMockEndpoint("mock:rollback").expectedMessageCount(1);
 
         Exchange out = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -80,18 +75,9 @@ public class RollbackTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(4).redeliveryDelay(0));
-                // we don't want the DLC to handle the Exception
-                onException(RollbackExchangeException.class).handled(false);
-
                 from("direct:start")
                     .choice()
                         .when(body().isNotEqualTo("ok"))
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertFalse("Rollback flag should have been cleared on redelivery", exchange.isRollbackOnly());
-                            }
-                        })
                         .to("mock:rollback")
                         .rollback("That do not work")
                     .otherwise()
