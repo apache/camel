@@ -83,17 +83,18 @@ public class ProcessDefinition extends NoOutputDefinition<ProcessDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
+        Processor answer = processor;
         if (processor == null) {
             ObjectHelper.notNull(ref, "ref", this);
-            processor = routeContext.lookup(getRef(), Processor.class);
-            ObjectHelper.notNull(processor, "registry entry called " + getRef(), this);
+            answer = routeContext.lookup(getRef(), Processor.class);
+            ObjectHelper.notNull(answer, "registry entry called " + getRef(), this);
         }
 
         // ensure its wrapped in a Service so we can manage it from eg. JMX
         // (a Processor must be a Service to be enlisted in JMX)
-        if (!(processor instanceof Service)) {
-            processor = new WrapProcessor(processor, processor);
+        if (!(answer instanceof Service)) {
+            answer = new WrapProcessor(answer, answer);
         }
-        return processor;
+        return answer;
     }
 }

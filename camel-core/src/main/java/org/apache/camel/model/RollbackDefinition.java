@@ -60,6 +60,11 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
     }
 
     @Override
+    public String getLabel() {
+        return "rollback";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) {
         // validate that only either mark rollbacks is chosen and not both
         if (isMarkRollbackOnly() && isMarkRollbackOnlyLast()) {
