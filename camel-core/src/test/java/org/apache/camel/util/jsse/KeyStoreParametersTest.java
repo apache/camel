@@ -24,9 +24,9 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.NoSuchProviderException;
 
-import org.apache.camel.TestSupport;
+import org.apache.camel.CamelContext;
 
-public class KeyStoreParametersTest extends TestSupport {
+public class KeyStoreParametersTest extends AbstractJsseParametersTest {
     
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
@@ -35,6 +35,22 @@ public class KeyStoreParametersTest extends TestSupport {
         ksp.setPassword("changeit");
         
         return ksp;
+    }
+    
+    public void testPropertyPlaceholders() throws Exception {
+        
+        CamelContext context = this.createPropertiesPlaceholderAwareContext();
+        
+        KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setCamelContext(context);
+        
+        ksp.setType("{{keyStoreParameters.type}}");
+        ksp.setProvider("{{keyStoreParameters.provider}}");
+        ksp.setResource("{{keyStoreParameters.resource}}");
+        ksp.setPassword("{{keyStoreParamerers.password}}");
+        
+        KeyStore ks = ksp.createKeyStore();
+        assertNotNull(ks.getCertificate("server"));
     }
     
     public void testValidParameters() throws GeneralSecurityException, IOException, URISyntaxException {

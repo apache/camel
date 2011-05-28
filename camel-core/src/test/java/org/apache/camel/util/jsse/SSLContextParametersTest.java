@@ -25,9 +25,66 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 
-import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
 
-public class SSLContextParametersTest extends TestCase {
+public class SSLContextParametersTest extends AbstractJsseParametersTest {
+    
+    public void testPropertyPlaceholders() throws Exception {
+        
+        CamelContext camelContext = this.createPropertiesPlaceholderAwareContext();
+        
+        KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setCamelContext(camelContext);
+        
+        ksp.setType("{{keyStoreParameters.type}}");
+        ksp.setProvider("{{keyStoreParameters.provider}}");
+        ksp.setResource("{{keyStoreParameters.resource}}");
+        ksp.setPassword("{{keyStoreParamerers.password}}");
+        
+        KeyManagersParameters kmp = new KeyManagersParameters();
+        kmp.setCamelContext(camelContext);
+        kmp.setKeyStore(ksp);
+        
+        kmp.setKeyPassword("{{keyManagersParameters.keyPassword}}");
+        kmp.setAlgorithm("{{keyManagersParameters.algorithm}}");
+        kmp.setProvider("{{keyManagersParameters.provider}}");
+        
+        TrustManagersParameters tmp = new TrustManagersParameters();
+        tmp.setCamelContext(camelContext);
+        tmp.setKeyStore(ksp);
+        
+        tmp.setAlgorithm("{{trustManagersParameters.algorithm}}");
+        tmp.setProvider("{{trustManagersParameters.provider}}");
+        
+        CipherSuitesParameters csp = new CipherSuitesParameters();
+        csp.getCipherSuite().add("{{cipherSuite.0}}");
+        
+        SecureSocketProtocolsParameters sspp = new SecureSocketProtocolsParameters();
+        sspp.getSecureSocketProtocol().add("{{secureSocketProtocol.0}}");
+        
+        SSLContextServerParameters scsp = new SSLContextServerParameters();
+        scsp.setCamelContext(camelContext);
+        scsp.setClientAuthentication("{{sslContextServerParameters.clientAuthentication}}");
+        
+        SSLContextParameters scp = new SSLContextParameters();
+        scp.setCamelContext(camelContext);
+        scp.setKeyManagers(kmp);
+        scp.setTrustManagers(tmp);
+        scp.setServerParameters(scsp);
+        
+        scp.setProvider("{{sslContextParameters.provider}}");
+        scp.setSecureSocketProtocol("{{sslContextParameters.protocol}}");
+        scp.setSessionTimeout("{{sslContextParameters.sessionTimeout}}");
+        
+        scp.setCipherSuites(csp);
+        scp.setSecureSocketProtocols(sspp);
+        
+        SSLContext context = scp.createSSLContext();
+        SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
+        assertTrue(serverSocket.getNeedClientAuth());
+        context.getSocketFactory().createSocket();
+        context.createSSLEngine();
+    }
     
     public void testServerParametersClientAuthentication() throws Exception {
         SSLContext controlContext = SSLContext.getInstance("TLS");
@@ -52,7 +109,7 @@ public class SSLContextParametersTest extends TestCase {
         assertEquals(controlEngine.getNeedClientAuth(), engine.getNeedClientAuth());
         
         // ClientAuthentication - NONE
-        scsp.setClientAuthentication(ClientAuthentication.NONE);
+        scsp.setClientAuthentication(ClientAuthentication.NONE.name());
         context = scp.createSSLContext();
         engine = context.createSSLEngine();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -63,7 +120,7 @@ public class SSLContextParametersTest extends TestCase {
         assertEquals(false, engine.getNeedClientAuth());
         
         // ClientAuthentication - WANT
-        scsp.setClientAuthentication(ClientAuthentication.WANT);
+        scsp.setClientAuthentication(ClientAuthentication.WANT.name());
         context = scp.createSSLContext();
         engine = context.createSSLEngine();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -74,7 +131,7 @@ public class SSLContextParametersTest extends TestCase {
         assertEquals(false, engine.getNeedClientAuth());
         
         // ClientAuthentication - REQUIRE
-        scsp.setClientAuthentication(ClientAuthentication.REQUIRE);
+        scsp.setClientAuthentication(ClientAuthentication.REQUIRE.name());
         context = scp.createSSLContext();
         engine = context.createSSLEngine();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
@@ -197,7 +254,7 @@ public class SSLContextParametersTest extends TestCase {
         assertEquals(0, serverSocket.getEnabledProtocols().length);
         
         // Server session timeout only affects server session configuration
-        scsp.setSessionTimeout(12345);
+        scsp.setSessionTimeout("12345");
         context = scp.createSSLContext();
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
@@ -317,7 +374,7 @@ public class SSLContextParametersTest extends TestCase {
         assertTrue(Arrays.equals(controlServerSocket.getEnabledProtocols(), serverSocket.getEnabledProtocols()));      
         
         // Client session timeout only affects client session configuration
-        sccp.setSessionTimeout(12345);
+        sccp.setSessionTimeout("12345");
         context = scp.createSSLContext();
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
@@ -610,14 +667,14 @@ public class SSLContextParametersTest extends TestCase {
     
     public void testSessionTimeout() throws Exception {
         SSLContextParameters scp = new SSLContextParameters();
-        scp.setSessionTimeout(60);
+        scp.setSessionTimeout("60");
         
         SSLContext context = scp.createSSLContext();
         
         assertEquals(60, context.getClientSessionContext().getSessionTimeout());
         assertEquals(60, context.getServerSessionContext().getSessionTimeout());
         
-        scp.setSessionTimeout(0);
+        scp.setSessionTimeout("0");
         
         context = scp.createSSLContext();
         

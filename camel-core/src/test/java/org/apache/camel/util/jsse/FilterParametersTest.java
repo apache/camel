@@ -20,9 +20,36 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
 
-public class FilterParametersTest extends TestCase {
+public class FilterParametersTest extends AbstractJsseParametersTest {
+    
+    public void testPropertyPlaceholders() throws Exception {
+        CamelContext context = this.createPropertiesPlaceholderAwareContext();
+        
+        FilterParameters filter = new FilterParameters();
+        filter.setCamelContext(context);
+        filter.getInclude().add("{{filterParameters.include}}");
+        filter.getExclude().add("{{filterParameters.exclude}}");
+        
+        FilterParameters.Patterns patterns = filter.getPatterns();
+        
+        List<Pattern> includes = patterns.getIncludes();
+        List<Pattern> excludes = patterns.getExcludes();
+        
+        assertNotNull(includes);
+        assertNotNull(excludes);
+        
+        assertEquals(1, includes.size());
+        assertEquals(1, excludes.size());
+        
+        Matcher includeMatcher = includes.get(0).matcher("include");
+        assertTrue(includeMatcher.matches());
+        
+        Matcher excludeMatcher = excludes.get(0).matcher("exclude");
+        assertTrue(excludeMatcher.matches());
+    }
+    
     public void testGetIncludePatterns() {
         FilterParameters filter = new FilterParameters();
         filter.getInclude().add("asdfsadfsadfsadf");

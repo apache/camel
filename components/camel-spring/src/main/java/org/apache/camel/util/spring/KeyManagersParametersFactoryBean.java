@@ -16,14 +16,24 @@
  */
 package org.apache.camel.util.spring;
 
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.util.jsse.AbstractKeyManagersParametersFactoryBean;
+import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
-public class KeyManagersParametersFactoryBean extends AbstractKeyManagersParametersFactoryBean implements FactoryBean<KeyManagersParameters> {
+public class KeyManagersParametersFactoryBean extends AbstractKeyManagersParametersFactoryBean 
+        implements FactoryBean<KeyManagersParameters>, ApplicationContextAware {
     
     KeyStoreParametersFactoryBean keyStore;
-    
+
+    @XmlTransient
+    private ApplicationContext applicationContext;
+
     @Override
     public KeyStoreParametersFactoryBean getKeyStore() {
         return this.keyStore;
@@ -31,5 +41,14 @@ public class KeyManagersParametersFactoryBean extends AbstractKeyManagersParamet
 
     public void setKeyStore(KeyStoreParametersFactoryBean keyStore) {
         this.keyStore = keyStore;
+    }
+
+    @Override
+    protected CamelContext getCamelContextWithId(String camelContextId) {
+        return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 }

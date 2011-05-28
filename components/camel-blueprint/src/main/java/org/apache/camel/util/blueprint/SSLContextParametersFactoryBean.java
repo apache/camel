@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util.spring;
+package org.apache.camel.util.blueprint;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -22,17 +22,11 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.util.jsse.AbstractSSLContextParametersFactoryBean;
-import org.apache.camel.spring.util.CamelContextResolverHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
-
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.osgi.service.blueprint.container.BlueprintContainer;
 
 @XmlRootElement(name = "sslContextParameters")
 @XmlType(propOrder = {})
-public class SSLContextParametersFactoryBean extends AbstractSSLContextParametersFactoryBean
-        implements FactoryBean<SSLContextParameters>, ApplicationContextAware {
+public class SSLContextParametersFactoryBean extends AbstractSSLContextParametersFactoryBean {
     
     private KeyManagersParametersFactoryBean keyManagers;
     
@@ -45,8 +39,8 @@ public class SSLContextParametersFactoryBean extends AbstractSSLContextParameter
     private SSLContextServerParametersFactoryBean serverParameters;
     
     @XmlTransient
-    private ApplicationContext applicationContext;
-    
+    private BlueprintContainer blueprintContainer;
+
     @Override
     public KeyManagersParametersFactoryBean getKeyManagers() {
         return keyManagers;
@@ -92,12 +86,16 @@ public class SSLContextParametersFactoryBean extends AbstractSSLContextParameter
         this.serverParameters = serverParameters;
     }
     
+    public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
+        this.blueprintContainer = blueprintContainer;
+    }
+    
     @Override
     protected CamelContext getCamelContextWithId(String camelContextId) {
-        return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
+        if (blueprintContainer != null) {
+            return (CamelContext) blueprintContainer.getComponentInstance(camelContextId);
+        }
+        return null;
     }
-
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
+    
 }

@@ -33,11 +33,16 @@ public class KeyStoreParametersFactoryBeanTest {
     @Resource
     KeyStoreParameters ksp;
     
+    @Resource(name = "&ksp")
+    KeyStoreParametersFactoryBean kspfb;
+    
     @Test
     public void testKeyStoreParameters() {
         assertEquals("keystore.jks", ksp.getResource());
         assertEquals("jks", ksp.getType());
         assertEquals("provider", ksp.getProvider());
         assertEquals("password", ksp.getPassword());
+        
+        assertEquals("test", kspfb.getCamelContext().getName());
     }
 }

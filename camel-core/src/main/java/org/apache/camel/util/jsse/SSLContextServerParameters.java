@@ -35,24 +35,24 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
     private static final Logger LOG = LoggerFactory.getLogger(SSLContextServerParameters.class);
 
     /**
-     * The optional configuration options for server-side client-authentication
-     * requirements.
+     * The optional configuration options for server-side client-authentication requirements.
      */
-    protected ClientAuthentication clientAuthentication;
+    protected String clientAuthentication;
     
     /**
-     * @see #setClientAuthentication(ClientAuthenticationParameters)   
+     * @see #setClientAuthentication(String)
      */
-    public ClientAuthentication getClientAuthentication() {
+    public String getClientAuthentication() {
         return clientAuthentication;
     }
 
     /**
      * Sets the configuration options for server-side client-authentication requirements.
+     * The value must be one of NONE, WANT, REQUIRE as defined in {@link ClientAuthentication}.
      * 
      * @param value the desired configuration options or {@code null} to use the defaults
      */
-    public void setClientAuthentication(ClientAuthentication value) {
+    public void setClientAuthentication(String value) {
         this.clientAuthentication = value;
     }
     
@@ -91,13 +91,12 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
         
         if (this.getClientAuthentication() != null) { 
             
-            final ClientAuthentication clientAuthValue = this.getClientAuthentication();
+            final ClientAuthentication clientAuthValue = 
+                ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
         
             Configurer<SSLEngine> sslEngineConfigurer = new Configurer<SSLEngine>() {
-                
                 @Override
                 public SSLEngine configure(SSLEngine engine) {
-                
                     switch (clientAuthValue) {
                     case NONE:
                         engine.setWantClientAuth(false);
@@ -110,7 +109,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
                         engine.setNeedClientAuth(true);
                         break;
                     default:
-                        throw new RuntimeCamelException("Unhandled ClientAuthentication enumeration value: " + clientAuthValue);
+                        throw new RuntimeCamelException("Unknown ClientAuthentication value: " + clientAuthValue);
                     }
                     
                     return engine;
@@ -128,16 +127,14 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
         List<Configurer<SSLServerSocket>> sslServerSocketConfigurers = 
             super.getSSLServerSocketFactorySSLServerSocketConfigurers(context);
         
-
-        if (this.getClientAuthentication() != null) { 
+        if (this.getClientAuthentication() != null) {
             
-            final ClientAuthentication clientAuthValue = this.getClientAuthentication();
+            final ClientAuthentication clientAuthValue =
+                ClientAuthentication.valueOf(this.parsePropertyValue(this.getClientAuthentication()));
         
             Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<SSLServerSocket>() {
-                
                 @Override
                 public SSLServerSocket configure(SSLServerSocket socket) {
-                    
                     switch (clientAuthValue) {
                     case NONE:
                         socket.setWantClientAuth(false);
@@ -150,7 +147,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
                         socket.setNeedClientAuth(true);
                         break;
                     default:
-                        throw new RuntimeCamelException("Unhandled ClientAuthentication enumeration value: " + clientAuthValue);
+                        throw new RuntimeCamelException("Unknown ClientAuthentication value: " + clientAuthValue);
                     }
                     
                     return socket;
@@ -159,8 +156,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             
             sslServerSocketConfigurers.add(sslServerSocketConfigurer);
         }
-        
-        
+
         return sslServerSocketConfigurers;
     }
 
@@ -188,6 +184,8 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
         builder.append(getSecureSocketProtocolsFilter());
         builder.append(", getSessionTimeout()=");
         builder.append(getSessionTimeout());
+        builder.append(", getContext()=");
+        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

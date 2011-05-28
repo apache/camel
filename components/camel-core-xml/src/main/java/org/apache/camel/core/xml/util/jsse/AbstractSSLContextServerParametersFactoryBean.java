@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.util.jsse.ClientAuthentication;
 import org.apache.camel.util.jsse.SSLContextServerParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -29,25 +28,21 @@ import org.apache.camel.util.jsse.SSLContextServerParameters;
 public abstract class AbstractSSLContextServerParametersFactoryBean extends AbstractBaseSSLContextParametersFactoryBean<SSLContextServerParameters> {
 
     @XmlAttribute
-    protected ClientAuthenticationDefinition clientAuthentication;
+    protected String clientAuthentication;
 
-    public ClientAuthenticationDefinition getClientAuthentication() {
+    public String getClientAuthentication() {
         return clientAuthentication;
     }
 
-    public void setClientAuthentication(ClientAuthenticationDefinition clientAuthentication) {
+    public void setClientAuthentication(String clientAuthentication) {
         this.clientAuthentication = clientAuthentication;
     }
 
     @Override
     protected SSLContextServerParameters createInstance() {
         SSLContextServerParameters newInstance = new SSLContextServerParameters();
-        
-        if (clientAuthentication != null) {
-            ClientAuthentication clientAuthenticationInstance = ClientAuthentication.valueOf(clientAuthentication.name());
-            newInstance.setClientAuthentication(clientAuthenticationInstance);
-        }
-        
+        newInstance.setClientAuthentication(clientAuthentication);
+        newInstance.setCamelContext(getCamelContext());
         return newInstance;
     }
 

@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * Represents configuration options that can be applied in the client-side
  * or server-side context depending on what they are applied to.
  */
-public abstract class BaseSSLContextParameters {
+public abstract class BaseSSLContextParameters extends JsseParameters {
 
     protected static final List<String> DEFAULT_CIPHER_SUITES_FILTER_INCLUDE =
         Collections.unmodifiableList(Arrays.asList(".*"));
@@ -89,7 +89,7 @@ public abstract class BaseSSLContextParameters {
     /**
      * The optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s in seconds.
      */
-    private Integer sessionTimeout;
+    private String sessionTimeout;
     
 
     /**
@@ -202,7 +202,7 @@ public abstract class BaseSSLContextParameters {
      * Returns the optional {@link SSLSessionContext} timeout time for {@link javax.net.ssl.SSLSession}s 
      * in seconds.
      */
-    public Integer getSessionTimeout() {
+    public String getSessionTimeout() {
         return sessionTimeout;
     }
 
@@ -212,7 +212,7 @@ public abstract class BaseSSLContextParameters {
      *
      * @param sessionTimeout the timeout value or {@code null} to use the default
      */
-    public void setSessionTimeout(Integer sessionTimeout) {
+    public void setSessionTimeout(String sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
     }
     
@@ -280,7 +280,7 @@ public abstract class BaseSSLContextParameters {
     protected List<Configurer<SSLEngine>> getSSLEngineConfigurers(SSLContext context) {
         
         final List<String> enabledCipherSuites = this.getCipherSuites() == null
-                ? null : this.getCipherSuites().getCipherSuite();
+                ? null : this.parsePropertyValues(this.getCipherSuites().getCipherSuite());
         
         final Patterns enabledCipherSuitePatterns;
         final Patterns defaultEnabledCipherSuitePatterns = this.getDefaultCipherSuitesFilter().getPatterns();
@@ -294,7 +294,7 @@ public abstract class BaseSSLContextParameters {
         ///
         
         final List<String> enabledSecureSocketProtocols = this.getSecureSocketProtocols() == null
-                ? null : this.getSecureSocketProtocols().getSecureSocketProtocol();
+                ? null : this.parsePropertyValues(this.getSecureSocketProtocols().getSecureSocketProtocol());
         
         final Patterns enabledSecureSocketProtocolsPatterns;
         final Patterns defaultEnabledSecureSocketProtocolsPatterns = 
@@ -435,7 +435,7 @@ public abstract class BaseSSLContextParameters {
      */
     protected List<Configurer<SSLSocket>> getSSLSocketFactorySSLSocketConfigurers(SSLContext context) {
         final List<String> enabledCipherSuites = this.getCipherSuites() == null
-                ? null : this.getCipherSuites().getCipherSuite();
+                ? null : this.parsePropertyValues(this.getCipherSuites().getCipherSuite());
 
         final Patterns enabledCipherSuitePatterns;
         final Patterns defaultEnabledCipherSuitePatterns = this.getDefaultCipherSuitesFilter().getPatterns();
@@ -449,7 +449,7 @@ public abstract class BaseSSLContextParameters {
         ///
         
         final List<String> enabledSecureSocketProtocols = this.getSecureSocketProtocols() == null
-                ? null : this.getSecureSocketProtocols().getSecureSocketProtocol();
+                ? null : this.parsePropertyValues(this.getSecureSocketProtocols().getSecureSocketProtocol());
         
         final Patterns enabledSecureSocketProtocolsPatterns;
         final Patterns defaultEnabledSecureSocketProtocolsPatterns = 
@@ -513,7 +513,7 @@ public abstract class BaseSSLContextParameters {
      */
     protected List<Configurer<SSLServerSocket>> getSSLServerSocketFactorySSLServerSocketConfigurers(SSLContext context) {
         final List<String> enabledCipherSuites = this.getCipherSuites() == null
-                ? null : this.getCipherSuites().getCipherSuite();
+                ? null : this.parsePropertyValues(this.getCipherSuites().getCipherSuite());
         
         final Patterns enabledCipherSuitePatterns;
         final Patterns defaultEnabledCipherSuitePatterns = this.getDefaultCipherSuitesFilter().getPatterns();
@@ -527,7 +527,7 @@ public abstract class BaseSSLContextParameters {
         ///
         
         final List<String> enabledSecureSocketProtocols = this.getSecureSocketProtocols() == null
-                ? null : this.getSecureSocketProtocols().getSecureSocketProtocol();
+                ? null : this.parsePropertyValues(this.getSecureSocketProtocols().getSecureSocketProtocol());
         
         final Patterns enabledSecureSocketProtocolsPatterns;
         final Patterns defaultEnabledSecureSocketProtocolsPatterns = 
@@ -583,10 +583,12 @@ public abstract class BaseSSLContextParameters {
      * @throws GeneralSecurityException if {@code sessionContext} is {@code null}
      */
     protected void configureSessionContext(
-        SSLSessionContext sessionContext, int sessionTimeout) throws GeneralSecurityException {
+        SSLSessionContext sessionContext, String sessionTimeout) throws GeneralSecurityException {
+        
+        int sessionTimeoutInt = Integer.parseInt(this.parsePropertyValue(sessionTimeout));
         
         if (sessionContext != null) {
-            sessionContext.setSessionTimeout(sessionTimeout);
+            sessionContext.setSessionTimeout(sessionTimeoutInt);
         } else {
             throw new GeneralSecurityException(
                     "The SSLContext does not support SSLSessionContext, "

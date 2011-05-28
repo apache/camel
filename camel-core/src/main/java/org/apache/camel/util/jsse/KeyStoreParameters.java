@@ -16,11 +16,8 @@
  */
 package org.apache.camel.util.jsse;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.Security;
@@ -32,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * A representation of configuration options for creating and loading a
  * {@link KeyStore} instance.
  */
-public class KeyStoreParameters {
+public class KeyStoreParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyStoreParameters.class);
 
@@ -149,66 +146,29 @@ public class KeyStoreParameters {
      *             resource to an input stream
      */
     public KeyStore createKeyStore() throws GeneralSecurityException, IOException {
-
         LOG.debug("Creating KeyStore instance from KeyStoreParameters: {}", this);
 
-        String ksType = this.type;
+        String ksType = this.parsePropertyValue(this.type);
         if (ksType == null) {
             ksType = KeyStore.getDefaultType();
         }
 
         char[] ksPassword = null;
         if (this.password != null) {
-            ksPassword = this.password.toCharArray();
+            ksPassword = this.parsePropertyValue(this.password).toCharArray();
         }
 
         KeyStore ks;
         if (this.provider == null) {
             ks = KeyStore.getInstance(ksType);
         } else {
-            ks = KeyStore.getInstance(ksType, this.provider);
+            ks = KeyStore.getInstance(ksType, this.parsePropertyValue(this.provider));
         }
 
         if (this.resource == null) {
             ks.load(null, ksPassword);
         } else {
-            InputStream is = null;
-
-            try {
-                is = new FileInputStream(this.resource);
-            } catch (FileNotFoundException e) {
-                LOG.debug("Could not open resource as a file, trying as class path resource.", e);
-            }
-
-            if (is == null) {
-                is = this.getClass().getResourceAsStream(this.resource);
-                if (is == null) {
-                    LOG.debug("Could not open resource as a class path resource using the classloader "
-                              + this.getClass().getClassLoader() 
-                              + ". Trying as a class path resource with the TCCL (if set).");
-                }
-            }
-            
-            if (is == null && Thread.currentThread().getContextClassLoader() != null) {
-                is = Thread.currentThread().getContextClassLoader().getResourceAsStream(this.resource);
-                if (is == null) {
-                    LOG.debug("Could not open resource as a class path resource using the TCCL "
-                              + Thread.currentThread().getContextClassLoader() + ".  Trying as a URL.");
-                }
-            }
-
-            if (is == null) {
-                try {
-                    is = new URL(this.resource).openStream();
-                } catch (IOException e) {
-                    LOG.debug("Could not open resource as a URL.", e);
-                }
-            }
-
-            if (is == null) {
-                throw new IOException("Could not open " + this.resource + " as a file, class path resource, or URL.");
-            }
-
+            InputStream is = this.resolveResource(this.parsePropertyValue(this.resource));
             ks.load(is, ksPassword);
         }
 
@@ -226,6 +186,8 @@ public class KeyStoreParameters {
         builder.append(provider);
         builder.append(", resource=");
         builder.append(resource);
+        builder.append(", getContext()=");
+        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

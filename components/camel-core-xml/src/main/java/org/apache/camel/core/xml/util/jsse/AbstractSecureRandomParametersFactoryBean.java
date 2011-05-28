@@ -69,6 +69,7 @@ public abstract class AbstractSecureRandomParametersFactoryBean extends Abstract
         
         newInstance.setAlgorithm(algorithm);
         newInstance.setProvider(provider);
+        newInstance.setCamelContext(getCamelContext());
         
         return newInstance;
     }

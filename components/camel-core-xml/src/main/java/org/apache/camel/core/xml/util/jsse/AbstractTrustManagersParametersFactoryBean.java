@@ -74,9 +74,12 @@ public abstract class AbstractTrustManagersParametersFactoryBean extends Abstrac
         
         newInstance.setAlgorithm(algorithm);
         if (getKeyStore() != null) {
+            getKeyStore().setCamelContext(getCamelContext());
             newInstance.setKeyStore(getKeyStore().getObject());
         }
         newInstance.setProvider(provider);
+        newInstance.setCamelContext(getCamelContext());
+        
         return newInstance;
     }
     

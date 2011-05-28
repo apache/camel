@@ -237,9 +237,10 @@ public class SSLContextParameters extends BaseSSLContextParameters {
 
         SSLContext context;
         if (this.getProvider() == null) {
-            context = SSLContext.getInstance(this.getSecureSocketProtocol());
+            context = SSLContext.getInstance(this.parsePropertyValue(this.getSecureSocketProtocol()));
         } else {
-            context = SSLContext.getInstance(this.getSecureSocketProtocol(), this.getProvider());
+            context = SSLContext.getInstance(this.parsePropertyValue(this.getSecureSocketProtocol()),
+                                             this.parsePropertyValue(this.getProvider()));
         }
         
         context.init(keyManagers, trustManagers, secureRandom);
@@ -352,6 +353,8 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         builder.append(getSecureSocketProtocolsFilter());
         builder.append(", getSessionTimeout()=");
         builder.append(getSessionTimeout());
+        builder.append(", getContext()=");
+        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

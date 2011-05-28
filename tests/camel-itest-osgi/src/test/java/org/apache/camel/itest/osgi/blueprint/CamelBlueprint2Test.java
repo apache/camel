@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.karaf.testing.Helper;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,12 +32,15 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.vmOption;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
@@ -98,6 +102,41 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
         assertEquals(1, ctx.getRoutes().size());
         assertSame(ctn.getComponentInstance("mycomp"), ctx.getComponent("mycomp"));
     }
+    
+    @Test
+    public void testJsseUtilNamespace() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle18").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle18)", 10000);
+        
+        SSLContextParameters scp = (SSLContextParameters) ctn.getComponentInstance("sslContextParameters");
+        
+        assertEquals("TLS", scp.getSecureSocketProtocol());
+        
+        assertNotNull(scp.getKeyManagers());
+        assertEquals("changeit", scp.getKeyManagers().getKeyPassword());
+        assertNull(scp.getKeyManagers().getProvider());
+        assertNotNull(scp.getKeyManagers().getKeyStore());
+        assertNull(scp.getKeyManagers().getKeyStore().getType());
+        
+        assertNotNull(scp.getTrustManagers());
+        assertNull(scp.getTrustManagers().getProvider());
+        assertNotNull(scp.getTrustManagers().getKeyStore());
+        assertNull(scp.getTrustManagers().getKeyStore().getType());
+        
+        assertNull(scp.getSecureRandom());
+        
+        assertNull(scp.getClientParameters());
+        
+        assertNull(scp.getServerParameters());
+        
+        assertEquals("test", scp.getCamelContext().getName());
+        
+        assertNotNull(scp.getCamelContext());
+        assertNotNull(scp.getKeyManagers().getCamelContext());
+        assertNotNull(scp.getKeyManagers().getKeyStore().getCamelContext());
+        assertNotNull(scp.getTrustManagers().getCamelContext());
+        assertNotNull(scp.getTrustManagers().getKeyStore().getCamelContext());
+    }
 
     @Configuration
     public static Option[] configure() throws Exception {
@@ -141,6 +180,14 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
                         
+                bundle(newBundle()
+                       .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-18.xml"))
+                       .add(JsseUtilTester.class)
+                       .add("localhost.ks", OSGiBlueprintTestSupport.class.getResourceAsStream("/org/apache/camel/itest/osgi/util/jsse/localhost.ks"))
+                       .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle18")
+                       .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                       .build()).noStart(),
+                        
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
                         "camel-core", "camel-blueprint", "camel-test", "camel-mail", "camel-jaxb", "camel-jms"),
@@ -150,6 +197,9 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
 
                 felix(),
                 equinox());
+                
+                // for remote debugging
+                // vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"));
 
         return options;
     }

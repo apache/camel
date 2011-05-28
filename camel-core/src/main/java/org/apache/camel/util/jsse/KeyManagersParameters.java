@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * A representation of configuration options for creating and loading
  * {@link KeyManager} instance(s).
  */
-public class KeyManagersParameters {
+public class KeyManagersParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(KeyManagersParameters.class);
 
@@ -85,7 +85,7 @@ public class KeyManagersParameters {
 
         KeyManager[] keyManagers;
 
-        String kmfAlgorithm = this.getAlgorithm();
+        String kmfAlgorithm = this.parsePropertyValue(this.getAlgorithm());
         if (kmfAlgorithm == null) {
             kmfAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
         }
@@ -94,13 +94,13 @@ public class KeyManagersParameters {
         if (this.getProvider() == null) {
             kmf = KeyManagerFactory.getInstance(kmfAlgorithm);
         } else {
-            kmf = KeyManagerFactory.getInstance(kmfAlgorithm, this.getProvider());
+            kmf = KeyManagerFactory.getInstance(kmfAlgorithm, this.parsePropertyValue(this.getProvider()));
         }
 
         
         char[] kmfPassword = null;
         if (this.getKeyPassword() != null) {
-            kmfPassword = this.getKeyPassword().toCharArray();
+            kmfPassword = this.parsePropertyValue(this.getKeyPassword()).toCharArray();
         }
         
         KeyStore ks = this.getKeyStore() == null ? null : this.getKeyStore().createKeyStore();
@@ -199,6 +199,8 @@ public class KeyManagersParameters {
         builder.append(provider);
         builder.append(", algorithm=");
         builder.append(algorithm);
+        builder.append(", getContext()=");
+        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

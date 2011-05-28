@@ -27,7 +27,7 @@ import java.util.regex.PatternSyntaxException;
  * Represents a set of regular expression based filter patterns for
  * including and excluding content of some type.
  */
-public class FilterParameters {
+public class FilterParameters extends JsseParameters {
 
     protected List<String> include;
     protected List<String> exclude;
@@ -103,7 +103,7 @@ public class FilterParameters {
         List<Pattern> patterns = new ArrayList<Pattern>(patternStrings.size());
         
         for (String expression : patternStrings) {
-            patterns.add(Pattern.compile(expression));
+            patterns.add(Pattern.compile(this.parsePropertyValue(expression)));
         }
         return patterns;
     }
@@ -112,8 +112,8 @@ public class FilterParameters {
      * An immutable collection of compiled includes and excludes filter {@link Pattern}s.
      */
     public static class Patterns {
-        final List<Pattern> includes;
-        final List<Pattern> excludes;
+        private final List<Pattern> includes;
+        private final List<Pattern> excludes;
         
         public Patterns(List<Pattern> includes, List<Pattern> excludes) {
             this.includes = Collections.unmodifiableList(new ArrayList<Pattern>(includes));
@@ -136,6 +136,8 @@ public class FilterParameters {
         builder.append(Arrays.toString(getInclude().toArray(new String[getInclude().size()])));
         builder.append(", exclude=");
         builder.append(Arrays.toString(getExclude().toArray(new String[getExclude().size()])));
+        builder.append(", getContext()=");
+        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

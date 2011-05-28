@@ -14,28 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.core.xml.util.jsse;
+package org.apache.camel.itest.osgi.blueprint;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
-/**
- * Represents the options for the client authentication settings of a server socket.
- */
-@XmlEnum(value = String.class)
-@XmlType(name = "clientAuthenticationParameters")
-public enum ClientAuthenticationDefinition {
+import javax.net.ssl.SSLContext;
 
-    /**
-     * No client authentication required or requested.
-     */
-    NONE,
-    /**
-     * Client authentication requested.
-     */
-    WANT,
-    /**
-     * Client authentication required.
-     */
-    REQUIRE;
+import org.apache.camel.util.jsse.SSLContextParameters;
+
+public class JsseUtilTester {
+    private SSLContext context;
+    
+    public JsseUtilTester(SSLContextParameters params) throws GeneralSecurityException, IOException {
+        context = params.createSSLContext();
+    }
+
+    public SSLContext getContext() {
+        return context;
+    }
 }

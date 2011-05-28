@@ -21,9 +21,11 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+       
+  <camel:camelContext id="test"/>
 
   <camel:sslContextParameters
-      id="id"
+      id="scp"
       sessionTimeout="1"
       secureSocketProtocol="protocol"
       provider="provider">

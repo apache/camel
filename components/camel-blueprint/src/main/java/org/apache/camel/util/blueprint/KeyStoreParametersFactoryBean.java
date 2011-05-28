@@ -14,27 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.core.xml.util.jsse;
+package org.apache.camel.util.blueprint;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.util.jsse.SSLContextClientParameters;
+import org.apache.camel.CamelContext;
+import org.apache.camel.core.xml.util.jsse.AbstractKeyStoreParametersFactoryBean;
+import org.osgi.service.blueprint.container.BlueprintContainer;
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlTransient
-public abstract class AbstractSSLContextClientParametersFactoryBean extends AbstractBaseSSLContextParametersFactoryBean<SSLContextClientParameters> {
+@XmlRootElement(name = "keyStoreParameters")
+public class KeyStoreParametersFactoryBean extends AbstractKeyStoreParametersFactoryBean {
+    
+    @XmlTransient
+    private BlueprintContainer blueprintContainer;
+    
+    public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
+        this.blueprintContainer = blueprintContainer;
+    }
     
     @Override
-    protected SSLContextClientParameters createInstance() {
-        SSLContextClientParameters newInstance = new SSLContextClientParameters();
-        newInstance.setCamelContext(getCamelContext());
-        return newInstance;
-    }
-
-    @Override
-    public Class<SSLContextClientParameters> getObjectType() {
-        return SSLContextClientParameters.class;
+    protected CamelContext getCamelContextWithId(String camelContextId) {
+        if (blueprintContainer != null) {
+            return (CamelContext) blueprintContainer.getComponentInstance(camelContextId);
+        }
+        return null;
     }
 }

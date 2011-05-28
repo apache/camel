@@ -23,7 +23,7 @@ import java.security.Security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SecureRandomParameters {
+public class SecureRandomParameters extends JsseParameters {
     
     private static final Logger LOG = LoggerFactory.getLogger(SecureRandomParameters.class);
 
@@ -60,9 +60,10 @@ public class SecureRandomParameters {
 
         SecureRandom secureRandom;
         if (this.getProvider() != null) {
-            secureRandom = SecureRandom.getInstance(this.getAlgorithm(), this.getProvider());
+            secureRandom = SecureRandom.getInstance(this.parsePropertyValue(this.getAlgorithm()),
+                                                    this.parsePropertyValue(this.getProvider()));
         } else {
-            secureRandom = SecureRandom.getInstance(this.getAlgorithm());
+            secureRandom = SecureRandom.getInstance(this.parsePropertyValue(this.getAlgorithm()));
         }
 
         return secureRandom;
@@ -118,6 +119,8 @@ public class SecureRandomParameters {
         builder.append(algorithm);
         builder.append(", provider=");
         builder.append(provider);
+        builder.append(", getContext()=");
+        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

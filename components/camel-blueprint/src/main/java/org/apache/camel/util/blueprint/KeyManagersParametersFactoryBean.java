@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util.spring;
+package org.apache.camel.util.blueprint;
 
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.core.xml.util.jsse.AbstractTrustManagersParametersFactoryBean;
-import org.apache.camel.spring.util.CamelContextResolverHelper;
-import org.apache.camel.util.jsse.TrustManagersParameters;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.apache.camel.core.xml.util.jsse.AbstractKeyManagersParametersFactoryBean;
+import org.osgi.service.blueprint.container.BlueprintContainer;
 
-public class TrustManagersParametersFactoryBean extends AbstractTrustManagersParametersFactoryBean
-        implements FactoryBean<TrustManagersParameters>, ApplicationContextAware {
+public class KeyManagersParametersFactoryBean extends AbstractKeyManagersParametersFactoryBean {
     
-    private KeyStoreParametersFactoryBean keyStore;
+    KeyStoreParametersFactoryBean keyStore;
     
     @XmlTransient
-    private ApplicationContext applicationContext;
+    private BlueprintContainer blueprintContainer;
 
     @Override
     public KeyStoreParametersFactoryBean getKeyStore() {
@@ -42,13 +37,16 @@ public class TrustManagersParametersFactoryBean extends AbstractTrustManagersPar
     public void setKeyStore(KeyStoreParametersFactoryBean keyStore) {
         this.keyStore = keyStore;
     }
+
+    public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
+        this.blueprintContainer = blueprintContainer;
+    }
     
     @Override
     protected CamelContext getCamelContextWithId(String camelContextId) {
-        return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
-    }
-
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+        if (blueprintContainer != null) {
+            return (CamelContext) blueprintContainer.getComponentInstance(camelContextId);
+        }
+        return null;
     }
 }

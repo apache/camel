@@ -24,9 +24,9 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.X509KeyManager;
 
-import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
 
-public class KeyManagersParametersTest extends TestCase {
+public class KeyManagersParametersTest extends AbstractJsseParametersTest {
     
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
@@ -43,6 +43,30 @@ public class KeyManagersParametersTest extends TestCase {
         kmp.setKeyPassword("changeit");
         
         return kmp;
+    }
+    
+    public void testPropertyPlaceholders() throws Exception {
+        
+        CamelContext context = this.createPropertiesPlaceholderAwareContext();
+        
+        KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setCamelContext(context);
+        
+        ksp.setType("{{keyStoreParameters.type}}");
+        ksp.setProvider("{{keyStoreParameters.provider}}");
+        ksp.setResource("{{keyStoreParameters.resource}}");
+        ksp.setPassword("{{keyStoreParamerers.password}}");
+        
+        KeyManagersParameters kmp = new KeyManagersParameters();
+        kmp.setCamelContext(context);
+        kmp.setKeyStore(ksp);
+        
+        kmp.setKeyPassword("{{keyManagersParameters.keyPassword}}");
+        kmp.setAlgorithm("{{keyManagersParameters.algorithm}}");
+        kmp.setProvider("{{keyManagersParameters.provider}}");
+        
+        KeyManager[] kms = kmp.createKeyManagers();
+        validateKeyManagers(kms);
     }
     
     public void testCreateKeyManagers() throws Exception {

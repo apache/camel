@@ -36,6 +36,9 @@ public class SSLContextParametersFactoryBeanTest {
     @Resource
     SSLContextParameters scp;
     
+    @Resource(name = "&scp")
+    SSLContextParametersFactoryBean scpfb;
+    
     @Test
     public void testKeyStoreParameters() {
         
@@ -63,12 +66,29 @@ public class SSLContextParametersFactoryBeanTest {
         validateBaseSSLContextParameters(scp.getClientParameters());
         
         assertNotNull(scp.getServerParameters());
-        assertEquals(ClientAuthentication.WANT, scp.getServerParameters().getClientAuthentication());
+        assertEquals(ClientAuthentication.WANT.name(), scp.getServerParameters().getClientAuthentication());
         validateBaseSSLContextParameters(scp.getServerParameters());
+        
+        assertEquals("test", scpfb.getCamelContext().getName());
+        
+        assertNotNull(scp.getCamelContext());
+        assertNotNull(scp.getCipherSuitesFilter().getCamelContext());
+        assertNotNull(scp.getSecureSocketProtocolsFilter().getCamelContext());
+        assertNotNull(scp.getSecureRandom().getCamelContext());
+        assertNotNull(scp.getKeyManagers().getCamelContext());
+        assertNotNull(scp.getKeyManagers().getKeyStore().getCamelContext());
+        assertNotNull(scp.getTrustManagers().getCamelContext());
+        assertNotNull(scp.getTrustManagers().getKeyStore().getCamelContext());
+        assertNotNull(scp.getClientParameters().getCamelContext());
+        assertNotNull(scp.getClientParameters().getCipherSuitesFilter().getCamelContext());
+        assertNotNull(scp.getClientParameters().getSecureSocketProtocolsFilter().getCamelContext());
+        assertNotNull(scp.getServerParameters().getCamelContext());
+        assertNotNull(scp.getServerParameters().getCipherSuitesFilter().getCamelContext());
+        assertNotNull(scp.getServerParameters().getSecureSocketProtocolsFilter().getCamelContext());
     }
     
     private void validateBaseSSLContextParameters(BaseSSLContextParameters params) {
-        assertEquals(1, params.getSessionTimeout().intValue());
+        assertEquals("1", params.getSessionTimeout());
         
         assertNotNull(params.getCipherSuites());
         assertEquals(1, params.getCipherSuites().getCipherSuite().size());

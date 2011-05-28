@@ -91,9 +91,12 @@ public abstract class AbstractKeyManagersParametersFactoryBean extends AbstractJ
         newInstance.setAlgorithm(algorithm);
         newInstance.setKeyPassword(keyPassword);
         if (getKeyStore() != null) {
+            getKeyStore().setCamelContext(getCamelContext());
             newInstance.setKeyStore(getKeyStore().getObject());
         }
         newInstance.setProvider(provider);
+        newInstance.setCamelContext(getCamelContext());
+        
         return newInstance;
     }
     

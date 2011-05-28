@@ -27,7 +27,7 @@ import javax.net.ssl.TrustManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TrustManagersParameters {
+public class TrustManagersParameters extends JsseParameters {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrustManagersParameters.class);
     
@@ -76,7 +76,7 @@ public class TrustManagersParameters {
         TrustManager[] trustManagers = null;
 
         if (this.getKeyStore() != null) {
-            String tmfAlgorithm = this.getAlgorithm();
+            String tmfAlgorithm = this.parsePropertyValue(this.getAlgorithm());
             if (tmfAlgorithm == null) {
                 tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
             }
@@ -85,11 +85,10 @@ public class TrustManagersParameters {
             if (this.getProvider() == null) {
                 tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
             } else {
-                tmf = TrustManagerFactory.getInstance(tmfAlgorithm, this.getProvider());
+                tmf = TrustManagerFactory.getInstance(tmfAlgorithm, this.parsePropertyValue(this.getProvider()));
             }
             
             KeyStore ks = this.getKeyStore() == null ? null : this.getKeyStore().createKeyStore();
-    
             tmf.init(ks);
             trustManagers = tmf.getTrustManagers();
         }
@@ -157,6 +156,8 @@ public class TrustManagersParameters {
         builder.append(provider);
         builder.append(", algorithm=");
         builder.append(algorithm);
+        builder.append(", getContext()=");
+        builder.append(getCamelContext());
         builder.append("]");
         return builder.toString();
     }

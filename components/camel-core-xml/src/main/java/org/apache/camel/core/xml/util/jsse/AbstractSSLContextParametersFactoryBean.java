@@ -38,28 +38,34 @@ public abstract class AbstractSSLContextParametersFactoryBean extends AbstractBa
         SSLContextParameters newInstance = new SSLContextParameters();
         
         if (getKeyManagers() != null) {
+            getKeyManagers().setCamelContext(getCamelContext());
             newInstance.setKeyManagers(getKeyManagers().getObject());
         }
         
         if (getTrustManagers() != null) {
+            getTrustManagers().setCamelContext(getCamelContext());
             newInstance.setTrustManagers(getTrustManagers().getObject());
         }
         
         if (getSecureRandom() != null) {
+            getSecureRandom().setCamelContext(getCamelContext());
             newInstance.setSecureRandom(getSecureRandom().getObject());
         }
         
         
         if (getClientParameters() != null) {
+            getClientParameters().setCamelContext(getCamelContext());
             newInstance.setClientParameters(getClientParameters().getObject());
         }
 
         if (getServerParameters() != null) {
+            getServerParameters().setCamelContext(getCamelContext());
             newInstance.setServerParameters(getServerParameters().getObject());
         }
         
         newInstance.setProvider(provider);
         newInstance.setSecureSocketProtocol(secureSocketProtocol);
+        newInstance.setCamelContext(getCamelContext());
         
         return newInstance;
     }

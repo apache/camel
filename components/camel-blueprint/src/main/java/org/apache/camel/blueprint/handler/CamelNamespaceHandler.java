@@ -77,6 +77,9 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.blueprint.KeyStoreParametersFactoryBean;
+import org.apache.camel.util.blueprint.SSLContextParametersFactoryBean;
+import org.apache.camel.util.blueprint.SecureRandomParametersFactoryBean;
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.ComponentDefinitionException;
@@ -95,6 +98,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     private static final String CAMEL_CONTEXT = "camelContext";
     private static final String ROUTE_CONTEXT = "routeContext";
+    private static final String KEY_STORE_PARAMETERS = "keyStoreParameters";
+    private static final String SECURE_RANDOM_PARAMETERS = "secureRandomParameters";
+    private static final String SSL_CONTEXT_PARAMETERS = "sslContextParameters";
 
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
     private static final String BLUEPRINT_NS = "http://camel.apache.org/schema/blueprint";
@@ -128,124 +134,243 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     public Metadata parse(Element element, ParserContext context) {
         renameNamespaceRecursive(element);
         if (element.getNodeName().equals(CAMEL_CONTEXT)) {
-            // Find the id, generate one if needed
-            String contextId = element.getAttribute("id");
-            boolean implicitId = false;
-
-            // lets avoid folks having to explicitly give an ID to a camel context
-            if (ObjectHelper.isEmpty(contextId)) {
-                // if no explicit id was set then use a default auto generated name
-                CamelContextNameStrategy strategy = new DefaultCamelContextNameStrategy();
-                contextId = strategy.getName();
-                element.setAttribute("id", contextId);
-                implicitId = true;
-            }
-
-            // now lets parse the routes with JAXB
-            Binder<Node> binder;
-            try {
-                binder = getJaxbContext().createBinder();
-            } catch (JAXBException e) {
-                throw new ComponentDefinitionException("Failed to create the JAXB binder : " + e, e);
-            }
-            Object value = parseUsingJaxb(element, context, binder);
-            if (!(value instanceof CamelContextFactoryBean)) {
-                throw new ComponentDefinitionException("Expected an instance of " + CamelContextFactoryBean.class);
-            }
-
-            CamelContextFactoryBean ccfb = (CamelContextFactoryBean) value;
-            ccfb.setImplicitId(implicitId);
-
-            MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
-            factory.setId(".camelBlueprint.passThrough." + contextId);
-            factory.setObject(new PassThroughCallable<Object>(value));
-
-            MutableBeanMetadata factory2 = context.createMetadata(MutableBeanMetadata.class);
-            factory2.setId(".camelBlueprint.factory." + contextId);
-            factory2.setFactoryComponent(factory);
-            factory2.setFactoryMethod("call");
-            factory2.setInitMethod("afterPropertiesSet");
-            factory2.setDestroyMethod("destroy");
-            factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
-            factory2.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
-
-            MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
-            ctx.setId(contextId);
-            ctx.setRuntimeClass(BlueprintCamelContext.class);
-            ctx.setFactoryComponent(factory2);
-            ctx.setFactoryMethod("getContext");
-            ctx.setInitMethod("init");
-            ctx.setDestroyMethod("destroy");
-
-            // Register objects
-            registerBeans(context, contextId, ccfb.getEndpoints());
-            registerBeans(context, contextId, ccfb.getThreadPools());
-            registerBeans(context, contextId, ccfb.getBeans());
-
-            // Register processors
-            MutablePassThroughMetadata beanProcessorFactory = context.createMetadata(MutablePassThroughMetadata.class);
-            beanProcessorFactory.setId(".camelBlueprint.processor.bean.passThrough." + contextId);
-            beanProcessorFactory.setObject(new PassThroughCallable<Object>(new CamelInjector(contextId)));
-
-            MutableBeanMetadata beanProcessor = context.createMetadata(MutableBeanMetadata.class);
-            beanProcessor.setId(".camelBlueprint.processor.bean." + contextId);
-            beanProcessor.setRuntimeClass(CamelInjector.class);
-            beanProcessor.setFactoryComponent(beanProcessorFactory);
-            beanProcessor.setFactoryMethod("call");
-            beanProcessor.setProcessor(true);
-            beanProcessor.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
-            context.getComponentDefinitionRegistry().registerComponentDefinition(beanProcessor);
-
-            MutablePassThroughMetadata regProcessorFactory = context.createMetadata(MutablePassThroughMetadata.class);
-            regProcessorFactory.setId(".camelBlueprint.processor.registry.passThrough." + contextId);
-            regProcessorFactory.setObject(new PassThroughCallable<Object>(new CamelDependenciesFinder(contextId, context)));
-
-            MutableBeanMetadata regProcessor = context.createMetadata(MutableBeanMetadata.class);
-            regProcessor.setId(".camelBlueprint.processor.registry." + contextId);
-            regProcessor.setRuntimeClass(CamelDependenciesFinder.class);
-            regProcessor.setFactoryComponent(regProcessorFactory);
-            regProcessor.setFactoryMethod("call");
-            regProcessor.setProcessor(true);
-            regProcessor.addDependsOn(".camelBlueprint.processor.bean." + contextId);
-            regProcessor.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
-            context.getComponentDefinitionRegistry().registerComponentDefinition(regProcessor);
-
-            return ctx;
+            return parseCamelContextNode(element, context);
         }
         if (element.getNodeName().equals(ROUTE_CONTEXT)) {
-            // now lets parse the routes with JAXB
-            Binder<Node> binder;
-            try {
-                binder = getJaxbContext().createBinder();
-            } catch (JAXBException e) {
-                throw new ComponentDefinitionException("Failed to create the JAXB binder : " + e, e);
-            }
-            Object value = parseUsingJaxb(element, context, binder);
-            if (!(value instanceof CamelRouteContextFactoryBean)) {
-                throw new ComponentDefinitionException("Expected an instance of " + CamelRouteContextFactoryBean.class);
-            }
-
-            CamelRouteContextFactoryBean rcfb = (CamelRouteContextFactoryBean) value;
-            String id = rcfb.getId();
-
-            MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
-            factory.setId(".camelBlueprint.passThrough." + id);
-            factory.setObject(new PassThroughCallable<Object>(rcfb));
-
-            MutableBeanMetadata factory2 = context.createMetadata(MutableBeanMetadata.class);
-            factory2.setId(".camelBlueprint.factory." + id);
-            factory2.setFactoryComponent(factory);
-            factory2.setFactoryMethod("call");
-
-            MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
-            ctx.setId(id);
-            ctx.setRuntimeClass(List.class);
-            ctx.setFactoryComponent(factory2);
-            ctx.setFactoryMethod("getRoutes");
-
-            return ctx;
+            return parseRouteContextNode(element, context);
         }
+        if (element.getNodeName().equals(KEY_STORE_PARAMETERS)) {
+            return parseKeyStoreParametersNode(element, context);
+        }
+        if (element.getNodeName().equals(SECURE_RANDOM_PARAMETERS)) {
+            return parseSecureRandomParametersNode(element, context);
+        }
+        if (element.getNodeName().equals(SSL_CONTEXT_PARAMETERS)) {
+            return parseSSLContextParametersNode(element, context);
+        }
+
         return null;
+    }
+
+    private Metadata parseCamelContextNode(Element element, ParserContext context) {
+        // Find the id, generate one if needed
+        String contextId = element.getAttribute("id");
+        boolean implicitId = false;
+
+        // lets avoid folks having to explicitly give an ID to a camel context
+        if (ObjectHelper.isEmpty(contextId)) {
+            // if no explicit id was set then use a default auto generated name
+            CamelContextNameStrategy strategy = new DefaultCamelContextNameStrategy();
+            contextId = strategy.getName();
+            element.setAttribute("id", contextId);
+            implicitId = true;
+        }
+
+        // now lets parse the routes with JAXB
+        Binder<Node> binder;
+        try {
+            binder = getJaxbContext().createBinder();
+        } catch (JAXBException e) {
+            throw new ComponentDefinitionException("Failed to create the JAXB binder : " + e, e);
+        }
+        Object value = parseUsingJaxb(element, context, binder);
+        if (!(value instanceof CamelContextFactoryBean)) {
+            throw new ComponentDefinitionException("Expected an instance of " + CamelContextFactoryBean.class);
+        }
+
+        CamelContextFactoryBean ccfb = (CamelContextFactoryBean) value;
+        ccfb.setImplicitId(implicitId);
+
+        MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
+        factory.setId(".camelBlueprint.passThrough." + contextId);
+        factory.setObject(new PassThroughCallable<Object>(value));
+
+        MutableBeanMetadata factory2 = context.createMetadata(MutableBeanMetadata.class);
+        factory2.setId(".camelBlueprint.factory." + contextId);
+        factory2.setFactoryComponent(factory);
+        factory2.setFactoryMethod("call");
+        factory2.setInitMethod("afterPropertiesSet");
+        factory2.setDestroyMethod("destroy");
+        factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
+        factory2.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
+
+        MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
+        ctx.setId(contextId);
+        ctx.setRuntimeClass(BlueprintCamelContext.class);
+        ctx.setFactoryComponent(factory2);
+        ctx.setFactoryMethod("getContext");
+        ctx.setInitMethod("init");
+        ctx.setDestroyMethod("destroy");
+
+        // Register objects
+        registerBeans(context, contextId, ccfb.getEndpoints());
+        registerBeans(context, contextId, ccfb.getThreadPools());
+        registerBeans(context, contextId, ccfb.getBeans());
+
+        // Register processors
+        MutablePassThroughMetadata beanProcessorFactory = context.createMetadata(MutablePassThroughMetadata.class);
+        beanProcessorFactory.setId(".camelBlueprint.processor.bean.passThrough." + contextId);
+        beanProcessorFactory.setObject(new PassThroughCallable<Object>(new CamelInjector(contextId)));
+
+        MutableBeanMetadata beanProcessor = context.createMetadata(MutableBeanMetadata.class);
+        beanProcessor.setId(".camelBlueprint.processor.bean." + contextId);
+        beanProcessor.setRuntimeClass(CamelInjector.class);
+        beanProcessor.setFactoryComponent(beanProcessorFactory);
+        beanProcessor.setFactoryMethod("call");
+        beanProcessor.setProcessor(true);
+        beanProcessor.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
+        context.getComponentDefinitionRegistry().registerComponentDefinition(beanProcessor);
+
+        MutablePassThroughMetadata regProcessorFactory = context.createMetadata(MutablePassThroughMetadata.class);
+        regProcessorFactory.setId(".camelBlueprint.processor.registry.passThrough." + contextId);
+        regProcessorFactory.setObject(new PassThroughCallable<Object>(new CamelDependenciesFinder(contextId, context)));
+
+        MutableBeanMetadata regProcessor = context.createMetadata(MutableBeanMetadata.class);
+        regProcessor.setId(".camelBlueprint.processor.registry." + contextId);
+        regProcessor.setRuntimeClass(CamelDependenciesFinder.class);
+        regProcessor.setFactoryComponent(regProcessorFactory);
+        regProcessor.setFactoryMethod("call");
+        regProcessor.setProcessor(true);
+        regProcessor.addDependsOn(".camelBlueprint.processor.bean." + contextId);
+        regProcessor.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
+        context.getComponentDefinitionRegistry().registerComponentDefinition(regProcessor);
+        return ctx;
+    }
+
+    private Metadata parseRouteContextNode(Element element, ParserContext context) {
+        // now lets parse the routes with JAXB
+        Binder<Node> binder;
+        try {
+            binder = getJaxbContext().createBinder();
+        } catch (JAXBException e) {
+            throw new ComponentDefinitionException("Failed to create the JAXB binder : " + e, e);
+        }
+        Object value = parseUsingJaxb(element, context, binder);
+        if (!(value instanceof CamelRouteContextFactoryBean)) {
+            throw new ComponentDefinitionException("Expected an instance of " + CamelRouteContextFactoryBean.class);
+        }
+
+        CamelRouteContextFactoryBean rcfb = (CamelRouteContextFactoryBean) value;
+        String id = rcfb.getId();
+
+        MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
+        factory.setId(".camelBlueprint.passThrough." + id);
+        factory.setObject(new PassThroughCallable<Object>(rcfb));
+
+        MutableBeanMetadata factory2 = context.createMetadata(MutableBeanMetadata.class);
+        factory2.setId(".camelBlueprint.factory." + id);
+        factory2.setFactoryComponent(factory);
+        factory2.setFactoryMethod("call");
+
+        MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
+        ctx.setId(id);
+        ctx.setRuntimeClass(List.class);
+        ctx.setFactoryComponent(factory2);
+        ctx.setFactoryMethod("getRoutes");
+
+        return ctx;
+    }
+
+    private Metadata parseKeyStoreParametersNode(Element element, ParserContext context) {
+        // now lets parse the key store parameters with JAXB
+        Binder<Node> binder;
+        try {
+            binder = getJaxbContext().createBinder();
+        } catch (JAXBException e) {
+            throw new ComponentDefinitionException("Failed to create the JAXB binder : " + e, e);
+        }
+        Object value = parseUsingJaxb(element, context, binder);
+        if (!(value instanceof KeyStoreParametersFactoryBean)) {
+            throw new ComponentDefinitionException("Expected an instance of " + KeyStoreParametersFactoryBean.class);
+        }
+
+        KeyStoreParametersFactoryBean kspfb = (KeyStoreParametersFactoryBean) value;
+        String id = kspfb.getId();
+
+        MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
+        factory.setId(".camelBlueprint.passThrough." + id);
+        factory.setObject(new PassThroughCallable<Object>(kspfb));
+
+        MutableBeanMetadata factory2 = context.createMetadata(MutableBeanMetadata.class);
+        factory2.setId(".camelBlueprint.factory." + id);
+        factory2.setFactoryComponent(factory);
+        factory2.setFactoryMethod("call");
+
+        MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
+        ctx.setId(id);
+        ctx.setRuntimeClass(List.class);
+        ctx.setFactoryComponent(factory2);
+        ctx.setFactoryMethod("getObject");
+
+        return ctx;
+    }
+
+    private Metadata parseSecureRandomParametersNode(Element element, ParserContext context) {
+        // now lets parse the key store parameters with JAXB
+        Binder<Node> binder;
+        try {
+            binder = getJaxbContext().createBinder();
+        } catch (JAXBException e) {
+            throw new ComponentDefinitionException("Failed to create the JAXB binder : " + e, e);
+        }
+        Object value = parseUsingJaxb(element, context, binder);
+        if (!(value instanceof SecureRandomParametersFactoryBean)) {
+            throw new ComponentDefinitionException("Expected an instance of " + SecureRandomParametersFactoryBean.class);
+        }
+
+        SecureRandomParametersFactoryBean srfb = (SecureRandomParametersFactoryBean) value;
+        String id = srfb.getId();
+
+        MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
+        factory.setId(".camelBlueprint.passThrough." + id);
+        factory.setObject(new PassThroughCallable<Object>(srfb));
+
+        MutableBeanMetadata factory2 = context.createMetadata(MutableBeanMetadata.class);
+        factory2.setId(".camelBlueprint.factory." + id);
+        factory2.setFactoryComponent(factory);
+        factory2.setFactoryMethod("call");
+
+        MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
+        ctx.setId(id);
+        ctx.setRuntimeClass(List.class);
+        ctx.setFactoryComponent(factory2);
+        ctx.setFactoryMethod("getObject");
+
+        return ctx;
+    }
+
+    private Metadata parseSSLContextParametersNode(Element element, ParserContext context) {
+        // now lets parse the key store parameters with JAXB
+        Binder<Node> binder;
+        try {
+            binder = getJaxbContext().createBinder();
+        } catch (JAXBException e) {
+            throw new ComponentDefinitionException("Failed to create the JAXB binder : " + e, e);
+        }
+        Object value = parseUsingJaxb(element, context, binder);
+        if (!(value instanceof SSLContextParametersFactoryBean)) {
+            throw new ComponentDefinitionException("Expected an instance of " + SSLContextParametersFactoryBean.class);
+        }
+
+        SSLContextParametersFactoryBean scpfb = (SSLContextParametersFactoryBean) value;
+        String id = scpfb.getId();
+
+        MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
+        factory.setId(".camelBlueprint.passThrough." + id);
+        factory.setObject(new PassThroughCallable<Object>(scpfb));
+
+        MutableBeanMetadata factory2 = context.createMetadata(MutableBeanMetadata.class);
+        factory2.setId(".camelBlueprint.factory." + id);
+        factory2.setFactoryComponent(factory);
+        factory2.setFactoryMethod("call");
+
+        MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
+        ctx.setId(id);
+        ctx.setRuntimeClass(List.class);
+        ctx.setFactoryComponent(factory2);
+        ctx.setFactoryMethod("getObject");
+
+        return ctx;
     }
 
     private void registerBeans(ParserContext context, String contextId, List<?> beans) {
@@ -329,6 +454,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
         classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
         classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
+        classes.add(SSLContextParametersFactoryBean.class);
         return classes;
     }
 

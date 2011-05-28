@@ -34,12 +34,14 @@
     <properties>
         <camel.osgi.import>
             !org.apache.camel.blueprint.*,
+            !org.apache.camel.util.blueprint.*,
             org.apache.camel.*;${camel.osgi.import.strict.version},
             org.osgi.service.event*;resolution:=optional,
             *
         </camel.osgi.import>
         <camel.osgi.export>
-            org.apache.camel.blueprint*;${camel.osgi.version}
+            org.apache.camel.blueprint*;${camel.osgi.version},
+            org.apache.camel.util.blueprint*;${camel.osgi.version}
         </camel.osgi.export>
 		<camel.osgi.private.pkg>
 			org.apache.camel.core.osgi*,
@@ -250,9 +252,11 @@
                                           <include name="org/apache/camel/blueprint/Camel*.java" />
                                           <include name="org/apache/camel/blueprint/ErrorHandler*.java" />
                                           <include name="org/apache/camel/blueprint/package-info.java" />
+                                          <include name="org/apache/camel/util/blueprint/**/*.java"/>
                                       </fileset>
                                       <fileset dir="${basedir}/../camel-core-xml/src/main/java">
                                           <include name="org/apache/camel/core/xml/*.java" />
+                                          <include name="org/apache/camel/core/xml/util/**/*.java"/>
                                       </fileset>
                                       <fileset dir="${basedir}/../../camel-core/src/main/java">
                                           <include name="org/apache/camel/model/**/*.java" />

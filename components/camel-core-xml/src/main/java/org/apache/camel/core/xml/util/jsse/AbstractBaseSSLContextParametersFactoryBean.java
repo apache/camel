@@ -36,7 +36,7 @@ public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends Base
     private FilterParametersDefinition secureSocketProtocolsFilter;
     
     @XmlAttribute
-    private Integer sessionTimeout;
+    private String sessionTimeout;
     
     @XmlTransient
     private T instance;
@@ -90,6 +90,7 @@ public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends Base
         FilterParameters filter = new FilterParameters();
         filter.getInclude().addAll(definition.getInclude());
         filter.getExclude().addAll(definition.getExclude());
+        filter.setCamelContext(getCamelContext());
         
         return filter;
     }
@@ -126,11 +127,11 @@ public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends Base
         this.secureSocketProtocolsFilter = secureSocketProtocolsFilter;
     }
 
-    public Integer getSessionTimeout() {
+    public String getSessionTimeout() {
         return sessionTimeout;
     }
 
-    public void setSessionTimeout(Integer sessionTimeout) {
+    public void setSessionTimeout(String sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
     }
 }

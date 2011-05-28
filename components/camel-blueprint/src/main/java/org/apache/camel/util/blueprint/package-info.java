@@ -14,17 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.core.xml.util.jsse;
-
-import org.apache.camel.core.xml.AbstractCamelFactoryBean;
-
-public abstract class AbstractJsseUtilFactoryBean<T> extends AbstractCamelFactoryBean<T> {
-    
-    public abstract T getObject() throws Exception;
-    
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public abstract Class<? extends T> getObjectType();
-}
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+                                     elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package org.apache.camel.util.blueprint;

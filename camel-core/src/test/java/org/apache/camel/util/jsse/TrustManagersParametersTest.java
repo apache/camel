@@ -23,9 +23,9 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
 
-public class TrustManagersParametersTest extends TestCase {
+public class TrustManagersParametersTest extends AbstractJsseParametersTest {
     
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
@@ -40,8 +40,30 @@ public class TrustManagersParametersTest extends TestCase {
         TrustManagersParameters tmp = new TrustManagersParameters();
         tmp.setKeyStore(this.createMinimalKeyStoreParameters());
         
-        
         return tmp;
+    }
+    
+    public void testPropertyPlaceholders() throws Exception {
+        
+        CamelContext context = this.createPropertiesPlaceholderAwareContext();
+        
+        KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setCamelContext(context);
+        
+        ksp.setType("{{keyStoreParameters.type}}");
+        ksp.setProvider("{{keyStoreParameters.provider}}");
+        ksp.setResource("{{keyStoreParameters.resource}}");
+        ksp.setPassword("{{keyStoreParamerers.password}}");
+        
+        TrustManagersParameters tmp = new TrustManagersParameters();
+        tmp.setCamelContext(context);
+        tmp.setKeyStore(ksp);
+        
+        tmp.setAlgorithm("{{trustManagersParameters.algorithm}}");
+        tmp.setProvider("{{trustManagersParameters.provider}}");
+        
+        TrustManager[] tms = tmp.createTrustManagers();
+        validateTrustManagers(tms);
     }
     
     public void testCreateTrustManagers() throws Exception {

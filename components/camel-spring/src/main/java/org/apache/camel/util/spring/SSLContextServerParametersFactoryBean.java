@@ -16,13 +16,31 @@
  */
 package org.apache.camel.util.spring;
 
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.core.xml.util.jsse.AbstractSSLContextServerParametersFactoryBean;
+import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.apache.camel.util.jsse.SSLContextServerParameters;
 
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 @XmlType(propOrder = {})
-public class SSLContextServerParametersFactoryBean extends AbstractSSLContextServerParametersFactoryBean  implements FactoryBean<SSLContextServerParameters> {
+public class SSLContextServerParametersFactoryBean extends AbstractSSLContextServerParametersFactoryBean
+        implements FactoryBean<SSLContextServerParameters>, ApplicationContextAware {
+    
+    @XmlTransient
+    private ApplicationContext applicationContext;
+    
+    @Override
+    protected CamelContext getCamelContextWithId(String camelContextId) {
+        return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
 }

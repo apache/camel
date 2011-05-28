@@ -79,7 +79,6 @@ public abstract class AbstractKeyStoreParametersFactoryBean extends AbstractJsse
             if (instance == null) { 
                 instance = createInstance();   
             }
-            
             return instance;
         } else {
             return createInstance();
@@ -93,6 +92,7 @@ public abstract class AbstractKeyStoreParametersFactoryBean extends AbstractJsse
         newInstance.setProvider(this.provider);
         newInstance.setResource(this.resource);
         newInstance.setType(this.type);
+        newInstance.setCamelContext(getCamelContext());
         
         return newInstance;
     }
