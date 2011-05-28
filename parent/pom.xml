@@ -59,7 +59,7 @@
     <dnsjava-version>2.1.1</dnsjava-version>
     <dozer-version>5.3.1</dozer-version>
     <easymock-version>2.5.2</easymock-version>
-    <ehcache-bundle-version>2.3.0_3-SNAPSHOT</ehcache-bundle-version>
+    <ehcache-bundle-version>2.3.0_3</ehcache-bundle-version>
     <flatpack-version>3.2.0_1</flatpack-version>
     <ftpserver-version>1.0.5</ftpserver-version>
     <fuse-commons-management-version>1.0</fuse-commons-management-version>
@@ -77,7 +77,7 @@
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <h2-version>1.2.144</h2-version>
     <hadoop-version>0.20.203.0</hadoop-version>
-    <hamcrest-version>1.2-dev1</hamcrest-version>
+    <hamcrest-version>1.1</hamcrest-version>
     <hawtbuf-version>1.2</hawtbuf-version>
     <hawtdb-version>1.5</hawtdb-version>
     <hazelcast-version>1.9.3</hazelcast-version>
