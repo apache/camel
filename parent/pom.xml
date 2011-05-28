@@ -76,6 +76,7 @@
     <groovy-version>1.8.0</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <h2-version>1.2.144</h2-version>
+    <hadoop-version>0.20.203.0</hadoop-version>
     <hamcrest-version>1.2-dev1</hamcrest-version>
     <hawtbuf-version>1.2</hawtbuf-version>
     <hawtdb-version>1.5</hawtdb-version>
@@ -358,17 +359,22 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-hl7</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-hawtdb</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-hazelcast</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-hdfs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-hl7</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
