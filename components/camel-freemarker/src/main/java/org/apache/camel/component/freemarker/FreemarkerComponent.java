@@ -19,6 +19,7 @@ package org.apache.camel.component.freemarker;
 import java.net.URL;
 import java.util.Map;
 
+import freemarker.cache.NullCacheStorage;
 import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
 import org.apache.camel.Endpoint;
@@ -75,7 +76,7 @@ public class FreemarkerComponent extends ResourceBasedComponent {
             // create a clone of the regular configuration
             noCacheConfiguration = (Configuration) getConfiguration().clone();
             // set this one to not use cache
-            noCacheConfiguration.setCacheStorage(new NoCacheStorage());
+            noCacheConfiguration.setCacheStorage(new NullCacheStorage());
         }
         return noCacheConfiguration;
     }
