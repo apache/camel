@@ -40,7 +40,7 @@ import org.junit.Test;
 public class CxfMtomConsumerTest extends CamelTestSupport {
     protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:9091/jaxws-mtom/hello";
     protected static final String MTOM_ENDPOINT_URI = "cxf://" + MTOM_ENDPOINT_ADDRESS
-        + "?serviceClass=org.apache.camel.component.cxf.HelloImpl";        
+        + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello";        
 
     private final QName serviceName = new QName("http://apache.org/camel/cxf/mtom_feature", "HelloService");
     
@@ -83,12 +83,12 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
         return service.getHelloPort();
     }
     
-    private Image getImage(String name) throws Exception {
+    protected Image getImage(String name) throws Exception {
         return ImageIO.read(getClass().getResource(name));
     }
     
     @Test
-    public void testInvokingServiceFromCXFClient() throws Exception {        
+    public void testInvokingService() throws Exception {        
        
         if (Boolean.getBoolean("java.awt.headless") 
             || System.getProperty("os.name").startsWith("Mac OS") && System.getProperty("user.name").equals("cruise")) {

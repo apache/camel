@@ -88,6 +88,8 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         Map<String, Object> properties = IntrospectionSupport.extractProperties(parameters, "properties.");
         if (properties != null) {
             result.setProperties(properties);
+            // set the properties of MTOM
+            result.setMtomEnabled(Boolean.valueOf((String)properties.get(Message.MTOM_ENABLED)));
         }
 
         return result;
