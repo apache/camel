@@ -311,7 +311,7 @@ public final class IntrospectionSupport {
             }
 
             // loop and execute the best setter method
-            Exception typeConvertionFailed = null;
+            Exception typeConversionFailed = null;
             for (Method setter : setters) {
                 // If the type is null or it matches the needed type, just use the value directly
                 if (value == null || setter.getParameterTypes()[0].isAssignableFrom(value.getClass())) {
@@ -325,9 +325,9 @@ public final class IntrospectionSupport {
                         setter.invoke(target, convertedValue);
                         return true;
                     } catch (NoTypeConversionAvailableException e) {
-                        typeConvertionFailed = e;
+                        typeConversionFailed = e;
                     } catch (IllegalArgumentException e) {
-                        typeConvertionFailed = e;
+                        typeConversionFailed = e;
                     }
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Setter \"{}\" with parameter type \"{}\" could not be used for type conversions of {}",
@@ -337,10 +337,10 @@ public final class IntrospectionSupport {
             }
             // we did not find a setter method to use, and if we did try to use a type converter then throw
             // this kind of exception as the caused by will hint this error
-            if (typeConvertionFailed != null) {
+            if (typeConversionFailed != null) {
                 throw new IllegalArgumentException("Could not find a suitable setter for property: " + name
                         + " as there isn't a setter method with same type: " + value.getClass().getCanonicalName()
-                        + " nor type conversion possible: " + typeConvertionFailed.getMessage());
+                        + " nor type conversion possible: " + typeConversionFailed.getMessage());
             } else {
                 return false;
             }
