@@ -88,14 +88,14 @@ public class CacheRoutesManagementTest extends OSGiIntegrationTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:add1")
-                .setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD))
-                .setHeader(CacheConstants.CACHE_KEY, constant("foo"))
-                .to(CACHE_URI).setId(ROUTE1_ID);
+                    .setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD))
+                    .setHeader(CacheConstants.CACHE_KEY, constant("foo"))
+                    .to(CACHE_URI).setId(ROUTE1_ID);
 
                 from("direct:add2")
-                .setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD))
-                .setHeader(CacheConstants.CACHE_KEY, constant("foo"))
-                .to(CACHE_URI).setId(ROUTE2_ID);
+                    .setHeader(CacheConstants.CACHE_OPERATION, constant(CacheConstants.CACHE_OPERATION_ADD))
+                    .setHeader(CacheConstants.CACHE_KEY, constant("foo"))
+                    .to(CACHE_URI).setId(ROUTE2_ID);
             }
         };
     }
