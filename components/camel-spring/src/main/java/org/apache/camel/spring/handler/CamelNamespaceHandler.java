@@ -267,6 +267,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 CamelRouteContextFactoryBean factoryBean = (CamelRouteContextFactoryBean) value;
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
             }
+
+            // lets inject the namespaces into any namespace aware POJOs
+            injectNamespaces(element, binder);
+
+            // TODO: We need to inject bean post processors
+            // but we need to camelContext id its referred from
         }
     }
 
