@@ -18,8 +18,10 @@ package org.apache.camel.component.spring.ws;
 
 import javax.xml.transform.Source;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
@@ -37,12 +39,25 @@ public class ProducerLocalRouteTest extends AbstractJUnit4SpringContextTests {
     @Produce
     private ProducerTemplate template;
 
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint resultEndpoint;
+
     @Test()
     public void consumeStockQuoteWebserviceWithDefaultTemplate() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebserviceWithDefaultTemplate", xmlRequestForGoogleStockQuote);
 
         assertNotNull(result);
         assertTrue(result instanceof Source);
+    }
+
+    @Test()
+    public void consumeStockQuoteWebserviceAndPreserveHeaders() throws Exception {
+        resultEndpoint.expectedHeaderReceived("helloHeader", "hello world!");
+
+        Object result = template.requestBodyAndHeader("direct:stockQuoteWebserviceMock", xmlRequestForGoogleStockQuote, "helloHeader", "hello world!");
+
+        assertNotNull(result);
+        resultEndpoint.assertIsSatisfied();
     }
 
     @Test()

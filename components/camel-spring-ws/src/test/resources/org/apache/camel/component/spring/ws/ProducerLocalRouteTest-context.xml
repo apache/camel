@@ -28,6 +28,13 @@
             <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote"/>
         </route>
         <route>
+            <from uri="direct:stockQuoteWebserviceMock"/>
+            <pipeline>
+                <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote"/>
+                <to uri="mock:result" />
+            </pipeline>
+        </route>
+        <route>
             <from uri="direct:stockQuoteWebserviceAsString"/>
             <to uri="spring-ws:http://localhost?webServiceTemplate=#webServiceTemplate&amp;soapAction=http://www.stockquotes.edu/GetQuote"/>
             <convertBodyTo type="java.lang.String"/>

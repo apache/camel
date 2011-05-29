@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ExchangeHelper;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.SourceExtractor;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
@@ -57,7 +58,10 @@ public class SpringWebserviceProducer extends DefaultProducer {
         } else {
             body = endpoint.getConfiguration().getWebServiceTemplate().sendSourceAndReceive(sourcePayload, callback, SOURCE_EXTRACTOR);
         }
-        exchange.getOut().setBody(body);
+        if (ExchangeHelper.isOutCapable(exchange)) {
+            exchange.getOut().copyFrom(exchange.getIn());
+            exchange.getOut().setBody(body);
+        }
     }
 
     protected class DefaultWebserviceMessageCallback implements WebServiceMessageCallback {
