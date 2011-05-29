@@ -29,7 +29,7 @@ import org.junit.Test;
  * Tests a routing expression using JavaScript
  */
 public class JavaScriptExpressionTest extends CamelTestSupport {
-    
+
     @Test
     public void testSendMatchingMessage() throws Exception {
         if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
@@ -60,6 +60,88 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("foo", "foo");
+        sendBody("direct:start", "hello", headers);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    // START SNIPPET: e1
+    public void testArgumentsExample() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+        getMockEndpoint("mock:unmatched").expectedMessageCount(1);
+
+        // additional arguments to ScriptEngine
+        Map<String, Object> arguments = new HashMap<String, Object>();
+        arguments.put("foo", "bar");
+        arguments.put("baz", 7);
+
+        // those additional arguments is provided as a header on the Camel Message
+        template.sendBodyAndHeader("direct:start", "hello", ScriptBuilder.ARGUMENTS, arguments);
+
+        assertMockEndpointsSatisfied();
+    }
+    // END SNIPPET: e1
+
+    @Test
+    public void testArgumentsWithStringMap() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+        getMockEndpoint("mock:unmatched").expectedMessageCount(1);
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> arguments = new HashMap<String, Object>();
+        arguments.put("foo", "bar");
+        arguments.put("baz", 7);
+        arguments.put("", "foo");
+        arguments.put(null, "bar");
+        headers.put(ScriptBuilder.ARGUMENTS, arguments);
+
+        sendBody("direct:start", "hello", headers);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testArgumentsWithIntegerMap() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+        getMockEndpoint("mock:unmatched").expectedMessageCount(1);
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<Integer, Object> arguments = new HashMap<Integer, Object>();
+        arguments.put(0, "bar");
+        arguments.put(1, 7);
+        headers.put(ScriptBuilder.ARGUMENTS, arguments);
+
+        sendBody("direct:start", "hello", headers);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testArgumentsWithNonMap() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+        getMockEndpoint("mock:unmatched").expectedMessageCount(1);
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        String arguments = "foo";
+        headers.put(ScriptBuilder.ARGUMENTS, arguments);
+
         sendBody("direct:start", "hello", headers);
 
         assertMockEndpointsSatisfied();

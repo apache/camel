@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Map;
 
 import javax.script.Compilable;
 import javax.script.CompiledScript;
@@ -34,7 +35,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.ObjectConverter;
-import org.apache.camel.spi.ScriptEngineResolver;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -48,6 +49,13 @@ import org.springframework.core.io.UrlResource;
  * @version 
  */
 public class ScriptBuilder implements Expression, Predicate, Processor {
+
+    /**
+     * Additional arguments to {@link ScriptEngine} provided as a header on the IN {@link org.apache.camel.Message}
+     * using the key {@link #ARGUMENTS}
+     */
+    public static final String ARGUMENTS = "CamelScriptArguments";
+
     private static final transient Logger LOG = LoggerFactory.getLogger(ScriptBuilder.class);
 
     private String scriptEngineName;
@@ -524,6 +532,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         try {
             getScriptContext();
             populateBindings(getEngine(), exchange);
+            addScriptEngineArguments(getEngine(), exchange);
             Object result = runScript();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("The script evaluation result is: " + result);
@@ -562,6 +571,25 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         context.setAttribute("request", exchange.getIn(), scope);
         if (exchange.hasOut()) {
             context.setAttribute("response", exchange.getOut(), scope);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void addScriptEngineArguments(ScriptEngine engine, Exchange exchange) {
+        if (!exchange.getIn().hasHeaders()) {
+            return;
+        }
+
+        Map<Object, Object> args = exchange.getIn().getHeader(ARGUMENTS, Map.class);
+        if (args != null) {
+            for (Map.Entry<Object, Object> entry : args.entrySet()) {
+                String key = exchange.getContext().getTypeConverter().convertTo(String.class, entry.getKey());
+                Object value = entry.getValue();
+                if (!ObjectHelper.isEmpty(key) && value != null) {
+                    LOG.trace("Putting {} -> {} on ScriptEngine", key, value);
+                    engine.put(key, value);
+                }
+            }
         }
     }
 
