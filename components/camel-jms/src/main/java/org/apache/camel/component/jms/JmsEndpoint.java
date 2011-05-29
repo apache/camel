@@ -44,7 +44,6 @@ import org.apache.camel.component.jms.reply.ReplyManager;
 import org.apache.camel.component.jms.reply.TemporaryQueueReplyManager;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -938,6 +937,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setForceSendOriginalMessage(boolean forceSendOriginalMessage) {
         configuration.setForceSendOriginalMessage(forceSendOriginalMessage);
+    }
+
+    @ManagedAttribute
+    public boolean isDisableTimeToLive() {
+        return configuration.isDisableTimeToLive();
+    }
+
+    @ManagedAttribute
+    public void setDisableTimeToLive(boolean disableTimeToLive) {
+        configuration.setDisableTimeToLive(disableTimeToLive);
     }
 
     @ManagedAttribute(description = "Camel id")

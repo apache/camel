@@ -116,6 +116,8 @@ public class JmsConfiguration implements Cloneable {
     // if the message is a JmsMessage and mapJmsMessage=false, force the 
     // producer to send the javax.jms.Message body to the next JMS destination    
     private boolean forceSendOriginalMessage;
+    // to force disabling time to live (works in both in-only or in-out mode)
+    private boolean disableTimeToLive;
 
     public JmsConfiguration() {
     }
@@ -271,10 +273,14 @@ public class JmsConfiguration implements Cloneable {
         if (answer instanceof JmsTemplate && requestTimeout > 0) {
             JmsTemplate jmsTemplate = (JmsTemplate) answer;
             jmsTemplate.setExplicitQosEnabled(true);
-            if (timeToLive < 0) {
-                // If TTL not specified, then default to
-                jmsTemplate.setTimeToLive(requestTimeout);
+
+            // prefer to use timeToLive over requestTimeout if both specified
+            long ttl = timeToLive > 0 ? timeToLive : requestTimeout;
+            if (ttl > 0 && !isDisableTimeToLive()) {
+                // only use TTL if not disabled
+                jmsTemplate.setTimeToLive(ttl);
             }
+
             jmsTemplate.setSessionTransacted(isTransactedInOut());
             if (isTransactedInOut()) {
                 jmsTemplate.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
@@ -329,7 +335,8 @@ public class JmsConfiguration implements Cloneable {
         if (receiveTimeout >= 0) {
             template.setReceiveTimeout(receiveTimeout);
         }
-        if (timeToLive >= 0) {
+        // only set TTL if we have a positive value and it has not been disabled
+        if (timeToLive >= 0 && !isDisableTimeToLive()) {
             template.setTimeToLive(timeToLive);
         }
 
@@ -1087,4 +1094,11 @@ public class JmsConfiguration implements Cloneable {
         return forceSendOriginalMessage;
     }
 
+    public boolean isDisableTimeToLive() {
+        return disableTimeToLive;
+    }
+
+    public void setDisableTimeToLive(boolean disableTimeToLive) {
+        this.disableTimeToLive = disableTimeToLive;
+    }
 }
