@@ -223,6 +223,11 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-csv/${pom.version}</bundle>
   </feature>
+  <feature name='camel-dns' version='${pom.version}' resolver='(obr)'>
+    <bundle dependency="true">mvn:dnsjava/dnsjava/${dnsjava-version}</bundle>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-dns/${pom.version}</bundle>
+  </feature>
   <feature name='camel-dozer' version='${pom.version}' resolver='(obr)'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
@@ -499,6 +504,10 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-routebox/${pom.version}</bundle>
   </feature>
+  <feature name='camel-ruby' version='${pom.version}'>
+    <feature version='${pom.version}'>camel-script</feature>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jruby/${jruby-bundle-version}</bundle>
+  </feature>
   <feature name='camel-rss' version='${pom.version}' resolver='(obr)'>
     <feature version='${pom.version}'>camel-atom</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
@@ -519,10 +528,6 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-script/${pom.version}</bundle>
-  </feature>
-  <feature name='camel-ruby' version='${pom.version}'>
-    <feature version='${pom.version}'>camel-script</feature>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jruby/${jruby-bundle-version}</bundle>
   </feature>
   <feature name='camel-sip' version='${pom.version}' resolver='(obr)'>
     <feature version='${pom.version}'>camel-core</feature>
