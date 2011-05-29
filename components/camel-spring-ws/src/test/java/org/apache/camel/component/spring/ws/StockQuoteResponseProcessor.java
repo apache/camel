@@ -17,6 +17,7 @@
 package org.apache.camel.component.spring.ws;
 
 import java.io.File;
+import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -36,10 +37,10 @@ public class StockQuoteResponseProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         LOG.info("Crafting standard response in StockQuoteResponseProcessor");
-        File file = new File("src/test/resources/stockquote-response.xml");
+        InputStream is = getClass().getResourceAsStream("/stockquote-response.xml");
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(file);
+        Document doc = db.parse(is);
         exchange.getOut().setBody(doc);
     }
 

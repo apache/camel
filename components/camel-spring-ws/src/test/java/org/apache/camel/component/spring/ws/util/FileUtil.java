@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.spring.ws.util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public final class FileUtil {
 
@@ -28,17 +24,18 @@ public final class FileUtil {
     }
 
     public static String readFileAsString(String filePath) throws IOException {
-        char[] buffer = new char[(int) new File(filePath).length()];
-        BufferedReader reader = null;
+        InputStream is = FileUtil.class.getResourceAsStream(filePath);
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
-            reader.read(buffer);
-        } finally {
-            if (reader != null) {
-                reader.close();
+            StringBuilder sb = new StringBuilder();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line).append("\n");
             }
+            return sb.toString().trim();
+        } finally {
+            is.close();
         }
-        return new String(buffer);
     }
 
 }

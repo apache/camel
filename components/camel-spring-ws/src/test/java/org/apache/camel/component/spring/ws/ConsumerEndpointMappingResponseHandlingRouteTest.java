@@ -41,7 +41,7 @@ public class ConsumerEndpointMappingResponseHandlingRouteTest extends CamelSprin
     private WebServiceTemplate webServiceTemplate;
 
     public ConsumerEndpointMappingResponseHandlingRouteTest() throws IOException {
-        expectedResponse = FileUtil.readFileAsString("src/test/resources/stockquote-response.xml");
+        expectedResponse = FileUtil.readFileAsString("/stockquote-response.xml");
     }
 
     @Before
