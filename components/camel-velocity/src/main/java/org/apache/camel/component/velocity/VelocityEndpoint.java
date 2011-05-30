@@ -95,7 +95,6 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
 
     public void setVelocityEngine(VelocityEngine velocityEngine) {
         this.velocityEngine = velocityEngine;
-
     }
 
     public boolean isLoaderCache() {
@@ -153,7 +152,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             return;
         }
 
-        Resource resource = null;
+        Resource resource;
         Reader reader;
         String content = exchange.getIn().getHeader(VelocityConstants.VELOCITY_TEMPLATE, String.class);
         if (content != null) {
@@ -196,4 +195,5 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             out.setHeader(entry.getKey(), entry.getValue());
         }
     }
+
 }

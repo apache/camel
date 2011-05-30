@@ -19,14 +19,14 @@ package org.apache.camel.component.velocity;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.velocity.app.VelocityEngine;
 
 /**
  * @version 
  */
-public class VelocityComponent extends DefaultComponent {
+public class VelocityComponent extends ResourceBasedComponent {
     private VelocityEngine velocityEngine;
 
     public VelocityEngine getVelocityEngine() {

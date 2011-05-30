@@ -278,7 +278,7 @@ public class XsltBuilder implements Processor {
      * Sets the XSLT transformer from the given input stream
      */
     public void setTransformerInputStream(InputStream in) throws TransformerConfigurationException, IOException {
-        notNull(in, "in");
+        notNull(in, "InputStream");
         setTransformerSource(new StreamSource(in));
     }
 

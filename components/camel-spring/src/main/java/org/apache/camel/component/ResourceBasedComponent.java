@@ -19,8 +19,6 @@ package org.apache.camel.component;
 import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
@@ -32,9 +30,12 @@ import org.springframework.core.io.ResourceLoader;
  */
 public abstract class ResourceBasedComponent extends DefaultComponent {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
-    private ResourceLoader resourceLoader = new DefaultResourceLoader();
+    private ResourceLoader resourceLoader;
 
     public ResourceLoader getResourceLoader() {
+        if (resourceLoader == null) {
+            resourceLoader = new CamelResourceLoader(getCamelContext());
+        }
         return resourceLoader;
     }
 
