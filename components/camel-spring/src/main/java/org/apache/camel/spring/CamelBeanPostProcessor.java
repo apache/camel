@@ -55,7 +55,9 @@ import org.springframework.context.ApplicationContextAware;
  * {@link org.apache.camel.Consume} annotation along with
  * <a href="http://camel.apache.org/pojo-producing.html">POJO Producing</a> via the
  * {@link org.apache.camel.Produce} annotation along with other annotations such as
+ * {@link org.apache.camel.DynamicRouter} for creating <a href="http://camel.apache.org/dynamicrouter-annotation.html">a Dynamic router via annotations</a>.
  * {@link org.apache.camel.RecipientList} for creating <a href="http://camel.apache.org/recipientlist-annotation.html">a Recipient List router via annotations</a>.
+ * {@link org.apache.camel.RoutingSlip} for creating <a href="http://camel.apache.org/routingslip-annotation.html">a Routing Slip router via annotations</a>.
  * <p>
  * If you use the &lt;camelContext&gt; element in your <a href="http://camel.apache.org/spring.html">Spring XML</a>
  * then one of these bean post processors is implicitly installed and configured for you. So you should never have to

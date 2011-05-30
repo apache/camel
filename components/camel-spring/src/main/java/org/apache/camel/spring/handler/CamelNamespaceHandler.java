@@ -103,7 +103,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         
         addBeanDefinitionParser("keyStoreParameters", KeyStoreParametersFactoryBean.class, true, true);
         addBeanDefinitionParser("secureRandomParameters", SecureRandomParametersFactoryBean.class, true, true);
-        registerBeanDefinitionParser("sslContextParameters", new SSLContextParametersFactoryBeanBeanDefinitionBarser());
+        registerBeanDefinitionParser("sslContextParameters", new SSLContextParametersFactoryBeanBeanDefinitionParser());
 
         addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class, true, false);
         addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class, true, false);
@@ -201,9 +201,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         return classes;
     }
     
-    protected class SSLContextParametersFactoryBeanBeanDefinitionBarser extends BeanDefinitionParser {
+    protected class SSLContextParametersFactoryBeanBeanDefinitionParser extends BeanDefinitionParser {
 
-        public SSLContextParametersFactoryBeanBeanDefinitionBarser() {
+        public SSLContextParametersFactoryBeanBeanDefinitionParser() {
             super(SSLContextParametersFactoryBean.class, true);
         }
 
@@ -236,7 +236,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("clientParameters", bean.getClientParameters());
                 builder.addPropertyValue("serverParameters", bean.getServerParameters());
             } else {
-                throw new BeanDefinitionStoreException("Parsed type is not of the expected type.  Expected "
+                throw new BeanDefinitionStoreException("Parsed type is not of the expected type. Expected "
                                                        + SSLContextParametersFactoryBean.class.getName() + " but found "
                                                        + value.getClass().getName());
             }
@@ -270,12 +270,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
             // lets inject the namespaces into any namespace aware POJOs
             injectNamespaces(element, binder);
-
-            // TODO: We need to inject bean post processors
-            // but we need to camelContext id its referred from
         }
     }
-
 
     protected class CamelContextBeanDefinitionParser extends BeanDefinitionParser {
 
