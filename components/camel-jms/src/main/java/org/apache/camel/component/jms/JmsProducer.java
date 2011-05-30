@@ -362,7 +362,7 @@ public class JmsProducer extends DefaultAsyncProducer {
 
     protected void setMessageId(Exchange exchange) {
         if (exchange.hasOut()) {
-            JmsMessage out = (JmsMessage) exchange.getOut();
+            JmsMessage out = exchange.getOut(JmsMessage.class);
             try {
                 if (out != null && out.getJmsMessage() != null) {
                     out.setMessageId(out.getJmsMessage().getJMSMessageID());
