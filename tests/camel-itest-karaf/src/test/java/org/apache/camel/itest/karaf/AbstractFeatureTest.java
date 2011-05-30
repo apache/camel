@@ -155,7 +155,7 @@ public abstract class AbstractFeatureTest {
 
     public static Option[] configure(String feature, boolean useFelix, boolean useEquinox) {
         Option[] options = options(
-            profile("log").version("1.4"),
+            profile("log").version("1.6.1"),
             // this is how you set the default log level when using pax logging (logProfile)
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG"),
 
