@@ -29,6 +29,7 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
@@ -131,7 +132,7 @@ public class DefaultCxfBindingTest extends Assert {
     public void testPopupalteCxfResponseFromExchange() {
         DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
         cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
-        Exchange exchange = new DefaultExchange(context);
+        Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
         org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
         exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.PAYLOAD);
         

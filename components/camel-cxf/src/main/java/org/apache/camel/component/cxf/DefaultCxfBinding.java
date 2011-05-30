@@ -271,8 +271,15 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // create response context
         Map<String, Object> responseContext = new HashMap<String, Object>();
         
+        org.apache.camel.Message response;
+        if (camelExchange.getPattern().isOutCapable()) {
+            response = camelExchange.getOut();
+        } else {
+            response = camelExchange.getIn();
+        }
+        
         // propagate response context
-        Map<String, Object> camelHeaders = camelExchange.getOut().getHeaders();
+        Map<String, Object> camelHeaders = response.getHeaders();
         extractInvocationContextFromCamel(camelExchange, camelHeaders, 
                 responseContext, Client.RESPONSE_CONTEXT);
         
@@ -297,7 +304,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         LOG.trace("Set out response context = {}", responseContext);
         
         // set body
-        Object outBody = DefaultCxfBinding.getBodyFromCamel(camelExchange.getOut(), dataFormat);
+        Object outBody = DefaultCxfBinding.getBodyFromCamel(response, dataFormat);
         
         if (outBody != null) {
             if (dataFormat == DataFormat.PAYLOAD) {

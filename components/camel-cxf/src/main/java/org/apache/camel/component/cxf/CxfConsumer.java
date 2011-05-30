@@ -174,10 +174,7 @@ public class CxfConsumer extends DefaultConsumer {
                 
                 checkFailure(camelExchange);
                 
-                // bind the Camel response into a CXF response
-                if (camelExchange.getPattern().isOutCapable()) {
-                    binding.populateCxfResponseFromExchange(camelExchange, cxfExchange);
-                }
+                binding.populateCxfResponseFromExchange(camelExchange, cxfExchange);
                 
                 // check failure again as fault could be discovered by converter
                 checkFailure(camelExchange);
