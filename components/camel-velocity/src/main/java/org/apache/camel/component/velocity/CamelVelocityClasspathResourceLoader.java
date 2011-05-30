@@ -35,7 +35,7 @@ public class CamelVelocityClasspathResourceLoader extends ClasspathResourceLoade
     @Override
     public void init(ExtendedProperties configuration) {
         super.init(configuration);
-        resolver = (ClassResolver) this.rsvc.getProperty("CamelClassResolver");;
+        resolver = (ClassResolver) this.rsvc.getProperty("CamelClassResolver");
         ObjectHelper.notNull(resolver, "ClassResolver");
     }
 
