@@ -63,6 +63,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
         String[] packageNames;
+
+        LOG.trace("Searching for {} services", META_INF_SERVICES);
         try {
             packageNames = findPackageNames();
             if (packageNames == null || packageNames.length == 0) {
@@ -82,6 +84,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             return;
         }
 
+        LOG.trace("Found converter packages to scan: {}", packageNames);
         Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);
         if (classes == null || classes.isEmpty()) {
             throw new TypeConverterLoaderException("Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));
@@ -126,7 +129,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             if (!visitedURIs.contains(path)) {
                 // remember we have visited this uri so we wont read it twice
                 visitedURIs.add(path);
-                LOG.info("Loading file {} to retrieve list of packages, from url: {}", META_INF_SERVICES, url);
+                LOG.debug("Loading file {} to retrieve list of packages, from url: {}", META_INF_SERVICES, url);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
                 try {
                     while (true) {

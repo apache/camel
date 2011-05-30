@@ -26,10 +26,14 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
@@ -41,6 +45,7 @@ import org.apache.camel.impl.scan.CompositePackageScanFilter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,6 +208,15 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
     }
 
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
+        Map<String, List<String>> jarCache = new LinkedHashMap<String, List<String>>();
+
+        find(test, packageName, loader, classes, jarCache);
+
+        jarCache.clear();
+    }
+
+    protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes,
+                        Map<String, List<String>> jarCache) {
         if (log.isTraceEnabled()) {
             log.trace("Searching for: {} in package: {} using classloader: {}", 
                     new Object[]{test, packageName, loader.getClass().getName()});
@@ -252,7 +266,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
 
                 // osgi bundles should be skipped
                 if (url.toString().startsWith("bundle:") || urlPath.startsWith("bundle:")) {
-                    log.trace("It's a virtual osgi bundle, skipping");
+                    log.trace("Skipping OSGi bundle: {}", url);
                     continue;
                 }
 
@@ -285,7 +299,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                         stream = new FileInputStream(file);
                     }
 
-                    loadImplementationsInJar(test, packageName, stream, urlPath, classes);
+                    loadImplementationsInJar(test, packageName, stream, urlPath, classes, jarCache);
                 }
             } catch (IOException e) {
                 // use debug logging to avoid being to noisy in logs
@@ -304,7 +318,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
      * Strategy to get the resources by the given classloader.
      * <p/>
      * Notice that in WebSphere platforms there is a {@link WebSpherePackageScanClassResolver}
-     * to take care of WebSphere's odditiy of resource loading.
+     * to take care of WebSphere's oddity of resource loading.
      *
      * @param loader  the classloader
      * @param packageName   the packagename for the package to load
@@ -347,7 +361,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
      */
     private void loadImplementationsInDirectory(PackageScanFilter test, String parent, File location, Set<Class<?>> classes) {
         File[] files = location.listFiles();
-        StringBuilder builder = null;
+        StringBuilder builder;
 
         for (File file : files) {
             builder = new StringBuilder(100);
@@ -376,8 +390,27 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
      *                be considered
      * @param stream  the inputstream of the jar file to be examined for classes
      * @param urlPath the url of the jar file to be examined for classes
+     * @param classes to add found and matching classes
+     * @param jarCache cache for JARs to speedup loading
      */
-    private void loadImplementationsInJar(PackageScanFilter test, String parent, InputStream stream, String urlPath, Set<Class<?>> classes) {
+    private void loadImplementationsInJar(PackageScanFilter test, String parent, InputStream stream,
+                                                       String urlPath, Set<Class<?>> classes, Map<String, List<String>> jarCache) {
+        ObjectHelper.notNull(classes, "classes");
+        ObjectHelper.notNull(jarCache, "jarCache");
+
+        List<String> cache = jarCache.get(urlPath);
+        if (cache == null) {
+            cache = doCacheJar(stream, urlPath);
+            jarCache.put(urlPath, cache);
+            log.debug("Cached {} JAR with {} entries", urlPath, cache.size());
+        }
+
+        doLoadImplementationsInJar(test, parent, cache, classes);
+    }
+
+    private List<String> doCacheJar(InputStream stream, String urlPath) {
+        List<String> entries = new ArrayList<String>();
+
         JarInputStream jarStream = null;
         try {
             jarStream = new JarInputStream(stream);
@@ -387,16 +420,25 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 String name = entry.getName();
                 if (name != null) {
                     name = name.trim();
-                    if (!entry.isDirectory() && name.startsWith(parent) && name.endsWith(".class")) {
-                        addIfMatching(test, name, classes);
+                    if (!entry.isDirectory() && name.endsWith(".class")) {
+                        entries.add(name);
                     }
                 }
             }
         } catch (IOException ioe) {
-            log.warn("Cannot search jar file '" + urlPath + "' for classes matching criteria: " + test
-                + " due to an IOException: " + ioe.getMessage(), ioe);
+            log.warn("Cannot search jar file '" + urlPath + " due to an IOException: " + ioe.getMessage(), ioe);
         } finally {
             IOHelper.close(jarStream, urlPath, log);
+        }
+
+        return entries;
+    }
+
+    private void doLoadImplementationsInJar(PackageScanFilter test, String parent, List<String> entries, Set<Class<?>> classes) {
+        for (String entry : entries) {
+            if (entry.startsWith(parent)) {
+                addIfMatching(test, entry, classes);
+            }
         }
     }
 
@@ -414,7 +456,9 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             Set<ClassLoader> set = getClassLoaders();
             boolean found = false;
             for (ClassLoader classLoader : set) {
-                log.trace("Testing for class {} matches criteria [{}] using classloader: {}", new Object[]{externalName, test, classLoader});
+                if (log.isTraceEnabled()) {
+                    log.trace("Testing for class {} matches criteria [{}] using classloader: {}", new Object[]{externalName, test, classLoader});
+                }
                 try {
                     Class<?> type = classLoader.loadClass(externalName);
                     log.trace("Loaded the class: {} in classloader: {}", type, classLoader);
