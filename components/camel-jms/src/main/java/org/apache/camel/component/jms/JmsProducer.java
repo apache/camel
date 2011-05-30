@@ -60,9 +60,6 @@ public class JmsProducer extends DefaultAsyncProducer {
         this.endpoint = endpoint;
     }
 
-    @Deprecated
-    // We need to look the message header to override the ReplyTo option of the JMS endpoint
-    // So please use initReplyManager(org.apache.camel.Message camelMessage)
     protected void initReplyManager() {
         if (!started.get()) {
             synchronized (this) {
@@ -73,32 +70,6 @@ public class JmsProducer extends DefaultAsyncProducer {
                     if (endpoint.getReplyTo() != null) {
                         replyManager = endpoint.getReplyManager(endpoint.getReplyTo());
                         LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from: " + endpoint.getReplyTo());
-                    } else {
-                        replyManager = endpoint.getReplyManager();
-                        LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from temporary queue");
-                    }
-                } catch (Exception e) {
-                    throw new FailedToCreateProducerException(endpoint, e);
-                }
-                started.set(true);
-            }
-        }
-    }
-    
-    protected void initReplyManager(org.apache.camel.Message camelMessage) {
-        if (!started.get()) {
-            synchronized (this) {
-                if (started.get()) {
-                    return;
-                }
-                try {
-                    String replyTo = camelMessage.getHeader(JmsConstants.JMS_REPLY_TO_NAME , String.class);
-                    if (replyTo == null) {
-                        replyTo = endpoint.getReplyTo();
-                    }
-                    if (replyTo != null) {
-                        replyManager = endpoint.getReplyManager(replyTo);
-                        LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from: " + replyTo);
                     } else {
                         replyManager = endpoint.getReplyManager();
                         LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from temporary queue");
@@ -152,7 +123,7 @@ public class JmsProducer extends DefaultAsyncProducer {
             destinationName = null;
         }
 
-        initReplyManager(in);
+        initReplyManager();
 
         // when using message id as correlation id, we need at first to use a provisional correlation id
         // which we then update to the real JMSMessageID when the message has been sent

@@ -25,7 +25,6 @@ public final class JmsConstants {
     public static final String JMS_DESTINATION_NAME = "CamelJmsDestinationName";
     public static final String JMS_MESSAGE_TYPE = "CamelJmsMessageType";
     public static final String JMS_DELIVERY_MODE = "CamelJmsDeliveryMode";
-    public static final String JMS_REPLY_TO_NAME = "CamelJmsReplyToName";
 
     private JmsConstants() {
         // utility class
