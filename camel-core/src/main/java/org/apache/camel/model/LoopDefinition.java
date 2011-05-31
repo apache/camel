@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
@@ -35,6 +36,9 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoopDefinition extends ExpressionNode {
 
+    @XmlAttribute
+    private Boolean copy;
+
     public LoopDefinition() {
     }
 
@@ -46,12 +50,37 @@ public class LoopDefinition extends ExpressionNode {
         super(expression);
     }
 
-    public void setExpression(Expression expr) {
-        if (expr != null) {
-            setExpression(new ExpressionDefinition(expr));
-        }
+    /**
+     * Enables copy mode so a copy of the input Exchange is used for each iteration.
+     * That means each iteration will start from a copy of the same message.
+     * <p/>
+     * By default loop will loop the same exchange all over, so each iteration may
+     * have different message content.
+     *
+     * @return the builder
+     */
+    public LoopDefinition copy() {
+        setCopy(true);
+        return this;
     }
-    
+
+    public void setExpression(Expression expr) {
+        setExpression(new ExpressionDefinition(expr));
+    }
+
+    public Boolean getCopy() {
+        return copy;
+    }
+
+    public void setCopy(Boolean copy) {
+        this.copy = copy;
+    }
+
+    public boolean isCopy() {
+        // do not copy by default to be backwards compatible
+        return copy != null ? copy : false;
+    }
+
     @Override
     public String toString() {
         return "Loop[" + getExpression() + " -> " + getOutputs() + "]";
@@ -65,7 +94,7 @@ public class LoopDefinition extends ExpressionNode {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor output = this.createChildProcessor(routeContext, true);
-        return new LoopProcessor(getExpression().createExpression(routeContext), output);
+        return new LoopProcessor(output, getExpression().createExpression(routeContext), isCopy());
     }
     
 }

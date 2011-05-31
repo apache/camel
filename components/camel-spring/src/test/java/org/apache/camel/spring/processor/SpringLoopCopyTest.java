@@ -14,16 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
+package org.apache.camel.spring.processor;
 
-import org.apache.camel.model.LoopDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.LoopCopyTest;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * Scala enrichment for Camel's LoopDefinition
+ * @version 
  */
-case class SLoopDefinition(override val target: LoopDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[LoopDefinition] {
+public class SpringLoopCopyTest extends LoopCopyTest {
 
-    def copy() = wrap(target.copy())
-
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringLoopCopyTest.xml");
+    }
 }

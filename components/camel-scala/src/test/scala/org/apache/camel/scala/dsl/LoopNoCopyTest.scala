@@ -1,3 +1,5 @@
+package org.apache.camel.scala.dsl
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,16 +16,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
-
-import org.apache.camel.model.LoopDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's LoopDefinition
+ * Test for looping from the Scala DSL
  */
-case class SLoopDefinition(override val target: LoopDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[LoopDefinition] {
+class LoopNoCopyTest extends ScalaTestSupport {
 
-    def copy() = wrap(target.copy())
+  def testLoopNoCopy() {
+      getMockEndpoint("mock:loop").expectedBodiesReceived("AB", "ABB", "ABBB")
+      getMockEndpoint("mock:result").expectedBodiesReceived("ABBB")
+
+      template.sendBody("direct:start", "A")
+
+      assertMockEndpointsSatisfied()
+  }
+
+  val builder = new RouteBuilder {
+     "direct:start" ==> {
+       loop(3) {
+         transform(simple("${body}B"))
+         to("mock:loop")
+       }
+       to("mock:result")
+     }
+   }
 
 }
+
+

@@ -24,6 +24,8 @@ package org.apache.camel.model;
  */
 public class NodeFactory {
 
+    // TODO: Make this as SPI interface and add the other createXXX methods
+
     public FilterDefinition createFilter() {
         return new FilterDefinition();
     }
