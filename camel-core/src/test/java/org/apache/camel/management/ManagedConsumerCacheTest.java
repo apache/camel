@@ -47,7 +47,6 @@ public class ManagedConsumerCacheTest extends ManagementTestSupport {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
-        assertEquals(8, set.size());
         List<ObjectName> list = new ArrayList<ObjectName>(set);
         ObjectName on = null;
         for (ObjectName name : list) {

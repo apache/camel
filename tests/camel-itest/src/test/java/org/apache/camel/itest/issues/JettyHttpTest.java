@@ -19,19 +19,14 @@ package org.apache.camel.itest.issues;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version 
  */
-@Ignore
 public class JettyHttpTest extends CamelTestSupport {
-
-    // TODO: Jetty async producer needs to be implemented before this test can pass
 
     private String targetProducerUri = "http://localhost:8542/someservice?bridgeEndpoint=true&throwExceptionOnFailure=false";
     private String targetConsumerUri = "jetty:http://localhost:8542/someservice?matchOnUriPrefix=true";
@@ -55,7 +50,6 @@ public class JettyHttpTest extends CamelTestSupport {
         
         template.sendBody("direct:relative", "");
         assertMockEndpointsSatisfied();
-        
     }
 
     @Override
@@ -63,7 +57,6 @@ public class JettyHttpTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
                 from(targetConsumerUri)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
@@ -82,7 +75,6 @@ public class JettyHttpTest extends CamelTestSupport {
                 from("direct:relative")
                     .to(sourceProducerUri + "/relative")
                     .to("mock:result");
-
             }
         };
     }

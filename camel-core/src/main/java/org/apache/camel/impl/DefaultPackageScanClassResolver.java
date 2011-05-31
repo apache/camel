@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -45,17 +44,21 @@ import org.apache.camel.impl.scan.CompositePackageScanFilter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanClassResolver}
  */
-public class DefaultPackageScanClassResolver implements PackageScanClassResolver {
+public class DefaultPackageScanClassResolver extends ServiceSupport implements PackageScanClassResolver {
 
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
+    // use a JAR cache to speed up scanning JARs, but let it be soft referenced so it can claim the data when memory is needed
+    private final Map<String, List<String>> jarCache = new LRUSoftCache<String, List<String>>(1000);
     private Set<PackageScanFilter> scanFilters;
     private String[] acceptableSchemes = {};
 
@@ -208,15 +211,6 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
     }
 
     protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes) {
-        Map<String, List<String>> jarCache = new LinkedHashMap<String, List<String>>();
-
-        find(test, packageName, loader, classes, jarCache);
-
-        jarCache.clear();
-    }
-
-    protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class<?>> classes,
-                        Map<String, List<String>> jarCache) {
         if (log.isTraceEnabled()) {
             log.trace("Searching for: {} in package: {} using classloader: {}", 
                     new Object[]{test, packageName, loader.getClass().getName()});
@@ -275,7 +269,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     urlPath = urlPath.substring(0, urlPath.indexOf('!'));
                 }
 
-                log.trace("Scanning for classes in [{}] matching criteria: {}", urlPath, test);
+                log.trace("Scanning for classes in: {} matching criteria: {}", urlPath, test);
 
                 File file = new File(urlPath);
                 if (file.isDirectory()) {
@@ -398,17 +392,28 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         ObjectHelper.notNull(classes, "classes");
         ObjectHelper.notNull(jarCache, "jarCache");
 
-        List<String> cache = jarCache.get(urlPath);
-        if (cache == null) {
-            cache = doCacheJar(stream, urlPath);
-            jarCache.put(urlPath, cache);
-            log.debug("Cached {} JAR with {} entries", urlPath, cache.size());
+        List<String> entries = jarCache != null ? jarCache.get(urlPath) : null;
+        if (entries == null) {
+            entries = doLoadJarClassEntries(stream, urlPath);
+            if (jarCache != null) {
+                jarCache.put(urlPath, entries);
+                log.trace("Cached {} JAR with {} entries", urlPath, entries.size());
+            }
+        } else {
+            log.trace("Using cached {} JAR with {} entries", urlPath, entries.size());
         }
 
-        doLoadImplementationsInJar(test, parent, cache, classes);
+        doLoadImplementationsInJar(test, parent, entries, classes);
     }
 
-    private List<String> doCacheJar(InputStream stream, String urlPath) {
+    /**
+     * Loads all the class entries from the JAR.
+     *
+     * @param stream  the inputstream of the jar file to be examined for classes
+     * @param urlPath the url of the jar file to be examined for classes
+     * @return all the .class entries from the JAR
+     */
+    private List<String> doLoadJarClassEntries(InputStream stream, String urlPath) {
         List<String> entries = new ArrayList<String>();
 
         JarInputStream jarStream = null;
@@ -434,6 +439,14 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
         return entries;
     }
 
+    /**
+     * Adds all the matching implementations from from the JAR entries to the classes.
+     *
+     * @param test    a Test used to filter the classes that are discovered
+     * @param parent  the parent package under which classes must be in order to be considered
+     * @param entries the .class entries from the JAR
+     * @param classes to add found and matching classes
+     */
     private void doLoadImplementationsInJar(PackageScanFilter test, String parent, List<String> entries, Set<Class<?>> classes) {
         for (String entry : entries) {
             if (entry.startsWith(parent)) {
@@ -471,12 +484,12 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                 } catch (ClassNotFoundException e) {
                     if (log.isTraceEnabled()) {
                         log.trace("Cannot find class '" + fqn + "' in classloader: " + classLoader
-                                + ". Reason: " + e, e);
+                                + ". Reason: " + e.getMessage(), e);
                     }
                 } catch (NoClassDefFoundError e) {
                     if (log.isTraceEnabled()) {
                         log.trace("Cannot find the class definition '" + fqn + "' in classloader: " + classLoader
-                            + ". Reason: " + e, e);
+                            + ". Reason: " + e.getMessage(), e);
                     }
                 }
             }
@@ -489,6 +502,14 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
                     + " with message: " + e.getMessage(), e);
             }
         }
+    }
+
+    protected void doStart() throws Exception {
+        ServiceHelper.startService(jarCache);
+    }
+
+    protected void doStop() throws Exception {
+        ServiceHelper.stopService(jarCache);
     }
 
 }

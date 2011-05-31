@@ -1420,6 +1420,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         addService(producerServicePool);
         addService(inflightRepository);
         addService(shutdownStrategy);
+        addService(packageScanClassResolver);
 
         startServices(components.values());
 
