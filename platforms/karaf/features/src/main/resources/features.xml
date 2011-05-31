@@ -55,7 +55,6 @@
     <bundle dependency="true">mvn:org.springframework/spring-jms/${spring-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/${asm-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.fastinfoset/${fastinfoset-version}</bundle>
-    <bundle>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency="true">mvn:commons-codec/commons-codec/${commons-codec}</bundle>
     <bundle>mvn:org.codehaus.jettison/jettison/${jettison-bundle-version}</bundle>
@@ -217,11 +216,12 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-csv/${pom.version}</bundle>
   </feature>
-  <feature name='camel-dns' version='${pom.version}' resolver='(obr)'>
+  <!-- dnsjava dependens on the sun.net.spi.nameservice and junit.framework, we need to find a way to support it -->
+  <!--feature name='camel-dns' version='${pom.version}' resolver='(obr)'>
     <bundle dependency="true">mvn:dnsjava/dnsjava/${dnsjava-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-dns/${pom.version}</bundle>
-  </feature>
+  </feature-->
   <feature name='camel-dozer' version='${pom.version}' resolver='(obr)'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
@@ -290,6 +290,10 @@
   <feature name='camel-hdfs' version='${pom.version}' resolver='(obr)'>
     <feature version='${pom.version}'>camel-core</feature>
     <feature>war</feature>
+    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-${jaxws.api.version}/${servicemix-specs-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.saaj-api-1.3/${servicemix-specs-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
+    <bundle dependency="true">mvn:http://download.java.net/maven/2!javax.mail/mail/${javax-mail-version}</bundle>
     <bundle dependency="true">mvn:commons-codec/commons-codec/${commons-codec}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
     <bundle dependency="true">mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
