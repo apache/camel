@@ -131,10 +131,6 @@
   </feature>
   <feature name='camel-jetty' version='${pom.version}' resolver='(obr)'>
     <feature>jetty</feature>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-client/${jetty-version}</bundle>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-jmx/${jetty-version}</bundle>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-webapp/${jetty-version}</bundle>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-servlets/${jetty-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-http</feature>
     <bundle>mvn:org.apache.camel/camel-jetty/${pom.version}</bundle>
@@ -212,8 +208,6 @@
   </feature>
   <feature name='camel-cometd' version='${pom.version}' resolver='(obr)'>
     <feature>jetty</feature>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-client/${jetty-version}</bundle>
-    <bundle dependency="true">mvn:org.eclipse.jetty/jetty-jmx/${jetty-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cometd-java-server/${cometd-java-server-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-cometd/${pom.version}</bundle>
