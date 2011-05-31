@@ -24,10 +24,9 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("The camel-dns feature does not work")
-public class CamelDnsTest extends AbstractFeatureTest {
+public class CamelHdfsTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelDnsTest.class);
+    public static final String COMPONENT = extractName(CamelHdfsTest.class);
 
     @Test
     public void test() throws Exception {

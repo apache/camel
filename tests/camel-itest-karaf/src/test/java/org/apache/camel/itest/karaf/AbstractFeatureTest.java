@@ -161,7 +161,7 @@ public abstract class AbstractFeatureTest {
 
             //need to install some karaf features
             mavenBundle("org.apache.felix", "org.apache.felix.configadmin").versionAsInProject(),
-            mavenBundle("org.apache.servicemix.bundles", "org.apache.servicemix.bundles.jaxp-ri").version("1.4.2_4"),
+            mavenBundle("org.apache.servicemix.bundles", "org.apache.servicemix.bundles.jaxp-ri").version("1.4.4_2"),
             scanFeatures(getKarafFeatureUrl(), "http"),
 
             // and the camel feature to be tested

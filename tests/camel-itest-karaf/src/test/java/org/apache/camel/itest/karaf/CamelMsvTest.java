@@ -29,7 +29,7 @@ public class CamelMsvTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        testComponent("msv");
+        testComponent(COMPONENT);
     }
 
     @Configuration
