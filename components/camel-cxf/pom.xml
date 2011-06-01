@@ -57,8 +57,7 @@
     </camel.osgi.import>
 
     <camel.osgi.export>
-      org.apache.camel.component.cxf.*;${camel.osgi.version};-split-package:=merge-first,
-      '=META-INF.cxf.camel'
+      org.apache.camel.component.cxf.*;${camel.osgi.version};-split-package:=merge-first
     </camel.osgi.export>
     <camel.osgi.failok>true</camel.osgi.failok>
 

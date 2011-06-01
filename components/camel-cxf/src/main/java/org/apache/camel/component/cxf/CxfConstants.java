@@ -39,11 +39,16 @@ public interface CxfConstants {
     String OPERATION_NAME = "operationName";
     String OPERATION_NAMESPACE = "operationNamespace";
     String SPRING_CONTEXT_ENDPOINT = "bean:";
+    @Deprecated
+    // This constants will be removed in Camel 3.0
+    // Please use that one in camel-cxf-transport
     String CAMEL_TRANSPORT_PREFIX = "camel:";
     String JAXWS_CONTEXT = "jaxwsContext";
+    @Deprecated
     String CXF_EXCHANGE = "org.apache.cxf.message.exchange";
     String DISPATCH_NAMESPACE = "http://camel.apache.org/cxf/jaxws/dispatch";
     String DISPATCH_DEFAULT_OPERATION_NAMESPACE = "Invoke";    
+    @Deprecated
     String CAMEL_EXCHANGE = "org.apache.camel.exchange";
     String CAMEL_CXF_MESSAGE = "CamelCxfMessage";
     String CAMEL_CXF_RS_USING_HTTP_API = "CamelCxfRsUsingHttpAPI";

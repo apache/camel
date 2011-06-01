@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf.transport;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.HelloService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

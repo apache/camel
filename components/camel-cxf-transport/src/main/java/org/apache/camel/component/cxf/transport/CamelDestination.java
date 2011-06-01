@@ -26,7 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.cxfbean.DefaultCxfBeanBinding;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -78,7 +77,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         super(bus, getTargetReference(info, bus), info);
         this.camelContext = camelContext;
         conduitInitiator = ci;
-        camelDestinationUri = endpointInfo.getAddress().substring(CxfConstants.CAMEL_TRANSPORT_PREFIX.length());
+        camelDestinationUri = endpointInfo.getAddress().substring(CamelTransportConstants.CAMEL_TRANSPORT_PREFIX.length());
         if (camelDestinationUri.startsWith("//")) {
             camelDestinationUri = camelDestinationUri.substring(2);
         }
@@ -148,7 +147,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         org.apache.cxf.message.Message inMessage =
             beanBinding.createCxfMessageFromCamelExchange(camelExchange, headerFilterStrategy);
 
-        inMessage.put(CxfConstants.CAMEL_EXCHANGE, camelExchange);
+        inMessage.put(CamelTransportConstants.CAMEL_EXCHANGE, camelExchange);
         ((MessageImpl) inMessage).setDestination(this);
 
         // Handling the incoming message
@@ -216,7 +215,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
          * @param message the message to be sent.
          */
         public void prepare(Message message) throws IOException {
-            message.put(CxfConstants.CAMEL_EXCHANGE, inMessage.get(CxfConstants.CAMEL_EXCHANGE));
+            message.put(CamelTransportConstants.CAMEL_EXCHANGE, inMessage.get(CamelTransportConstants.CAMEL_EXCHANGE));
             message.setContent(OutputStream.class, new CamelOutputStream(message));
         }
 
@@ -263,7 +262,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
         // Prepare the message and get the send out message
         private void commitOutputMessage() throws IOException {
-            Exchange camelExchange = (Exchange)outMessage.get(CxfConstants.CAMEL_EXCHANGE);
+            Exchange camelExchange = (Exchange)outMessage.get(CamelTransportConstants.CAMEL_EXCHANGE);
 
             propagateResponseHeadersToCamel(outMessage, camelExchange);
 

@@ -26,10 +26,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.transport.util.CxfMessageHelper;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
-import org.apache.camel.component.cxf.util.CxfMessageHelper;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
@@ -77,7 +75,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         super(getTargetReference(epInfo, targetReference, b));
         String address = epInfo.getAddress();
         if (address != null) {
-            targetCamelEndpointUri = address.substring(CxfConstants.CAMEL_TRANSPORT_PREFIX.length());
+            targetCamelEndpointUri = address.substring(CamelTransportConstants.CAMEL_TRANSPORT_PREFIX.length());
             if (targetCamelEndpointUri.startsWith("//")) {
                 targetCamelEndpointUri = targetCamelEndpointUri.substring(2);
             }
@@ -208,7 +206,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             if (exception != null) {
                 throw new IOException("Cannot send the request message.", exchange.getException());
             }
-            exchange.setProperty(CxfConstants.CXF_EXCHANGE, outMessage.getExchange());
+            exchange.setProperty(CamelTransportConstants.CXF_EXCHANGE, outMessage.getExchange());
             if (!isOneWay) {
                 handleResponse(exchange);
             }

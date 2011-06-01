@@ -17,20 +17,27 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:camel="http://cxf.apache.org/transports/camel"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/cxfEndpoint.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-    
-  <bean id="cxfBus" class="org.apache.camel.component.cxf.spring.SpringBusFactoryBean">
-     <property name="cfgFiles" value="META-INF/cxf/cxf.xml;META-INF/cxf/cxf-extension-soap.xml" />
-     <property name="includeDefaultBus" value="false" />
-  </bean>
-  
-  <bean id="myBus" class="org.apache.camel.component.cxf.spring.SpringBusFactoryBean">
-     <property name="cfgFiles" value="META-INF/cxf/cxf-extension-soap.xml" />
-     <property name="includeDefaultBus" value="true" />
-  </bean>
+
+
+   <camel:destination name="{http://camel.apache.org/camel-test}port.camel-destination">
+        <camelContext id="dest_context" xmlns="http://camel.apache.org/schema/spring">
+            <route>
+                <from uri="direct:EndpointA"/>
+                <to uri="direct:EndpointB"/>
+            </route>
+            <route>
+                <from uri="direct:EndpointC"/>
+                <to uri="mock:EndpiontB"/>
+            </route>
+        </camelContext>
+   </camel:destination>
 
 </beans>

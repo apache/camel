@@ -18,4 +18,6 @@
 #    under the License.
 #
 #
-http\://camel.apache.org/schema/cxf=org.apache.camel.component.cxf.spring.NamespaceHandler
+
+# since we don't publish the camel schema in the cxf site, we will always use the schema file in the class path 
+http\://cxf.apache.org/transports/camel.xsd=schema/configuration/camel.xsd

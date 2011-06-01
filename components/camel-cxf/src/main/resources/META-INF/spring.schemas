@@ -33,6 +33,3 @@ http\://camel.apache.org/schema/cxf/camel-cxf-2.6.0.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-2.7.0.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-2.7.1.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-${pom.version}.xsd=schema/cxfEndpoint.xsd
-
-# since we don't publish the camel schema in the cxf site, we will always use the schema file in the class path 
-http\://cxf.apache.org/transports/camel.xsd=schema/configuration/camel.xsd

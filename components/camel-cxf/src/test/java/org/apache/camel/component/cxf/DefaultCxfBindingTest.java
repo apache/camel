@@ -67,7 +67,6 @@ public class DefaultCxfBindingTest extends Assert {
         cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
         Exchange exchange = new DefaultExchange(context);
         org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
-        exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
         exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.PAYLOAD);
         Map<String, Object> requestContext = new HashMap<String, Object>();
         
@@ -102,7 +101,6 @@ public class DefaultCxfBindingTest extends Assert {
         cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
         Exchange exchange = new DefaultExchange(context);
         org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
-        exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
         exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.PAYLOAD);
         Map<String, Object> responseContext = new HashMap<String, Object>();
         responseContext.put(org.apache.cxf.message.Message.RESPONSE_CODE, Integer.valueOf(200));

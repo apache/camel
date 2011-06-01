@@ -303,6 +303,11 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-cxf-transport</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
          <groupId>org.apache.camel</groupId>
 	     <artifactId>camel-eclipse</artifactId>
 	     <version>${project.version}</version>

@@ -49,6 +49,7 @@
         <include>org.apache.camel:camel-crypto</include>
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
+        <include>org.apache.camel:camel-cxf-transport</include>
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-ejb</include>
