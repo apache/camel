@@ -49,26 +49,38 @@ public class RestletConsumer extends DefaultConsumer {
                 
                 try {
                     Exchange exchange = getEndpoint().createExchange();
-                    RestletBinding binding = ((RestletEndpoint)getEndpoint()).getRestletBinding();
-                    binding.populateExchangeFromRestletRequest(request, exchange);
-                    getProcessor().process(exchange);
+
+                    RestletBinding binding = getEndpoint().getRestletBinding();
+                    binding.populateExchangeFromRestletRequest(request, response, exchange);
+
+                    try {
+                        getProcessor().process(exchange);
+                    } catch (Exception e) {
+                        exchange.setException(e);
+                    }
                     binding.populateRestletResponseFromExchange(exchange, response);
+
                 } catch (Exception e) {
-                    throw new RuntimeCamelException(e);
+                    throw new RuntimeCamelException("Cannot process request", e);
                 }
             }
         };
     }
 
     @Override
+    public RestletEndpoint getEndpoint() {
+        return (RestletEndpoint) super.getEndpoint();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ((RestletEndpoint)getEndpoint()).connect(this);
+        getEndpoint().connect(this);
     }
 
     @Override
     public void doStop() throws Exception {
-        ((RestletEndpoint)getEndpoint()).disconnect(this);
+        getEndpoint().disconnect(this);
         super.doStop();
     }
 

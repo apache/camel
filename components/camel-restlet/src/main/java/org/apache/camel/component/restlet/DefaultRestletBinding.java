@@ -50,8 +50,11 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRestletBinding.class);
     private HeaderFilterStrategy headerFilterStrategy;
 
-    public void populateExchangeFromRestletRequest(Request request, Exchange exchange) throws Exception {
+    public void populateExchangeFromRestletRequest(Request request, Response response, Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
+
+        inMessage.setHeader(RestletConstants.RESTLET_REQUEST, request);
+        inMessage.setHeader(RestletConstants.RESTLET_RESPONSE, response);
 
         // extract headers from restlet
         for (Map.Entry<String, Object> entry : request.getAttributes().entrySet()) {
@@ -128,9 +131,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (login != null && password != null) {
             ChallengeResponse authentication = new ChallengeResponse(ChallengeScheme.HTTP_BASIC, login, password);
             request.setChallengeResponse(authentication);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Basic HTTP Authentication has been applied");
-            }
+            LOG.debug("Basic HTTP Authentication has been applied");
         }
 
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
@@ -226,18 +227,19 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         if (body == null) {
             // empty response
             response.setEntity("", MediaType.TEXT_PLAIN);
+        } else if (body instanceof Response) {
+            // its already a restlet response, so dont do anything
+            LOG.debug("Using existing Restlet Response from exchange body: {}", body);
         } else if (body instanceof InputStream) {
             response.setEntity(new InputRepresentation(out.getBody(InputStream.class), mediaType));
         } else if (body instanceof File) {
             response.setEntity(new FileRepresentation(out.getBody(File.class), mediaType));
-        } else if (body != null) {
+        } else {
             // fallback and use string
             String text = out.getBody(String.class);
             response.setEntity(text, mediaType);
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Populate Restlet response from exchange body: " + body);
-        }
+        LOG.debug("Populate Restlet response from exchange body: {}", body);
 
         if (exchange.getProperty(Exchange.CHARSET_NAME) != null) {
             CharacterSet cs = CharacterSet.valueOf(exchange.getProperty(Exchange.CHARSET_NAME, String.class));
@@ -259,6 +261,9 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // set response code
         int responseCode = response.getStatus().getCode();
         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
+
+        // set restlet response as header so end user have access to it if needed
+        exchange.getOut().setHeader(RestletConstants.RESTLET_RESPONSE, response);
 
         if (response.getEntity() != null) {
             // get content type

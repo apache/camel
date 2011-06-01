@@ -25,6 +25,8 @@ public final class RestletConstants {
     
     public static final String RESTLET_LOGIN = "CamelRestletLogin";
     public static final String RESTLET_PASSWORD = "CamelRestletPassword";
+    public static final String RESTLET_REQUEST = "CamelRestletRequest";
+    public static final String RESTLET_RESPONSE = "CamelRestletResponse";
 
     private RestletConstants() {
     }

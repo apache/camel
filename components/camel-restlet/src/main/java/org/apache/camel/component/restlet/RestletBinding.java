@@ -38,11 +38,12 @@ public interface RestletBinding {
     /**
      * Populate Camel message from Restlet request
      * 
+     *
      * @param request message to be copied from
-     * @param exchange to be populated
-     * @throws Exception is thrown if error processing
+     * @param response
+     *@param exchange to be populated  @throws Exception is thrown if error processing
      */
-    void populateExchangeFromRestletRequest(Request request, Exchange exchange) throws Exception;
+    void populateExchangeFromRestletRequest(Request request, Response response, Exchange exchange) throws Exception;
 
     /**
      * Populate Restlet Request from Camel message
