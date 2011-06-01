@@ -17,13 +17,12 @@
       limitations under the License.
 -->
 <features>
-  <repository>mvn:org.apache.karaf.assemblies.features/standard/${karaf-version}/xml/features</repository>
   <feature name='camel' version='${pom.version}' resolver='(obr)'>
     <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-spring</feature>
   </feature>
   <feature name='camel-core' version='${pom.version}' resolver='(obr)'>
-    <feature version="${spring-version}">spring</feature>
+    <feature version="[3,4)">spring</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxb-api-2.2/${servicemix-specs-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
@@ -34,8 +33,8 @@
   </feature>
   <feature name='camel-spring' version='${pom.version}' resolver='(obr)'>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
-    <feature version='${spring-version}'>spring</feature>
-    <feature version='${spring-osgi-version}'>spring-dm</feature>
+    <feature version="[3,4)">spring</feature>
+    <feature version="[1.2,2)">spring-dm</feature>
     <bundle dependency="true">mvn:org.springframework/spring-tx/${spring-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-spring/${pom.version}</bundle>
