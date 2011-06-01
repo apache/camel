@@ -17,10 +17,12 @@
 package org.apache.camel.impl;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +63,6 @@ public class DefaultExchangeHolder implements Serializable {
 
     /**
      * Creates a payload object with the information from the given exchange.
-     * Only marshal the Serializable object
      *
      * @param exchange the exchange
      * @return the holder object with information copied form the exchange
@@ -72,7 +73,6 @@ public class DefaultExchangeHolder implements Serializable {
 
     /**
      * Creates a payload object with the information from the given exchange.
-     * Only marshal the Serializable object
      *
      * @param exchange the exchange
      * @param includeProperties whether or not to include exchange properties
@@ -82,10 +82,10 @@ public class DefaultExchangeHolder implements Serializable {
         DefaultExchangeHolder payload = new DefaultExchangeHolder();
 
         payload.exchangeId = exchange.getExchangeId();
-        payload.inBody = checkSerializableObject("in body", exchange, exchange.getIn().getBody());
+        payload.inBody = checkSerializableBody("in body", exchange, exchange.getIn().getBody());
         payload.safeSetInHeaders(exchange);
         if (exchange.hasOut()) {
-            payload.outBody = checkSerializableObject("out body", exchange, exchange.getOut().getBody());
+            payload.outBody = checkSerializableBody("out body", exchange, exchange.getOut().getBody());
             payload.outFaultFlag = exchange.getOut().isFault();
             payload.safeSetOutHeaders(exchange);
         }
@@ -182,7 +182,7 @@ public class DefaultExchangeHolder implements Serializable {
         return null;
     }
 
-    private static Object checkSerializableObject(String type, Exchange exchange, Object object) {
+    private static Object checkSerializableBody(String type, Exchange exchange, Object object) {
         if (object == null) {
             return null;
         }
@@ -191,7 +191,7 @@ public class DefaultExchangeHolder implements Serializable {
         if (converted != null) {
             return converted;
         } else {
-            LOG.warn(type + " containing object: " + object + " of type: " + object.getClass().getCanonicalName() + " cannot be serialized, it will be excluded by the holder.");
+            LOG.warn("Exchange " + type + " containing object: " + object + " of type: " + object.getClass().getCanonicalName() + " cannot be serialized, it will be excluded by the holder.");
             return null;
         }
     }
@@ -203,18 +203,71 @@ public class DefaultExchangeHolder implements Serializable {
 
         Map<String, Object> result = new LinkedHashMap<String, Object>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
+
             // silently skip any values which is null
             if (entry.getValue() != null) {
                 Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, entry.getValue());
+
+                // if the converter is a map/collection we need to check its content as well
+                if (converted instanceof Collection) {
+                    Collection valueCol = (Collection) converted;
+                    if (!collectionContainsAllSerializableObjects(valueCol, exchange)) {
+                        logCannotSerializeObject(type, entry.getKey(), entry.getValue());
+                        continue;
+                    }
+                } else if (converted instanceof Map) {
+                    Map valueMap = (Map) converted;
+                    if (!mapContainsAllSerializableObjects(valueMap, exchange)) {
+                        logCannotSerializeObject(type, entry.getKey(), entry.getValue());
+                        continue;
+                    }
+                }
+
                 if (converted != null) {
                     result.put(entry.getKey(), converted);
                 } else {
-                    LOG.warn(type + " containing object: " + entry.getValue() + " with key: " + entry.getKey()
-                            + " cannot be serialized, it will be excluded by the holder.");
+                    logCannotSerializeObject(type, entry.getKey(), entry.getValue());
                 }
             }
         }
 
         return result;
     }
+
+    private static void logCannotSerializeObject(String type, String key, Object value) {
+        if (key.startsWith("Camel")) {
+            // log Camel at DEBUG level
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Exchange {} containing key: {} with object: {} of type: {} cannot be serialized, it will be excluded by the holder.", new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
+            }
+        } else {
+            // log regular at WARN level
+            LOG.warn("Exchange {} containing key: {} with object: {} of type: {} cannot be serialized, it will be excluded by the holder.", new Object[]{type, key, value, ObjectHelper.classCanonicalName(value)});
+        }
+    }
+
+    private static boolean collectionContainsAllSerializableObjects(Collection col, Exchange exchange) {
+        for (Object value : col) {
+            if (value != null) {
+                Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, value);
+                if (converted == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean mapContainsAllSerializableObjects(Map map, Exchange exchange) {
+        for (Object value : map.values()) {
+            if (value != null) {
+                Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, value);
+                if (converted == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }
