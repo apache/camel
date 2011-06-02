@@ -17,7 +17,6 @@
 package org.apache.camel.component.hawtdb;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -55,8 +54,9 @@ public final class HawtDBCamelCodec {
         DataByteArrayOutputStream baos = new DataByteArrayOutputStream();
         // use DefaultExchangeHolder to marshal to a serialized object
         DefaultExchangeHolder pe = DefaultExchangeHolder.marshal(exchange, false);
-        // add the aggregated size property as the only property we want to retain
+        // add the aggregated size and timeout property as the only properties we want to retain
         DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_SIZE, exchange.getProperty(Exchange.AGGREGATED_SIZE, Integer.class));
+        DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_TIMEOUT, exchange.getProperty(Exchange.AGGREGATED_TIMEOUT, Long.class));
         // add the aggregated completed by property to retain
         DefaultExchangeHolder.addProperty(pe, Exchange.AGGREGATED_COMPLETED_BY, exchange.getProperty(Exchange.AGGREGATED_COMPLETED_BY, String.class));
         // add the aggregated correlation key property to retain

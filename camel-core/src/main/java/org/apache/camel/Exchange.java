@@ -74,6 +74,7 @@ public interface Exchange {
     String AUTHENTICATION_FAILURE_POLICY_ID = "CamelAuthenticationFailurePolicyId";
     String ACCEPT_CONTENT_TYPE              = "CamelAcceptContentType";
     String AGGREGATED_SIZE                  = "CamelAggregatedSize";
+    String AGGREGATED_TIMEOUT               = "CamelAggregatedTimeout";
     String AGGREGATED_COMPLETED_BY          = "CamelAggregatedCompletedBy";
     String AGGREGATED_CORRELATION_KEY       = "CamelAggregatedCorrelationKey";
     String AGGREGATION_STRATEGY             = "CamelAggregationStrategy";

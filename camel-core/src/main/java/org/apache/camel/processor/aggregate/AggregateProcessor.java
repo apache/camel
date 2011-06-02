@@ -54,6 +54,8 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.TimeoutMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +74,6 @@ import org.slf4j.LoggerFactory;
  * messages for the same stock are combined (or just the latest message is used
  * and older prices are discarded). Another idea is to combine line item messages
  * together into a single invoice message.
- *
- * @version 
  */
 public class AggregateProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
 
@@ -198,7 +198,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * @param key      the correlation key
      * @param exchange the exchange
      * @return the aggregated exchange
-     * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
+     * @throws org.apache.camel.CamelExchangeException
+     *          is thrown if error aggregating
      */
     private Exchange doAggregation(String key, Exchange exchange) throws CamelExchangeException {
         LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
@@ -275,8 +276,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     /**
      * Tests whether the given exchange is complete or not
      *
-     * @param key       the correlation key
-     * @param exchange  the incoming exchange
+     * @param key      the correlation key
+     * @param exchange the incoming exchange
      * @return <tt>null</tt> if not completed, otherwise a String with the type that triggered the completion
      */
     protected String isCompleted(String key, Exchange exchange) {
@@ -311,7 +312,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             if (value != null && value > 0) {
                 LOG.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
                         new Object[]{key, value, exchange});
-                timeoutMap.put(key, exchange.getExchangeId(), value);
+                addExchangeToTimeoutMap(key, exchange, value);
                 timeoutSet = true;
             }
         }
@@ -319,10 +320,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             // timeout is used so use the timeout map to keep an eye on this
             LOG.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
                     new Object[]{key, getCompletionTimeout(), exchange});
-            timeoutMap.put(key, exchange.getExchangeId(), getCompletionTimeout());
+            addExchangeToTimeoutMap(key, exchange, getCompletionTimeout());
         }
 
-        if (isCompletionFromBatchConsumer()) {            
+        if (isCompletionFromBatchConsumer()) {
             batchConsumerCorrelationKeys.add(key);
             batchConsumerCounter.incrementAndGet();
             int size = exchange.getProperty(Exchange.BATCH_SIZE, 0, Integer.class);
@@ -398,6 +399,50 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 }
             }
         });
+    }
+
+    /**
+     * Restores the timeout map with timeout values from the aggregation repository.
+     * <p/>
+     * This is needed in case the aggregator has been stopped and started again (for example a server restart).
+     * Then the existing exchanges from the {@link AggregationRepository} must have its timeout conditions restored.
+     */
+    protected void restoreTimeoutMapFromAggregationRepository() throws Exception {
+        StopWatch watch = new StopWatch();
+        LOG.trace("Starting restoring CompletionTimeout for existing exchanges from the aggregation repository...");
+
+        // grab the timeout value for each partly aggregated exchange
+        Set<String> keys = aggregationRepository.getKeys();
+        if (keys == null || keys.isEmpty()) {
+            return;
+        }
+
+        for (String key : keys) {
+            Exchange exchange = aggregationRepository.get(camelContext, key);
+            // grab the timeout value
+            long timeout = exchange.hasProperties() ? exchange.getProperty(Exchange.AGGREGATED_TIMEOUT, 0, long.class) : 0;
+            if (timeout > 0) {
+                LOG.trace("Restoring CompletionTimeout for exchangeId: {} with timeout: {} millis.", exchange.getExchangeId(), timeout);
+                addExchangeToTimeoutMap(key, exchange, timeout);
+            }
+        }
+
+        // log duration of this task so end user can see how long it takes to pre-check this upon starting
+        LOG.info("Restored {} CompletionTimeout conditions in the AggregationTimeoutChecker in {}",
+                timeoutMap.size(), TimeUtils.printDuration(watch.stop()));
+    }
+
+    /**
+     * Adds the given exchange to the timeout map, which is used by the timeout checker task to trigger timeouts.
+     *
+     * @param key      the correlation key
+     * @param exchange the exchange
+     * @param timeout  the timeout value in millis
+     */
+    private void addExchangeToTimeoutMap(String key, Exchange exchange, long timeout) {
+        // store the timeout value on the exchange as well, in case we need it later
+        exchange.setProperty(Exchange.AGGREGATED_TIMEOUT, timeout);
+        timeoutMap.put(key, exchange.getExchangeId(), timeout);
     }
 
     public Predicate getCompletionPredicate() {
@@ -797,6 +842,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             ScheduledExecutorService scheduler = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateTimeoutChecker", 1);
             // check for timed out aggregated messages once every second
             timeoutMap = new AggregationTimeoutMap(scheduler, 1000L);
+            // fill in existing timeout values from the aggregation repository, for example if a restart occurred, then we
+            // need to re-establish the timeout map so timeout can trigger
+            restoreTimeoutMapFromAggregationRepository();
             ServiceHelper.startService(timeoutMap);
         }
     }
