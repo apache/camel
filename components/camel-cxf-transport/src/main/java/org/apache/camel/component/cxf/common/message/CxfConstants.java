@@ -21,46 +21,43 @@ package org.apache.camel.component.cxf.common.message;
  *
  * @version 
  */
-public interface CxfConstants {
-    String METHOD = "method";
-    String SERVICE_CLASS = "serviceClass";
+public final class CxfConstants {
+    public static final String METHOD = "method";
+    public static final String SERVICE_CLASS = "serviceClass";
     // CamelCXFDataFormat is used as exchange property key
-    String DATA_FORMAT_PROPERTY = "CamelCXFDataFormat";
-    String SET_DEFAULT_BUS = "setDefaultBus";
-    String WSDL_URL = "wsdlURL";
-    String ADDRESS = "address";
-    String SERVICE_NAME = "serviceName";
-    String PORT_NAME = "portName";
-    String SERVICE_LOCALNAME = "serviceLocalName";
-    String SERVICE_NAMESPACE = "serviceNamespace";
-    String PORT_LOCALNAME = "endpointLocalName";
-    String PORT_NAMESPACE = "endpointNamespace";
-    String PROTOCOL_NAME_RES = "res";
-    String OPERATION_NAME = "operationName";
-    String OPERATION_NAMESPACE = "operationNamespace";
-    String SPRING_CONTEXT_ENDPOINT = "bean:";
-    @Deprecated
-    // This constants will be removed in Camel 3.0
-    // Please use that one in camel-cxf-transport
-    String CAMEL_TRANSPORT_PREFIX = "camel:";
-    String JAXWS_CONTEXT = "jaxwsContext";
-    @Deprecated
-    String CXF_EXCHANGE = "org.apache.cxf.message.exchange";
-    String DISPATCH_NAMESPACE = "http://camel.apache.org/cxf/jaxws/dispatch";
-    String DISPATCH_DEFAULT_OPERATION_NAMESPACE = "Invoke";    
-    @Deprecated
-    String CAMEL_EXCHANGE = "org.apache.camel.exchange";
-    String CAMEL_CXF_MESSAGE = "CamelCxfMessage";
-    String CAMEL_CXF_RS_USING_HTTP_API = "CamelCxfRsUsingHttpAPI";
-    String CAMEL_CXF_RS_VAR_VALUES = "CamelCxfRsVarValues";
-    String CAMEL_CXF_RS_RESPONSE_CLASS = "CamelCxfRsResponseClass";
-    String CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE = "CamelCxfRsResponseGenericType";
-    String CAMEL_CXF_RS_QUERY_MAP = "CamelCxfRsQueryMap";
-    String CAMEL_CXF_RS_EXTRACT_ENTITY = "CamelCxfRsExtractEntity";
-    String CAMEL_CXF_RS_OPERATION_RESOURCE_INFO_STACK = "CamelCxfRsOperationResourceInfoStack";
-    String CAMEL_CXF_ATTACHMENTS = "CamelAttachments";
-    String CAMEL_CXF_RS_THROW_EXCEPTION_ON_FAILURE = "CamelCxfRsThrowExceptionOnFailure";
+    public static final String DATA_FORMAT_PROPERTY = "CamelCXFDataFormat";
+    public static final String SET_DEFAULT_BUS = "setDefaultBus";
+    public static final String WSDL_URL = "wsdlURL";
+    public static final String ADDRESS = "address";
+    public static final String SERVICE_NAME = "serviceName";
+    public static final String PORT_NAME = "portName";
+    public static final String SERVICE_LOCALNAME = "serviceLocalName";
+    public static final String SERVICE_NAMESPACE = "serviceNamespace";
+    public static final String PORT_LOCALNAME = "endpointLocalName";
+    public static final String PORT_NAMESPACE = "endpointNamespace";
+    public static final String PROTOCOL_NAME_RES = "res";
+    public static final String OPERATION_NAME = "operationName";
+    public static final String OPERATION_NAMESPACE = "operationNamespace";
+    public static final String SPRING_CONTEXT_ENDPOINT = "bean:";
+    
+    public static final String JAXWS_CONTEXT = "jaxwsContext";
+    public static final String DISPATCH_NAMESPACE = "http://camel.apache.org/cxf/jaxws/dispatch";
+    public static final String DISPATCH_DEFAULT_OPERATION_NAMESPACE = "Invoke";    
+    
+    public static final String CAMEL_CXF_MESSAGE = "CamelCxfMessage";
+    public static final String CAMEL_CXF_RS_USING_HTTP_API = "CamelCxfRsUsingHttpAPI";
+    public static final String CAMEL_CXF_RS_VAR_VALUES = "CamelCxfRsVarValues";
+    public static final String CAMEL_CXF_RS_RESPONSE_CLASS = "CamelCxfRsResponseClass";
+    public static final String CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE = "CamelCxfRsResponseGenericType";
+    public static final String CAMEL_CXF_RS_QUERY_MAP = "CamelCxfRsQueryMap";
+    public static final String CAMEL_CXF_RS_EXTRACT_ENTITY = "CamelCxfRsExtractEntity";
+    public static final String CAMEL_CXF_RS_OPERATION_RESOURCE_INFO_STACK = "CamelCxfRsOperationResourceInfoStack";
+    public static final String CAMEL_CXF_ATTACHMENTS = "CamelAttachments";
+    public static final String CAMEL_CXF_RS_THROW_EXCEPTION_ON_FAILURE = "CamelCxfRsThrowExceptionOnFailure";
 
+    private CxfConstants() {
+        // Utility class
+    }
 }
 
 

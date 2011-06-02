@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.transport.CamelDestination;
+import org.apache.camel.component.cxf.transport.CamelTransportConstants;
 import org.apache.cxf.Bus;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
@@ -75,7 +76,7 @@ public class CxfBeanDestination extends CamelDestination implements Processor {
             endpoint.getCxfBeanBinding().createCxfMessageFromCamelExchange(camelExchange,
                     endpoint.getHeaderFilterStrategy());
                       
-        cxfMessage.put(CxfConstants.CAMEL_EXCHANGE, camelExchange);
+        cxfMessage.put(CamelTransportConstants.CAMEL_EXCHANGE, camelExchange);
         ((MessageImpl)cxfMessage).setDestination(this);
 
         // Handling the incoming message
