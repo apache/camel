@@ -28,6 +28,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.component.cxf.CxfHeaderFilterStrategy;
+import org.apache.camel.component.cxf.common.message.CxfMessageHelper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.HeaderFilterStrategy;

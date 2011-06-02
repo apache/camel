@@ -28,7 +28,6 @@ import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
-
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfNonWrapperTest extends CamelSpringTestSupport {

@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.net.URL;
 
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService12;
 import org.springframework.test.context.ContextConfiguration;
-
-import static org.junit.Assert.assertNotNull;
 
 
 /**

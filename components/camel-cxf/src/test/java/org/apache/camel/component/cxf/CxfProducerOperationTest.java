@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.junit.Test;
 
 /**

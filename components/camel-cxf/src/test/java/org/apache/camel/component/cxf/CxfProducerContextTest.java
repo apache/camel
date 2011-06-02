@@ -25,6 +25,7 @@ import javax.xml.ws.BindingProvider;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.message.Message;
 import org.junit.Test;

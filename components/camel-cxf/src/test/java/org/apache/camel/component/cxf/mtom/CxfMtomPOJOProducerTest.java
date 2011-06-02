@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
+import static org.junit.Assert.assertEquals;
+
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.net.URL;
 
 import javax.imageio.ImageIO;
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 import javax.xml.ws.soap.SOAPBinding;
@@ -31,17 +31,12 @@ import junit.framework.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.cxf.mtom_feature.Hello;
-import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode

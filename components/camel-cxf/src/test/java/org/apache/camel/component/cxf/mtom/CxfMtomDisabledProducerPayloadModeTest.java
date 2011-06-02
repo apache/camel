@@ -34,8 +34,6 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.w3c.dom.Element;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -47,6 +45,7 @@ import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.junit.Assert;
 import org.springframework.test.context.ContextConfiguration;
+import org.w3c.dom.Element;
 
 /**
  * 

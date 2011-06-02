@@ -18,8 +18,6 @@ package org.apache.camel.component.cxf;
 
 import java.util.List;
 
-import org.w3c.dom.Element;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -34,9 +32,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.w3c.dom.Element;
 
 
 public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {

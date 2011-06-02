@@ -20,13 +20,14 @@ import java.io.StringReader;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.namespace.QName;
-import org.w3c.dom.Element;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.wsdl_first.types.UnknownPersonFault;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.helpers.DOMUtils;
+import org.w3c.dom.Element;
 
 
 public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultTest {

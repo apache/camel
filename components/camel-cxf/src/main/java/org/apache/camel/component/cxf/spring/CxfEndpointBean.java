@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.spring;
 
 import java.util.List;
+
 import javax.xml.ws.handler.Handler;
 
 import org.apache.cxf.BusFactory;

@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf.spring;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.SoapBindingFactory;
-import org.apache.cxf.version.Version;
 import org.junit.Test;
 
 public class SpringBusFactoryBeanTest extends AbstractSpringBeanTestSupport {

@@ -19,15 +19,14 @@ package org.apache.camel.component.cxf.transport;
 import java.io.IOException;
 import java.io.OutputStream;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.cxfbean.DefaultCxfBeanBinding;
-import org.apache.camel.component.cxf.util.CxfHeaderHelper;
+import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
+import org.apache.camel.component.cxf.common.message.DefaultCxfMesssageMapper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -143,7 +142,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
     protected void incoming(org.apache.camel.Exchange camelExchange) {
         LOG.debug("server received request: ", camelExchange);
-        DefaultCxfBeanBinding beanBinding = new DefaultCxfBeanBinding();
+        DefaultCxfMesssageMapper beanBinding = new DefaultCxfMesssageMapper();
         org.apache.cxf.message.Message inMessage =
             beanBinding.createCxfMessageFromCamelExchange(camelExchange, headerFilterStrategy);
 

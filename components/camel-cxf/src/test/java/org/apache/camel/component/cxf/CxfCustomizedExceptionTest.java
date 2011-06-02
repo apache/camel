@@ -22,15 +22,12 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
@@ -42,6 +39,9 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 
 public class CxfCustomizedExceptionTest extends CamelTestSupport {

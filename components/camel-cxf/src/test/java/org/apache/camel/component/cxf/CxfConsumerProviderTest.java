@@ -18,8 +18,6 @@
 package org.apache.camel.component.cxf;
 
 
-import org.w3c.dom.Node;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -27,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.w3c.dom.Node;
 
 public class CxfConsumerProviderTest extends CamelTestSupport {
     

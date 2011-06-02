@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.hello_world_soap_http.BadRecordLitFault;
 import org.apache.hello_world_soap_http.GreeterImpl;

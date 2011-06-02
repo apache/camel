@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.transport;
+package org.apache.camel.component.cxf.cxfbean;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfConsumer;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfProducer;
+import org.apache.camel.component.cxf.transport.CamelConduit;
+import org.apache.camel.component.cxf.transport.CamelDestination;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

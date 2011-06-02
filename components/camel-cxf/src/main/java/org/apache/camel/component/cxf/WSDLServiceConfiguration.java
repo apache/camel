@@ -20,7 +20,6 @@ import java.util.Map;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.RuntimeCamelException;

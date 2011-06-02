@@ -23,10 +23,9 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.ws.handler.MessageContext;
 
-import org.w3c.dom.Node;
-
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.outofband.header.OutofBandHeader;
+import org.w3c.dom.Node;
 
 public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
     

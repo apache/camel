@@ -27,6 +27,7 @@ import javax.xml.ws.WebServiceException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.Person;

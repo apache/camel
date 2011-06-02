@@ -30,8 +30,6 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.xpath.XPathConstants;
 
-import org.w3c.dom.Element;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -48,6 +46,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.w3c.dom.Element;
 
 /**
 * Unit test for exercising MTOM feature of a CxfProducer in PAYLOAD mode

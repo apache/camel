@@ -24,14 +24,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.ws.WebServiceProvider;
 
-import org.w3c.dom.Element;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
 import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
@@ -65,6 +64,7 @@ import org.apache.cxf.service.model.MessagePartInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
+import org.w3c.dom.Element;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>.

@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.cxf.multipart;
 
-import java.io.IOException;
-
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;
-
-import junit.framework.TestCase;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cxf.multipart.MultiPartInvoke;
@@ -30,10 +26,6 @@ import org.apache.camel.cxf.multipart.types.InE;
 import org.apache.camel.cxf.multipart.types.ObjectFactory;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.apache.cxf.transport.http.HTTPConduit;
-import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

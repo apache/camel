@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.feature;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
 import org.apache.camel.component.cxf.interceptors.ConfigureDocLitWrapperInterceptor;
 import org.apache.camel.component.cxf.interceptors.RemoveClassTypeInterceptor;
 import org.apache.cxf.Bus;

@@ -19,9 +19,11 @@ package org.apache.camel.component.cxf;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 

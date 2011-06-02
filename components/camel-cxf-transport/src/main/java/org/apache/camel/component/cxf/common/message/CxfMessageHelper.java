@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.util;
+package org.apache.camel.component.cxf.common.message;
 
 import java.io.InputStream;
 
-import javax.xml.transform.Source;
-
-import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
+import org.apache.camel.component.cxf.transport.CamelTransportConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.MessageImpl;
@@ -37,7 +35,7 @@ public final class CxfMessageHelper {
                                                                  boolean isClient) {
         MessageImpl answer = new MessageImpl();
         org.apache.cxf.message.Exchange cxfExchange = exchange
-            .getProperty(CxfConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
+            .getProperty(CamelTransportConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
         org.apache.camel.Message message;
         if (isClient && exchange.hasOut()) {
             message = exchange.getOut();
@@ -47,7 +45,7 @@ public final class CxfMessageHelper {
         assert message != null;
         if (cxfExchange == null) {
             cxfExchange = new ExchangeImpl();
-            exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
+            exchange.setProperty(CamelTransportConstants.CXF_EXCHANGE, cxfExchange);
         }
 
         CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), answer, exchange);
@@ -65,37 +63,6 @@ public final class CxfMessageHelper {
         answer.setExchange(cxfExchange);
         cxfExchange.setInMessage(answer);
         return answer;
-    }
-
-    //This method is not used, and will be removed in Camel 3.0
-    @Deprecated
-    public static org.apache.cxf.message.Message getCxfOutMessage(HeaderFilterStrategy headerFilterStrategy,
-                                                                  org.apache.camel.Exchange exchange,
-                                                                  boolean isClient)
-        throws InvalidPayloadException {
-        org.apache.cxf.message.Exchange cxfExchange = exchange
-            .getProperty(CxfConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
-        assert cxfExchange != null;
-        org.apache.cxf.endpoint.Endpoint cxfEndpoint = cxfExchange
-            .get(org.apache.cxf.endpoint.Endpoint.class);
-        org.apache.cxf.message.Message outMessage = cxfEndpoint.getBinding().createMessage();
-        outMessage.setExchange(cxfExchange);
-        cxfExchange.setOutMessage(outMessage);
-
-        org.apache.camel.Message message;
-        if (isClient && exchange.hasOut()) {
-            message = exchange.getIn();
-        } else {
-            message = exchange.getOut();
-        }
-
-        CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), outMessage, exchange);
-
-        // send the body back
-        Source body = message.getMandatoryBody(Source.class);
-        outMessage.setContent(Source.class, body);
-        outMessage.putAll(message.getHeaders());
-        return outMessage;
     }
 
 }

@@ -28,12 +28,11 @@ import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 
-import org.w3c.dom.Node;
-
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.outofband.header.OutofBandHeader;
+import org.w3c.dom.Node;
 
 
 /**

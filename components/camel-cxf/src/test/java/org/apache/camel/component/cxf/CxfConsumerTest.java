@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;

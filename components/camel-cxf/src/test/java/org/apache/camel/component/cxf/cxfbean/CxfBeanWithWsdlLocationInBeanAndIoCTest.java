@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf.cxfbean;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -25,15 +27,12 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import static org.junit.Assert.assertEquals;
-
 /**
  *
  * @version 
  */
 @ContextConfiguration
-public class CxfBeanWithWsdlLocationInBeanTest extends AbstractJUnit4SpringContextTests {
+public class CxfBeanWithWsdlLocationInBeanAndIoCTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testDoNotUseWsdlDefinedInJaxWsBeanByDefault() throws Exception {        
@@ -53,7 +52,7 @@ public class CxfBeanWithWsdlLocationInBeanTest extends AbstractJUnit4SpringConte
             String responseBody = EntityUtils.toString(response.getEntity());
             String correct = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
                 + "<GetPersonResponse xmlns=\"http://camel.apache.org/wsdl-first/types\">"
-                + "<personId>hello</personId><ssn>000-000-0000</ssn><name>Bonjour</name></GetPersonResponse></soap:Body></soap:Envelope>";
+                + "<personId>hello</personId><ssn>000-000-0000</ssn><name>Bye</name></GetPersonResponse></soap:Body></soap:Envelope>";
             
             assertEquals("Get a wrong response", correct, responseBody);
         } finally {

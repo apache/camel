@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;

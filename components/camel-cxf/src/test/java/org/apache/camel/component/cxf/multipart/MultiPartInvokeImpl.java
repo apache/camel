@@ -18,11 +18,7 @@
 package org.apache.camel.component.cxf.multipart;
 
 import java.util.logging.Logger;
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.annotation.XmlSeeAlso;
+
 import javax.xml.ws.Holder;
 
 import org.apache.camel.cxf.multipart.MultiPartInvoke;

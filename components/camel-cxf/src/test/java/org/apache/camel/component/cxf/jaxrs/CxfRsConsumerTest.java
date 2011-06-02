@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -30,7 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpResponse;

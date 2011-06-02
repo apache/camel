@@ -27,7 +27,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.wsdl_first.PersonMultiPartImpl;
 import org.apache.camel.wsdl_first.PersonMultiPartPortType;
 import org.apache.camel.wsdl_first.PersonMultiPartService;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

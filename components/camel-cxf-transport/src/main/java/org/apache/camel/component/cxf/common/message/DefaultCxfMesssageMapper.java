@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.cxfbean;
+package org.apache.camel.component.cxf.common.message;
 
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.cxf.util.CxfMessageHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
@@ -31,8 +30,8 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultCxfBeanBinding implements CxfBeanBinding {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfBeanBinding.class);
+public class DefaultCxfMesssageMapper implements CxfMessageMapper {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfMesssageMapper.class);
 
     public Message createCxfMessageFromCamelExchange(Exchange camelExchange, 
             HeaderFilterStrategy headerFilterStrategy) {

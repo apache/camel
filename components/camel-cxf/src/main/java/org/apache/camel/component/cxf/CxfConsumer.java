@@ -22,10 +22,9 @@ import java.util.Map;
 
 import javax.xml.ws.WebFault;
 
-import org.w3c.dom.Element;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.continuations.Continuation;
@@ -39,6 +38,7 @@ import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
 /**
  * A Consumer of exchanges for a service in CXF.  CxfConsumer acts a CXF

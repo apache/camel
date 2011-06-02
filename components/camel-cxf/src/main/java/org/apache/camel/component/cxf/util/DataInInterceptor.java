@@ -22,8 +22,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
-import org.w3c.dom.Document;
-
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.interceptor.AbstractInDatabindingInterceptor;
 import org.apache.cxf.interceptor.Fault;
@@ -31,6 +29,7 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.staxutils.DepthXMLStreamReader;
 import org.apache.cxf.staxutils.StaxUtils;
+import org.w3c.dom.Document;
 
 public class DataInInterceptor extends AbstractInDatabindingInterceptor {
     // CXF requires JUL for Message

@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.cxf;
 
+import static org.junit.Assert.assertEquals;
+
 import java.net.URL;
 
 import javax.xml.namespace.QName;
@@ -28,8 +30,6 @@ import org.apache.camel.non_wrapper.types.GetPersonResponse;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration(locations = { "/org/apache/camel/component/cxf/context-camel-1145.xml" })
 public class TestCamel1145Route extends AbstractJUnit4SpringContextTests {

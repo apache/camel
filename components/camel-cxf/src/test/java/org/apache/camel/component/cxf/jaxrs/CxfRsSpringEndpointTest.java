@@ -21,7 +21,6 @@ import org.apache.camel.component.cxf.spring.CxfRsClientFactoryBeanDefinitionPar
 import org.apache.camel.component.cxf.spring.CxfRsServerFactoryBeanDefinitionParser.SpringJAXRSServerFactoryBean;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

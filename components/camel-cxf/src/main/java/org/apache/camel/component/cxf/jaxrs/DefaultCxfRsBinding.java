@@ -27,7 +27,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.cxf.jaxrs.impl.MetadataMap;

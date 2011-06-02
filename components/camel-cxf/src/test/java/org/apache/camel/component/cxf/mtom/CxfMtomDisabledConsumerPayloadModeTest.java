@@ -23,8 +23,6 @@ import java.util.List;
 import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.w3c.dom.Element;
-
 import junit.framework.Assert;
 
 import org.apache.camel.Exchange;
@@ -34,6 +32,7 @@ import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.springframework.test.context.ContextConfiguration;
+import org.w3c.dom.Element;
 
 /**
 * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfConsumer in PAYLOAD mode.  

@@ -18,11 +18,10 @@ package org.apache.camel.component.cxf.converter;
 
 import javax.xml.transform.TransformerException;
 
-import org.w3c.dom.Element;
-
 import org.apache.camel.Converter;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.w3c.dom.Element;
 
 // This converter is used to show how to override the CxfPayload default toString converter
 @Converter 

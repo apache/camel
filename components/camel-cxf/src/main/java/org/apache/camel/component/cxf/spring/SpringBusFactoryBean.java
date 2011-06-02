@@ -18,10 +18,7 @@ package org.apache.camel.component.cxf.spring;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.SmartFactoryBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 /**
  * This factoryBean which can help user to choice CXF components that he wants bus to load

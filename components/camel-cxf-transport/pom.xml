@@ -68,23 +68,20 @@
       <version>${cxf-version}</version>
     </dependency>
     
-     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-cxf</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-spring</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-blueprint</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.aries.blueprint</groupId>
-          <artifactId>org.apache.aries.blueprint</artifactId>
-        </exclusion>
-      </exclusions>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-bindings-soap</artifactId>
+      <version>${cxf-version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
     </dependency>
 
     <!-- for testing -->
@@ -108,12 +105,6 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-bindings-jbi</artifactId>
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>

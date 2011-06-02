@@ -20,13 +20,12 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.w3c.dom.Element;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.DOMUtils;
+import org.w3c.dom.Element;
 
 
 // SET the fault message directly on the out message

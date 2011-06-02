@@ -42,7 +42,6 @@ import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.easymock.classextension.EasyMock;
-import org.hamcrest.core.IsNull;
 import org.junit.Assert;
 import org.junit.Test;
 

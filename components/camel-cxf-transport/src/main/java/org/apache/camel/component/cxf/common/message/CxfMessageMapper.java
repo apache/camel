@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.cxfbean;
+package org.apache.camel.component.cxf.common.message;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -25,7 +25,7 @@ import org.apache.cxf.message.Message;
  *
  * @version 
  */
-public interface CxfBeanBinding {
+public interface CxfMessageMapper {
 
     /**
      * Create a CXF {@link Message} from a Camel exchange.

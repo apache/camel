@@ -24,9 +24,9 @@ import javax.xml.ws.WebServiceProvider;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;

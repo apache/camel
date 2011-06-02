@@ -23,8 +23,6 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 
-import org.w3c.dom.Element;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,6 +37,7 @@ import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.junit.Test;
+import org.w3c.dom.Element;
 
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode

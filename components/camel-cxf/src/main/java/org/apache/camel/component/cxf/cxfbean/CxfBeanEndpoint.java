@@ -22,6 +22,8 @@ import java.util.List;
 import javax.jws.WebService;
 
 import org.apache.camel.component.cxf.CxfHeaderFilterStrategy;
+import org.apache.camel.component.cxf.common.message.CxfMessageMapper;
+import org.apache.camel.component.cxf.common.message.DefaultCxfMesssageMapper;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -47,7 +49,7 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
     private Server server;
     private Bus bus;
     private boolean isSetDefaultBus;
-    private CxfBeanBinding cxfBeanBinding = new DefaultCxfBeanBinding();
+    private CxfMessageMapper cxfBeanBinding = new DefaultCxfMesssageMapper();
     private HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
     private boolean loggingFeatureEnabled;
     private boolean populateFromClass = true;
@@ -164,11 +166,11 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
         return isSetDefaultBus;
     }
 
-    public void setCxfBeanBinding(CxfBeanBinding cxfBeanBinding) {
+    public void setCxfBeanBinding(CxfMessageMapper cxfBeanBinding) {
         this.cxfBeanBinding = cxfBeanBinding;
     }
 
-    public CxfBeanBinding getCxfBeanBinding() {
+    public CxfMessageMapper getCxfBeanBinding() {
         return cxfBeanBinding;
     }
 

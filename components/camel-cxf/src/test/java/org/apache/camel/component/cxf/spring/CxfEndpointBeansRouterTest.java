@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.junit.Test;
 
 public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {

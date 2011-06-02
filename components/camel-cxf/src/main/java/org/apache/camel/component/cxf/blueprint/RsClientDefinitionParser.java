@@ -18,7 +18,6 @@
 package org.apache.camel.component.cxf.blueprint;
 
 import java.util.StringTokenizer;
-import org.w3c.dom.Element;
 
 import org.apache.aries.blueprint.ParserContext;
 import org.apache.aries.blueprint.mutable.MutableBeanMetadata;
@@ -26,6 +25,7 @@ import org.apache.camel.component.cxf.CxfBlueprintEndpoint;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.blueprint.AbstractBPBeanDefinitionParser;
 import org.osgi.service.blueprint.reflect.Metadata;
+import org.w3c.dom.Element;
 
 public class RsClientDefinitionParser extends AbstractBPBeanDefinitionParser {
 
