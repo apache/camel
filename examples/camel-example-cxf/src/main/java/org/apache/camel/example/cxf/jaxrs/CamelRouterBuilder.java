@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStoreImpl;
