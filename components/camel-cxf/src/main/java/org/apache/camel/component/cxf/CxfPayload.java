@@ -19,9 +19,9 @@ package org.apache.camel.component.cxf;
 import java.util.List;
 
 import javax.xml.transform.TransformerException;
-
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.w3c.dom.Element;
+import org.apache.camel.converter.jaxp.XmlConverter;
+
 
 /**
  * CxfMessage body type when {@link DataFormat#PAYLOAD} is used.

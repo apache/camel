@@ -18,7 +18,7 @@ package org.apache.camel.component.cxf.spring;
 
 import java.util.List;
 import java.util.Map;
-
+import org.w3c.dom.Element;
 import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
@@ -33,7 +33,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.w3c.dom.Element;
+
 
 public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefinitionParser  {
 

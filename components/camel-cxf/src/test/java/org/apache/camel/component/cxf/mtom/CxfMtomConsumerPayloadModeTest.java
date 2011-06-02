@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +25,8 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
 import javax.xml.xpath.XPathConstants;
+
+import org.w3c.dom.Element;
 
 import junit.framework.Assert;
 
@@ -43,7 +43,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.w3c.dom.Element;
+
+import static org.junit.Assert.assertEquals;
+
 
 /**
 * Unit test for exercising MTOM feature of a CxfConsumer in PAYLOAD mode

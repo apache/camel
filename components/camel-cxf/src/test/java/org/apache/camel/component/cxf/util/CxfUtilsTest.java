@@ -19,10 +19,12 @@ package org.apache.camel.component.cxf.util;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import org.w3c.dom.Element;
+
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.junit.Assert;
 import org.junit.Test;
-import org.w3c.dom.Element;
+
 
 public class CxfUtilsTest extends Assert {
     private static final String TEST_XML1 = 

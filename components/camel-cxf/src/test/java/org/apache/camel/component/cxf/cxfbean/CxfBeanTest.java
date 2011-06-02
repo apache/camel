@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.cxf.cxfbean;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.net.URL;
 
@@ -44,6 +40,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 @ContextConfiguration
 public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>113</id></Customer>";

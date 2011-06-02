@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.transport;
 
-import static org.hamcrest.CoreMatchers.is;
 
 import javax.jws.WebMethod;
 import javax.jws.WebResult;
@@ -30,6 +29,7 @@ import org.apache.cxf.BusFactory;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.is;
 /**
  * Test CXF-CamelConduit when the destination is not a pipeline
  */

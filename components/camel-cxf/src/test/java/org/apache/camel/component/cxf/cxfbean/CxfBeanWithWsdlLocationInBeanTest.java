@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cxf.cxfbean;
 
-import static org.junit.Assert.assertEquals;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -27,6 +25,8 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  *

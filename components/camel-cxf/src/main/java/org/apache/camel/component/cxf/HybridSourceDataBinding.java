@@ -19,6 +19,8 @@ package org.apache.camel.component.cxf;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.w3c.dom.Node;
+
 import org.apache.cxf.databinding.DataReader;
 import org.apache.cxf.databinding.DataWriter;
 import org.apache.cxf.databinding.source.NodeDataReader;
@@ -26,7 +28,7 @@ import org.apache.cxf.databinding.source.NodeDataWriter;
 import org.apache.cxf.databinding.source.XMLStreamDataReader;
 import org.apache.cxf.databinding.source.XMLStreamDataWriter;
 import org.apache.cxf.jaxb.JAXBDataBinding;
-import org.w3c.dom.Node;
+
 
 /**
  * This is a hybrid DataBinding of {@link JAXBDataBinding} and {@link org.apache.cxf.databinding.source.SourceDataBinding}.

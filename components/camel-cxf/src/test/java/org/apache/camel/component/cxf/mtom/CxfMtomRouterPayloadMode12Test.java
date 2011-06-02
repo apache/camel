@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.net.URL;
 
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService12;
 import org.springframework.test.context.ContextConfiguration;
 
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode for SOAP 1.2

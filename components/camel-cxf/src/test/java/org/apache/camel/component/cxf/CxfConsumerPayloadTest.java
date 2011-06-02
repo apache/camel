@@ -18,14 +18,14 @@ package org.apache.camel.component.cxf;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+
 
 public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
         

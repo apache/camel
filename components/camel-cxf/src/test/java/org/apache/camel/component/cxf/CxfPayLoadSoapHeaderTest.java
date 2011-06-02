@@ -22,6 +22,8 @@ import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 
+import org.w3c.dom.Element;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,7 +37,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.w3c.dom.Element;
 
 
 public class CxfPayLoadSoapHeaderTest extends CamelTestSupport {

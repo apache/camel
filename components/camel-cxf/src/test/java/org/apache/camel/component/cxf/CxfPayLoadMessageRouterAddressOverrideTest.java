@@ -17,11 +17,11 @@
 package org.apache.camel.component.cxf;
 
 import java.util.List;
-
+import org.w3c.dom.Element;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.w3c.dom.Element;
+
 
 /**
  * A unit test for testing reading SOAP body with address override in PAYLOAD mode.

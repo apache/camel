@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.mtom;
 
-import static org.junit.Assert.assertEquals;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -38,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+import static org.junit.Assert.assertEquals;
 /**
  * Unit test for exercising MTOM enabled end-to-end router in PAYLOAD mode
  * 

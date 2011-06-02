@@ -20,6 +20,8 @@ package org.apache.camel.component.cxf;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.Element;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -36,7 +38,7 @@ import org.apache.cxf.helpers.XMLUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.w3c.dom.Element;
+
 
 public class CxfMixedModeRouterTest extends CamelTestSupport {    
     protected static Server server;
