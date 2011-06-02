@@ -289,7 +289,7 @@ public class BeanInfo {
     @SuppressWarnings("unchecked")
     protected MethodInfo createMethodInfo(Class clazz, Method method) {
         Class[] parameterTypes = method.getParameterTypes();
-        Annotation[][] parametersAnnotations = method.getParameterAnnotations();
+        List<Annotation>[] parametersAnnotations = collectParameterAnnotations(clazz, method);
 
         List<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
         List<ParameterInfo> bodyParameters = new ArrayList<ParameterInfo>();
@@ -302,7 +302,7 @@ public class BeanInfo {
 
         for (int i = 0; i < size; i++) {
             Class parameterType = parameterTypes[i];
-            Annotation[] parameterAnnotations = parametersAnnotations[i];
+            Annotation[] parameterAnnotations = parametersAnnotations[i].toArray(new Annotation[parametersAnnotations[i].size()]);
             Expression expression = createParameterUnmarshalExpression(clazz, method, parameterType, parameterAnnotations);
             hasCustomAnnotation |= expression != null;
 
@@ -336,6 +336,33 @@ public class BeanInfo {
 
         // now lets add the method to the repository
         return new MethodInfo(camelContext, clazz, method, parameters, bodyParameters, hasCustomAnnotation, hasHandlerAnnotation);
+    }
+
+    protected List<Annotation>[] collectParameterAnnotations(Class<?> c, Method m) {
+        List<Annotation>[] annotations = new List[m.getParameterTypes().length];
+        for (int i = 0; i < annotations.length; i++) {
+            annotations[i] = new ArrayList<Annotation>();
+        }
+        collectParameterAnnotations(c, m, annotations);
+        return annotations;
+    }
+
+    protected void collectParameterAnnotations(Class<?> c, Method m, List<Annotation>[] a) {
+        try {
+            Annotation[][] pa = c.getDeclaredMethod(m.getName(), m.getParameterTypes()).getParameterAnnotations();
+            for (int i = 0; i < pa.length; i++) {
+                a[i].addAll(Arrays.asList(pa[i]));
+            }
+        } catch (NoSuchMethodException e) {
+            // no method with signature of m declared on c
+        }
+        for (Class<?> i : c.getInterfaces()) {
+            collectParameterAnnotations(i, m, a);
+        }
+        if (!c.isInterface() && c.getSuperclass() != Object.class) {
+            collectParameterAnnotations(c.getSuperclass(), m, a);
+        }
+
     }
 
     /**
