@@ -18,7 +18,7 @@ package org.apache.camel.itest.greeter;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 
 public class FilePrepareRequest implements Processor {
     public void process(Exchange exchange) throws Exception {
