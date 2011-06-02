@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.quickfixj;
 
+import java.util.concurrent.Callable;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
@@ -26,31 +28,61 @@ import quickfix.Session;
 import quickfix.SessionID;
 
 public class QuickfixjProducer extends DefaultProducer {
-    private final SessionID sessionID;
-
+    public static final String CORRELATION_TIMEOUT_KEY = "CorrelationTimeout";
+    public static final String CORRELATION_CRITERIA_KEY = "CorrelationCriteria";
+	
+	private final SessionID sessionID;
+    
     public QuickfixjProducer(Endpoint endpoint) {
         super(endpoint);
         sessionID = ((QuickfixjEndpoint) getEndpoint()).getSessionID();
     }
 
     public void process(Exchange exchange) throws Exception {
-        Message message = exchange.getIn().getBody(Message.class);
-        if (log.isDebugEnabled()) {
-            log.debug("Sending FIX message: " + message.toString());
-        }
-        
-        SessionID messageSessionID = sessionID;
-        if (messageSessionID == null) {
-            messageSessionID = MessageUtils.getSessionID(message);
-        }
-        
-        Session session = Session.lookupSession(messageSessionID);
-        if (session == null) {
-            exchange.setException(new IllegalStateException("Unknown session: " + messageSessionID));
-            return;
-        }
-        
-        session.send(message);
+        sendMessage(exchange, exchange.getIn());
     }
 
+	void sendMessage(Exchange exchange, org.apache.camel.Message camelMessage)
+			throws InterruptedException {
+		try {
+			Message message = camelMessage.getBody(Message.class);
+			if (log.isDebugEnabled()) {
+				log.debug("Sending FIX message: " + message.toString());
+			}
+
+			SessionID messageSessionID = sessionID;
+			if (messageSessionID == null) {
+				messageSessionID = MessageUtils.getSessionID(message);
+			}
+
+			Session session = getSession(messageSessionID);
+			if (session == null) {
+				throw new IllegalStateException("Unknown session: "
+						+ messageSessionID);
+			}
+
+			Callable<Message> callable = null;
+
+			if (exchange.getPattern().isOutCapable()) {
+				QuickfixjEndpoint endpoint = (QuickfixjEndpoint) getEndpoint();
+				MessageCorrelator messageCorrelator = endpoint.getEngine()
+						.getMessageCorrelator();
+				callable = messageCorrelator.getReply(
+						endpoint.getSessionID(), exchange);
+			}
+
+			session.send(message);
+
+			if (callable != null) {
+				Message reply = callable.call();
+				exchange.getOut().setBody(reply);
+			}
+		} catch (Exception e) {
+			exchange.setException(e);
+		}
+	}
+
+	Session getSession(SessionID messageSessionID) {
+		return Session.lookupSession(messageSessionID);
+	}
 }

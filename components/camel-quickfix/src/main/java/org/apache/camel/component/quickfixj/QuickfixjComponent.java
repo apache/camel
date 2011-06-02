@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.management.JMException;
 
 import org.apache.camel.Endpoint;
@@ -29,6 +30,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import quickfix.ConfigError;
 import quickfix.FieldConvertError;
 import quickfix.LogFactory;
@@ -72,7 +74,7 @@ public class QuickfixjComponent extends DefaultComponent {
                     }
                 }
 
-                endpoint = new QuickfixjEndpoint(uri, getCamelContext());
+                endpoint = new QuickfixjEndpoint(engine, uri, getCamelContext());
                 engine.addEventListener(endpoint);
                 endpoints.put(uri, endpoint);
             }

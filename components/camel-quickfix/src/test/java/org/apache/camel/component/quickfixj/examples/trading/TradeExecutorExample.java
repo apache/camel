@@ -63,7 +63,6 @@ public class TradeExecutorExample {
             @Override
             public void configure() throws Exception {
                 // Release latch when session logon events are received
-                // We expect four logon events (four sessions)
                 from("quickfix:examples/inprocess.cfg").
                     filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.SessionLogon)).
                     bean(new CountDownLatchDecrementer("logon", logonLatch));

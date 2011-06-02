@@ -18,16 +18,32 @@ package org.apache.camel.component.quickfixj.examples.transform;
 
 import java.util.Iterator;
 
+import quickfix.ConfigError;
 import quickfix.DataDictionary;
 import quickfix.Field;
 import quickfix.FieldMap;
+import quickfix.FieldNotFound;
 import quickfix.FieldType;
 import quickfix.Group;
 import quickfix.Message;
-
+import quickfix.MessageUtils;
+import quickfix.Session;
+import quickfix.SessionID;
 
 public class QuickfixjMessageJsonTransformer {
-    
+   
+	public String transform(Message message) throws FieldNotFound, ConfigError {
+		SessionID sessionID = MessageUtils.getSessionID(message);
+        Session session = Session.lookupSession(sessionID);
+        DataDictionary dataDictionary = session.getDataDictionary();
+        
+        if (dataDictionary == null) {
+            throw new IllegalStateException("No Data Dictionary. Exchange must reference an existing session");
+        }
+        
+		return transform(message, dataDictionary);
+	}
+	
     public String transform(Message message, DataDictionary dataDictionary) {
         return transform(message, "", dataDictionary);
     }

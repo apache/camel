@@ -92,7 +92,8 @@ public class QuickfixjEngine {
     private final MessageStoreFactory messageStoreFactory;
     private final LogFactory sessionLogFactory;
     private final MessageFactory messageFactory;
-
+    private final MessageCorrelator messageCorrelator = new MessageCorrelator();
+    
     private boolean started;
     private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<QuickfixjEventListener>();
 
@@ -119,6 +120,8 @@ public class QuickfixjEngine {
             MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
             MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
 
+    	addEventListener(messageCorrelator);
+    	
         this.uri = uri;
         this.forcedShutdown = forcedShutdown;
         
@@ -462,6 +465,10 @@ public class QuickfixjEngine {
     public String getUri() {
         return uri;
     }
+
+    public MessageCorrelator getMessageCorrelator() {
+		return messageCorrelator;
+	}
 
     // For Testing
     Initiator getInitiator() {

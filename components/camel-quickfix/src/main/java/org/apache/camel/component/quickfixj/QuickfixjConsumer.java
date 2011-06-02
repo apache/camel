@@ -18,12 +18,17 @@ package org.apache.camel.component.quickfixj;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
+import quickfix.MessageUtils;
+import quickfix.Session;
+import quickfix.SessionID;
+
 public class QuickfixjConsumer extends DefaultConsumer {
 
-    public QuickfixjConsumer(Endpoint endpoint, Processor processor) {
+	public QuickfixjConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
@@ -31,9 +36,38 @@ public class QuickfixjConsumer extends DefaultConsumer {
         if (isStarted()) {
             try {
                 getProcessor().process(exchange);
+                if (exchange.getPattern().isOutCapable() && exchange.hasOut()) {
+                	sendOutMessage(exchange);
+                }
             } catch (Exception e) {
                 exchange.setException(e);
             }
         }
     }
+
+	private void sendOutMessage(Exchange exchange) {
+		try {
+			Message camelMessage = exchange.getOut();
+			quickfix.Message quickfixjMessage = camelMessage.getBody(quickfix.Message.class);
+	 
+			if (log.isDebugEnabled()) {
+			    log.debug("Sending FIX message reply: " + quickfixjMessage.toString());
+			}
+			
+			SessionID messageSessionID = MessageUtils.getReverseSessionID(exchange.getIn().getBody(quickfix.Message.class));
+			
+			Session session = getSession(messageSessionID);
+			if (session == null) {
+			   throw new IllegalStateException("Unknown session: " + messageSessionID);
+			}
+			
+			session.send(quickfixjMessage);
+		} catch (Exception e) {
+			exchange.setException(e);
+		}
+	}
+
+	Session getSession(SessionID messageSessionID) {
+		return Session.lookupSession(messageSessionID);
+	}
 }

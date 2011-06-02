@@ -98,7 +98,7 @@ public class QuickfixjConvertersTest {
     @Test
     public void convertToExchange() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
-        QuickfixjEndpoint endpoint = new QuickfixjEndpoint("", camelContext);
+        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", camelContext);
         
         Message message = new Message();     
         message.getHeader().setString(MsgType.FIELD, MsgType.ORDER_SINGLE);
@@ -116,7 +116,7 @@ public class QuickfixjConvertersTest {
     @Test
     public void convertToExchangeWithNullMessage() {
         SessionID sessionID = new SessionID("FIX.4.0", "FOO", "BAR");
-        QuickfixjEndpoint endpoint = new QuickfixjEndpoint("", camelContext);
+        QuickfixjEndpoint endpoint = new QuickfixjEndpoint(null, "", camelContext);
         
         Exchange exchange = QuickfixjConverters.toExchange(endpoint, sessionID, null, QuickfixjEventCategory.AppMessageSent);
         
