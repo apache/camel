@@ -139,7 +139,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
         return DefaultExchangeHolder.marshal(exchange, includeProperties);
     }
 
-    private class MyFoo {
+    private final class MyFoo {
         private String foo;
 
         private MyFoo(String foo) {
