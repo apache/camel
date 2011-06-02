@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.cxf.cxfbean;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
 import static org.junit.Assert.assertEquals;
-
 /**
  *
  * @version 
@@ -35,26 +35,27 @@ public class CxfBeanWithWsdlLocationInBeanAndIoCTest extends AbstractJUnit4Sprin
 
     @Test
     public void testDoNotUseWsdlDefinedInJaxWsBeanByDefault() throws Exception {        
-        PostMethod post = new PostMethod("http://localhost:9090/customerservice/customers");
-        post.addRequestHeader("Accept" , "text/xml");
+        HttpPost post = new HttpPost("http://localhost:9090/customerservice/customers");
+        post.addHeader("Accept" , "text/xml");
         String body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<soap:Body><GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\">" 
             + "<personId>hello</personId></GetPerson></soap:Body></soap:Envelope>";
         
-        RequestEntity entity = new StringRequestEntity(body, "text/xml", "ISO-8859-1");
-        post.setRequestEntity(entity);
-        HttpClient httpclient = new HttpClient();
+        StringEntity entity = new StringEntity(body, "text/xml", "ISO-8859-1");
+        post.setEntity(entity);
+        HttpClient httpclient = new DefaultHttpClient();
 
         try {
-            assertEquals(200, httpclient.executeMethod(post));
-            String response = post.getResponseBodyAsString();
+            HttpResponse response = httpclient.execute(post);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            String responseBody = EntityUtils.toString(response.getEntity());
             String correct = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"><soap:Body>"
                 + "<GetPersonResponse xmlns=\"http://camel.apache.org/wsdl-first/types\">"
                 + "<personId>hello</personId><ssn>000-000-0000</ssn><name>Bye</name></GetPersonResponse></soap:Body></soap:Envelope>";
             
-            assertEquals("Get a wrong response", correct, response);
+            assertEquals("Get a wrong response", correct, responseBody);
         } finally {
-            post.releaseConnection();
+            httpclient.getConnectionManager().shutdown();
         }
     }
     
