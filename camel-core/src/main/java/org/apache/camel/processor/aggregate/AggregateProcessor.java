@@ -198,8 +198,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * @param key      the correlation key
      * @param exchange the exchange
      * @return the aggregated exchange
-     * @throws org.apache.camel.CamelExchangeException
-     *          is thrown if error aggregating
+     * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
      */
     private Exchange doAggregation(String key, Exchange exchange) throws CamelExchangeException {
         LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
@@ -408,14 +407,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
      * Then the existing exchanges from the {@link AggregationRepository} must have its timeout conditions restored.
      */
     protected void restoreTimeoutMapFromAggregationRepository() throws Exception {
-        StopWatch watch = new StopWatch();
-        LOG.trace("Starting restoring CompletionTimeout for existing exchanges from the aggregation repository...");
-
         // grab the timeout value for each partly aggregated exchange
         Set<String> keys = aggregationRepository.getKeys();
         if (keys == null || keys.isEmpty()) {
             return;
         }
+
+        StopWatch watch = new StopWatch();
+        LOG.trace("Starting restoring CompletionTimeout for {} existing exchanges from the aggregation repository...", keys.size());
 
         for (String key : keys) {
             Exchange exchange = aggregationRepository.get(camelContext, key);
