@@ -73,49 +73,47 @@ public final class TestSupport {
     }
     
     public static Session createSession(SessionID sessionID) throws ConfigError, IOException {
-    	MessageStoreFactory mockMessageStoreFactory = Mockito.mock(MessageStoreFactory.class);
-    	MessageStore mockMessageStore = Mockito.mock(MessageStore.class);
-    	Mockito.when(mockMessageStore.getCreationTime()).thenReturn(new Date());
-    	
-		Mockito.when(mockMessageStoreFactory.create(sessionID)).thenReturn(mockMessageStore);
-    	
-		DefaultSessionFactory factory = new DefaultSessionFactory(
-    			Mockito.mock(Application.class),
-    			mockMessageStoreFactory,
-    			Mockito.mock(LogFactory.class));
-    	
-    	SessionSettings settings = new SessionSettings();
-    	settings.setLong(Session.SETTING_HEARTBTINT, 10);
-    	settings.setString(Session.SETTING_START_TIME, "00:00:00");
-    	settings.setString(Session.SETTING_END_TIME, "00:00:00");
-    	settings.setString(SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
-    	settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
-    	
-		return factory.create(sessionID, settings);
-    			
+        MessageStoreFactory mockMessageStoreFactory = Mockito.mock(MessageStoreFactory.class);
+        MessageStore mockMessageStore = Mockito.mock(MessageStore.class);
+        Mockito.when(mockMessageStore.getCreationTime()).thenReturn(new Date());
+        
+        Mockito.when(mockMessageStoreFactory.create(sessionID)).thenReturn(mockMessageStore);
+
+        DefaultSessionFactory factory = new DefaultSessionFactory(
+            Mockito.mock(Application.class),
+            mockMessageStoreFactory,
+            Mockito.mock(LogFactory.class));
+        
+        SessionSettings settings = new SessionSettings();
+        settings.setLong(Session.SETTING_HEARTBTINT, 10);
+        settings.setString(Session.SETTING_START_TIME, "00:00:00");
+        settings.setString(Session.SETTING_END_TIME, "00:00:00");
+        settings.setString(SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
+        settings.setBool(Session.SETTING_USE_DATA_DICTIONARY, false);
+        
+        return factory.create(sessionID, settings);
     }
     
-    public static QuickfixjEngine createEngine() throws ConfigError, FieldConvertError, IOException, JMException {   	
-    	SessionID sessionID = new SessionID("FIX.4.4:SENDER->TARGET");
+    public static QuickfixjEngine createEngine() throws ConfigError, FieldConvertError, IOException, JMException {       
+        SessionID sessionID = new SessionID("FIX.4.4:SENDER->TARGET");
 
-    	MessageStoreFactory mockMessageStoreFactory = Mockito.mock(MessageStoreFactory.class);
-    	MessageStore mockMessageStore = Mockito.mock(MessageStore.class);
-    	Mockito.when(mockMessageStore.getCreationTime()).thenReturn(new Date());
-		Mockito.when(mockMessageStoreFactory.create(sessionID)).thenReturn(mockMessageStore);
-    	
-    	SessionSettings settings = new SessionSettings();
-    	
-    	settings.setLong(sessionID, Session.SETTING_HEARTBTINT, 10);
-    	settings.setString(sessionID, Session.SETTING_START_TIME, "00:00:00");
-    	settings.setString(sessionID, Session.SETTING_END_TIME, "00:00:00");
-    	settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
-    	settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 8000);
-    	settings.setBool(sessionID, Session.SETTING_USE_DATA_DICTIONARY, false);
-    	
-		return new QuickfixjEngine("", settings, false, 
-				mockMessageStoreFactory, 
-				Mockito.mock(LogFactory.class), 
-				Mockito.mock(MessageFactory.class));
-    			
+        MessageStoreFactory mockMessageStoreFactory = Mockito.mock(MessageStoreFactory.class);
+        MessageStore mockMessageStore = Mockito.mock(MessageStore.class);
+        Mockito.when(mockMessageStore.getCreationTime()).thenReturn(new Date());
+        Mockito.when(mockMessageStoreFactory.create(sessionID)).thenReturn(mockMessageStore);
+        
+        SessionSettings settings = new SessionSettings();
+        
+        settings.setLong(sessionID, Session.SETTING_HEARTBTINT, 10);
+        settings.setString(sessionID, Session.SETTING_START_TIME, "00:00:00");
+        settings.setString(sessionID, Session.SETTING_END_TIME, "00:00:00");
+        settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
+        settings.setLong(sessionID, Acceptor.SETTING_SOCKET_ACCEPT_PORT, 8000);
+        settings.setBool(sessionID, Session.SETTING_USE_DATA_DICTIONARY, false);
+        
+        return new QuickfixjEngine("", settings, false, 
+            mockMessageStoreFactory, 
+            Mockito.mock(LogFactory.class), 
+            Mockito.mock(MessageFactory.class));
     }
 }

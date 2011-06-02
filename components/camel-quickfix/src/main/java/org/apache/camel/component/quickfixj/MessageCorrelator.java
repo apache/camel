@@ -28,82 +28,74 @@ import quickfix.Message;
 import quickfix.SessionID;
 
 public class MessageCorrelator implements QuickfixjEventListener {
-	public static final long DEFAULT_CORRELATION_TIMEOUT = 1000L;
-	private final CopyOnWriteArrayList<MessageCorrelationRule> rules = new CopyOnWriteArrayList<MessageCorrelationRule>();
+    public static final long DEFAULT_CORRELATION_TIMEOUT = 1000L;
+    private final CopyOnWriteArrayList<MessageCorrelationRule> rules = new CopyOnWriteArrayList<MessageCorrelationRule>();
 
-	public Callable<Message> getReply(SessionID sessionID, Exchange exchange)
-			throws InterruptedException, ExchangeTimedOutException {
+    public Callable<Message> getReply(SessionID sessionID, Exchange exchange)
+        throws InterruptedException, ExchangeTimedOutException {
 
-		MessagePredicate messageCriteria = (MessagePredicate) exchange
-				.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY);
-		final MessageCorrelationRule correlationRule = new MessageCorrelationRule(
-				exchange, sessionID, messageCriteria);
-		
-		final long timeout = exchange.getProperty(
-				QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
-				DEFAULT_CORRELATION_TIMEOUT, Long.class);
+        MessagePredicate messageCriteria = (MessagePredicate) exchange.getProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY);
+        final MessageCorrelationRule correlationRule = new MessageCorrelationRule(exchange, sessionID, messageCriteria);
+        rules.add(correlationRule);
 
-		rules.add(correlationRule);
+        final long timeout = exchange.getProperty(
+            QuickfixjProducer.CORRELATION_TIMEOUT_KEY,
+            DEFAULT_CORRELATION_TIMEOUT, Long.class);
 
-		return new Callable<Message>() {
-			@Override
-			public Message call() throws Exception {
-				if (!correlationRule.getLatch().await(timeout,
-						TimeUnit.MILLISECONDS)) {
-					throw new ExchangeTimedOutException(
-							correlationRule.getExchange(), timeout);
-				}
-				return correlationRule.getReplyMessage();
-			}
-		};
-	}
+        return new Callable<Message>() {
+            @Override
+            public Message call() throws Exception {
+                if (!correlationRule.getLatch().await(timeout, TimeUnit.MILLISECONDS)) {
+                    throw new ExchangeTimedOutException(correlationRule.getExchange(), timeout);
+                }
+                return correlationRule.getReplyMessage();
+            }
+        };
+    }
 
-	@Override
-	public void onEvent(QuickfixjEventCategory eventCategory,
-			SessionID sessionID, Message message) throws Exception {
-		if (message != null) {
-			for (MessageCorrelationRule rule : rules) {
-				if (rule.getMessageCriteria().evaluate(message)) {
-					rule.setReplyMessage(message);
-					rules.remove(rule);
-					rule.getLatch().countDown();
-				}
-			}
-		}
-	}
+    @Override
+    public void onEvent(QuickfixjEventCategory eventCategory, SessionID sessionID, Message message) throws Exception {
+        if (message != null) {
+            for (MessageCorrelationRule rule : rules) {
+                if (rule.getMessageCriteria().evaluate(message)) {
+                    rule.setReplyMessage(message);
+                    rules.remove(rule);
+                    rule.getLatch().countDown();
+                }
+            }
+        }
+    }
 
-	private class MessageCorrelationRule {
-		private final Exchange exchange;
-		private final CountDownLatch latch = new CountDownLatch(1);
-		private final MessagePredicate messageCriteria;
+    private class MessageCorrelationRule {
+        private final Exchange exchange;
+        private final CountDownLatch latch = new CountDownLatch(1);
+        private final MessagePredicate messageCriteria;
 
-		private Message replyMessage;
+        private Message replyMessage;
 
-		public MessageCorrelationRule(Exchange exchange, SessionID sessionID,
-				MessagePredicate messageCriteria) {
-			this.exchange = exchange;
-			this.messageCriteria = messageCriteria;
-		}
+        public MessageCorrelationRule(Exchange exchange, SessionID sessionID, MessagePredicate messageCriteria) {
+            this.exchange = exchange;
+            this.messageCriteria = messageCriteria;
+        }
 
-		public void setReplyMessage(Message message) {
-			this.replyMessage = message;
-		}
+        public void setReplyMessage(Message message) {
+            this.replyMessage = message;
+        }
 
-		public Message getReplyMessage() {
-			return replyMessage;
-		}
+        public Message getReplyMessage() {
+            return replyMessage;
+        }
 
-		public CountDownLatch getLatch() {
-			return latch;
-		}
+        public CountDownLatch getLatch() {
+            return latch;
+        }
 
-		public Exchange getExchange() {
-			return exchange;
-		}
+        public Exchange getExchange() {
+            return exchange;
+        }
 
-		public MessagePredicate getMessageCriteria() {
-			return messageCriteria;
-		}
-	}
-
+        public MessagePredicate getMessageCriteria() {
+            return messageCriteria;
+        }
+    }
 }

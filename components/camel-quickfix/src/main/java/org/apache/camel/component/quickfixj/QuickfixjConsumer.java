@@ -28,7 +28,7 @@ import quickfix.SessionID;
 
 public class QuickfixjConsumer extends DefaultConsumer {
 
-	public QuickfixjConsumer(Endpoint endpoint, Processor processor) {
+    public QuickfixjConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
@@ -37,7 +37,7 @@ public class QuickfixjConsumer extends DefaultConsumer {
             try {
                 getProcessor().process(exchange);
                 if (exchange.getPattern().isOutCapable() && exchange.hasOut()) {
-                	sendOutMessage(exchange);
+                    sendOutMessage(exchange);
                 }
             } catch (Exception e) {
                 exchange.setException(e);
@@ -45,29 +45,29 @@ public class QuickfixjConsumer extends DefaultConsumer {
         }
     }
 
-	private void sendOutMessage(Exchange exchange) {
-		try {
-			Message camelMessage = exchange.getOut();
-			quickfix.Message quickfixjMessage = camelMessage.getBody(quickfix.Message.class);
-	 
-			if (log.isDebugEnabled()) {
-			    log.debug("Sending FIX message reply: " + quickfixjMessage.toString());
-			}
-			
-			SessionID messageSessionID = MessageUtils.getReverseSessionID(exchange.getIn().getBody(quickfix.Message.class));
-			
-			Session session = getSession(messageSessionID);
-			if (session == null) {
-			   throw new IllegalStateException("Unknown session: " + messageSessionID);
-			}
-			
-			session.send(quickfixjMessage);
-		} catch (Exception e) {
-			exchange.setException(e);
-		}
-	}
+    private void sendOutMessage(Exchange exchange) {
+        try {
+            Message camelMessage = exchange.getOut();
+            quickfix.Message quickfixjMessage = camelMessage.getBody(quickfix.Message.class);
+     
+            if (log.isDebugEnabled()) {
+                log.debug("Sending FIX message reply: " + quickfixjMessage.toString());
+            }
+            
+            SessionID messageSessionID = MessageUtils.getReverseSessionID(exchange.getIn().getBody(quickfix.Message.class));
+            
+            Session session = getSession(messageSessionID);
+            if (session == null) {
+                throw new IllegalStateException("Unknown session: " + messageSessionID);
+            }
+            
+            session.send(quickfixjMessage);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+    }
 
-	Session getSession(SessionID messageSessionID) {
-		return Session.lookupSession(messageSessionID);
-	}
+    Session getSession(SessionID messageSessionID) {
+        return Session.lookupSession(messageSessionID);
+    }
 }

@@ -36,7 +36,6 @@ import org.apache.camel.component.quickfixj.QuickfixjProducer;
 import org.apache.camel.component.quickfixj.examples.transform.QuickfixjMessageJsonTransformer;
 import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecrementer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.eclipse.jetty.util.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,21 +71,21 @@ public class RequestReplyExample {
         RouteBuilder routes = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-            	// Synchronize the logon so we don't start sending status requests too early
+                // Synchronize the logon so we don't start sending status requests too early
                 from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:TRADER->MARKET").
                     filter(header(QuickfixjEndpoint.EVENT_CATEGORY_KEY).isEqualTo(QuickfixjEventCategory.SessionLogon)).
                     bean(new CountDownLatchDecrementer("logon", logonLatch));
 
                 // Incoming status requests are converted to InOut exchange pattern and passed to the
                 // order status service. The response is sent back to the session making the request.
-                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER&exchangePattern=InOut").
-                	filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.ORDER_STATUS_REQUEST)).
-                    bean(new MarketOrderStatusService());
+                from("quickfix:examples/inprocess.cfg?sessionID=FIX.4.2:MARKET->TRADER&exchangePattern=InOut")
+                    .filter(header(QuickfixjEndpoint.MESSAGE_TYPE_KEY).isEqualTo(MsgType.ORDER_STATUS_REQUEST))
+                    .bean(new MarketOrderStatusService());
                 
-                from ("jetty:" + orderStatusServiceUrl).
-	            	bean(new OrderStatusRequestTransformer()).
-                	routingSlip(bean(FixSessionRouter.class, "route")).
-	            	bean(new QuickfixjMessageJsonTransformer());
+                from("jetty:" + orderStatusServiceUrl)
+                    .bean(new OrderStatusRequestTransformer())
+                    .routingSlip(bean(FixSessionRouter.class, "route"))
+                    .bean(new QuickfixjMessageJsonTransformer());
             }
         };
         
@@ -103,21 +102,19 @@ public class RequestReplyExample {
         // Verify that the response is a JSON response.
         
         URL orderStatusUrl = new URL(orderStatusServiceUrl + "?sessionID=FIX.4.2:TRADER->MARKET&orderID=abc");
-		HttpURLConnection connection = (HttpURLConnection) orderStatusUrl.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) orderStatusUrl.openConnection();
         BufferedReader orderStatusReply = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String line = orderStatusReply.readLine();
         if (!line.equals("\"message\": {")) {
-        	throw new Exception("Don't appear to be a JSON response");
-        }
-        else {
-        	StringBuilder sb = new StringBuilder();
-        	while (line != null) {
-        		sb.append(line);
-        		sb.append('\n');
-        		line = orderStatusReply.readLine();
-        	}
-        	Log.info("Web request response:\n" + sb);
-        	
+            throw new Exception("Don't appear to be a JSON response");
+        } else {
+            StringBuilder sb = new StringBuilder();
+            while (line != null) {
+                sb.append(line);
+                sb.append('\n');
+                line = orderStatusReply.readLine();
+            }
+            LOG.info("Web request response:\n" + sb);
         }
         orderStatusReply.close();
         
@@ -128,45 +125,44 @@ public class RequestReplyExample {
     }
         
     public static class OrderStatusRequestTransformer {
-    	public void transform(Exchange exchange) throws FieldNotFound {
-    		String sessionID = (String) exchange.getIn().getHeader("sessionID");
-    		String orderID = (String) exchange.getIn().getHeader("orderID");
-    		
+        public void transform(Exchange exchange) throws FieldNotFound {
+            String sessionID = (String) exchange.getIn().getHeader("sessionID");
+            String orderID = (String) exchange.getIn().getHeader("orderID");
+
             OrderStatusRequest request = new OrderStatusRequest(new ClOrdID("XYZ"), new Symbol("GOOG"), new Side(Side.BUY));
             request.set(new OrderID(orderID));
              
             // Look for a reply execution report back to the requester session
             // and having the requested OrderID. This is a loose correlation but the best
             // we can do with FIX 4.2. Newer versions of FIX have an optional explicit correlation field.
-            exchange.setProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY,
-            		new MessagePredicate(new SessionID(sessionID), MsgType.EXECUTION_REPORT)
-            			.withField(OrderID.FIELD, request.getString(OrderID.FIELD)));
+            exchange.setProperty(QuickfixjProducer.CORRELATION_CRITERIA_KEY, new MessagePredicate(
+                new SessionID(sessionID), MsgType.EXECUTION_REPORT).withField(OrderID.FIELD, request.getString(OrderID.FIELD)));
             
             exchange.getIn().setBody(request);
-    	}
+        }
     }
     
     public static class MarketOrderStatusService {
         private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
         
         public ExecutionReport getOrderStatus(OrderStatusRequest request) throws FieldNotFound {
-        	LOG.info("Received order status request for orderId=" + request.getOrderID().getValue());
-    		return new ExecutionReport(
-    				request.getOrderID(), new ExecID(UUID.randomUUID().toString()),
-    						new ExecTransType(ExecTransType.STATUS), 
-    						new ExecType(ExecType.REJECTED),
-    						new OrdStatus(OrdStatus.REJECTED),
-    						new Symbol("GOOG"),
-    						new Side(Side.BUY),
-    						new LeavesQty(100),
-    						new CumQty(0),
-    						new AvgPx(0));
-    	}
+            LOG.info("Received order status request for orderId=" + request.getOrderID().getValue());
+            return new ExecutionReport(request.getOrderID(), 
+                new ExecID(UUID.randomUUID().toString()),
+                new ExecTransType(ExecTransType.STATUS), 
+                new ExecType(ExecType.REJECTED),
+                new OrdStatus(OrdStatus.REJECTED),
+                new Symbol("GOOG"),
+                new Side(Side.BUY),
+                new LeavesQty(100),
+                new CumQty(0),
+                new AvgPx(0));
+        }
     }
     
     public static class FixSessionRouter {
-    	public String route(@Header("sessionID") String sessionID, @Body Object body) {
-    		return String.format("quickfix:examples/inprocess.cfg?sessionID=%s", sessionID);
-    	}
+        public String route(@Header("sessionID") String sessionID, @Body Object body) {
+            return String.format("quickfix:examples/inprocess.cfg?sessionID=%s", sessionID);
+        }
     }
 }

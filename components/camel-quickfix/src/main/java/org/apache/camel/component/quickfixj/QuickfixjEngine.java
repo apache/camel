@@ -120,17 +120,14 @@ public class QuickfixjEngine {
             MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
             MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
 
-    	addEventListener(messageCorrelator);
-    	
+        addEventListener(messageCorrelator);
+
         this.uri = uri;
         this.forcedShutdown = forcedShutdown;
         
         messageFactory = messageFactoryOverride != null ? messageFactoryOverride : new DefaultMessageFactory();
-
         sessionLogFactory = sessionLogFactoryOverride != null ? sessionLogFactoryOverride : inferLogFactory(settings);
-
-        messageStoreFactory = messageStoreFactoryOverride != null ? messageStoreFactoryOverride
-                : inferMessageStoreFactory(settings);
+        messageStoreFactory = messageStoreFactoryOverride != null ? messageStoreFactoryOverride : inferMessageStoreFactory(settings);
 
         // Set default session schedule if not specified in configuration
         if (!settings.isSetting(Session.SETTING_START_TIME)) {
@@ -165,15 +162,15 @@ public class QuickfixjEngine {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
 
             if (isConnectorRole(settings, SessionFactory.ACCEPTOR_CONNECTION_TYPE)) {
-                acceptor = createAcceptor(new Dispatcher(), settings, messageStoreFactory, sessionLogFactory,
-                        messageFactory, threadModel);
+                acceptor = createAcceptor(new Dispatcher(), settings, messageStoreFactory, 
+                    sessionLogFactory, messageFactory, threadModel);
             } else {
                 acceptor = null;
             }
 
             if (isConnectorRole(settings, SessionFactory.INITIATOR_CONNECTION_TYPE)) {
-                initiator = createInitiator(new Dispatcher(), settings, messageStoreFactory, sessionLogFactory,
-                        messageFactory, threadModel);
+                initiator = createInitiator(new Dispatcher(), settings, messageStoreFactory, 
+                    sessionLogFactory, messageFactory, threadModel);
             } else {
                 initiator = null;
             }
@@ -467,8 +464,8 @@ public class QuickfixjEngine {
     }
 
     public MessageCorrelator getMessageCorrelator() {
-		return messageCorrelator;
-	}
+        return messageCorrelator;
+    }
 
     // For Testing
     Initiator getInitiator() {

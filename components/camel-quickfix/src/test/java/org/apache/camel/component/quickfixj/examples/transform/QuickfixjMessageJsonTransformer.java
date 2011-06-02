@@ -32,8 +32,8 @@ import quickfix.SessionID;
 
 public class QuickfixjMessageJsonTransformer {
    
-	public String transform(Message message) throws FieldNotFound, ConfigError {
-		SessionID sessionID = MessageUtils.getSessionID(message);
+    public String transform(Message message) throws FieldNotFound, ConfigError {
+        SessionID sessionID = MessageUtils.getSessionID(message);
         Session session = Session.lookupSession(sessionID);
         DataDictionary dataDictionary = session.getDataDictionary();
         
@@ -41,9 +41,9 @@ public class QuickfixjMessageJsonTransformer {
             throw new IllegalStateException("No Data Dictionary. Exchange must reference an existing session");
         }
         
-		return transform(message, dataDictionary);
-	}
-	
+        return transform(message, dataDictionary);
+    }
+
     public String transform(Message message, DataDictionary dataDictionary) {
         return transform(message, "", dataDictionary);
     }
