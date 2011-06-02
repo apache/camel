@@ -45,6 +45,7 @@
     <module>camel-http4</module>
     <module>camel-jetty</module>
     <module>camel-cxf</module>
+    <module>camel-cxf-transport</module>
     <module>camel-web</module>
     <module>camel-web-standalone</module>
     <module>camel-jms</module>
