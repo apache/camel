@@ -26,14 +26,24 @@ import org.junit.Test;
 
 public class AhcComponentClientConfigTest extends CamelTestSupport {
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
+    public void configureComponent() {
+        // START SNIPPET: e1
+        // create a client config builder
         AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
+        // use the builder to set the options we want, in this case we want to follow redirects and try
+        // at most 3 retries to send a request to the host
         AsyncHttpClientConfig config = builder.setFollowRedirects(true).setMaxRequestRetry(3).build();
 
-        CamelContext context = super.createCamelContext();
+        // lookup AhcComponent
         AhcComponent component = context.getComponent("ahc", AhcComponent.class);
+        // and set our custom client config to be used
         component.setClientConfig(config);
+        // END SNIPPET: e1
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
         return context;
     }
 
@@ -51,6 +61,8 @@ public class AhcComponentClientConfigTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                configureComponent();
+
                 from("direct:start")
                     .to("ahc:http://localhost:9080/foo")
                     .to("mock:result");
