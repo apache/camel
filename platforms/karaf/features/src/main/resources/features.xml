@@ -157,6 +157,11 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jmx/${pom.version}</bundle>
   </feature>
+  <feature name='camel-ahc' version='${pom.version}' resolver='(obr)'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle dependency="true">mvn:com.ning/async-http-client/${ahc-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-ahc/${pom.version}</bundle>
+  </feature>
   <feature name='camel-amqp' version='${pom.version}' resolver='(obr)'>
     <bundle dependency="true">mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency="true">mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
