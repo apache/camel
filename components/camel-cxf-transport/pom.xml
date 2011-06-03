@@ -24,6 +24,7 @@
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
     <version>2.8-SNAPSHOT</version>
+    <relativePath>../../parent</relativePath>
   </parent>
 
   <artifactId>camel-cxf-transport</artifactId>
