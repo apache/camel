@@ -33,6 +33,21 @@ public class AhcProduceGetTest extends CamelTestSupport {
     }
 
     @Test
+    public void testAhcProduceInOut() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+
+        template.requestBody("direct:start", null, String.class);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testAhcProduceDirectly() throws Exception {
+        Object out = template.requestBody("ahc:http://localhost:9080/foo", null, String.class);
+        assertEquals("Bye World", out);
+    }
+
+    @Test
     public void testAhcProduceGetHeader() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
