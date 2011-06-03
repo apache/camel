@@ -51,6 +51,7 @@
     <module>camel-jms</module>
 
     <!-- regular modules in alphabetic order -->
+    <module>camel-ahc</module>
     <module>camel-amqp</module>
     <module>camel-atom</module>
     <module>camel-aws</module>

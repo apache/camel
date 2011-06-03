@@ -36,6 +36,7 @@
     <compiler.fork>false</compiler.fork>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.5.0</activemq-version>
+    <ahc-version>1.6.3</ahc-version>
     <apacheds-version>1.5.7</apacheds-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
     <atomikos-trascations-version>3.7.0</atomikos-trascations-version>
@@ -214,6 +215,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ahc</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

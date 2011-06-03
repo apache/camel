@@ -93,6 +93,7 @@ public interface Exchange {
     String CHARSET_NAME      = "CamelCharsetName";
     String CREATED_TIMESTAMP = "CamelCreatedTimestamp";
     String CONTENT_ENCODING  = "Content-Encoding";
+    String CONTENT_LENGTH    = "Content-Length";
     String CONTENT_TYPE      = "Content-Type";
     String CORRELATION_ID    = "CamelCorrelationId";
 

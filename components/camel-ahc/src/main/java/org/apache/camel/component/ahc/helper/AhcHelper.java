@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http.helper;
+package org.apache.camel.component.ahc.helper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,48 +22,22 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import java.net.URISyntaxException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.component.http.HttpConstants;
-import org.apache.camel.component.http.HttpConverter;
-import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.camel.component.http.HttpMethods;
+import org.apache.camel.component.ahc.AhcEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.URISupport;
 
-public final class HttpHelper {
+/**
+ *
+ */
+public final class AhcHelper {
 
-    private HttpHelper() {
+    private AhcHelper() {
         // Helper class
-    }
-
-    public static void setCharsetFromContentType(String contentType, Exchange exchange) {
-        if (contentType != null) {
-            // find the charset and set it to the Exchange
-            int index = contentType.indexOf("charset=");
-            if (index > 0) {
-                String charset = contentType.substring(index + 8);
-                exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
-            }
-        }
-    }
-    
-    /**
-     * Writes the given object as response body to the servlet response
-     * <p/>
-     * The content type will be set to {@link HttpConstants#CONTENT_TYPE_JAVA_SERIALIZED_OBJECT}
-     *
-     * @param response servlet response
-     * @param target   object to write
-     * @throws IOException is thrown if error writing
-     */
-    public static void writeObjectToServletResponse(ServletResponse response, Object target) throws IOException {
-        response.setContentType(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
-        writeObjectToStream(response.getOutputStream(), target);
     }
 
     /**
@@ -71,7 +45,7 @@ public final class HttpHelper {
      *
      * @param stream output stream
      * @param target   object to write
-     * @throws IOException is thrown if error writing
+     * @throws java.io.IOException is thrown if error writing
      */
     public static void writeObjectToStream(OutputStream stream, Object target) throws IOException {
         ObjectOutputStream oos = new ObjectOutputStream(stream);
@@ -104,39 +78,14 @@ public final class HttpHelper {
         return answer;
     }
 
-    /**
-     * Reads the response body from the given http servlet request.
-     *
-     * @param request  http servlet request
-     * @param exchange the exchange
-     * @return the response body, can be <tt>null</tt> if no body
-     * @throws IOException is thrown if error reading response body
-     */
-    public static Object readResponseBodyFromServletRequest(HttpServletRequest request, Exchange exchange) throws IOException {
-        InputStream is = HttpConverter.toInputStream(request, exchange);
-        return readResponseBodyFromInputStream(is, exchange);
-    }
-
-    /**
-     * Reads the response body from the given input stream.
-     *
-     * @param is       the input stream
-     * @param exchange the exchange
-     * @return the response body, can be <tt>null</tt> if no body
-     * @throws IOException is thrown if error reading response body
-     */
-    public static Object readResponseBodyFromInputStream(InputStream is, Exchange exchange) throws IOException {
-        if (is == null) {
-            return null;
-        }
-
-        // convert the input stream to StreamCache if the stream cache is not disabled
-        if (exchange.getProperty(Exchange.DISABLE_HTTP_STREAM_CACHE, Boolean.FALSE, Boolean.class)) {
-            return is;
-        } else {
-            CachedOutputStream cos = new CachedOutputStream(exchange);
-            IOHelper.copyAndCloseInput(is, cos);
-            return cos.getStreamCache();
+    public static void setCharsetFromContentType(String contentType, Exchange exchange) {
+        if (contentType != null) {
+            // find the charset and set it to the Exchange
+            int index = contentType.indexOf("charset=");
+            if (index > 0) {
+                String charset = contentType.substring(index + 8);
+                exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
+            }
         }
     }
 
@@ -146,8 +95,14 @@ public final class HttpHelper {
      * @param exchange the exchange
      * @param endpoint the endpoint
      * @return the URL to invoke
+     * @throws java.net.URISyntaxException is thrown if the URL is invalid
      */
-    public static String createURL(Exchange exchange, HttpEndpoint endpoint) {
+    public static String createURL(Exchange exchange, AhcEndpoint endpoint) throws URISyntaxException {
+        String url = doCreateURL(exchange, endpoint);
+        return URISupport.normalizeUri(url);
+    }
+
+    private static String doCreateURL(Exchange exchange, AhcEndpoint endpoint) {
         String uri = null;
         if (!(endpoint.isBridgeEndpoint())) {
             uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
@@ -202,36 +157,5 @@ public final class HttpHelper {
             }
         }
         return uri;
-    }
-
-    /**
-     * Creates the HttpMethod to use to call the remote server, often either its GET or POST.
-     *
-     * @param exchange  the exchange
-     * @return the created method
-     */
-    public static HttpMethods createMethod(Exchange exchange, HttpEndpoint endpoint, boolean hasPayload) {
-        // is a query string provided in the endpoint URI or in a header (header
-        // overrules endpoint)
-        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
-        if (queryString == null) {
-            queryString = endpoint.getHttpUri().getQuery();
-        }
-
-        // compute what method to use either GET or POST
-        HttpMethods answer;
-        HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
-        if (m != null) {
-            // always use what end-user provides in a header
-            answer = m;
-        } else if (queryString != null) {
-            // if a query string is provided then use GET
-            answer = HttpMethods.GET;
-        } else {
-            // fallback to POST if we have payload, otherwise GET
-            answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
-        }
-
-        return answer;
     }
 }
