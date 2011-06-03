@@ -70,6 +70,12 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                                 // We just put the response Object into the out message body
                                 exchange.getOut().setBody(customer);
                             } else {
+                                if ("/customerservice/customers/123".equals(path)) {
+                                    // send a customer response back
+                                    Response r = Response.status(200).entity("customer response back!").build();
+                                    exchange.getOut().setBody(r);
+                                    return;
+                                }
                                 if ("/customerservice/customers/456".equals(path)) {
                                     Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
                                     throw new WebApplicationException(r);
@@ -89,6 +95,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                             // set the response back
                             exchange.getOut().setBody(Response.ok().build());
                         }
+                        
                     }
                     
                 });
@@ -97,22 +104,31 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     }
     // END SNIPPET: example
     
-    @Test
-    public void testGetCustomer() throws Exception {
-        HttpGet get = new HttpGet("http://localhost:9000/rest/customerservice/customers/126");
+    private void invokeGetCustomer(String uri, String expect) throws Exception {
+        HttpGet get = new HttpGet(uri);
         get.addHeader("Accept" , "application/json");
         HttpClient httpclient = new DefaultHttpClient();
 
         try {
             HttpResponse response = httpclient.execute(get);
             assertEquals(200, response.getStatusLine().getStatusCode());
-            assertEquals("{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}",
+            assertEquals(expect,
                          EntityUtils.toString(response.getEntity()));
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
+    }
+    
+    @Test
+    public void testGetCustomer() throws Exception {
+        invokeGetCustomer("http://localhost:9000/rest/customerservice/customers/126",
+                          "{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}");
+        invokeGetCustomer("http://localhost:9000/rest/customerservice/customers/123",
+                          "customer response back!");
         
     }
+    
+    
     
     @Test
     public void testGetWrongCustomer() throws Exception {
