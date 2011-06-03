@@ -17,6 +17,7 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -30,45 +31,17 @@ import org.apache.hadoop.io.IOUtils;
 import org.junit.Test;
 
 public class HdfsProducerSplitTest extends CamelTestSupport {
+    
+    private static final Path BASE_FILE = new Path(new File("target/test/test-camel-simple-write-BASE_FILE").getAbsolutePath());
 
     @Test
     public void testSimpleWriteFileWithMessageSplit() throws Exception {
-        for (int i = 0; i < 10; ++i) {
-            template.sendBody("direct:start1", "CIAO" + i);
-        }
-        stopCamelContext();
-
-        for (int i = 0; i < 10; ++i) {
-            InputStream in = null;
-            try {
-                in = new URL("file:///tmp/test/test-camel-simple-write-file1" + '/' + HdfsConstants.DEFAULT_SEGMENT_PREFIX + i).openStream();
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                IOUtils.copyBytes(in, bos, 4096, false);
-                Assert.assertEquals("CIAO" + i, new String(bos.toByteArray()));
-            } finally {
-                IOUtils.closeStream(in);
-            }
-        }
+        doTest(1);
     }
 
     @Test
     public void testSimpleWriteFileWithBytesSplit() throws Exception {
-        for (int i = 0; i < 10; ++i) {
-            template.sendBody("direct:start2", "CIAO" + i);
-        }
-        stopCamelContext();
-
-        for (int i = 0; i < 10; ++i) {
-            InputStream in = null;
-            try {
-                in = new URL("file:///tmp/test/test-camel-simple-write-file2" + '/' + HdfsConstants.DEFAULT_SEGMENT_PREFIX + i).openStream();
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                IOUtils.copyBytes(in, bos, 4096, false);
-                Assert.assertEquals("CIAO" + i, new String(bos.toByteArray()));
-            } finally {
-                IOUtils.closeStream(in);
-            }
-        }
+        doTest(2);
     }
 
     @Test
@@ -81,7 +54,7 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
         for (int i = 0; i < 3; ++i) {
             InputStream in = null;
             try {
-                in = new URL("file:///tmp/test/test-camel-simple-write-file3" + '/' + HdfsConstants.DEFAULT_SEGMENT_PREFIX + i).openStream();
+                in = new URL("file:///" + BASE_FILE.toUri() + "3/" + HdfsConstants.DEFAULT_SEGMENT_PREFIX + i).openStream();
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 IOUtils.copyBytes(in, bos, 4096, false);
                 Assert.assertEquals("CIAO" + i, new String(bos.toByteArray()));
@@ -93,35 +66,24 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
 
     @Test
     public void testSimpleWriteFileWithMessageIdleSplit() throws Exception {
-        for (int i = 0; i < 10; ++i) {
-            template.sendBody("direct:start4", "CIAO" + i);
-        }
-        Thread.sleep(2000);
-
-        for (int i = 0; i < 10; ++i) {
-            InputStream in = null;
-            try {
-                in = new URL("file:///tmp/test/test-camel-simple-write-file4" + '/' + HdfsConstants.DEFAULT_SEGMENT_PREFIX + i).openStream();
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                IOUtils.copyBytes(in, bos, 4096, false);
-                Assert.assertEquals("CIAO" + i, new String(bos.toByteArray()));
-            } finally {
-                IOUtils.closeStream(in);
-            }
-        }
+        doTest(4);
     }
 
     @Test
     public void testSimpleWriteFileWithBytesIdleSplit() throws Exception {
+        doTest(5);
+    }
+
+    private void doTest(int routeNr) throws Exception {
         for (int i = 0; i < 10; ++i) {
-            template.sendBody("direct:start5", "CIAO" + i);
+            template.sendBody("direct:start" + routeNr, "CIAO" + i);
         }
-        Thread.sleep(2000);
+        stopCamelContext();
 
         for (int i = 0; i < 10; ++i) {
             InputStream in = null;
             try {
-                in = new URL("file:///tmp/test/test-camel-simple-write-file5" + '/' + HdfsConstants.DEFAULT_SEGMENT_PREFIX + i).openStream();
+                in = new URL("file:///" + BASE_FILE.toUri() + routeNr + '/' + HdfsConstants.DEFAULT_SEGMENT_PREFIX + i).openStream();
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 IOUtils.copyBytes(in, bos, 4096, false);
                 Assert.assertEquals("CIAO" + i, new String(bos.toByteArray()));
@@ -136,7 +98,7 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
         super.tearDown();
         Thread.sleep(100);
         Configuration conf = new Configuration();
-        Path dir = new Path("file:///tmp/test");
+        Path dir = new Path("target/test");
         FileSystem fs = FileSystem.get(dir.toUri(), conf);
         fs.delete(dir, true);
     }
@@ -146,11 +108,11 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start1").to("hdfs://localhost/tmp/test/test-camel-simple-write-file1?fileSystemType=LOCAL&splitStrategy=MESSAGES:1");
-                from("direct:start2").to("hdfs://localhost/tmp/test/test-camel-simple-write-file2?fileSystemType=LOCAL&splitStrategy=BYTES:5");
-                from("direct:start3").to("hdfs://localhost/tmp/test/test-camel-simple-write-file3?fileSystemType=LOCAL&splitStrategy=IDLE:1000");
-                from("direct:start4").to("hdfs://localhost/tmp/test/test-camel-simple-write-file4?fileSystemType=LOCAL&splitStrategy=IDLE:1000,MESSAGES:1");
-                from("direct:start5").to("hdfs://localhost/tmp/test/test-camel-simple-write-file5?fileSystemType=LOCAL&splitStrategy=IDLE:1000,BYTES:5");
+                from("direct:start1").to("hdfs://localhost/" + BASE_FILE.toUri() + "1?fileSystemType=LOCAL&splitStrategy=MESSAGES:1");
+                from("direct:start2").to("hdfs://localhost/" + BASE_FILE.toUri() + "2?fileSystemType=LOCAL&splitStrategy=BYTES:5");
+                from("direct:start3").to("hdfs://localhost/" + BASE_FILE.toUri() + "3?fileSystemType=LOCAL&splitStrategy=IDLE:1000");
+                from("direct:start4").to("hdfs://localhost/" + BASE_FILE.toUri() + "4?fileSystemType=LOCAL&splitStrategy=IDLE:1000,MESSAGES:1");
+                from("direct:start5").to("hdfs://localhost/" + BASE_FILE.toUri() + "5?fileSystemType=LOCAL&splitStrategy=IDLE:1000,BYTES:5");
             }
         };
     }

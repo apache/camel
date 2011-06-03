@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hdfs;
 
+import java.io.File;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -37,11 +38,13 @@ public class HdfsProducerConsumerTest extends CamelTestSupport {
 
     @Test
     public void testSimpleSplitWriteRead() throws Exception {
+        final Path file = new Path(new File("target/test/test-camel-simple-write-file").getAbsolutePath());
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("hdfs://localhost/tmp/test/test-camel-simple-write-file?fileSystemType=LOCAL&splitStrategy=BYTES:5,IDLE:1000");
-                from("hdfs://localhost/tmp/test/test-camel-simple-write-file?pattern=seg*&initialDelay=2000&fileSystemType=LOCAL&chunkSize=5").to("mock:result");
+                from("direct:start").to("hdfs:///localhost/" + file.toUri() + "?fileSystemType=LOCAL&splitStrategy=BYTES:5,IDLE:1000");
+                from("hdfs:///localhost/" + file.toUri() + "?pattern=seg*&initialDelay=2000&fileSystemType=LOCAL&chunkSize=5").to("mock:result");
             }
         });
         context.start();
@@ -67,7 +70,7 @@ public class HdfsProducerConsumerTest extends CamelTestSupport {
         super.tearDown();
         Thread.sleep(100);
         Configuration conf = new Configuration();
-        Path dir = new Path("file:///tmp/test");
+        Path dir = new Path("target/test");
         FileSystem fs = FileSystem.get(dir.toUri(), conf);
         fs.delete(dir, true);
     }

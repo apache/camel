@@ -17,6 +17,7 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.ByteBuffer;
@@ -41,12 +42,14 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
     @Test
     public void testSimpleWriteFile() throws Exception {
+        final Path file = new Path(new File("target/test/test-camel-simple-write-file").getAbsolutePath());
+
         deleteDirectory("target/file-batch1");
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("file://target/file-batch1?sortBy=file:name")
-                        .to("hdfs://localhost/tmp/test/test-camel-simple-write-file?fileSystemType=LOCAL");
+                        .to("hdfs://localhost/" + file.toUri() + "?fileSystemType=LOCAL");
             }
         });
 
@@ -63,7 +66,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
         InputStream in = null;
         try {
-            in = new URL("file:///tmp/test/test-camel-simple-write-file").openStream();
+            in = new URL("file:///" + file.toUri()).openStream();
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             IOUtils.copyBytes(in, bos, 4096, false);
             Assert.assertEquals(40, bos.size());
@@ -74,13 +77,14 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
     @Test
     public void testSequenceWriteFile() throws Exception {
+        final Path file = new Path(new File("target/test/test-camel-simple-write-file1").getAbsolutePath());
         deleteDirectory("target/file-batch2");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("file://target/file-batch2?sortBy=file:name")
-                        .to("hdfs://localhost/tmp/test/test-camel-sequence-write-file1?fileSystemType=LOCAL&fileType=SEQUENCE_FILE");
+                        .to("hdfs://localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE");
             }
         });
 
@@ -96,7 +100,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
         context.stop();
 
         Configuration conf = new Configuration();
-        Path file1 = new Path("file:///tmp/test/test-camel-sequence-write-file1");
+        Path file1 = new Path("file:///" + file.toUri());
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
         SequenceFile.Reader reader = new SequenceFile.Reader(fs1, file1, conf);
         Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
@@ -112,6 +116,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
     @Test
     public void testSequenceKeyWriteFile() throws Exception {
+        final Path file = new Path(new File("target/test/test-camel-simple-write-file2").getAbsolutePath());
         deleteDirectory("target/file-batch3");
 
         context.addRoutes(new RouteBuilder() {
@@ -119,7 +124,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("file://target/file-batch3?sortBy=file:name")
                         .setHeader("KEY").simple("${in.header.CamelFileName}")
-                        .to("hdfs://localhost/tmp/test/test-camel-sequence-write-file2?fileSystemType=LOCAL&keyType=TEXT&fileType=SEQUENCE_FILE");
+                        .to("hdfs://localhost/" + file.toUri() + "?fileSystemType=LOCAL&keyType=TEXT&fileType=SEQUENCE_FILE");
             }
         });
 
@@ -135,7 +140,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
         context.stop();
 
         Configuration conf = new Configuration();
-        Path file1 = new Path("file:///tmp/test/test-camel-sequence-write-file2");
+        Path file1 = new Path("file:///" + file.toUri());
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
         SequenceFile.Reader reader = new SequenceFile.Reader(fs1, file1, conf);
         Text key = (Text) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
@@ -152,6 +157,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
     @Test
     public void testMapKeyWriteFile() throws Exception {
+        final Path file = new Path(new File("target/test/test-camel-simple-write-file1").getAbsolutePath());
         deleteDirectory("target/file-batch4");
 
         context.addRoutes(new RouteBuilder() {
@@ -159,7 +165,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("file://target/file-batch4?sortBy=file:name")
                         .setHeader("KEY").simple("${in.header.CamelFileName}")
-                        .to("hdfs://localhost/tmp/test/test-camel-map-write-file1?fileSystemType=LOCAL&keyType=TEXT&fileType=MAP_FILE");
+                        .to("hdfs://localhost/" + file.toUri() + "?fileSystemType=LOCAL&keyType=TEXT&fileType=MAP_FILE");
             }
         });
 
@@ -175,9 +181,9 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
         context.stop();
 
         Configuration conf = new Configuration();
-        Path file1 = new Path("file:///tmp/test/test-camel-map-write-file1");
+        Path file1 = new Path("file:///" + file.toUri());
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
-        MapFile.Reader reader = new MapFile.Reader(fs1, "file:///tmp/test/test-camel-map-write-file1", conf);
+        MapFile.Reader reader = new MapFile.Reader(fs1, "target/test/test-camel-simple-write-file1", conf);
         for (int i = 0; i < 10; ++i) {
             Text key = new Text("CIAO" + i);
             BytesWritable value = new BytesWritable();
@@ -191,13 +197,14 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
     @Test
     public void testSequenceKeyWriteBigFile() throws Exception {
+        final Path file = new Path(new File("target/test/test-camel-simple-write-file1").getAbsolutePath());
         deleteDirectory("target/file-batch5");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("file://target/file-batch5?sortBy=file:name")
-                        .to("hdfs://localhost/tmp/test/test-camel-sequence-write-file3?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&splitStrategy=IDLE:100&checkIdleInterval=10");
+                        .to("hdfs://localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&splitStrategy=IDLE:100&checkIdleInterval=10");
             }
         });
 
@@ -217,7 +224,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
         context.stop();
 
         Configuration conf = new Configuration();
-        Path file1 = new Path("file:///tmp/test/test-camel-sequence-write-file3/" + '/' + HdfsConstants.DEFAULT_SEGMENT_PREFIX + 0);
+        Path file1 = new Path("file:///" + file.toUri() + '/' + HdfsConstants.DEFAULT_SEGMENT_PREFIX + 0);
         FileSystem fs1 = FileSystem.get(file1.toUri(), conf);
         SequenceFile.Reader reader = new SequenceFile.Reader(fs1, file1, conf);
         Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
@@ -234,7 +241,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
         Configuration conf = new Configuration();
-        Path dir = new Path("file:///tmp/test");
+        Path dir = new Path("target/test");
         FileSystem fs = FileSystem.get(dir.toUri(), conf);
         fs.delete(dir, true);
     }

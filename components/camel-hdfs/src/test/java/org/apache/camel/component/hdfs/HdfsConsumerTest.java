@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hdfs;
 
+import java.io.File;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -54,8 +55,8 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testSimpleConsumer() throws Exception {
+        final Path file = new Path(new File("target/test/test-camel-normal-file").getAbsolutePath());
         Configuration conf = new Configuration();
-        Path file = new Path("file:///tmp/test/test-camel-normal-file");
         FileSystem fs = FileSystem.get(file.toUri(), conf);
         FSDataOutputStream out = fs.create(file);
         for (int i = 0; i < 1024; ++i) {
@@ -66,7 +67,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:///tmp/test/test-camel-normal-file?fileSystemType=LOCAL&chunkSize=4096&initialDelay=0").to("mock:result");
+                from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=4096&initialDelay=0").to("mock:result");
             }
         });
         MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
@@ -78,7 +79,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadBoolean() throws Exception {
-        Path file = new Path("file:///tmp/test/test-camel-boolean");
+        final Path file = new Path(new File("target/test/test-camel-boolean").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
         SequenceFile.Writer writer = createWriter(fs1, conf, file, NullWritable.class, BooleanWritable.class);
@@ -91,7 +92,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:///tmp/test/test-camel-boolean?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -107,7 +108,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadByte() throws Exception {
-        Path file = new Path("file:///tmp/test/test-camel-byte");
+        final Path file = new Path(new File("target/test/test-camel-byte").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
         SequenceFile.Writer writer = createWriter(fs1, conf, file, NullWritable.class, ByteWritable.class);
@@ -121,7 +122,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:///tmp/test/test-camel-byte?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -137,7 +138,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadFloat() throws Exception {
-        Path file = new Path("file:///tmp/test/test-camel-float");
+        final Path file = new Path(new File("target/test/test-camel-float").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
         SequenceFile.Writer writer = createWriter(fs1, conf, file, NullWritable.class, FloatWritable.class);
@@ -151,7 +152,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:///tmp/test/test-camel-float?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:///" + file.toUri() + "??fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -167,7 +168,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadDouble() throws Exception {
-        Path file = new Path("file:///tmp/test/test-camel-double");
+        final Path file = new Path(new File("target/test/test-camel-double").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
         SequenceFile.Writer writer = createWriter(fs1, conf, file, NullWritable.class, DoubleWritable.class);
@@ -181,7 +182,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:///tmp/test/test-camel-double?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:///" + file.toUri() + "??fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -197,7 +198,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadInt() throws Exception {
-        Path file = new Path("file:///tmp/test/test-camel-int");
+        final Path file = new Path(new File("target/test/test-camel-int").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
         SequenceFile.Writer writer = createWriter(fs1, conf, file, NullWritable.class, IntWritable.class);
@@ -211,7 +212,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:///tmp/test/test-camel-int?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -227,7 +228,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadLong() throws Exception {
-        Path file = new Path("file:///tmp/test/test-camel-long");
+        final Path file = new Path(new File("target/test/test-camel-long").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
         SequenceFile.Writer writer = createWriter(fs1, conf, file, NullWritable.class, LongWritable.class);
@@ -241,7 +242,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:///tmp/test/test-camel-long?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -257,7 +258,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadBytes() throws Exception {
-        Path file = new Path("file:///tmp/test/test-camel-bytes");
+        final Path file = new Path(new File("target/test/test-camel-bytes").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
         SequenceFile.Writer writer = createWriter(fs1, conf, file, NullWritable.class, BytesWritable.class);
@@ -271,7 +272,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:///tmp/test/test-camel-bytes?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -287,7 +288,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadString() throws Exception {
-        Path file = new Path("file:///tmp/test/test-camel-string");
+        final Path file = new Path(new File("target/test/test-camel-string").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
         SequenceFile.Writer writer = createWriter(fs1, conf, file, NullWritable.class, Text.class);
@@ -301,7 +302,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:///tmp/test/test-camel-string?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -317,10 +318,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadStringArrayFile() throws Exception {
-        Path file = new Path("file:///tmp/test/test-camel-string");
+        final Path file = new Path(new File("target/test/test-camel-string").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
-        ArrayFile.Writer writer = new ArrayFile.Writer(conf, fs1, "file:///tmp/test/test-camel-string1", Text.class, CompressionType.NONE, new Progressable() {
+        ArrayFile.Writer writer = new ArrayFile.Writer(conf, fs1, "target/test/test-camel-string1", Text.class, CompressionType.NONE, new Progressable() {
             @Override
             public void progress() {
             }
@@ -333,7 +334,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("hdfs:///tmp/test?fileSystemType=LOCAL&fileType=ARRAY_FILE&initialDelay=0").to("mock:result");
+                from("hdfs:///" + file.getParent().toUri() + "?fileSystemType=LOCAL&fileType=ARRAY_FILE&initialDelay=0").to("mock:result");
             }
         });
         context.start();
@@ -352,7 +353,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
         super.tearDown();
         Thread.sleep(100);
         Configuration conf = new Configuration();
-        Path dir = new Path("file:///tmp/test");
+        Path dir = new Path("target/test");
         FileSystem fs = FileSystem.get(dir.toUri(), conf);
         fs.delete(dir, true);
     }
