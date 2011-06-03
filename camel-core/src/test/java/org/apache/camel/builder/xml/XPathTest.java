@@ -375,6 +375,7 @@ public class XPathTest extends ContextTestSupport {
             assertNotNull(doc);
         }
         assertEquals(size, count);
+        executor.shutdownNow();
     }
 
     public void testXPathNodeListTest() throws Exception {

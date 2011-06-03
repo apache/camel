@@ -59,6 +59,7 @@ public class JmsProduerConcurrentTest extends CamelTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     protected CamelContext createCamelContext() throws Exception {

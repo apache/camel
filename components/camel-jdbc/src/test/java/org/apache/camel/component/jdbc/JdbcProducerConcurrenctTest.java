@@ -85,6 +85,7 @@ public class JdbcProducerConcurrenctTest extends CamelTestSupport {
                 assertEquals("nsandhu", columns.get("NAME"));
             }
         }
+        executor.shutdownNow();
     }
 
     protected JndiRegistry createRegistry() throws Exception {

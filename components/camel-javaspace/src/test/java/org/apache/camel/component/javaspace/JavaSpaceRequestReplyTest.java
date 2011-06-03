@@ -74,7 +74,7 @@ public class JavaSpaceRequestReplyTest extends CamelTestSupport {
         }
         long stop = System.currentTimeMillis();
         System.out.println(stop - start);
-        es.shutdown();
+        es.shutdownNow();
     }
 
     @Override

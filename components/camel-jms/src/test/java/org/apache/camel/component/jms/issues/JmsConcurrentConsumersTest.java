@@ -65,6 +65,7 @@ public class JmsConcurrentConsumersTest extends CamelTestSupport {
 
         long delta = System.currentTimeMillis() - start;
         assertTrue("Should be faster than 20000 millis, took " + delta + " millis", delta < 20000L);
+        executor.shutdown();
     }
 
     protected CamelContext createCamelContext() throws Exception {

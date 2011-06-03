@@ -90,6 +90,7 @@ public class JettyHttpProducerConcurrentTest extends BaseJettyTest {
 
         // should be 10 unique responses
         assertEquals("Should be " + files + " unique responses", files, unique.size());
+        executor.shutdownNow();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

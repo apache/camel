@@ -62,6 +62,7 @@ public class JmsRouteUsingJMSXGroupTest extends CamelTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     protected CamelContext createCamelContext() throws Exception {

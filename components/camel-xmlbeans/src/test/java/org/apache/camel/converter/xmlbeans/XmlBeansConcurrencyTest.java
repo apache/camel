@@ -56,6 +56,7 @@ public class XmlBeansConcurrencyTest extends CamelTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     protected RouteBuilder createRouteBuilder() {

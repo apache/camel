@@ -56,6 +56,7 @@ public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport
         service.invokeAll(tasks);
 
         assertMockEndpointsSatisfied();
+        service.shutdownNow();
     }
 
     @Override

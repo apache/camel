@@ -85,6 +85,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(20, replies.size());
+        executors.shutdownNow();
     }
 
     public void testSedaConcurrentInOutWithAsync() throws Exception {
@@ -96,7 +97,8 @@ public class SedaConcurrentTest extends ContextTestSupport {
         mock.setMinimumResultWaitTime(3000);
 
         // use our own template that has a higher thread pool than default camel that uses 5
-        ProducerTemplate pt = new DefaultProducerTemplate(context, Executors.newFixedThreadPool(10));
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        ProducerTemplate pt = new DefaultProducerTemplate(context, executor);
         // must start the template
         pt.start();
 
@@ -113,8 +115,8 @@ public class SedaConcurrentTest extends ContextTestSupport {
             String out = (String) replies.get(i).get();
             assertTrue(out.startsWith("Bye"));
         }
-
         pt.stop();
+        executor.shutdownNow();
     }
 
     @Override

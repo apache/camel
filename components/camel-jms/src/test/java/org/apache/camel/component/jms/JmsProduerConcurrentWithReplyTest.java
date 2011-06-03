@@ -69,6 +69,7 @@ public class JmsProduerConcurrentWithReplyTest extends CamelTestSupport {
             Object out = futures.get(i).get();
             assertEquals("Bye Message " + i, out);
         }
+        executor.shutdownNow();
     }
 
     protected CamelContext createCamelContext() throws Exception {

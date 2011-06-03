@@ -476,6 +476,7 @@ public class CaseInsensitiveMapTest extends TestCase {
         assertEquals(123, map.get("FOO"));
         assertEquals(456, map.get("Bar"));
         assertEquals("cheese", map.get("cAKe"));
+        service.shutdownNow();
     }
 
     public void testCopyMapWithCamelHeadersTest() throws Exception {

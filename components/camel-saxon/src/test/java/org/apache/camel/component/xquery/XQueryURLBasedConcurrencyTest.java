@@ -63,6 +63,7 @@ public class XQueryURLBasedConcurrencyTest extends CamelTestSupport {
         // must use bodyAs(String.class) to force DOM to be converted to String XML
         // for duplication detection
         mock.assertNoDuplicates(bodyAs(String.class));
+        executor.shutdown();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

@@ -31,6 +31,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class WireTapCustomPoolTest extends ContextTestSupport {
     protected MockEndpoint tap;
     protected MockEndpoint result;
+    protected ExecutorService pool;
+    
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        if (pool != null) {
+            pool.shutdownNow();
+        }
+    }
 
     public void testSend() throws Exception {
         // hello must come first, as we have delay on the tapped route

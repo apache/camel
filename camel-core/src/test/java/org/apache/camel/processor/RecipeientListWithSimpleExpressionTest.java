@@ -72,6 +72,7 @@ public class RecipeientListWithSimpleExpressionTest extends ContextTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executors.shutdownNow();
     }
 
     public static class MyBeanRouter {
@@ -123,6 +124,7 @@ public class RecipeientListWithSimpleExpressionTest extends ContextTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executors.shutdownNow();
     }
 
 }

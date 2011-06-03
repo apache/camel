@@ -85,6 +85,7 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
                 assertEquals("Linux", columns.get("PROJECT"));
             }
         }
+        executor.shutdownNow();
     }
 
     @Before

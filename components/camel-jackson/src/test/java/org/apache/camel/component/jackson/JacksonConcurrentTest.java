@@ -59,6 +59,7 @@ public class JacksonConcurrentTest extends CamelTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     protected RouteBuilder createRouteBuilder() {

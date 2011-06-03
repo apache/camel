@@ -86,6 +86,7 @@ public class RmiConcurrencyTest extends CamelTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     @Override

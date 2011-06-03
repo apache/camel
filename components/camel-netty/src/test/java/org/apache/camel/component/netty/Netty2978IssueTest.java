@@ -82,6 +82,7 @@ public class Netty2978IssueTest extends CamelTestSupport {
 
             // should be 1000 unique replies
             assertEquals(1000, replies.size());
+            executorService.shutdownNow();
         } finally {
             client.close();
         }

@@ -73,6 +73,7 @@ public class HttpProducerConcurrentTest extends BaseJettyTest {
 
         // should be 10 unique responses
         assertEquals("Should be " + files + " unique responses", files, unique.size());
+        executor.shutdownNow();
     }
 
 

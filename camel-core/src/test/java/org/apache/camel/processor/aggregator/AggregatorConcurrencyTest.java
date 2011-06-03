@@ -71,6 +71,8 @@ public class AggregatorConcurrencyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals(100, COUNTER.get());
+        // Need to shutdown the threadpool
+        service.shutdownNow();
     }
 
     @Override

@@ -62,6 +62,7 @@ public class JaxbConcurrentDataFormatTest extends CamelTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     protected RouteBuilder createRouteBuilder() {

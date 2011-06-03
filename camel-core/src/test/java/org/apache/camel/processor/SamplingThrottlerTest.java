@@ -85,6 +85,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         }
 
         mock.assertIsSatisfied();
+        executor.shutdownNow();
     }
 
     public void testSamplingUsingmessageFrequency() throws Exception {

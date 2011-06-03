@@ -72,6 +72,7 @@ public class MinaProducerAnotherConcurrentTest extends CamelTestSupport {
             Object out = responses.get(i).get();
             assertEquals("Bye " + i, out);
         }
+        executor.shutdownNow();
     }
 
     @Override

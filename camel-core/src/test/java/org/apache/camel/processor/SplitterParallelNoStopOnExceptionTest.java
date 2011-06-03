@@ -31,6 +31,19 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class SplitterParallelNoStopOnExceptionTest extends ContextTestSupport {
 
+    private ExecutorService service; 
+    
+    protected void setUp() throws Exception {
+        // use a pool with 2 concurrent tasks so we cannot run too fast
+        service = Executors.newFixedThreadPool(2);
+        super.setUp();
+    }
+    
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        service.shutdownNow();
+    }
+
     public void testSplitParallelNoStopOnExceptionOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Hi World");
@@ -63,8 +76,6 @@ public class SplitterParallelNoStopOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // use a pool with 2 concurrent tasks so we cannot run to fast
-                ExecutorService service = Executors.newFixedThreadPool(2);
 
                 from("direct:start")
                         .split(body().tokenize(",")).parallelProcessing().executorService(service)

@@ -60,6 +60,7 @@ public class XStreamConcurrencyTest extends CamelTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     protected RouteBuilder createRouteBuilder() {

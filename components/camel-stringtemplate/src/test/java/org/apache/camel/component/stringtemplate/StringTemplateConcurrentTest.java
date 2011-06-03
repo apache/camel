@@ -56,6 +56,7 @@ public class StringTemplateConcurrentTest extends CamelTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     protected RouteBuilder createRouteBuilder() {

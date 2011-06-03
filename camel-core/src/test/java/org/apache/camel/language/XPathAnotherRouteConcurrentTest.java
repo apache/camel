@@ -55,6 +55,7 @@ public class XPathAnotherRouteConcurrentTest extends ContextTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdown();
     }
 
     private String createXmlBody(int index, String name) {

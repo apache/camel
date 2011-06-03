@@ -87,6 +87,7 @@ public class JpaProducerConcurrentTest extends CamelTestSupport {
 
         // assert in the database
         assertEntityInDB(files);
+        executor.shutdownNow();
     }
 
     @Override

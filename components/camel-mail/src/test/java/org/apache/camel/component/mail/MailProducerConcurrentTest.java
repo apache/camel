@@ -73,6 +73,7 @@ public class MailProducerConcurrentTest extends CamelTestSupport {
         }
 
         assertEquals("There should be " + files + " unique mails", files, bodies.size());
+        executor.shutdownNow();
     }
 
     @Override

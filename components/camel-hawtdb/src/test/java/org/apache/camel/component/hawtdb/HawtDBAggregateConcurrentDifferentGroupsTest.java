@@ -73,6 +73,7 @@ public class HawtDBAggregateConcurrentDifferentGroupsTest extends CamelTestSuppo
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     @Override

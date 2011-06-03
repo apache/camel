@@ -61,6 +61,7 @@ public class FtpProducerConcurrentTest extends FtpServerTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     @Override

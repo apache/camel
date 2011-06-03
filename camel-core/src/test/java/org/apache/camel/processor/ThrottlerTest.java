@@ -71,6 +71,7 @@ public class ThrottlerTest extends ContextTestSupport {
         // add a little slack
         long delta = System.currentTimeMillis() - start + 200;
         assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
+        executor.shutdownNow();
     }
 
     public void testTimeSlotCalculus() throws Exception {
@@ -113,6 +114,7 @@ public class ThrottlerTest extends ContextTestSupport {
         // add a little slack
         long delta = System.currentTimeMillis() - start + 200;
         assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
+        executor.shutdownNow();
     }
 
     public void testConfigurationWithHeaderExpression() throws Exception {
@@ -138,6 +140,7 @@ public class ThrottlerTest extends ContextTestSupport {
         // add a little slack
         long delta = System.currentTimeMillis() - start + 200;
         assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
+        executor.shutdownNow();
     }
     
     protected RouteBuilder createRouteBuilder() {

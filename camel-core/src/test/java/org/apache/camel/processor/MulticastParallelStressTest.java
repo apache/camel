@@ -72,6 +72,7 @@ public class MulticastParallelStressTest extends ContextTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
 

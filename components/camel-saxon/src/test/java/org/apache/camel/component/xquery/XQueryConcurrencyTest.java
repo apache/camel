@@ -63,6 +63,7 @@ public class XQueryConcurrencyTest extends CamelTestSupport {
         mock.assertNoDuplicates(body());
 
         assertMockEndpointsSatisfied();
+        executor.shutdown();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

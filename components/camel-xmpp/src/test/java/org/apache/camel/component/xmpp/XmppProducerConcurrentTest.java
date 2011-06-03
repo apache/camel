@@ -63,6 +63,7 @@ public class XmppProducerConcurrentTest extends CamelTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     @Override

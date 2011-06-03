@@ -61,6 +61,7 @@ public class XMLSecurityConcurrencyTest extends CamelTestSupport {
         String secure = getMockEndpoint("mock:secure").getReceivedExchanges().get(0).getIn().getBody(String.class);
         assertNotNull(secure);
         assertTrue("Should not be readable", secure.indexOf("read") == -1);
+        executor.shutdownNow();
     }
 
     protected RouteBuilder createRouteBuilder() {

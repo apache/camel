@@ -213,6 +213,7 @@ public class ServicePoolTest extends ContextTestSupport {
         for (int i = 0; i < 5; i++) {
             assertEquals(i, response.get(i).get());
         }
+        executor.shutdownNow();
     }
 
     public void testConcurrentStress() throws Exception {
@@ -242,6 +243,7 @@ public class ServicePoolTest extends ContextTestSupport {
         for (int i = 0; i < 5; i++) {
             assertEquals(i, response.get(i).get());
         }
+        executor.shutdownNow();
     }
 
 }

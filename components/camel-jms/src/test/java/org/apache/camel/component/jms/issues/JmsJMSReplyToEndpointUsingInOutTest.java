@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.issues;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -57,7 +58,8 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
         // do not use Camel to send and receive to simulate a non Camel client
 
         // use another thread to listen and send the reply
-        Executors.newFixedThreadPool(1).submit(new Callable<Object>() {
+        ExecutorService executor = Executors.newFixedThreadPool(1);
+        executor.submit(new Callable<Object>() {
             public Object call() throws Exception {
                 JmsTemplate jms = new JmsTemplate(amq.getConfiguration().getConnectionFactory());
 
@@ -94,6 +96,7 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
+        executor.shutdownNow();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

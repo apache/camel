@@ -70,7 +70,7 @@ public final class CamelClient {
 
         latch.await(300, TimeUnit.SECONDS);
         System.out.println("... Send " + SIZE + " message to JMS broker");
-
+        executors.shutdownNow();
         System.exit(0);
     }
 

@@ -61,6 +61,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
 
         mock.assertIsSatisfied();
         mock.expectsNoDuplicates(body());
+        executor.shutdown();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

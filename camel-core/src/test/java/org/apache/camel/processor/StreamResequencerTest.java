@@ -72,7 +72,7 @@ public class StreamResequencerTest extends ContextTestSupport {
         resultEndpoint.setResultWaitTime(20000);
         resultEndpoint.assertIsSatisfied();
 
-        service.shutdown();
+        service.shutdownNow();
     }
     
     @Override

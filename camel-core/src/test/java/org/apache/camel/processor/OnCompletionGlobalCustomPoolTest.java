@@ -26,12 +26,24 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class OnCompletionGlobalCustomPoolTest extends OnCompletionGlobalTest {
 
+    private ExecutorService pool; 
+    
+    protected void setUp() throws Exception {
+        // use a pool with 2 concurrent tasks so we cannot run too fast
+        pool = Executors.newFixedThreadPool(2);
+        super.setUp();
+    }
+    
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        pool.shutdownNow();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                ExecutorService pool = Executors.newFixedThreadPool(2);
 
                 // use a custom thread pool
                 onCompletion().executorService(pool).to("log:global").to("mock:sync");
