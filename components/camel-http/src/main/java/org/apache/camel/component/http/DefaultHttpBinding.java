@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Map;
-
 import javax.activation.DataHandler;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +42,8 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
@@ -51,6 +52,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultHttpBinding implements HttpBinding {
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
     private boolean useReaderForPayload;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private HttpEndpoint endpoint;
@@ -70,6 +72,7 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     public void readRequest(HttpServletRequest request, HttpMessage message) {
+        LOG.trace("readRequest {}", request);
         
         // lets force a parse of the body and headers
         message.getBody();
@@ -116,6 +119,15 @@ public class DefaultHttpBinding implements HttpBinding {
         headers.put(Exchange.HTTP_PATH, request.getPathInfo());
         headers.put(Exchange.CONTENT_TYPE, request.getContentType());
 
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("HTTP method {}", request.getMethod());
+            LOG.trace("HTTP query {}", request.getQueryString());
+            LOG.trace("HTTP url {}", request.getRequestURL());
+            LOG.trace("HTTP uri {}", request.getRequestURI());
+            LOG.trace("HTTP path {}", request.getPathInfo());
+            LOG.trace("HTTP content-type {}", request.getContentType());
+        }
+
         // if content type is serialized java object, then de-serialize it to a Java object
         if (request.getContentType() != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(request.getContentType())) {
             try {
@@ -139,11 +151,14 @@ public class DefaultHttpBinding implements HttpBinding {
         while (names.hasMoreElements()) {
             String name = (String)names.nextElement();
             Object value = request.getParameter(name);
+            LOG.trace("HTTP header {} = {}", name, value);
             if (headerFilterStrategy != null
                 && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
                 headers.put(name, value);
             }
         }
+
+        LOG.trace("HTTP method {} with Content-Type {}", request.getMethod(), request.getContentType());
         
         if (request.getMethod().equals("POST") && request.getContentType() != null
                 && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)) {
@@ -175,6 +190,7 @@ public class DefaultHttpBinding implements HttpBinding {
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
             Object object = request.getAttribute(name);
+            LOG.trace("HTTP attachment {} = {}", name, object);
             if (object instanceof File) {
                 String fileName = request.getParameter(name);
                 message.addAttachment(fileName, new DataHandler(new CamelFileDataSource((File)object, fileName)));

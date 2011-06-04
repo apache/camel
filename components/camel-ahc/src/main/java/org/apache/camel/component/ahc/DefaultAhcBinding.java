@@ -46,11 +46,12 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- *
- */
 public class DefaultAhcBinding implements AhcBinding {
+
+    protected final transient Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public Request prepareRequest(AhcEndpoint endpoint, Exchange exchange) throws CamelExchangeException {
@@ -60,11 +61,15 @@ public class DefaultAhcBinding implements AhcBinding {
 
         RequestBuilder builder = new RequestBuilder();
         try {
-            builder.setUrl(AhcHelper.createURL(exchange, endpoint));
+            String url = AhcHelper.createURL(exchange, endpoint);
+            log.trace("Setting url {}", url);
+            builder.setUrl(url);
         } catch (URISyntaxException e) {
             throw new CamelExchangeException("Error creating URL", exchange, e);
         }
-        builder.setMethod(extractMethod(exchange));
+        String method = extractMethod(exchange);
+        log.trace("Setting method {}", method);
+        builder.setMethod(method);
 
         populateHeaders(builder, endpoint, exchange);
         populateBody(builder, endpoint, exchange);
@@ -91,6 +96,7 @@ public class DefaultAhcBinding implements AhcBinding {
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             String headerValue = exchange.getIn().getHeader(entry.getKey(), String.class);
             if (strategy != null && !strategy.applyFilterToCamelHeaders(entry.getKey(), headerValue, exchange)) {
+                log.trace("Adding header {} = {}", entry.getKey(), headerValue);
                 builder.addHeader(entry.getKey(), headerValue);
             }
         }
@@ -104,6 +110,7 @@ public class DefaultAhcBinding implements AhcBinding {
 
         String contentType = ExchangeHelper.getContentType(exchange);
         BodyGenerator body = in.getBody(BodyGenerator.class);
+        String charset = IOConverter.getCharsetName(exchange, false);
 
         if (body == null) {
             try {
@@ -129,7 +136,6 @@ public class DefaultAhcBinding implements AhcBinding {
                         // so we only do an instanceof check and accept String if the body is really a String
                         // do not fallback to use the default charset as it can influence the request
                         // (for example application/x-www-form-urlencoded forms being sent)
-                        String charset = IOConverter.getCharsetName(exchange, false);
                         if (charset != null) {
                             body = new ByteArrayBodyGenerator(((String) data).getBytes(charset));
                         } else {
@@ -150,12 +156,18 @@ public class DefaultAhcBinding implements AhcBinding {
             }
         }
 
-        if (contentType != null) {
-            builder.setHeader(Exchange.CONTENT_TYPE, contentType);
-        }
         if (body != null) {
+            log.trace("Setting body {}", body);
             builder.setBody(body);
         }
+        if (charset != null) {
+            log.trace("Setting body charset {}", charset);
+            builder.setBodyEncoding(charset);
+        }
+        // must set content type, even if its null, otherwise it may default to
+        // application/x-www-form-urlencoded which may not be your intention
+        log.trace("Setting Content-Type {}", contentType);
+        builder.setHeader(Exchange.CONTENT_TYPE, contentType);
     }
 
     @Override
