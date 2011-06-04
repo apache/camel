@@ -169,6 +169,16 @@ public class DefaultChannel extends ServiceSupport implements Channel {
         // so if a child is set then use it, if not then its the original output used
         ProcessorDefinition<?> targetOutputDef = childDefinition != null ? childDefinition : outputDefinition;
 
+        // fix parent/child relationship. This will be the case of the routes has been
+        // defined using XML DSL or end user may have manually assembled a route from the model.
+        // Background note: parent/child relationship is assembled on-the-fly when using Java DSL (fluent builders)
+        // where as when using XML DSL (JAXB) then it fixed after, but if people are using custom interceptors
+        // then we need to fix the parent/child relationship beforehand, and thus we can do it here
+        // ideally we need the design time route -> runtime route to be a 2-phase pass (scheduled work for Camel 3.0)
+        if (childDefinition != null && outputDefinition != childDefinition) {
+            childDefinition.setParent(outputDefinition);
+        }
+
         // first wrap the output with the managed strategy if any
         InterceptStrategy managed = routeContext.getManagedInterceptStrategy();
         if (managed != null) {

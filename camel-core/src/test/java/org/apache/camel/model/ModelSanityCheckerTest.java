@@ -90,6 +90,11 @@ public class ModelSanityCheckerTest extends TestCase {
             for (Method method : clazz.getDeclaredMethods()) {
                 LOG.debug("Class {} has method {}", clazz.getName(), method.getName());
 
+                // special for OptionalIdentifiedDefinition as it has setter, so we should skip it
+                if (clazz.getCanonicalName().equals(OptionalIdentifiedDefinition.class.getCanonicalName())) {
+                    continue;
+                }
+
                 // does the method have a jaxb annotation?
                 boolean attribute = method.getAnnotation(XmlAttribute.class) != null;
                 boolean element = method.getAnnotation(XmlElement.class) != null;

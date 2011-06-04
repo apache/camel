@@ -21,25 +21,7 @@ import org.apache.camel.processor.intercept.ParentChildInterceptStrategyTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- *
- */
 public class SpringParentChildInterceptStrategyTest extends ParentChildInterceptStrategyTest {
-
-    public void testParentChild() throws Exception {
-        getMockEndpoint("mock:done").expectedMessageCount(1);
-        getMockEndpoint("mock:a").expectedMessageCount(1);
-        getMockEndpoint("mock:b").expectedMessageCount(1);
-        getMockEndpoint("mock:c").expectedMessageCount(1);
-        getMockEndpoint("mock:d").expectedMessageCount(0);
-        getMockEndpoint("mock:e").expectedMessageCount(0);
-
-        template.sendBody("direct:start", "Hello Camel");
-
-        assertMockEndpointsSatisfied();
-
-        assertEquals(7, LIST.size());
-    }
 
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/intercept/SpringParentChildInterceptStrategyTest.xml");
