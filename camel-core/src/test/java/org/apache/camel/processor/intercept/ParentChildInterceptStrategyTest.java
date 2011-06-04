@@ -52,7 +52,8 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
         assertEquals("Parent when2 -> target task-d", LIST.get(3));
         assertEquals("Parent otherwise -> target task-e", LIST.get(4));
         assertEquals("Parent route -> target choice", LIST.get(5));
-        assertEquals("Parent route -> target task-done", LIST.get(6));
+        // the last one has no custom id so its using its label instead
+        assertEquals("Parent route -> target mock:done", LIST.get(6));
     }
 
     @Override
@@ -73,7 +74,7 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
                         .otherwise().id("otherwise")
                             .to("mock:e").id("task-e")
                     .end()
-                    .to("mock:done").id("task-done");
+                    .to("mock:done");
             }
         };
     }
@@ -83,8 +84,12 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
         @Override
         public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition<?> definition,
                                                      final Processor target, final Processor nextTarget) throws Exception {
-            String targetId = definition.getId();
-            String parentId = definition.getParent() != null ? definition.getParent().getId() : "";
+            String targetId = definition.hasCustomIdAssigned() ? definition.getId() : definition.getLabel();
+            ProcessorDefinition parent = definition.getParent();
+            String parentId = "";
+            if (parent != null) {
+                parentId = parent.hasCustomIdAssigned() ? parent.getId() : parent.getLabel();
+            }
 
             LIST.add("Parent " + parentId + " -> target " + targetId);
 
