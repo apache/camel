@@ -49,7 +49,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/file-batch1?sortBy=file:name")
-                        .to("hdfs://localhost/" + file.toUri() + "?fileSystemType=LOCAL");
+                        .to("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL");
             }
         });
 
@@ -84,7 +84,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/file-batch2?sortBy=file:name")
-                        .to("hdfs://localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE");
+                        .to("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE");
             }
         });
 
@@ -124,7 +124,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("file://target/file-batch3?sortBy=file:name")
                         .setHeader("KEY").simple("${in.header.CamelFileName}")
-                        .to("hdfs://localhost/" + file.toUri() + "?fileSystemType=LOCAL&keyType=TEXT&fileType=SEQUENCE_FILE");
+                        .to("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&keyType=TEXT&fileType=SEQUENCE_FILE");
             }
         });
 
@@ -165,7 +165,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("file://target/file-batch4?sortBy=file:name")
                         .setHeader("KEY").simple("${in.header.CamelFileName}")
-                        .to("hdfs://localhost/" + file.toUri() + "?fileSystemType=LOCAL&keyType=TEXT&fileType=MAP_FILE");
+                        .to("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&keyType=TEXT&fileType=MAP_FILE");
             }
         });
 
@@ -204,7 +204,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/file-batch5?sortBy=file:name")
-                        .to("hdfs://localhost/" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&splitStrategy=IDLE:100&checkIdleInterval=10");
+                        .to("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&splitStrategy=IDLE:100&checkIdleInterval=10");
             }
         });
 
