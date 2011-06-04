@@ -22,8 +22,8 @@ import java.io.InputStream;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.GZIPHelper;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.RequestEntity;
 

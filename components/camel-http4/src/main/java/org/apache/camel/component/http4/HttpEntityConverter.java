@@ -22,8 +22,8 @@ import java.io.InputStream;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.http4.helper.GZIPHelper;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.GZIPHelper;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.InputStreamEntity;
 
@@ -77,7 +77,7 @@ public class HttpEntityConverter {
         InputStreamEntity entity = null;
         if (exchange != null
             && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
-            entity = new InputStreamEntity(GZIPHelper.compressGzip(contentEncoding, data), -1);        
+            entity = new InputStreamEntity(GZIPHelper.compressGzip(contentEncoding, data), -1);
         } else {
             entity = new InputStreamEntity(new ByteArrayInputStream(data), -1);
         }

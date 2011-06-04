@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ahc.helper;
+package org.apache.camel.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,10 +25,9 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.util.IOHelper;
 
 /**
- *
+ * Helper class to help wrapping content into GZIP input and output streams.
  */
 public final class GZIPHelper {
 
@@ -42,8 +41,9 @@ public final class GZIPHelper {
             return in;
         }
     }
-
+    
     public static InputStream compressGzip(String contentEncoding, InputStream in) throws IOException {
+
         if (isGzip(contentEncoding)) {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             GZIPOutputStream gzip = new GZIPOutputStream(os);
@@ -58,6 +58,7 @@ public final class GZIPHelper {
         } else {
             return in;
         }
+
     }
 
     public static InputStream compressGzip(String contentEncoding, byte[] data) throws IOException {
@@ -88,14 +89,14 @@ public final class GZIPHelper {
             return os.toByteArray();
         } finally {
             IOHelper.close(gzip, "gzip");
-            IOHelper.close(os, "byte array");
+            IOHelper.close(os, "byte array output stream");
         }
     }
 
-    public static boolean isGzip(Message message) {
+    public static boolean isGzip(Message message) {        
         return isGzip(message.getHeader(Exchange.CONTENT_ENCODING, String.class), message.getExchange());
     }
-
+    
     public static boolean isGzip(String header , Exchange exchange) {
         if (exchange == null || !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             return isGzip(header);
@@ -107,5 +108,4 @@ public final class GZIPHelper {
     public static boolean isGzip(String header) {
         return header != null && header.toLowerCase().contains("gzip");
     }
-
 }
