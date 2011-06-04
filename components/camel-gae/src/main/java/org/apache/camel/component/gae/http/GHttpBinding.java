@@ -37,7 +37,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 import static org.apache.camel.component.gae.http.GHttpEndpoint.getEndpointUrl;
-import static org.apache.camel.component.http.helper.GZIPHelper.isGzip;
+import static org.apache.camel.util.GZIPHelper.isGzip;
 
 /**
  * Binds the {@link HTTPRequest}/{@link HTTPResponse} pair of the URL fetch
