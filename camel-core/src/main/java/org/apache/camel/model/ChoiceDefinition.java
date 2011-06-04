@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -37,7 +36,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 /**
  * Represents an XML &lt;choice/&gt; element
  *
- * @version 
+ * @version
  */
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -59,11 +58,12 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
         }
     }
+
     @Override
     public String getShortName() {
         return "choice";
     }
-           
+
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
@@ -79,10 +79,11 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     // Fluent API
     // -------------------------------------------------------------------------
+
     /**
      * Sets the predicate for the when node
      *
-     * @param predicate  the predicate
+     * @param predicate the predicate
      * @return the builder
      */
     public ChoiceDefinition when(Predicate predicate) {
@@ -108,7 +109,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     /**
      * Sets the otherwise node
-     * 
+     *
      * @return the builder
      */
     public ChoiceDefinition otherwise() {
@@ -116,6 +117,33 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         answer.setParent(this);
         setOtherwise(answer);
         return this;
+    }
+
+    @Override
+    public void setId(String value) {
+        // when setting id, we should set it on the fine grained element, if possible
+        if (otherwise != null) {
+            otherwise.setId(value);
+        } else if (!getWhenClauses().isEmpty()) {
+            int size = getWhenClauses().size();
+            getWhenClauses().get(size - 1).setId(value);
+        } else {
+            super.setId(value);
+        }
+    }
+
+    @Override
+    public void addOutput(ProcessorDefinition output) {
+        super.addOutput(output);
+        // re-configure parent as its a tad more complex for the CNR
+        if (otherwise != null) {
+            output.setParent(otherwise);
+        } else if (!getWhenClauses().isEmpty()) {
+            int size = getWhenClauses().size();
+            output.setParent(getWhenClauses().get(size - 1));
+        } else {
+            output.setParent(this);
+        }
     }
 
     // Properties

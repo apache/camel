@@ -1094,11 +1094,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         if (blocks.isEmpty()) {
             if (parent == null) {
-                return this; 
+                return this.endParent();
             }
-            return parent;
+            return parent.endParent();
         }
         popBlock();
+        return this.endParent();
+    }
+
+    /**
+     * Strategy to allow {@link ProcessorDefinition}s to have special logic when using end() in the DSL
+     * to return back to the intended parent.
+     * <p/>
+     * For example a content based router we return back to the {@link ChoiceDefinition} when we end()
+     * from a {@link WhenDefinition}.
+     *
+     * @return the end
+     */
+    public ProcessorDefinition endParent() {
         return this;
     }
 
@@ -1108,7 +1121,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public ChoiceDefinition endChoice() {
-        return (ChoiceDefinition) end();
+        ProcessorDefinition def = end();
+        if (def instanceof WhenDefinition) {
+            return (ChoiceDefinition) def.getParent();
+        } else if (def instanceof OtherwiseDefinition) {
+            return (ChoiceDefinition) def.getParent();
+        } else {
+            return (ChoiceDefinition) def;
+        }
     }
 
     /**
