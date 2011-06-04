@@ -45,7 +45,6 @@ public class Http4Test extends OSGiIntegrationTestSupport {
     }
 
     @Test
-    @Ignore("Error doing POST in OSGi")
     public void testHttp4Post() throws Exception {
         String reply = template.requestBody("http4://localhost:9081/foo", "Hello World", String.class);
         assertEquals("Bye World", reply);

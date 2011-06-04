@@ -45,7 +45,6 @@ public class AhcTest extends OSGiIntegrationTestSupport {
     }
 
     @Test
-    @Ignore("Error doing POST in OSGi")
     public void testAhcPost() throws Exception {
         String reply = template.requestBody("ahc:http://localhost:9081/foo", "Hello World", String.class);
         assertEquals("Bye World", reply);
