@@ -46,13 +46,16 @@ public class ExceptionCamel4022Test extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public static class MyExceptionThrower implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            throw new IllegalArgumentException("Forced by unit test");
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final Processor exceptionThrower = new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                throw new IllegalArgumentException("Forced by unit test");
-            }
-        };
+        final Processor exceptionThrower = new MyExceptionThrower();
 
         return new RouteBuilder() {
             public void configure() {
