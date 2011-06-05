@@ -135,7 +135,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     @Override
     public void addOutput(ProcessorDefinition output) {
         super.addOutput(output);
-        // re-configure parent as its a tad more complex for the CNR
+        // re-configure parent as its a tad more complex for the Content Based Router
         if (otherwise != null) {
             output.setParent(otherwise);
         } else if (!getWhenClauses().isEmpty()) {
