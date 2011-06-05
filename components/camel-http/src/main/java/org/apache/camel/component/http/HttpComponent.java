@@ -215,8 +215,11 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
         String authMethodPriority = getAndRemoveParameter(parameters, "authMethodPriority", String.class);
+        Boolean authPreemptive = getAndRemoveParameter(parameters, "authPreemptive", Boolean.class, Boolean.TRUE);
+
         // http client can be configured from URI options
         HttpClientParams clientParams = new HttpClientParams();
+        clientParams.setAuthenticationPreemptive(authPreemptive);
         IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
         // validate that we could resolve all httpClient. parameters as this component is lenient
         validateParameters(uri, parameters, "httpClient.");       
