@@ -33,6 +33,16 @@
   </description>
   <packaging>bundle</packaging>
   
+  <repositories>
+      <!-- for javax mail and jvnet mock-mail -->
+      <repository>
+          <id>java.net.m2</id>
+          <name>Java.net Repository for Maven</name>
+          <url>http://download.java.net/maven/2/</url>
+          <layout>default</layout>
+      </repository>
+  </repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -65,27 +75,27 @@
 			<artifactId>camel-mail</artifactId>
 		</dependency>
 		
-        <!-- mock mail server so we do not send an email for real -->
-        <dependency>
-            <groupId>org.jvnet.mock-javamail</groupId>
-            <artifactId>mock-javamail</artifactId>
-            <version>1.7</version>
-            <exclusions>
-              <exclusion>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-              </exclusion>
-            </exclusions>
-            <scope>test</scope>
-        </dependency>
-        
-       <dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <!-- mock mail server so we do not send an email for real -->
+    <dependency>
+        <groupId>org.jvnet.mock-javamail</groupId>
+        <artifactId>mock-javamail</artifactId>
+        <version>1.7</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+          </exclusion>
+        </exclusions>
+        <scope>test</scope>
+    </dependency>
 
-		<!-- cxf -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- cxf -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-core</artifactId>
@@ -116,12 +126,12 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>
-        <dependency>
-           <groupId>org.slf4j</groupId>
-           <artifactId>slf4j-log4j12</artifactId>
-         </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
 
-		<!-- cxf web container for unit testing -->
+    <!-- cxf web container for unit testing -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-transports-http-jetty</artifactId>
@@ -242,7 +252,7 @@
 				</configuration>
 			</plugin>
 
-        </plugins>
-    </build>
+    </plugins>
+  </build>
 
 </project>
