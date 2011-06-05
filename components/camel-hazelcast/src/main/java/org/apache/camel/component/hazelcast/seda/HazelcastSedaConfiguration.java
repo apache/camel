@@ -24,6 +24,7 @@ public class HazelcastSedaConfiguration {
     private int concurrentConsumers = 1;
     private int pollInterval = 1000;
     private String queueName;
+    private boolean transferExchange;
 
     public HazelcastSedaConfiguration() {
         super();
@@ -52,4 +53,13 @@ public class HazelcastSedaConfiguration {
     public void setPollInterval(int pollInterval) {
         this.pollInterval = pollInterval;
     }
+
+    public boolean isTransferExchange() {
+        return transferExchange;
+    }
+
+    public void setTransferExchange(boolean transferExchange) {
+        this.transferExchange = transferExchange;
+    }
+
 }

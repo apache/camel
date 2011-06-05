@@ -20,25 +20,21 @@ import java.io.Serializable;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.impl.DefaultExchangeHolder;
 
 /**
  * Implementation of Hazelcast SEDA {@link Producer} component. Just appends exchange body into a Hazelcast {@link BlockingQueue}.
  */
-public class HazelcastSedaProducer extends DefaultProducer implements AsyncProcessor {
+public class HazelcastSedaProducer extends DefaultAsyncProducer {
 
     private final transient BlockingQueue queue;
 
     public HazelcastSedaProducer(final HazelcastSedaEndpoint endpoint, final BlockingQueue hzlq) {
         super(endpoint);
         this.queue = hzlq;
-    }
-
-    public void process(final Exchange exchange) throws Exception {
-        checkAndStore(exchange);
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
@@ -52,11 +48,18 @@ public class HazelcastSedaProducer extends DefaultProducer implements AsyncProce
         Object obj;
         Object body = exchange.getIn().getBody();
 
-        // in case body is not serializable convert to byte array
-        if (!(body instanceof Serializable)) {
-            obj = exchange.getIn().getBody(byte[].class);
+        final HazelcastSedaEndpoint endpoint = (HazelcastSedaEndpoint) this.getEndpoint();
+        final HazelcastSedaConfiguration configuration = endpoint.getConfiguration();
+
+        if (configuration.isTransferExchange()) {
+            obj = DefaultExchangeHolder.marshal(exchange);
         } else {
-            obj = body;
+            // in case body is not serializable convert to byte array
+            if (!(body instanceof Serializable)) {
+                obj = exchange.getIn().getBody(byte[].class);
+            } else {
+                obj = body;
+            }
         }
 
         queue.add(obj);

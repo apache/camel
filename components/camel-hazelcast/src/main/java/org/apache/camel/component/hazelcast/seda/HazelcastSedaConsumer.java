@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,10 +79,16 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 final Object body = queue.poll(endpoint.getConfiguration().getPollInterval(), TimeUnit.MILLISECONDS);
 
                 if (body != null) {
-                    exchange.getIn().setBody(body);
+                    if (body instanceof DefaultExchangeHolder) {
+                        DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) body);
+                    } else {
+                        exchange.getIn().setBody(body);
+                    }
                     try {
+                        // process using the asynchronous routing engine
                         processor.process(exchange, new AsyncCallback() {
-                            public void done(final boolean sync) {
+                            public void done(boolean asyncDone) {
+                                // noop
                             }
                         });
 
