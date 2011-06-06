@@ -1132,6 +1132,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Ends the current block and returns back to the {@link TryDefinition doTry()} DSL.
+     *
+     * @return the builder
+     */
+    public TryDefinition endDoTry() {
+        return (TryDefinition) end();
+    }
+
+    /**
      * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
