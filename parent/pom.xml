@@ -93,6 +93,7 @@
     <jackson-version>1.8.1</jackson-version>
     <jain-sip-ri-bundle-version>1.2.154_1</jain-sip-ri-bundle-version>
     <jasypt-version>1.7</jasypt-version>
+    <java-apns-version>0.1.6</java-apns-version>
     <javassist-bundle-version>3.9.0.GA_1</javassist-bundle-version>
     <javax-mail-version>1.4.4</javax-mail-version>
     <jaxen-version>1.1.1</jaxen-version>
@@ -225,6 +226,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-amqp</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-apns</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

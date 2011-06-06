@@ -35,6 +35,7 @@
       <includes>
         <include>org.apache.camel:camel-ahc</include>
         <include>org.apache.camel:camel-amqp</include>
+        <include>org.apache.camel:camel-apns</include>
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-aws</include>
         <include>org.apache.camel:camel-bam</include>

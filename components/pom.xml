@@ -53,6 +53,7 @@
     <!-- regular modules in alphabetic order -->
     <module>camel-ahc</module>
     <module>camel-amqp</module>
+    <module>camel-apns</module>
     <module>camel-atom</module>
     <module>camel-aws</module>
     <module>camel-bean-validator</module>
