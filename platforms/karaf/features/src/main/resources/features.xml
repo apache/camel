@@ -170,6 +170,14 @@
     <feature version='${pom.version}'>camel-jms</feature>
     <bundle>mvn:org.apache.camel/camel-amqp/${pom.version}</bundle>
   </feature>
+<!-- TODO: apns bundle does not work - SMX4-857
+  <feature name='camel-apns' version='${pom.version}' resolver='(obr)'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
+    <bundle dependency="true">mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.java-apns/${java-apns-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-apns/${pom.version}</bundle>
+  </feature> -->
   <feature name='camel-atom' version='${pom.version}' resolver='(obr)'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.abdera/${abdera-bundle-version}</bundle>
