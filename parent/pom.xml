@@ -94,7 +94,7 @@
     <jain-sip-ri-bundle-version>1.2.154_1</jain-sip-ri-bundle-version>
     <jasypt-version>1.7</jasypt-version>
     <javassist-bundle-version>3.9.0.GA_1</javassist-bundle-version>
-    <javax-mail-version>1.4.3</javax-mail-version>
+    <javax-mail-version>1.4.4</javax-mail-version>
     <jaxen-version>1.1.1</jaxen-version>
     <jdom-version>1.1</jdom-version>
     <jetty-version>7.4.1.v20110513</jetty-version>
