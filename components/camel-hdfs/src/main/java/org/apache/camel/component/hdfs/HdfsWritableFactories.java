@@ -282,8 +282,9 @@ public class HdfsWritableFactories {
 
         @Override
         public Writable create(Object value, TypeConverter typeConverter, Holder<Integer> size) {
+        	InputStream  is = null;
             try {
-                InputStream is = typeConverter.convertTo(InputStream.class, value);
+                is = typeConverter.convertTo(InputStream.class, value);
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 IOUtils.copyBytes(is, bos, HdfsConstants.DEFAULT_BUFFERSIZE, false);
                 BytesWritable writable = new BytesWritable();
@@ -292,6 +293,14 @@ public class HdfsWritableFactories {
                 return writable;
             } catch (IOException ex) {
                 throw new RuntimeCamelException(ex);
+            } finally {
+            	if (is != null) {
+            		try {
+						is.close();
+					} catch (IOException e) {
+						throw new RuntimeException("Error closing stream", e);
+					}
+            	}
             }
         }
 

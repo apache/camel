@@ -61,7 +61,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             template.sendBodyAndHeader("file://target/file-batch1/", "CIAO", "CamelFileName", "CIAO" + i);
         }
 
-        nb.matchesMockWaitTime();
+        Assert.assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
         context.stop();
 
         InputStream in = null;
@@ -96,7 +96,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             template.sendBodyAndHeader("file://target/file-batch2", "CIAO", "CamelFileName", "CIAO" + i);
         }
 
-        nb.matchesMockWaitTime();
+        Assert.assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
         context.stop();
 
         Configuration conf = new Configuration();
@@ -136,7 +136,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             template.sendBodyAndHeader("file://target/file-batch3", "CIAO", "CamelFileName", "CIAO" + i);
         }
 
-        nb.matchesMockWaitTime();
+        Assert.assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
         context.stop();
 
         Configuration conf = new Configuration();
@@ -177,7 +177,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             template.sendBodyAndHeader("file://target/file-batch4", "CIAO" + i, "CamelFileName", "CIAO" + i);
         }
 
-        nb.matchesMockWaitTime();
+        Assert.assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
         context.stop();
 
         Configuration conf = new Configuration();
@@ -220,7 +220,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             template.sendBodyAndHeader("file://target/file-batch5", bb, "CamelFileName", "CIAO" + i);
         }
 
-        nb.matchesMockWaitTime();
+        Assert.assertTrue("Timeout waiting for match" + nb.toString(), nb.matchesMockWaitTime());
         context.stop();
 
         Configuration conf = new Configuration();

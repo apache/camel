@@ -44,6 +44,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.MapFile;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.SequenceFile;
+import org.apache.hadoop.io.SequenceFile.Writer;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
@@ -55,11 +56,20 @@ public enum HdfsFileType {
     NORMAL_FILE {
         @Override
         public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
+        	InputStream is = null;
             try {
-                InputStream is = typeConverter.convertTo(InputStream.class, value);
+                is = typeConverter.convertTo(InputStream.class, value);
                 return copyBytes(is, (FSDataOutputStream) hdfsostr.getOut(), HdfsConstants.DEFAULT_BUFFERSIZE, false);
             } catch (IOException ex) {
                 throw new RuntimeCamelException(ex);
+            } finally {
+            	if (is != null) {
+            		try {
+						is.close();
+					} catch (IOException e) {
+						throw new RuntimeException("Error closing stream", e);
+					}
+            	}
             }
         }
 
@@ -130,8 +140,9 @@ public enum HdfsFileType {
                 Writable keyWritable = getWritable(key, typeConverter, keySize);
                 Holder<Integer> valueSize = new Holder<Integer>();
                 Writable valueWritable = getWritable(value, typeConverter, valueSize);
-                ((SequenceFile.Writer) hdfsostr.getOut()).append(keyWritable, valueWritable);
-                ((SequenceFile.Writer) hdfsostr.getOut()).sync();
+                Writer writer = (SequenceFile.Writer) hdfsostr.getOut();
+                writer.append(keyWritable, valueWritable);
+                writer.sync();
                 return keySize.value + valueSize.value;
             } catch (Exception ex) {
                 throw new RuntimeCamelException(ex);
