@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.helyx.camel.apns.ApnsComponent
+class=org.apache.camel.component.apns.ApnsComponent
