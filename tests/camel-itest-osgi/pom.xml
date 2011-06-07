@@ -342,6 +342,7 @@
               </includes>
               <excludes>
                   <exclude>**/FIXMETest.*</exclude>
+                  <exclude>**/*Test.*</exclude>
               </excludes>
               <systemPropertyVariables>
                   <springVersion>${spring-version}</springVersion>

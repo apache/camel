@@ -159,6 +159,7 @@
           <excludes>
             <!-- TODO FIXME ASAP -->
             <exclude>**/XXXTest.*</exclude>            
+            <exclude>**/LRUSoftCacheTest.*</exclude>            
           </excludes>
         </configuration>
       </plugin>
