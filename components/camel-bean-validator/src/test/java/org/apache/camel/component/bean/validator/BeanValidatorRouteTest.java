@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.bean.validator;
 
+import java.util.Locale;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -24,12 +25,26 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @version 
  */
 public class BeanValidatorRouteTest extends CamelTestSupport {
+	private Locale origLocale;
+
+	@Before
+	public void setLanguage() {
+		origLocale = Locale.getDefault();
+		Locale.setDefault(Locale.US);
+	}
+	
+	@After
+	public void restoreLanguage() {
+		Locale.setDefault(origLocale);
+	}
     
     @Test
     public void validateShouldSuccessWithImpliciteDefaultGroup() throws Exception {
