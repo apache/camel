@@ -44,7 +44,7 @@ public class BeanValidatorComponent extends DefaultComponent {
         ConstraintValidatorFactory constraintValidatorFactory = resolveAndRemoveReferenceParameter(parameters, "constraintValidatorFactory", ConstraintValidatorFactory.class);
         String group = getAndRemoveParameter(parameters, "group", String.class);
         
-        Configuration configuration = Validation.byDefaultProvider().configure();
+        Configuration<?> configuration = Validation.byDefaultProvider().configure();
         
         if (messageInterpolator != null) {
             configuration.messageInterpolator(messageInterpolator);

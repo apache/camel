@@ -38,7 +38,7 @@ public class BeanValidator implements Processor {
     
     private ValidatorFactory validatorFactory;
     private Validator validator;
-    private Class group;
+    private Class<?> group;
     
     public void process(Exchange exchange) throws Exception {
         Object bean = exchange.getIn().getBody();
@@ -68,11 +68,11 @@ public class BeanValidator implements Processor {
         return validator;
     }
     
-    public Class getGroup() {
+    public Class<?> getGroup() {
         return group;
     }
    
-    public void setGroup(Class group) {
+    public void setGroup(Class<?> group) {
         this.group = group;
     }
 
