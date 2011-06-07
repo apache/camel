@@ -73,7 +73,7 @@ public class ContextScopedOnExceptionNotHandledErrorHandlerRefIssueTwoRoutesTest
                 onException(IllegalArgumentException.class)
                     .handled(false)
                     .to("mock:handled")
-                .end();
+                    .end();
 
                 from("direct:foo")
                     .to("mock:foo")

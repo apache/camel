@@ -64,7 +64,7 @@ public class ContextScopedOnExceptionErrorHandlerRefIssueTwoRoutesTest extends C
                 onException(IllegalArgumentException.class)
                     .handled(true)
                     .to("mock:handled")
-                .end();
+                    .end();
 
                 from("direct:foo")
                     .errorHandler(new ErrorHandlerBuilderRef("myDLC"))

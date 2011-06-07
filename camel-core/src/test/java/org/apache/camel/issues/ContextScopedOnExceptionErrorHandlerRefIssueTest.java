@@ -54,7 +54,7 @@ public class ContextScopedOnExceptionErrorHandlerRefIssueTest extends ContextTes
                 onException(IllegalArgumentException.class)
                     .handled(true)
                     .to("mock:handled")
-                .end();
+                    .end();
 
                 from("direct:start")
                     .to("mock:a")

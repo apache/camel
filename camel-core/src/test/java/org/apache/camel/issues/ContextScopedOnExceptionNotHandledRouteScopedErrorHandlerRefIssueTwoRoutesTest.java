@@ -71,7 +71,7 @@ public class ContextScopedOnExceptionNotHandledRouteScopedErrorHandlerRefIssueTw
                 onException(IllegalArgumentException.class)
                     .handled(false)
                     .to("mock:handled")
-                .end();
+                    .end();
 
                 from("direct:foo")
                     .errorHandler(new ErrorHandlerBuilderRef("myDLC"))

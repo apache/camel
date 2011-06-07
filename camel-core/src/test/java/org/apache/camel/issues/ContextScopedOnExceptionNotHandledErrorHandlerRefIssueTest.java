@@ -59,7 +59,7 @@ public class ContextScopedOnExceptionNotHandledErrorHandlerRefIssueTest extends 
                 onException(IllegalArgumentException.class)
                     .handled(false)
                     .to("mock:handled")
-                .end();
+                    .end();
 
                 errorHandler(new ErrorHandlerBuilderRef("myDLC"));
 
