@@ -38,13 +38,17 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
     private WebServiceTemplate webServiceTemplate;
 
     public ConsumerEndpointMappingByBeanNameRouteTest() throws IOException {
-        expectedResponse = FileUtil.readFileAsString("/stockquote-response.xml");
+        expectedResponse = toUnixLineEndings(FileUtil.readFileAsString("/stockquote-response.xml"));
     }
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
         webServiceTemplate = (WebServiceTemplate) applicationContext.getBean("webServiceTemplate");
+    }
+    
+    public String toUnixLineEndings(String inSt) {
+    	return inSt.replace("\r\n", "\n");
     }
 
     @Test
@@ -54,7 +58,7 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
         StreamResult result = new StreamResult(sw);
         webServiceTemplate.sendSourceAndReceiveToResult(source, result);
         assertNotNull(result);
-        assertEquals(expectedResponse, sw.toString());
+        assertEquals(expectedResponse, toUnixLineEndings(sw.toString()));
     }
 
     @Override
