@@ -75,7 +75,6 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void putAll(Map<? extends K, ? extends V> map) {
         // do not use entrySet but copy one by one
         for (K key : map.keySet()) {

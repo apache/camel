@@ -25,13 +25,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
-/**
+/*
  * @version 
  */
 public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
-    private static AtomicInteger retry = new AtomicInteger();
-    private static AtomicInteger onExceptionRetry = new AtomicInteger();
+    private static final AtomicInteger RETRY = new AtomicInteger();
+    private static final AtomicInteger ON_EXCEPTION_RETRY = new AtomicInteger();
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -39,8 +39,8 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
     }
 
     public void testExceptionThrownFromOnException() throws Exception {
-        retry.set(0);
-        onExceptionRetry.set(0);
+        RETRY.set(0);
+        ON_EXCEPTION_RETRY.set(0);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -52,7 +52,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            onExceptionRetry.incrementAndGet();
+                            ON_EXCEPTION_RETRY.incrementAndGet();
                             throw new IOException("Some other IOException");
                         }
                     })
@@ -67,7 +67,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            retry.incrementAndGet();
+                            RETRY.incrementAndGet();
                             throw new IOException("IO error");
                         }
                     })
@@ -92,13 +92,13 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, retry.get());
-        assertEquals("Should only invoke onException once", 1, onExceptionRetry.get());
+        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
+        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
     public void testExceptionThrownFromOnExceptionAndHandled() throws Exception {
-        retry.set(0);
-        onExceptionRetry.set(0);
+        RETRY.set(0);
+        ON_EXCEPTION_RETRY.set(0);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -112,7 +112,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            onExceptionRetry.incrementAndGet();
+                            ON_EXCEPTION_RETRY.incrementAndGet();
                             throw new IOException("Some other IOException");
                         }
                     })
@@ -127,7 +127,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            retry.incrementAndGet();
+                            RETRY.incrementAndGet();
                             throw new IOException("IO error");
                         }
                     })
@@ -152,13 +152,13 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, retry.get());
-        assertEquals("Should only invoke onException once", 1, onExceptionRetry.get());
+        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
+        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
     public void testExceptionThrownFromOnExceptionWithDeadLetterChannel() throws Exception {
-        retry.set(0);
-        onExceptionRetry.set(0);
+        RETRY.set(0);
+        ON_EXCEPTION_RETRY.set(0);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -173,7 +173,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            onExceptionRetry.incrementAndGet();
+                            ON_EXCEPTION_RETRY.incrementAndGet();
                             throw new IOException("Some other IOException");
                         }
                     })
@@ -188,7 +188,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            retry.incrementAndGet();
+                            RETRY.incrementAndGet();
                             throw new IOException("IO error");
                         }
                     })
@@ -216,13 +216,13 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, retry.get());
-        assertEquals("Should only invoke onException once", 1, onExceptionRetry.get());
+        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
+        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
     public void testExceptionThrownFromOnExceptionAndHandledWithDeadLetterChannel() throws Exception {
-        retry.set(0);
-        onExceptionRetry.set(0);
+        RETRY.set(0);
+        ON_EXCEPTION_RETRY.set(0);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -239,7 +239,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            onExceptionRetry.incrementAndGet();
+                            ON_EXCEPTION_RETRY.incrementAndGet();
                             throw new IOException("Some other IOException");
                         }
                     })
@@ -254,7 +254,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            retry.incrementAndGet();
+                            RETRY.incrementAndGet();
                             throw new IOException("IO error");
                         }
                     })
@@ -282,13 +282,13 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, retry.get());
-        assertEquals("Should only invoke onException once", 1, onExceptionRetry.get());
+        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
+        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
     public void testNoExceptionThrownFromOnExceptionWithDeadLetterChannel() throws Exception {
-        retry.set(0);
-        onExceptionRetry.set(0);
+        RETRY.set(0);
+        ON_EXCEPTION_RETRY.set(0);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -303,7 +303,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            onExceptionRetry.incrementAndGet();
+                            ON_EXCEPTION_RETRY.incrementAndGet();
                             // no exception is thrown this time
                         }
                     })
@@ -318,7 +318,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            retry.incrementAndGet();
+                            RETRY.incrementAndGet();
                             throw new IOException("IO error");
                         }
                     })
@@ -348,13 +348,13 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, retry.get());
-        assertEquals("Should only invoke onException once", 1, onExceptionRetry.get());
+        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
+        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
     public void testNoExceptionThrownFromOnExceptionAndHandledWithDeadLetterChannel() throws Exception {
-        retry.set(0);
-        onExceptionRetry.set(0);
+        RETRY.set(0);
+        ON_EXCEPTION_RETRY.set(0);
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -371,7 +371,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            onExceptionRetry.incrementAndGet();
+                            ON_EXCEPTION_RETRY.incrementAndGet();
                             // no exception is thrown this time
                         }
                     })
@@ -386,7 +386,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            retry.incrementAndGet();
+                            RETRY.incrementAndGet();
                             throw new IOException("IO error");
                         }
                     })
@@ -409,8 +409,8 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("Should try 4 times (1 first, 3 retry)", 4, retry.get());
-        assertEquals("Should only invoke onException once", 1, onExceptionRetry.get());
+        assertEquals("Should try 4 times (1 first, 3 retry)", 4, RETRY.get());
+        assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
 }

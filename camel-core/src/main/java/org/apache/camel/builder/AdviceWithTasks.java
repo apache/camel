@@ -93,7 +93,7 @@ public final class AdviceWithTasks {
      */
     private static final class MatchByType implements MatchBy {
 
-        private final Class type;
+        private final Class<?> type;
 
         private MatchByType(Class<?> type) {
             this.type = type;

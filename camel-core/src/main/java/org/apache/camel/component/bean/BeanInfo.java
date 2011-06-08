@@ -339,6 +339,7 @@ public class BeanInfo {
     }
 
     protected List<Annotation>[] collectParameterAnnotations(Class<?> c, Method m) {
+        @SuppressWarnings("unchecked")
         List<Annotation>[] annotations = new List[m.getParameterTypes().length];
         for (int i = 0; i < annotations.length; i++) {
             annotations[i] = new ArrayList<Annotation>();

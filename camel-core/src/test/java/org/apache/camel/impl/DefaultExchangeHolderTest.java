@@ -146,6 +146,7 @@ public class DefaultExchangeHolderTest extends ContextTestSupport {
             this.foo = foo;
         }
 
+        @SuppressWarnings("unused")
         public String getFoo() {
             return foo;
         }
