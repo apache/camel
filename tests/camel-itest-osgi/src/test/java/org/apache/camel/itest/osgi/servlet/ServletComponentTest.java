@@ -50,7 +50,7 @@ public class ServletComponentTest extends OSGiIntegrationSpringTestSupport {
             Helper.getDefaultOptions(
             // this is how you set the default log level when using pax logging (logProfile)
                 Helper.setLogLevel("WARN")),
-            Helper.loadKarafStandardFeatures("http", "war"),
+            Helper.loadKarafStandardFeatures("spring", "jetty", "http", "war"),
             // set the system property for pax web
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.osgi.service.http.port").value("9080"),
             

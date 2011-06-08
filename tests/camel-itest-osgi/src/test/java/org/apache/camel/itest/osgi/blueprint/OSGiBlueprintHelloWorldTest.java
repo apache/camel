@@ -86,6 +86,9 @@ public class OSGiBlueprintHelloWorldTest extends OSGiBlueprintTestSupport {
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-13.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, OSGiBlueprintHelloWorldTest.class.getName())
                         .build()).noStart(),
+                        
+                // install the spring, http features first
+                scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
 
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),

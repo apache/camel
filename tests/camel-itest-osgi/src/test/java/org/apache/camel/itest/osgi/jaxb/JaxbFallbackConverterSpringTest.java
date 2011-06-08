@@ -18,7 +18,6 @@ package org.apache.camel.itest.osgi.jaxb;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
-import org.apache.karaf.testing.Helper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -26,11 +25,8 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 public class JaxbFallbackConverterSpringTest extends OSGiIntegrationSpringTestSupport {
@@ -56,19 +52,11 @@ public class JaxbFallbackConverterSpringTest extends OSGiIntegrationSpringTestSu
     }    
     
     @Configuration
-    public static Option[] configure() throws Exception {
+    public static Option[] configure() {
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),
-            // using the features to install the camel components             
-            scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-spring", "camel-test", "camel-jaxb"),
-            
-            workingDirectory("target/paxrunner/"),
-
-            felix(), equinox());
+            getDefaultCamelKarafOptions(),
+            // using the features to install the other camel components             
+            scanFeatures(getCamelKarafFeatureUrl(), "camel-jaxb"));
         
         return options;
     }

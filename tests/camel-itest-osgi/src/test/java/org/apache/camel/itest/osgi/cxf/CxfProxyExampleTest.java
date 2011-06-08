@@ -88,6 +88,9 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
             Helper.getDefaultOptions(
             // this is how you set the default log level when using pax logging (logProfile)
                   Helper.setLogLevel("WARN")),
+                  
+            // install the spring, http features first
+            scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
            
             // using the features to install the camel components
             scanFeatures(getCamelKarafFeatureUrl(),

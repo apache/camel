@@ -72,39 +72,46 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     }
     
     public static UrlReference getCamelKarafFeatureUrl() {
-        String springVersion = System.getProperty("springVersion");
-        System.out.println("*** The spring version is " + springVersion + " ***");
-
+        
         String type = "xml/features";
         return mavenBundle().groupId("org.apache.camel.karaf").
             artifactId("apache-camel").versionAsInProject().type(type);
     }
     
     public static UrlReference getKarafFeatureUrl() {
-        String karafVersion = "2.2.1";
+        String karafVersion = System.getProperty("karafVersion");
         System.out.println("*** The karaf version is " + karafVersion + " ***");
 
         String type = "xml/features";
         return mavenBundle().groupId("org.apache.karaf.assemblies.features").
             artifactId("standard").version(karafVersion).type(type);
     }
-
-    @Configuration
-    public static Option[] configure() throws Exception {
+    
+    public static Option[] getDefaultCamelKarafOptions() {
         Option[] options = combine(
             // Default karaf environment
             Helper.getDefaultOptions(
             // this is how you set the default log level when using pax logging (logProfile)
-                  Helper.setLogLevel("WARN")),
+                Helper.setLogLevel("WARN")),
+                                         
+            // install the spring, http features first
+            scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
 
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-spring", "camel-test"),
-            
+                "camel-core", "camel-spring", "camel-test"),
+                                   
             workingDirectory("target/paxrunner/"),
 
             equinox(),
             felix());
+        return options;
+    }
+
+    @Configuration
+    public static Option[] configure() throws Exception {
+        Option[] options = combine(
+            getDefaultCamelKarafOptions());
 
         // for remote debugging
         // vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),

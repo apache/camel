@@ -18,7 +18,6 @@ package org.apache.camel.itest.osgi.ahc;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.apache.karaf.testing.Helper;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,11 +25,8 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 /**
  *
@@ -70,17 +66,11 @@ public class AhcTest extends OSGiIntegrationTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-                    // this is how you set the default log level when using pax logging (logProfile)
-                    Helper.setLogLevel("WARN")),
-            // using the features to install the camel components
+            getDefaultCamelKarafOptions(),
+            
+            // using the features to install other camel components
             scanFeatures(getCamelKarafFeatureUrl(),
-                          "camel-core", "camel-test", "camel-jetty", "camel-ahc"),
-
-            workingDirectory("target/paxrunner/"),
-
-            felix(), equinox());
+                          "camel-jetty", "camel-ahc"));
 
         return options;
     }

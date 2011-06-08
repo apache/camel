@@ -22,25 +22,15 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.aws.sqs.SqsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
-import org.apache.karaf.testing.Helper;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
-
 @RunWith(JUnit4TestRunner.class)
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey in CamelIntegrationContext.xml!")
-public class AwsSqsIntegrationTest extends OSGiIntegrationSpringTestSupport {
+public class AwsSqsIntegrationTest extends AwsTestSupport {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
@@ -94,23 +84,5 @@ public class AwsSqsIntegrationTest extends OSGiIntegrationSpringTestSupport {
         
         assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
-    }
-
-    @Configuration
-    public static Option[] configure() {
-        Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),
-
-            // using the features to install the camel components             
-            scanFeatures(getCamelKarafFeatureUrl(),                         
-                "camel-core", "camel-spring", "camel-test", "camel-aws"),
-            workingDirectory("target/paxrunner/"),
-            equinox(),
-            felix());
-        
-        return options;
     }
 }

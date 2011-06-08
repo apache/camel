@@ -52,22 +52,14 @@ public class StreamTest extends OSGiIntegrationTestSupport {
             }
         };
     }
-    
     @Configuration
-    public static Option[] configure() throws Exception {
+    public static Option[] configure() {
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),
-            // using the features to install the camel components             
-            scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-test", "camel-stream"),
-            
-            workingDirectory("target/paxrunner/"),
-
-            felix(), equinox());
+            getDefaultCamelKarafOptions(),
+            // using the features to install the other camel components             
+            scanFeatures(getCamelKarafFeatureUrl(), "camel-stream"));
         
         return options;
     }
+    
 }

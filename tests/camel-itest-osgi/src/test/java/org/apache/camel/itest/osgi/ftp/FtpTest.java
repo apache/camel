@@ -62,6 +62,9 @@ public class FtpTest extends OSGiIntegrationSpringTestSupport {
             mavenBundle().groupId("org.apache.ftpserver").artifactId("ftpserver-core").version("1.0.5"),
             mavenBundle().groupId("org.apache.ftpserver").artifactId("ftplet-api").version("1.0.5"),
 
+            // install the spring, http features first
+            scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
+            
             // using the features to install the camel components
             scanFeatures(getCamelKarafFeatureUrl(),                         
                           "camel-core", "camel-spring", "camel-test", "camel-ftp"),

@@ -188,6 +188,8 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                        .build()).noStart(),
                         
+                // install the spring, http features first
+                scanFeatures(getKarafFeatureUrl(), "jetty"),
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
                         "camel-core", "camel-blueprint", "camel-test", "camel-mail", "camel-jaxb", "camel-jms"),

@@ -90,6 +90,8 @@ public class BlueprintPropertiesRouteTest extends OSGiBlueprintTestSupport {
                 // install blueprint requirements
                 mavenBundle("org.apache.felix", "org.apache.felix.configadmin"),
 
+                // install the spring, http features first
+                scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
                         "camel-core", "camel-blueprint", "camel-test"),

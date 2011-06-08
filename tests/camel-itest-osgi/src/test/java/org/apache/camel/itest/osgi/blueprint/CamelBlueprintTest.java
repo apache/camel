@@ -146,6 +146,9 @@ public class CamelBlueprintTest extends OSGiBlueprintTestSupport {
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle5")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
+                        
+                // install the spring, http features first
+                scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
 
                  // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),

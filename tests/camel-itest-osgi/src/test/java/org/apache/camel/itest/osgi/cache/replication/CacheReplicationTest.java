@@ -20,6 +20,7 @@ import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.apache.karaf.testing.Helper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -70,6 +71,9 @@ public class CacheReplicationTest extends OSGiIntegrationSpringTestSupport {
                     // this is how you set the default log level when using pax
                     // logging (logProfile)
                     Helper.setLogLevel("WARN")),
+                    
+                    // install the spring, http features first
+                    scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
 
                     // using the features to install AMQ
                     scanFeatures("mvn:org.apache.activemq/activemq-karaf/5.5.0/xml/features",

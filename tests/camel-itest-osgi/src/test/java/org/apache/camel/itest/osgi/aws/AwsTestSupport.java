@@ -14,51 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi.script;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+package org.apache.camel.itest.osgi.aws;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
-/**
- * Test camel-script for groovy expressions in OSGi
- */
-@RunWith(JUnit4TestRunner.class)
-public class GroovyScriptOsgiTest extends OSGiIntegrationTestSupport {
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:start").setBody().groovy("request.body * 2").to("mock:result");
-            }
-        };
-    }
 
-    @Test
-    public void testLanguage() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived(6);
-
-        template.sendBody("direct:start", 3);
-
-        assertMockEndpointsSatisfied();
-    }
+public abstract class AwsTestSupport extends OSGiIntegrationSpringTestSupport {
+    
     
     @Configuration
     public static Option[] configure() {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
-            scanFeatures(getCamelKarafFeatureUrl(), "camel-script", "camel-groovy"));
+            // using the features to install the other camel components             
+            scanFeatures(getCamelKarafFeatureUrl(), "camel-aws"));
+        
         return options;
     }
-    
-   
+
 }

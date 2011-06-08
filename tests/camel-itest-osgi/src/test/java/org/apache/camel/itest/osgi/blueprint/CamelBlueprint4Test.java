@@ -91,6 +91,9 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
                         .add("org/apache/camel/itest/osgi/blueprint/example.vm", OSGiBlueprintTestSupport.class.getResource("example.vm"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle20")
                         .build()).noStart(),
+                        
+                // install the spring, http features first
+                scanFeatures(getKarafFeatureUrl(), "spring", "jetty"),
 
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),

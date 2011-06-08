@@ -27,17 +27,13 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.swissbox.tinybundles.dp.Constants;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
-
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("TODO: fix me")
+//@Ignore("TODO: fix me")
 public class OSGiMulitJettyCamelContextsTest extends OSGiIntegrationTestSupport {
    
     @Test
@@ -66,16 +62,13 @@ public class OSGiMulitJettyCamelContextsTest extends OSGiIntegrationTestSupport 
         response = template.requestBody(endpointURI, "Hello World", String.class);
         assertEquals("response is " , "camelContext2", response);
     }
+    
     @Configuration
-    public static Option[] configure() throws Exception {
+    public static Option[] configure() {
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")), 
-            // using the features to install the camel components             
-            scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-spring", "camel-test", "camel-jetty"),
+            getDefaultCamelKarafOptions(),
+            // using the features to install the other camel components             
+            scanFeatures(getCamelKarafFeatureUrl(), "camel-jetty"),
             //set up the camel context bundle1          
             provision(newBundle().add("META-INF/spring/CamelContext1.xml", OSGiMulitJettyCamelContextsTest.class.getResource("CamelContext1.xml"))
                       .add(JettyProcessor.class)
@@ -89,15 +82,11 @@ public class OSGiMulitJettyCamelContextsTest extends OSGiIntegrationTestSupport 
                       .add(JettyProcessor.class)           
                       .set(Constants.BUNDLE_SYMBOLICNAME, "org.apache.camel.itest.osgi.CamelContextBundle2")
                       .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                      .set(Constants.BUNDLE_NAME, "CamelContext2").build()),
-                      
-            
-            workingDirectory("target/paxrunner/"),
-             
-            equinox(),
-            felix());
+                      .set(Constants.BUNDLE_NAME, "CamelContext2").build())   
+        );
         
         return options;
     }
+    
 
 }

@@ -112,6 +112,9 @@ public class MyBatisTest extends OSGiIntegrationTestSupport {
             // this is how you set the default log level when using pax logging (logProfile)
                 Helper.setLogLevel("WARN")),
                 
+            // install the spring, http features first
+            scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
+                
             mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"),
 
             // using the features to install the camel components

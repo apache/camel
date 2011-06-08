@@ -36,7 +36,7 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
-public class AwsSnsTest extends OSGiIntegrationSpringTestSupport {
+public class AwsSnsTest extends AwsTestSupport {
     
     @Override
     protected OsgiBundleXmlApplicationContext createApplicationContext() {
@@ -66,22 +66,5 @@ public class AwsSnsTest extends OSGiIntegrationSpringTestSupport {
         
         assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getOut().getHeader(SnsConstants.MESSAGE_ID));
     }
-
-    @Configuration
-    public static Option[] configure() {
-        Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),
-
-            // using the features to install the camel components             
-            scanFeatures(getCamelKarafFeatureUrl(),                         
-                "camel-core", "camel-spring", "camel-test", "camel-aws"),
-            workingDirectory("target/paxrunner/"),
-            equinox(),
-            felix());
-        
-        return options;
-    }
+    
 }

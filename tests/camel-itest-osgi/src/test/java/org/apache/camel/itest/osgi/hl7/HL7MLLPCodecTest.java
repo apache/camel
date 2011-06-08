@@ -19,7 +19,6 @@ package org.apache.camel.itest.osgi.hl7;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
-import org.apache.karaf.testing.Helper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -27,12 +26,8 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 public class HL7MLLPCodecTest extends OSGiIntegrationSpringTestSupport implements Processor {
@@ -63,25 +58,15 @@ public class HL7MLLPCodecTest extends OSGiIntegrationSpringTestSupport implement
         String out = "MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123\rMSA|AA|123\n"; 
         exchange.getOut().setBody(out);
     }
-
+    
     @Configuration
-    public static Option[] configure() throws Exception {
+    public static Option[] configure() {
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),
-            // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(),
-                          "camel-core", "camel-spring", "camel-test", "camel-mina", "camel-hl7"),
-
-            // add hl7 osgi bundle
-            mavenBundle().groupId("http://hl7api.sourceforge.net/m2/!ca.uhn.hapi").artifactId("hapi-osgi-base").version("1.0.1"),
-
-            workingDirectory("target/paxrunner/"),
-
-            felix(), equinox());
-
+            getDefaultCamelKarafOptions(),
+             // using the features to install the other camel components             
+            scanFeatures(getCamelKarafFeatureUrl(), "camel-hl7", "camel-mina"));
+        
         return options;
     }
+
 }

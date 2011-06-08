@@ -29,11 +29,8 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 public class HL7DataFormatTest extends OSGiIntegrationTestSupport {
@@ -105,22 +102,15 @@ public class HL7DataFormatTest extends OSGiIntegrationTestSupport {
         body.append(line8);
         return body.toString();
     }
-
+    
     @Configuration
-    public static Option[] configure() throws Exception {
+    public static Option[] configure() {
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),
-            // using the features to install the camel components
-            scanFeatures(getCamelKarafFeatureUrl(),
-                          "camel-core", "camel-spring", "camel-test", "camel-hl7"),
-
-            workingDirectory("target/paxrunner/"),
-
-            felix(), equinox());
-
+            getDefaultCamelKarafOptions(),
+            // using the features to install the other camel components             
+            scanFeatures(getCamelKarafFeatureUrl(), "camel-hl7"));
+        
         return options;
     }
+
 }

@@ -132,7 +132,10 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             // Default karaf environment
             Helper.getDefaultOptions(
             // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),   
+                Helper.setLogLevel("WARN")),
+                
+            // install the spring, http features first
+            scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
                           "camel-core", "camel-spring", "camel-test", "camel-jpa"),

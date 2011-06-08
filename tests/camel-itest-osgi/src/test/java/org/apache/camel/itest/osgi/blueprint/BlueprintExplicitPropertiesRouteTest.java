@@ -91,6 +91,9 @@ public class BlueprintExplicitPropertiesRouteTest extends OSGiBlueprintTestSuppo
                 .set(Constants.BUNDLE_SYMBOLICNAME, BlueprintExplicitPropertiesRouteTest.class.getName())
                 .build()).noStart(),
 
+                // install the spring, http features first
+                scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
+                
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
                         "camel-core", "camel-blueprint", "camel-test"),
