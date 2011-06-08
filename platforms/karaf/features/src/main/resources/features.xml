@@ -17,6 +17,7 @@
       limitations under the License.
 -->
 <features>
+  <repository>mvn:org.apache.karaf.assemblies.features/standard/${karaf-version}/xml/features</repository>
   <feature name='camel' version='${pom.version}' resolver='(obr)'>
     <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-spring</feature>
