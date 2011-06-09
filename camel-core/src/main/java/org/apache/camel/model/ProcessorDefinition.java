@@ -77,8 +77,6 @@ import static org.apache.camel.builder.Builder.body;
 
 /**
  * Base class for processor types that most XML types extend.
- *
- * @version 
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition implements Block {
@@ -96,7 +94,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorDefinition> getOutputs();
-
     public abstract boolean isOutputSupported();
 
     /**
@@ -611,7 +608,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return (Type) this;
     }
 
-
     /**
      * Sends the exchange to the given endpoint
      *
@@ -636,7 +632,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(new ToDefinition(uri, pattern));
         return (Type) this;
     }   
-    
 
     /**
      * Sends the exchange with certain exchange pattern to the given endpoint
@@ -665,7 +660,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return (Type) this;
     }
 
-
     /**
      * Sends the exchange to a list of endpoints
      *
@@ -693,7 +687,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         }
         return (Type) this;
     }
-    
     
     /**
      * Sends the exchange to a list of endpoints
@@ -788,7 +781,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return to(ExchangePattern.InOnly, endpoint);
     }
 
-
     /**
      * Sends the message to the given endpoints using an
      * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
@@ -800,7 +792,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type inOnly(String... uris) {
         return to(ExchangePattern.InOnly, uris);
     }
-
 
     /**
      * Sends the message to the given endpoints using an
@@ -825,7 +816,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type inOnly(Iterable<Endpoint> endpoints) {
         return to(ExchangePattern.InOnly, endpoints);
     }
-
 
     /**
      * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
@@ -957,8 +947,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
      *
-     * @param aggregationStrategy the strategy used to aggregate responses for
-     *          every part
+     * @param aggregationStrategy the strategy used to aggregate responses for every part
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the builder
      */
@@ -2104,7 +2093,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * Stops continue routing the current {@link org.apache.camel.Exchange} and marks it as completed.
-     *
      * @return the builder
      */
     @SuppressWarnings("unchecked")
@@ -2197,7 +2185,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     // Transformers
     // -------------------------------------------------------------------------
-
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds the custom processor to this destination which could be a final
@@ -2804,7 +2791,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     // DataFormat support
     // -------------------------------------------------------------------------
-
     /**
      * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
      * Unmarshals the in body using a {@link DataFormat} expression to define
@@ -3008,5 +2994,4 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public String getLabel() {
         return "";
     }
-
 }
