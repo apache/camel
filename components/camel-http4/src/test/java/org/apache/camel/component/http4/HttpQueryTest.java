@@ -58,10 +58,21 @@ public class HttpQueryTest extends BaseHttpTest {
 
         assertExchange(exchange);
     }
+    
+    @Test
+    public void httpQueryWithUsernamePassword() throws Exception {
+        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/user/pass?password=baa&username=foo", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+            }
+        });
+
+        assertExchange(exchange);
+    }
 
     @Override
     protected void registerHandler(LocalTestServer server) {
         server.register("/", new BasicValidationHandler("GET", "hl=en&q=camel", null, getExpectedContent()));
         server.register("/test/", new BasicValidationHandler("GET", "my=@+camel", null, getExpectedContent()));
+        server.register("/user/pass", new BasicValidationHandler("GET", "password=baa&username=foo", null, getExpectedContent()));
     }
 }
