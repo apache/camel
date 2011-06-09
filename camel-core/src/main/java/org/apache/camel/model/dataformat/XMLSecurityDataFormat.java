@@ -58,26 +58,19 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
     }
 
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String passPhrase) {
-        this();
-        this.setSecureTag(secureTag);
-        this.setSecureTagContents(secureTagContents);
+        this(secureTag, secureTagContents);
         this.setPassPhrase(passPhrase);
     }
 
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String passPhrase,
                                  String xmlCipherAlgorithm) {
-    	this();
-        this.setSecureTag(secureTag);
-        this.setSecureTagContents(secureTagContents);
+        this(secureTag, secureTagContents, passPhrase);
         this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
-        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
     }
-    
-    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias, 
-    		String xmlCipherAlgorithm, String keyCipherAlgorithm) {
-    	this();
-        this.setSecureTag(secureTag);
-        this.setSecureTagContents(secureTagContents);
+
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
+                                 String xmlCipherAlgorithm, String keyCipherAlgorithm) {
+        this(secureTag, secureTagContents);
         this.setRecipientKeyAlias(recipientKeyAlias);
         this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         this.setKeyCipherAlgorithm(keyCipherAlgorithm);
@@ -103,11 +96,11 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
         } else {
             setProperty(dataFormat, "xmlCipherAlgorithm", TRIPLEDES);
         }
-        if(getKeyCipherAlgorithm() != null) {
-        	setProperty(dataFormat, "keyCipherAlgorithm", getKeyCipherAlgorithm());
+        if (getKeyCipherAlgorithm() != null) {
+            setProperty(dataFormat, "keyCipherAlgorithm", getKeyCipherAlgorithm());
         }
-        if(getRecipientKeyAlias() != null) {
-        	setProperty(dataFormat, "recipientKeyAlias", getRecipientKeyAlias());
+        if (getRecipientKeyAlias() != null) {
+            setProperty(dataFormat, "recipientKeyAlias", getRecipientKeyAlias());
         }
     }
 
@@ -146,20 +139,20 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
     public boolean isSecureTagContents() {
         return secureTagContents != null && secureTagContents;
     }
-    
+
     public void setKeyCipherAlgorithm(String keyCipherAlgorithm) {
-    	this.keyCipherAlgorithm = keyCipherAlgorithm;
+        this.keyCipherAlgorithm = keyCipherAlgorithm;
     }
-    
+
     public String getKeyCipherAlgorithm() {
-    	return keyCipherAlgorithm;
+        return keyCipherAlgorithm;
     }
-    
+
     public void setRecipientKeyAlias(String recipientKeyAlias) {
         this.recipientKeyAlias = recipientKeyAlias;
     }
-    
+
     public String getRecipientKeyAlias() {
-    	return recipientKeyAlias;
+        return recipientKeyAlias;
     }
 }
