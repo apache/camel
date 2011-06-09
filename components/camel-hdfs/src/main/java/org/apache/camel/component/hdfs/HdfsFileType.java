@@ -56,20 +56,20 @@ public enum HdfsFileType {
     NORMAL_FILE {
         @Override
         public long append(HdfsOutputStream hdfsostr, Object key, Object value, TypeConverter typeConverter) {
-        	InputStream is = null;
+            InputStream is = null;
             try {
                 is = typeConverter.convertTo(InputStream.class, value);
                 return copyBytes(is, (FSDataOutputStream) hdfsostr.getOut(), HdfsConstants.DEFAULT_BUFFERSIZE, false);
             } catch (IOException ex) {
                 throw new RuntimeCamelException(ex);
             } finally {
-            	if (is != null) {
-            		try {
-						is.close();
-					} catch (IOException e) {
-						throw new RuntimeException("Error closing stream", e);
-					}
-            	}
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException("Error closing stream", e);
+                    }
+                }
             }
         }
 

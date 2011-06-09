@@ -33,19 +33,19 @@ import org.junit.Test;
  * @version 
  */
 public class BeanValidatorRouteTest extends CamelTestSupport {
-	private Locale origLocale;
+    private Locale origLocale;
 
-	@Before
-	public void setLanguage() {
-		origLocale = Locale.getDefault();
-		Locale.setDefault(Locale.US);
-	}
-	
-	@After
-	public void restoreLanguage() {
-		Locale.setDefault(origLocale);
-	}
-    
+    @Before
+    public void setLanguage() {
+        origLocale = Locale.getDefault();
+        Locale.setDefault(Locale.US);
+    }
+
+    @After
+    public void restoreLanguage() {
+        Locale.setDefault(origLocale);
+    }
+
     @Test
     public void validateShouldSuccessWithImpliciteDefaultGroup() throws Exception {
         Exchange exchange = template.request("bean-validator://x", new Processor() {
