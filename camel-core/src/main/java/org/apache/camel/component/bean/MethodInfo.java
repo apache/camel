@@ -151,6 +151,7 @@ public class MethodInfo {
             recipientList.setParallelProcessing(annotation.parallelProcessing());
             recipientList.setStreaming(annotation.streaming());
             recipientList.setTimeout(annotation.timeout());
+            recipientList.setShareUnitOfWork(annotation.shareUnitOfWork());
 
             if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
                 ExecutorService executor = CamelContextHelper.mandatoryLookup(camelContext, annotation.executorServiceRef(), ExecutorService.class);

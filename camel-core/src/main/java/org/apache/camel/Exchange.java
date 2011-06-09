@@ -150,6 +150,8 @@ public interface Exchange {
 
     String ON_COMPLETION = "CamelOnCompletion";
 
+    String PARENT_UNIT_OF_WORK = "CamelParentUnitOfWork";
+
     String RECEIVED_TIMESTAMP      = "CamelReceivedTimestamp";
     String REDELIVERED             = "CamelRedelivered";
     String REDELIVERY_COUNTER      = "CamelRedeliveryCounter";
@@ -177,6 +179,8 @@ public interface Exchange {
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
     String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
     String TRANSFER_ENCODING     = "Transfer-Encoding";
+
+    String UNIT_OF_WORK_EXHAUSTED = "CamelUnitOfWorkExhausted";
 
     String XSLT_FILE_NAME = "CamelXsltFileName";
 

@@ -26,11 +26,14 @@ import java.util.Stack;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelUnitOfWorkException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.SubUnitOfWork;
+import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.TracedRouteNodes;
@@ -42,12 +45,18 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation of {@link org.apache.camel.spi.UnitOfWork}
- *
- * @version 
  */
 public class DefaultUnitOfWork implements UnitOfWork, Service {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
 
+    // TODO: This implementation seems to have transformed itself into a to broad concern
+    // where unit of work is doing a bit more work than the transactional aspect that ties
+    // to its name. Maybe this implementation should be named ExchangeContext and we can
+    // introduce a simpler UnitOfWork concept. This would also allow us to refactor the
+    // SubUnitOfWork into a general parent/child unit of work concept. However this
+    // requires API changes and thus is best kept for Camel 3.0
+
+    private UnitOfWork parent;
     private String id;
     private CamelContext context;
     private List<Synchronization> synchronizations;
@@ -55,13 +64,14 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private final TracedRouteNodes tracedRouteNodes;
     private Set<Object> transactedBy;
     private final Stack<RouteContext> routeContextStack = new Stack<RouteContext>();
+    private Stack<DefaultSubUnitOfWork> subUnitOfWorks;
 
     public DefaultUnitOfWork(Exchange exchange) {
         log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
         tracedRouteNodes = new DefaultTracedRouteNodes();
         context = exchange.getContext();
 
-        // TODO: the copy on facade strategy will help us here in the future
+        // TODO: Camel 3.0: the copy on facade strategy will help us here in the future
         // TODO: optimize to only copy original message if enabled to do so in the route
         // special for JmsMessage as it can cause it to loose headers later.
         // This will be resolved when we get the message facade with copy on write implemented
@@ -98,6 +108,22 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
     }
 
+    UnitOfWork newInstance(Exchange exchange) {
+        return new DefaultUnitOfWork(exchange);
+    }
+
+    @Override
+    public void setParentUnitOfWork(UnitOfWork parentUnitOfWork) {
+        this.parent = parentUnitOfWork;
+    }
+
+    public UnitOfWork createChildUnitOfWork(Exchange childExchange) {
+        // create a new child unit of work, and mark me as its parent
+        UnitOfWork answer = newInstance(childExchange);
+        answer.setParentUnitOfWork(this);
+        return answer;
+    }
+
     public void start() throws Exception {
         id = null;
     }
@@ -113,11 +139,15 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (transactedBy != null) {
             transactedBy.clear();
         }
-        originalInMessage = null;
-
         if (!routeContextStack.isEmpty()) {
             routeContextStack.clear();
         }
+        if (subUnitOfWorks != null) {
+            subUnitOfWorks.clear();
+        }
+        originalInMessage = null;
+        parent = null;
+        id = null;
     }
 
     public synchronized void addSynchronization(Synchronization synchronization) {
@@ -159,7 +189,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             }
         }
     }
-   
+
     public void done(Exchange exchange) {
         log.trace("UnitOfWork done for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
 
@@ -167,6 +197,17 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
         // at first done the synchronizations
         UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, log);
+
+        // notify uow callback if in use
+        try {
+            SubUnitOfWorkCallback uowCallback = getSubUnitOfWorkCallback();
+            if (uowCallback != null) {
+                uowCallback.onDone(exchange);
+            }
+        } catch (Throwable e) {
+            // must catch exceptions to ensure synchronizations is also invoked
+            log.warn("Exception occurred during savepoint onDone. This exception will be ignored.", e);
+        }
 
         // then fire event to signal the exchange is done
         try {
@@ -241,7 +282,68 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public void afterProcess(Processor processor, Exchange exchange, AsyncCallback callback, boolean doneSync) {
-        // noop
+    }
+
+    @Override
+    public void beginSubUnitOfWork(Exchange exchange) {
+        log.trace("beginSubUnitOfWork exchangeId: {}", exchange.getExchangeId());
+
+        if (subUnitOfWorks == null) {
+            subUnitOfWorks = new Stack<DefaultSubUnitOfWork>();
+        }
+        // push a new savepoint
+        subUnitOfWorks.push(new DefaultSubUnitOfWork());
+    }
+
+    @Override
+    public void endSubUnitOfWork(Exchange exchange) {
+        log.trace("endSubUnitOfWork exchangeId: {}", exchange.getExchangeId());
+
+        if (subUnitOfWorks == null || subUnitOfWorks.isEmpty()) {
+            return;
+        }
+
+        // pop last sub unit of work as its now ended
+        SubUnitOfWork subUoW = subUnitOfWorks.pop();
+        if (subUoW.isFailed()) {
+            // the sub unit of work failed so set an exception containing all the caused exceptions
+            // and mark the exchange for rollback only
+
+            // if there are multiple exceptions then wrap those into another exception with them all
+            Exception cause;
+            List<Exception> list = subUoW.getExceptions();
+            if (list != null) {
+                if (list.size() == 1) {
+                    cause = list.get(0);
+                } else {
+                    cause = new CamelUnitOfWorkException(exchange, list);
+                }
+                exchange.setException(cause);
+            }
+            // mark it as rollback and that the unit of work is exhausted. This ensures that we do not try
+            // to redeliver this exception (again)
+            exchange.setProperty(Exchange.ROLLBACK_ONLY, true);
+            exchange.setProperty(Exchange.UNIT_OF_WORK_EXHAUSTED, true);
+            // and remove any indications of error handled which will prevent this exception to be noticed
+            // by the error handler which we want to react with the result of the sub unit of work
+            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, null);
+            exchange.setProperty(Exchange.FAILURE_HANDLED, null);
+            log.trace("endSubUnitOfWork exchangeId: {} with {} caused exceptions.", exchange.getExchangeId(), list.size());
+        }
+    }
+
+    @Override
+    public SubUnitOfWorkCallback getSubUnitOfWorkCallback() {
+        // if there is a parent-child relationship between unit of works
+        // then we should use the callback strategies from the parent
+        if (parent != null) {
+            return parent.getSubUnitOfWorkCallback();
+        }
+
+        if (subUnitOfWorks == null || subUnitOfWorks.isEmpty()) {
+            return null;
+        }
+        return subUnitOfWorks.peek();
     }
 
     private Set<Object> getTransactedBy() {

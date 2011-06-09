@@ -56,6 +56,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     private boolean streaming;
     private long timeout;
     private Processor onPrepare;
+    private boolean shareUnitOfWork;
     private ExecutorService executorService;
     private ExecutorService aggregateExecutorService;
     private AggregationStrategy aggregationStrategy = new UseLatestAggregationStrategy();
@@ -112,7 +113,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
                                                                 isParallelProcessing(), getExecutorService(), isStreaming(),
-                                                                isStopOnException(), getTimeout(), getOnPrepare()) {
+                                                                isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork()) {
             @Override
             protected synchronized ExecutorService createAggregateExecutorService(String name) {
                 // use a shared executor service to avoid creating new thread pools
@@ -133,8 +134,14 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
             return true;
         }
 
+        AsyncProcessor target = rlp;
+        if (isShareUnitOfWork()) {
+            // wrap answer in a sub unit of work, since we share the unit of work
+            target = new SubUnitOfWorkProcessor(rlp);
+        }
+
         // now let the multicast process the exchange
-        return AsyncProcessorHelper.process(rlp, exchange, callback);
+        return AsyncProcessorHelper.process(target, exchange, callback);
     }
 
     protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
@@ -220,5 +227,13 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
     public void setOnPrepare(Processor onPrepare) {
         this.onPrepare = onPrepare;
+    }
+
+    public boolean isShareUnitOfWork() {
+        return shareUnitOfWork;
+    }
+
+    public void setShareUnitOfWork(boolean shareUnitOfWork) {
+        this.shareUnitOfWork = shareUnitOfWork;
     }
 }

@@ -26,22 +26,20 @@ import org.apache.camel.Service;
  * An object representing the unit of work processing an {@link Exchange}
  * which allows the use of {@link Synchronization} hooks. This object might map one-to-one with
  * a transaction in JPA or Spring; or might not.
- *
- * @version 
  */
 public interface UnitOfWork extends Service {
 
     /**
      * Adds a synchronization hook
      *
-     * @param synchronization  the hook
+     * @param synchronization the hook
      */
     void addSynchronization(Synchronization synchronization);
 
     /**
      * Removes a synchronization hook
      *
-     * @param synchronization  the hook
+     * @param synchronization the hook
      */
     void removeSynchronization(Synchronization synchronization);
 
@@ -51,8 +49,8 @@ public interface UnitOfWork extends Service {
      * This is used when a route turns into asynchronous and the {@link org.apache.camel.Exchange} that
      * is continued and routed in the async thread should do the on completion callbacks instead of the
      * original synchronous thread.
-     * 
-     * @param target  the target exchange
+     *
+     * @param target the target exchange
      */
     void handoverSynchronization(Exchange target);
 
@@ -65,7 +63,7 @@ public interface UnitOfWork extends Service {
 
     /**
      * Returns the unique ID of this unit of work, lazily creating one if it does not yet have one
-     * 
+     *
      * @return the unique ID
      */
     String getId();
@@ -154,7 +152,7 @@ public interface UnitOfWork extends Service {
      *
      * @param processor the processor to be executed
      * @param exchange  the current exchange
-     * @param callback the callback
+     * @param callback  the callback
      * @return the callback to be used (can return a wrapped callback)
      */
     AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback);
@@ -168,4 +166,53 @@ public interface UnitOfWork extends Service {
      * @param doneSync  whether the process was done synchronously or asynchronously
      */
     void afterProcess(Processor processor, Exchange exchange, AsyncCallback callback, boolean doneSync);
+
+    /**
+     * Create a child unit of work, which is associated to this unit of work as its parent.
+     * <p/>
+     * This is often used when EIPs need to support {@link SubUnitOfWork}s. For example a splitter,
+     * where the sub messages of the splitter all participate in the same sub unit of work.
+     * That sub unit of work then decides whether the Splitter (in general) is failed or a
+     * processed successfully.
+     *
+     * @param childExchange the child exchange
+     * @return the created child unit of work
+     * @see SubUnitOfWork
+     * @see SubUnitOfWorkCallback
+     */
+    UnitOfWork createChildUnitOfWork(Exchange childExchange);
+
+    /**
+     * Sets the parent unit of work.
+     *
+     * @param parentUnitOfWork the parent
+     */
+    void setParentUnitOfWork(UnitOfWork parentUnitOfWork);
+
+    /**
+     * Gets the {@link SubUnitOfWorkCallback} if this unit of work participates in a sub unit of work.
+     *
+     * @return the callback, or <tt>null</tt> if this unit of work is not part of a sub unit of work.
+     * @see #beginSubUnitOfWork(org.apache.camel.Exchange)
+     */
+    SubUnitOfWorkCallback getSubUnitOfWorkCallback();
+
+    /**
+     * Begins a {@link SubUnitOfWork}, where sub (child) unit of works participate in a parent unit of work.
+     * The {@link SubUnitOfWork} will callback to the parent unit of work using {@link SubUnitOfWorkCallback}s.
+     *
+     * @param exchange the exchange
+     */
+    void beginSubUnitOfWork(Exchange exchange);
+
+    /**
+     * Ends a {@link SubUnitOfWork}.
+     * <p/>
+     * The {@link #beginSubUnitOfWork(org.apache.camel.Exchange)} must have been invoked
+     * prior to this operation.
+     *
+     * @param exchange the exchange
+     */
+    void endSubUnitOfWork(Exchange exchange);
+
 }

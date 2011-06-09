@@ -31,6 +31,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -230,10 +231,24 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // compute if we should redeliver or not
             boolean shouldRedeliver = shouldRedeliver(exchange, data);
             if (!shouldRedeliver) {
-                // no we should not redeliver to the same output so either try an onException (if any given)
-                // or the dead letter queue
-                Processor target = data.failureProcessor != null ? data.failureProcessor : data.deadLetterProcessor;
-                // deliver to the failure processor (either an on exception or dead letter queue
+                Processor target = null;
+                boolean deliver = true;
+
+                // the unit of work may have an optional callback associated we need to leverage
+                SubUnitOfWorkCallback uowCallback = exchange.getUnitOfWork().getSubUnitOfWorkCallback();
+                if (uowCallback != null) {
+                    // signal to the callback we are exhausted
+                    uowCallback.onExhausted(exchange);
+                    // do not deliver to the failure processor as its been handled by the callback instead
+                    deliver = false;
+                }
+
+                if (deliver) {
+                    // should deliver to failure processor (either from onException or the dead letter channel)
+                    target = data.failureProcessor != null ? data.failureProcessor : data.deadLetterProcessor;
+                }
+                // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
+                // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
                 boolean sync = deliverToFailureProcessor(target, exchange, data, callback);
                 // we are breaking out
                 return sync;
@@ -356,10 +371,24 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // compute if we should redeliver or not
         boolean shouldRedeliver = shouldRedeliver(exchange, data);
         if (!shouldRedeliver) {
-            // no we should not redeliver to the same output so either try an onException (if any given)
-            // or the dead letter queue
-            Processor target = data.failureProcessor != null ? data.failureProcessor : data.deadLetterProcessor;
-            // deliver to the failure processor (either an on exception or dead letter queue
+            Processor target = null;
+            boolean deliver = true;
+
+            // the unit of work may have an optional callback associated we need to leverage
+            SubUnitOfWorkCallback uowCallback = exchange.getUnitOfWork().getSubUnitOfWorkCallback();
+            if (uowCallback != null) {
+                // signal to the callback we are exhausted
+                uowCallback.onExhausted(exchange);
+                // do not deliver to the failure processor as its been handled by the callback instead
+                deliver = false;
+            }
+
+            if (deliver) {
+                // should deliver to failure processor (either from onException or the dead letter channel)
+                target = data.failureProcessor != null ? data.failureProcessor : data.deadLetterProcessor;
+            }
+            // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
+            // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
             deliverToFailureProcessor(target, exchange, data, callback);
             // we are breaking out
             return;
@@ -527,9 +556,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             }
         }
 
-        String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId()
-                + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e;
-        logFailedDelivery(true, false, false, exchange, msg, data, e);
+        // only log if not failure handled or not an exhausted unit of work
+        if (!ExchangeHelper.isFailureHandled(exchange) && !ExchangeHelper.isUnitOfWorkExhausted(exchange)) {
+            String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId()
+                    + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e;
+            logFailedDelivery(true, false, false, exchange, msg, data, e);
+        }
 
         data.redeliveryCounter = incrementRedeliveryCounter(exchange, e, data);
     }
@@ -688,43 +720,50 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             return;
         }
 
-        if (handled && !data.currentRedeliveryPolicy.isLogHandled()) {
-            // do not log handled
-            return;
-        }
+        if (!exchange.isRollbackOnly()) {
+            // if we should not rollback, then check whether logging is enabled
+            if (handled && !data.currentRedeliveryPolicy.isLogHandled()) {
+                // do not log handled
+                return;
+            }
 
-        if (continued && !data.currentRedeliveryPolicy.isLogContinued()) {
-            // do not log handled
-            return;
-        }
+            if (continued && !data.currentRedeliveryPolicy.isLogContinued()) {
+                // do not log handled
+                return;
+            }
 
-        if (shouldRedeliver && !data.currentRedeliveryPolicy.isLogRetryAttempted()) {
-            // do not log retry attempts
-            return;
-        }
+            if (shouldRedeliver && !data.currentRedeliveryPolicy.isLogRetryAttempted()) {
+                // do not log retry attempts
+                return;
+            }
 
-        if (!shouldRedeliver && !data.currentRedeliveryPolicy.isLogExhausted()) {
-            // do not log exhausted
-            return;
+            if (!shouldRedeliver && !data.currentRedeliveryPolicy.isLogExhausted()) {
+                // do not log exhausted
+                return;
+            }
         }
 
         LoggingLevel newLogLevel;
-        boolean logStrackTrace;
-        if (shouldRedeliver) {
+        boolean logStackTrace;
+        if (exchange.isRollbackOnly()) {
+            newLogLevel = data.currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
+            logStackTrace = data.currentRedeliveryPolicy.isLogStackTrace();
+        } else if (shouldRedeliver) {
             newLogLevel = data.currentRedeliveryPolicy.getRetryAttemptedLogLevel();
-            logStrackTrace = data.currentRedeliveryPolicy.isLogRetryStackTrace();
+            logStackTrace = data.currentRedeliveryPolicy.isLogRetryStackTrace();
         } else {
             newLogLevel = data.currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
-            logStrackTrace = data.currentRedeliveryPolicy.isLogStackTrace();
+            logStackTrace = data.currentRedeliveryPolicy.isLogStackTrace();
         }
         if (e == null) {
             e = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         }
 
         if (exchange.isRollbackOnly()) {
-            String msg = "Rollback exchange";
-            if (exchange.getException() != null) {
-                msg = msg + " due: " + exchange.getException().getMessage();
+            String msg = "Rollback exchangeId: " + exchange.getExchangeId();
+            Throwable cause = exchange.getException() != null ? exchange.getException() : exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+            if (cause != null) {
+                msg = msg + " due: " + cause.getMessage();
             }
             if (newLogLevel == LoggingLevel.ERROR) {
                 // log intended rollback on maximum WARN level (no ERROR)
@@ -733,7 +772,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // otherwise use the desired logging level
                 logger.log(msg, newLogLevel);
             }
-        } else if (e != null && logStrackTrace) {
+        } else if (e != null && logStackTrace) {
             logger.log(message, e, newLogLevel);
         } else {
             logger.log(message, newLogLevel);

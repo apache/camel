@@ -244,25 +244,48 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 || ProcessorDefinitionHelper.isParentOfType(FinallyDefinition.class, defn, true)) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
             // by checking that any of our parent(s) is not a try .. catch or finally type
-        } else if (defn instanceof MulticastDefinition || defn instanceof RecipientListDefinition) {
-            // do not use error handler for multicast or recipient list based as it offers fine grained error handlers for its outputs
+        } else if (defn instanceof MulticastDefinition) {
+            // do not use error handler for multicast as it offers fine grained error handlers for its outputs
+            // however if sub unit of work is enabled, we need to wrap an error handler on the multicast parent
+            MulticastDefinition def = (MulticastDefinition) defn;
+            if (def.isShareUnitOfWork() && child == null) {
+                // only wrap the parent (not the children of the multicast)
+                wrapChannelInErrorHandler(channel, routeContext);
+            }
+        } else if (defn instanceof RecipientListDefinition) {
+            // do not use error handler for recipient list as it offers fine grained error handlers for its outputs
+            // however if sub unit of work is enabled, we need to wrap an error handler on the recipient list parent
+            RecipientListDefinition def = (RecipientListDefinition) defn;
+            if (def.isShareUnitOfWork() && child == null) {
+                // only wrap the parent (not the children of the multicast)
+                wrapChannelInErrorHandler(channel, routeContext);
+            }
         } else {
             // use error handler by default or if configured to do so
-            if (isInheritErrorHandler() == null || isInheritErrorHandler()) {
-                log.trace("{} is configured to inheritErrorHandler", defn);
-                // only add error handler if we are configured to do so
-                // regular definition so add the error handler
-                Processor output = channel.getOutput();
-                Processor errorHandler = wrapInErrorHandler(routeContext, getErrorHandlerBuilder(), output);
-                // set error handler on channel
-                channel.setErrorHandler(errorHandler);
-            } else {
-                log.debug("{} is configured to not inheritErrorHandler.", defn);
-            }
+            wrapChannelInErrorHandler(channel, routeContext);
         }
 
         log.trace("{} wrapped in Channel: {}", defn, channel);
         return channel;
+    }
+
+    /**
+     * Wraps the given channel in error handler (if error handler is inherited)
+     *
+     * @param channel       the channel
+     * @param routeContext  the route context
+     * @throws Exception can be thrown if failed to create error handler builder
+     */
+    private void wrapChannelInErrorHandler(Channel channel, RouteContext routeContext) throws Exception {
+        if (isInheritErrorHandler() == null || isInheritErrorHandler()) {
+            log.trace("{} is configured to inheritErrorHandler", this);
+            Processor output = channel.getOutput();
+            Processor errorHandler = wrapInErrorHandler(routeContext, getErrorHandlerBuilder(), output);
+            // set error handler on channel
+            channel.setErrorHandler(errorHandler);
+        } else {
+            log.debug("{} is configured to not inheritErrorHandler.", this);
+        }
     }
 
     /**

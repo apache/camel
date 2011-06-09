@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * Handles calling the {@link org.apache.camel.spi.UnitOfWork#done(org.apache.camel.Exchange)} method
  * when processing of an {@link Exchange} is complete.
  */
-public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
+public class UnitOfWorkProcessor extends DelegateAsyncProcessor {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(UnitOfWorkProcessor.class);
     private final RouteContext routeContext;
@@ -85,16 +85,9 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
         }
 
         if (exchange.getUnitOfWork() == null) {
-            UnitOfWork unitOfWork;
             // If there is no existing UoW, then we should start one and
             // terminate it once processing is completed for the exchange.
-            if (exchange.getContext().isUseMDCLogging()) {
-                unitOfWork = new MDCUnitOfWork(exchange);
-            } else {
-                unitOfWork = new DefaultUnitOfWork(exchange);
-            }
-            final UnitOfWork uow = unitOfWork;
-
+            final UnitOfWork uow = createUnitOfWork(exchange);
             exchange.setUnitOfWork(uow);
             try {
                 uow.start();
@@ -138,6 +131,22 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
             // so that the guy the initiated the UoW can terminate it.
             return processor.process(exchange, callback);
         }
+    }
+
+    /**
+     * Strategy to create the unit of work for the given exchange.
+     *
+     * @param exchange the exchange
+     * @return the created unit of work
+     */
+    protected UnitOfWork createUnitOfWork(Exchange exchange) {
+        UnitOfWork answer;
+        if (exchange.getContext().isUseMDCLogging()) {
+            answer = new MDCUnitOfWork(exchange);
+        } else {
+            answer = new DefaultUnitOfWork(exchange);
+        }
+        return answer;
     }
 
     private void doneUow(UnitOfWork uow, Exchange exchange) {

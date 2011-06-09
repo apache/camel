@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.processor.SubUnitOfWorkProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -60,6 +61,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     private String onPrepareRef;
     @XmlTransient
     private Processor onPrepare;
+    @XmlAttribute
+    private Boolean shareUnitOfWork;
 
     public MulticastDefinition() {
     }
@@ -188,6 +191,17 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         return this;
     }
 
+    /**
+     * Shares the {@link org.apache.camel.spi.UnitOfWork} with the parent and each of the sub messages.
+     *
+     * @return the builder.
+     * @see org.apache.camel.spi.SubUnitOfWork
+     */
+    public MulticastDefinition shareUnitOfWork() {
+        setShareUnitOfWork(true);
+        return this;
+    }
+
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) throws Exception {
         if (strategyRef != null) {
             aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
@@ -210,8 +224,13 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
             onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
         }
 
-        return new MulticastProcessor(routeContext.getCamelContext(), list, aggregationStrategy, isParallelProcessing(),
-                                      executorService, isStreaming(), isStopOnException(), timeout, onPrepare);
+        MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, aggregationStrategy, isParallelProcessing(),
+                                      executorService, isStreaming(), isStopOnException(), timeout, onPrepare, isShareUnitOfWork());
+        if (isShareUnitOfWork()) {
+            // wrap answer in a sub unit of work, since we share the unit of work
+            return new SubUnitOfWorkProcessor(answer);
+        }
+        return answer;
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -306,4 +325,17 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     public void setOnPrepare(Processor onPrepare) {
         this.onPrepare = onPrepare;
     }
+
+    public Boolean getShareUnitOfWork() {
+        return shareUnitOfWork;
+    }
+
+    public void setShareUnitOfWork(Boolean shareUnitOfWork) {
+        this.shareUnitOfWork = shareUnitOfWork;
+    }
+
+    public boolean isShareUnitOfWork() {
+        return shareUnitOfWork != null && shareUnitOfWork;
+    }
+
 }

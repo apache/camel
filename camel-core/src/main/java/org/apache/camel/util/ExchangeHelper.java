@@ -445,6 +445,10 @@ public final class ExchangeHelper {
         return exchange.getProperty(Exchange.FAILURE_HANDLED, false, Boolean.class);
     }
 
+    public static boolean isUnitOfWorkExhausted(Exchange exchange) {
+        return exchange.getProperty(Exchange.UNIT_OF_WORK_EXHAUSTED, false, Boolean.class);
+    }
+
     public static void setFailureHandled(Exchange exchange) {
         exchange.setProperty(Exchange.FAILURE_HANDLED, Boolean.TRUE);
         // clear exception since its failure handled
