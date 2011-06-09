@@ -64,7 +64,8 @@ public class CBRWithRecipientListTest extends ContextTestSupport {
                         .when(body().contains("Camel"))
                             .recipientList(header("foo")).end()
                         .when(body().contains("Donkey"))
-                            .recipientList(header("bar")).end()
+                            // we can do either end() or endChoice()
+                            .recipientList(header("bar")).endChoice()
                         .otherwise()
                             .to("mock:result");
             }
