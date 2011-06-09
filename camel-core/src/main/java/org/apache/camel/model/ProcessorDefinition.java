@@ -246,7 +246,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             // by checking that any of our parent(s) is not a try .. catch or finally type
         } else if (defn instanceof MulticastDefinition) {
             // do not use error handler for multicast as it offers fine grained error handlers for its outputs
-            // however if sub unit of work is enabled, we need to wrap an error handler on the multicast parent
+            // however if share unit of work is enabled, we need to wrap an error handler on the multicast parent
             MulticastDefinition def = (MulticastDefinition) defn;
             if (def.isShareUnitOfWork() && child == null) {
                 // only wrap the parent (not the children of the multicast)
@@ -254,7 +254,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             }
         } else if (defn instanceof RecipientListDefinition) {
             // do not use error handler for recipient list as it offers fine grained error handlers for its outputs
-            // however if sub unit of work is enabled, we need to wrap an error handler on the recipient list parent
+            // however if share unit of work is enabled, we need to wrap an error handler on the recipient list parent
             RecipientListDefinition def = (RecipientListDefinition) defn;
             if (def.isShareUnitOfWork() && child == null) {
                 // only wrap the parent (not the children of the multicast)

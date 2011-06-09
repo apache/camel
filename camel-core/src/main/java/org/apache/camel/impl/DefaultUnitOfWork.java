@@ -291,7 +291,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (subUnitOfWorks == null) {
             subUnitOfWorks = new Stack<DefaultSubUnitOfWork>();
         }
-        // push a new savepoint
         subUnitOfWorks.push(new DefaultSubUnitOfWork());
     }
 

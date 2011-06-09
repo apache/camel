@@ -23,7 +23,7 @@ import java.util.List;
  * <p/>
  * This implementation will provide the first exception from the list in its cause, so its shown
  * in the stacktrace etc when logging this exception. But the remainder exceptions is only available
- * from the {@link #getCause()} method.
+ * from the {@link #getCauses()} method.
  */
 public class CamelUnitOfWorkException extends CamelExchangeException {
 
