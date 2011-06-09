@@ -97,8 +97,7 @@ public class CxfConsumer extends DefaultConsumer {
                             }
                         });
                         
-                    }
-                    if (continuation.isResumed()) {
+                    } else if (continuation.isResumed()) {
                         org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation
                             .getObject();
                         setResponseBack(cxfExchange, camelExchange);
