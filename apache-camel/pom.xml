@@ -562,7 +562,7 @@
       <id>build.distro</id>
       <activation>
         <property>
-          <name>!fastinstall</name>
+          <name>!noassembly</name>
         </property>
       </activation>
       <build>

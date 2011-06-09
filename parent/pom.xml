@@ -1648,6 +1648,7 @@
       </activation>
       <properties>
         <maven.test.skip.exec>true</maven.test.skip.exec>
+        <noassembly>true</noassembly>
       </properties>
     </profile>
     <profile>
