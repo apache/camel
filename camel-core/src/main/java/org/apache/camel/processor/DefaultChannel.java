@@ -165,17 +165,19 @@ public class DefaultChannel extends ServiceSupport implements Channel {
             ((CamelContextAware) target).setCamelContext(camelContext);
         }
 
+        // the definition to wrap should be the fine grained,
+        // so if a child is set then use it, if not then its the original output used
+        ProcessorDefinition<?> targetOutputDef = childDefinition != null ? childDefinition : outputDefinition;
+
         // first wrap the output with the managed strategy if any
         InterceptStrategy managed = routeContext.getManagedInterceptStrategy();
         if (managed != null) {
             next = target == nextProcessor ? null : nextProcessor;
-            target = managed.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, target, next);
+            target = managed.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
         }
 
         // then wrap the output with the tracer
-        // the tracer should have the fine grained definition so if a child is set then use it, if not then its the original output used
-        ProcessorDefinition<?> traceDef = childDefinition != null ? childDefinition : outputDefinition;
-        TraceInterceptor trace = (TraceInterceptor) getOrCreateTracer().wrapProcessorInInterceptors(routeContext.getCamelContext(), traceDef, target, null);
+        TraceInterceptor trace = (TraceInterceptor) getOrCreateTracer().wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
         // trace interceptor need to have a reference to route context so we at runtime can enable/disable tracing on-the-fly
         trace.setRouteContext(routeContext);
         target = trace;
@@ -191,7 +193,8 @@ public class DefaultChannel extends ServiceSupport implements Channel {
             if (strategy instanceof Tracer) {
                 continue;
             }
-            Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, target, next);
+            // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
+            Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {
                 LOG.warn("Interceptor: " + strategy + " at: " + outputDefinition + " does not return an AsyncProcessor instance."
                         + " This causes the asynchronous routing engine to not work as optimal as possible."
@@ -202,7 +205,7 @@ public class DefaultChannel extends ServiceSupport implements Channel {
                 // use a bridge and wrap again which allows us to adapt and leverage the asynchronous routing engine anyway
                 // however its not the most optimal solution, but we can still run.
                 InterceptorToAsyncProcessorBridge bridge = new InterceptorToAsyncProcessorBridge(target);
-                wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, bridge, next);
+                wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, bridge, next);
                 bridge.setTarget(wrapped);
                 wrapped = bridge;
             }

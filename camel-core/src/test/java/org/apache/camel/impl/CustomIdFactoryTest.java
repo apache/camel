@@ -71,6 +71,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
                         .when(body().contains("Hello"))
                             .to("mock:hello")
                         .otherwise()
+                            .log("Hey")
                             .to("mock:other")
                     .end();
             }
@@ -87,8 +88,8 @@ public class CustomIdFactoryTest extends ContextTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        // this should take the when path
-        assertEquals("#choice6##when3#", ids);
+        // this should take the when path (first to)
+        assertEquals("#choice5##to2#", ids);
     }
 
     /**
@@ -102,7 +103,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // this should take the otherwise path
-        assertEquals("#choice6##otherwise5#", ids);
+        assertEquals("#choice5##log3##to4#", ids);
     }
 
     private class MyDebuggerCheckingId implements InterceptStrategy {
