@@ -80,8 +80,7 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
     @Test
     public void testProducer() throws Exception {
         
-        if (Boolean.getBoolean("java.awt.headless")
-            || System.getProperty("os.name").startsWith("Mac OS") && System.getProperty("user.name").equals("cruise")) {
+        if (Boolean.getBoolean("java.awt.headless")) {
             System.out.println("Running headless. Skipping test as Images may not work.");
             return;
         }     

@@ -445,6 +445,9 @@
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
           <failIfNoTests>false</failIfNoTests>
+          <systemPropertyVariables>
+              <java.awt.headless>${java.awt.headless}</java.awt.headless>
+          </systemPropertyVariables>
           <includes>
              <include>**/*Test.java</include>             
           </includes>
