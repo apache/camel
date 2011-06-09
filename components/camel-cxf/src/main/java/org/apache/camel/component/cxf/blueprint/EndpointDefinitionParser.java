@@ -142,17 +142,6 @@ public class EndpointDefinitionParser extends AbstractBPBeanDefinitionParser {
         return endpointConfig;
     }
 
-    private Bundle getBlueprintBundle(ParserContext context) {
-        PassThroughMetadata metadata = (PassThroughMetadata) context.getComponentDefinitionRegistry().getComponentDefinition("blueprintBundle");
-
-        Bundle result = null;
-        if (metadata != null) {
-            result = (Bundle) metadata.getObject();
-        }
-
-        return result;
-    }
-
     public static class PassThroughCallable<T> implements Callable<T> {
 
         private T value;

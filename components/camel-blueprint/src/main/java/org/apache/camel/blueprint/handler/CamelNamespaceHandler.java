@@ -458,12 +458,6 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         return classes;
     }
 
-    private ValueMetadata createValue(ParserContext context, String value) {
-        MutableValueMetadata v = context.createMetadata(MutableValueMetadata.class);
-        v.setStringValue(value);
-        return v;
-    }
-
     private RefMetadata createRef(ParserContext context, String value) {
         MutableRefMetadata r = context.createMetadata(MutableRefMetadata.class);
         r.setComponentId(value);
@@ -786,14 +780,6 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 String lang = expression.getLanguage();
                 if (lang != null && lang.length() > 0) {
                     languages.add(lang);
-                }
-            }
-        }
-
-        private void findLanguage(List<ExpressionDefinition> expressions, Set<String> languages) {
-            if (expressions != null) {
-                for (ExpressionDefinition e : expressions) {
-                    findLanguage(e, languages);
                 }
             }
         }
