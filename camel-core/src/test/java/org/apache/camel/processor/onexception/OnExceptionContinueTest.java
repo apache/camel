@@ -51,6 +51,8 @@ public class OnExceptionContinueTest extends ContextTestSupport {
                 from("direct:start")
                     .to("mock:start")
                     .throwException(new IllegalArgumentException("Forced"))
+                    //throw a second time to validate that the exchange is reset appropriately
+                    .throwException(new IllegalArgumentException("Forced"))
                     .to("mock:result");
             }
             // END SNIPPET: e1
