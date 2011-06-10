@@ -39,6 +39,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -720,4 +721,15 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ServiceHelper.startServices(inProgressRepository, idempotentRepository);
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        ServiceHelper.stopServices(inProgressRepository, idempotentRepository);
+    }
 }
