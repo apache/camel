@@ -92,15 +92,14 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             List<Field> linkFields = new ArrayList<Field>();
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Class retrieved: " + cl.getName());
+                LOG.debug("Class retrieved: {}", cl.getName());
             }
 
             for (Field field : cl.getDeclaredFields()) {
                 DataField dataField = field.getAnnotation(DataField.class);
                 if (dataField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Position defined in the class: " + cl.getName()
-                                + ", position: " + dataField.pos() + ", Field: " + dataField.toString());
+                        LOG.debug("Position defined in the class: {}, position: {}, Field: {}", new Object[]{cl.getName(), dataField.pos(), dataField});
                     }
 
                     if (dataField.required()) {
@@ -117,7 +116,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                 if (linkField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Class linked: " + cl.getName() + ", Field: " + field.toString());
+                        LOG.debug("Class linked: {}, Field: {}", cl.getName(), field);
                     }
                     linkFields.add(field);
                 }
@@ -131,9 +130,9 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             totalFields = numberMandatoryFields + numberOptionalFields;
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Number of optional fields: " + numberOptionalFields);
-                LOG.debug("Number of mandatory fields: " + numberMandatoryFields);
-                LOG.debug("Total: " + totalFields);
+                LOG.debug("Number of optional fields: {}", numberOptionalFields);
+                LOG.debug("Number of mandatory fields: {}", numberMandatoryFields);
+                LOG.debug("Total: {}", totalFields);
             }
 
         }
@@ -202,7 +201,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             field.setAccessible(true);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Pos/Offset: " + offset + ", Data: " + token + ", Field type: " + field.getType());
+                LOG.debug("Pos/Offset: {}, Data: {}, Field type: {}", new Object[]{offset, token, field.getType()});
             }
             
             Format<?> format;
@@ -237,9 +236,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Counter mandatory fields: " + counterMandatoryFields);
-        }
+        LOG.debug("Counter mandatory fields: {}", counterMandatoryFields);
 
         if (pos < totalFields) {
             throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line: " + line);
@@ -263,7 +260,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 Object obj = model.get(clazz.getName());
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Model object: " + obj + ", class: " + obj.getClass().getName());
+                    LOG.debug("Model object: {}, class: {}", obj, obj.getClass().getName());
                 }
 
                 if (obj != null) {
@@ -383,7 +380,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     }
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value to be formatted: " + value + ", position: " + datafield.pos() + ", and its formatted value: " + result);
+                        LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", new Object[]{value, datafield.pos(), result});
                     }
 
                 } else {
@@ -429,45 +426,31 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             FixedLengthRecord record = cl.getAnnotation(FixedLengthRecord.class);
 
             if (record != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Fixed length record : " + record.toString());
-                }
+                LOG.debug("Fixed length record : {}", record);
 
                 // Get carriage return parameter
                 crlf = record.crlf();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Carriage return defined for the CSV : " + crlf);
-                }
+                LOG.debug("Carriage return defined for the CSV : {}", crlf);
 
                 // Get hasHeader parameter
                 hasHeader = record.hasHeader();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Has Header :  " + hasHeader);
-                }
+                LOG.debug("Has Header :  {}", hasHeader);
 
                 // Get hasFooter parameter
                 hasFooter = record.hasFooter();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Has Footer :  " + hasFooter);
-                }
+                LOG.debug("Has Footer :  {}", hasFooter);
 
                 // Get padding character
                 paddingChar = record.paddingChar();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Padding char :  " + paddingChar);
-                }
+                LOG.debug("Padding char :  {}", paddingChar);
 
                 // Get length of the record
                 recordLength = record.length();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Length of the record :  " + recordLength);
-                }
+                LOG.debug("Length of the record : {}", recordLength);
 
                 // Get length of the record
                 recordLength = record.length();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Length of the record :  " + recordLength);
-                }
+                LOG.debug("Length of the record : {}", recordLength);
             }
         }
     }

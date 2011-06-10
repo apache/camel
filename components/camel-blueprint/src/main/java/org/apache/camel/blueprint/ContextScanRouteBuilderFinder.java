@@ -56,21 +56,19 @@ public class ContextScanRouteBuilderFinder {
 
             // certain beans should be ignored
             if (shouldIgnoreBean(bean)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Ignoring RouteBuilder id: " + key);
-                }
+                LOG.debug("Ignoring RouteBuilder id: {}", key);
                 continue;
             }
 
             if (!isFilteredClass(bean)) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Ignoring filtered RouteBuilder id: " + key + " as class: " + bean.getClass());
+                    LOG.debug("Ignoring filtered RouteBuilder id: {} as class: {}", key, bean.getClass());
                 }
                 continue;
             }
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Adding instantiated RouteBuilder id: " + key + " as class: " + bean.getClass());
+                LOG.debug("Adding instantiated RouteBuilder id: {} as class: {}", key, bean.getClass());
             }
             list.add((RoutesBuilder) bean);
         }

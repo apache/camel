@@ -115,20 +115,14 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             // mark the beginning of this transaction boundary
             exchange.getUnitOfWork().beginTransactedBy(transactionKey);
 
-            if (log.isDebugEnabled()) {
-                log.debug("Transaction begin (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId());
-            }
+            log.debug("Transaction begin ({}) for ExchangeId: {}", transactionKey, exchange.getExchangeId());
 
             doInTransactionTemplate(exchange);
 
-            if (log.isDebugEnabled()) {
-                log.debug("Transaction commit (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId());
-            }
+            log.debug("Transaction commit ({}) for ExchangeId: {}", transactionKey, exchange.getExchangeId());
         } catch (TransactionRollbackException e) {
             // ignore as its just a dummy exception to force spring TX to rollback
-            if (log.isDebugEnabled()) {
-                log.debug("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId() + " due exchange was marked for rollbackOnly");
-            }
+            log.debug("Transaction rollback ({}) for ExchangeId: {} due exchange was marked for rollbackOnly", transactionKey, exchange.getExchangeId());
         } catch (Exception e) {
             log.warn("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId() + " due exception: " + e.getMessage());
             exchange.setException(e);
@@ -147,8 +141,8 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                     log.debug("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId()
                         + " due exchange was marked for rollbackOnlyLast and due exception: ", cause);
                 } else {
-                    log.debug("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId()
-                        + " due exchange was marked for rollbackOnlyLast");
+                    log.debug("Transaction rollback ({}) for ExchangeId: {} due exchange was marked for rollbackOnlyLast",
+                            transactionKey, exchange.getExchangeId());
                 }
             }
             // remove caused exception due we was marked as rollback only last

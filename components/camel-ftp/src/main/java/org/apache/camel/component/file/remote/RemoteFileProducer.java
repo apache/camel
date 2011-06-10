@@ -86,9 +86,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     public void disconnect() throws GenericFileOperationFailedException {
         loggedIn = false;
         if (getOperations().isConnected()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Disconnecting from: " + getEndpoint());
-            }
+            log.debug("Disconnecting from: {}", getEndpoint());
             getOperations().disconnect();
         }
     }
@@ -181,9 +179,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
 
         // recover by re-creating operations which should most likely be able to recover
         if (!loggedIn) {
-            if (log.isDebugEnabled()) {
-                log.debug("Trying to recover connection to: " + getEndpoint() + " with a fresh client.");
-            }
+            log.debug("Trying to recover connection to: {} with a fresh client.", getEndpoint());
             setOperations(getEndpoint().createRemoteFileOperations());
             connectIfNecessary();
         }
@@ -191,9 +187,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
 
     protected void connectIfNecessary() throws GenericFileOperationFailedException {
         if (!getOperations().isConnected()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Not already connected/logged in. Connecting to: " + getEndpoint());
-            }
+            log.debug("Not already connected/logged in. Connecting to: {}", getEndpoint());
             RemoteFileConfiguration config = getEndpoint().getConfiguration();
             loggedIn = getOperations().connect(config);
             if (!loggedIn) {

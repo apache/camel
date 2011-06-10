@@ -34,10 +34,7 @@ public class NettyUDPSyncTest extends CamelTestSupport {
 
     @Test
     public void testUDPStringInOutWithNettyConsumer() throws Exception {
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testUDPInOutWithNettyConsumer()");
-        }
+        LOG.debug("Beginning Test ---> testUDPInOutWithNettyConsumer()");
         
         for (int i = 0; i < 5; i++) {
             String response = producerTemplate.requestBody(
@@ -46,9 +43,7 @@ public class NettyUDPSyncTest extends CamelTestSupport {
             assertEquals("Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.", response);
         }
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testUDPInOutWithNettyConsumer()");
-        }        
+        LOG.debug("Completed Test ---> testUDPInOutWithNettyConsumer()");        
     }   
     
     @Override

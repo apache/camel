@@ -74,9 +74,7 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
 
                 replyChannel.subscribe(new MessageHandler() {
                     public void handleMessage(Message<?> message) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Received " + message + " from ReplyChannel: " + replyChannel);
-                        }
+                        LOG.debug("Received {} from ReplyChannel: {}", message, replyChannel);
                         //TODO set the corralationID
                         SpringIntegrationBinding.storeToCamelMessage(message, exchange.getOut());
                     }

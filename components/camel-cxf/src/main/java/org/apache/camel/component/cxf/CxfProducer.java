@@ -304,10 +304,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             lp = endpoint.getDefaultOperationName();
         }
         if (lp == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Try to find a default operation.  You should set '" 
-                        + CxfConstants.OPERATION_NAME + "' in header.");
-            }
+            LOG.debug("Try to find a default operation. You should set '{}' in header.", CxfConstants.OPERATION_NAME);
             Collection<BindingOperationInfo> bois = 
                 client.getEndpoint().getEndpointInfo().getBinding().getOperations();
             

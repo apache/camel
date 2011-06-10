@@ -50,7 +50,7 @@ public class IrcComponent extends DefaultComponent {
         final IRCConnection connection;
         if (connectionCache.containsKey(configuration.getCacheKey())) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Returning Cached Connection to " + configuration.getHostname() + ":" + configuration.getNickname());
+                LOG.debug("Returning Cached Connection to {}:{}", configuration.getHostname(), configuration.getNickname());
             }
             connection = connectionCache.get(configuration.getCacheKey());
         } else {
@@ -66,8 +66,8 @@ public class IrcComponent extends DefaultComponent {
 
         if (configuration.getUsingSSL()) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating SSL Connection to " + configuration.getHostname() + " destination(s): " + configuration.getListOfChannels()
-                        + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
+                LOG.debug("Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
+                        new Object[]{configuration.getHostname(), configuration.getListOfChannels(), configuration.getNickname(), configuration.getUsername()});
             }
             SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
                     configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
@@ -77,8 +77,8 @@ public class IrcComponent extends DefaultComponent {
 
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Creating Connection to " + configuration.getHostname() + " destination(s): " + configuration.getListOfChannels()
-                        + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
+                LOG.debug("Creating Connection to {} destination(s): {} nick: {} user: {}",
+                        new Object[]{configuration.getHostname(), configuration.getListOfChannels(), configuration.getNickname(), configuration.getUsername()});
             }
 
             conn = new IRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),

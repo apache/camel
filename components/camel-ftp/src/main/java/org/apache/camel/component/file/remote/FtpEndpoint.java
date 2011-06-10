@@ -116,7 +116,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Created FTPClient [connectTimeout: " + client.getConnectTimeout() + ", soTimeout: " + getSoTimeout() + ", dataTimeout: " + dataTimeout + "]: " + client);
+            log.debug("Created FTPClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}]: {}", 
+                    new Object[]{client.getConnectTimeout(), getSoTimeout(), dataTimeout, client});
         }
 
         FtpOperations operations = new FtpOperations(client, getFtpClientConfig());

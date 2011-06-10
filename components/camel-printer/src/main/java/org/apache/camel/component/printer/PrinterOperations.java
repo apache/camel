@@ -96,7 +96,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
                 }    
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Issuing Job " + i + " to Printer: " + this.printService.getName());
+                    LOG.debug("Issuing Job {} to Printer: {}", i, this.printService.getName());
                 }
                 print(doc);
             }

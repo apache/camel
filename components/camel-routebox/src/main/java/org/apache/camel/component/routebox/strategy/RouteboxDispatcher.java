@@ -54,7 +54,7 @@ public class RouteboxDispatcher {
         Exchange reply;
         
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Dispatching exchange " + exchange + " to endpoint " + endpoint.getEndpointUri());
+            LOG.debug("Dispatching exchange {} to endpoint {}", exchange, endpoint.getEndpointUri());
         }
         
         dispatchUri = selectDispatchUri(endpoint, exchange);
@@ -73,7 +73,7 @@ public class RouteboxDispatcher {
         Exchange reply;
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Dispatching exchange " + exchange + " to endpoint " + endpoint.getEndpointUri());
+            LOG.debug("Dispatching exchange {} to endpoint {}", exchange, endpoint.getEndpointUri());
         }
         
         dispatchUri = selectDispatchUri(endpoint, exchange);

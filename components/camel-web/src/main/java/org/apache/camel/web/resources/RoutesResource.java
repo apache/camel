@@ -135,9 +135,7 @@ public class RoutesResource extends CamelChildResourceSupport {
     public Response postRouteForm(@Context UriInfo uriInfo, @FormParam("language") String language, 
                                   @FormParam("route") String body) throws URISyntaxException {
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("New Route is: " + body);
-        }
+        LOG.debug("New Route is: {}", body);
         
         LOG.info(body);
         if (body == null) {

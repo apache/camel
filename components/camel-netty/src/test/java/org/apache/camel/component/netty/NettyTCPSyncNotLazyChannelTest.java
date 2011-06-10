@@ -34,33 +34,25 @@ public class NettyTCPSyncNotLazyChannelTest extends CamelTestSupport {
 
     @Test
     public void testTCPStringInOutWithNettyConsumer() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testTCPInOutWithNettyConsumer()");
-        }
+        LOG.debug("Beginning Test ---> testTCPInOutWithNettyConsumer()");
 
         String response = producerTemplate.requestBody(
             "netty:tcp://localhost:5151?sync=true&lazyChannelCreation=false",
             "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testTCPInOutWithNettyConsumer()");
-        }
+        LOG.debug("Completed Test ---> testTCPInOutWithNettyConsumer()");
     }
 
     @Test
     public void testTCPObjectInOutWithNettyConsumer() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testUDPInOutWithNettyConsumer()");
-        }
+        LOG.debug("Beginning Test ---> testUDPInOutWithNettyConsumer()");
 
         Poetry poetry = new Poetry();
         Poetry response = (Poetry) producerTemplate.requestBody("netty:tcp://localhost:5151?sync=true&lazyChannelCreation=false", poetry);
         assertEquals("Dr. Sarojini Naidu", response.getPoet());
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testUDPInOutWithNettyConsumer()");
-        }
+        LOG.debug("Completed Test ---> testUDPInOutWithNettyConsumer()");
     }
 
     @Override

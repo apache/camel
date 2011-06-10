@@ -45,9 +45,7 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory {
 
         SslHandler sslHandler = configureClientSSLOnDemand();
         if (sslHandler != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Client SSL handler configured and added to the ChannelPipeline");
-            }
+            LOG.debug("Client SSL handler configured and added to the ChannelPipeline");
             channelPipeline.addLast("ssl", sslHandler);
         }
 

@@ -102,17 +102,12 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         if (ObjectHelper.isNotEmpty(getCamelContext().getProperties().get("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperties().get("http.proxyPort"))) {
             String host = getCamelContext().getProperties().get("http.proxyHost");
             int port = Integer.parseInt(getCamelContext().getProperties().get("http.proxyPort"));
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: "
-                        + host + " port: " + port);
-            }
+            LOG.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
             answer.getHostConfiguration().setProxy(host, port);
         }
 
         if (proxyHost != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using proxy: " + proxyHost + ":" + proxyPort);
-            }
+            LOG.debug("Using proxy: {}:{}", proxyHost, proxyPort);
             answer.getHostConfiguration().setProxy(proxyHost, proxyPort);
         }
 
@@ -126,9 +121,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
                 if (auth == null) {
                     throw new IllegalArgumentException("Unknown authMethod: " + value + " in authMethodPriority: " + authMethodPriority);
                 }
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Using authSchemePriority #" + i + ": " + auth);
-                }
+                LOG.debug("Using authSchemePriority #{}: {}", i, auth);
                 authPrefs.add(auth.name());
                 i++;
             }

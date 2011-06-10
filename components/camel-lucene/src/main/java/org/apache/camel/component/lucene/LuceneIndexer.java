@@ -60,9 +60,7 @@ public class LuceneIndexer {
     }
 
     public void index(Exchange exchange) throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Indexing " + exchange);
-        }
+        LOG.debug("Indexing {}", exchange);
         openIndexWriter();
         Map<String, Object> headers = exchange.getIn().getHeaders();
         add("exchangeId", exchange.getExchangeId(), true);

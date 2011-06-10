@@ -49,12 +49,8 @@ public class SipSubscriptionListener implements SipListener {
     }
 
     private void dispatchExchange(Object response) throws CamelException {
-        Exchange exchange;
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Consumer Dispatching the received notification along the route");
-        }
-        exchange = sipSubscriber.getEndpoint().createExchange(ExchangePattern.InOnly);
+        LOG.debug("Consumer Dispatching the received notification along the route");
+        Exchange exchange = sipSubscriber.getEndpoint().createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody(response);
         try {
             sipSubscriber.getProcessor().process(exchange);
@@ -68,11 +64,9 @@ public class SipSubscriptionListener implements SipListener {
         ServerTransaction serverTransactionId = requestReceivedEvent
                 .getServerTransaction();
         String viaBranch = ((ViaHeader)(request.getHeaders(ViaHeader.NAME).next())).getParameter("branch");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Request: " + request.getMethod()); 
-            LOG.debug("Server Transaction Id:" + serverTransactionId);
-            LOG.debug("Received From Branch:" + viaBranch);
-        }
+        LOG.debug("Request: {}", request.getMethod()); 
+        LOG.debug("Server Transaction Id: {}", serverTransactionId);
+        LOG.debug("Received From Branch: {}", viaBranch);
 
         if (request.getMethod().equals(Request.NOTIFY)) {
             processNotify(requestReceivedEvent, serverTransactionId);
@@ -81,16 +75,12 @@ public class SipSubscriptionListener implements SipListener {
 
     public synchronized void processNotify(RequestEvent requestEvent,
             ServerTransaction serverTransactionId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Notification received at Subscriber");
-        }
+        LOG.debug("Notification received at Subscriber");
         SipProvider provider = (SipProvider) requestEvent.getSource();
         Request notify = requestEvent.getRequest();
         try {
             if (serverTransactionId == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.info("ServerTransaction is null. Creating new Server transaction");
-                }
+                LOG.info("ServerTransaction is null. Creating new Server transaction");
                 serverTransactionId = provider.getNewServerTransaction(notify);
             }
             Dialog dialog = serverTransactionId.getDialog();
@@ -111,9 +101,7 @@ public class SipSubscriptionListener implements SipListener {
 
             // Subscription is terminated?
             if (subscriptionState.getState().equalsIgnoreCase(SubscriptionStateHeader.TERMINATED)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.info("Subscription state is terminated. Deleting the current dialog");
-                }
+                LOG.info("Subscription state is terminated. Deleting the current dialog");
                 dialog.delete();
             }
         } catch (Exception e) {
@@ -122,15 +110,11 @@ public class SipSubscriptionListener implements SipListener {
     }
     
     public void processResponse(ResponseEvent responseReceivedEvent) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Response received at Subscriber");
-        }
+        LOG.debug("Response received at Subscriber");
         Response response = responseReceivedEvent.getResponse();
         Transaction clientTransactionId = responseReceivedEvent.getClientTransaction();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Response received with client transaction id " + clientTransactionId + ":" + response.getStatusCode());
-        }
+        LOG.debug("Response received with client transaction id {}:{}", clientTransactionId, response.getStatusCode());
         if (clientTransactionId == null) {
             if (LOG.isWarnEnabled()) {
                 LOG.warn("Stray response -- dropping");

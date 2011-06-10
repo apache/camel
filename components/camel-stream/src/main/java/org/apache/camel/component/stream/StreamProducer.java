@@ -87,9 +87,7 @@ public class StreamProducer extends DefaultProducer {
     private OutputStream resolveStreamFromUrl() throws IOException {
         String u = endpoint.getUrl();
         ObjectHelper.notEmpty(u, "url");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("About to write to url: " + u);
-        }
+        LOG.debug("About to write to url: {}", u);
 
         URL url = new URL(u);
         URLConnection c = url.openConnection();
@@ -99,9 +97,7 @@ public class StreamProducer extends DefaultProducer {
     private OutputStream resolveStreamFromFile() throws IOException {
         String fileName = endpoint.getFileName();
         ObjectHelper.notEmpty(fileName, "fileName");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("About to write to file: " + fileName);
-        }
+        LOG.debug("About to write to file: {}", fileName);
         File f = new File(fileName);
         // will create a new file if missing or append to existing
         f.createNewFile();
@@ -127,9 +123,7 @@ public class StreamProducer extends DefaultProducer {
         if (!(body instanceof String)) {
             byte[] bytes = exchange.getIn().getBody(byte[].class);
             if (bytes != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Writing as byte[]: " + bytes + " to " + outputStream);
-                }
+                LOG.debug("Writing as byte[]: {} to {}", bytes, outputStream);
                 outputStream.write(bytes);
                 return;
             }
@@ -141,7 +135,7 @@ public class StreamProducer extends DefaultProducer {
         Writer writer = new OutputStreamWriter(outputStream, charset);
         BufferedWriter bw = new BufferedWriter(writer);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Writing as text: " + body + " to " + outputStream + " using encoding:" + charset);
+            LOG.debug("Writing as text: {} to {} using encoding: {}", new Object[]{body, outputStream, charset});
         }
         bw.write(s);
         bw.write("\n");

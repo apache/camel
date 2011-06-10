@@ -90,9 +90,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     public void onApplicationEvent(ApplicationEvent event) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("onApplicationEvent: " + event);
-        }
+        LOG.debug("onApplicationEvent: {}", event);
 
         if (event instanceof ContextRefreshedEvent) {
             // now lets start the CamelContext so that all its possible
@@ -113,7 +111,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         if (eventEndpoint != null) {
             eventEndpoint.onApplicationEvent(event);
         } else {
-            LOG.info("No spring-event endpoint enabled to handle event: " + event);
+            LOG.info("No spring-event endpoint enabled to handle event: {}", event);
         }
     }
 
@@ -135,9 +133,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             LOG.warn("Cannot find the class loader from application context, using the thread context class loader instead");
             cl = Thread.currentThread().getContextClassLoader();
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Set the application context classloader to: " + cl);
-        }
+        LOG.debug("Set the application context classloader to: {}", cl);
         this.setApplicationContextClassLoader(cl);
 
         if (applicationContext instanceof ConfigurableApplicationContext) {

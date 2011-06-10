@@ -70,7 +70,7 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting HawtDB using file: " + getFile());
+            LOG.debug("Starting HawtDB using file: {}", getFile());
         }
 
         open();
@@ -99,7 +99,7 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
 
     public void stop() {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Stopping HawtDB using file: " + getFile());
+            LOG.debug("Stopping HawtDB using file: {}", getFile());
         }
 
         close();
@@ -130,9 +130,7 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
             // add it to indexes so we can find it the next time
             indexes.put(name, page);
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Created new repository index with name " + name + " at location " + page);
-            }
+            LOG.debug("Created new repository index with name {} at location {}", name, page);
 
             answer = created;
         } else if (location != null) {
@@ -152,8 +150,8 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
         while (!done) {
             try {
                 // only log at DEBUG level if we are retrying
-                if (attempt > 0 && LOG.isDebugEnabled()) {
-                    LOG.debug("Attempt " + attempt + " to execute work " + work);
+                if (attempt > 0) {
+                    LOG.debug("Attempt {} to execute work {}", attempt, work);
                 }
                 attempt++;
 

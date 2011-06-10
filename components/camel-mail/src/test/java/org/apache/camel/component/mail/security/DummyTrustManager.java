@@ -49,7 +49,7 @@ public class DummyTrustManager implements X509TrustManager {
     private static void logCertificateChain(String type, X509Certificate[] chain) {
         if (LOG.isDebugEnabled()) {
             for (X509Certificate certificate : chain) {
-                LOG.debug(type + " certificate is trusted: " + certificate);
+                LOG.debug("{} certificate is trusted: {}", type, certificate);
             }
         }
     }

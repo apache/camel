@@ -133,9 +133,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
 
     public VelocityEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(getResourceUri(), newResourceUri);
-        if (log.isDebugEnabled()) {
-            log.debug("Getting endpoint with URI: " + newUri);
-        }
+        log.debug("Getting endpoint with URI: {}", newUri);
         return (VelocityEndpoint) getCamelContext().getEndpoint(newUri);
     }
 
@@ -149,9 +147,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(VelocityConstants.VELOCITY_RESOURCE_URI);
 
-            if (log.isDebugEnabled()) {
-                log.debug(VelocityConstants.VELOCITY_RESOURCE_URI + " set to " + newResourceUri + " creating new endpoint to handle exchange");
-            }
+            log.debug("{} set to {} creating new endpoint to handle exchange", VelocityConstants.VELOCITY_RESOURCE_URI, newResourceUri);
             VelocityEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
             newEndpoint.onExchange(exchange);
             return;
@@ -164,7 +160,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             // use content from header
             reader = new StringReader(content);
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from header " + VelocityConstants.VELOCITY_TEMPLATE + " for endpoint " + getEndpointUri());
+                log.debug("Velocity content read from header {} for endpoint {}", VelocityConstants.VELOCITY_TEMPLATE, getEndpointUri());
             }
             // remove the header to avoid it being propagated in the routing
             exchange.getIn().removeHeader(VelocityConstants.VELOCITY_TEMPLATE);
@@ -173,7 +169,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             resource = getResource();
             ObjectHelper.notNull(resource, "resource");
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from resource " + resource + " with resourceUri: " + path + " for endpoint " + getEndpointUri());
+                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{resource, path, getEndpointUri()});
             }
             reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());
         }
@@ -186,9 +182,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
 
         // let velocity parse and generate the result in buffer
         VelocityEngine engine = getVelocityEngine();
-        if (log.isDebugEnabled()) {
-            log.debug("Velocity is evaluating using velocity context: " + variableMap);
-        }
+        log.debug("Velocity is evaluating using velocity context: {}", variableMap);
         engine.evaluate(velocityContext, buffer, logTag, reader);
 
         // now lets output the results to the exchange

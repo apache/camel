@@ -62,18 +62,14 @@ public class NettyTCPAsyncTest extends CamelTestSupport {
 
     @Test
     public void testTCPInOnlyWithNettyConsumer() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testTCPInOnlyWithNettyConsumer()");
-        }
+        LOG.debug("Beginning Test ---> testTCPInOnlyWithNettyConsumer()");
         
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         sendFile("netty:tcp://localhost:5150?sync=false");
         
         mock.assertIsSatisfied();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testTCPInOnlyWithNettyConsumer()");
-        }            
+        LOG.debug("Completed Test ---> testTCPInOnlyWithNettyConsumer()");           
     }
     
     @Override

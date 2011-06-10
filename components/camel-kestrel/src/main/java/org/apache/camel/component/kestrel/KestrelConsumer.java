@@ -110,7 +110,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
         shutdownPending = true;
 
         if (log.isDebugEnabled()) {
-            log.debug("Preparing to shutdown, waiting for " + shutdownLatch.getCount() + " threads to complete.");
+            log.debug("Preparing to shutdown, waiting for {} threads to complete.", shutdownLatch.getCount());
         }
 
         // Wait for all threads to end
@@ -164,7 +164,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
                         exchanger = exchangerQueue.take();
                     } catch (InterruptedException e) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Interrupted, are we stopping? " + (isStopping() || isStopped()));
+                            log.debug("Interrupted, are we stopping? {}", isStopping() || isStopped());
                         }
                         continue;
                     }
@@ -214,7 +214,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
                         exchanger.exchange(value);
                     } catch (InterruptedException e) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Interrupted, are we stopping? " + (isStopping() || isStopped()));
+                            log.debug("Interrupted, are we stopping? {}", isStopping() || isStopped());
                         }
                         continue;
                     }
@@ -264,7 +264,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
                     exchangerQueue.put(exchanger);
                 } catch (InterruptedException e) {
                     if (log.isDebugEnabled()) {
-                        log.debug("Interrupted, are we stopping? " + (isStopping() || isStopped()));
+                        log.debug("Interrupted, are we stopping? {}", isStopping() || isStopped());
                     }
                     continue;
                 }
@@ -279,7 +279,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
                         value = exchanger.exchange(this);
                     } catch (InterruptedException e) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Interrupted, are we stopping? " + (isStopping() || isStopped()));
+                            log.debug("Interrupted, are we stopping? {}", isStopping() || isStopped());
                         }
                         continue;
                     }

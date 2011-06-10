@@ -146,10 +146,7 @@ public class BindyFixedLengthDataFormat implements DataFormat {
                 // Add objects graph to the list
                 models.add(model);
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Graph of objects created : " + model);
-                }
-
+                LOG.debug("Graph of objects created : {}", model);
             }
 
             // Test if models list is empty or not

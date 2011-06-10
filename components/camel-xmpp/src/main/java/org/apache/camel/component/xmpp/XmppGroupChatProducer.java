@@ -53,14 +53,12 @@ public class XmppGroupChatProducer extends DefaultProducer {
             // make sure we are connected
             if (!connection.isConnected()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Reconnecting to: " + XmppEndpoint.getConnectionMessage(connection));
+                    LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
                 }
                 connection.connect();
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending XMPP message: " + message.getBody());
-            }
+            LOG.debug("Sending XMPP message: {}", message.getBody());
             chat.sendMessage(message);
             // must invoke nextMessage to consume the response from the server
             // otherwise the client local queue will fill up (CAMEL-1467)

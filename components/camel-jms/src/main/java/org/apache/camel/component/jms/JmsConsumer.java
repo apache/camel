@@ -88,9 +88,7 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
      */
     protected void testConnectionOnStartup() throws FailedToCreateConsumerException {
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Testing JMS Connection on startup for destination: " + getDestinationName());
-            }
+            log.debug("Testing JMS Connection on startup for destination: {}", getDestinationName());
             Connection con = listenerContainer.getConnectionFactory().createConnection();
             JmsUtils.closeConnection(con);
 

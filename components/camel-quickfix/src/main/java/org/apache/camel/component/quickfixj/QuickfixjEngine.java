@@ -443,7 +443,7 @@ public class QuickfixjEngine {
 
         private void dispatch(QuickfixjEventCategory quickfixjEventCategory, SessionID sessionID, Message message) throws Exception {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("FIX event dispatched: " + quickfixjEventCategory + " " + (message != null ? message : ""));
+                LOG.debug("FIX event dispatched: {} {}", quickfixjEventCategory, message != null ? message : "");
             }
             for (QuickfixjEventListener listener : eventListeners) {
                 // Exceptions propagate back to the FIX engine so sequence numbers can be adjusted

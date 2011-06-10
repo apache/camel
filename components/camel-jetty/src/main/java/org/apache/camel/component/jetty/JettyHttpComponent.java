@@ -579,8 +579,7 @@ public class JettyHttpComponent extends HttpComponent {
             String host = System.getProperty("http.proxyHost");
             int port = Integer.parseInt(System.getProperty("http.proxyPort"));
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Java System Property http.proxyHost and http.proxyPort detected. Using http proxy host: "
-                        + host + " port: " + port);
+                LOG.debug("Java System Property http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
             }
             httpClient.setProxy(new Address(host, port));
         }

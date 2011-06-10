@@ -41,9 +41,7 @@ public class KestrelProducer extends DefaultProducer {
         String queue = endpoint.getQueue();
         if (msg != null) {
             try {
-                if (log.isDebugEnabled()) {
-                    log.debug("Sending to: " + queue + " message: " + msg);
-                }
+                log.debug("Sending to: {} message: {}", queue, msg);
                 memcachedClient.set(queue, 0, msg);
             } catch (Exception e) {
                 throw new CamelExchangeException("Error sending to: " + queue, exchange, e);

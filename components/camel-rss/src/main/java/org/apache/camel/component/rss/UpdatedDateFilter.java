@@ -47,17 +47,12 @@ public class UpdatedDateFilter implements EntryFilter {
             updated = ((SyndEntry)entry).getPublishedDate();
         }
         if (updated == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("No updated time for entry so assuming its valid: entry=[" + entry + "]");
-            }
+            LOG.debug("No updated time for entry so assuming its valid: entry=[{}]", entry);
             return true;
         }
         if (lastUpdate != null) {
             if (lastUpdate.after(updated) || lastUpdate.equals(updated)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Entry is older than lastupdate=[" + lastUpdate
-                        + "], no valid entry=[" + entry + "]");
-                }
+                LOG.debug("Entry is older than lastupdate=[{}], no valid entry=[{}]", lastUpdate, entry);
                 return false;
             }
         }

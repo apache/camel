@@ -165,9 +165,7 @@ public class ActivityState extends TemporalEntity {
         if (!isStarted()) {
             setTimeStarted(currentTime());
             context.onStarted(this);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Activity first message: " + this);
-            }
+            LOG.debug("Activity first message: {}", this);
         }
     }
 
@@ -180,9 +178,7 @@ public class ActivityState extends TemporalEntity {
             // must also clear overdue otherwise we will get failures
             setTimeOverdue(null);
             context.onCompleted(this);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Activity complete: " + this);
-            }
+            LOG.debug("Activity complete: {}", this);
         }
     }
 

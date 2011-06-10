@@ -123,9 +123,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
 
         // set the address
         String address = String.format("%s:%s/%d", getProtocol(), host, port);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Using snmp address " + address);
-        }
+        LOG.debug("Using snmp address {}", address);
         setAddress(address);
     }
 

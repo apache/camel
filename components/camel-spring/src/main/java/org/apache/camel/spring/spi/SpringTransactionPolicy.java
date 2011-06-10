@@ -77,18 +77,14 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             // otherwise its just the "default" that has not explicit been configured
             // and if so then we can safely replace that with our transacted error handler
             if (ErrorHandlerBuilderRef.isErrorHandlerBuilderConfigured(ref)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Looking up ErrorHandlerBuilder with ref: " + ref);
-                }
+                LOG.debug("Looking up ErrorHandlerBuilder with ref: {}", ref);
                 builder = ErrorHandlerBuilderRef.lookupErrorHandlerBuilder(routeContext, ref);
             }
         }
 
         if (builder != null && builder.supportTransacted()) {
             // already a TX error handler then we are good to go
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("The ErrorHandlerBuilder configured is already a TransactionErrorHandlerBuilder: " + builder);
-            }
+            LOG.debug("The ErrorHandlerBuilder configured is already a TransactionErrorHandlerBuilder: {}", builder);
             answer = createTransactionErrorHandler(routeContext, processor, builder);
             answer.setExceptionPolicy(builder.getExceptionPolicyStrategy());
             // configure our answer based on the existing error handler
@@ -97,12 +93,10 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             // no transaction error handler builder configure so create a temporary one as we got all
             // the needed information form the configured builder anyway this allow us to use transacted
             // routes anyway even though the error handler is not transactional, eg ease of configuration
-            if (LOG.isDebugEnabled()) {
-                if (builder != null) {
-                    LOG.debug("The ErrorHandlerBuilder configured is not a TransactionErrorHandlerBuilder: " + builder);
-                } else {
-                    LOG.debug("No ErrorHandlerBuilder configured, will use default TransactionErrorHandlerBuilder settings");
-                }
+            if (builder != null) {
+                LOG.debug("The ErrorHandlerBuilder configured is not a TransactionErrorHandlerBuilder: {}", builder);
+            } else {
+                LOG.debug("No ErrorHandlerBuilder configured, will use default TransactionErrorHandlerBuilder settings");
             }
             TransactionErrorHandlerBuilder txBuilder = new TransactionErrorHandlerBuilder();
             txBuilder.setTransactionTemplate(getTransactionTemplate());

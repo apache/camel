@@ -238,18 +238,15 @@ public class MinaComponent extends DefaultComponent {
             }
             addCodecFactory(config, codecFactory);
             if (LOG.isDebugEnabled()) {
-                LOG.debug(type + ": Using TextLineCodecFactory: " + codecFactory + " using encoding: "
-                        + charset + " line delimiter: " + configuration.getTextlineDelimiter()
-                        + "(" + delimiter + ")");
-                LOG.debug("Encoder maximum line length: " + codecFactory.getEncoderMaxLineLength()
-                        + ". Decoder maximum line length: " + codecFactory.getDecoderMaxLineLength());
+                LOG.debug("{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
+                        new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
+                LOG.debug("Encoder maximum line length: {}. Decoder maximum line length: {}",
+                        codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
             }
         } else {
             ObjectSerializationCodecFactory codecFactory = new ObjectSerializationCodecFactory();
             addCodecFactory(config, codecFactory);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(type + ": Using ObjectSerializationCodecFactory: " + codecFactory);
-            }
+            LOG.debug("{}: Using ObjectSerializationCodecFactory: {}", type, codecFactory);
         }
         
     }
@@ -324,7 +321,7 @@ public class MinaComponent extends DefaultComponent {
             codecFactory = new MinaUdpProtocolCodecFactory(getCamelContext(), charset);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug(type + ": Using CodecFactory: " + codecFactory + " using encoding: " + charset);
+                LOG.debug("{}: Using CodecFactory: {} using encoding: {}", new Object[]{type, codecFactory, charset});
             }
         }
 
@@ -362,9 +359,7 @@ public class MinaComponent extends DefaultComponent {
             encoding = Charset.defaultCharset().name();
             // set in on configuration so its updated
             configuration.setEncoding(encoding);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(type + ": No encoding parameter using default charset: " + encoding);
-            }
+            LOG.debug("{}: No encoding parameter using default charset: {}", type, encoding);
         }
         if (!Charset.isSupported(encoding)) {
             throw new IllegalArgumentException("The encoding: " + encoding + " is not supported");

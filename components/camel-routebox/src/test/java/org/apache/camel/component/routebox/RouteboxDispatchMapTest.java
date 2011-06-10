@@ -83,9 +83,7 @@ public class RouteboxDispatchMapTest extends RouteboxDemoTestSupport {
         });
         context.start();
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testRouteboxUsingDispatchMap()");
-        }        
+        LOG.debug("Beginning Test ---> testRouteboxUsingDispatchMap()");        
         
         Book book = new Book("Sir Arthur Conan Doyle", "The Adventures of Sherlock Holmes");
 
@@ -93,14 +91,10 @@ public class RouteboxDispatchMapTest extends RouteboxDemoTestSupport {
         assertEquals("Book with Author " + book.getAuthor() + " and title " + book.getTitle() + " added to Catalog", response);
         
         book = (Book) sendFindBookRequest(template, routeboxUri, "findBook", "Sir Arthur Conan Doyle");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Received book with author " + book.getAuthor() + " and title " + book.getTitle());
-        }        
+        LOG.debug("Received book with author {} and title {}", book.getAuthor(), book.getTitle());       
         assertEquals("The Adventures of Sherlock Holmes", book.getTitle());
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testRouteboxUsingDispatchMap()");
-        }
+        LOG.debug("Completed Test ---> testRouteboxUsingDispatchMap()");
         context.stop();
     }  
     

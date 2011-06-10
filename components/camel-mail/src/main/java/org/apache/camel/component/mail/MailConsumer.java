@@ -148,9 +148,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
-            }
+            LOG.debug("Limiting to maximum messages to poll {} as there was {} messages in this poll.", maxMessagesPerPoll, total);
             total = maxMessagesPerPoll;
         }
 
@@ -234,7 +232,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         int count = fetchSize == -1 ? messages.length : Math.min(fetchSize, messages.length);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Fetching " + count + " messages. Total " + messages.length + " messages.");
+            LOG.debug("Fetching {} messages. Total {} messages.", count, messages.length);
         }
 
         for (int i = 0; i < count; i++) {
@@ -244,7 +242,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
                 answer.add(exchange);
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Skipping message as it was flagged as deleted: " + MailUtils.dumpMessage(message));
+                    LOG.debug("Skipping message as it was flagged as deleted: {}", MailUtils.dumpMessage(message));
                 }
             }
         }
@@ -258,7 +256,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
     protected void processExchange(Exchange exchange) throws Exception {
         if (LOG.isDebugEnabled()) {
             MailMessage msg = (MailMessage) exchange.getIn();
-            LOG.debug("Processing message: " + MailUtils.dumpMessage(msg.getMessage()));
+            LOG.debug("Processing message: {}", MailUtils.dumpMessage(msg.getMessage()));
         }
         getProcessor().process(exchange);
     }
@@ -323,7 +321,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
             folder = null;
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Connecting to MailStore: " + getEndpoint().getConfiguration().getMailStoreLogInformation());
+                LOG.debug("Connecting to MailStore: {}", getEndpoint().getConfiguration().getMailStoreLogInformation());
             }
             store = sender.getSession().getStore(config.getProtocol());
             store.connect(config.getHost(), config.getPort(), config.getUsername(), config.getPassword());
@@ -331,7 +329,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
 
         if (folder == null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Getting folder " + config.getFolderName());
+                LOG.debug("Getting folder {}", config.getFolderName());
             }
             folder = store.getFolder(config.getFolderName());
             if (folder == null || !folder.exists()) {

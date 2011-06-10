@@ -55,7 +55,7 @@ public class NagiosProducer extends DefaultProducer {
         MessagePayload payload = new MessagePayload(hostName, level.ordinal(), serviceName, message);
 
         if (log.isDebugEnabled()) {
-            log.debug("Sending notification to Nagios: " + payload.getMessage());
+            log.debug("Sending notification to Nagios: {}", payload.getMessage());
         }
         sender.send(payload);
         log.trace("Sending notification done");

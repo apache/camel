@@ -679,7 +679,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 answer.add((Element)part);
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Unhandled part type '" + part.getClass());
+                    LOG.debug("Unhandled part type '{}'", part.getClass());
                 }
             }
         }

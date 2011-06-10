@@ -80,7 +80,7 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
                 dispatchToInnerRoute(queue, exchange);
             } catch (InterruptedException e) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                    LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
                 }
                 continue;
             }
@@ -93,9 +93,7 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
         if (exchange != null) {
             if (isRunAllowed()) {
                 try {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Dispatching to inner route: " + exchange);
-                    }
+                    LOG.debug("Dispatching to inner route: {}", exchange);
                     RouteboxDispatcher dispatcher = new RouteboxDispatcher(producer);
                     result = dispatcher.dispatchAsync(getRouteboxEndpoint(), exchange); 
                     AsyncProcessorHelper.process(processor, result, new AsyncCallback() {

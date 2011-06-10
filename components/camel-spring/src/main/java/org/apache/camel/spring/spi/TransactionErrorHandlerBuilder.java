@@ -79,13 +79,12 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
                 Map<String, TransactionTemplate> map = routeContext.lookupByType(TransactionTemplate.class);
                 if (map != null && map.size() == 1) {
                     transactionTemplate = map.values().iterator().next();
-                } else if (LOG.isDebugEnabled()) {
-                    if (map == null || map.isEmpty()) {
-                        LOG.trace("No TransactionTemplate found in registry.");
-                    } else {
-                        LOG.debug("Found " + map.size() + " TransactionTemplate in registry. "
-                                + "Cannot determine which one to use. Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder");
-                    }
+                }
+                if (map == null || map.isEmpty()) {
+                    LOG.trace("No TransactionTemplate found in registry.");
+                } else {
+                    LOG.debug("Found {} TransactionTemplate in registry. Cannot determine which one to use. "
+                    		+ "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", map.size());
                 }
             }
 
@@ -93,13 +92,12 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
                 Map<String, PlatformTransactionManager> map = routeContext.lookupByType(PlatformTransactionManager.class);
                 if (map != null && map.size() == 1) {
                     transactionTemplate = new TransactionTemplate(map.values().iterator().next());
-                } else if (LOG.isDebugEnabled()) {
-                    if (map == null || map.isEmpty()) {
-                        LOG.trace("No PlatformTransactionManager found in registry.");
-                    } else {
-                        LOG.debug("Found " + map.size() + " PlatformTransactionManager in registry. "
-                                + "Cannot determine which one to use for TransactionTemplate. Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder");
-                    }
+                }
+                if (map == null || map.isEmpty()) {
+                    LOG.trace("No PlatformTransactionManager found in registry.");
+                } else {
+                    LOG.debug("Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
+                    		+ "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", map.size());
                 }
             }
 

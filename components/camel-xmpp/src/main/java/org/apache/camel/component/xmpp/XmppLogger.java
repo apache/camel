@@ -32,7 +32,7 @@ public class XmppLogger implements PacketListener {
 
     public void processPacket(Packet packet) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug(direction + " : " + packet.toXML());
+            LOG.debug("{} : {}", direction, packet.toXML());
         }
     }
 }

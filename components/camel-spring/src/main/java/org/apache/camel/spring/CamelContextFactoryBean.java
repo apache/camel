@@ -239,9 +239,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             // let the spring camel context handle the events
             context.onApplicationEvent(event);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Publishing spring-event: " + event);
-            }
+            LOG.debug("Publishing spring-event: {}", event);
 
             if (event instanceof ContextRefreshedEvent) {
                 // now lets start the CamelContext so that all its possible

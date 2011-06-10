@@ -44,9 +44,7 @@ public class DefaultServerPipelineFactory implements ChannelPipelineFactory {
 
         SslHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline");
-            }
+            LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline");
             channelPipeline.addLast("ssl", sslHandler);            
         }
         List<ChannelDownstreamHandler> encoders = consumer.getConfiguration().getEncoders();

@@ -258,9 +258,7 @@ public class JmsBinding {
         if (answer == null) {
             if (cause != null) {
                 // an exception occurred so send it as response
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Will create JmsMessage with caused exception: " + cause);
-                }
+                LOG.debug("Will create JmsMessage with caused exception: {}", cause);
                 // create jms message containing the caused exception
                 answer = createJmsMessage(cause, session);
             } else {
@@ -334,8 +332,8 @@ public class JmsBinding {
                 JmsMessageHelper.setProperty(jmsMessage, key, value);
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we cannot sent it over the wire
-                LOG.debug("Ignoring non primitive header: " + headerName + " of class: "
-                    + headerValue.getClass().getName() + " with value: " + headerValue);
+                LOG.debug("Ignoring non primitive header: {} of class: {} with value: {}",
+                        new Object[]{headerName, headerValue.getClass().getName(), headerValue});
             }
         }
     }

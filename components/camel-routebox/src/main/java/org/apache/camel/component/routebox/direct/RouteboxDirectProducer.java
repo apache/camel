@@ -46,9 +46,7 @@ public class RouteboxDirectProducer extends RouteboxServiceSupport implements Pr
         if ((((RouteboxDirectEndpoint)getRouteboxEndpoint()).getConsumer() == null) && (getRouteboxEndpoint().getConfig().isSendToConsumer())) {
             throw new CamelExchangeException("No consumers available on endpoint: " + getRouteboxEndpoint(), exchange);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Dispatching to Inner Route " + exchange);
-            }
+            LOG.debug("Dispatching to Inner Route {}", exchange);
             RouteboxDispatcher dispatcher = new RouteboxDispatcher(producer);
             result = dispatcher.dispatchSync(getRouteboxEndpoint(), exchange);
         }
@@ -67,9 +65,7 @@ public class RouteboxDirectProducer extends RouteboxServiceSupport implements Pr
             flag = true;
         } else {
             try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Dispatching to Inner Route " + exchange);
-                }
+                LOG.debug("Dispatching to Inner Route {}", exchange);
                 
                 RouteboxDispatcher dispatcher = new RouteboxDispatcher(producer);
                 exchange = dispatcher.dispatchAsync(getRouteboxEndpoint(), exchange);      

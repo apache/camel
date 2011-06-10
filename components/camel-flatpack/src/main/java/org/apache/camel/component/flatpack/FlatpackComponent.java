@@ -54,9 +54,7 @@ public class FlatpackComponent extends ResourceBasedComponent {
                 resource = getResourceLoader().getResource(remaining);
             }
         }
-        if (log.isDebugEnabled()) {
-            log.debug(this + " using flatpack map resource: " + resource);
-        }
+        log.debug("{} using flatpack map resource: {}", this, resource);
         FixedLengthEndpoint answer;
         if (fixed) {
             answer = new FixedLengthEndpoint(uri, resource);

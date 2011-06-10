@@ -135,10 +135,7 @@ public class SmppProducer extends DefaultProducer {
             }
         }
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending a short message for exchange id '"
-                    + exchange.getExchangeId() + "'...");
-        }
+        LOG.debug("Sending a short message for exchange id '{}'...", exchange.getExchangeId());
         
         // only possible by trying to reconnect 
         if (this.session == null) {
@@ -169,21 +166,14 @@ public class SmppProducer extends DefaultProducer {
                 (byte) 0,
                 submitSm.getShortMessage());
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sent a short message for exchange id '"
-                    + exchange.getExchangeId() + "' and received message id '"
-                    + messageId + "'");
-        }
+        LOG.debug("Sent a short message for exchange id '{}' and received message id '{}'",
+                exchange.getExchangeId(), messageId);
 
         if (exchange.getPattern().isOutCapable()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Exchange is out capable, setting headers on out exchange...");
-            }
+            LOG.debug("Exchange is out capable, setting headers on out exchange...");
             exchange.getOut().setHeader(SmppBinding.ID, messageId);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Exchange is not out capable, setting headers on in exchange...");
-            }
+            LOG.debug("Exchange is not out capable, setting headers on in exchange...");
             exchange.getIn().setHeader(SmppBinding.ID, messageId);
         }
     }

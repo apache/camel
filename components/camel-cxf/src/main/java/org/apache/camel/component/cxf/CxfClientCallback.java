@@ -58,7 +58,7 @@ public class CxfClientCallback extends ClientCallback {
                         ctx);
             }
             if (LOG.isDebugEnabled()) {
-                LOG.debug(Thread.currentThread().getName() + " calling handleResponse");
+                LOG.debug("{} calling handleResponse", Thread.currentThread().getName());
             }
             camelAsyncCallback.done(false);
         }
@@ -77,7 +77,7 @@ public class CxfClientCallback extends ClientCallback {
                                                                          ctx);
             }
             if (LOG.isDebugEnabled()) {
-                LOG.debug(Thread.currentThread().getName() + " calling handleException");
+                LOG.debug("{} calling handleException", Thread.currentThread().getName());
             }
             camelAsyncCallback.done(false);
         }

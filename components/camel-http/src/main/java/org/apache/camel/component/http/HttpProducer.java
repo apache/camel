@@ -93,12 +93,10 @@ public class HttpProducer extends DefaultProducer {
         // lets store the result in the output message.
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing http " + method.getName() + " method: " + method.getURI().toString());
+                LOG.debug("Executing http {} method: {}", method.getName(), method.getURI().toString());
             }
             int responseCode = executeMethod(method);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Http responseCode: " + responseCode);
-            }
+            LOG.debug("Http responseCode: {}", responseCode);
 
             if (!throwException) {
                 // if we do not use failed exception then populate response for all response codes
@@ -291,9 +289,7 @@ public class HttpProducer extends DefaultProducer {
         if (methodToUse.isEntityEnclosing()) {
             ((EntityEnclosingMethod) method).setRequestEntity(requestEntity);
             if (requestEntity != null && requestEntity.getContentType() == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("No Content-Type provided for URL: " + url + " with exchange: " + exchange);
-                }
+                LOG.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
             }
         }
 

@@ -199,9 +199,7 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
             
             try {
                 currentUser.login(token);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Current User " + currentUser.getPrincipal() + " successfully authenticated");
-                }
+                LOG.debug("Current User {} successfully authenticated", currentUser.getPrincipal());
             } catch (UnknownAccountException uae) {
                 throw new UnknownAccountException("Authentication Failed. There is no user with username of " + token.getPrincipal(), uae.getCause());
             } catch (IncorrectCredentialsException ice) {
@@ -225,9 +223,7 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
                 }
             }
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Valid Permissions List not specified for ShiroSecurityPolicy. No authorization checks will be performed for current user");
-            }
+            LOG.debug("Valid Permissions List not specified for ShiroSecurityPolicy. No authorization checks will be performed for current user");
             authorized = true;
         }
         
@@ -235,9 +231,7 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
             throw new CamelAuthorizationException("Authorization Failed. Subject's role set does not have the necessary permissions to perform further processing", exchange);
         } 
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Current User " + currentUser.getPrincipal() + " is successfully authorized. The exchange will be allowed to proceed");
-        }
+        LOG.debug("Current User {} is successfully authorized. The exchange will be allowed to proceed", currentUser.getPrincipal());
     }
     
     public CipherService getCipherService() {

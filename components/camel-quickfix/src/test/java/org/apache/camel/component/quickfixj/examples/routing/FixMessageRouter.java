@@ -56,9 +56,7 @@ public class FixMessageRouter {
             SessionID destinationSession = getDestinationSessionID(message);
             if (destinationSession != null) {
                 String destinationUri = String.format("%s?sessionID=%s", engineUri, destinationSession);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Routing destination: " + destinationUri);
-                }
+                LOG.debug("Routing destination: {}", destinationUri);
                 return destinationUri;
             }
         }

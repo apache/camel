@@ -112,16 +112,14 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
                 // byte arrays is not readable so convert to string
                 out = exchange.getContext().getTypeConverter().convertTo(String.class, body);
             }
-            LOG.debug("Writing body : " + out);
+            LOG.debug("Writing body : {}", out);
         }
         // write the body
         MinaHelper.writeBody(session, body, exchange);
 
         if (sync) {
             // wait for response, consider timeout
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Waiting for response using timeout " + timeout + " millis.");
-            }
+            LOG.debug("Waiting for response using timeout {} millis.", timeout);
             boolean done = latch.await(timeout, TimeUnit.MILLISECONDS);
             if (!done) {
                 throw new ExchangeTimedOutException(exchange, timeout);
@@ -159,7 +157,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
         }
         if (disconnect) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Closing session when complete at address: " + getEndpoint().getAddress());
+                LOG.debug("Closing session when complete at address: {}", getEndpoint().getAddress());
             }
             session.close();
         }
@@ -176,7 +174,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
     @Override
     protected void doStop() throws Exception {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Stopping connector: " + connector + " at address: " + getEndpoint().getAddress());
+            LOG.debug("Stopping connector: {} at address: {}", connector, getEndpoint().getAddress());
         }
         closeConnection();
         super.doStop();
@@ -200,7 +198,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
         SocketAddress address = getEndpoint().getAddress();
         connector = getEndpoint().getConnector();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating connector to address: " + address + " using connector: " + connector + " timeout: " + timeout + " millis.");
+            LOG.debug("Creating connector to address: {} using connector: {} timeout: {} millis.", new Object[]{address, connector, timeout});
         }
         IoHandler ioHandler = new ResponseHandler(getEndpoint());
         // connect and wait until the connection is established
@@ -230,9 +228,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
 
         @Override
         public void messageReceived(IoSession ioSession, Object message) throws Exception {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Message received: " + message);
-            }
+            LOG.debug("Message received: {}", message);
             this.message = message;
             messageReceived = true;
             cause = null;
@@ -251,7 +247,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
             if (sync && !messageReceived) {
                 // sync=true (InOut mode) so we expected a message as reply but did not get one before the session is closed
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Session closed but no message received from address: " + this.endpoint.getAddress());
+                    LOG.debug("Session closed but no message received from address: {}", this.endpoint.getAddress());
                 }
                 // session was closed but no message received. This could be because the remote server had an internal error
                 // and could not return a response. We should count down to stop waiting for a response

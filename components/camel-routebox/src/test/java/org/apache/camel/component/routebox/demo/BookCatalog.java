@@ -37,24 +37,18 @@ public class BookCatalog {
     }
 
     public String addToCatalog(Book book) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Adding book with author " + book.getAuthor() + " and title " + book.getTitle());
-        }
+        LOG.debug("Adding book with author {} and title {}", book.getAuthor(), book.getTitle());
         map.put(book.getAuthor(), book);
         return "Book with Author " + book.getAuthor() + " and title " + book.getTitle() + " added to Catalog";
     }
     
     public Book findBook(String author) throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Finding book with author " + author);
-        }
+        LOG.debug("Finding book with author {}", author);
         return map.get(author);
     }
     
     public Book findAuthor(String title) throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Finding author with book " + title);
-        }
+        LOG.debug("Finding author with book {}", title);
         Set<String> keys = map.keySet();
         Book book = null;
         

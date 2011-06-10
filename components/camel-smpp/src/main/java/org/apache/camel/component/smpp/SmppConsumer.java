@@ -83,9 +83,7 @@ public class SmppConsumer extends DefaultConsumer {
             private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
 
             public void onAcceptAlertNotification(AlertNotification alertNotification) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Received an alertNotification " + alertNotification);
-                }
+                LOG.debug("Received an alertNotification {}", alertNotification);
 
                 try {
                     Exchange exchange = getEndpoint().createOnAcceptAlertNotificationExchange(
@@ -100,9 +98,7 @@ public class SmppConsumer extends DefaultConsumer {
             }
 
             public void onAcceptDeliverSm(DeliverSm deliverSm) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Received a deliverSm " + deliverSm);
-                }
+                LOG.debug("Received a deliverSm {}", deliverSm);
 
                 try {
                     Exchange exchange = getEndpoint().createOnAcceptDeliverSmExchange(deliverSm);
@@ -117,9 +113,7 @@ public class SmppConsumer extends DefaultConsumer {
 
             public DataSmResult onAcceptDataSm(DataSm dataSm, Session session)
                 throws ProcessRequestException {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Received a dataSm " + dataSm);
-                }
+                LOG.debug("Received a dataSm {}", dataSm);
 
                 MessageId newMessageId = messageIDGenerator.newMessageId();
 

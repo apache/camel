@@ -121,9 +121,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                 try {
                     final byte[] data = codec.marshallExchange(camelContext, exchange);
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Adding exchange with key: [" + key + "]");
-                    }
+                    LOG.debug("Adding exchange with key: [{}]", key);
 
                     String insert = "INSERT INTO " + getRepositoryName() + " (" + EXCHANGE + ", " + ID + ") VALUES (?, ?)";
                     String update = "UPDATE " + getRepositoryName() + " SET " + EXCHANGE + " = ? WHERE " + ID + " = ?";
@@ -160,9 +158,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         final String key = correlationId;
         Exchange result = get(key, getRepositoryName(), camelContext);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Getting key  [" + key + "] -> " + result);
-        }
+        LOG.debug("Getting key  [{}] -> {}", key, result);
 
         return result;
     }
@@ -197,9 +193,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                 try {
                     final byte[] data = codec.marshallExchange(camelContext, exchange);
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Removing key [" + key + "]");
-                    }
+                    LOG.debug("Removing key [{}]", key);
 
                     jdbcTemplate.update("DELETE FROM " + getRepositoryName() + " WHERE " + ID + " = ?",
                             new Object[]{key});
@@ -222,9 +216,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
     public void confirm(final CamelContext camelContext, final String exchangeId) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Confirming exchangeId [" + exchangeId + "]");
-                }
+                LOG.debug("Confirming exchangeId [{}]", exchangeId);
                 final String confirmKey = exchangeId;
 
                 jdbcTemplate.update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?",
@@ -272,9 +264,7 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         final String key = exchangeId;
         Exchange answer = get(key, getRepositoryNameCompleted(), camelContext);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Recovering exchangeId [" + key + "] -> " + answer);
-        }
+        LOG.debug("Recovering exchangeId [{}] -> {}", key, answer);
 
         return answer;
     }

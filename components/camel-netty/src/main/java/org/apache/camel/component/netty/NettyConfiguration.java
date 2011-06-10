@@ -135,22 +135,18 @@ public class NettyConfiguration implements Cloneable {
                     decoders.add(new StringDecoder(charset));
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using textline encoders and decoders with charset: " + charset + ", delimiter: "
-                            + delimiter + " and decoderMaxLineLength: " + decoderMaxLineLength);
+                        LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}", 
+                                new Object[]{charset, delimiter, decoderMaxLineLength});
                     }
                 } else {
                     // object serializable is then used
                     encoders.add(new ObjectEncoder());
                     decoders.add(new ObjectDecoder());
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using object encoders and decoders");
-                    }
+                    LOG.debug("Using object encoders and decoders");
                 }
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("No encoders and decoders will be used");
-                }
+                LOG.debug("No encoders and decoders will be used");
             }
         } else {
             LOG.debug("Using configured encoders and/or decoders");

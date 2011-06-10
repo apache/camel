@@ -76,31 +76,21 @@ public class CacheProducer extends DefaultProducer {
         Object element;
 
         if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_ADD)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Adding an element with key " + key + " into the Cache");
-            }
+            LOG.debug("Adding an element with key {} into the Cache", key);
             element = createElementFromBody(exchange, CacheConstants.CACHE_OPERATION_ADD);
             cache.put(new Element(key, element));
         } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_UPDATE)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Updating an element with key " + key + " into the Cache");
-            }
+            LOG.debug("Updating an element with key {} into the Cache", key);
             element = createElementFromBody(exchange, CacheConstants.CACHE_OPERATION_UPDATE);
             cache.put(new Element(key, element));
         } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_DELETEALL)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Deleting All elements from the Cache");
-            }
+            LOG.debug("Deleting All elements from the Cache");
             cache.removeAll();
         } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_DELETE)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Deleting an element with key " + key + " into the Cache");
-            }
+            LOG.debug("Deleting an element with key {} into the Cache", key);
             cache.remove(key);
         } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_GET)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Quering an element with key " + key + " from the Cache");
-            }
+            LOG.debug("Quering an element with key {} from the Cache", key);
             if (cache.isKeyInCache(key) && cache.get(key) != null) {
                 exchange.getIn().setHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND, true);
                 exchange.getIn().setBody(cache.get(key).getValue());
@@ -108,9 +98,7 @@ public class CacheProducer extends DefaultProducer {
                 exchange.getIn().removeHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND);
             }
         } else if (operation.equalsIgnoreCase(CacheConstants.CACHE_OPERATION_CHECK)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Querying an element with key " + key + " from the Cache");
-            }
+            LOG.debug("Querying an element with key {} from the Cache", key);
             if (cache.isKeyInCache(key)) {
                 exchange.getIn().setHeader(CacheConstants.CACHE_ELEMENT_WAS_FOUND, true);
             } else {

@@ -38,9 +38,7 @@ public class CamelContextFactory implements BundleContextAware {
     }
 
     public void setBundleContext(BundleContext bundleContext) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Using BundleContext: " + bundleContext);
-        }
+        LOG.debug("Using BundleContext: {}", bundleContext);
         this.bundleContext = bundleContext;
     }
 
@@ -49,9 +47,7 @@ public class CamelContextFactory implements BundleContextAware {
     }
 
     public void setRegistry(Registry registry) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Using Registry: " + registry);
-        }
+        LOG.debug("Using Registry: {}", registry);
         this.registry = registry;
     }
 

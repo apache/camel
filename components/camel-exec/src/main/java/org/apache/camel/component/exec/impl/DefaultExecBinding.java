@@ -64,9 +64,7 @@ public class DefaultExecBinding implements ExecBinding {
                 // use args from header instead from endpoint
                 s = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, args);
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Parsing argument String to a List: " + s);
-            }
+            LOG.debug("Parsing argument String to a List: {}", s);
             argsList = splitToWhiteSpaceSeparatedTokens(s);
         }
 

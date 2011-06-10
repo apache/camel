@@ -95,9 +95,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
             // subscribe so we can receive the reply from spring integration
             inputChannel.subscribe(new MessageHandler() {
                 public void handleMessage(Message<?> message) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Received " + message + " from InputChannel: " + inputChannel);
-                    }
+                    log.debug("Received {} from InputChannel: {}", message, inputChannel);
                     SpringIntegrationBinding.storeToCamelMessage(message, exchange.getOut());
                 }
             });
@@ -105,9 +103,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
         org.springframework.integration.Message siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
         // send the message to spring integration
-        if (log.isDebugEnabled()) {
-            log.debug("Sending " + siOutmessage + " to OutputChannel: " + outputChannel);
-        }
+        log.debug("Sending {} to OutputChannel: {}", siOutmessage, outputChannel);
         outputChannel.send(siOutmessage);
     }
 

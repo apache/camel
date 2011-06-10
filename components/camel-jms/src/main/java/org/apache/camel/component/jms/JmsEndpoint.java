@@ -179,7 +179,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
         if (configuration.getTaskExecutor() != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Using custom TaskExecutor: " + configuration.getTaskExecutor() + " on listener container: " + listenerContainer);
+                log.debug("Using custom TaskExecutor: {} on listener container: {}", configuration.getTaskExecutor(), listenerContainer);
             }
             listenerContainer.setTaskExecutor(configuration.getTaskExecutor());
         } else {

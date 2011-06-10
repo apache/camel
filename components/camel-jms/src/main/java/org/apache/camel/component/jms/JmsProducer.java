@@ -232,9 +232,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                 Object jmsReplyTo = JmsMessageHelper.getJMSReplyTo(answer);
                 if (endpoint.isDisableReplyTo()) {
                     // honor disable reply to configuration
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("ReplyTo is disabled on endpoint: " + endpoint);
-                    }
+                    LOG.debug("ReplyTo is disabled on endpoint: {}", endpoint);
                     JmsMessageHelper.setJMSReplyTo(answer, null);
                 } else {
                     // if the binding did not create the reply to then we have to try to create it here
@@ -255,8 +253,8 @@ public class JmsProducer extends DefaultAsyncProducer {
                     // log at debug what we are doing, as higher level may cause noise in production logs
                     // this behavior is also documented at the camel website
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Disabling JMSReplyTo: " + jmsReplyTo + " for destination: " + to
-                            + ". Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on endpoint: " + endpoint);
+                        LOG.debug("Disabling JMSReplyTo: {} for destination: {}. Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on endpoint: {}",
+                                new Object[]{jmsReplyTo, to, endpoint});
                     }
                     jmsReplyTo = null;
                 }
@@ -276,14 +274,10 @@ public class JmsProducer extends DefaultAsyncProducer {
                     if (jmsReplyTo == null) {
                         // okay then fallback and create the queue
                         if (endpoint.isPubSubDomain()) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Creating JMSReplyTo topic: " + replyTo);
-                            }
+                            LOG.debug("Creating JMSReplyTo topic: {}", replyTo);
                             jmsReplyTo = session.createTopic(replyTo);
                         } else {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Creating JMSReplyTo queue: " + replyTo);
-                            }
+                            LOG.debug("Creating JMSReplyTo queue: {}", replyTo);
                             jmsReplyTo = session.createQueue(replyTo);
                         }
                     }
@@ -295,9 +289,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                     replyTo = (Destination) jmsReplyTo;
                 }
                 if (replyTo != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using JMSReplyTo destination: " + replyTo);
-                    }
+                    LOG.debug("Using JMSReplyTo destination: {}", replyTo);
                     JmsMessageHelper.setJMSReplyTo(answer, replyTo);
                 } else {
                     // do not use JMSReplyTo

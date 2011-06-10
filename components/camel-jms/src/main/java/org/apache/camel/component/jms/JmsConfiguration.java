@@ -247,18 +247,18 @@ public class JmsConfiguration implements Cloneable {
                 }
 
                 // need to log just before so the message is 100% correct when logged
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sending JMS message to: {} with message: {}", producer.getDestination(), message);
                 }
                 producer.send(message, deliveryMode, priority, ttl);
             } else {
                 // need to log just before so the message is 100% correct when logged
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Sending JMS message to: " + producer.getDestination() + " with message: " + message);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sending JMS message to: {} with message: {}", producer.getDestination(), message);
                 }
                 super.doSend(producer, message);
-                if (logger.isTraceEnabled()) {
-                    logger.trace("Sent JMS message to: " + producer.getDestination() + " with message: " + message);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Sent JMS message to: " + producer.getDestination() + " with message: " + message);
                 }
             }
         }

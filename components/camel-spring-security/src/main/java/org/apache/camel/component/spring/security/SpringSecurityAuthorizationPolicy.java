@@ -106,9 +106,7 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
         // try to get it from thread context as a fallback
         if (answer == null && useThreadSecurityContext) {
             answer = SecurityContextHolder.getContext().getAuthentication();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Get the authentication from SecurityContextHolder");
-            }
+            LOG.debug("Get the authentication from SecurityContextHolder");
         }        
         return answer;
     }
@@ -134,16 +132,12 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
     
     private Authentication authenticateIfRequired(Authentication authentication) {
         if (authentication.isAuthenticated() && !alwaysReauthenticate) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Previously Authenticated: " + authentication);
-            }
+            LOG.debug("Previously Authenticated: {}", authentication);
             return authentication;
         }
 
         authentication = authenticationManager.authenticate(authentication);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Successfully Authenticated: " + authentication);
-        }
+        LOG.debug("Successfully Authenticated: {}", authentication);
         return authentication;
     }
     

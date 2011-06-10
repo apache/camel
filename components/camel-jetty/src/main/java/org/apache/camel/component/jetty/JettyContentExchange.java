@@ -139,7 +139,7 @@ public class JettyContentExchange extends ContentExchange {
         int exchangeState = getStatus();
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("TaskComplete with state " + exchangeState + " for url: " + getUrl());
+            LOG.debug("TaskComplete with state {} for url: {}", exchangeState, getUrl());
         }
 
         try {

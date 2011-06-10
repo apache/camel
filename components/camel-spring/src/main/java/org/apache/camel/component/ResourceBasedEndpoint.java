@@ -61,9 +61,7 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
 
     public Resource getResource() {
         if (resource == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Loading resource: " + resourceUri + " using: " + getResourceLoader());
-            }
+            log.debug("Loading resource: {} using: {}", resourceUri, getResourceLoader());
             resource = getResourceLoader().getResource(resourceUri);
             if (resource == null) {
                 throw new IllegalArgumentException("Could not find resource for URI: " + resourceUri + " using: " + getResourceLoader());
@@ -91,16 +89,12 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
         if (contentCache) {
             synchronized (resource) {
                 if (buffer == null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Reading resource: " + resourceUri + " into the content cache");
-                    }
+                    log.debug("Reading resource: {} into the content cache", resourceUri);
                     is = getResourceAsInputStreamWithoutCache();
                     buffer = IOConverter.toBytes(is);
                 }
             }
-            if (log.isDebugEnabled()) {
-                log.debug("Using resource: " + resourceUri + " from the content cache");
-            }
+            log.debug("Using resource: {} from the content cache", resourceUri);
             return new ByteArrayInputStream(buffer);
         } 
 

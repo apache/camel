@@ -246,9 +246,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Deleting file: " + name);
-        }
+        LOG.debug("Deleting file: {}", name);
         try {
             channel.rm(name);
             return true;
@@ -258,9 +256,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Renaming file: " + from + " to: " + to);
-        }
+        LOG.debug("Renaming file: {} to: {}", from, to);
         try {
             channel.rename(from, to);
             return true;
@@ -288,9 +284,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
 
             if (!success) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Trying to build remote directory: " + directory);
-                }
+                LOG.debug("Trying to build remote directory: {}", directory);
 
                 try {
                     channel.mkdir(directory);
@@ -580,9 +574,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             IOHelper.close(os, "retrieve: " + name, LOG);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Retrieve file to local work file result: true");
-        }
+        LOG.debug("Retrieve file to local work file result: true");
 
         // operation went okay so rename temp to local after we have retrieved the data
         LOG.trace("Renaming local in progress file from: {} to: {}", temp, local);

@@ -87,7 +87,7 @@ class HL7MLLPEncoder implements ProtocolEncoder {
         // flip the buffer so we can use it to write to the out stream
         buf.flip();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Encoding HL7 from " + message.getClass().getCanonicalName() + " to byte stream");
+            LOG.debug("Encoding HL7 from {} to byte stream", message.getClass().getCanonicalName());
         }
         out.write(buf);
     }

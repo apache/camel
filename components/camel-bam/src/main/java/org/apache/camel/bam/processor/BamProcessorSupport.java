@@ -93,9 +93,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
                             T entity = loadEntity(exchange, key);
 
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Correlation key: " + key + " with entity: " + entity);
-                            }
+                            LOG.debug("Correlation key: {} with entity: {}", key, entity);
                             processEntity(exchange, entity);
 
                             return entity;
@@ -105,7 +103,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
                     }
                 });
                 if (i > 1) {
-                    LOG.info("Attempt " + i + " worked!");
+                    LOG.info("Attempt {} worked!", i);
                 }
                 return;
             } catch (Exception e) {

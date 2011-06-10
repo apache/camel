@@ -194,9 +194,7 @@ public class RouteResource extends CamelChildResourceSupport {
             return Response.seeOther(new URI("/routes")).build();
         }
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("New Route is: " + body);
-        }
+        LOG.debug("New Route is: {}", body);
         
         LOG.info(body);
         if (body == null) {

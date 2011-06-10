@@ -109,9 +109,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     @SuppressWarnings("unchecked")
     public Object evaluate(Exchange exchange) {
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Evaluation: " + expression + " for exchange: " + exchange);
-            }
+            LOG.debug("Evaluation: {} for exchange: {}", expression, exchange);
 
             if (resultType != null) {
                 if (resultType.equals(String.class)) {
@@ -511,9 +509,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     protected synchronized void initialize(Exchange exchange) throws XPathException, IOException {
         // must use synchronized for concurrency issues and only let it initialize once
         if (!initialized.get()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Initializing XQueryBuilder " + this);
-            }
+            LOG.debug("Initializing XQueryBuilder {}", this);
             configuration = new Configuration();
             configuration.setHostLanguage(Configuration.XQUERY);
             configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);

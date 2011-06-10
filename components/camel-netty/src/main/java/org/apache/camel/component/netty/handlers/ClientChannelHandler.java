@@ -92,7 +92,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             // session was closed but no message received. This could be because the remote server had an internal error
             // and could not return a response. We should count down to stop waiting for a response
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Channel closed but no message received from address: " + producer.getConfiguration().getAddress());
+                LOG.debug("Channel closed but no message received from address: {}", producer.getConfiguration().getAddress());
             }
             exchange.setException(new CamelExchangeException("No response received from remote server: " + producer.getConfiguration().getAddress(), exchange));
             // signal callback
@@ -105,9 +105,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         messageReceived = true;
 
         Object body = messageEvent.getMessage();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Message received: " + body);
-        }
+        LOG.debug("Message received: {}", body);
 
         // if textline enabled then covert to a String which must be used for textline
         if (producer.getConfiguration().isTextline()) {
@@ -143,7 +141,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             }
             if (disconnect) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Closing channel when complete at address: " + producer.getConfiguration().getAddress());
+                    LOG.debug("Closing channel when complete at address: {}", producer.getConfiguration().getAddress());
                 }
                 NettyHelper.close(ctx.getChannel());
             }

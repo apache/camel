@@ -111,9 +111,9 @@ public class CacheConsumerTest extends CamelTestSupport {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("------- Cache Event Notification ---------");
                             LOG.debug("Received notification for the following activity in cache TestCache1:");
-                            LOG.debug("Operation = " + operation);
-                            LOG.debug("key = " + key);
-                            LOG.debug("value = " + data);
+                            LOG.debug("Operation = {}", operation);
+                            LOG.debug("key = {}", key);
+                            LOG.debug("value = {}", data);
                             LOG.debug("------ End Cache Event Notification ------");
                         }
                     }

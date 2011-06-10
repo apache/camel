@@ -100,7 +100,7 @@ public class MinaConsumer extends DefaultConsumer {
                     // byte arrays is not readable so convert to string
                     in = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, in);
                 }
-                LOG.debug("Received body: " + in);
+                LOG.debug("Received body: {}", in);
             }
 
             Exchange exchange = getEndpoint().createExchange(session, object);
@@ -139,16 +139,12 @@ public class MinaConsumer extends DefaultConsumer {
                     if (getEndpoint().getConfiguration().isDisconnectOnNoReply()) {
                         // must close session if no data to write otherwise client will never receive a response
                         // and wait forever (if not timing out)
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Closing session as no payload to send as reply at address: " + address);
-                        }
+                        LOG.debug("Closing session as no payload to send as reply at address: {}", address);
                         session.close();
                     }
                 } else {
                     // we got a response to write
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Writing body: " + body);
-                    }
+                    LOG.debug("Writing body: {}", body);
                     MinaHelper.writeBody(session, body, exchange);
                 }
             }
@@ -167,9 +163,7 @@ public class MinaConsumer extends DefaultConsumer {
                 disconnect = close;
             }
             if (disconnect) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Closing session when complete at address: " + address);
-                }
+                LOG.debug("Closing session when complete at address: {}", address);
                 session.close();
             }
         }

@@ -44,9 +44,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         this.participant = participant;
         ObjectHelper.notEmpty(participant, "participant");
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating XmppPrivateChatProducer to participant " + participant);
-        }
+        LOG.debug("Creating XmppPrivateChatProducer to participant {}", participant);
     }
 
     public void process(Exchange exchange) {
@@ -54,7 +52,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             // make sure we are connected
             if (!connection.isConnected()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Reconnecting to: " + XmppEndpoint.getConnectionMessage(connection));
+                    LOG.debug("Reconnecting to: {}", XmppEndpoint.getConnectionMessage(connection));
                 }
                 connection.connect();
             }
@@ -73,7 +71,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
                 public void processMessage(Chat chat, Message message) {
                     // not here to do conversation
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Received and discarding message from " + getParticipant() + " : " + message.getBody());
+                        LOG.debug("Received and discarding message from {} : {}", getParticipant(), message.getBody());
                     }
                 }
             });
@@ -89,7 +87,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             endpoint.getBinding().populateXmppMessage(message, exchange);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending XMPP message to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message.getBody());
+                LOG.debug("Sending XMPP message to {} from {} : {}", new Object[]{endpoint.getParticipant(), endpoint.getUser(), message.getBody()});
             }
             chat.sendMessage(message);
         } catch (XMPPException xmppe) {

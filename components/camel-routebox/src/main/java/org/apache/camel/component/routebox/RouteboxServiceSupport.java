@@ -54,7 +54,7 @@ public abstract class RouteboxServiceSupport extends ServiceSupport {
         if (!(routeBuildersList.isEmpty())) {
             for (RouteBuilder routeBuilder : routeBuildersList) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Adding RouteBuilder " + routeBuilder + " to " + context.getName());
+                    log.debug("Adding RouteBuilder {} to {}", routeBuilder, context.getName());
                 }
                 context.addRoutes(routeBuilder);
             }

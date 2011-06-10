@@ -45,9 +45,7 @@ public class QuickfixjProducer extends DefaultProducer {
     void sendMessage(Exchange exchange, org.apache.camel.Message camelMessage) throws InterruptedException {
         try {
             Message message = camelMessage.getBody(Message.class);
-            if (log.isDebugEnabled()) {
-                log.debug("Sending FIX message: " + message.toString());
-            }
+            log.debug("Sending FIX message: {}", message);
 
             SessionID messageSessionID = sessionID;
             if (messageSessionID == null) {

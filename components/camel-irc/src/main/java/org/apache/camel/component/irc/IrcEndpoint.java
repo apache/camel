@@ -195,12 +195,12 @@ public class IrcEndpoint extends DefaultEndpoint {
 
         if (ObjectHelper.isNotEmpty(key)) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Joining: " + channel + " using " + connection.getClass().getName() + " with key " + key);
+                LOG.debug("Joining: {} using {} with key {}", new Object[]{channel, connection.getClass().getName(), key});
             }
             connection.doJoin(channel, key);
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Joining: " + channel + " using " + connection.getClass().getName());
+                LOG.debug("Joining: {} using {}", channel, connection.getClass().getName());
             }
             connection.doJoin(channel);
         }

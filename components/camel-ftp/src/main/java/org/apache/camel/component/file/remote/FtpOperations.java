@@ -206,9 +206,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
-        if (log.isDebugEnabled()) {
-            log.debug("Deleting file: " + name);
-        }
+        log.debug("Deleting file: {}", name);
         try {
             return this.client.deleteFile(name);
         } catch (IOException e) {
@@ -217,9 +215,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
-        if (log.isDebugEnabled()) {
-            log.debug("Renaming file: " + from + " to: " + to);
-        }
+        log.debug("Renaming file: {} to: {}", from, to);
         try {
             return client.rename(from, to);
         } catch (IOException e) {
@@ -401,9 +397,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             IOHelper.close(os, "retrieve: " + name, log);
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Retrieve file to local work file result: " + result);
-        }
+        log.debug("Retrieve file to local work file result: {}", result);
 
         if (result) {
             log.trace("Renaming local in progress file from: {} to: {}", temp, local);

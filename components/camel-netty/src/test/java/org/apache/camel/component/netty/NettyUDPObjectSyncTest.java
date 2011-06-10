@@ -34,17 +34,13 @@ public class NettyUDPObjectSyncTest extends CamelTestSupport {
     
     @Test
     public void testUDPObjectInOutWithNettyConsumer() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testUDPInOutWithNettyConsumer()");
-        }
+        LOG.debug("Beginning Test ---> testUDPInOutWithNettyConsumer()");
         
         Poetry poetry = new Poetry();
         Poetry response = producerTemplate.requestBody("netty:udp://localhost:5155?sync=true", poetry, Poetry.class);        
         assertEquals("Dr. Sarojini Naidu", response.getPoet());
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testUDPInOutWithNettyConsumer()");
-        }
+        LOG.debug("Completed Test ---> testUDPInOutWithNettyConsumer()");
     }    
     
     @Override

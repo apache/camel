@@ -57,7 +57,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
             props.put(CONTEXT_VERSION_PROPERTY, getBundleVersion(bundleContext.getBundle()));
 
             if (log.isDebugEnabled()) {
-                log.debug("Registering CamelContext [" + context.getName() + "] in OSGi registry");
+                log.debug("Registering CamelContext [{}] in OSGi registry", context.getName());
             }
             ServiceRegistration reg = bundleContext.registerService(CamelContext.class.getName(), context, props);
             registrations.put(context, reg);
@@ -66,7 +66,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
             ServiceRegistration reg = registrations.get(context);
             if (reg != null) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Unregistering CamelContext [" + context.getName() + "] from OSGi registry");
+                    log.debug("Unregistering CamelContext [{}] from OSGi registry", context.getName());
                 }
                 reg.unregister();
             }

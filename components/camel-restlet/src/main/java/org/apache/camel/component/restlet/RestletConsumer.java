@@ -43,9 +43,7 @@ public class RestletConsumer extends DefaultConsumer {
         restlet = new Restlet() {
             @Override
             public void handle(Request request, Response response) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Consumer restlet handle request method: " + request.getMethod());
-                }
+                LOG.debug("Consumer restlet handle request method: {}", request.getMethod());
                 
                 try {
                     Exchange exchange = getEndpoint().createExchange();

@@ -66,9 +66,7 @@ public class EndpointMessageListener implements MessageListener {
     public void onMessage(final Message message) {
         LOG.trace("onMessage START");
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(endpoint + " consumer received JMS message: " + message);
-        }
+        LOG.debug("{} consumer received JMS message: {}", endpoint, message);
 
         boolean sendReply;
         RuntimeCamelException rce = null;
@@ -275,9 +273,7 @@ public class EndpointMessageListener implements MessageListener {
     protected void sendReply(Destination replyDestination, final Message message, final Exchange exchange,
                              final org.apache.camel.Message out, final Exception cause) {
         if (replyDestination == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Cannot send reply message as there is no replyDestination for: " + out);
-            }
+            LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;
         }
         getTemplate().send(replyDestination, new MessageCreator() {
@@ -287,7 +283,7 @@ public class EndpointMessageListener implements MessageListener {
                 reply.setJMSCorrelationID(correlationID);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug(endpoint + " sending reply JMS message [correlationId:" + correlationID + "]: " + reply);
+                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", new Object[]{endpoint, correlationID, reply});
                 }
                 return reply;
             }
@@ -297,9 +293,7 @@ public class EndpointMessageListener implements MessageListener {
     protected void sendReply(String replyDestination, final Message message, final Exchange exchange,
                              final org.apache.camel.Message out, final Exception cause) {
         if (replyDestination == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Cannot send reply message as there is no replyDestination for: " + out);
-            }
+            LOG.debug("Cannot send reply message as there is no replyDestination for: {}", out);
             return;
         }
         getTemplate().send(replyDestination, new MessageCreator() {
@@ -309,7 +303,7 @@ public class EndpointMessageListener implements MessageListener {
                 reply.setJMSCorrelationID(correlationID);
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug(endpoint + " sending reply JMS message [correlationId:" + correlationID + "]: " + reply);
+                    LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", new Object[]{endpoint, correlationID, reply});
                 }
                 return reply;
             }

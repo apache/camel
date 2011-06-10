@@ -47,9 +47,7 @@ public class TestEndpoint extends MockEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Consuming expected messages from: " + expectedMessageEndpoint);
-        }
+        LOG.debug("Consuming expected messages from: {}", expectedMessageEndpoint);
         final List<Object> expectedBodies = new ArrayList<Object>();
         EndpointHelper.pollEndpoint(expectedMessageEndpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -58,9 +56,7 @@ public class TestEndpoint extends MockEndpoint {
             }
         }, timeout);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Received: " + expectedBodies.size() + " expected message(s) from: " + expectedMessageEndpoint);
-        }
+        LOG.debug("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
         expectedBodiesReceived(expectedBodies);
     }
 

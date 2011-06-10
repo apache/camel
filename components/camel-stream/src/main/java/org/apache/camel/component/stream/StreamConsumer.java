@@ -216,9 +216,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private InputStream resolveStreamFromUrl() throws IOException {
         String u = endpoint.getUrl();
         ObjectHelper.notEmpty(u, "url");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("About to read from url: " + u);
-        }
+        LOG.debug("About to read from url: {}", u);
 
         URL url = new URL(u);
         URLConnection c = url.openConnection();
@@ -234,7 +232,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         File file = new File(fileName);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("File to be scanned : " + file.getName() + ", path : " + file.getAbsolutePath());
+            LOG.debug("File to be scanned : {}, path : {}", file.getName(), file.getAbsolutePath());
         }
 
         if (file.canRead()) {

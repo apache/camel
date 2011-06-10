@@ -75,9 +75,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
         Object in = messageEvent.getMessage();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Incoming message: " + in);
-        }
+        LOG.debug("Incoming message: {}", in);
 
         // create Exchange and let the consumer process it
         Exchange exchange = consumer.getEndpoint().createExchange(ctx, messageEvent);
@@ -125,7 +123,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
                 // must close session if no data to write otherwise client will never receive a response
                 // and wait forever (if not timing out)
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Closing channel as no payload to send as reply at address: " + messageEvent.getRemoteAddress());
+                    LOG.debug("Closing channel as no payload to send as reply at address: {}", messageEvent.getRemoteAddress());
                 }
                 NettyHelper.close(messageEvent.getChannel());
             }
@@ -136,9 +134,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             }
 
             // we got a body to write
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing body: " + body);
-            }
+            LOG.debug("Writing body: {}", body);
             if (consumer.getConfiguration().isTcp()) {
                 NettyHelper.writeBodySync(messageEvent.getChannel(), null, body, exchange);
             } else {
@@ -161,7 +157,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         }
         if (disconnect) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Closing channel when complete at address: " + messageEvent.getRemoteAddress());
+                LOG.debug("Closing channel when complete at address: {}", messageEvent.getRemoteAddress());
             }
             NettyHelper.close(messageEvent.getChannel());
         }

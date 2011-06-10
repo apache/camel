@@ -105,9 +105,9 @@ public class CacheBasedXPathElementReplacerTest extends CamelTestSupport {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("------- Payload Replacement Results ---------");
                             LOG.debug("The following Payload was replaced from Cache: TestCache1");
-                            LOG.debug("key = " + key);
-                            LOG.debug("Before Value = " + xmlFragment);
-                            LOG.debug("After value = " + data);
+                            LOG.debug("key = {}", key);
+                            LOG.debug("Before Value = {}", xmlFragment);
+                            LOG.debug("After value = {}", data);
                             LOG.debug("------ End  ------");
                         }
                     }

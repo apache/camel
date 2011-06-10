@@ -153,10 +153,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (!connection.isAuthenticated()) {
             if (user != null) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Logging in to XMPP as user: " + user + " on connection: " + getConnectionMessage(connection));
+                    LOG.debug("Logging in to XMPP as user: {} on connection: {}", user, getConnectionMessage(connection));
                 }
                 if (password == null) {
-                    LOG.warn("No password configured for user: " + user + " on connection: " + getConnectionMessage(connection));
+                    LOG.warn("No password configured for user: {} on connection: {}", user, getConnectionMessage(connection));
                 }
 
                 if (createAccount) {
@@ -172,7 +172,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                 }
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Logging in anonymously to XMPP on connection: "  + getConnectionMessage(connection));
+                    LOG.debug("Logging in anonymously to XMPP on connection: {}", getConnectionMessage(connection));
                 }
                 connection.loginAnonymously();
             }
@@ -200,9 +200,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         }
 
         String chatServer = iterator.next();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Detected chat server: " + chatServer);
-        }
+        LOG.debug("Detected chat server: {}", chatServer);
 
         return room + "@" + chatServer;
     }

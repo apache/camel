@@ -53,7 +53,7 @@ public class LdapProducer extends DefaultProducer {
         if (returnedAttributes != null) {
             String returnedAtts[] = returnedAttributes.split(",");
             if (log.isDebugEnabled()) {
-                log.debug("Setting returning Attributes to searchControls: " + Arrays.toString(returnedAtts));
+                log.debug("Setting returning Attributes to searchControls: {}", Arrays.toString(returnedAtts));
             }
             searchControls.setReturningAttributes(returnedAtts);
         }
@@ -118,7 +118,7 @@ public class LdapProducer extends DefaultProducer {
         } while (prepareNextPage(ldapContext));
 
         if (log.isDebugEnabled()) {
-            log.debug("Found a total of " + data.size() + " entries for ldap filter " + searchFilter);
+            log.debug("Found a total of {} entries for ldap filter {}", data.size(), searchFilter);
         }
 
         return data;

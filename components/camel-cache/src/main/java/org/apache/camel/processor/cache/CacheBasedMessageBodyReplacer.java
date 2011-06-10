@@ -49,9 +49,7 @@ public class CacheBasedMessageBodyReplacer extends CacheValidate implements Proc
 
         if (isValid(cacheManager, cacheName, key)) {
             cache = cacheManager.getCache(cacheName);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Replacing Message Body from CacheName " + cacheName + " for key " + key);
-            }
+            LOG.debug("Replacing Message Body from CacheName {} for key {}", cacheName, key);
             exchange.getIn().setHeader(CacheConstants.CACHE_KEY, key);
             exchange.getIn().setBody(cache.get(key).getObjectValue());
         }

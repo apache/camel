@@ -35,9 +35,7 @@ public class ValidatorComponent extends ResourceBasedComponent {
         SpringValidator validator = new SpringValidator();
         Resource resource = resolveMandatoryResource(remaining);
         validator.setSchemaResource(resource);
-        if (log.isDebugEnabled()) {
-            log.debug(this + " using schema resource: " + resource);
-        }
+        log.debug("{} using schema resource: {}", resource);
         configureValidator(validator, uri, remaining, parameters);
 
         // force loading of schema at create time otherwise concurrent processing could

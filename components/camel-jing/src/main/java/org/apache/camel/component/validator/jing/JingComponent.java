@@ -34,9 +34,7 @@ public class JingComponent extends ResourceBasedComponent {
         JingValidator validator = new JingValidator();
         Resource resource = resolveMandatoryResource(remaining);
         validator.setSchemaResource(resource);
-        if (log.isDebugEnabled()) {
-            log.debug(this + " using schema resource: " + resource);
-        }
+        log.debug("{} using schema resource: {}", this, resource);
         configureValidator(validator, uri, remaining, parameters);
         return new ProcessorEndpoint(uri, this, validator);
     }

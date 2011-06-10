@@ -134,9 +134,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
                 SpringIntegrationBinding.storeToSpringIntegrationMessage(exchange.getOut());
 
             // send the message to spring integration
-            if (log.isDebugEnabled()) {
-                log.debug("Sending " + siOutMessage + " to ReplyChannel: " + reply);
-            }
+            log.debug("Sending {} to ReplyChannel: {}", siOutMessage, reply);
             reply.send(siOutMessage);
         }        
     }   

@@ -48,9 +48,7 @@ public class JdbcAggregateLoadAndRecoverTest extends AbstractJdbcAggregationTest
             Map<String, Object> headers = new HashMap<String, Object>();
             headers.put("id", id);
             headers.put("seq", i);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending " + value + " with id " + id);
-            }
+            LOG.debug("Sending {} with id {}", value, id);
             template.sendBodyAndHeaders("seda:start?size=" + SIZE, value, headers);
             // simulate a little delay
             Thread.sleep(3);

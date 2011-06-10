@@ -160,9 +160,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 }
 
                 if (result.size() > 0) {
-
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Size of the record splitted : " + result.size());
+                        LOG.debug("Size of the record splitted : {}", result.size());
                     }
 
                     // Bind data from CSV record with model classes
@@ -174,12 +173,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                     // Add objects graph to the list
                     models.add(model);
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Graph of objects created : " + model);
-                    }
-
+                    LOG.debug("Graph of objects created : {}", model);
                 }
-
             }
 
             // Test if models list is empty or not

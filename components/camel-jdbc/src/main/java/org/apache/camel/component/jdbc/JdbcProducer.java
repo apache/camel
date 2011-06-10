@@ -75,9 +75,7 @@ public class JdbcProducer extends DefaultProducer {
                 IntrospectionSupport.setProperties(stmt, parameters);
             }
             
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing JDBC statement: " + sql);
-            }
+            LOG.debug("Executing JDBC statement: {}", sql);
 
             if (stmt.execute(sql)) {
                 rs = stmt.getResultSet();

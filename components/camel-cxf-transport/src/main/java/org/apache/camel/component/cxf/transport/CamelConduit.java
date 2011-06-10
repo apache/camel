@@ -182,9 +182,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
             } else {
                 pattern = ExchangePattern.InOut;
             }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("send the message to endpoint" + targetCamelEndpointUri);
-            }
+            LOG.debug("send the message to endpoint {}", targetCamelEndpointUri);
             org.apache.camel.Exchange exchange = producer.createExchange(pattern);
 
             exchange.setProperty(Exchange.TO_ENDPOINT, targetCamelEndpointUri);

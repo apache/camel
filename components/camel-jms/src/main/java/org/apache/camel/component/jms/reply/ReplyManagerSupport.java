@@ -100,9 +100,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             return;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Received reply message with correlationID: " + correlationID + " -> " + message);
-        }
+        log.debug("Received reply message with correlationID: {} -> {}", correlationID, message);
 
         // handle the reply message
         handleReplyMessage(correlationID, message);
@@ -122,16 +120,12 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 Object body = response.getBody();
 
                 if (endpoint.isTransferException() && body instanceof Exception) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Reply received. Setting reply as an Exception: " + body);
-                    }
+                    log.debug("Reply received. Setting reply as an Exception: {}", body);
                     // we got an exception back and endpoint was configured to transfer exception
                     // therefore set response as exception
                     exchange.setException((Exception) body);
                 } else {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Reply received. Setting reply as OUT message: " + body);
-                    }
+                    log.debug("Reply received. Setting reply as OUT message: {}", body);
                     // regular response
                     exchange.setOut(response);
                 }

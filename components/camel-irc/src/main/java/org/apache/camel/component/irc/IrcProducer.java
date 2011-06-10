@@ -51,20 +51,14 @@ public class IrcProducer extends DefaultProducer {
         }
 
         if (isMessageACommand(msg)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending command: " + msg);
-            }
+            LOG.debug("Sending command: {}", msg);
             connection.send(msg);
         } else if (targetChannel != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending to: " + targetChannel + " message: " + msg);
-            }
+            LOG.debug("Sending to: {} message: {}", targetChannel, msg);
             connection.doPrivmsg(targetChannel, msg);
         } else {
             for (String channel : endpoint.getConfiguration().getChannels()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Sending to: " + channel + " message: " + msg);
-                }
+                LOG.debug("Sending to: {} message: {}", channel, msg);
                 connection.doPrivmsg(channel, msg);
             }
         }
@@ -83,9 +77,7 @@ public class IrcProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         if (connection != null) {
             for (String channel : endpoint.getConfiguration().getChannels()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Parting: " + channel);
-                }
+                LOG.debug("Parting: {}", channel);
                 connection.doPart(channel);
             }
             connection.removeIRCEventListener(listener);

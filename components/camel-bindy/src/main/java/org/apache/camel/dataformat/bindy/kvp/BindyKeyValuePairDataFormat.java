@@ -115,7 +115,6 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
                 }
 
                 if (result.size() > 0) {
-
                     // Bind data from message with model classes
                     // Counter is used to detect line where error occurs
                     factory.bind(result, model, count);
@@ -126,11 +125,8 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
                     // Add objects graph to the list
                     models.add(model);
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Graph of objects created : " + model);
-                    }
+                    LOG.debug("Graph of objects created : {}", model);
                 }
-
             }
 
             // Test if models list is empty or not

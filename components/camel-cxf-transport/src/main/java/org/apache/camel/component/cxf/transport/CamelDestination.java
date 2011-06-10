@@ -273,9 +273,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
             CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
             camelExchange.getOut().setBody(outputStream.getInputStream());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("send the response message: " + outputStream);
-            }
+            LOG.debug("send the response message: {}", outputStream);
         }
 
         @Override

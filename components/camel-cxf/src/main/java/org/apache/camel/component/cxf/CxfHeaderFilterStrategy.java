@@ -122,9 +122,7 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // get filter
         MessageHeaderFilter messageHeaderfilter = getMessageHeaderFilter(exchange);
         if (messageHeaderfilter == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("No CXF Binding namespace can be resolved.  Message headers are intact.");
-            }
+            LOG.debug("No CXF Binding namespace can be resolved.  Message headers are intact.");
             return false;
         }
         

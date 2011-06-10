@@ -55,19 +55,15 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
         Request request = requestEvent.getRequest();
         ServerTransaction serverTransactionId = requestEvent.getServerTransaction();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Request: " + request.getMethod()); 
-            LOG.debug("Server Transaction Id:" + serverTransactionId);
-        }
+        LOG.debug("Request: {}", request.getMethod()); 
+        LOG.debug("Server Transaction Id: {}", serverTransactionId);
 
         if (request.getMethod().equals(Request.SUBSCRIBE)) {
             processSubscribe(requestEvent, serverTransactionId);
         } else if (request.getMethod().equals(Request.PUBLISH)) {
             processPublish(requestEvent, serverTransactionId);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Received expected request with method: " + request.getMethod() + ". No further processing done");
-            }
+            LOG.debug("Received expected request with method: {}. No further processing done", request.getMethod());
         }
     }
     
@@ -107,9 +103,7 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
         notifyRequest.setHeader(eventHeader);
         notifyRequest.setHeader(sipPresenceAgent.getConfiguration().getContactHeader());
         notifyRequest.setContent(body, sipPresenceAgent.getConfiguration().getContentTypeHeader());
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending the following NOTIFY request to Subscriber: " + notifyRequest);
-        }
+        LOG.debug("Sending the following NOTIFY request to Subscriber: {}", notifyRequest);
         
         ClientTransaction clientTransactionId = sipPresenceAgent.getProvider().getNewClientTransaction(notifyRequest);
 
@@ -120,10 +114,8 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
             ServerTransaction serverTransactionId) {
         try {
             Request request = requestEvent.getRequest();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("SipPresenceAgentListener: Received a Publish request, sending OK");
-                LOG.debug("SipPresenceAgentListener request: " + request);
-            }
+            LOG.debug("SipPresenceAgentListener: Received a Publish request, sending OK");
+            LOG.debug("SipPresenceAgentListener request: {}", request);
             EventHeader eventHeader = (EventHeader) requestEvent.getRequest().getHeader(EventHeader.NAME);
             Response response = sipPresenceAgent.getConfiguration().getMessageFactory().createResponse(202, request);
             sipPresenceAgent.getProvider().sendResponse(response);
@@ -141,15 +133,11 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
         SipProvider sipProvider = (SipProvider) requestEvent.getSource();
         Request request = requestEvent.getRequest();
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("SipPresenceAgentListener: Received a Subscribe request, sending OK");
-                LOG.debug("SipPresenceAgentListener request: " + request);
-            }
+            LOG.debug("SipPresenceAgentListener: Received a Subscribe request, sending OK");
+            LOG.debug("SipPresenceAgentListener request: {}", request);
             EventHeader eventHeader = (EventHeader) request.getHeader(EventHeader.NAME);
             if (eventHeader == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Cannot find event header.... dropping request.");
-                }
+                LOG.debug("Cannot find event header.... dropping request.");
                 return;
             }
 
@@ -182,10 +170,8 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
             response.addHeader(sipPresenceAgent.getConfiguration().getExpiresHeader());
             st.sendResponse(response);
             
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("SipPresenceAgentListener: Sent OK Message");
-                LOG.debug("SipPresenceAgentListener response: " + response);
-            }
+            LOG.debug("SipPresenceAgentListener: Sent OK Message");
+            LOG.debug("SipPresenceAgentListener response: {}", response);
             sendNotification(eventHeader, isInitial, request.getContent());
 
         } catch (Throwable e) {

@@ -62,18 +62,14 @@ public class NettyUDPAsyncTest extends CamelTestSupport {
 
     @Test
     public void testUDPInOnlyWithNettyConsumer() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testUDPInOnlyWithNettyConsumer()");
-        }
+        LOG.debug("Beginning Test ---> testUDPInOnlyWithNettyConsumer()");
         
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         sendFile("netty:udp://localhost:5151?sync=false");
         mock.assertIsSatisfied();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testUDPInOnlyWithNettyConsumer()");
-        }    
+        LOG.debug("Completed Test ---> testUDPInOnlyWithNettyConsumer()");   
     }
 
     

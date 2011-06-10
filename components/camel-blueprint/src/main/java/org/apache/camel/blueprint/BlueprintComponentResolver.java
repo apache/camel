@@ -38,9 +38,7 @@ public class BlueprintComponentResolver extends OsgiComponentResolver {
         try {
             Object bean = context.getRegistry().lookup(name);
             if (bean instanceof Component) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found component: " + name + " in registry: " + bean);
-                }
+                LOG.debug("Found component: {} in registry: {}", name, bean);
                 return (Component) bean;
             } else {
                 // lets use Camel's type conversion mechanism to convert things like CamelContext
@@ -56,9 +54,7 @@ public class BlueprintComponentResolver extends OsgiComponentResolver {
         try {
             Object bean = context.getRegistry().lookup(".camelBlueprint.componentResolver." + name);
             if (bean instanceof ComponentResolver) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found component resolver: " + name + " in registry: " + bean);
-                }
+                LOG.debug("Found component resolver: {} in registry: {}", name, bean);
                 return ((ComponentResolver) bean).resolveComponent(name, context);
             }
         } catch (Exception e) {

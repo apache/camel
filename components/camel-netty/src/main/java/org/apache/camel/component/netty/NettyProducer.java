@@ -101,9 +101,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
 
     @Override
     protected void doStop() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Stopping producer at address: " + configuration.getAddress());
-        }
+        LOG.debug("Stopping producer at address: {}", configuration.getAddress());
         // close all channels
         ChannelGroupFuture future = ALL_CHANNELS.close();
         future.awaitUninterruptibly();
@@ -159,18 +157,14 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
         }
 
         // log what we are writing
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Writing body: " + body);
-        }
+        LOG.debug("Writing body: {}", body);
         // write the body asynchronously
         ChannelFuture future = channel.write(body);
 
         // add listener which handles the operation
         future.addListener(new ChannelFutureListener() {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Operation complete " + channelFuture);
-                }
+                LOG.debug("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {
                     // no success the set the caused exception and signal callback and break
                     exchange.setException(channelFuture.getCause());
@@ -196,7 +190,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
                         }
                         if (disconnect) {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Closing channel when complete at address: " + getEndpoint().getConfiguration().getAddress());
+                                LOG.debug("Closing channel when complete at address: {}", getEndpoint().getConfiguration().getAddress());
                             }
                             NettyHelper.close(channel);
                         }
@@ -286,9 +280,7 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
         // to keep track of all channels in use
         ALL_CHANNELS.add(channel);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating connector to address: " + configuration.getAddress());
-        }
+        LOG.debug("Creating connector to address: {}", configuration.getAddress());
         return channel;
     }
 

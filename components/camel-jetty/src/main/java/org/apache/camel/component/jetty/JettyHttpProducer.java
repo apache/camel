@@ -178,7 +178,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
 
     protected static void doSendExchange(HttpClient client, JettyContentExchange httpExchange) throws IOException {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending HTTP request to: " + httpExchange.getUrl());
+            LOG.debug("Sending HTTP request to: {}", httpExchange.getUrl());
         }
         client.send(httpExchange);
     }

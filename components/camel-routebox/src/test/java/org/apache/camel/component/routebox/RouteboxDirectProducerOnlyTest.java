@@ -77,9 +77,7 @@ public class RouteboxDirectProducerOnlyTest extends RouteboxDemoTestSupport {
         });
         context.start();
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testRouteboxDirectSyncRequests()");
-        }        
+        LOG.debug("Beginning Test ---> testRouteboxDirectSyncRequests()");       
         
         Book book = new Book("Sir Arthur Conan Doyle", "The Adventures of Sherlock Holmes");
         
@@ -89,14 +87,10 @@ public class RouteboxDirectProducerOnlyTest extends RouteboxDemoTestSupport {
         //Thread.sleep(2000);
         
         book = (Book) sendFindBookRequest(template, "direct:start", "findBook", "Sir Arthur Conan Doyle");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Received book with author " + book.getAuthor() + " and title " + book.getTitle());
-        }        
+        LOG.debug("Received book with author {} and title {}", book.getAuthor(), book.getTitle());        
         assertEquals("The Adventures of Sherlock Holmes", book.getTitle());
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testRouteboxDirectSyncRequests()");
-        }
+        LOG.debug("Completed Test ---> testRouteboxDirectSyncRequests()");
         context.stop();
     }      
 }

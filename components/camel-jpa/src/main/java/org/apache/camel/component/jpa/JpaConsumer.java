@@ -137,9 +137,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
 
             if (lockEntity(result, entityManager)) {
                 // process the current exchange
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Processing exchange: " + exchange);
-                }
+                LOG.debug("Processing exchange: {}", exchange);
                 try {
                     getProcessor().process(exchange);
                 } catch (Exception e) {
@@ -268,9 +266,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
             return true;
         }
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Acquiring exclusive lock on entity: " + entity);
-            }
+            LOG.debug("Acquiring exclusive lock on entity: {}", entity);
             entityManager.lock(entity, LockModeType.WRITE);
             return true;
         } catch (Exception e) {

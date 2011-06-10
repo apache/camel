@@ -55,8 +55,8 @@ public class Jt400PgmProducer extends DefaultProducer {
         pgmCall.setParameterList(parameterList);
 
         if (LOG.isDebugEnabled()) {
-            LOG.trace("Starting to call PGM '" + commandStr + "' in host '" + iSeries.getSystemName()
-                    + "' authentication with the user '" + iSeries.getUserId() + "'");
+            LOG.trace("Starting to call PGM '{}' in host '{}' authentication with the user '{}'",
+                    new Object[]{commandStr, iSeries.getSystemName(), iSeries.getUserId()});
         }
 
         boolean result = pgmCall.run();

@@ -100,9 +100,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     }
 
     public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Adding key   [" + key + "] -> " + exchange);
-        }
+        LOG.debug("Adding key [{}] -> {}", key, exchange);
         try {
             // If we could guarantee that the key and exchange are immutable,
             // then we could have stuck them directly into the index, 
@@ -166,16 +164,12 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             throw new RuntimeException("Error getting key " + key + " from repository " + repositoryName, e);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Getting key  [" + key + "] -> " + answer);
-        }
+        LOG.debug("Getting key  [{}] -> {}", key, answer);
         return answer;
     }
 
     public void remove(final CamelContext camelContext, final String key, final Exchange exchange) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Removing key [" + key + "]");
-        }
+        LOG.debug("Removing key [{}]", key);
         try {
             final Buffer keyBuffer = codec.marshallKey(key);
             final Buffer confirmKeyBuffer = codec.marshallKey(exchange.getExchangeId());
@@ -206,9 +200,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     }
 
     public void confirm(final CamelContext camelContext, final String exchangeId) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Confirming exchangeId [" + exchangeId + "]");
-        }
+        LOG.debug("Confirming exchangeId [{}]", exchangeId);
         try {
             final Buffer confirmKeyBuffer = codec.marshallKey(exchangeId);
             hawtDBFile.execute(new Work<Buffer>() {
@@ -319,7 +311,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             LOG.trace("Scanned and found no exchange to recover.");
         } else {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Scanned and found " + answer.size() + " exchange(s) to recover (note some of them may already be in progress).");
+                LOG.debug("Scanned and found {} exchange(s) to recover (note some of them may already be in progress).", answer.size());
             }
         }
         return answer;
@@ -351,9 +343,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             throw new RuntimeException("Error recovering exchangeId " + exchangeId + " from repository " + repositoryName, e);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Recovering exchangeId [" + exchangeId + "] -> " + answer);
-        }
+        LOG.debug("Recovering exchangeId [{}] -> {}", exchangeId, answer);
         return answer;
     }
 
@@ -370,9 +360,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
             }
         });
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Size of repository [" + repositoryName + "] -> " + answer);
-        }
+        LOG.debug("Size of repository [{}] -> {}", repositoryName, answer);
         return answer;
     }
 

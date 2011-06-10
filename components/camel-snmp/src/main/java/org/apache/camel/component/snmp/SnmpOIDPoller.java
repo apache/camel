@@ -90,21 +90,21 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
 
         // listen to the transport
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting OID poller on " + endpoint.getAddress() + " using " + endpoint.getProtocol() + " protocol");
+            LOG.debug("Starting OID poller on {} using {} protocol", endpoint.getAddress(), endpoint.getProtocol());
         }
         this.transport.listen();
-        LOG.info("Started OID poller on " + endpoint.getAddress() + " using " + endpoint.getProtocol() + " protocol");
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Started OID poller on {} using {} protocol", endpoint.getAddress(), endpoint.getProtocol());
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
         // stop listening to the transport
         if (this.transport != null && this.transport.isListening()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.info("Stopping OID poller on " + targetAddress);
-            }
+            LOG.info("Stopping OID poller on {}", targetAddress);
             this.transport.close();
-            LOG.info("Stopped OID poller on " + targetAddress);
+            LOG.info("Stopped OID poller on {}", targetAddress);
         }
 
         super.doStop();
@@ -150,7 +150,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
      */
     public void processPDU(PDU pdu) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Received response event for " + this.endpoint.getAddress() + " : " + pdu);
+            LOG.debug("Received response event for {} : {}", this.endpoint.getAddress(), pdu);
         }
         Exchange exchange = endpoint.createExchange(pdu);
         try {

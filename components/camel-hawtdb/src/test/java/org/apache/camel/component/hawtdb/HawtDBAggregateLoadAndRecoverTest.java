@@ -58,9 +58,7 @@ public class HawtDBAggregateLoadAndRecoverTest extends CamelTestSupport {
             Map<String, Object> headers = new HashMap<String, Object>();
             headers.put("id", id);
             headers.put("seq", i);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending " + value + " with id " + id);
-            }
+            LOG.debug("Sending {} with id {}", value, id);
             template.sendBodyAndHeaders("seda:start", value, headers);
             // simulate a little delay
             Thread.sleep(5);

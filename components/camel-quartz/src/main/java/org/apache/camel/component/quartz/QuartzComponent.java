@@ -214,21 +214,15 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
         Trigger existingTrigger = getScheduler().getTrigger(trigger.getName(), trigger.getGroup());
         if (existingTrigger == null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Adding job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
-            }
+            LOG.debug("Adding job using trigger: {}/{}", trigger.getGroup(), trigger.getName());
             getScheduler().scheduleJob(job, trigger);
         } else if (hasTriggerChanged(existingTrigger, trigger)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Trigger: " + trigger.getGroup() + "/" + trigger.getName() + " already exists and will be updated by Quartz.");
-            }
+            LOG.debug("Trigger: {}/{} already exists and will be updated by Quartz.", trigger.getGroup(), trigger.getName());
             scheduler.addJob(job, true);
             trigger.setJobName(job.getName());
             scheduler.rescheduleJob(trigger.getName(), trigger.getGroup(), trigger);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Trigger: " + trigger.getGroup() + "/" + trigger.getName() + " already exists and will be resumed automatically by Quartz.");
-            }
+            LOG.debug("Trigger: {}/{} already exists and will be resumed automatically by Quartz.", trigger.getGroup(), trigger.getName());
             if (!isClustered()) {
                 scheduler.resumeTrigger(trigger.getName(), trigger.getGroup());
             }
@@ -250,13 +244,9 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
         if (isClustered()) {
             // do not pause jobs which are clustered, as we want the jobs to continue running on the other nodes
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Cannot pause job using trigger: " + trigger.getGroup() + "/" + trigger.getName() + " as the JobStore is clustered.");
-            }
+            LOG.debug("Cannot pause job using trigger: {}/{} as the JobStore is clustered.", trigger.getGroup(), trigger.getName());
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Pausing job using trigger: " + trigger.getGroup() + "/" + trigger.getName());
-            }
+            LOG.debug("Pausing job using trigger: {}/{}", trigger.getGroup(), trigger.getName());
             getScheduler().pauseTrigger(trigger.getName(), trigger.getGroup());
             getScheduler().pauseJob(trigger.getName(), trigger.getGroup());
         }
@@ -265,15 +255,11 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     public void deleteJob(String name, String group) throws SchedulerException {
         if (isClustered()) {
             // do not pause jobs which are clustered, as we want the jobs to continue running on the other nodes
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Cannot delete job using trigger: " + group + "/" + name + " as the JobStore is clustered.");
-            }
+            LOG.debug("Cannot delete job using trigger: {}/{} as the JobStore is clustered.", group, name);
         } else {
             Trigger trigger  = getScheduler().getTrigger(name, group);
             if (trigger != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Deleting job using trigger: " + group + "/" + name);
-                }
+                LOG.debug("Deleting job using trigger: {}/{}", group, name);
                 getScheduler().unscheduleJob(name, group);
             }
         }
@@ -456,7 +442,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
         if (LOG.isDebugEnabled()) {
             String name = prop.getProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME);
-            LOG.debug("Creating SchedulerFactory: " + name + " with properties: " + prop);
+            LOG.debug("Creating SchedulerFactory: {} with properties: {}", name, prop);
         }
         return answer;
     }

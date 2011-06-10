@@ -91,9 +91,7 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
 
                 long timeToSleep = nextPoll - System.currentTimeMillis();
                 if (timeToSleep > 0) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Sleeping for " + timeToSleep + " millis");
-                    }
+                    LOG.debug("Sleeping for {} millis", timeToSleep);
                     try {
                         Thread.sleep(timeToSleep);
                     } catch (InterruptedException e) {
@@ -108,9 +106,7 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
 
     @SuppressWarnings("unchecked")
     protected void fireExpiredEvent(final ActivityState activityState) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Trying to fire expiration of: " + activityState);
-        }
+        LOG.debug("Trying to fire expiration of: {}", activityState);
 
         template.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {

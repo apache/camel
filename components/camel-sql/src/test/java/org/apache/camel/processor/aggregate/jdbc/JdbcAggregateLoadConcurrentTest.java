@@ -48,9 +48,7 @@ public class JdbcAggregateLoadConcurrentTest extends AbstractJdbcAggregationTest
             executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     char id = KEYS[key];
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Sending " + value + " with id " + id);
-                    }
+                    LOG.debug("Sending {} with id {}", value, id);
                     template.sendBodyAndHeader("direct:start", value, "id", "" + id);
                     // simulate a little delay
                     Thread.sleep(3);

@@ -77,13 +77,9 @@ public class NettySSLTest extends CamelTestSupport {
         });
         context.start();
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testSSLInOutWithNettyConsumer()");
-        }        
+        LOG.debug("Beginning Test ---> testSSLInOutWithNettyConsumer()");       
         sendRequest();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testSSLInOutWithNettyConsumer()");
-        }
+        LOG.debug("Completed Test ---> testSSLInOutWithNettyConsumer()");
         context.stop();
     }    
 

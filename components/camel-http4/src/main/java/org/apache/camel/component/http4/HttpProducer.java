@@ -96,13 +96,11 @@ public class HttpProducer extends DefaultProducer {
         HttpResponse httpResponse = null;
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing http " + httpRequest.getMethod() + " method: " + httpRequest.getURI().toString());
+                LOG.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getURI().toString());
             }
             httpResponse = executeMethod(httpRequest);
             int responseCode = httpResponse.getStatusLine().getStatusCode();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Http responseCode: " + responseCode);
-            }
+            LOG.debug("Http responseCode: {}", responseCode);
 
             if (throwException && (responseCode < 100 || responseCode >= 300)) {
                 throw populateHttpOperationFailedException(exchange, httpRequest, httpResponse, responseCode);
@@ -304,9 +302,7 @@ public class HttpProducer extends DefaultProducer {
         if (methodToUse.isEntityEnclosing()) {
             ((HttpEntityEnclosingRequestBase) httpRequest).setEntity(requestEntity);
             if (requestEntity != null && requestEntity.getContentType() == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("No Content-Type provided for URL: " + url + " with exchange: " + exchange);
-                }
+                LOG.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
             }
         }
 

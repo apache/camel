@@ -94,9 +94,7 @@ public class LocalContextComponent extends DefaultComponent {
     }
 
     protected void logUsingEndpoint(String uri, Endpoint endpoint) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Mapping the URI: " + uri + " to local endpoint: " + endpoint);
-        }
+        LOG.debug("Mapping the URI: {} to local endpoint: {}", uri, endpoint);
     }
 
 }

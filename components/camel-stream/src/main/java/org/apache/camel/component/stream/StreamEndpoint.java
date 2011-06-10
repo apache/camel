@@ -158,9 +158,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     Charset getCharset() {
         if (encoding == null) {
             encoding = Charset.defaultCharset().name();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("No encoding parameter using default charset: " + encoding);
-            }
+            LOG.debug("No encoding parameter using default charset: {}", encoding);
         }
         if (!Charset.isSupported(encoding)) {
             throw new IllegalArgumentException("The encoding: " + encoding + " is not supported");

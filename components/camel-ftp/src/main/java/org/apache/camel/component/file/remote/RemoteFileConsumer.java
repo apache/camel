@@ -89,7 +89,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             if (getOperations().isConnected()) {
                 loggedIn = false;
                 if (log.isDebugEnabled()) {
-                    log.debug("Disconnecting from: " + remoteServer());
+                    log.debug("Disconnecting from: {}", remoteServer());
                 }
                 getOperations().disconnect();
             }
@@ -111,9 +111,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
         // recover by re-creating operations which should most likely be able to recover
         if (!loggedIn) {
-            if (log.isDebugEnabled()) {
-                log.debug("Trying to recover connection to: " + getEndpoint() + " with a fresh client.");
-            }
+            log.debug("Trying to recover connection to: {} with a fresh client.", getEndpoint());
             setOperations(getEndpoint().createRemoteFileOperations());
             connectIfNecessary();
         }
@@ -122,7 +120,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected void connectIfNecessary() throws IOException {
         if (!loggedIn) {
             if (log.isDebugEnabled()) {
-                log.debug("Not connected/logged in, connecting to: " + remoteServer());
+                log.debug("Not connected/logged in, connecting to: {}", remoteServer());
             }
             loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration());
             if (loggedIn) {

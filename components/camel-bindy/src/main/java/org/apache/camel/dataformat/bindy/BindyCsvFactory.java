@@ -98,14 +98,15 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             List<Field> linkFields = new ArrayList<Field>();
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Class retrieved : " + cl.getName());
+                LOG.debug("Class retrieved : {}", cl.getName());
             }
 
             for (Field field : cl.getDeclaredFields()) {
                 DataField dataField = field.getAnnotation(DataField.class);
                 if (dataField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Position defined in the class : " + cl.getName() + ", position : " + dataField.pos() + ", Field : " + dataField.toString());
+                        LOG.debug("Position defined in the class : {}, position : {}, Field : {}",
+                                new Object[]{cl.getName(), dataField.pos(), dataField});
                     }
 
                     if (dataField.required()) {
@@ -122,7 +123,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 if (linkField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Class linked  : " + cl.getName() + ", Field" + field.toString());
+                        LOG.debug("Class linked  : {}, Field {}", cl.getName(), field);
                     }
                     linkFields.add(field);
                 }
@@ -136,11 +137,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             totalFields = numberMandatoryFields + numberOptionalFields;
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Number of optional fields : " + numberOptionalFields);
-                LOG.debug("Number of mandatory fields : " + numberMandatoryFields);
-                LOG.debug("Total : " + totalFields);
+                LOG.debug("Number of optional fields : {}", numberOptionalFields);
+                LOG.debug("Number of mandatory fields : {}", numberMandatoryFields);
+                LOG.debug("Total : {}", totalFields);
             }
-
         }
     }
 
@@ -175,7 +175,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             field.setAccessible(true);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Pos : " + pos + ", Data : " + data + ", Field type : " + field.getType());
+                LOG.debug("Pos : {}, Data : {}, Field type : {}", new Object[]{pos, data, field.getType()});
             }
 
             Format<?> format;
@@ -210,9 +210,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Counter mandatory fields : " + counterMandatoryFields);
-        }
+        LOG.debug("Counter mandatory fields : {}", counterMandatoryFields);
 
         if (pos < totalFields) {
             throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line : " + line);
@@ -236,7 +234,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         char separator = Converter.getCharDelimitor(this.getSeparator());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Separator converted : '0x" + Integer.toHexString(separator) + "', from : " + this.getSeparator());
+            LOG.debug("Separator converted : '0x{}', from : {}", Integer.toHexString(separator), this.getSeparator());
         }
 
         for (Class clazz : models) {
@@ -244,7 +242,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 Object obj = model.get(clazz.getName());
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Model object : " + obj + ", class : " + obj.getClass().getName());
+                    LOG.debug("Model object : {}, class : {}", obj, obj.getClass().getName());
                 }
                 if (obj != null) {
 
@@ -333,14 +331,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     v.add(l.get(idx));
                     index.put(ii, idx);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value : " + l.get(idx) + ", pos : " + ii + ", at :" + idx);
+                        LOG.debug("Value : {}, pos : {}, at : {}", new Object[]{l.get(idx), ii, idx});
                     }
                 } else {
                     v.add(l.get(0));
                     index.put(ii, 0);
                     ++idxSize;
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value : " + l.get(0) + ", pos : " + ii + ", at index : " + 0);
+                        LOG.debug("Value : {}, pos : {}, at index : {}", new Object[]{l.get(0), ii, 0});
                     }
                 }
             }
@@ -395,7 +393,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     result = formatString(format, value);
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value to be formatted : " + value + ", position : " + datafield.pos() + ", and its formated value : " + result);
+                        LOG.debug("Value to be formatted : {}, position : {}, and its formated value : {}", new Object[]{value, datafield.pos(), result});
                     }
 
                 } else {
@@ -413,7 +411,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     Integer keyGenerated = generateKey(key1, key2);
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key generated : " + String.valueOf(keyGenerated) + ", for section : " + key1);
+                        LOG.debug("Key generated : {}, for section : {}", String.valueOf(keyGenerated), key1);
                     }
 
                     key = keyGenerated;
@@ -520,41 +518,28 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 Section section = cl.getAnnotation(Section.class);
 
                 if (record != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Csv record : " + record.toString());
-                    }
+                    LOG.debug("Csv record : {}", record);
 
                     // Get skipFirstLine parameter
                     skipFirstLine = record.skipFirstLine();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Skip First Line parameter of the CSV : " + skipFirstLine);
-                    }
+                    LOG.debug("Skip First Line parameter of the CSV : {}" + skipFirstLine);
 
                     // Get generateHeaderColumnNames parameter
                     generateHeaderColumnNames = record.generateHeaderColumns();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Generate header column names parameter of the CSV : " + generateHeaderColumnNames);
-                    }
+                    LOG.debug("Generate header column names parameter of the CSV : {}", generateHeaderColumnNames);
 
                     // Get Separator parameter
                     ObjectHelper.notNull(record.separator(), "No separator has been defined in the @Record annotation !");
                     separator = record.separator();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Separator defined for the CSV : " + separator);
-                    }
+                    LOG.debug("Separator defined for the CSV : {}", separator);
 
                     // Get carriage return parameter
                     crlf = record.crlf();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Carriage return defined for the CSV : " + crlf);
-                    }
+                    LOG.debug("Carriage return defined for the CSV : {}", crlf);
 
                     // Get isOrdered parameter
                     messageOrdered = record.isOrdered();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Must CSV record be ordered ? " + messageOrdered);
-                    }
-
+                    LOG.debug("Must CSV record be ordered ? {}", messageOrdered);
                 }
 
                 if (section != null) {

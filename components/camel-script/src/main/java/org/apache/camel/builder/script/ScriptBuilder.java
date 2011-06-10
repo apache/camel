@@ -534,9 +534,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             populateBindings(getEngine(), exchange);
             addScriptEngineArguments(getEngine(), exchange);
             Object result = runScript();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("The script evaluation result is: " + result);
-            }
+            LOG.debug("The script evaluation result is: {}", result);
             return result;
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {

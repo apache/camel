@@ -45,9 +45,7 @@ public class IrcConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         if (connection != null) {
             for (String channel : endpoint.getConfiguration().getChannels()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Parting: " + channel);
-                }
+                LOG.debug("Parting: {}", channel);
                 connection.doPart(channel);
             }
             connection.removeIRCEventListener(listener);

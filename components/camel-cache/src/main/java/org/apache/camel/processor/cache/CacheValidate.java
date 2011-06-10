@@ -34,6 +34,7 @@ public class CacheValidate {
                     + " Replacement will not be performed since the cache {} does not presently exist", cacheName, cacheName);
             return false;
         }
+
         LOG.debug("Found an existing cache: {}", cacheName);
 
         if (LOG.isTraceEnabled()) {

@@ -60,9 +60,7 @@ public class NettyConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Netty consumer binding to: " + configuration.getAddress());
-        }
+        LOG.debug("Netty consumer binding to: {}", configuration.getAddress());
 
         super.doStart();
         if (isTcp()) {
@@ -76,9 +74,7 @@ public class NettyConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Netty consumer unbinding from: " + configuration.getAddress());
-        }
+        LOG.debug("Netty consumer unbinding from: {}", configuration.getAddress());
 
         // close all channels
         ChannelGroupFuture future = allChannels.close();

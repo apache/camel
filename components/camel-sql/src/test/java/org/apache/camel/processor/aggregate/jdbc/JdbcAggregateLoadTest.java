@@ -38,9 +38,7 @@ public class JdbcAggregateLoadTest extends AbstractJdbcAggregationTestSupport {
         for (int i = 0; i < SIZE; i++) {
             final int value = 1;
             char id = 'A';
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending " + value + " with id " + id);
-            }
+            LOG.debug("Sending {} with id {}", value, id);
             template.sendBodyAndHeader("seda:start?size=" + SIZE, value, "id", "" + id);
         }
 

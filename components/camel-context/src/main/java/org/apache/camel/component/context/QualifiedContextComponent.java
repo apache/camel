@@ -42,9 +42,7 @@ public class QualifiedContextComponent extends DefaultComponent {
             String localEndpoint = splitURI[1];
             Component component = getCamelContext().getComponent(contextId);
             if (component != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Attempting to create local endpoint: " + localEndpoint + " inside the component: " + component);
-                }
+                LOG.debug("Attempting to create local endpoint: {} inside the component: {}", localEndpoint, component);
                 return component.createEndpoint(localEndpoint);
             }
         }

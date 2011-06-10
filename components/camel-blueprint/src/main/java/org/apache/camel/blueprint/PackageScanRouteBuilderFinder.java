@@ -61,16 +61,12 @@ public class PackageScanRouteBuilderFinder {
 
             // certain beans should be ignored
             if (shouldIgnoreBean(aClass)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Ignoring RouteBuilder class: " + aClass);
-                }
+                LOG.debug("Ignoring RouteBuilder class: {}", aClass);
                 continue;
             }
 
             if (!isValidClass(aClass)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Ignoring invalid RouteBuilder class: " + aClass);
-                }
+                LOG.debug("Ignoring invalid RouteBuilder class: {}", aClass);
                 continue;
             }
 
@@ -80,9 +76,7 @@ public class PackageScanRouteBuilderFinder {
             // Inject the annotated resource
 //                beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
 //            }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Adding instantiated RouteBuilder: " + builder);
-            }
+            LOG.debug("Adding instantiated RouteBuilder: {}", builder);
             list.add(builder);
         }
     }

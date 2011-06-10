@@ -48,5 +48,4 @@ public class CacheConsumer extends DefaultConsumer {
 
         getEndpoint().initializeCache();
     }
-
 }

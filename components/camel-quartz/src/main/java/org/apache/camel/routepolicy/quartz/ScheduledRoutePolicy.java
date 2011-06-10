@@ -38,9 +38,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
     protected abstract Trigger createTrigger(Action action, Route route) throws Exception;
 
     protected void onJobExecute(Action action, Route route) throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Scheduled Event notification received. Performing requested operation " + action + " for route " + route.getId());
-        }
+        LOG.debug("Scheduled Event notification received. Performing requested operation {} for route {}", action, route.getId());
         ServiceStatus routeStatus = route.getRouteContext().getCamelContext().getRouteStatus(route.getId());
         if (action == Action.START) {
             if (routeStatus == ServiceStatus.Stopped) {
@@ -82,7 +80,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         getScheduler().scheduleJob(jobDetail, trigger);
         
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Scheduled Trigger: " + trigger.getFullName()  + " is operational");
+            LOG.debug("Scheduled Trigger: {} is operational", trigger.getFullName());
         }
     }    
 
@@ -92,9 +90,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         
         getScheduler().pauseTrigger(triggerName, triggerGroup);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Scheduled Trigger: " + triggerGroup + "." + triggerName + " is paused");
-        }
+        LOG.debug("Scheduled Trigger: {}. {} is paused", triggerGroup, triggerName);
     }
     
     public void resumeRouteTrigger(Action action) throws SchedulerException {
@@ -103,9 +99,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         
         getScheduler().resumeTrigger(triggerName, triggerGroup);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Scheduled Trigger: " + triggerGroup + "." + triggerName + " has been resumed");
-        }
+        LOG.debug("Scheduled Trigger: {}. {} has been resumed", triggerGroup, triggerName);
     }
 
     public void deleteRouteJob(Action action) throws SchedulerException {
@@ -116,9 +110,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
             getScheduler().deleteJob(jobDetailName, jobDetailGroup);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Scheduled Job: " + jobDetailGroup + "." + jobDetailName + " has been deleted");
-        }
+        LOG.debug("Scheduled Job: {}. {} has been deleted", jobDetailGroup, jobDetailName);
     }
     
     protected JobDetail createJobDetail(Action action, Route route) throws Exception {

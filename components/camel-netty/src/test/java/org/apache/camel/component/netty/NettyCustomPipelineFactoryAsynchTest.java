@@ -81,13 +81,9 @@ public class NettyCustomPipelineFactoryAsynchTest extends CamelTestSupport {
         });
         context.start();
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Beginning Test ---> testCustomClientPipelineFactory()");
-        }        
+        LOG.debug("Beginning Test ---> testCustomClientPipelineFactory()");       
         sendRequest();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Completed Test ---> testCustomClientPipelineFactory()");
-        }
+        LOG.debug("Completed Test ---> testCustomClientPipelineFactory()");
         context.stop();
         
         assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'", response);

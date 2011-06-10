@@ -168,10 +168,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 sfb.getFeatures().add(new MessageDataFormatFeature());
             }
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Ignore DataFormat mode " + getDataFormat() 
-                        + " since SEI class is annotated with WebServiceProvider");
-            }
+            LOG.debug("Ignore DataFormat mode {} since SEI class is annotated with WebServiceProvider", getDataFormat());
         }
         
         if (loggingFeatureEnabled) {
@@ -556,16 +553,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public Bus getBus() {
         if (bus == null) {
             bus = doGetBus();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using DefaultBus " + bus);
-            }
+            LOG.debug("Using DefaultBus {}", bus);
         }
 
         if (!getBusHasBeenCalled.getAndSet(true) && isSetDefaultBus) {
             BusFactory.setDefaultBus(bus);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Set bus " + bus + " as thread default bus");
-            }
+            LOG.debug("Set bus {} as thread default bus", bus);
         }
         return bus;
     }

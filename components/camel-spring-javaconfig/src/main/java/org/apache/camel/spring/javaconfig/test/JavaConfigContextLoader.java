@@ -91,7 +91,7 @@ public class JavaConfigContextLoader implements ContextLoader {
      */
     public ApplicationContext loadContext(String... locations) {
         if (logger.isDebugEnabled()) {
-            logger.debug("Creating a JavaConfigApplicationContext for " + Arrays.asList(locations));
+            logger.debug("Creating a JavaConfigApplicationContext for {}", Arrays.asList(locations));
         }
 
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
@@ -112,10 +112,8 @@ public class JavaConfigContextLoader implements ContextLoader {
             }
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Setting config classes to " + configClasses);
-            logger.debug("Setting base packages to " + basePackages);
-        }
+        logger.debug("Setting config classes to {}", configClasses);
+        logger.debug("Setting base packages to {}", basePackages);
 
         for (Class<?> configClass : configClasses) {
             context.register(configClass);

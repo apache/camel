@@ -57,8 +57,8 @@ public class CacheBasedTokenReplacer extends CacheValidate implements Processor 
             cache = cacheManager.getCache(cacheName);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Replacing Token " + replacementToken + "in Message with value stored against key "
-                         + key + " in CacheName " + cacheName);
+                LOG.debug("Replacing Token {} in Message with value stored against key {} in CacheName {}",
+                        new Object[]{replacementToken, key, cacheName});
             }
             exchange.getIn().setHeader(CacheConstants.CACHE_KEY, key);
 

@@ -40,8 +40,8 @@ public class OsgiComponentResolver implements ComponentResolver {
         Object bean = null;
         try {
             bean = context.getRegistry().lookup(name);
-            if (bean != null && LOG.isDebugEnabled()) {
-                LOG.debug("Found component: " + name + " in registry: " + bean);
+            if (bean != null) {
+                LOG.debug("Found component: {} in registry: {}", name, bean);
             }
         } catch (Exception e) {
             LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);

@@ -69,9 +69,7 @@ public class XsltComponent extends ResourceBasedComponent {
 
     protected Endpoint createEndpoint(String uri, final String remaining, Map<String, Object> parameters) throws Exception {
         final Resource resource = resolveMandatoryResource(remaining);
-        if (log.isDebugEnabled()) {
-            log.debug(this + " using schema resource: " + resource);
-        }
+        log.debug("{} using schema resource: {}", this, resource);
         final XsltBuilder xslt = getCamelContext().getInjector().newInstance(XsltBuilder.class);
 
         // lets allow the converter to be configured

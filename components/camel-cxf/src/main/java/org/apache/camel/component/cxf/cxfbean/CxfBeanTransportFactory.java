@@ -37,9 +37,7 @@ public class CxfBeanTransportFactory extends CamelTransportFactory  {
  
     @Override
     public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Create CxfBeanDestination: " + endpointInfo);
-        }
+        LOG.debug("Create CxfBeanDestination: {}", endpointInfo);
         
         // lookup endpoint from component instead of CamelContext because it may not
         // be added to the CamelContext yet.

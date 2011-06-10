@@ -70,8 +70,8 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
             cache = cacheManager.getCache(cacheName);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Replacing XPath value " + xpath + "in Message with value stored against key " + key
-                        + " in CacheName " + cacheName);
+                LOG.debug("Replacing XPath value {} in Message with value stored against key {} in CacheName {}",
+                        new Object[]{xpath, key, cacheName});
             }
             exchange.getIn().setHeader(CacheConstants.CACHE_KEY, key);
             Object body = exchange.getIn().getBody();

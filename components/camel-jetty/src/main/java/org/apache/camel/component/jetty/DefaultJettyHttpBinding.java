@@ -44,9 +44,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
     public void populateResponse(Exchange exchange, JettyContentExchange httpExchange) throws Exception {
         int responseCode = httpExchange.getResponseStatus();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("HTTP responseCode: " + responseCode);
-        }
+        LOG.debug("HTTP responseCode: {}", responseCode);
 
         Message in = exchange.getIn();
         if (!isThrowExceptionOnFailure()) {

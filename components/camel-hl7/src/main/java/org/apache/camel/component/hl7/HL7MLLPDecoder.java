@@ -71,7 +71,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
             String body = in.getString(state.length(), charsetDecoder(session));
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Decoded HL7 from byte stream of length " + state.length() + " to String of length " + body.length());
+                LOG.debug("Decoded HL7 from byte stream of length {} to String of length {}", state.length(), body.length());
             }
             out.write(body);
             // Avoid redelivery of scanned message
@@ -113,7 +113,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
                     state.posStart = in.position();
                     state.waitingForEndByte2 = false;
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Message starts at position " + state.posStart);
+                        LOG.debug("Message starts at position {}", state.posStart);
                     }
                 }
             }
@@ -131,7 +131,7 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
                                                   // last 2 end markers
                 state.waitingForEndByte2 = false;
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Message ends at position " + state.posEnd);
+                    LOG.debug("Message ends at position {}", state.posEnd);
                 }
                 break;
             }

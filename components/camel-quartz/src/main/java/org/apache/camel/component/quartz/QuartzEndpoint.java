@@ -106,9 +106,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
             return;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Firing Quartz Job with context: " + jobExecutionContext);
-        }
+        LOG.debug("Firing Quartz Job with context: {}", jobExecutionContext);
         Exchange exchange = createExchange(jobExecutionContext);
         try {
             balancer.process(exchange);
@@ -207,9 +205,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
 
     public synchronized void consumerStarted(final QuartzConsumer consumer) throws SchedulerException {
         ObjectHelper.notNull(trigger, "trigger");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Adding consumer " + consumer.getProcessor());
-        }
+        LOG.debug("Adding consumer {}", consumer.getProcessor());
         getLoadBalancer().addProcessor(consumer.getProcessor());
 
         // if we have not yet added our default trigger, then lets do it
@@ -226,9 +222,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
             started = false;
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Removing consumer " + consumer.getProcessor());
-        }
+        LOG.debug("Removing consumer {}", consumer.getProcessor());
         getLoadBalancer().removeProcessor(consumer.getProcessor());
     }
 

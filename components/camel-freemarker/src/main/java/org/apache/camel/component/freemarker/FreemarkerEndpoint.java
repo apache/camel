@@ -86,9 +86,7 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
 
     public FreemarkerEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(getResourceUri(), newResourceUri);
-        if (log.isDebugEnabled()) {
-            log.debug("Getting endpoint with URI: " + newUri);
-        }
+        log.debug("Getting endpoint with URI: {}", newUri);
         return (FreemarkerEndpoint) getCamelContext().getEndpoint(newUri);
     }
 
@@ -103,9 +101,7 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
         if (newResourceUri != null) {
             exchange.getIn().removeHeader(FreemarkerConstants.FREEMARKER_RESOURCE_URI);
 
-            if (log.isDebugEnabled()) {
-                log.debug(FreemarkerConstants.FREEMARKER_RESOURCE_URI + " set to " + newResourceUri + " creating new endpoint to handle exchange");
-            }
+            log.debug("{} set to {} creating new endpoint to handle exchange", FreemarkerConstants.FREEMARKER_RESOURCE_URI, newResourceUri);
             FreemarkerEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
             newEndpoint.onExchange(exchange);
             return;
@@ -125,14 +121,10 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
         Template template;
 
         if (reader != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Freemarker is evaluating template read from header " + FreemarkerConstants.FREEMARKER_TEMPLATE + " using context: " + variableMap);
-            }
+            log.debug("Freemarker is evaluating template read from header {} using context: {}", FreemarkerConstants.FREEMARKER_TEMPLATE, variableMap);
             template = new Template("temp", reader, new Configuration());
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Freemarker is evaluating " + path + " using context: " + variableMap);
-            }
+            log.debug("Freemarker is evaluating {} using context: {}", path, variableMap);
             if (getEncoding() != null) {
                 template = configuration.getTemplate(path, getEncoding());
             } else {

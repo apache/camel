@@ -142,9 +142,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         } else {
             LOG.info("OSGi environment not detected.");
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Using " + cl.getCanonicalName() + " as CamelContextBeanDefinitionParser");
-        }
+        LOG.debug("Using {} as CamelContextBeanDefinitionParser", cl.getCanonicalName());
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }
 
@@ -387,9 +385,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             } else {
                 for (String depend : depends) {
                     depend = depend.trim();
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Adding dependsOn " + depend + " to CamelContext(" + factoryBean.getId() + ")");
-                    }
+                    LOG.debug("Adding dependsOn {} to CamelContext({})", depend, factoryBean.getId());
                     builder.addDependsOn(depend);
                 }
             }
@@ -566,17 +562,15 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             autoRegisterMap.put(id, definition);
             parserContext.registerComponent(new BeanComponentDefinition(definition, id));
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Registered default: " + definition.getBeanClassName() + " with id: " + id + " on camel context: " + contextId);
+                LOG.debug("Registered default: {} with id: {} on camel context: {}", new Object[]{definition.getBeanClassName(), id, contextId});
             }
         } else {
             // ups we have already registered it before with same id, but on another camel context
             // this is not good so we need to remove all traces of this auto registering.
             // end user must manually add the needed XML elements and provide unique ids access all camel context himself.
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Unregistered default: " + definition.getBeanClassName() + " with id: " + id
-                        + " as we have multiple camel contexts and they must use unique ids."
-                        + " You must define the definition in the XML file manually to avoid id clashes when using multiple camel contexts");
-            }
+            LOG.debug("Unregistered default: {} with id: {} as we have multiple camel contexts and they must use unique ids."
+                    + " You must define the definition in the XML file manually to avoid id clashes when using multiple camel contexts",
+                    definition.getBeanClassName(), id);
 
             parserContext.getRegistry().removeBeanDefinition(id);
         }

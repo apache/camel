@@ -41,8 +41,8 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
         Object bean = null;
         try {
             bean = context.getRegistry().lookup(name);
-            if (bean != null && LOG.isDebugEnabled()) {
-                LOG.debug("Found language: " + name + " in registry: " + bean);
+            if (bean != null) {
+                LOG.debug("Found language: {} in registry: {}", name, bean);
             }
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {

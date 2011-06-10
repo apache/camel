@@ -52,7 +52,7 @@ public class CxfBeanDestination extends CamelDestination implements Processor {
     @Override
     public void activate() {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Activating CxfBeanDestination " + getCamelDestinationUri());
+            LOG.debug("Activating CxfBeanDestination {}", getCamelDestinationUri());
         }
 
         endpoint = cxfBeanComponent.getEndpoint(getCamelDestinationUri());

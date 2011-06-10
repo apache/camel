@@ -39,56 +39,37 @@ public class CacheEventListener implements net.sf.ehcache.event.CacheEventListen
     }
 
     public void notifyElementEvicted(Ehcache cache, Element element) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Element" + element.toString() + " is being evicted from cache " + cache.getName());
-        }
+        LOG.debug("Element {} is being evicted from cache {}", element, cache.getName());
     }
 
     public void notifyElementExpired(Ehcache cache, Element element) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Element" + element.toString() + " has expired in cache " + cache.getName());       
-        }
+        LOG.debug("Element {} has expired in cache {}", element, cache.getName());
     }
 
-    public void notifyElementPut(Ehcache cache, Element element)
-        throws CacheException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Element" + element.toString() + " has just been added/put in cache " + cache.getName());
-        }
+    public void notifyElementPut(Ehcache cache, Element element) throws CacheException {
+        LOG.debug("Element {} has just been added/put in cache {}", element, cache.getName());
         dispatchExchange(cache, element, "ADD");
     }
 
-    public void notifyElementRemoved(Ehcache cache, Element element)
-        throws CacheException {
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Element" + element.toString() + " has just been removed from cache " + cache.getName());
-        }
+    public void notifyElementRemoved(Ehcache cache, Element element) throws CacheException {
+        LOG.debug("Element {} has just been removed from cache {}", element, cache.getName());
         dispatchExchange(cache, element, "DELETE");        
     }
 
-    public void notifyElementUpdated(Ehcache cache, Element element)
-        throws CacheException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Element" + element.toString() + " has just been updated in cache " + cache.getName());
-        }
+    public void notifyElementUpdated(Ehcache cache, Element element) throws CacheException {
+        LOG.debug("Element {} has just been updated in cache {}", element, cache.getName());
         dispatchExchange(cache, element, "UPDATE");            
     }
 
     public void notifyRemoveAll(Ehcache cache) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Cache " + cache.getName() + " is being emptied and all elements removed");
-        }
+        LOG.debug("Cache {} is being emptied and all elements removed", cache.getName());
         dispatchExchange(cache, null, "DELETEALL");
-        
     }
 
     private void dispatchExchange(Ehcache cache, Element element, String operation) {
         Exchange exchange;
+        LOG.debug("Consumer Dispatching the Exchange containing the Element {} in cache {}", element, cache.getName());
         
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Consumer Dispatching the Exchange containing the Element " + element.toString() + " in cache " + cache.getName());
-        }
         if (element == null) {
             exchange = cacheConsumer.getEndpoint().createCacheExchange(operation, "", "");
         } else {

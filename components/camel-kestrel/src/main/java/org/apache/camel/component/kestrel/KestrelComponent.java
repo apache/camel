@@ -178,9 +178,7 @@ public class KestrelComponent extends DefaultComponent {
 
     public void closeMemcachedClient(String key, MemcachedClient memcachedClient) {
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Closing client connection to " + key);
-            }
+            LOG.debug("Closing client connection to {}", key);
             memcachedClient.shutdown();
             memcachedClientCache.remove(key);
         } catch (Exception e) {

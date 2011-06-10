@@ -144,8 +144,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
             }
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Detached restlet uriPattern: " + router.getUriPattern() 
-                          + " method: " + endpoint.getRestletMethod());
+                LOG.debug("Detached restlet uriPattern: {} method: {}", router.getUriPattern(), endpoint.getRestletMethod());
             }
         }
     }    
@@ -155,9 +154,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
             MethodBasedRouter result = routers.get(uriPattern);
             if (result == null) {
                 result = new MethodBasedRouter(uriPattern);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Added method based router: " + result);
-                }
+                LOG.debug("Added method based router: {}", result);
                 routers.put(uriPattern, result);
             }
             return result;
@@ -172,9 +169,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
             if (server == null) {
                 server = component.getServers().add(Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
                 servers.put(key, server);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Added server: " + key);
-                }
+                LOG.debug("Added server: {}", key);
                 server.start();
             }
         }
@@ -198,31 +193,25 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
             guard.setVerifier(verifier);
             guard.setNext(target);
             target = guard;
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Target has been set to guard: " + guard);
-            }
+            LOG.debug("Target has been set to guard: {}", guard);
         }
         
         if (endpoint.getRestletMethods() != null) {
             Method[] methods = endpoint.getRestletMethods();
             for (Method method : methods) {
                 router.addRoute(method, target);   
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Attached restlet uriPattern: " + uriPattern + " method: " + method);
-                }
+                LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
             }
         } else {
             router.addRoute(endpoint.getRestletMethod(), target);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Attached restlet uriPattern: " + uriPattern + " method: " + endpoint.getRestletMethod());
+                LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, endpoint.getRestletMethod());
             }
         }
         
         if (!router.hasBeenAttached()) {
             component.getDefaultHost().attach(uriPattern, router);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Attached methodRouter uriPattern: " + uriPattern);
-            }
+            LOG.debug("Attached methodRouter uriPattern: {}", uriPattern);
         }
     }
 

@@ -90,9 +90,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new CxfRsHeaderFilterStrategy();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Create default header filter strategy " + headerFilterStrategy);
-            }
+            LOG.debug("Create default header filter strategy {}", headerFilterStrategy);
         }
         return headerFilterStrategy;
     }
@@ -124,9 +122,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public synchronized CxfRsBinding getBinding() {
         if (binding == null) {
             binding = new DefaultCxfRsBinding();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Create default CXF Binding " + binding);
-            }
+            LOG.debug("Create default CXF Binding {}", binding);
         }
 
         if (!bindingInitialized.getAndSet(true) && binding instanceof HeaderFilterStrategyAware) {

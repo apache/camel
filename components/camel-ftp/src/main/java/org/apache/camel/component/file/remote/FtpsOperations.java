@@ -55,15 +55,11 @@ public class FtpsOperations extends FtpOperations {
                 }
 
                 if (execPbsz != null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("FTPClient initializing with execPbsz=" + execPbsz);
-                    }
+                    log.debug("FTPClient initializing with execPbsz={}", execPbsz);
                     getFtpClient().execPBSZ(execPbsz);
                 }
                 if (execProt != null) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("FTPClient initializing with execProt=" + execProt);
-                    }
+                    log.debug("FTPClient initializing with execProt={}", execProt);
                     getFtpClient().execPROT(execProt);
                 }
             } catch (SSLException e) {

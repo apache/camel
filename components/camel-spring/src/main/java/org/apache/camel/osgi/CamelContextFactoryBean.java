@@ -42,9 +42,7 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
     }
 
     public void setBundleContext(BundleContext bundleContext) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Using BundleContext: " + bundleContext);
-        }
+        LOG.debug("Using BundleContext: {}", bundleContext);
         this.bundleContext = bundleContext;
     }
     
