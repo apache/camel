@@ -48,7 +48,7 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteWithDefaultErrorHandle
                 from("direct:start")
                     // route specific on exception for MyFunctionalException
                     // we MUST use .end() to indicate that this sub block is ended
-                    .onException(MyFunctionalException.class).end()
+                    .onException(MyFunctionalException.class).handled(false).end()
                     .to("bean:myServiceBean")
                     .to("mock:result");
 
