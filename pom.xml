@@ -118,7 +118,6 @@
     <module>tooling</module>
     <module>tests</module>
     <module>examples</module>
-    <module>apache-camel</module>
   </modules>
 
   <scm>
@@ -545,6 +544,17 @@
   </reporting>
 
   <profiles>
+    <profile>
+      <id>assembly</id>
+      <activation>
+        <property>
+          <name>!noassembly</name>
+        </property>
+      </activation>
+      <modules>
+        <module>apache-camel</module>
+      </modules>
+    </profile>
     <profile>
       <id>setup.eclipse</id>
       <!--

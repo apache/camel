@@ -557,14 +557,6 @@
     </dependency>
   </dependencies>
 
-  <profiles>
-    <profile>
-      <id>build.distro</id>
-      <activation>
-        <property>
-          <name>!noassembly</name>
-        </property>
-      </activation>
       <build>
         <plugins>
           <plugin>
@@ -629,8 +621,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-  </profiles>
 
   <reporting>
     <plugins>
