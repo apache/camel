@@ -1591,6 +1591,9 @@
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-codegen-plugin</artifactId>
           <version>${cxf-version}</version>
+          <configuration>
+            <fork>once</fork>
+          </configuration>
           <dependencies>
             <!--
               needed to add this to get around the following error on IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class
