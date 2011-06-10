@@ -75,11 +75,9 @@ public final class PipelineHelper {
                 }
                 log.debug(sb.toString());
             }
-            
 
             return false;
         }
-
 
         // check for stop
         Object stop = exchange.getProperty(Exchange.ROUTE_STOP);

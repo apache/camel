@@ -47,8 +47,8 @@ public class SplitSubUnitOfWorkStopOnExceptionAndParallelTest extends ContextTes
 
         getMockEndpoint("mock:dead").expectedBodiesReceived("Tiger,Donkey,Camel");
         getMockEndpoint("mock:a").expectedMessageCount(1);
-        // b should get between 2 or 3 depending when we stop (we run parallel)
-        getMockEndpoint("mock:b").expectedMinimumMessageCount(2);
+        // b should get between 1 or 3 depending when we stop (we run parallel)
+        getMockEndpoint("mock:b").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
         // line should get between 1 or 2 depending when we stop (we run parallel)
         getMockEndpoint("mock:line").expectedMinimumMessageCount(1);

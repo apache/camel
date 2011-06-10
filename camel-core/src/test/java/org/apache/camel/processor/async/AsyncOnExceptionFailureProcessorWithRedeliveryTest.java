@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import org.apache.camel.CamelExchangeException;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -30,11 +32,16 @@ public class AsyncOnExceptionFailureProcessorWithRedeliveryTest extends ContextT
     private static String afterThreadName;
 
     public void testAsyncEndpoint() throws Exception {
-        getMockEndpoint("mock:error").expectedBodiesReceived("Bye Camel");
+        getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        String reply = template.requestBody("direct:start", "Hello Camel", String.class);
-        assertEquals("Bye Camel", reply);
+        try {
+            template.requestBody("direct:start", "Hello Camel", String.class);
+            fail("Should throw exception");
+        } catch (CamelExecutionException e) {
+            CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+            assertEquals("Simulated error at attempt 1. Exchange[Message: Hello Camel]", cause.getMessage());
+        }
 
         assertMockEndpointsSatisfied();
 
@@ -51,7 +58,7 @@ public class AsyncOnExceptionFailureProcessorWithRedeliveryTest extends ContextT
                 // use redelivery up till 5 times
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5));
 
-                onException(Exception.class).handled(true)
+                onException(IllegalArgumentException.class).handled(true)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             beforeThreadName = Thread.currentThread().getName();

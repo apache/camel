@@ -22,7 +22,13 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <bean id="MyExceptionThrower" class="org.apache.camel.issues.ExceptionCamel4022Test$MyExceptionThrower"/>
+  <bean id="MyExceptionThrowerAgain" class="org.apache.camel.issues.ExceptionCamel4022Test$MyExceptionThrower">
+    <constructor-arg index="0" value="Damn Again"/>
+  </bean>
+
+  <bean id="MyExceptionThrower" class="org.apache.camel.issues.ExceptionCamel4022Test$MyExceptionThrower">
+    <constructor-arg index="0" value="Damn"/>
+  </bean>
 
   <camelContext errorHandlerRef="dlc" xmlns="http://camel.apache.org/schema/spring">
 
@@ -32,18 +38,20 @@
 
     <onException>
       <exception>java.lang.IllegalArgumentException</exception>
-      <process ref="MyExceptionThrower"/>
+      <process ref="MyExceptionThrowerAgain"/>
       <to uri="mock:onexception"/>
     </onException>
 
     <route>
       <from uri="direct:start"/>
+      <to uri="mock:a"/>
       <to uri="direct:intermediate"/>
       <to uri="mock:result2"/>
     </route>
 
     <route>
       <from uri="direct:intermediate"/>
+      <to uri="mock:b"/>
       <setBody>
         <constant>&lt;some-value/&gt;</constant>
       </setBody>

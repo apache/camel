@@ -41,7 +41,7 @@
         <property name="camelException" value="true"/>
     </bean>
 
-    <camelContext errorHandlerRef="deadLetter" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext trace="true" errorHandlerRef="deadLetter" xmlns="http://camel.apache.org/schema/spring">
 
         <onException useOriginalMessage="true">
             <exception>java.lang.IllegalArgumentException</exception>

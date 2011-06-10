@@ -16,12 +16,10 @@
  */
 package org.apache.camel.processor.async;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.ThreadPoolProfileSupport;
 import org.apache.camel.spi.ThreadPoolProfile;
 
@@ -46,12 +44,10 @@ public class AsyncDeadLetterChannelExecutorServiceRefTest extends ContextTestSup
                 context.getExecutorServiceStrategy().registerThreadPoolProfile(profile);
 
                 errorHandler(deadLetterChannel("mock:dead")
-                    .maximumRedeliveries(2)
-                    .redeliveryDelay(0)
-                    .logStackTrace(false)
-                    .executorServiceRef("myAsyncPool"));
-                // we don't want the DLC to handle the exception
-                onException(Exception.class).handled(false);
+                        .maximumRedeliveries(2)
+                        .redeliveryDelay(0)
+                        .logStackTrace(false)
+                        .executorServiceRef("myAsyncPool"));
 
                 from("direct:in")
                     .threads(2)
@@ -66,20 +62,9 @@ public class AsyncDeadLetterChannelExecutorServiceRefTest extends ContextTestSup
         context.start();
 
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:dead").expectedMessageCount(1);
 
-        MockEndpoint mock = getMockEndpoint("mock:dead");
-        mock.expectedMessageCount(1);
-        mock.message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        mock.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
-        mock.message(0).header(Exchange.REDELIVERY_MAX_COUNTER).isEqualTo(2);
-
-        try {
-            template.requestBody("direct:in", "Hello World");
-            fail("Should have thrown a CamelExecutionException");
-        } catch (CamelExecutionException e) {
-            assertEquals("Forced exception by unit test", e.getCause().getMessage());
-            // expected
-        }
+        template.requestBody("direct:in", "Hello World");
 
         assertMockEndpointsSatisfied();
     }

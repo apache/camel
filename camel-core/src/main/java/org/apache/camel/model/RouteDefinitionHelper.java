@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 
@@ -36,24 +37,27 @@ public final class RouteDefinitionHelper {
     private RouteDefinitionHelper() {
     }
 
-    public static void initParent(RouteDefinition route) {
-        for (ProcessorDefinition output : route.getOutputs()) {
-            output.setParent(route);
-            if (output.getOutputs() != null) {
-                // recursive the outputs
-                initParent(output);
-            }
-        }
-    }
-
     @SuppressWarnings("unchecked")
     public static void initParent(ProcessorDefinition parent) {
         List<ProcessorDefinition> children = parent.getOutputs();
         for (ProcessorDefinition child : children) {
             child.setParent(parent);
-            if (child.getOutputs() != null) {
+            if (child.getOutputs() != null && !child.getOutputs().isEmpty()) {
                 // recursive the children
                 initParent(child);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void initParentAndErrorHandlerBuilder(ProcessorDefinition parent, ErrorHandlerBuilder builder) {
+        List<ProcessorDefinition> children = parent.getOutputs();
+        for (ProcessorDefinition child : children) {
+            child.setParent(parent);
+            child.setErrorHandlerBuilder(builder);
+            if (child.getOutputs() != null && !child.getOutputs().isEmpty()) {
+                // recursive the children
+                initParentAndErrorHandlerBuilder(child, builder);
             }
         }
     }
@@ -102,9 +106,6 @@ public final class RouteDefinitionHelper {
                                     List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions,
                                     List<OnCompletionDefinition> onCompletions) {
 
-        // at first init the parent
-        RouteDefinitionHelper.initParent(route);
-
         // abstracts is the cross cutting concerns
         List<ProcessorDefinition> abstracts = new ArrayList<ProcessorDefinition>();
 
@@ -116,7 +117,9 @@ public final class RouteDefinitionHelper {
 
         RouteDefinitionHelper.prepareRouteForInit(route, abstracts, lower);
 
-        // interceptors should be first for the cross cutting concerns
+        // parent and error handler builder should be initialized first
+        initParentAndErrorHandlerBuilder(context, route, abstracts, onExceptions);
+        // then interceptors
         initInterceptors(context, route, abstracts, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
         // then on completion
         initOnCompletions(abstracts, upper, onCompletions);
@@ -131,14 +134,30 @@ public final class RouteDefinitionHelper {
         route.getOutputs().addAll(0, upper);
     }
 
+    private static void initParentAndErrorHandlerBuilder(CamelContext context, RouteDefinition route,
+                                                         List<ProcessorDefinition> abstracts, List<OnExceptionDefinition> onExceptions) {
+
+        if (context != null) {
+            // let the route inherit the error handler builder from camel context if none already set
+            route.setErrorHandlerBuilderIfNull(context.getErrorHandlerBuilder());
+        }
+
+        // init parent and error handler builder on the route
+        initParentAndErrorHandlerBuilder(route, route.getErrorHandlerBuilder());
+
+        // set the parent and error handler builder on the global on exceptions
+        if (onExceptions != null) {
+            for (OnExceptionDefinition global : onExceptions) {
+                global.setErrorHandlerBuilder(context.getErrorHandlerBuilder());
+                initParentAndErrorHandlerBuilder(global, context.getErrorHandlerBuilder());
+            }
+        }
+    }
+
     private static void initOnExceptions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper,
                                          List<OnExceptionDefinition> onExceptions) {
         // add global on exceptions if any
         if (onExceptions != null && !onExceptions.isEmpty()) {
-            // init the parent
-            for (OnExceptionDefinition global : onExceptions) {
-                RouteDefinitionHelper.initParent(global);
-            }
             abstracts.addAll(onExceptions);
         }
 
@@ -204,7 +223,7 @@ public final class RouteDefinitionHelper {
             for (InterceptDefinition intercept : intercepts) {
                 intercept.afterPropertiesSet();
                 // init the parent
-                RouteDefinitionHelper.initParent(intercept);
+                initParent(intercept);
                 // add as first output so intercept is handled before the actual route and that gives
                 // us the needed head start to init and be able to intercept all the remaining processing steps
                 upper.add(0, intercept);
@@ -239,7 +258,7 @@ public final class RouteDefinitionHelper {
                 if (match) {
                     intercept.afterPropertiesSet();
                     // init the parent
-                    RouteDefinitionHelper.initParent(intercept);
+                    initParent(intercept);
                     // add as first output so intercept is handled before the actual route and that gives
                     // us the needed head start to init and be able to intercept all the remaining processing steps
                     upper.add(0, intercept);
@@ -252,7 +271,7 @@ public final class RouteDefinitionHelper {
             for (InterceptSendToEndpointDefinition intercept : interceptSendToEndpointDefinitions) {
                 intercept.afterPropertiesSet();
                 // init the parent
-                RouteDefinitionHelper.initParent(intercept);
+                initParent(intercept);
                 // add as first output so intercept is handled before the actual route and that gives
                 // us the needed head start to init and be able to intercept all the remaining processing steps
                 upper.add(0, intercept);
@@ -276,7 +295,7 @@ public final class RouteDefinitionHelper {
             completions = onCompletions;
             // init the parent
             for (OnCompletionDefinition global : completions) {
-                RouteDefinitionHelper.initParent(global);
+                initParent(global);
             }
         }
 

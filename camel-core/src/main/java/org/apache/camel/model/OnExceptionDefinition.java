@@ -36,6 +36,7 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
+import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
@@ -137,6 +138,10 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
+        if (isInheritErrorHandler() != null && isInheritErrorHandler()) {
+            throw new IllegalArgumentException(this + " cannot have the inheritErrorHandler option set to true");
+        }
+
         setHandledFromExpressionType(routeContext);
         setContinuedFromExpressionType(routeContext);
         setRetryWhileFromExpressionType(routeContext);
@@ -154,8 +159,17 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         }
 
         // lets attach this on exception to the route error handler
-        errorHandler = routeContext.createProcessor(this);
+        Processor child = routeContext.createProcessor(this);
+        if (child != null) {
+            // wrap in our special safe fallback error handler if OnException have child output
+            errorHandler = new FatalFallbackErrorHandler(child);
+        } else {
+            // do not wrap as there is no child output
+            errorHandler = null;
+        }
+        // lookup the error handler builder
         ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
+        // and add this as error handlers
         builder.addErrorHandlers(this);
     }
 

@@ -19,9 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit test to verify that redelivery counters is working as expected.
@@ -29,77 +27,63 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
 
     private static int counter;
+    private static int redeliveryCounter;
 
-    public void testRedeliveryTest() throws Exception {
+    public void testTwoRedeliveryTest() throws Exception {
         counter = 0;
+        redeliveryCounter = 0;
 
-        // We expect the exchange here after 1 delivery and 2 re-deliveries
-        MockEndpoint mock = getMockEndpoint("mock:error");
-        mock.expectedMessageCount(1);
-        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.TRUE);
-        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(2);
+        getMockEndpoint("mock:error").expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-        } catch (RuntimeCamelException e) {
-            // expected
-        }
+        template.sendBody("direct:two", "Hello World");
 
         assertMockEndpointsSatisfied();
 
         assertEquals(3, counter); // One call + 2 re-deliveries
+        assertEquals(2, redeliveryCounter); // 2 re-deliveries
     }
 
     public void testNoRedeliveriesTest() throws Exception {
         counter = 0;
+        redeliveryCounter = 0;
 
-        // We expect the exchange here after 1 delivery
-        MockEndpoint mock = getMockEndpoint("mock:no");
-        mock.expectedMessageCount(1);
-        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.FALSE);
-        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(0);
+        getMockEndpoint("mock:error").expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:no", "Hello World");
-        } catch (RuntimeCamelException e) {
-            // expected
-        }
+        template.sendBody("direct:no", "Hello World");
 
         assertMockEndpointsSatisfied();
 
         assertEquals(1, counter); // One call
+        assertEquals(0, redeliveryCounter); // no redeliveries
     }
 
-    public void testOneRedeliveryTest() throws Exception {
+    public void testOneRedeliveriesTest() throws Exception {
         counter = 0;
+        redeliveryCounter = 0;
 
-        // We expect the exchange here after 1 delivery and 1 re delivery
-        MockEndpoint mock = getMockEndpoint("mock:one");
-        mock.expectedMessageCount(1);
-        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.TRUE);
-        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(1);
+        getMockEndpoint("mock:error").expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:one", "Hello World");
-        } catch (RuntimeCamelException e) {
-            // expected
-        }
+        template.sendBody("direct:one", "Hello World");
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(2, counter); // One call + 1 re-delivery
+        assertEquals(2, counter); // One call + 1 redelivery
+        assertEquals(1, redeliveryCounter); // 1 redelivery
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // we use onException(Exception.class).handled(false) to instruct DLC to not handle the exception 
-                // and therefore we can assert the number of redelivery attempts to see if that works correctly
-                onException(Exception.class).handled(false);
-
-                from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0))
+                from("direct:two")
+                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0)
+                        .onRedelivery(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+                            }
+                        }))
+                    // route start here
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;
@@ -108,7 +92,14 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
                     });
 
                 from("direct:no")
-                    .errorHandler(deadLetterChannel("mock:no").maximumRedeliveries(0))
+                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0)
+                        .onRedelivery(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+                            }
+                        }))
+                    // route start here
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;
@@ -117,7 +108,14 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
                     });
 
                 from("direct:one")
-                    .errorHandler(deadLetterChannel("mock:one").maximumRedeliveries(1).redeliveryDelay(0))
+                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).redeliveryDelay(0)
+                            .onRedelivery(new Processor() {
+                                @Override
+                                public void process(Exchange exchange) throws Exception {
+                                    redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+                                }
+                            }))
+                    // route start here
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;

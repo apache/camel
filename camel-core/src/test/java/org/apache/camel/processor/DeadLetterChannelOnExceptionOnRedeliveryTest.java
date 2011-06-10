@@ -65,7 +65,10 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
                 // START SNIPPET: e1
                 // when we redeliver caused by an IOException we want to do some special
                 // code before the redeliver attempt
-                onException(IOException.class).onRedelivery(new MyIORedeliverPrcessor());
+                onException(IOException.class)
+                        // try to redeliver at most 3 times
+                        .maximumRedeliveries(3)
+                        .onRedelivery(new MyIORedeliverProcessor());
                 // END SNIPPET: e1
 
                 // START SNIPPET: e2
@@ -73,8 +76,8 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
                 // MyRedeliveryProcessor before a redelivery is
                 // attempted. This allows us to alter the message before
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(5)
-                        .onRedelivery(new MyRedeliverPrcessor())
-                        // setting delay to zero is just to make unit teting faster
+                        .onRedelivery(new MyRedeliverProcessor())
+                        // setting delay to zero is just to make unit testing faster
                         .redeliveryDelay(0L));
                 // END SNIPPET: e2
 
@@ -89,7 +92,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
     // START SNIPPET: e3
     // This is our processor that is executed before every redelivery attempt
     // here we can do what we want in the java code, such as altering the message
-    public static class MyRedeliverPrcessor implements Processor {
+    public static class MyRedeliverProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
             // the message is being redelivered so we can alter it
@@ -108,7 +111,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
     // This is our processor that is executed before IOException redeliver attempt
     // here we can do what we want in the java code, such as altering the message
 
-    public static class MyIORedeliverPrcessor implements Processor {
+    public static class MyIORedeliverProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
             // just for show and tell, here we set a special header to instruct

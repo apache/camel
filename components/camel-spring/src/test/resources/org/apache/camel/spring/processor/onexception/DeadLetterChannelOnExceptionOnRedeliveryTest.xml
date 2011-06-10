@@ -41,11 +41,11 @@
 
     <!-- START SNIPPET: e2 -->
     <bean id="myRedeliveryProcessor"
-          class="org.apache.camel.processor.DeadLetterChannelOnExceptionOnRedeliveryTest$MyRedeliverPrcessor"/>
+          class="org.apache.camel.processor.DeadLetterChannelOnExceptionOnRedeliveryTest$MyRedeliverProcessor"/>
     <!-- END SNIPPET: e2 -->
 
     <bean id="myIORedeliverProcessor"
-          class="org.apache.camel.processor.DeadLetterChannelOnExceptionOnRedeliveryTest$MyIORedeliverPrcessor"/>
+          class="org.apache.camel.processor.DeadLetterChannelOnExceptionOnRedeliveryTest$MyIORedeliverProcessor"/>
 
     <bean id="throwExceptionProcessor"
           class="org.apache.camel.processor.DeadLetterChannelOnExceptionOnRedeliveryTest$ThrowExceptionProcessor"/>

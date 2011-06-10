@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -34,6 +33,9 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
         outer.setName("Claus");
         inner.setName("James");
 
+        getMockEndpoint("mock:inner").expectedMessageCount(0);
+        getMockEndpoint("mock:outer").expectedMessageCount(0);
+
         MockEndpoint mock = getMockEndpoint("mock:end");
         mock.expectedHeaderReceived("name", "James");
 
@@ -46,17 +48,12 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
         outer.setName("Error");
         inner.setName("James");
 
+        getMockEndpoint("mock:inner").expectedMessageCount(0);
+
         MockEndpoint mock = getMockEndpoint("mock:outer");
         mock.expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown a IllegalArgumentException");
-        } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals("Forced exception by unit test", e.getCause().getMessage());
-            // expected
-        }
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -65,18 +62,13 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
         outer.setName("Claus");
         inner.setName("Error");
 
+        getMockEndpoint("mock:outer").expectedMessageCount(0);
+
         MockEndpoint mock = getMockEndpoint("mock:inner");
         mock.expectedHeaderReceived("name", "Claus");
         mock.expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-            fail("Should have thrown a IllegalArgumentException");
-        } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals("Forced exception by unit test", e.getCause().getMessage());
-            // expected
-        }
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -85,9 +77,6 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // we don't want the DLC to handle the Exception
-                onException(IllegalArgumentException.class).handled(false);
-
                 from("direct:start")
                     .errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).redeliveryDelay(0))
                     .process(outer)

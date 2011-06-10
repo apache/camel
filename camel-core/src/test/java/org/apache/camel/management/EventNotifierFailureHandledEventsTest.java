@@ -127,13 +127,13 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertIsInstanceOf(RouteStartedEvent.class, events.get(1));
         assertIsInstanceOf(CamelContextStartedEvent.class, events.get(2));
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(3));
-        assertIsInstanceOf(ExchangeSentEvent.class, events.get(4));
 
-        ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(5));
+        ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(4));
         assertEquals("should NOT be DLC", false, e.isDeadLetterChannel());
 
-        // dead letter channel will mark the exchange as completed
-        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(6));
+        // onException will handle the exception
+        assertIsInstanceOf(ExchangeCompletedEvent.class, events.get(5));
+        assertIsInstanceOf(ExchangeSentEvent.class, events.get(6));
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(7));
     }
 

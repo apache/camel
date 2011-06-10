@@ -74,7 +74,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         if (!isErrorHandlerBuilderConfigured(ref)) {
             // see if there has been configured a route builder on the route
             answer = routeContext.getRoute().getErrorHandlerBuilder();
-            if (answer == null) {
+            if (answer == null && routeContext.getRoute().getErrorHandlerRef() != null) {
                 answer = routeContext.lookup(routeContext.getRoute().getErrorHandlerRef(), ErrorHandlerBuilder.class);
             }
             if (answer == null) {

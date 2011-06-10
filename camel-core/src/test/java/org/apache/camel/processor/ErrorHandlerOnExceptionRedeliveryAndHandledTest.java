@@ -38,14 +38,17 @@ public class ErrorHandlerOnExceptionRedeliveryAndHandledTest extends ContextTest
 
         try {
             template.sendBody("direct:start", "Hello World");
+            // we tried to handle that exception but then another exception occurred
+            // so this exchange failed with an exception
             fail("Should throw an exception");
         } catch (CamelExecutionException e) {
-            assertIsInstanceOf(ConnectException.class, e.getCause());
+            ConnectException cause = assertIsInstanceOf(ConnectException.class, e.getCause());
+            assertEquals("Cannot connect to bar server", cause.getMessage());
         }
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("12312345", counter);
+        assertEquals("123", counter);
     }
 
     @Override
@@ -62,6 +65,7 @@ public class ErrorHandlerOnExceptionRedeliveryAndHandledTest extends ContextTest
                                 String s = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
                                 counter += s;
                             }
+                            // we throw an exception here, but the default error handler should not kick in
                             throw new ConnectException("Cannot connect to bar server");
                         }
                     })

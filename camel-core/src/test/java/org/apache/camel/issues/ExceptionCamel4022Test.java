@@ -27,54 +27,62 @@ import org.apache.camel.builder.RouteBuilder;
 public class ExceptionCamel4022Test extends ContextTestSupport {
 
     public void testExceptionWithFatalException() throws Exception {
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:intermediate").expectedMessageCount(0);
         getMockEndpoint("mock:onexception").expectedMessageCount(0);
-        // TODO: CAMEL-4022 should not go into DLC
-        //getMockEndpoint("mock:dlc").expectedMessageCount(0);
+        getMockEndpoint("mock:dlc").expectedMessageCount(0);
 
         try {
-            // TODO: if sending to direct:intermediate then it works as expected
             template.sendBody("direct:start", "<body/>");
-            // TODO: should fail
-            // fail("Should throw an exception");
+            fail("Should throw an exception");
         } catch (Exception e) {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Forced by unit test", cause.getMessage());
+            assertEquals("Damn Again", cause.getMessage());
         }
 
         assertMockEndpointsSatisfied();
     }
 
     public static class MyExceptionThrower implements Processor {
+
+        private String msg;
+
+        public MyExceptionThrower(String msg) {
+            this.msg = msg;
+        }
+
         @Override
         public void process(Exchange exchange) throws Exception {
-            throw new IllegalArgumentException("Forced by unit test");
+            throw new IllegalArgumentException(msg);
         }
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final Processor exceptionThrower = new MyExceptionThrower();
-
         return new RouteBuilder() {
             public void configure() {
                 // DLC
                 errorHandler(deadLetterChannel("mock:dlc").redeliveryDelay(0).maximumRedeliveries(3));
 
                 // onException that does NOT handle the exception
-                onException(IllegalArgumentException.class)
-                    .process(exceptionThrower)
+                onException(Exception.class)
+                    .logStackTrace(false)
+                    .process(new MyExceptionThrower("Damn Again"))
                     .to("mock:onexception");
 
                 // route
                 from("direct:start")
+                    .to("mock:a")
                     .to("direct:intermediate")
                     .to("mock:result2");
 
+                // 2nd route
                 from("direct:intermediate")
+                    .to("mock:b")
                     .setBody(constant("<some-value/>"))
-                    .process(exceptionThrower)
+                    .process(new MyExceptionThrower("Damn"))
                     .to("mock:intermediate");
             }
         };

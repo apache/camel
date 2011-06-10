@@ -18,8 +18,8 @@ package org.apache.camel.processor.onexception;
 
 import java.io.IOException;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -69,23 +69,26 @@ public class OnExceptionRouteTest extends ContextTestSupport {
     }
 
     public void testErrorWhileHandlingException() throws Exception {
+        // DLC does not handle the exception as we failed during processing in onException
         MockEndpoint error = getMockEndpoint("mock:error");
-        error.expectedMessageCount(1);
+        error.expectedMessageCount(0);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBody("direct:start", "<order><type>myType</type><user>FuncError</user></order>");
+        try {
+            template.sendBody("direct:start", "<order><type>myType</type><user>FuncError</user></order>");
+            fail("Should have thrown an exception");
+        } catch (CamelExecutionException e) {
+            // the myOwnHandlerBean throw exception while handling an exception
+            IOException cause = assertIsInstanceOf(IOException.class, e.getCause());
+            assertEquals("Damn something did not work", cause.getMessage());
+        }
 
         assertMockEndpointsSatisfied();
 
         // should not handle it
         assertNull(myOwnHandlerBean.getPayload());
-
-        // and check that we have the caused exception stored
-        Exception cause = error.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-        assertIsInstanceOf(IOException.class, cause);
-        assertEquals("Damn something did not work", cause.getMessage());
     }
 
     @Override
