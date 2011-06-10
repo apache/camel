@@ -48,4 +48,7 @@ public class SimpleBuilder implements Predicate, Expression {
         return exchange.getContext().resolveLanguage("simple").createExpression(text).evaluate(exchange, type);
     }
 
+    public String toString() {
+        return "Simple: " + text;
+    }
 }
