@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Helper for {@link RouteDefinition}
@@ -132,6 +133,32 @@ public final class RouteDefinitionHelper {
         route.clearOutput();
         route.getOutputs().addAll(lower);
         route.getOutputs().addAll(0, upper);
+    }
+
+    /**
+     * Sanity check the route, that it has input(s) and outputs.
+     *
+     * @param route the route
+     * @throws IllegalArgumentException is thrown if the route is invalid
+     */
+    public static void sanityCheckRoute(RouteDefinition route) {
+        ObjectHelper.notNull(route, "route");
+
+        if (route.getInputs() == null || route.getInputs().isEmpty()) {
+            String msg = "Route has no inputs: " + route;
+            if (route.getId() != null) {
+                msg = "Route " + route.getId() + " has no inputs: " + route;
+            }
+            throw new IllegalArgumentException(msg);
+        }
+
+        if (route.getOutputs() == null || route.getOutputs().isEmpty()) {
+            String msg = "Route has no outputs: " + route;
+            if (route.getId() != null) {
+                msg = "Route " + route.getId() + " has no outputs: " + route;
+            }
+            throw new IllegalArgumentException(msg);
+        }
     }
 
     private static void initParentAndErrorHandlerBuilder(CamelContext context, RouteDefinition route,

@@ -313,6 +313,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
      */
     private void prepareRoutes() {
         for (RouteDefinition route : getRoutes()) {
+            // sanity check first as the route is created using XML
+            RouteDefinitionHelper.sanityCheckRoute(route);
+
             // leverage logic from route definition helper to prepare the route
             RouteDefinitionHelper.prepareRoute(getContext(), route, getOnExceptions(), getIntercepts(), getInterceptFroms(),
                     getInterceptSendToEndpoints(), getOnCompletions());
