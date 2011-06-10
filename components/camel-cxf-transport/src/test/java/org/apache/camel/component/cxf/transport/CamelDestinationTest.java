@@ -21,14 +21,20 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.Endpoint;
+import javax.xml.ws.Holder;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.transport.CamelDestination.ConsumerProcessor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.wsdl_first.Person;
+import org.apache.camel.wsdl_first.UnknownPersonFault;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
@@ -262,6 +268,22 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         Assert.assertNotNull(exc);
         Assert.assertEquals(expectedException, exc);
         EasyMock.verify(dest);
+    }
+    
+    @Test
+    public void testCAMEL4073() throws Exception {
+        try {
+            Endpoint.publish("camel://foo", new Person() {
+                public void getPerson(Holder<String> personId, Holder<String> ssn, Holder<String> name)
+                    throws UnknownPersonFault {
+                }
+            });
+            fail("Should throw and Exception");
+        } catch (WebServiceException ex) {
+            Throwable c = ex.getCause();
+            assertNotNull(c);
+            assertTrue(c instanceof NoSuchEndpointException);
+        }
     }
 
 }

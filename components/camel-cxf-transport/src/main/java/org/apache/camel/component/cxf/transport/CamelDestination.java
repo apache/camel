@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.DefaultCxfMesssageMapper;
@@ -112,9 +113,17 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         try {
             LOG.debug("establishing Camel connection");
             destinationEndpoint = getCamelContext().getEndpoint(camelDestinationUri);
+            if (destinationEndpoint == null) {
+                throw new NoSuchEndpointException(camelDestinationUri);
+            }
             consumer = destinationEndpoint.createConsumer(new ConsumerProcessor());
             ServiceHelper.startService(consumer);
+        } catch (NoSuchEndpointException nex) {
+            throw nex;
         } catch (Exception ex) {
+            if (destinationEndpoint == null) {
+                throw new FailedToCreateConsumerException(camelDestinationUri, ex);
+            }
             throw new FailedToCreateConsumerException(destinationEndpoint, ex);
         }
     }
