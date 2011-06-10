@@ -33,7 +33,7 @@
   <description>Camel Parent POM</description>
 
   <properties>
-    <compiler.fork>false</compiler.fork>
+    <compiler.fork>true</compiler.fork>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.5.0</activemq-version>
     <ahc-version>1.6.3</ahc-version>
