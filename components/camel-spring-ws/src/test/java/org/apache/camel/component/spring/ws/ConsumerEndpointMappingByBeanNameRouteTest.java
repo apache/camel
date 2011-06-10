@@ -48,7 +48,7 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
     }
     
     public String toUnixLineEndings(String inSt) {
-    	return inSt.replace("\r\n", "\n");
+        return inSt.replace("\r\n", "\n");
     }
 
     @Test
