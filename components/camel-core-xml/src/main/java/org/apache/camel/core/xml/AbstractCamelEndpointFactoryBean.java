@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoSuchEndpointException;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -34,6 +35,8 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
     private Boolean singleton;
     @XmlAttribute
     private String uri;
+    @XmlAttribute
+    private ExchangePattern pattern;
     @XmlTransient
     private Endpoint endpoint;
 
@@ -65,4 +68,11 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
         this.uri = uri;
     }
 
+    public ExchangePattern getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(ExchangePattern pattern) {
+        this.pattern = pattern;
+    }
 }
