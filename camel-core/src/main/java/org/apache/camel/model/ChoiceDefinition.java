@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -34,6 +33,7 @@ import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;choice/&gt; element
@@ -53,7 +53,10 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     
     @Override
     public List<ProcessorDefinition> getOutputs() {
+        // wrap the outputs into a list where we can on the inside control the when/otherwise
+        // but make it appear as a list on the outside
         return new AbstractList<ProcessorDefinition>() {
+
             public ProcessorDefinition get(int index) {
                 if (index < whenClauses.size()) {
                     return whenClauses.get(index);
@@ -61,8 +64,9 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
                 if (index == whenClauses.size()) {
                     return otherwise;
                 }
-                throw new IndexOutOfBoundsException();
+                throw new IndexOutOfBoundsException("Index " + index + " is out of bounds with size " + size());
             }
+
             public boolean add(ProcessorDefinition def) {
                 if (def instanceof WhenDefinition) {
                     return whenClauses.add((WhenDefinition)def);
@@ -70,28 +74,34 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
                     otherwise = (OtherwiseDefinition)def;
                     return true;
                 }
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Expected either a WhenDefinition or OtherwiseDefinition but was "
+                        + ObjectHelper.classCanonicalName(def));
             }
+
             public int size() {
                 return whenClauses.size() + (otherwise == null ? 0 : 1);
             }
+
             public void clear() {
                 whenClauses.clear();
                 otherwise = null;
             }
+
             public ProcessorDefinition set(int index, ProcessorDefinition element) {
                 if (index < whenClauses.size()) {
                     if (element instanceof WhenDefinition) {
                         return whenClauses.set(index, (WhenDefinition)element);
                     }
-                    throw new IllegalArgumentException();
+                    throw new IllegalArgumentException("Expected WhenDefinition but was "
+                            + ObjectHelper.classCanonicalName(element));
                 } else if (index == whenClauses.size()) {
                     ProcessorDefinition old = otherwise;
                     otherwise = (OtherwiseDefinition)element;
                     return old;
                 }
-                throw new IndexOutOfBoundsException();
+                throw new IndexOutOfBoundsException("Index " + index + " is out of bounds with size " + size());
             }
+
             public ProcessorDefinition remove(int index) {
                 if (index < whenClauses.size()) {
                     return whenClauses.remove(index);
@@ -100,7 +110,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
                     otherwise = null;
                     return old;
                 }
-                throw new IndexOutOfBoundsException();
+                throw new IndexOutOfBoundsException("Index " + index + " is out of bounds with size " + size());
             }
         };
     }

@@ -238,7 +238,7 @@ public class RouteService extends ServiceSupport {
 
     protected void startChildService(Route route, List<Service> services) throws Exception {
         for (Service service : services) {
-            LOG.debug("Starting {}", service);
+            LOG.debug("Starting child service on route: {} -> {}", route.getId(), service);
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
                 strategy.onServiceAdd(camelContext, service, route);
             }
@@ -249,6 +249,7 @@ public class RouteService extends ServiceSupport {
 
     protected void stopChildService(Route route, Set<Service> services, boolean shutdown) throws Exception {
         for (Service service : services) {
+            LOG.debug("Stopping child service on route: {} -> {}", route.getId(), service);
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
                 strategy.onServiceRemove(camelContext, service, route);
             }
