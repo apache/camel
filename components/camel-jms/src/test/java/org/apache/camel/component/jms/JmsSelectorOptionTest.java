@@ -39,7 +39,7 @@ public class JmsSelectorOptionTest extends CamelTestSupport {
         MockEndpoint endpointB = getMockEndpoint("mock:b");
         MockEndpoint endpointC = getMockEndpoint("mock:c");
         
-        endpointA.expectedBodiesReceived("A blue car!", "A blue car, again!");
+        endpointA.expectedBodiesReceivedInAnyOrder("A blue car!", "A blue car, again!");
         endpointA.expectedHeaderReceived("color", "blue");
         endpointB.expectedHeaderReceived("color", "red");
         endpointB.expectedBodiesReceived("A red car!");
