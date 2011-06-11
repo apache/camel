@@ -168,6 +168,7 @@ public class DefaultChannel extends ServiceSupport implements Channel {
         // the definition to wrap should be the fine grained,
         // so if a child is set then use it, if not then its the original output used
         ProcessorDefinition<?> targetOutputDef = childDefinition != null ? childDefinition : outputDefinition;
+        LOG.debug("Initialize channel for target: '{}'", targetOutputDef);
 
         // first wrap the output with the managed strategy if any
         InterceptStrategy managed = routeContext.getManagedInterceptStrategy();

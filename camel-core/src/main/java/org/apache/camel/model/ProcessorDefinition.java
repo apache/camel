@@ -159,14 +159,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     public void addOutput(ProcessorDefinition output) {
-        output.setParent(this);
-        configureChild(output);
-        if (blocks.isEmpty()) {
-            getOutputs().add(output);
-        } else {
+        if (!blocks.isEmpty()) {
+            // let the Block deal with the output
             Block block = blocks.getLast();
             block.addOutput(output);
+            return;
         }
+
+        output.setParent(this);
+        configureChild(output);
+        getOutputs().add(output);
     }
 
     public void clearOutput() {
@@ -903,7 +905,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             setId(id);
         } else {
             // set it on last output as this is what the user means to do
-            getOutputs().get(getOutputs().size() - 1).setId(id);
+            // for Block(s) with non empty getOutputs() the id probably refers
+            //  to the last definition in the current Block
+            List<ProcessorDefinition> outputs = getOutputs();
+            if (!blocks.isEmpty()) {
+                if (blocks.getLast() instanceof ProcessorDefinition) {
+                    ProcessorDefinition block = (ProcessorDefinition)blocks.getLast();
+                    if (!block.getOutputs().isEmpty()) {
+                        outputs = block.getOutputs();
+                    }
+                }
+            }
+            outputs.get(outputs.size() - 1).setId(id);
         }
 
         return (Type) this;
@@ -1090,7 +1103,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // when using doTry .. doCatch .. doFinally we should always
         // end the try definition to avoid having to use 2 x end() in the route
         // this is counter intuitive for end users
-        if (defn instanceof TryDefinition) {
+        // TODO (camel-3.0): this should be done inside of TryDefinition or even better
+        //  in Block(s) in general, but the api needs to be revisited for that.
+        if (defn instanceof TryDefinition || defn instanceof ChoiceDefinition) {
             popBlock();
         }
 
