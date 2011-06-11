@@ -101,6 +101,7 @@ public final class Builder {
      */
     public static ValueBuilder simple(String value, Class<?> resultType) {
         Expression expression = ExpressionBuilder.simpleExpression(value);
+        expression = ExpressionBuilder.convertToExpression(expression, resultType);
         return new ValueBuilder(expression);
     }
 
