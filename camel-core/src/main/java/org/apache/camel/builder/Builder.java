@@ -97,6 +97,14 @@ public final class Builder {
     }
     
     /**
+     * Returns a simple expression
+     */
+    public static ValueBuilder simple(String value, Class<?> resultType) {
+        Expression expression = ExpressionBuilder.simpleExpression(value);
+        return new ValueBuilder(expression);
+    }
+
+    /**
      * Returns a predicate and value builder for headers on an exchange
      */
     public static ValueBuilder header(String name) {

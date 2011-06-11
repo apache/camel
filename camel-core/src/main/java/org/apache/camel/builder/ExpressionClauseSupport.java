@@ -417,6 +417,21 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
+     * Evaluates a <a href="http://camel.apache.org/simple.html">Simple
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @param resultType the result type
+     * @return the builder to continue processing the DSL
+     */
+    public T simple(String text, Class<?> resultType) {
+        SimpleExpression expression = new SimpleExpression(text);
+        expression.setResultType(resultType);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a>
      *

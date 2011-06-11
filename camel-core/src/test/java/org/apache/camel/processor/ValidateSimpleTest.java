@@ -56,7 +56,7 @@ public class ValidateSimpleTest extends ContextTestSupport {
         } catch (CamelExecutionException e) {
             // expected
             assertIsInstanceOf(PredicateValidationException.class, e.getCause());
-            assertEquals("Validation failed for Predicate[body contains Camel]."
+            assertEquals("Validation failed for Predicate[Simple: ${body} contains 'Camel']."
                 + " Exchange[Message: Bye World]", e.getCause().getMessage());
         }
 

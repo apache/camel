@@ -41,4 +41,28 @@ public class SimpleBuilderTest extends TestSupport {
         assertEquals("foo", SimpleBuilder.simple("${body}").evaluate(exchange, String.class));
         assertNull(SimpleBuilder.simple("${header.cheese}").evaluate(exchange, String.class));
     }
+
+    public void testResultType() throws Exception {
+        exchange.getIn().setBody("foo");
+        exchange.getIn().setHeader("cool", true);
+
+        assertEquals("foo", SimpleBuilder.simple("${body}", String.class).evaluate(exchange, Object.class));
+        // not possible
+        assertEquals(null, SimpleBuilder.simple("${body}", int.class).evaluate(exchange, Object.class));
+
+        assertEquals(true, SimpleBuilder.simple("${header.cool}", boolean.class).evaluate(exchange, Object.class));
+        assertEquals("true", SimpleBuilder.simple("${header.cool}", String.class).evaluate(exchange, Object.class));
+        // not possible
+        assertEquals(null, SimpleBuilder.simple("${header.cool}", int.class).evaluate(exchange, Object.class));
+
+        assertEquals(true, SimpleBuilder.simple("${header.cool}").resultType(Boolean.class).evaluate(exchange, Object.class));
+        assertEquals("true", SimpleBuilder.simple("${header.cool}").resultType(String.class).evaluate(exchange, Object.class));
+        // not possible
+        assertEquals(null, SimpleBuilder.simple("${header.cool}").resultType(int.class).evaluate(exchange, Object.class));
+
+        // should be convertable to integers
+        assertEquals(9, SimpleBuilder.simple("9", int.class).evaluate(exchange, Object.class));
+        assertEquals(9, SimpleBuilder.simple("09", int.class).evaluate(exchange, Object.class));
+        assertEquals(9, SimpleBuilder.simple("0009", int.class).evaluate(exchange, Object.class));
+    }
 }

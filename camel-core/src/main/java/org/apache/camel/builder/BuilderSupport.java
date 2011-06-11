@@ -137,6 +137,13 @@ public abstract class BuilderSupport {
     }
     
     /**
+     * Returns a simple expression value builder
+     */
+    public SimpleBuilder simple(String value, Class<?> resultType) {
+        return SimpleBuilder.simple(value, resultType);
+    }
+
+    /**
      * Returns a xpath expression value builder
      */
     public XPathBuilder xpath(String value) {

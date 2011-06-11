@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.language.simple.SimpleLanguage;
 
 /**
  * Creates an {@link org.apache.camel.language.Simple} language builder.
@@ -31,6 +32,7 @@ import org.apache.camel.Predicate;
 public class SimpleBuilder implements Predicate, Expression {
 
     private final String text;
+    private Class<?> resultType;
 
     public SimpleBuilder(String text) {
         this.text = text;
@@ -40,12 +42,39 @@ public class SimpleBuilder implements Predicate, Expression {
         return new SimpleBuilder(text);
     }
 
+    public static SimpleBuilder simple(String text, Class<?> resultType) {
+        SimpleBuilder answer = simple(text);
+        answer.setResultType(resultType);
+        return answer;
+    }
+
+    public Class<?> getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(Class<?> resultType) {
+        this.resultType = resultType;
+    }
+
+    public SimpleBuilder resultType(Class<?> resultType) {
+        setResultType(resultType);
+        return this;
+    }
+
     public boolean matches(Exchange exchange) {
         return exchange.getContext().resolveLanguage("simple").createPredicate(text).matches(exchange);
     }
 
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        return exchange.getContext().resolveLanguage("simple").createExpression(text).evaluate(exchange, type);
+        return createExpression(exchange).evaluate(exchange, type);
+    }
+
+    private Expression createExpression(Exchange exchange) {
+        SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
+        if (resultType != null) {
+            simple.setResultType(resultType);
+        }
+        return simple.createExpression(text);
     }
 
     public String toString() {

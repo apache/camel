@@ -18,6 +18,7 @@ package org.apache.camel.language;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,14 @@ public class SimpleTest extends LanguageTestSupport {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("myAnimal", new Animal("Donkey", 17));
         return jndi;
+    }
+
+    public void testResultType() throws Exception {
+        assertEquals(123, SimpleLanguage.simple("${header.bar}", int.class).evaluate(exchange, Object.class));
+        assertEquals("123", SimpleLanguage.simple("${header.bar}", String.class).evaluate(exchange, Object.class));
+        // should not be possible
+        assertEquals(null, SimpleLanguage.simple("${header.bar}", Date.class).evaluate(exchange, Object.class));
+        assertEquals(null, SimpleLanguage.simple("${header.unknown}", String.class).evaluate(exchange, Object.class));
     }
 
     public void testRefExpression() throws Exception {

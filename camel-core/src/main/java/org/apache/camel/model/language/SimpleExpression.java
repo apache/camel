@@ -18,7 +18,13 @@ package org.apache.camel.model.language;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
+import org.apache.camel.builder.SimpleBuilder;
 
 /**
  * For expressions and predicates using the
@@ -29,6 +35,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "simple")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SimpleExpression extends ExpressionDefinition {
+    @XmlAttribute
+    private Class<?> resultType;
 
     public SimpleExpression() {
     }
@@ -39,5 +47,26 @@ public class SimpleExpression extends ExpressionDefinition {
 
     public String getLanguage() {
         return "simple";
+    }
+
+    public Class<?> getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(Class<?> resultType) {
+        this.resultType = resultType;
+    }
+
+    @Override
+    public Expression createExpression(CamelContext camelContext) {
+        SimpleBuilder answer = new SimpleBuilder(getExpression());
+        answer.setResultType(resultType);
+        return answer;
+    }
+
+    @Override
+    public Predicate createPredicate(CamelContext camelContext) {
+        // SimpleBuilder is also a Predicate
+        return (Predicate) createExpression(camelContext);
     }
 }

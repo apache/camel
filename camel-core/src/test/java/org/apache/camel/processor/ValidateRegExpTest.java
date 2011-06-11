@@ -57,8 +57,9 @@ public class ValidateRegExpTest extends ContextTestSupport {
             // expected
             assertIsInstanceOf(PredicateValidationException.class, e.getCause());
             // as the Expression could be different between the DSL and simple language, here we just check part of the message 
-            assertTrue("Get a wrong exception message", e.getCause().getMessage().startsWith("Validation failed for Predicate[bodyAs[java.lang.String]"));
-            assertTrue("Get a wrong exception message", e.getCause().getMessage().endsWith("Exchange[Message: 1.1.2010]"));           
+            assertTrue("Get a wrong exception message", e.getCause().getMessage().startsWith("Validation failed for Predicate"));
+            assertTrue(e.getCause().getMessage().contains("^\\d{2}\\.\\d{2}\\.\\d{4}$"));
+            assertTrue("Get a wrong exception message", e.getCause().getMessage().endsWith("Exchange[Message: 1.1.2010]"));
         }
 
         assertMockEndpointsSatisfied();

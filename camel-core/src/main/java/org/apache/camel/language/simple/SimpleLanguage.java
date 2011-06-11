@@ -91,7 +91,33 @@ import org.apache.camel.util.StringHelper;
  */
 public class SimpleLanguage extends SimpleLanguageSupport {
 
+    // singleton for expressions without a result type
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
+
+    private Class<?> resultType;
+
+    public Class<?> getResultType() {
+        return resultType;
+    }
+
+    public void setResultType(Class<?> resultType) {
+        this.resultType = resultType;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        // we cannot be singleton as we have state
+        return false;
+    }
+
+    @Override
+    public Expression createExpression(String expression) {
+        Expression answer = super.createExpression(expression);
+        if (resultType != null) {
+            return ExpressionBuilder.convertToExpression(answer, resultType);
+        }
+        return answer;
+    }
 
     /**
      * Does the expression have the simple language start token?
@@ -109,6 +135,12 @@ public class SimpleLanguage extends SimpleLanguageSupport {
 
     public static Expression simple(String expression) {
         return SIMPLE.createExpression(expression);
+    }
+
+    public static Expression simple(String expression, Class<?> resultType) {
+        SimpleLanguage answer = new SimpleLanguage();
+        answer.setResultType(resultType);
+        return answer.createExpression(expression);
     }
 
     protected Expression createSimpleExpressionDirectly(String expression) {
@@ -362,7 +394,4 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         throw new ExpressionIllegalSyntaxException("File language syntax: " + remainder);
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }
