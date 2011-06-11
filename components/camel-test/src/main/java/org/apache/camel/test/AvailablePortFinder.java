@@ -22,6 +22,7 @@ import java.net.ServerSocket;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+
 /**
  * Finds currently available server ports.
  *
@@ -59,7 +60,7 @@ public final class AvailablePortFinder {
      *
      * @throws NoSuchElementException if there are no ports available
      */
-    public static int getNextAvailable() {
+    public synchronized static int getNextAvailable() {
         int next = getNextAvailable(currentMinPort.get());
         currentMinPort.set(next + 1);
         return next;
@@ -71,7 +72,7 @@ public final class AvailablePortFinder {
      * @param fromPort the currentMinPort to scan for availability
      * @throws NoSuchElementException if there are no ports available
      */
-    public static int getNextAvailable(int fromPort) {
+    public synchronized static int getNextAvailable(int fromPort) {
         if (fromPort < currentMinPort.get() || fromPort > MAX_PORT_NUMBER) {
             throw new IllegalArgumentException("Invalid start currentMinPort: " + fromPort);
         }

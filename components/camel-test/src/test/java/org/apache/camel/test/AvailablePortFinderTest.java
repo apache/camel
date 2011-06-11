@@ -19,6 +19,8 @@ package org.apache.camel.test;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.net.ServerSocket;
+
 public class AvailablePortFinderTest {
 
 
@@ -26,7 +28,25 @@ public class AvailablePortFinderTest {
     public void getNextAvailablePort() throws Exception {
         int p1 = AvailablePortFinder.getNextAvailable();
         int p2 = AvailablePortFinder.getNextAvailable();
-        Assert.assertTrue(p1 != p2);
+        Assert.assertFalse("Port " + p1 + " Port2 " + p2, p1 == p2);
+    }
+
+    @Test
+    public void testGetNextAvailablePortInt() throws Exception {
+        int p1 = AvailablePortFinder.getNextAvailable(9123);
+        int p2 = AvailablePortFinder.getNextAvailable(9123);
+        // these calls only check availability but don't mark the port as in use.
+        Assert.assertEquals(p1, p2);
+    }
+
+
+    @Test
+    public void testNotAvailablePort() throws Exception {
+        int p1 = AvailablePortFinder.getNextAvailable(11000);
+        ServerSocket socket = new ServerSocket(p1);
+        int p2 = AvailablePortFinder.getNextAvailable(p1);
+        Assert.assertFalse("Port " + p1 + " Port2 " + p2, p1 == p2);
+        socket.close();
     }
 
     @Test (expected = IllegalArgumentException.class)
