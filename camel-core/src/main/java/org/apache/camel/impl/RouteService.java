@@ -238,6 +238,7 @@ public class RouteService extends ServiceSupport {
 
     protected void startChildService(Route route, List<Service> services) throws Exception {
         for (Service service : services) {
+            LOG.debug("Starting {}", service);
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
                 strategy.onServiceAdd(camelContext, service, route);
             }

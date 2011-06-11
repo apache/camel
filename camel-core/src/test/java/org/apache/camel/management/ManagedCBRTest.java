@@ -26,32 +26,33 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedCBRTest extends ManagementTestSupport {
 
+    // CAMEL-4044: mbeans not registered for children of choice
     public void testManagedCBR() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route\"");
-        mbeanServer.isRegistered(on);
+        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
 
         on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-a\"");
-        mbeanServer.isRegistered(on);
+        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
 
         on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"choice\"");
-        mbeanServer.isRegistered(on);
+        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
 
         on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-b\"");
-        mbeanServer.isRegistered(on);
-
+        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
+        
         on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-c\"");
-        mbeanServer.isRegistered(on);
+        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
 
         on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-d\"");
-        mbeanServer.isRegistered(on);
+        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
 
         on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-e\"");
-        mbeanServer.isRegistered(on);
+        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
 
         on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"task-done\"");
-        mbeanServer.isRegistered(on);
+        assertTrue("MBean '" + on + "' not registered", mbeanServer.isRegistered(on));
     }
 
     @Override

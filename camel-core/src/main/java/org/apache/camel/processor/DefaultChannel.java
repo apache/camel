@@ -168,6 +168,7 @@ public class DefaultChannel extends ServiceSupport implements Channel {
         // the definition to wrap should be the fine grained,
         // so if a child is set then use it, if not then its the original output used
         ProcessorDefinition<?> targetOutputDef = childDefinition != null ? childDefinition : outputDefinition;
+        LOG.debug("Initialize channel for target: '{}'", targetOutputDef);
 
         // fix parent/child relationship. This will be the case of the routes has been
         // defined using XML DSL or end user may have manually assembled a route from the model.
