@@ -21,38 +21,26 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class NettyTCPSyncNotLazyChannelTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyTCPSyncNotLazyChannelTest.class);
+public class NettyTCPSyncNotLazyChannelTest extends BaseNettyTest {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate producerTemplate;
 
     @Test
     public void testTCPStringInOutWithNettyConsumer() throws Exception {
-        LOG.debug("Beginning Test ---> testTCPInOutWithNettyConsumer()");
-
         String response = producerTemplate.requestBody(
-            "netty:tcp://localhost:5151?sync=true&lazyChannelCreation=false",
+            "netty:tcp://localhost:{{port}}?sync=true&lazyChannelCreation=false",
             "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
-
-        LOG.debug("Completed Test ---> testTCPInOutWithNettyConsumer()");
     }
 
     @Test
     public void testTCPObjectInOutWithNettyConsumer() throws Exception {
-        LOG.debug("Beginning Test ---> testUDPInOutWithNettyConsumer()");
-
         Poetry poetry = new Poetry();
-        Poetry response = (Poetry) producerTemplate.requestBody("netty:tcp://localhost:5151?sync=true&lazyChannelCreation=false", poetry);
+        Poetry response = (Poetry) producerTemplate.requestBody("netty:tcp://localhost:{{port}}?sync=true&lazyChannelCreation=false", poetry);
         assertEquals("Dr. Sarojini Naidu", response.getPoet());
-
-        LOG.debug("Completed Test ---> testUDPInOutWithNettyConsumer()");
     }
 
     @Override
@@ -60,7 +48,7 @@ public class NettyTCPSyncNotLazyChannelTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:5151?sync=true")
+                from("netty:tcp://localhost:{{port}}?sync=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             if (exchange.getIn().getBody() instanceof Poetry) {

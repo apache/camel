@@ -33,7 +33,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -41,7 +40,7 @@ import org.junit.Test;
  * @version 
  */
 @Ignore
-public class Netty2978IssueTest extends CamelTestSupport {
+public class Netty2978IssueTest extends BaseNettyTest {
 
     @Test
     public void testNetty2978() throws Exception {
@@ -93,7 +92,7 @@ public class Netty2978IssueTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:22048?sync=true")
+                from("netty:tcp://localhost:{{port}}?sync=true")
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
@@ -111,7 +110,7 @@ public class Netty2978IssueTest extends CamelTestSupport {
 
         public CamelClient() {
             this.context = new DefaultCamelContext();
-            this.endpoint = context.getEndpoint("netty:tcp://localhost:22048?sync=true");
+            this.endpoint = context.getEndpoint("netty:tcp://localhost:{{port}}?sync=true");
             this.producerTemplate = context.createProducerTemplate();
         }
 

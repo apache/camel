@@ -25,12 +25,11 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.CamelTestSupport;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NettySSLTest extends CamelTestSupport {
+public class NettySSLTest extends BaseNettyTest {
     private static final transient Logger LOG = LoggerFactory.getLogger(NettySSLTest.class);
   
     @Produce(uri = "direct:start")
@@ -38,7 +37,7 @@ public class NettySSLTest extends CamelTestSupport {
     
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = new JndiRegistry(createJndiContext());
+        JndiRegistry registry = super.createRegistry();
         registry.bind("password", "changeit");
         registry.bind("ksf", new File("src/test/resources/keystore.jks"));
         registry.bind("tsf", new File("src/test/resources/keystore.jks"));
@@ -52,7 +51,7 @@ public class NettySSLTest extends CamelTestSupport {
 
     private void sendRequest() throws Exception {
         String response = producerTemplate.requestBody(
-            "netty:tcp://localhost:5150?sync=true&ssl=true&passphrase=#password&keyStoreFile=#ksf&trustStoreFile=#tsf", 
+            "netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#password&keyStoreFile=#ksf&trustStoreFile=#tsf",
             "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);        
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }
@@ -67,7 +66,7 @@ public class NettySSLTest extends CamelTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("netty:tcp://localhost:5150?sync=true&ssl=true&passphrase=#password&keyStoreFile=#ksf&trustStoreFile=#tsf")
+                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=#password&keyStoreFile=#ksf&trustStoreFile=#tsf")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");                           
@@ -77,9 +76,7 @@ public class NettySSLTest extends CamelTestSupport {
         });
         context.start();
         
-        LOG.debug("Beginning Test ---> testSSLInOutWithNettyConsumer()");       
         sendRequest();
-        LOG.debug("Completed Test ---> testSSLInOutWithNettyConsumer()");
         context.stop();
     }    
 

@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.CamelTestSupport;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
@@ -33,11 +32,8 @@ import org.jboss.netty.handler.codec.string.StringDecoder;
 import org.jboss.netty.handler.codec.string.StringEncoder;
 import org.jboss.netty.util.CharsetUtil;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class NettyCustomPipelineFactoryAsynchTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyCustomPipelineFactoryAsynchTest.class);
+public class NettyCustomPipelineFactoryAsynchTest extends BaseNettyTest {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate producerTemplate;
@@ -47,7 +43,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends CamelTestSupport {
     
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = new JndiRegistry(createJndiContext());
+        JndiRegistry registry = super.createRegistry();
         clientPipelineFactory = new TestClientChannelPipelineFactory();
         serverPipelineFactory = new TestServerChannelPipelineFactory();
         registry.bind("cpf", clientPipelineFactory);
@@ -63,7 +59,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends CamelTestSupport {
     private void sendRequest() throws Exception {
         // Async request
         response = (String) producerTemplate.requestBody(
-            "netty:tcp://localhost:5110?clientPipelineFactory=#cpf&textline=true", 
+            "netty:tcp://localhost:{{port}}?clientPipelineFactory=#cpf&textline=true",
             "Forest Gump describing Vietnam...");        
     }
     
@@ -71,7 +67,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends CamelTestSupport {
     public void testCustomClientPipelineFactory() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("netty:tcp://localhost:5110?serverPipelineFactory=#spf&textline=true")
+                from("netty:tcp://localhost:{{port}}?serverPipelineFactory=#spf&textline=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setBody("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");                           
@@ -81,9 +77,7 @@ public class NettyCustomPipelineFactoryAsynchTest extends CamelTestSupport {
         });
         context.start();
         
-        LOG.debug("Beginning Test ---> testCustomClientPipelineFactory()");       
         sendRequest();
-        LOG.debug("Completed Test ---> testCustomClientPipelineFactory()");
         context.stop();
         
         assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'", response);

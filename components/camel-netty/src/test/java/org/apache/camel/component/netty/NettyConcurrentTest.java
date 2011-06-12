@@ -28,9 +28,8 @@ import java.util.concurrent.Future;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.CamelTestSupport;
 
-public class NettyConcurrentTest extends CamelTestSupport {
+public class NettyConcurrentTest extends BaseNettyTest {
 
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
@@ -49,7 +48,7 @@ public class NettyConcurrentTest extends CamelTestSupport {
             final int index = i;
             Future out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    return template.requestBody("netty:tcp://localhost:5150", index, String.class);
+                    return template.requestBody("netty:tcp://localhost:{{port}}", index, String.class);
                 }
             });
             responses.put(index, out);
@@ -73,7 +72,7 @@ public class NettyConcurrentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty:tcp://localhost:5150?sync=true").process(new Processor() {
+                from("netty:tcp://localhost:{{port}}?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);

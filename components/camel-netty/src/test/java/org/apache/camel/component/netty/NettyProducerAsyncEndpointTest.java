@@ -19,13 +19,12 @@ package org.apache.camel.component.netty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class NettyProducerAsyncEndpointTest extends CamelTestSupport {
+public class NettyProducerAsyncEndpointTest extends BaseNettyTest {
 
     private static String beforeThreadName;
     private static String afterThreadName;
@@ -57,7 +56,7 @@ public class NettyProducerAsyncEndpointTest extends CamelTestSupport {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         })
-                        .to("netty:tcp://localhost:5147?textline=true&sync=true")
+                        .to("netty:tcp://localhost:{{port}}?textline=true&sync=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();
@@ -67,7 +66,7 @@ public class NettyProducerAsyncEndpointTest extends CamelTestSupport {
                         .to("mock:after")
                         .to("mock:result");
 
-                from("netty:tcp://localhost:5147?textline=true&sync=true")
+                from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
                     .delay(1000)
                     .validate(body().isInstanceOf(String.class))
                     .transform(body().regexReplaceAll("Hello", "Bye"));

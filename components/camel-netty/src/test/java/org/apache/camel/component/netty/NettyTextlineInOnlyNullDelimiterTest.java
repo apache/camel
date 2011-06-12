@@ -17,19 +17,18 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class NettyTextlineInOnlyNullDelimiterTest extends CamelTestSupport {
+public class NettyTextlineInOnlyNullDelimiterTest extends BaseNettyTest {
 
     @Test
     public void testTextlineInOnlyNull() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("netty:tcp://localhost:5149?textline=true&delimiter=NULL&sync=false", "Hello World\u0000");
+        template.sendBody("netty:tcp://localhost:{{port}}?textline=true&delimiter=NULL&sync=false", "Hello World\u0000");
 
         assertMockEndpointsSatisfied();
     }
@@ -39,7 +38,7 @@ public class NettyTextlineInOnlyNullDelimiterTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:5149?textline=true&delimiter=NULL&sync=false")
+                from("netty:tcp://localhost:{{port}}?textline=true&delimiter=NULL&sync=false")
                     // body should be a String when using textline codec
                     .validate(body().isInstanceOf(String.class))
                     .to("mock:result");

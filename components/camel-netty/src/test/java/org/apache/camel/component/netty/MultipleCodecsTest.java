@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
@@ -32,7 +31,7 @@ import org.jboss.netty.handler.codec.string.StringDecoder;
 import org.jboss.netty.handler.codec.string.StringEncoder;
 import org.junit.Test;
 
-public class MultipleCodecsTest extends CamelTestSupport {
+public class MultipleCodecsTest extends BaseNettyTest {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -78,9 +77,9 @@ public class MultipleCodecsTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: routes
-                from("direct:multiple-codec").to("netty:tcp://localhost:5150?encoders=#encoders&sync=false");
+                from("direct:multiple-codec").to("netty:tcp://localhost:{{port}}?encoders=#encoders&sync=false");
                 
-                from("netty:tcp://localhost:5150?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
+                from("netty:tcp://localhost:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
                 // START SNIPPET: routes
             }
         };

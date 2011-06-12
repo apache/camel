@@ -18,24 +18,23 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class NettyInOutWithForcedNoResponseTest extends CamelTestSupport {
+public class NettyInOutWithForcedNoResponseTest extends BaseNettyTest {
 
     @Test
     public void testResponse() throws Exception {
-        Object out = template.requestBody("netty:tcp://localhost:4444", "Copenhagen");
+        Object out = template.requestBody("netty:tcp://localhost:{{port}}", "Copenhagen");
         assertEquals("Hello Claus", out);
     }
 
     @Test
     public void testNoResponse() throws Exception {
         try {
-            template.requestBody("netty:tcp://localhost:4444", "London");
+            template.requestBody("netty:tcp://localhost:{{port}}", "London");
             fail("Should throw an exception");
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause().getMessage().startsWith("No response"));
@@ -46,13 +45,7 @@ public class NettyInOutWithForcedNoResponseTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty:tcp://localhost:4444")
-                    .choice()
-                        .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
-                        .otherwise().transform(constant(null));
-
-                from("netty:tcp://localhost:4445?sync=true&disconnectOnNoReply=false&noReplyLogLevel=INFO")
-                    .to("log:foo")
+                from("netty:tcp://localhost:{{port}}")
                     .choice()
                         .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
                         .otherwise().transform(constant(null));

@@ -21,37 +21,29 @@ import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class NettyUDPSyncTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyUDPSyncTest.class);
+public class NettyUDPSyncTest extends BaseNettyTest {
 
     @Produce(uri = "direct:start")
     protected ProducerTemplate producerTemplate;
 
     @Test
     public void testUDPStringInOutWithNettyConsumer() throws Exception {
-        LOG.debug("Beginning Test ---> testUDPInOutWithNettyConsumer()");
-        
         for (int i = 0; i < 5; i++) {
             String response = producerTemplate.requestBody(
-                "netty:udp://localhost:5152?sync=true", 
+                "netty:udp://localhost:{{port}}?sync=true",
                 "After the Battle of Thermopylae in 480 BC - Simonides of Ceos (c. 556 BC-468 BC), Greek lyric poet wrote ?", String.class);        
             assertEquals("Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.", response);
         }
-        
-        LOG.debug("Completed Test ---> testUDPInOutWithNettyConsumer()");        
-    }   
+    }
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {                
-                from("netty:udp://localhost:5152?sync=true")
+                from("netty:udp://localhost:{{port}}?sync=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setBody("Go tell the Spartans, thou that passest by, That faithful to their precepts here we lie.");                           

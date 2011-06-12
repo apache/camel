@@ -17,19 +17,18 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class NettyTextlineInOutTest extends CamelTestSupport {
+public class NettyTextlineInOutTest extends BaseNettyTest {
 
     @Test
     public void testTextlineInOut() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        String reply = template.requestBody("netty:tcp://localhost:5148?textline=true&sync=true", "Hello World", String.class);
+        String reply = template.requestBody("netty:tcp://localhost:{{port}}?textline=true&sync=true", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
         assertMockEndpointsSatisfied();
@@ -40,7 +39,7 @@ public class NettyTextlineInOutTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:5148?textline=true&sync=true")
+                from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
                     // body should be a String when using textline codec
                     .validate(body().isInstanceOf(String.class))
                     .to("mock:result")

@@ -23,7 +23,6 @@ import java.net.InetAddress;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +30,8 @@ import org.slf4j.LoggerFactory;
 /**
  * @version 
  */
-public class NettyUdpWithInOutUsingPlainSocketTest extends CamelTestSupport {
+public class NettyUdpWithInOutUsingPlainSocketTest extends BaseNettyTest {
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyUdpWithInOutUsingPlainSocketTest.class);
-    private static final int PORT = 4445;
 
     @Test
     public void testSendAndReceiveOnce() throws Exception {
@@ -49,14 +47,14 @@ public class NettyUdpWithInOutUsingPlainSocketTest extends CamelTestSupport {
         // must append delimiter
         byte[] data = (input + "\n").getBytes();
 
-        DatagramPacket packet = new DatagramPacket(data, data.length, address, PORT);
+        DatagramPacket packet = new DatagramPacket(data, data.length, address, getPort());
         LOG.debug("+++ Sending data +++");
         socket.send(packet);
 
         Thread.sleep(1000);
 
         byte[] buf = new byte[128];
-        DatagramPacket receive = new DatagramPacket(buf, buf.length, address, PORT);
+        DatagramPacket receive = new DatagramPacket(buf, buf.length, address, getPort());
         LOG.debug("+++ Receiving data +++");
         socket.receive(receive);
 
@@ -68,7 +66,7 @@ public class NettyUdpWithInOutUsingPlainSocketTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty:udp://127.0.0.1:" + PORT + "?textline=true&sync=true").process(new Processor() {
+                from("netty:udp://127.0.0.1:{{port}}?textline=true&sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String s = exchange.getIn().getBody(String.class);
                         LOG.debug("Server got: " + s);

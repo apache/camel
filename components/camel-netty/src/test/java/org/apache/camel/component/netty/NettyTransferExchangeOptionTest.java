@@ -26,15 +26,12 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class NettyTransferExchangeOptionTest extends CamelTestSupport {
-
-    protected String uri = "netty:tcp://localhost:6321?transferExchange=true";
+public class NettyTransferExchangeOptionTest extends BaseNettyTest {
 
     @Test
     public void testNettyTransferExchangeOptionWithoutException() throws Exception {
@@ -49,7 +46,7 @@ public class NettyTransferExchangeOptionTest extends CamelTestSupport {
     }
 
     private Exchange sendExchange(boolean setException) throws Exception {
-        Endpoint endpoint = context.getEndpoint(uri);
+        Endpoint endpoint = context.getEndpoint("netty:tcp://localhost:{{port}}?transferExchange=true");
         Exchange exchange = endpoint.createExchange();
 
         Message message = exchange.getIn();
@@ -95,7 +92,7 @@ public class NettyTransferExchangeOptionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).process(new Processor() {
+                from("netty:tcp://localhost:{{port}}?transferExchange=true").process(new Processor() {
                     public void process(Exchange e) throws InterruptedException {
                         Assert.assertNotNull(e.getIn().getBody());
                         Assert.assertNotNull(e.getIn().getHeaders());

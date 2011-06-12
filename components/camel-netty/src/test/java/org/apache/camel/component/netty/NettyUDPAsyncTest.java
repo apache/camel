@@ -29,14 +29,10 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class NettyUDPAsyncTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyUDPAsyncTest.class);
-    
+public class NettyUDPAsyncTest extends BaseNettyTest {
+
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
     @Produce(uri = "direct:start")
@@ -62,23 +58,18 @@ public class NettyUDPAsyncTest extends CamelTestSupport {
 
     @Test
     public void testUDPInOnlyWithNettyConsumer() throws Exception {
-        LOG.debug("Beginning Test ---> testUDPInOnlyWithNettyConsumer()");
-        
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        sendFile("netty:udp://localhost:5151?sync=false");
+        sendFile("netty:udp://localhost:{{port}}?sync=false");
         mock.assertIsSatisfied();
-
-        LOG.debug("Completed Test ---> testUDPInOnlyWithNettyConsumer()");   
     }
 
-    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:udp://localhost:5151?sync=false")
+                from("netty:udp://localhost:{{port}}?sync=false")
                     .to("mock:result")
                     .to("log:Message"); 
             }

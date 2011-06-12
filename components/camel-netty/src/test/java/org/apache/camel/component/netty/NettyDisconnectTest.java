@@ -19,19 +19,16 @@ package org.apache.camel.component.netty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class NettyDisconnectTest extends CamelTestSupport {
-
-    private String uri = "netty:tcp://localhost:8080?sync=true&disconnect=true";
+public class NettyDisconnectTest extends BaseNettyTest {
 
     @Test
     public void testCloseSessionWhenComplete() throws Exception {
-        Object out = template.requestBody(uri, "Claus");
+        Object out = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "Claus");
         assertEquals("Bye Claus", out);
     }
 
@@ -39,7 +36,7 @@ public class NettyDisconnectTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(uri).process(new Processor() {
+                from("netty:tcp://localhost:{{port}}?sync=true&disconnect=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);

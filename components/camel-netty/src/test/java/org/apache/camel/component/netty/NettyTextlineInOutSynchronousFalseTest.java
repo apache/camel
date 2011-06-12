@@ -19,17 +19,15 @@ package org.apache.camel.component.netty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class NettyTextlineInOutSynchronousFalseTest extends CamelTestSupport {
+public class NettyTextlineInOutSynchronousFalseTest extends BaseNettyTest {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private String url = "netty:tcp://localhost:5148?textline=true&sync=true&synchronous=false";
 
     @Test
     public void testSynchronous() throws Exception {
@@ -55,7 +53,7 @@ public class NettyTextlineInOutSynchronousFalseTest extends CamelTestSupport {
                             beforeThreadName = Thread.currentThread().getName();
                         }
                     })
-                    .to(url)
+                    .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&synchronous=false")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             afterThreadName = Thread.currentThread().getName();
@@ -64,7 +62,7 @@ public class NettyTextlineInOutSynchronousFalseTest extends CamelTestSupport {
                     .to("log:after")
                     .to("mock:result");
 
-                from(url)
+                from("netty:tcp://localhost:{{port}}?textline=true&sync=true&synchronous=false")
                     // body should be a String when using textline codec
                     .validate(body().isInstanceOf(String.class))
                     .transform(body().regexReplaceAll("Hello", "Bye"));

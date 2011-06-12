@@ -18,13 +18,12 @@ package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class NettyInOutFromSedaTest extends CamelTestSupport {
+public class NettyInOutFromSedaTest extends BaseNettyTest {
 
     @Test
     public void testInOutIssue() throws Exception {
@@ -45,11 +44,11 @@ public class NettyInOutFromSedaTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("seda:start")
                     .log("before ${body}")
-                    .to("netty:tcp://localhost:8555?textline=true&sync=true")
+                    .to("netty:tcp://localhost:{{port}}?textline=true&sync=true")
                     .log("after ${body}")
                     .to("mock:result");
 
-                from("netty:tcp://localhost:8555?textline=true&sync=true")
+                from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
                     .transform(body().prepend("Bye "));
             }
         };

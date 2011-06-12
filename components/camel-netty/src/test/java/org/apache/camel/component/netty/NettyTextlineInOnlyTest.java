@@ -17,19 +17,18 @@
 package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class NettyTextlineInOnlyTest extends CamelTestSupport {
+public class NettyTextlineInOnlyTest extends BaseNettyTest {
 
     @Test
     public void testTextlineInOnlyDual() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "how are you?");
 
-        template.sendBody("netty:tcp://localhost:5149?textline=true&sync=false", "Hello World\nhow are you?\n");
+        template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World\nhow are you?\n");
 
         assertMockEndpointsSatisfied();
     }
@@ -38,7 +37,7 @@ public class NettyTextlineInOnlyTest extends CamelTestSupport {
     public void testTextlineInOnlyAutoAppend() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("netty:tcp://localhost:5149?textline=true&sync=false", "Hello World");
+        template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +46,7 @@ public class NettyTextlineInOnlyTest extends CamelTestSupport {
     public void testTextlineInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("netty:tcp://localhost:5149?textline=true&sync=false", "Hello World\n");
+        template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World\n");
 
         assertMockEndpointsSatisfied();
     }
@@ -57,7 +56,7 @@ public class NettyTextlineInOnlyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:5149?textline=true&sync=false")
+                from("netty:tcp://localhost:{{port}}?textline=true&sync=false")
                     // body should be a String when using textline codec
                     .validate(body().isInstanceOf(String.class))
                     .to("mock:result");

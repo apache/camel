@@ -29,12 +29,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NettyTCPAsyncTest extends CamelTestSupport {
+public class NettyTCPAsyncTest extends BaseNettyTest {
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyTCPAsyncTest.class);
     
     @EndpointInject(uri = "mock:result")
@@ -62,14 +61,11 @@ public class NettyTCPAsyncTest extends CamelTestSupport {
 
     @Test
     public void testTCPInOnlyWithNettyConsumer() throws Exception {
-        LOG.debug("Beginning Test ---> testTCPInOnlyWithNettyConsumer()");
-        
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        sendFile("netty:tcp://localhost:5150?sync=false");
+        sendFile("netty:tcp://localhost:{{port}}?sync=false");
         
         mock.assertIsSatisfied();
-        LOG.debug("Completed Test ---> testTCPInOnlyWithNettyConsumer()");           
     }
     
     @Override
@@ -77,7 +73,7 @@ public class NettyTCPAsyncTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:5150?sync=false")
+                from("netty:tcp://localhost:{{port}}?sync=false")
                     .to("log:result")
                     .to("mock:result");                
             }
