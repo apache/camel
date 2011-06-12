@@ -125,21 +125,16 @@ public class MailBinding {
             contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
         }
 
-        // fix content type to include a space after semi colon if missing
+        // fix content-type to have space after semi colons, otherwise some mail servers will choke
         if (contentType != null && contentType.contains(";")) {
-            String before = ObjectHelper.before(contentType, ";");
-            String charset = determineCharSet(configuration, exchange);
-
-            if (before != null && charset == null) {
-                contentType = before.trim();
-            } else if (before != null && charset != null) {
-                contentType = before.trim() + "; charset=" + charset;
-            }
+            contentType = MailUtils.padContentType(contentType);
         }
-        
-        // set the charset if exchange has the charset name as fall back
-        if (contentType != null && !contentType.contains(";") && IOConverter.getCharsetName(exchange, false) != null) {
-            contentType = contentType.trim() + "; charset=" + IOConverter.getCharsetName(exchange, false);
+
+        if (contentType != null) {
+            // no charset in content-type, then try to see if we can determine one
+            String charset = determineCharSet(configuration, exchange);
+            // must replace charset, even with null in case its an unsupported charset
+            contentType = MailUtils.replaceCharSet(contentType, charset);
         }
 
         LOG.trace("Determined Content-Type: {}", contentType);
@@ -157,37 +152,30 @@ public class MailBinding {
             contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
         }
 
-        // fix content type to include a space after semi colon if missing
-        if (contentType != null && contentType.contains(";")) {
-            String after = ObjectHelper.after(contentType, ";");
-
-            // after is the charset lets see if its given and a valid charset
-            if (after != null) {
-                String charset = IOConverter.normalizeCharset(ObjectHelper.after(after, "="));
-                if (charset != null) {
-                    boolean supported;
-                    try {
-                        supported = Charset.isSupported(charset);
-                    } catch (IllegalCharsetNameException e) {
-                        supported = false;
-                    }
-                    if (supported) {
-                        return charset;
-                    } else if (!configuration.isIgnoreUnsupportedCharset()) {
-                        return charset;
-                    } else if (configuration.isIgnoreUnsupportedCharset()) {
-                        LOG.warn("Charset: " + charset + " is not supported, will fallback to use platform default instead.");
-                        return null;
-                    }
+        // look for charset
+        String charset = MailUtils.getCharSetFromContentType(contentType);
+        if (charset != null) {
+            charset = IOConverter.normalizeCharset(charset);
+            if (charset != null) {
+                boolean supported;
+                try {
+                    supported = Charset.isSupported(charset);
+                } catch (IllegalCharsetNameException e) {
+                    supported = false;
+                }
+                if (supported) {
+                    return charset;
+                } else if (!configuration.isIgnoreUnsupportedCharset()) {
+                    return charset;
+                } else if (configuration.isIgnoreUnsupportedCharset()) {
+                    LOG.warn("Charset: " + charset + " is not supported and cannot be used as charset in Content-Type header.");
+                    return null;
                 }
             }
         }
-        
+
         // Using the charset header of exchange as a fall back
         return IOConverter.getCharsetName(exchange, false);
-        
-        
-        
     }
 
     protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange)
