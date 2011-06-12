@@ -20,13 +20,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ahc.AhcConstants;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.component.ahc.BaseAhcTest;
 import org.junit.Test;
 
 /**
  *
  */
-public class AhcProduceJavaBodyTest extends CamelTestSupport {
+public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -38,7 +38,7 @@ public class AhcProduceJavaBodyTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice")
+                from("jetty:http://localhost:{{port}}/myapp/myservice")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 MyCoolBean cool = exchange.getIn().getBody(MyCoolBean.class);
@@ -58,7 +58,7 @@ public class AhcProduceJavaBodyTest extends CamelTestSupport {
 
         MyCoolBean cool = new MyCoolBean(123, "Camel");
 
-        String reply = template.requestBodyAndHeader("ahc:http:localhost:9080/myapp/myservice", cool,
+        String reply = template.requestBodyAndHeader("ahc:http:localhost:{{port}}/myapp/myservice", cool,
                 Exchange.CONTENT_TYPE, AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, String.class);
 
         assertEquals("OK", reply);
@@ -69,7 +69,7 @@ public class AhcProduceJavaBodyTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice")
+                from("jetty:http://localhost:{{port}}/myapp/myservice")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 MyCoolBean cool = exchange.getIn().getBody(MyCoolBean.class);
@@ -89,7 +89,7 @@ public class AhcProduceJavaBodyTest extends CamelTestSupport {
 
         MyCoolBean cool = new MyCoolBean(123, "Camel");
 
-        MyCoolBean reply = template.requestBodyAndHeader("ahc:http://localhost:9080/myapp/myservice", cool,
+        MyCoolBean reply = template.requestBodyAndHeader("ahc:http://localhost:{{port}}/myapp/myservice", cool,
                 Exchange.CONTENT_TYPE, AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, MyCoolBean.class);
 
         assertEquals(456, reply.getId());
@@ -101,7 +101,7 @@ public class AhcProduceJavaBodyTest extends CamelTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice")
+                from("jetty:http://localhost:{{port}}/myapp/myservice")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = exchange.getIn().getBody(String.class);
@@ -117,7 +117,7 @@ public class AhcProduceJavaBodyTest extends CamelTestSupport {
         });
         context.start();
 
-        MyCoolBean reply = template.requestBody("ahc:http://localhost:9080/myapp/myservice", "Hello World", MyCoolBean.class);
+        MyCoolBean reply = template.requestBody("ahc:http://localhost:{{port}}/myapp/myservice", "Hello World", MyCoolBean.class);
 
         assertEquals(456, reply.getId());
         assertEquals("Camel rocks", reply.getName());

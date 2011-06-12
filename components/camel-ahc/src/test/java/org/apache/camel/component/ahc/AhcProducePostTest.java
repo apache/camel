@@ -18,10 +18,9 @@ package org.apache.camel.component.ahc;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class AhcProducePostTest extends CamelTestSupport {
+public class AhcProducePostTest extends BaseAhcTest {
 
     @Test
     public void testAhcProduce() throws Exception {
@@ -43,7 +42,7 @@ public class AhcProducePostTest extends CamelTestSupport {
 
     @Test
     public void testAhcProduceDirectly() throws Exception {
-        Object out = template.requestBody("ahc:http://localhost:9080/foo", "World", String.class);
+        Object out = template.requestBody("ahc:http://localhost:{{port}}/foo", "World", String.class);
         assertEquals("Bye World", out);
     }
 
@@ -62,10 +61,10 @@ public class AhcProducePostTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("ahc:http://localhost:9080/foo")
+                    .to("ahc:http://localhost:{{port}}/foo")
                     .to("mock:result");
 
-                from("jetty:http://localhost:9080/foo")
+                from("jetty:http://localhost:{{port}}/foo")
                         .transform(simple("Bye ${body}"));
             }
         };

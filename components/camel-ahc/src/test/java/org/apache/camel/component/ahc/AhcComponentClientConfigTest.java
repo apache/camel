@@ -17,14 +17,12 @@
 package org.apache.camel.component.ahc;
 
 import com.ning.http.client.AsyncHttpClientConfig;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class AhcComponentClientConfigTest extends CamelTestSupport {
+public class AhcComponentClientConfigTest extends BaseAhcTest {
 
     public void configureComponent() {
         // START SNIPPET: e1
@@ -39,12 +37,6 @@ public class AhcComponentClientConfigTest extends CamelTestSupport {
         // and set our custom client config to be used
         component.setClientConfig(config);
         // END SNIPPET: e1
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        return context;
     }
 
     @Test
@@ -64,19 +56,19 @@ public class AhcComponentClientConfigTest extends CamelTestSupport {
                 configureComponent();
 
                 from("direct:start")
-                    .to("ahc:http://localhost:9080/foo")
+                    .to("ahc:http://localhost:{{port}}/foo")
                     .to("mock:result");
 
-                from("jetty:http://localhost:9080/foo")
+                from("jetty:http://localhost:{{port}}/foo")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // redirect to test the client config worked as we told it to follow redirects
                                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "301");
-                                exchange.getOut().setHeader("Location", "http://localhost:9080/bar");
+                                exchange.getOut().setHeader("Location", "http://localhost:" + getPort() + "/bar");
                             }
                         });
 
-                from("jetty:http://localhost:9080/bar")
+                from("jetty:http://localhost:{{port}}/bar")
                         .transform(constant("Bye World"));
             }
         };

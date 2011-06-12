@@ -18,10 +18,9 @@ package org.apache.camel.component.ahc;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class AhcProduceTransferExceptionTest extends CamelTestSupport {
+public class AhcProduceTransferExceptionTest extends BaseAhcTest {
 
     @Test
     public void testAhcProduce() throws Exception {
@@ -45,10 +44,10 @@ public class AhcProduceTransferExceptionTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("ahc:http://localhost:9080/foo?transferException=true")
+                    .to("ahc:http://localhost:{{port}}/foo?transferException=true")
                     .to("mock:result");
 
-                from("jetty:http://localhost:9080/foo?transferException=true")
+                from("jetty:http://localhost:{{port}}/foo?transferException=true")
                     .throwException(new MyOrderException("123"));
             }
         };

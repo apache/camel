@@ -19,10 +19,9 @@ package org.apache.camel.component.ahc;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class AhcProduceNoThrowExceptionOnFailureTest extends CamelTestSupport {
+public class AhcProduceNoThrowExceptionOnFailureTest extends BaseAhcTest {
 
     @Test
     public void testAhcProduce() throws Exception {
@@ -40,10 +39,10 @@ public class AhcProduceNoThrowExceptionOnFailureTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("ahc:http://localhost:9080/foo?throwExceptionOnFailure=false")
+                    .to("ahc:http://localhost:{{port}}/foo?throwExceptionOnFailure=false")
                     .to("mock:result");
 
-                from("jetty:http://localhost:9080/foo")
+                from("jetty:http://localhost:{{port}}/foo")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);

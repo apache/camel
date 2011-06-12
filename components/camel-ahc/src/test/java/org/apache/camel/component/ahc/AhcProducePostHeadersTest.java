@@ -21,10 +21,9 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class AhcProducePostHeadersTest extends CamelTestSupport {
+public class AhcProducePostHeadersTest extends BaseAhcTest {
 
     @Test
     public void testAhcProduce() throws Exception {
@@ -49,10 +48,10 @@ public class AhcProducePostHeadersTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("ahc:http://localhost:9080/foo")
+                    .to("ahc:http://localhost:{{port}}/foo")
                     .to("mock:result");
 
-                from("jetty:http://localhost:9080/foo")
+                from("jetty:http://localhost:{{port}}/foo")
                         .transform(simple("Bye ${body}"));
             }
         };

@@ -22,22 +22,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class AhcBridgeEndpointTest extends CamelTestSupport {
+public class AhcBridgeEndpointTest extends BaseAhcTest {
+
+    private int port1;
+    private int port2;
 
     @Test
     public void testBridgeEndpoint() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:9080/test/hello",
+        String response = template.requestBodyAndHeader("http://localhost:" + port1 +"/test/hello",
                 new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
         assertEquals("Get a wrong response", "/", response);
 
-        response = template.requestBody("http://localhost:9081/hello/world", "hello", String.class);
+        response = template.requestBody("http://localhost:" + port2 + "/hello/world", "hello", String.class);
         assertEquals("Get a wrong response", "/hello/world", response);
 
         try {
-            template.requestBody("http://localhost:9080/hello/world", "hello", String.class);
+            template.requestBody("http://localhost:" + port1 + "/hello/world", "hello", String.class);
             fail("Expect exception here!");
         } catch (Exception ex) {
             assertTrue("We should get a RuntimeCamelException", ex instanceof RuntimeCamelException);
@@ -49,6 +51,9 @@ public class AhcBridgeEndpointTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                port1 = getPort();
+                port2 = getNextPort();
+
                 Processor serviceProc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // get the request URL and copy it to the request body
@@ -57,10 +62,10 @@ public class AhcBridgeEndpointTest extends CamelTestSupport {
                     }
                 };
 
-                from("jetty:http://localhost:9080/test/hello")
-                        .to("ahc:http://localhost:9081?throwExceptionOnFailure=false&bridgeEndpoint=true");
+                from("jetty:http://localhost:" + port1 + "/test/hello")
+                        .to("ahc:http://localhost:" + port2 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
 
-                from("jetty:http://localhost:9081?matchOnUriPrefix=true")
+                from("jetty:http://localhost:" + port2 + "?matchOnUriPrefix=true")
                         .process(serviceProc);
             }
         };

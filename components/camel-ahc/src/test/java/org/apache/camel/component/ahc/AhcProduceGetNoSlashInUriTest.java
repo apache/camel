@@ -17,10 +17,9 @@
 package org.apache.camel.component.ahc;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class AhcProduceGetNoSlashInUriTest extends CamelTestSupport {
+public class AhcProduceGetNoSlashInUriTest extends BaseAhcTest {
 
     @Test
     public void testAhcProduce() throws Exception {
@@ -38,10 +37,10 @@ public class AhcProduceGetNoSlashInUriTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     // no // slash in uri should still work
-                    .to("ahc:http:localhost:9080/foo")
+                    .to("ahc:http:localhost:{{port}}/foo")
                     .to("mock:result");
 
-                from("jetty:http://localhost:9080/foo")
+                from("jetty:http://localhost:{{port}}/foo")
                         .transform(constant("Bye World"));
             }
         };

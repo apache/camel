@@ -21,10 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class AhcProduceClientConfigTest extends CamelTestSupport {
+public class AhcProduceClientConfigTest extends BaseAhcTest {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -51,19 +50,19 @@ public class AhcProduceClientConfigTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("ahc:http://localhost:9080/foo?clientConfig=#myConfig")
+                    .to("ahc:http://localhost:{{port}}/foo?clientConfig=#myConfig")
                     .to("mock:result");
 
-                from("jetty:http://localhost:9080/foo")
+                from("jetty:http://localhost:{{port}}/foo")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // redirect to test the client config worked as we told it to follow redirects
                                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "301");
-                                exchange.getOut().setHeader("Location", "http://localhost:9080/bar");
+                                exchange.getOut().setHeader("Location", "http://localhost:" + getPort() + "/bar");
                             }
                         });
 
-                from("jetty:http://localhost:9080/bar")
+                from("jetty:http://localhost:{{port}}/bar")
                         .transform(constant("Bye World"));
             }
         };
