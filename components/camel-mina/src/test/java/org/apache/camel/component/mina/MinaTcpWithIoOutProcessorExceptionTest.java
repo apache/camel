@@ -16,27 +16,20 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * To unit test CAMEL-364.
  */
-public class MinaTcpWithIoOutProcessorExceptionTest extends CamelTestSupport {
-    private static final int PORT = 6334;
-    protected CamelContext container = new DefaultCamelContext();
-    // use parameter sync=true to force InOut pattern of the MinaExchange
-    protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
+public class MinaTcpWithIoOutProcessorExceptionTest extends BaseMinaTest {
 
     @Test
     public void testExceptionThrownInProcessor() {
         String body = "Hello World";
-        Object result = template.requestBody(uri, body);
+        Object result = template.requestBody("mina:tcp://localhost:{{port}}?textline=true&sync=true", body);
         // The exception should be passed to the client
         assertNotNull("the result should not be null", result);
         assertEquals("result is IllegalArgumentException", result, "java.lang.IllegalArgumentException: Forced exception");
@@ -48,7 +41,7 @@ public class MinaTcpWithIoOutProcessorExceptionTest extends CamelTestSupport {
                 // use no delay for fast unit testing
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
-                from(uri).process(new Processor() {
+                from("mina:tcp://localhost:{{port}}?textline=true&sync=true").process(new Processor() {
                     public void process(Exchange e) {
                         assertEquals("Hello World", e.getIn().getBody(String.class));
                         // simulate a problem processing the input to see if we can handle it properly

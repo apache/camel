@@ -22,20 +22,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test to check if the message of an exchange send from the MinaConsumer
  * is a MinaMessage.
  */
-public class MessageIOSessionTest extends CamelTestSupport {
+public class MessageIOSessionTest extends BaseMinaTest {
 
     @Test
     public void testIoSession() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBody("mina:tcp://localhost:9200?textline=true&sync=false", "Hello World");
+        template.sendBody("mina:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World");
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
@@ -48,7 +47,7 @@ public class MessageIOSessionTest extends CamelTestSupport {
     public void testLocalAndRemoteAddressHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBody("mina:tcp://localhost:9200?textline=true&sync=false", "Hello World");
+        template.sendBody("mina:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World");
         assertMockEndpointsSatisfied();
         
         Message message = mock.getExchanges().get(0).getIn();
@@ -63,7 +62,7 @@ public class MessageIOSessionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("mina:tcp://localhost:9200?textline=true&sync=false")
+                from("mina:tcp://localhost:{{port}}?textline=true&sync=false")
                     .to("log://mytest")
                     .to("mock:result");
             }

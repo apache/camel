@@ -19,13 +19,12 @@ package org.apache.camel.component.mina;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaMaxLineLengthTest extends CamelTestSupport {
+public class MinaMaxLineLengthTest extends BaseMinaTest {
 
     @Test
     public void testSendToServer() {
@@ -35,7 +34,7 @@ public class MinaMaxLineLengthTest extends CamelTestSupport {
         }
 
         // START SNIPPET: e3
-        String out = (String) template.requestBody("mina:tcp://localhost:5555?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000", request);
+        String out = (String) template.requestBody("mina:tcp://localhost:{{port}}?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000", request);
         assertEquals(request, out);
         // END SNIPPET: e3
     }
@@ -46,10 +45,11 @@ public class MinaMaxLineLengthTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // lets setup a server on port 5555
+                // lets setup a server on port {{port}}
                 // we set the sync option so we will send a reply
                 // and we let the request-reply be processed in the MyServerProcessor
-                from("mina:tcp://localhost:5555?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000").process(new MyServerProcessor());
+                from("mina:tcp://localhost:{{port}}?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000")
+                        .process(new MyServerProcessor());
                 // END SNIPPET: e1
             }
         };

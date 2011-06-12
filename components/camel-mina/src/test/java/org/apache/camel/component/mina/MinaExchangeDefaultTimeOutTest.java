@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -28,15 +27,12 @@ import org.junit.Test;
  *
  * @version 
  */
-public class MinaExchangeDefaultTimeOutTest extends CamelTestSupport {
-
-    private static final int PORT = 6338;
-    protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
+public class MinaExchangeDefaultTimeOutTest extends BaseMinaTest {
 
     @Test
     public void testDefaultTimeOut() {
         try {
-            String result = (String)template.requestBody(uri, "Hello World");
+            String result = (String)template.requestBody("mina:tcp://localhost:{{port}}?textline=true&sync=true", "Hello World");
             assertEquals("Okay I will be faster in the future", result);
         } catch (RuntimeCamelException e) {
             fail("Should not get a RuntimeCamelException");
@@ -46,7 +42,7 @@ public class MinaExchangeDefaultTimeOutTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).process(new Processor() {
+                from("mina:tcp://localhost:{{port}}?textline=true&sync=true").process(new Processor() {
                     public void process(Exchange e) throws Exception {
                         assertEquals("Hello World", e.getIn().getBody(String.class));
                         // MinaProducer has a default timeout of 30 seconds so we just wait 5 seconds

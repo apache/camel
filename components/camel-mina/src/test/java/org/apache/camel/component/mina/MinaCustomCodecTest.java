@@ -20,7 +20,6 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
@@ -34,11 +33,7 @@ import org.junit.Test;
 /**
  * Unit test with custom codec.
  */
-public class MinaCustomCodecTest extends CamelTestSupport {
-
-    protected String uri = "mina:tcp://localhost:9130?sync=true&codec=#myCodec";
-   
-    protected String badUri = "mina:tcp://localhost:9130?sync=true&codec=#XXX";
+public class MinaCustomCodecTest extends BaseMinaTest {
 
     @Test
     public void testMyCodec() throws Exception {
@@ -46,7 +41,7 @@ public class MinaCustomCodecTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Bye World");
 
-        Object out = template.requestBody(uri, "Hello World");
+        Object out = template.requestBody("mina:tcp://localhost:{{port}}?sync=true&codec=#myCodec", "Hello World");
         assertEquals("Bye World", out);
 
         mock.assertIsSatisfied();
@@ -54,7 +49,7 @@ public class MinaCustomCodecTest extends CamelTestSupport {
     
     @Test
     public void testTCPEncodeUTF8InputIsString() throws Exception {
-        final String myUri = "mina:tcp://localhost:9085?encoding=UTF-8&sync=false";
+        final String myUri = "mina:tcp://localhost:" + getNextPort() + "?encoding=UTF-8&sync=false";
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(myUri).to("mock:result");
@@ -76,7 +71,7 @@ public class MinaCustomCodecTest extends CamelTestSupport {
     @Test
     public void testBadConfiguration() throws Exception {
         try {
-            template.sendBody(badUri, "Hello World");
+            template.sendBody("mina:tcp://localhost:{{port}}?sync=true&codec=#XXX", "Hello World");
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
             // ok
@@ -92,7 +87,7 @@ public class MinaCustomCodecTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(uri).transform(constant("Bye World")).to("mock:result");                
+                from("mina:tcp://localhost:{{port}}?sync=true&codec=#myCodec").transform(constant("Bye World")).to("mock:result");
             }
         };
     }

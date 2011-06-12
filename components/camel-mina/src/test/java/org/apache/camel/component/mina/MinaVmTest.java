@@ -18,14 +18,12 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaVmTest extends CamelTestSupport {
-    protected String uri = "mina:vm://localhost:8080?sync=false&minaLogger=true";
+public class MinaVmTest extends BaseMinaTest {
 
     @Test
     public void testMinaRoute() throws Exception {
@@ -33,7 +31,7 @@ public class MinaVmTest extends CamelTestSupport {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader(uri, body, "cheese", 123);
+        template.sendBodyAndHeader("mina:vm://localhost:{{port}}?sync=false&minaLogger=true", body, "cheese", 123);
 
         assertMockEndpointsSatisfied();
     }
@@ -41,7 +39,8 @@ public class MinaVmTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
+                from("mina:vm://localhost:{{port}}?sync=false&minaLogger=true")
+                        .to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
             }
         };
     }

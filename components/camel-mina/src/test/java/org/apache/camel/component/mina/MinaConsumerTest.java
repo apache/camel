@@ -21,13 +21,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test for wiki documentation
  */
-public class MinaConsumerTest extends CamelTestSupport {
+public class MinaConsumerTest extends BaseMinaTest {
+
+    int port1;
+    int port2;
 
     @Test
     public void testSendTextlineText() throws Exception {
@@ -35,7 +37,7 @@ public class MinaConsumerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("mina:tcp://localhost:6200?textline=true&sync=false", "Hello World");
+        template.sendBody("mina:tcp://localhost:" + port1 + "?textline=true&sync=false", "Hello World");
 
         assertMockEndpointsSatisfied();
         // END SNIPPET: e2
@@ -44,7 +46,7 @@ public class MinaConsumerTest extends CamelTestSupport {
     @Test
     public void testSendTextlineSyncText() throws Exception {
         // START SNIPPET: e4
-        String response = (String)template.requestBody("mina:tcp://localhost:9201?textline=true&sync=true", "World");
+        String response = (String)template.requestBody("mina:tcp://localhost:" + port2 + "?textline=true&sync=true", "World");
         assertEquals("Bye World", response);
         // END SNIPPET: e4
     }
@@ -52,12 +54,15 @@ public class MinaConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                port1 = getPort();
+                port2 = getNextPort();
+
                 // START SNIPPET: e1
-                from("mina:tcp://localhost:6200?textline=true&sync=false").to("mock:result");
+                from("mina:tcp://localhost:" + port1 + "?textline=true&sync=false").to("mock:result");
                 // END SNIPPET: e1
 
                 // START SNIPPET: e3
-                from("mina:tcp://localhost:9201?textline=true&sync=true").process(new Processor() {
+                from("mina:tcp://localhost:" + port2 + "?textline=true&sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);

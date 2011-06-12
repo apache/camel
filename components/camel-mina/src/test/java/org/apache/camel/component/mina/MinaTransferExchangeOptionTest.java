@@ -26,7 +26,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -34,9 +33,7 @@ import org.junit.Test;
  *
  * @version 
  */
-public class MinaTransferExchangeOptionTest extends CamelTestSupport {
-
-    protected String uri = "mina:tcp://localhost:6321?sync=true&encoding=UTF-8&transferExchange=true";
+public class MinaTransferExchangeOptionTest extends BaseMinaTest {
 
     @Test
     public void testMinaTransferExchangeOptionWithoutException() throws Exception {
@@ -51,7 +48,7 @@ public class MinaTransferExchangeOptionTest extends CamelTestSupport {
     }
 
     private Exchange sendExchange(boolean setException) throws Exception {
-        Endpoint endpoint = context.getEndpoint(uri);
+        Endpoint endpoint = context.getEndpoint("mina:tcp://localhost:{{port}}?sync=true&encoding=UTF-8&transferExchange=true");
         Exchange exchange = endpoint.createExchange();
 
         Message message = exchange.getIn();
@@ -97,7 +94,7 @@ public class MinaTransferExchangeOptionTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).process(new Processor() {
+                from("mina:tcp://localhost:{{port}}?sync=true&encoding=UTF-8&transferExchange=true").process(new Processor() {
                     public void process(Exchange e) throws InterruptedException {
                         Assert.assertNotNull(e.getIn().getBody());
                         Assert.assertNotNull(e.getIn().getHeaders());

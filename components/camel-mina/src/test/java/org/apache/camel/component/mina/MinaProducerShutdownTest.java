@@ -22,12 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Ignore;
 
 /**
  * Unit testing for using a MinaProducer that it can shutdown properly (CAMEL-395)
  * <p>
  * Run this test from maven: mvn exec:java and see the output if there is a error.
  */
+@Ignore
 public class MinaProducerShutdownTest {
 
     private static final String URI = "mina:tcp://localhost:6321?textline=true&sync=false";

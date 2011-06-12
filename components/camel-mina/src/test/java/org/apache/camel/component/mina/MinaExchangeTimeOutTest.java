@@ -22,7 +22,6 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -30,16 +29,13 @@ import org.junit.Test;
  *
  * @version 
  */
-public class MinaExchangeTimeOutTest extends CamelTestSupport {
-
-    private static final int PORT = 6336;
-    protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
+public class MinaExchangeTimeOutTest extends BaseMinaTest {
 
     @Test
     public void testUsingTimeoutParameter() throws Exception {
 
         // use a timeout value of 2 seconds (timeout is in millis) so we should actually get a response in this test
-        Endpoint endpoint = context.getEndpoint("mina:tcp://localhost:" + PORT + "?textline=true&sync=true&timeout=2000");
+        Endpoint endpoint = context.getEndpoint("mina:tcp://localhost:{{port}}?textline=true&sync=true&timeout=2000");
         Producer producer = endpoint.createProducer();
         producer.start();
         Exchange exchange = producer.createExchange();
@@ -56,7 +52,7 @@ public class MinaExchangeTimeOutTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).process(new Processor() {
+                from("mina:tcp://localhost:{{port}}?textline=true&sync=true").process(new Processor() {
                     public void process(Exchange e) throws Exception {
                         assertEquals("Hello World", e.getIn().getBody(String.class));
                         // MinaProducer has a default timeout of 30 seconds so we just wait 5 seconds

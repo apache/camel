@@ -28,13 +28,12 @@ import java.util.concurrent.Future;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaProducerConcurrentTest extends CamelTestSupport {
+public class MinaProducerConcurrentTest extends BaseMinaTest {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -55,7 +54,7 @@ public class MinaProducerConcurrentTest extends CamelTestSupport {
             final int index = i;
             Future out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    return template.requestBody("mina:tcp://localhost:9090?sync=true", index, String.class);
+                    return template.requestBody("mina:tcp://localhost:{{port}}?sync=true", index, String.class);
                 }
             });
             responses.put(index, out);
@@ -79,7 +78,7 @@ public class MinaProducerConcurrentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina:tcp://localhost:9090?sync=true").process(new Processor() {
+                from("mina:tcp://localhost:{{port}}?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);

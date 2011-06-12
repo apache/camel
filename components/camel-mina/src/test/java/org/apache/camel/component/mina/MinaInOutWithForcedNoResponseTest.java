@@ -19,24 +19,26 @@ package org.apache.camel.component.mina;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test with InOut however we want sometimes to not send a response.
  */
-public class MinaInOutWithForcedNoResponseTest extends CamelTestSupport {
+public class MinaInOutWithForcedNoResponseTest extends BaseMinaTest {
+
+    int port1;
+    int port2;
 
     @Test
     public void testResponse() throws Exception {
-        Object out = template.requestBody("mina:tcp://localhost:4444?sync=true", "Copenhagen");
+        Object out = template.requestBody("mina:tcp://localhost:" + port1 + "?sync=true", "Copenhagen");
         assertEquals("Hello Claus", out);
     }
 
     @Test
     public void testNoResponse() throws Exception {
         try {
-            template.requestBody("mina:tcp://localhost:4444?sync=true", "London");
+            template.requestBody("mina:tcp://localhost:" + port1 + "?sync=true", "London");
             fail("Should throw an exception");
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause().getMessage().startsWith("No response"));
@@ -46,7 +48,7 @@ public class MinaInOutWithForcedNoResponseTest extends CamelTestSupport {
     @Test
     public void testNoResponseDisconnectOnNoReplyFalse() throws Exception {
         try {
-            template.requestBody("mina:tcp://localhost:4445?sync=true&timeout=3000", "London");
+            template.requestBody("mina:tcp://localhost:" + port2 + "?sync=true&timeout=3000", "London");
             fail("Should throw an exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
@@ -57,12 +59,15 @@ public class MinaInOutWithForcedNoResponseTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina:tcp://localhost:4444?sync=true")
+                port1 = getPort();
+                port2 = getNextPort();
+
+                from("mina:tcp://localhost:" + port1 + "?sync=true")
                     .choice()
                         .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
                         .otherwise().transform(constant(null));
 
-                from("mina:tcp://localhost:4445?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF")
+                from("mina:tcp://localhost:" + port2 + "?sync=true&disconnectOnNoReply=false&noReplyLogLevel=OFF")
                     .choice()
                         .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
                         .otherwise().transform(constant(null));

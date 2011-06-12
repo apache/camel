@@ -25,7 +25,6 @@ import java.net.Socket;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -33,12 +32,7 @@ import org.junit.Test;
  *
  * @version 
  */
-public class MinaTcpLineDelimiterUsingPlainSocketTest extends CamelTestSupport {
-
-    private static final int PORT = 6334;
-    // use parameter sync=true to force InOut pattern of the MinaExchange
-    // use MAC textline delimiter
-    protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&textlineDelimiter=MAC&sync=true";
+public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
 
     @Test
     public void testSendAndReceiveOnce() throws Exception {
@@ -85,7 +79,7 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends CamelTestSupport {
         byte buf[] = new byte[128];
 
         Socket soc = new Socket();
-        soc.connect(new InetSocketAddress("localhost", PORT));
+        soc.connect(new InetSocketAddress("localhost", getPort()));
 
         // Send message using plain Socket to test if this works
         OutputStream os = null;
@@ -132,7 +126,7 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends CamelTestSupport {
                 // use no delay for fast unit testing
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
-                from(uri).process(new Processor() {
+                from("mina:tcp://localhost:{{port}}?textline=true&textlineDelimiter=MAC&sync=true").process(new Processor() {
                     public void process(Exchange e) {
                         String in = e.getIn().getBody(String.class);
                         if ("force-null-out-body".equals(in)) {

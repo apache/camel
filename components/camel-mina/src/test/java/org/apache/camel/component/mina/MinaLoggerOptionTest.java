@@ -23,18 +23,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.mina.common.IoSession;
 import org.junit.Test;
 
 /**
  * For unit testing the <tt>logger</tt> option.
  */
-public class MinaLoggerOptionTest extends CamelTestSupport {
+public class MinaLoggerOptionTest extends BaseMinaTest {
 
     @Test
     public void testLoggerOptionTrue() throws Exception {
-        final String uri = "mina:tcp://localhost:6321?textline=true&minaLogger=true&sync=false";
+        final String uri = "mina:tcp://localhost:{{port}}?textline=true&minaLogger=true&sync=false";
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 from(uri).to("mock:result");
@@ -65,7 +64,7 @@ public class MinaLoggerOptionTest extends CamelTestSupport {
 
     @Test
     public void testLoggerOptionFalse() throws Exception {
-        final String uri = "mina:tcp://localhost:6321?textline=true&minaLogger=false&sync=false";
+        final String uri = "mina:tcp://localhost:{{port}}?textline=true&minaLogger=false&sync=false";
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 from(uri).to("mock:result");
@@ -96,7 +95,7 @@ public class MinaLoggerOptionTest extends CamelTestSupport {
 
     @Test
     public void testNoLoggerOption() throws Exception {
-        final String uri = "mina:tcp://localhost:6321?textline=true&sync=false";
+        final String uri = "mina:tcp://localhost:{{port}}?textline=true&sync=false";
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 from(uri).to("mock:result");

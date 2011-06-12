@@ -16,14 +16,33 @@
  */
 package org.apache.camel.component.mina;
 
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
+
 /**
  * @version 
  */
-public class MinaTcpTextlineProtocolTest extends MinaVmTest {
+public class MinaTcpTextlineProtocolTest extends BaseMinaTest {
 
-    @Override
-    public void setUp() throws Exception {
-        uri = "mina:tcp://localhost:6124?textline=true&sync=false";
-        super.setUp();
+    @Test
+    public void testMinaRoute() throws Exception {
+        MockEndpoint endpoint = getMockEndpoint("mock:result");
+        Object body = "Hello there!";
+        endpoint.expectedBodiesReceived(body);
+
+        template.sendBodyAndHeader("mina:tcp://localhost:{{port}}?textline=true&sync=false", body, "cheese", 123);
+
+        assertMockEndpointsSatisfied();
     }
+
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from("mina:tcp://localhost:{{port}}?textline=true&sync=false")
+                        .to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
+            }
+        };
+    }
+
 }

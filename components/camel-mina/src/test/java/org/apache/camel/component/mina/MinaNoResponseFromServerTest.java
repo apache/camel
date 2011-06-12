@@ -21,7 +21,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
@@ -34,9 +33,7 @@ import org.junit.Test;
 /**
  * Unit test to test what happens if remote server closes session but doesn't reply
  */
-public class MinaNoResponseFromServerTest extends CamelTestSupport {
-
-    private String uri = "mina:tcp://localhost:11300?sync=true&codec=#myCodec";
+public class MinaNoResponseFromServerTest extends BaseMinaTest {
 
     @Test
     public void testNoResponse() throws Exception {
@@ -44,7 +41,7 @@ public class MinaNoResponseFromServerTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
 
         try {
-            template.requestBody(uri, "Hello World");
+            template.requestBody("mina:tcp://localhost:{{port}}?sync=true&codec=#myCodec", "Hello World");
             fail("Should throw a CamelExchangeException");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(CamelExchangeException.class, e.getCause());
@@ -63,7 +60,8 @@ public class MinaNoResponseFromServerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(uri).transform(constant("Bye World")).to("mock:result");
+                from("mina:tcp://localhost:{{port}}?sync=true&codec=#myCodec")
+                        .transform(constant("Bye World")).to("mock:result");
             }
         };
     }

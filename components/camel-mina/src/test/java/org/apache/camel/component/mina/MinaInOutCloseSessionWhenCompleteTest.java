@@ -19,17 +19,16 @@ package org.apache.camel.component.mina;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test for close session when complete test.
  */
-public class MinaInOutCloseSessionWhenCompleteTest extends CamelTestSupport {
+public class MinaInOutCloseSessionWhenCompleteTest extends BaseMinaTest {
 
     @Test
     public void testCloseSessionWhenComplete() throws Exception {
-        Object out = template.requestBody("mina:tcp://localhost:8080?sync=true&textline=true", "Claus");
+        Object out = template.requestBody("mina:tcp://localhost:{{port}}?sync=true&textline=true", "Claus");
         assertEquals("Bye Claus", out);
     }
 
@@ -37,7 +36,7 @@ public class MinaInOutCloseSessionWhenCompleteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina:tcp://localhost:8080?sync=true&textline=true").process(new Processor() {
+                from("mina:tcp://localhost:{{port}}?sync=true&textline=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);

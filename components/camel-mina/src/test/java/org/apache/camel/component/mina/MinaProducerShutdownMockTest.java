@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.mina.transport.socket.nio.SocketConnector;
 import org.junit.Test;
 
@@ -34,9 +33,7 @@ import static org.easymock.classextension.EasyMock.verify;
 /**
  * Unit testing for using a MinaProducer that it can shutdown properly (CAMEL-395)
  */
-public class MinaProducerShutdownMockTest extends CamelTestSupport {
-
-    private static final String URI = "mina:tcp://localhost:6321?textline=true&sync=false";
+public class MinaProducerShutdownMockTest extends BaseMinaTest {
 
     @Test
     public void testProducerShutdownTestingWithMock() throws Exception {
@@ -49,7 +46,7 @@ public class MinaProducerShutdownMockTest extends CamelTestSupport {
         replay(mockConnector);
 
         // normal camel code to get a producer
-        Endpoint endpoint = context.getEndpoint(URI);
+        Endpoint endpoint = context.getEndpoint("mina:tcp://localhost:{{port}}?textline=true&sync=false");
         Exchange exchange = endpoint.createExchange();
         Producer producer = endpoint.createProducer();
         producer.start();
@@ -74,7 +71,7 @@ public class MinaProducerShutdownMockTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(URI).to("mock:result");
+                from("mina:tcp://localhost:{{port}}?textline=true&sync=false").to("mock:result");
             }
         };
     }

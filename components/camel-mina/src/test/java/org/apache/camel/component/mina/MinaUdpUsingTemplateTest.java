@@ -21,13 +21,12 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaUdpUsingTemplateTest extends CamelTestSupport {
+public class MinaUdpUsingTemplateTest extends BaseMinaTest {
 
     private int messageCount = 3;
 
@@ -46,7 +45,7 @@ public class MinaUdpUsingTemplateTest extends CamelTestSupport {
 
     protected void sendUdpMessages() throws Exception {
         for (int i = 0; i < messageCount; i++) {
-            template.sendBody("mina:udp://127.0.0.1:4445?sync=false", "Hello Message: " + i);
+            template.sendBody("mina:udp://127.0.0.1:{{port}}?sync=false", "Hello Message: " + i);
         }
     }
 
@@ -56,7 +55,7 @@ public class MinaUdpUsingTemplateTest extends CamelTestSupport {
         endpoint.expectedMessageCount(1);
 
         byte[] in = "Hello from bytes".getBytes();
-        template.sendBody("mina:udp://127.0.0.1:4445?sync=false", in);
+        template.sendBody("mina:udp://127.0.0.1:{{port}}?sync=false", in);
 
         // sleeping for while to let the mock endpoint get all the message
         Thread.sleep(2000);
@@ -73,7 +72,7 @@ public class MinaUdpUsingTemplateTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("mina:udp://127.0.0.1:4445?sync=false&minaLogger=true").to("mock:result");
+                from("mina:udp://127.0.0.1:{{port}}?sync=false&minaLogger=true").to("mock:result");
             }
         };
     }

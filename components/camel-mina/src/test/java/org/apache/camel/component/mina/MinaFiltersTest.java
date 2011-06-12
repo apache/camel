@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.mina.common.IoFilter;
 import org.apache.mina.common.IoFilterAdapter;
@@ -36,16 +35,16 @@ import org.junit.Test;
 /**
  * For unit testing the <tt>filters</tt> option.
  */
-public class MinaFiltersTest extends CamelTestSupport {
+public class MinaFiltersTest extends BaseMinaTest {
 
     @Test
     public void testFilterListRef() throws Exception {
-        testFilter("mina:tcp://localhost:6321?textline=true&minaLogger=true&sync=false&filters=#myFilters");
+        testFilter("mina:tcp://localhost:{{port}}?textline=true&minaLogger=true&sync=false&filters=#myFilters");
     }
 
     @Test
     public void testFilterElementRef() throws Exception {
-        testFilter("mina:tcp://localhost:6322?textline=true&minaLogger=true&sync=false&filters=#myFilter");
+        testFilter("mina:tcp://localhost:{{port}}?textline=true&minaLogger=true&sync=false&filters=#myFilter");
     }
 
     @Override
@@ -53,10 +52,9 @@ public class MinaFiltersTest extends CamelTestSupport {
         TestFilter.called = 0;
         super.tearDown();
     }
-    
+
     private void testFilter(final String uri) throws Exception {
         context.addRoutes(new RouteBuilder() {
-
             public void configure() throws Exception {
                 from(uri).to("mock:result");
             }
@@ -97,19 +95,21 @@ public class MinaFiltersTest extends CamelTestSupport {
         answer.bind("myFilter", myFilter);
         return answer;
     }
-}
 
-class TestFilter extends IoFilterAdapter {
+    public static final class TestFilter extends IoFilterAdapter {
 
-    public static volatile int called;
+        public static volatile int called;
 
-    @Override
-    public void sessionCreated(NextFilter nextFilter, IoSession session) throws Exception {
-        incCalled();
-        nextFilter.sessionCreated(session);
+        @Override
+        public void sessionCreated(NextFilter nextFilter, IoSession session) throws Exception {
+            incCalled();
+            nextFilter.sessionCreated(session);
+        }
+
+        public static synchronized void incCalled() {
+            called++;
+        }
     }
 
-    public static synchronized void incCalled() {
-        called++;
-    }
 }
+

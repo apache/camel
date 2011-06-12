@@ -18,13 +18,12 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaFileTcpTest extends CamelTestSupport {
+public class MinaFileTcpTest extends BaseMinaTest {
 
     @Test
     public void testMinaRoute() throws Exception {
@@ -39,11 +38,11 @@ public class MinaFileTcpTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // lets setup a server
-                from("mina:tcp://localhost:9123?sync=false&textline=true")
+                from("mina:tcp://localhost:{{port}}?sync=false&textline=true")
                     .to("mock:results");
 
                 from("file:src/test/data?noop=true&fileName=message1.txt").
-                    to("mina:tcp://localhost:9123?sync=false&textline=true");
+                    to("mina:tcp://localhost:{{port}}?sync=false&textline=true");
             }
         };
     }

@@ -33,6 +33,10 @@ public class ReverserServer {
     protected int port = 6321;
     private IoAcceptor acceptor;
 
+    public ReverserServer(int port) {
+        this.port = port;
+    }
+
     public void start() throws Exception {
         acceptor = new SocketAcceptor();
 

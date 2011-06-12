@@ -20,16 +20,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test to verify that MINA can be used with an InOut MEP but still use sync to send and receive data
  * from a remote server and using MAC textline delimiter.
  */
-public class MinaInOutRouteTextLineDelimiterTest extends CamelTestSupport {
-
-    private String uri = "mina:tcp://localhost:8080?sync=true&textline=true&textlineDelimiter=MAC";
+public class MinaInOutRouteTextLineDelimiterTest extends BaseMinaTest {
 
     @Test
     public void testInOutUsingMina() throws Exception {
@@ -38,7 +35,7 @@ public class MinaInOutRouteTextLineDelimiterTest extends CamelTestSupport {
         // we should preserve headers
         mock.setResultWaitTime(5000);
 
-        Object out = template.requestBody(uri, "Claus");
+        Object out = template.requestBody("mina:tcp://localhost:{{port}}?sync=true&textline=true&textlineDelimiter=MAC", "Claus");
 
         assertMockEndpointsSatisfied();
         assertEquals("Bye Claus", out);
@@ -48,7 +45,7 @@ public class MinaInOutRouteTextLineDelimiterTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(uri).process(new Processor() {
+                from("mina:tcp://localhost:{{port}}?sync=true&textline=true&textlineDelimiter=MAC").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);

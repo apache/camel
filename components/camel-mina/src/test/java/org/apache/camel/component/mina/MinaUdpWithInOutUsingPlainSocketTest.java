@@ -23,7 +23,6 @@ import java.net.InetAddress;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +30,9 @@ import org.slf4j.LoggerFactory;
 /**
  * To test InOut exchange for the UDP protocol.
  */
-public class MinaUdpWithInOutUsingPlainSocketTest extends CamelTestSupport {
+public class MinaUdpWithInOutUsingPlainSocketTest extends BaseMinaTest {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(MinaUdpWithInOutUsingPlainSocketTest.class);
-    private static final int PORT = 4445;
 
     @Test
     public void testSendAndReceiveOnce() throws Exception {
@@ -49,15 +47,15 @@ public class MinaUdpWithInOutUsingPlainSocketTest extends CamelTestSupport {
 
         byte[] data = input.getBytes();
 
-        DatagramPacket packet = new DatagramPacket(data, data.length, address, PORT);
+        DatagramPacket packet = new DatagramPacket(data, data.length, address, getPort());
         LOG.debug("+++ Sending data +++");
         socket.send(packet);
 
         Thread.sleep(1000);
 
         byte[] buf = new byte[128];
-        DatagramPacket receive = new DatagramPacket(buf, buf.length, address, PORT);
-        LOG.debug("+++ Receving data +++");
+        DatagramPacket receive = new DatagramPacket(buf, buf.length, address, getPort());
+        LOG.debug("+++ Receiveing data +++");
         socket.receive(receive);
 
         socket.close();
@@ -68,7 +66,7 @@ public class MinaUdpWithInOutUsingPlainSocketTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("mina:udp://127.0.0.1:" + PORT + "?sync=true").process(new Processor() {
+                from("mina:udp://127.0.0.1:{{port}}?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String s = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Hello " + s);

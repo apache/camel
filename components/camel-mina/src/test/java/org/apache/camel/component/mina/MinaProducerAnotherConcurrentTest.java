@@ -26,13 +26,12 @@ import java.util.concurrent.Future;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class MinaProducerAnotherConcurrentTest extends CamelTestSupport {
+public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
 
     @Test
     public void testSimple() throws Exception {
@@ -79,9 +78,9 @@ public class MinaProducerAnotherConcurrentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").to("mina:tcp://localhost:9080?sync=true");
+                from("direct:start").to("mina:tcp://localhost:{{port}}?sync=true");
 
-                from("mina:tcp://localhost:9080?sync=true").process(new Processor() {
+                from("mina:tcp://localhost:{{port}}?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);

@@ -19,21 +19,26 @@ package org.apache.camel.component.mina;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.mina.common.IoFilterChain.Entry;
 import org.junit.Test;
 
 /**
  * For unit testing the <tt>noDefaultCodec</tt> option.
  */
-public class MinaNoDefaultCodecTest extends CamelTestSupport {
+public class MinaNoDefaultCodecTest extends BaseMinaTest {
+
+    int port1;
+    int port2;
 
     @Test
     public void testFilter() throws Exception {
-        final String uri1 = "mina:tcp://localhost:6321?allowDefaultCodec=false";
-        final String uri2 = "mina:tcp://localhost:6322";
-        context.addRoutes(new RouteBuilder() {
+        port1 = getPort();
+        port2 = getNextPort();
 
+        final String uri1 = "mina:tcp://localhost:" + port1 + "?allowDefaultCodec=false";
+        final String uri2 = "mina:tcp://localhost:" + port2;
+
+        context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 from(uri1).to("mock:result");
                 from(uri2).to("mock:result");

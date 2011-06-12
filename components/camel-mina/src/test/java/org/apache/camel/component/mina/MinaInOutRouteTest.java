@@ -20,14 +20,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test to verify that MINA can be used with an InOut MEP but still use sync to send and receive data
  * from a remote server.
  */
-public class MinaInOutRouteTest extends CamelTestSupport {
+public class MinaInOutRouteTest extends BaseMinaTest {
 
     @Test
     public void testInOutUsingMina() throws Exception {
@@ -47,7 +46,7 @@ public class MinaInOutRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina:tcp://localhost:8080?sync=true").process(new Processor() {
+                from("mina:tcp://localhost:{{port}}?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);
@@ -55,7 +54,7 @@ public class MinaInOutRouteTest extends CamelTestSupport {
                 });
 
                 from("direct:in")
-                        .to("mina:tcp://localhost:8080?sync=true&lazySessionCreation=true")
+                        .to("mina:tcp://localhost:{{port}}?sync=true&lazySessionCreation=true")
                         .to("mock:result");
             }
         };
