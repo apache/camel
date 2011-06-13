@@ -170,6 +170,8 @@ public class PropertiesComponent extends DefaultComponent {
                 if (ObjectHelper.isEmpty(value)) {
                     throw new IllegalArgumentException("Cannot find system environment with key: " + key);
                 }
+                // must quoute the replacement to have it work as literal replacement
+                value = Matcher.quoteReplacement(value);
                 location = matcher.replaceFirst(value);
                 // must match again as location is changed
                 matcher = ENV_PATTERN.matcher(location);
@@ -182,6 +184,8 @@ public class PropertiesComponent extends DefaultComponent {
                 if (ObjectHelper.isEmpty(value)) {
                     throw new IllegalArgumentException("Cannot find JVM system property with key: " + key);
                 }
+                // must quoute the replacement to have it work as literal replacement
+                value = Matcher.quoteReplacement(value);
                 location = matcher.replaceFirst(value);
                 // must match again as location is changed
                 matcher = SYS_PATTERN.matcher(location);
