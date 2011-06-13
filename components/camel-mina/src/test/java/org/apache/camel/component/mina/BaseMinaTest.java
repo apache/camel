@@ -22,12 +22,12 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
 
 /**
  *
@@ -37,20 +37,7 @@ public class BaseMinaTest extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        File file = new File("./target/minaport.txt");
-        file = file.getAbsoluteFile();
-
-        if (!file.exists()) {
-            // start from somewhere in the 255xx range
-            port = AvailablePortFinder.getNextAvailable(25500);
-        } else {
-            // read port number from file
-            String s = IOConverter.toString(file, null);
-            port = Integer.parseInt(s);
-            // use next port
-            port++;
-        }
-
+        port = AvailablePortFinder.getNextAvailable();
     }
 
     @AfterClass
@@ -86,7 +73,7 @@ public class BaseMinaTest extends CamelTestSupport {
     }
 
     protected int getNextPort() {
-        port = AvailablePortFinder.getNextAvailable(port + 1);
+        port = AvailablePortFinder.getNextAvailable();
         return port;
     }
 
