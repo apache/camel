@@ -20,10 +20,14 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.jms.JmsConfiguration.QUEUE_PREFIX;
@@ -212,6 +216,44 @@ public final class JmsMessageHelper {
         }
 
         return null;
+    }
+
+    /**
+     * Sets the JMSDeliveryMode on the message.
+     *
+     * @param exchange the exchange
+     * @param message  the message
+     * @param deliveryMode  the delivery mode, either as a String or integer
+     * @throws javax.jms.JMSException is thrown if error setting the delivery mode
+     */
+    public static void setJMSDeliveryMode(Exchange exchange, Message message, Object deliveryMode) throws JMSException {
+        int mode = Message.DEFAULT_DELIVERY_MODE;
+
+        if (deliveryMode instanceof String) {
+            String s = (String) deliveryMode;
+            if ("PERSISTENT".equalsIgnoreCase(s)) {
+                mode = DeliveryMode.PERSISTENT;
+            } else if ("NON_PERSISTENT".equalsIgnoreCase(s)) {
+                mode = DeliveryMode.NON_PERSISTENT;
+            } else {
+                // it may be a number in the String so try that
+                Integer value = ExchangeHelper.convertToType(exchange, Integer.class, deliveryMode);
+                if (value != null) {
+                    mode = value;
+                } else {
+                    throw new IllegalArgumentException("Unknown delivery mode with value: " + deliveryMode);
+                }
+            }
+        } else {
+            // fallback and try to convert to a number
+            Integer value = ExchangeHelper.convertToType(exchange, Integer.class, deliveryMode);
+            if (value != null) {
+                mode = value;
+            }
+        }
+
+        message.setJMSDeliveryMode(mode);
+        message.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, mode);
     }
 
 }

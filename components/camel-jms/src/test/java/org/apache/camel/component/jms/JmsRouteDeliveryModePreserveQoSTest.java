@@ -60,11 +60,39 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         assertEquals(DeliveryMode.NON_PERSISTENT, map.get("JMSDeliveryMode"));
     }
 
+    public void testSendNonPersistentAsString() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:bar");
+        mock.expectedBodiesReceived("Hello World");
+
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode", "NON_PERSISTENT");
+
+        assertMockEndpointsSatisfied();
+
+        // should preserve non persistent
+        Map map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
+        assertNotNull(map);
+        assertEquals(DeliveryMode.NON_PERSISTENT, map.get("JMSDeliveryMode"));
+    }
+
     public void testSendPersistent() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode", DeliveryMode.PERSISTENT);
+
+        assertMockEndpointsSatisfied();
+
+        // should preserve persistent
+        Map map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
+        assertNotNull(map);
+        assertEquals(DeliveryMode.PERSISTENT, map.get("JMSDeliveryMode"));
+    }
+
+    public void testSendPersistentAsString() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:bar");
+        mock.expectedBodiesReceived("Hello World");
+
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode", "PERSISTENT");
 
         assertMockEndpointsSatisfied();
 

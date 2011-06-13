@@ -96,6 +96,17 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
     }
 
     @Test
+    public void testInOnlyJMSDeliveryModeAsString() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header("JMSDeliveryMode").isEqualTo(1);
+
+        template.sendBodyAndHeader("activemq:queue:foo?preserveMessageQos=true", "Hello World", "JMSDeliveryMode", "NON_PERSISTENT");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testInOnlyJMSExpiration() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
