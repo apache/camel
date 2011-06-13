@@ -39,7 +39,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "bean")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BeanDefinition extends OutputDefinition<BeanDefinition> {
+public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     @XmlAttribute
     private String ref;
     @XmlAttribute

@@ -58,8 +58,13 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "marshal")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MarshalDefinition extends OutputDefinition<MarshalDefinition> {
+public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
+
+    // TODO: Camel 3.0 Should extend NoOutputDefinition
+    // TODO: Camel 3.0, ref attribute should be removed as RefDataFormat is to be used instead
+
     @XmlAttribute
+    @Deprecated
     private String ref;
     // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
