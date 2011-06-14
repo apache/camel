@@ -75,7 +75,9 @@ public class MultiPartFormTest extends BaseJettyTest {
                         DataHandler data = in.getAttachment("NOTICE.txt");
 
                         assertNotNull("Should get the DataHandle NOTICE.txt", data);
-                        // The content-type is set by the file name, not the content-type send from the client now
+                        // This assert is wrong, but the correct content-type (application/octet-stream)
+                        // will not be returned until Jetty makes it available - currently the content-type
+                        // returned is just the default for FileDataHandler (for the implentation being used)
                         //assertEquals("Get a wrong content type", "text/plain", data.getContentType());
                         assertEquals("Got the wrong name", "NOTICE.txt", data.getName());
 
