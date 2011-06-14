@@ -21,6 +21,10 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+<bean id="propertyConfigurer"
+	class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+</bean>
+
     <bean id="myMinaFactory" class="org.apache.camel.component.mina.MinaComponent">
         <!-- we must provide a camel context so we refer to it by its id -->
         <constructor-arg index="0" ref="myCamel"/>
@@ -37,7 +41,7 @@
     <bean id="minaSyslogConfig" class="org.apache.camel.component.mina.MinaConfiguration">
         <property name="protocol" value="udp"/>
         <property name="host" value="localhost"/>
-        <property name="port" value="10514"/>
+        <property name="port" value="${server-port}"/>
         <property name="sync" value="false"/>
     </bean>
 
