@@ -280,6 +280,8 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
             // clear exception so finally block can be executed
             final Exception e = exchange.getException();
             exchange.setException(null);
+            // store the last to endpoint as the failure endpoint
+            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
 
             boolean sync = super.processNext(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
@@ -341,6 +343,8 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
                 return true;
             }
 
+            // store the last to endpoint as the failure endpoint
+            exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
             // give the rest of the pipeline another chance
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, caught);
             exchange.setException(null);
