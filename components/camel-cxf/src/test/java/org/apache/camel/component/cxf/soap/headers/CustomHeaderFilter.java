@@ -20,7 +20,7 @@ package org.apache.camel.component.cxf.soap.headers;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.component.cxf.MessageHeaderFilter;
+import org.apache.camel.component.cxf.common.header.MessageHeaderFilter;
 import org.apache.camel.spi.HeaderFilterStrategy.Direction;
 import org.apache.cxf.headers.Header;
 

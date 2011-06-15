@@ -21,7 +21,7 @@ import java.util.List;
 
 import javax.jws.WebService;
 
-import org.apache.camel.component.cxf.CxfHeaderFilterStrategy;
+import org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy;
 import org.apache.camel.component.cxf.common.message.CxfMessageMapper;
 import org.apache.camel.component.cxf.common.message.DefaultCxfMesssageMapper;
 import org.apache.camel.impl.ProcessorEndpoint;
