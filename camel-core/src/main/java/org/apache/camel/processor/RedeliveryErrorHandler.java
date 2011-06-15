@@ -228,9 +228,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 handleException(exchange, data);
             }
 
-            // compute if we should redeliver or not
-            boolean shouldRedeliver = shouldRedeliver(exchange, data);
-            if (!shouldRedeliver) {
+            // compute if we are exhausted or not
+            boolean exhausted = isExhausted(exchange, data);
+            if (exhausted) {
                 Processor target = null;
                 boolean deliver = true;
 
@@ -368,9 +368,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             handleException(exchange, data);
         }
 
-        // compute if we should redeliver or not
-        boolean shouldRedeliver = shouldRedeliver(exchange, data);
-        if (!shouldRedeliver) {
+        // compute if we are exhausted or not
+        boolean exhausted = isExhausted(exchange, data);
+        if (exhausted) {
             Processor target = null;
             boolean deliver = true;
 
@@ -781,20 +781,29 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     /**
-     * Determines whether or not to we should try to redeliver
+     * Determines whether the exchange is exhausted (or anyway marked to not continue such as rollback).
+     * <p/>
+     * If the exchange is exhausted, then we will not continue processing, but let the
+     * failure processor deal with the exchange.
      *
      * @param exchange the current exchange
      * @param data     the redelivery data
-     * @return <tt>true</tt> to redeliver, or <tt>false</tt> to exhaust.
+     * @return <tt>false</tt> to continue/redeliver, or <tt>true</tt> to exhaust.
      */
-    private boolean shouldRedeliver(Exchange exchange, RedeliveryData data) {
-        // if marked as rollback only then do not redeliver
+    private boolean isExhausted(Exchange exchange, RedeliveryData data) {
+        // if marked as rollback only then do not continue/redeliver
         boolean rollbackOnly = exchange.getProperty(Exchange.ROLLBACK_ONLY, false, Boolean.class);
         if (rollbackOnly) {
-            log.trace("This exchange is marked as rollback only, should not be redelivered: {}", exchange);
+            log.trace("This exchange is marked as rollback only, so forcing it to be exhausted: {}", exchange);
+            return true;
+        }
+        // its the first original call so continue
+        if (data.redeliveryCounter == 0) {
             return false;
         }
-        return data.currentRedeliveryPolicy.shouldRedeliver(exchange, data.redeliveryCounter, data.retryWhilePredicate);
+        // its a potential redelivery so determine if we should redeliver or not
+        boolean redeliver = data.currentRedeliveryPolicy.shouldRedeliver(exchange, data.redeliveryCounter, data.retryWhilePredicate);
+        return !redeliver;
     }
 
     /**
