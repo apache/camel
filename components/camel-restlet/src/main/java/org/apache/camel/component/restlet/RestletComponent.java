@@ -50,7 +50,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     private final Component component = new Component();
     
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         
         RestletEndpoint result = new RestletEndpoint(this, remaining);

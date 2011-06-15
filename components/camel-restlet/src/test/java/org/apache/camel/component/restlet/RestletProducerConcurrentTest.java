@@ -29,7 +29,6 @@ import java.util.concurrent.Future;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -37,7 +36,7 @@ import org.junit.Test;
  * 
  * @version 
  */
-public class RestletProducerConcurrentTest extends CamelTestSupport {
+public class RestletProducerConcurrentTest extends RestletTestSupport {
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -53,16 +52,16 @@ public class RestletProducerConcurrentTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future> responses = new ConcurrentHashMap<Integer, Future>();
+        Map<Integer, Future<?>> responses = new ConcurrentHashMap<Integer, Future<?>>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future out = executor.submit(new Callable<Object>() {
+            Future<?> out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     Map<String, Object> headers = new HashMap<String, Object>();
                     headers.put("username", "davsclaus");
                     headers.put("id", index);
                     return template
-                        .requestBodyAndHeaders("restlet:http://localhost:9080/users/davsclaus/" + index + "?restletMethod=GET",
+                        .requestBodyAndHeaders("restlet:http://localhost:" + portNum + "/users/davsclaus/" + index + "?restletMethod=GET",
                                                null, headers, String.class);
                 }
             });
@@ -74,7 +73,7 @@ public class RestletProducerConcurrentTest extends CamelTestSupport {
 
         // get all responses
         Set<Object> unique = new HashSet<Object>();
-        for (Future future : responses.values()) {
+        for (Future<?> future : responses.values()) {
             unique.add(future.get());
         }
 
@@ -88,7 +87,7 @@ public class RestletProducerConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://localhost:9080/users/{username}/{id}?restletMethod=GET")
+                from("restlet:http://localhost:" + portNum + "/users/{username}/{id}?restletMethod=GET")
                     .to("log:inbox").process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String index = exchange.getIn().getHeader("id", String.class);

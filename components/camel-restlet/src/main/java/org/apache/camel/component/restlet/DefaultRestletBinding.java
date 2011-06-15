@@ -202,7 +202,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         Object body = out.getBody();
         if (body instanceof GenericFile) {
             // grab body from generic file holder
-            GenericFile gf = (GenericFile) body;
+            GenericFile<?> gf = (GenericFile<?>) body;
             body = gf.getBody();
         }
 

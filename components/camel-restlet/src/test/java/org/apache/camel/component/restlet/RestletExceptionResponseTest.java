@@ -36,7 +36,7 @@ public class RestletExceptionResponseTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://localhost:9080/users/{username}?restletMethod=POST").process(new Processor() {
+                from("restlet:http://localhost:" + portNum + "/users/{username}?restletMethod=POST").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.setException(new IllegalArgumentException("Damn something went wrong"));
                     }
@@ -47,7 +47,7 @@ public class RestletExceptionResponseTest extends RestletTestSupport {
 
     @Test
     public void testExceptionResponse() throws Exception {
-        HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+        HttpResponse response = doExecute(new HttpPost("http://localhost:" + portNum + "/users/homer"));
         String body = EntityUtils.toString(response.getEntity());
 
         assertHttpResponse(response, 500, "text/plain");

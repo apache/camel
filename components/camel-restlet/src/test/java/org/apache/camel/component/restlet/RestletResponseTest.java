@@ -39,7 +39,7 @@ public class RestletResponseTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://localhost:9080/users/{username}?restletMethod=POST").process(new Processor() {
+                from("restlet:http://localhost:" + portNum + "/users/{username}?restletMethod=POST").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String userName = exchange.getIn().getHeader("username", String.class);                        
                         assertNotNull("userName should not be null", userName);
@@ -54,7 +54,7 @@ public class RestletResponseTest extends RestletTestSupport {
     
     @Test
     public void testCustomResponse() throws Exception {
-        HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+        HttpResponse response = doExecute(new HttpPost("http://localhost:" + portNum + "/users/homer"));
 
         assertHttpResponse(response, 417, "application/JSON");
     }
@@ -63,7 +63,7 @@ public class RestletResponseTest extends RestletTestSupport {
     public void testRestletProducer() throws Exception {
         Map<String, Object> headers = new HashMap<String, Object>();        
         headers.put("username", "homer");
-        String response = (String)template.requestBodyAndHeaders("restlet:http://localhost:9080/users/{username}?restletMethod=POST", "<request>message</request>", headers);
+        String response = (String)template.requestBodyAndHeaders("restlet:http://localhost:" + portNum + "/users/{username}?restletMethod=POST", "<request>message</request>", headers);
         assertEquals("The response is wrong ", response, "{homer}");
     }
 }

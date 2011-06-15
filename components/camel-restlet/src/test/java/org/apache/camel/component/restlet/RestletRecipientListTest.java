@@ -17,21 +17,20 @@
 package org.apache.camel.component.restlet;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class RestletRecipientListTest extends CamelTestSupport {
+public class RestletRecipientListTest extends RestletTestSupport {
 
     @Test
     public void testRestlet() throws Exception {
         getMockEndpoint("mock:oracle").expectedBodiesReceived("110");
         getMockEndpoint("mock:apple").expectedBodiesReceived("150");
 
-        template.sendBody("restlet:http://0.0.0.0:9080/stock/ORCL?restletMethod=post", "110");
-        template.sendBody("restlet:http://0.0.0.0:9080/stock/APPL?restletMethod=post", "150");
+        template.sendBody("restlet:http://0.0.0.0:" + portNum + "/stock/ORCL?restletMethod=post", "110");
+        template.sendBody("restlet:http://0.0.0.0:" + portNum + "/stock/APPL?restletMethod=post", "150");
 
         assertMockEndpointsSatisfied();
     }
@@ -41,7 +40,7 @@ public class RestletRecipientListTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://0.0.0.0:9080/stock/{symbol}?restletMethods=post")
+                from("restlet:http://0.0.0.0:" + portNum + "/stock/{symbol}?restletMethods=post")
                     .recipientList().simple("seda:${header.symbol}");
 
                 from("seda:ORCL").to("mock:oracle");

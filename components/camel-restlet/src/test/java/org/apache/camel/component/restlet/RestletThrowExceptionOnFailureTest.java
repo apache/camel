@@ -43,9 +43,9 @@ public class RestletThrowExceptionOnFailureTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("restlet:http://localhost:9080/user/{id}/like/{beverage.beer}");
+                from("direct:start").to("restlet:http://localhost:" + portNum + "/user/{id}/like/{beverage.beer}");
 
-                from("restlet:http://localhost:9080/users/{id}/like/{beer}").process(new Processor() {
+                from("restlet:http://localhost:" + portNum + "/users/{id}/like/{beer}").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("id", String.class);
                         String beer = exchange.getIn().getHeader("beer", String.class);

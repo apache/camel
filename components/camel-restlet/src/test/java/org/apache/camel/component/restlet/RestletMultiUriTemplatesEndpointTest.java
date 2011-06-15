@@ -48,14 +48,14 @@ public class RestletMultiUriTemplatesEndpointTest extends RestletTestSupport {
 
     @Test
     public void testPostUserUriPattern() throws Exception {
-        HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+        HttpResponse response = doExecute(new HttpPost("http://localhost:" + portNum + "/users/homer"));
 
         assertHttpResponse(response, 200, "text/plain", "POST homer");
     }
 
     @Test
     public void testGetAtomUriPattern() throws Exception {
-        HttpResponse response = doExecute(new HttpGet("http://localhost:9080/atom/collection/foo/component/bar"));
+        HttpResponse response = doExecute(new HttpGet("http://localhost:" + portNum + "/atom/collection/foo/component/bar"));
 
         assertHttpResponse(response, 200, "text/plain", "GET foo bar");
     }
@@ -66,15 +66,15 @@ public class RestletMultiUriTemplatesEndpointTest extends RestletTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: routeDefinition
-                from("restlet:http://localhost:9080?restletMethods=post,get&restletUriPatterns=#uriTemplates")
+                from("restlet:http://localhost:" + portNum + "?restletMethods=post,get&restletUriPatterns=#uriTemplates")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // echo the method
                             String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
                             String out = exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class);
-                            if ("http://localhost:9080/users/homer".equals(uri)) {
+                            if (("http://localhost:" + portNum + "/users/homer").equals(uri)) {
                                 exchange.getOut().setBody(out + " " + exchange.getIn().getHeader("username", String.class));
-                            } else if ("http://localhost:9080/atom/collection/foo/component/bar".equals(uri)) {
+                            } else if (("http://localhost:" + portNum + "/atom/collection/foo/component/bar").equals(uri)) {
                                 exchange.getOut().setBody(out + " " + exchange.getIn().getHeader("id", String.class)
                                                           + " " + exchange.getIn().getHeader("cid", String.class));
                             }

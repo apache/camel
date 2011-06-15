@@ -33,14 +33,14 @@ public class RestletMultiMethodsEndpointTest extends RestletTestSupport {
 
     @Test
     public void testPostMethod() throws Exception {
-        HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+        HttpResponse response = doExecute(new HttpPost("http://localhost:" + portNum + "/users/homer"));
 
         assertHttpResponse(response, 200, "text/plain", "POST");
     }
 
     @Test
     public void testGetMethod() throws Exception {
-        HttpResponse response = doExecute(new HttpGet("http://localhost:9080/users/homer"));
+        HttpResponse response = doExecute(new HttpGet("http://localhost:" + portNum + "/users/homer"));
 
         assertHttpResponse(response, 200, "text/plain", "GET");
     }
@@ -50,7 +50,7 @@ public class RestletMultiMethodsEndpointTest extends RestletTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: routeDefinition
-                from("restlet:http://localhost:9080/users/{username}?restletMethods=post,get")
+                from("restlet:http://localhost:" + portNum + "/users/{username}?restletMethods=post,get")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // echo the method

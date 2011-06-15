@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -35,7 +34,7 @@ import org.restlet.data.Status;
  *
  * @version 
  */
-public class RestletRequestAndResponseAPITest extends CamelTestSupport {
+public class RestletRequestAndResponseAPITest extends RestletTestSupport {
 
     @Test
     public void testRestletProducer() throws Exception {
@@ -75,10 +74,10 @@ public class RestletRequestAndResponseAPITest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("restlet:http://localhost:9080/users/{id}/like/{beverage.beer}");
+                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/{id}/like/{beverage.beer}");
 
                 // START SNIPPET: e1
-                from("restlet:http://localhost:9080/users/{id}/like/{beer}")
+                from("restlet:http://localhost:" + portNum + "/users/{id}/like/{beer}")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // the Restlet request should be available if neeeded

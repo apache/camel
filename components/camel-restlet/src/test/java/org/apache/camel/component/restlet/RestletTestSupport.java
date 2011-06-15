@@ -18,6 +18,7 @@ package org.apache.camel.component.restlet;
 
 import java.io.IOException;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
@@ -26,13 +27,20 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.junit.BeforeClass;
 
 /**
  *
  * @version 
  */
 public abstract class RestletTestSupport extends CamelTestSupport {
-
+    public static int portNum;
+    
+    @BeforeClass
+    public static void initializePortNum() {
+        portNum = AvailablePortFinder.getNextAvailable();
+    }
+    
     public HttpResponse doExecute(HttpUriRequest method) throws Exception {
         HttpClient client = new DefaultHttpClient();
         try {

@@ -22,13 +22,12 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class RestletProducerGet2Test extends CamelTestSupport {
+public class RestletProducerGet2Test extends RestletTestSupport {
 
     @Test
     public void testRestletProducerGet2() throws Exception {
@@ -45,9 +44,9 @@ public class RestletProducerGet2Test extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("restlet:http://localhost:9080/users/{id}/like/{beverage.beer}");
+                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/{id}/like/{beverage.beer}");
 
-                from("restlet:http://localhost:9080/users/{id}/like/{beer}")
+                from("restlet:http://localhost:" + portNum + "/users/{id}/like/{beer}")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String id = exchange.getIn().getHeader("id", String.class);

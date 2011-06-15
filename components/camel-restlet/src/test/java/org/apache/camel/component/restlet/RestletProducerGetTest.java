@@ -19,13 +19,12 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class RestletProducerGetTest extends CamelTestSupport {
+public class RestletProducerGetTest extends RestletTestSupport {
 
     @Test
     public void testRestletProducerGet() throws Exception {
@@ -38,9 +37,9 @@ public class RestletProducerGetTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("restlet:http://localhost:9080/users/123/basic").to("log:reply");
+                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/123/basic").to("log:reply");
 
-                from("restlet:http://localhost:9080/users/{id}/basic")
+                from("restlet:http://localhost:" + portNum + "/users/{id}/basic")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String id = exchange.getIn().getHeader("id", String.class);

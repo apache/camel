@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.restlet.Client;
 import org.restlet.Request;
@@ -32,7 +31,7 @@ import org.restlet.data.Method;
 import org.restlet.data.Protocol;
 import org.restlet.data.Status;
 
-public class RestletRouteBuilderTest extends CamelTestSupport {
+public class RestletRouteBuilderTest extends RestletTestSupport {
     private static final String ID = "89531";
     private static final String JSON = "{\"document type\": \"JSON\"}";
 
@@ -44,10 +43,10 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
                 // Restlet producer to use POST method. The RestletMethod=post will be stripped
                 // before request is sent.
                 from("direct:start").setHeader("id", constant(ID))
-                    .to("restlet:http://localhost:9080/orders?restletMethod=post&foo=bar");
+                    .to("restlet:http://localhost:" + portNum + "/orders?restletMethod=post&foo=bar");
 
                 // Restlet consumer to handler POST method
-                from("restlet:http://localhost:9080/orders?restletMethod=post").process(new Processor() {
+                from("restlet:http://localhost:" + portNum + "/orders?restletMethod=post").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody(
                                 "received [" + exchange.getIn().getBody(String.class)
@@ -57,7 +56,7 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
                 });
 
                 // Restlet consumer to handler POST method
-                from("restlet:http://localhost:9080/ordersJSON?restletMethod=post").process(new Processor() {
+                from("restlet:http://localhost:" + portNum + "/ordersJSON?restletMethod=post").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         if (body.indexOf("{") == -1) {
@@ -68,7 +67,7 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
                 });
 
                 // Restlet consumer default to handle GET method
-                from("restlet:http://localhost:9080/orders/{id}/{x}").process(new Processor() {
+                from("restlet:http://localhost:" + portNum + "/orders/{id}/{x}").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody(
                                 "received GET request with id="
@@ -87,7 +86,7 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
         
         response = (String)template.sendBodyAndHeader(
-             "restlet:http://localhost:9080/orders?restletMethod=post&foo=bar", 
+             "restlet:http://localhost:" + portNum + "/orders?restletMethod=post&foo=bar", 
              ExchangePattern.InOut,
              "<order foo='1'/>", "id", "89531");
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
@@ -96,7 +95,7 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
     @Test
     public void testProducerJSON() throws IOException {
         String response = (String)template.sendBodyAndHeader(
-                "restlet:http://localhost:9080/ordersJSON?restletMethod=post&foo=bar", 
+                "restlet:http://localhost:" + portNum + "/ordersJSON?restletMethod=post&foo=bar", 
                 ExchangePattern.InOut,
                 JSON,
                 Exchange.CONTENT_TYPE,
@@ -110,7 +109,7 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
     public void testProducerJSONFailure() throws IOException {
         
         String response = (String)template.sendBodyAndHeader(
-                "restlet:http://localhost:9080/ordersJSON?restletMethod=post&foo=bar", 
+                "restlet:http://localhost:" + portNum + "/ordersJSON?restletMethod=post&foo=bar", 
                 ExchangePattern.InOut,
                 "{'JSON'}",
                 Exchange.CONTENT_TYPE,
@@ -123,7 +122,7 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
     public void testConsumer() throws IOException {
         Client client = new Client(Protocol.HTTP);
         Response response = client.handle(new Request(Method.GET, 
-                "http://localhost:9080/orders/99991/6"));
+                "http://localhost:" + portNum + "/orders/99991/6"));
         assertEquals("received GET request with id=99991 and x=6",
                 response.getEntity().getText());
     }
@@ -132,7 +131,7 @@ public class RestletRouteBuilderTest extends CamelTestSupport {
     public void testUnhandledConsumer() throws IOException {
         Client client = new Client(Protocol.HTTP);
         Response response = client.handle(new Request(Method.POST, 
-                "http://localhost:9080/orders/99991/6"));
+                "http://localhost:" + portNum + "/orders/99991/6"));
         // expect error status as no Restlet consumer to handle POST method
         assertEquals(Status.CLIENT_ERROR_NOT_FOUND, response.getStatus());
         assertNotNull(response.getEntity().getText());
