@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.transport.CamelDestination;
 import org.apache.camel.component.cxf.transport.CamelTransportConstants;
 import org.apache.cxf.Bus;
