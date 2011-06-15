@@ -25,10 +25,12 @@ import org.apache.camel.impl.JndiRegistry;
 /**
  *
  */
-public class TryCatchCaughtExceptionTest extends ContextTestSupport {
+public class TryCatchCaughtExceptionTwoTimesTest extends ContextTestSupport {
 
     public void testTryCatchCaughtException() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
@@ -61,6 +63,19 @@ public class TryCatchCaughtExceptionTest extends ContextTestSupport {
                             }
                         })
                     .end()
+                    .to("mock:b")
+                    .doTry()
+                        .to("mock:c")
+                        .to("bean:myBean?method=doSomethingElse")
+                    .doCatch(Exception.class)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                assertEquals("bean://myBean?method=doSomethingElse", exchange.getProperty(Exchange.FAILURE_ENDPOINT));
+                                assertEquals("Forced Again", exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
+                            }
+                        })
+                    .end()
                     .to("mock:result");
             }
         };
@@ -68,5 +83,9 @@ public class TryCatchCaughtExceptionTest extends ContextTestSupport {
 
     public void doSomething(String body) throws Exception {
         throw new IllegalArgumentException("Forced");
+    }
+
+    public void doSomethingElse(String body) throws Exception {
+        throw new IllegalArgumentException("Forced Again");
     }
 }

@@ -25,9 +25,9 @@ import org.apache.camel.impl.JndiRegistry;
 /**
  *
  */
-public class TryCatchCaughtExceptionTest extends ContextTestSupport {
+public class TryCatchCaughtExceptionFinallyTest extends ContextTestSupport {
 
-    public void testTryCatchCaughtException() throws Exception {
+    public void testTryCatchCaughtExceptionFinally() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -53,6 +53,14 @@ public class TryCatchCaughtExceptionTest extends ContextTestSupport {
                         .to("mock:a")
                         .to("bean:myBean?method=doSomething")
                     .doCatch(Exception.class)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                assertEquals("bean://myBean?method=doSomething", exchange.getProperty(Exchange.FAILURE_ENDPOINT));
+                                assertEquals("Forced", exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class).getMessage());
+                            }
+                        })
+                    .doFinally()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
