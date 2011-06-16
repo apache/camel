@@ -319,9 +319,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
 
                 MessageContentsList resList = null;
-                if (outBody instanceof MessageContentsList) {
-                    resList = (MessageContentsList)outBody;
-                } else if (outBody instanceof List) {
+                // Create a new MessageContentsList to avoid OOM from the HolderOutInterceptor
+                if (outBody instanceof List) {
                     resList = new MessageContentsList((List<?>)outBody);
                 } else if (outBody.getClass().isArray()) {
                     resList = new MessageContentsList((Object[])outBody);
