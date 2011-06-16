@@ -133,7 +133,7 @@
   
   
   <!-- START SNIPPET: dropAllMessageHeadersStrategy -->
-  <bean id="dropAllMessageHeadersStrategy" class="org.apache.camel.component.cxf.CxfHeaderFilterStrategy">
+  <bean id="dropAllMessageHeadersStrategy" class="org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy">
   
       <!--  Set relayHeaders to false to drop all SOAP headers -->
       <property name="relayHeaders" value="false"/>
@@ -142,11 +142,11 @@
   <!-- END SNIPPET: dropAllMessageHeadersStrategy -->
   
   <!-- START SNIPPET: customMessageFilterStrategy -->
-  <bean id="customMessageFilterStrategy" class="org.apache.camel.component.cxf.CxfHeaderFilterStrategy">
+  <bean id="customMessageFilterStrategy" class="org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy">
       <property name="messageHeaderFilters">
           <list>
               <!--  SoapMessageHeaderFilter is the built in filter.  It can be removed by omitting it. -->
-              <bean class="org.apache.camel.component.cxf.SoapMessageHeaderFilter"/>          
+              <bean class="org.apache.camel.component.cxf.common.header.SoapMessageHeaderFilter"/>
               
               <!--  Add custom filter here -->    
               <bean class="org.apache.camel.component.cxf.soap.headers.CustomHeaderFilter"/>
