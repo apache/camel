@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "customDataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomDataFormat extends DataFormatDefinition {
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String ref;
 
     public CustomDataFormat() {

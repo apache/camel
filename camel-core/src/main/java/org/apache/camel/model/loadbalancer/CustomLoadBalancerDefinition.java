@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String ref;
 
     public CustomLoadBalancerDefinition() {

@@ -35,6 +35,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
+import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -56,6 +57,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     @XmlTransient
     private StreamResequencerConfig streamConfig;
     @XmlElementRef
+    @Required
     private ExpressionDefinition expression;
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();

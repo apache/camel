@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "sticky")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
-    @XmlElement(name = "correlationExpression")
+    @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
 
     public StickyLoadBalancerDefinition() {
