@@ -1,5 +1,6 @@
 package org.apache.camel.component.cxf.spring;
 
+import org.apache.camel.component.cxf.CxfEndpointBean;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.bus.spring.SpringBusFactory;

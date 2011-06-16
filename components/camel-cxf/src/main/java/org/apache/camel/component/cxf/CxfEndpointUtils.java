@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.util;
+package org.apache.camel.component.cxf;
 
 import java.lang.annotation.Annotation;
 
@@ -24,10 +24,8 @@ import javax.xml.ws.WebServiceProvider;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.cxf.CxfEndpoint;
-import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.component.cxf.spring.CxfEndpointBean;
+import org.apache.camel.component.cxf.util.WSDLSoapServiceFactoryBean;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;

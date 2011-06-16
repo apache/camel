@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.spring;
 
+import org.apache.camel.component.cxf.CxfEndpointBean;
 import org.junit.Test;
 
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {

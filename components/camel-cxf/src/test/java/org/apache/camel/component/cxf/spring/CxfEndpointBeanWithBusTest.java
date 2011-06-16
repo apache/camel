@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CxfEndpoint;
+import org.apache.camel.component.cxf.CxfEndpointBean;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.junit.Before;
 import org.junit.Test;

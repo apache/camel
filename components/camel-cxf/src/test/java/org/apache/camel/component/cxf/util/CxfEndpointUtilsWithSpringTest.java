@@ -20,6 +20,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CxfEndpoint;
+import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.spring.SpringCamelContext;

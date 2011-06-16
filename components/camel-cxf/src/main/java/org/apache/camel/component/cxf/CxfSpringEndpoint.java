@@ -22,8 +22,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.component.cxf.spring.CxfEndpointBean;
-import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;

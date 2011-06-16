@@ -25,7 +25,6 @@ import javax.xml.ws.handler.Handler;
 
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
