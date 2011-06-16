@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
@@ -43,8 +44,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private long initialDelay = 1000;
     private long delay = 500;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-    private boolean useFixedDelay;
+    private boolean useFixedDelay = true;
     private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
+    private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -65,6 +67,44 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      * Invoked whenever we should be polled
      */
     public void run() {
+        // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
+        try {
+            // log starting
+            if (LoggingLevel.ERROR == runLoggingLevel) {
+                LOG.error("Scheduled task started on:   {}", this.getEndpoint());
+            } else if (LoggingLevel.WARN == runLoggingLevel) {
+                LOG.warn("Scheduled task started on:   {}", this.getEndpoint());
+            } else if (LoggingLevel.INFO == runLoggingLevel) {
+                LOG.info("Scheduled task started on:   {}", this.getEndpoint());
+            } else if (LoggingLevel.DEBUG == runLoggingLevel) {
+                LOG.debug("Scheduled task started on:   {}", this.getEndpoint());
+            } else {
+                LOG.trace("Scheduled task started on:   {}", this.getEndpoint());
+            }
+
+            // execute scheduled task
+            doRun();
+
+            // log completed
+            if (LoggingLevel.ERROR == runLoggingLevel) {
+                LOG.error("Scheduled task completed on: {}", this.getEndpoint());
+            } else if (LoggingLevel.WARN == runLoggingLevel) {
+                LOG.warn("Scheduled task completed on: {}", this.getEndpoint());
+            } else if (LoggingLevel.INFO == runLoggingLevel) {
+                LOG.info("Scheduled task completed on: {}", this.getEndpoint());
+            } else if (LoggingLevel.DEBUG == runLoggingLevel) {
+                LOG.debug("Scheduled task completed on: {}", this.getEndpoint());
+            } else {
+                LOG.trace("Scheduled task completed on: {}", this.getEndpoint());
+            }
+
+        } catch (Error e) {
+            // must catch Error, to ensure the task is re-scheduled
+            LOG.error("Error occurred during running scheduled task on: " + this.getEndpoint() + ", due: " + e.getMessage(), e);
+        }
+    }
+
+    private void doRun() {
         if (isSuspended()) {
             LOG.trace("Cannot start to poll: {} as its suspended", this.getEndpoint());
             return;
@@ -169,6 +209,14 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         this.useFixedDelay = useFixedDelay;
     }
 
+    public LoggingLevel getRunLoggingLevel() {
+        return runLoggingLevel;
+    }
+
+    public void setRunLoggingLevel(LoggingLevel runLoggingLevel) {
+        this.runLoggingLevel = runLoggingLevel;
+    }
+
     public PollingConsumerPollStrategy getPollStrategy() {
         return pollStrategy;
     }
@@ -191,6 +239,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        ObjectHelper.notNull(executor, "executor", this);
+        ObjectHelper.notNull(pollStrategy, "pollStrategy", this);
+
         if (isUseFixedDelay()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
@@ -209,6 +260,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     @Override
     protected void doStop() throws Exception {
         if (future != null) {
+            LOG.debug("This consumer is stopping, so cancelling scheduled task: " + future);
             future.cancel(false);
         }
         super.doStop();

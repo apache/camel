@@ -76,7 +76,7 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
         endpint = context.getEndpoint("file://target/foo?consumer.delay=1000&consumer.initialDelay=5000");
         assertNotNull(endpint);
 
-        endpint = context.getEndpoint("file://target/foo?consumer.delay=1000&consumer.initialDelay=5000&consumer.useFixedDelay=true");
+        endpint = context.getEndpoint("file://target/foo?consumer.delay=1000&consumer.initialDelay=5000&consumer.useFixedDelay=false");
         assertNotNull(endpint);
 
         // without consumer. prefix
@@ -86,11 +86,11 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
         endpint = context.getEndpoint("file://foo2?delay=1000&initialDelay=5000");
         assertNotNull(endpint);
 
-        endpint = context.getEndpoint("file://foo2?delay=1000&initialDelay=5000&useFixedDelay=true");
+        endpint = context.getEndpoint("file://foo2?delay=1000&initialDelay=5000&useFixedDelay=false");
         assertNotNull(endpint);
 
         // combined with and without consumer. prefix
-        endpint = context.getEndpoint("file://foo3?delay=1000&consumer.initialDelay=5000&useFixedDelay=true");
+        endpint = context.getEndpoint("file://foo3?delay=1000&consumer.initialDelay=5000&useFixedDelay=false");
         assertNotNull(endpint);
     }
 
