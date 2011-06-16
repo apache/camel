@@ -56,7 +56,7 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @Override
     public String toString() {
-        return "RefLoadBalancer[" + ref + "]";
+        return "CustomLoadBalancer[" + ref + "]";
     }
 
 }
