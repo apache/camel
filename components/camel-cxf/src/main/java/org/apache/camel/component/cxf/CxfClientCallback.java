@@ -32,18 +32,18 @@ public class CxfClientCallback extends ClientCallback {
     private final Exchange camelExchange;
     private final org.apache.cxf.message.Exchange cxfExchange;
     private final BindingOperationInfo boi;
-    private final CxfEndpoint endpoint;
+    private final CxfBinding binding;
     
     public CxfClientCallback(AsyncCallback callback, 
                              Exchange camelExchange,
                              org.apache.cxf.message.Exchange cxfExchange,
                              BindingOperationInfo boi,
-                             CxfEndpoint endpoint) {
+                             CxfBinding binding) {
         this.camelAsyncCallback = callback;
         this.camelExchange = camelExchange;
         this.cxfExchange = cxfExchange;
         this.boi = boi;
-        this.endpoint = endpoint;       
+        this.binding = binding;       
     }
     
     public void handleResponse(Map<String, Object> ctx, Object[] res) {
@@ -54,8 +54,7 @@ public class CxfClientCallback extends ClientCallback {
             if (!boi.getOperationInfo().isOneWay()) {
                 // copy the InMessage header to OutMessage header
                 camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
-                endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
-                        ctx);
+                binding.populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{} calling handleResponse", Thread.currentThread().getName());
@@ -73,8 +72,7 @@ public class CxfClientCallback extends ClientCallback {
             if (!boi.getOperationInfo().isOneWay()) {
                 // copy the InMessage header to OutMessage header
                 camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
-                endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
-                                                                         ctx);
+                binding.populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{} calling handleException", Thread.currentThread().getName());
