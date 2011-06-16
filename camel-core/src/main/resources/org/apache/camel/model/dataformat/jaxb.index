@@ -17,6 +17,7 @@
 BindyDataFormat
 BindyType
 CastorDataFormat
+CustomDataFormat
 CsvDataFormat
 CryptoDataFormat
 DataFormatsDefinition
@@ -27,7 +28,6 @@ JaxbDataFormat
 JsonDataFormat
 JsonLibrary
 ProtobufDataFormat
-RefDataFormat
 RssDataFormat
 SerializationDataFormat
 StringDataFormat

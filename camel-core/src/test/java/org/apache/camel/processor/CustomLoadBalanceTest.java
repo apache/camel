@@ -64,7 +64,7 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private class MyLoadBalancer extends LoadBalancerSupport {
+    public static class MyLoadBalancer extends LoadBalancerSupport {
 
         public boolean process(Exchange exchange, AsyncCallback callback) {
             String body = exchange.getIn().getBody(String.class);

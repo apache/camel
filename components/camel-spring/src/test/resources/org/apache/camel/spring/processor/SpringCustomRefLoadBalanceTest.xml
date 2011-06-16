@@ -22,27 +22,23 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- this is our custom data format implementation -->
-    <bean id="reverse" class="org.apache.camel.impl.RefDataFormatTest$MyReverseDataFormat"/>
+  <!-- START SNIPPET: e1 -->
+  <!-- this is the implementation of our custom load balancer -->
+  <bean id="myBalancer" class="org.apache.camel.processor.CustomLoadBalanceTest$MyLoadBalancer"/>
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <from uri="direct:a"/>
-            <marshal>
-                <!-- refer to my custom data format -->
-                <custom ref="reverse"/>
-            </marshal>
-            <to uri="mock:a"/>
-        </route>
-
-        <route>
-            <from uri="direct:b"/>
-            <unmarshal>
-                <!-- refer to my custom data format -->
-                <custom ref="reverse"/>
-            </unmarshal>
-            <to uri="mock:b"/>
-        </route>
-    </camelContext>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <from uri="direct:start"/>
+      <loadBalance>
+        <!-- refer to my custom load balancer -->
+        <custom ref="myBalancer"/>
+        <!-- these are the endpoints to balancer -->
+        <to uri="mock:x"/>
+        <to uri="mock:y"/>
+        <to uri="mock:z"/>
+      </loadBalance>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e1 -->
 
 </beans>

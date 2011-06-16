@@ -33,6 +33,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RandomLoadBalancerDefinition;
+import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
@@ -56,10 +57,12 @@ import org.apache.camel.util.CollectionStringBuffer;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefinition> {
     @XmlAttribute
+    @Deprecated
     private String ref;
     @XmlElements({
             @XmlElement(required = false, name = "failover", type = FailoverLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
+            @XmlElement(required = false, name = "custom", type = CustomLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "sticky", type = StickyLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class),
@@ -245,10 +248,24 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
 
     /**
      * Uses random load balancer
+     *
      * @return the builder
      */
     public LoadBalanceDefinition random() {
         setLoadBalancerType(new LoadBalancerDefinition(new RandomLoadBalancer()));
+        return this;
+    }
+
+    /**
+     * Uses the custom load balancer
+     *
+     * @param ref reference to lookup a custom load balancer from the {@link org.apache.camel.spi.Registry} to be used.
+     * @return the builder
+     */
+    public LoadBalanceDefinition custom(String ref) {
+        CustomLoadBalancerDefinition balancer = new CustomLoadBalancerDefinition();
+        balancer.setRef(ref);
+        setLoadBalancerType(balancer);
         return this;
     }
 

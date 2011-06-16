@@ -35,7 +35,7 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
-import org.apache.camel.model.dataformat.RefDataFormat;
+import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
@@ -71,6 +71,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
     @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
     @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
     @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
+    @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),
     @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
     @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
     @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
@@ -78,7 +79,6 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
     @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
     @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
     @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),
-    @XmlElement(required = false, name = "ref", type = RefDataFormat.class),
     @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
     @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),

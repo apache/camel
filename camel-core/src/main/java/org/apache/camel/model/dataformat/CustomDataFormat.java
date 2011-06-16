@@ -30,16 +30,16 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version
  */
-@XmlRootElement(name = "ref")
+@XmlRootElement(name = "customDataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RefDataFormat extends DataFormatDefinition {
+public class CustomDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String ref;
 
-    public RefDataFormat() {
+    public CustomDataFormat() {
     }
 
-    public RefDataFormat(String ref) {
+    public CustomDataFormat(String ref) {
         this.ref = ref;
     }
 
@@ -54,5 +54,10 @@ public class RefDataFormat extends DataFormatDefinition {
 
     public void setRef(String ref) {
         this.ref = ref;
+    }
+
+    @Override
+    public String toString() {
+        return "CustomDataFormat[" + ref + "]";
     }
 }

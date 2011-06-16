@@ -57,9 +57,9 @@ public class RefDataFormatTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").marshal().ref("reverse").to("mock:a");
+                from("direct:a").marshal().custom("reverse").to("mock:a");
 
-                from("direct:b").unmarshal().ref("reverse").to("mock:b");
+                from("direct:b").unmarshal().custom("reverse").to("mock:b");
             }
         };
     }
