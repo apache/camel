@@ -35,7 +35,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
-import org.apache.camel.component.cxf.spring.CxfEndpointBeanDefinitionParser.CxfSpringEndpointBean;
+import org.apache.camel.component.cxf.spring.CxfSpringEndpointBean;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.EndpointHelper;

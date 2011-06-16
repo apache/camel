@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.spring;
 import java.util.List;
 
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
-import org.apache.camel.component.cxf.spring.CxfRsServerFactoryBeanDefinitionParser.SpringJAXRSServerFactoryBean;
 import org.junit.Test;
 
 public class CxfRsServerFactoryBeanTest extends AbstractSpringBeanTestSupport {

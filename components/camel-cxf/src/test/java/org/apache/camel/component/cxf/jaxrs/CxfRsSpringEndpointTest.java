@@ -17,8 +17,8 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
-import org.apache.camel.component.cxf.spring.CxfRsClientFactoryBeanDefinitionParser.SpringJAXRSClientFactoryBean;
-import org.apache.camel.component.cxf.spring.CxfRsServerFactoryBeanDefinitionParser.SpringJAXRSServerFactoryBean;
+import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
+import org.apache.camel.component.cxf.spring.SpringJAXRSServerFactoryBean;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
