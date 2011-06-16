@@ -314,7 +314,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
                     // noop
-                    log.trace("Done processing file: {} {}", target, doneSync ? "synchronously" : "asynchronously");
+                    if (log.isTraceEnabled()) {
+                        log.trace("Done processing file: {} {}", target, doneSync ? "synchronously" : "asynchronously");
+                    }
                 }
             });
 

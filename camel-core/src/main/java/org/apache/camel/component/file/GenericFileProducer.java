@@ -247,7 +247,9 @@ public class GenericFileProducer<T> extends DefaultProducer {
         }
 
         // upload
-        log.trace("About to write [{}] to [{}] from exchange [{}]", new Object[]{fileName, getEndpoint(), exchange});
+        if (log.isTraceEnabled()) {
+            log.trace("About to write [{}] to [{}] from exchange [{}]", new Object[]{fileName, getEndpoint(), exchange});
+        }
 
         boolean success = operations.storeFile(fileName, exchange);
         if (!success) {

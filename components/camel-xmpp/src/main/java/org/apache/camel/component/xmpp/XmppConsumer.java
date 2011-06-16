@@ -65,11 +65,15 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             privateChat = chatManager.getThreadChat(endpoint.getChatId());
 
             if (privateChat != null) {
-                LOG.debug("Adding listener to existing chat opened to " + privateChat.getParticipant());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Adding listener to existing chat opened to " + privateChat.getParticipant());
+                }
                 privateChat.addMessageListener(this);
             } else {                
                 privateChat = connection.getChatManager().createChat(endpoint.getParticipant(), endpoint.getChatId(), this);
-                LOG.debug("Opening private chat to " + privateChat.getParticipant());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Opening private chat to " + privateChat.getParticipant());
+                }
             }
         } else {
             // add the presence packet listener to the connection so we only get packets that concerns us
@@ -84,7 +88,9 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             history.setMaxChars(0); // we do not want any historical messages
 
             muc.join(endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
-            LOG.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
+            }
         }
 
         super.doStart();
@@ -94,7 +100,9 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
     protected void doStop() throws Exception {
         super.doStop();
         if (muc != null) {
-            LOG.info("Leaving room: {}", muc.getRoom());
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Leaving room: {}", muc.getRoom());
+            }
             muc.removeMessageListener(this);
             muc.leave();
             muc = null;
@@ -106,7 +114,9 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
 
     public void chatCreated(Chat chat, boolean createdLocally) {
         if (!createdLocally) {
-            LOG.debug("Accepting incoming chat session from " + chat.getParticipant());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Accepting incoming chat session from " + chat.getParticipant());
+            }
             chat.addMessageListener(this);
         }
     }

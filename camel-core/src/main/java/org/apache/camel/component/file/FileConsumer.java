@@ -51,11 +51,15 @@ public class FileConsumer extends GenericFileConsumer<File> {
         File[] files = directory.listFiles();
         if (files == null || files.length == 0) {
             // no files in this directory to poll
-            log.trace("No files found in directory: {}", directory.getPath());
+            if (log.isTraceEnabled()) {
+                log.trace("No files found in directory: {}", directory.getPath());
+            }
             return true;
         } else {
             // we found some files
-            log.trace("Found {} in directory: {}", files.length, directory.getPath());
+            if (log.isTraceEnabled()) {
+                log.trace("Found {} in directory: {}", files.length, directory.getPath());
+            }
         }
 
         for (File file : files) {
@@ -86,7 +90,9 @@ public class FileConsumer extends GenericFileConsumer<File> {
                 // Windows can report false to a file on a share so regard it always as a file (if its not a directory)
                 if (isValidFile(gf, false)) {
                     if (isInProgress(gf)) {
-                        log.trace("Skipping as file is already in progress: {}", gf.getFileName());
+                        if (log.isTraceEnabled()) {
+                            log.trace("Skipping as file is already in progress: {}", gf.getFileName());
+                        }
                     } else {
                         log.trace("Adding valid file: {}", file);
                         // matched file so add

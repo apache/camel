@@ -679,7 +679,9 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             throw new InvalidXPathExpression(getText(), e);
         }
 
-        LOG.trace("Done evaluating exchange: {} as: {} with result: {}", new Object[]{exchange, resultQName, answer});
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Done evaluating exchange: {} as: {} with result: {}", new Object[]{exchange, resultQName, answer});
+        }
         return answer;
     }
 

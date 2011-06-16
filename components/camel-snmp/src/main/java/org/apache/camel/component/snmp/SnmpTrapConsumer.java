@@ -52,7 +52,9 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         super.doStart();
 
         // load connection data only if the endpoint is enabled
-        LOG.info("Starting trap consumer on {}", this.endpoint.getAddress());
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Starting trap consumer on {}", this.endpoint.getAddress());
+        }
 
         this.listenGenericAddress = GenericAddress.parse(this.endpoint.getAddress());
 

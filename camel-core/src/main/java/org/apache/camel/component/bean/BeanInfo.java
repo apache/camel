@@ -298,7 +298,9 @@ public class BeanInfo {
         boolean hasHandlerAnnotation = ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
 
         int size = parameterTypes.length;
-        LOG.trace("Creating MethodInfo for class: {} method: {} having {} parameters", new Object[]{clazz, method, size});
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Creating MethodInfo for class: {} method: {} having {} parameters", new Object[]{clazz, method, size});
+        }
 
         for (int i = 0; i < size; i++) {
             Class parameterType = parameterTypes[i];
@@ -442,7 +444,9 @@ public class BeanInfo {
         Object body = in.getBody();
         if (body != null) {
             Class bodyType = body.getClass();
-            LOG.trace("Matching for method with a single parameter that matches type: {}", bodyType.getCanonicalName());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Matching for method with a single parameter that matches type: {}", bodyType.getCanonicalName());
+            }
 
             List<MethodInfo> possibles = new ArrayList<MethodInfo>();
             List<MethodInfo> possiblesWithException = new ArrayList<MethodInfo>();

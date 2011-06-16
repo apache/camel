@@ -113,7 +113,7 @@ public class FileOperations implements GenericFileOperations<File> {
                 return true;
             } else {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Building directory: " + path);
+                    LOG.trace("Building directory: {}", path);
                 }
                 return path.mkdirs();
             }
@@ -157,9 +157,7 @@ public class FileOperations implements GenericFileOperations<File> {
         if (file.exists()) {
             if (endpoint.getFileExist() == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("An existing file already exists: " + file + ". Ignore and do not override it.");
-                }
+                LOG.trace("An existing file already exists: {}. Ignore and do not override it.", file);
                 return true;
             } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
                 throw new GenericFileOperationFailedException("File already exist: " + file + ". Cannot write new file.");
@@ -230,16 +228,14 @@ public class FileOperations implements GenericFileOperations<File> {
             if (last != null) {
                 boolean result = file.setLastModified(last);
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Keeping last modified timestamp: " + last + " on file: " + file + " with result: " + result);
+                    LOG.trace("Keeping last modified timestamp: {} on file: {} with result: {}", new Object[]{last, file, result});
                 }
             }
         }
     }
 
     private boolean writeFileByLocalWorkPath(File source, File file) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Using local work file being renamed from: " + source + " to: " + file);
-        }
+        LOG.trace("Using local work file being renamed from: {} to: {}", source, file);
 
         return FileUtil.renameFile(source, file);
     }
@@ -249,11 +245,7 @@ public class FileOperations implements GenericFileOperations<File> {
         FileChannel out = null;
         try {
             out = prepareOutputFileChannel(target, out);
-
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Using FileChannel to transfer from: " + in + " to: " + out);
-            }
-
+            LOG.trace("Using FileChannel to transfer from: {} to: {}", in, out);
             long size = in.size();
             long position = 0;
             while (position < size) {
@@ -269,10 +261,7 @@ public class FileOperations implements GenericFileOperations<File> {
         FileChannel out = null;
         try {
             out = prepareOutputFileChannel(target, out);
-
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Using InputStream to transfer from: " + in + " to: " + out);
-            }
+            LOG.trace("Using InputStream to transfer from: {} to: {}", in, out);
             int size = endpoint.getBufferSize();
             byte[] buffer = new byte[size];
             ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);

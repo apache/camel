@@ -215,7 +215,9 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             }
             ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(name);
             done = !getManagementStrategy().isManaged(mc, on);
-            LOG.trace("Using name: {} in ObjectName[{}] exists? {}", new Object[]{name, on, done});
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Using name: {} in ObjectName[{}] exists? {}", new Object[]{name, on, done});
+            }
         }
         return name;
     }

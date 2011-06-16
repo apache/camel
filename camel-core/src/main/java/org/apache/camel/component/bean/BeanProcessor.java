@@ -122,7 +122,9 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             LOG.trace("Exchange IN body is a BeanInvocation instance: {}", beanInvoke);
             Class<?> clazz = beanInvoke.getMethod().getDeclaringClass();
             boolean sameBean = clazz.isInstance(bean);
-            LOG.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", new Object[]{bean.getClass(), clazz, sameBean});
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", new Object[]{bean.getClass(), clazz, sameBean});
+            }
             if (sameBean) {
                 beanInvoke.invoke(bean, exchange);
                 // propagate headers

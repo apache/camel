@@ -50,7 +50,9 @@ public class NagiosEventNotifier extends EventNotifierSupport {
         Level level = determineLevel(eventObject);
         MessagePayload payload = new MessagePayload(getHostName(), level.ordinal(), getServiceName(), message);
 
-        log.info("Sending notification to Nagios: {}", payload.getMessage());
+        if (log.isInfoEnabled()) {
+            log.info("Sending notification to Nagios: {}", payload.getMessage());
+        }
         sender.send(payload);
         log.trace("Sending notification done");
     }

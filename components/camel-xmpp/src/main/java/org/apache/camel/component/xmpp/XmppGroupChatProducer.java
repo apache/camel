@@ -58,7 +58,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
                 connection.connect();
             }
 
-            LOG.debug("Sending XMPP message: {}", message.getBody());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending XMPP message: {}", message.getBody());
+            }
             chat.sendMessage(message);
             // must invoke nextMessage to consume the response from the server
             // otherwise the client local queue will fill up (CAMEL-1467)
@@ -80,7 +82,9 @@ public class XmppGroupChatProducer extends DefaultProducer {
             DiscussionHistory history = new DiscussionHistory();
             history.setMaxChars(0); // we do not want any historical messages
             chat.join(endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
-            LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Joined room: {} as: {}", room, endpoint.getNickname());
+            }
         }
 
         super.doStart();

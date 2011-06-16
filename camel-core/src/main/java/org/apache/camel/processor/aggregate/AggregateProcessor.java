@@ -309,16 +309,20 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         if (getCompletionTimeoutExpression() != null) {
             Long value = getCompletionTimeoutExpression().evaluate(exchange, Long.class);
             if (value != null && value > 0) {
-                LOG.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
-                        new Object[]{key, value, exchange});
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
+                            new Object[]{key, value, exchange});
+                }
                 addExchangeToTimeoutMap(key, exchange, value);
                 timeoutSet = true;
             }
         }
         if (!timeoutSet && getCompletionTimeout() > 0) {
             // timeout is used so use the timeout map to keep an eye on this
-            LOG.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
-                    new Object[]{key, getCompletionTimeout(), exchange});
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
+                        new Object[]{key, getCompletionTimeout(), exchange});
+            }
             addExchangeToTimeoutMap(key, exchange, getCompletionTimeout());
         }
 
