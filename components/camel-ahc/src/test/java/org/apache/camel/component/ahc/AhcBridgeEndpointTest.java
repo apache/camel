@@ -31,7 +31,7 @@ public class AhcBridgeEndpointTest extends BaseAhcTest {
 
     @Test
     public void testBridgeEndpoint() throws Exception {
-        String response = template.requestBodyAndHeader("http://localhost:" + port1 +"/test/hello",
+        String response = template.requestBodyAndHeader("http://localhost:" + port1 + "/test/hello",
                 new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml", String.class);
         assertEquals("Get a wrong response", "/", response);
 
