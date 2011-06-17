@@ -47,9 +47,11 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     
     public void testEchoWithMethodHeaderHi() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("echo Hello World");
-        mock.expectedHeaderReceived(Exchange.BEAN_METHOD_NAME, "hi");
+        mock.expectedBodiesReceived("hi Hello World");
+        // header should be removed after usage
+        mock.message(0).header(Exchange.BEAN_METHOD_NAME).isNull();
 
+        // header overrule endpoint configuration, so we should invoke the hi method
         template.sendBodyAndHeader("direct:echo", ExchangePattern.InOut, "Hello World", Exchange.BEAN_METHOD_NAME, "hi");
 
         assertMockEndpointsSatisfied();
@@ -57,9 +59,11 @@ public class BeanWithMethodHeaderTest extends ContextTestSupport {
     
     public void testMixedBeanEndpoints() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("hi echo Hello World");
-        mock.expectedHeaderReceived(Exchange.BEAN_METHOD_NAME, "hi");
+        mock.expectedBodiesReceived("hi hi Hello World");
+        // header should be removed after usage
+        mock.message(0).header(Exchange.BEAN_METHOD_NAME).isNull();
 
+        // header overrule endpoint configuration, so we should invoke the hi method
         template.sendBodyAndHeader("direct:mixed", ExchangePattern.InOut, "Hello World", Exchange.BEAN_METHOD_NAME, "hi");
 
         assertMockEndpointsSatisfied();

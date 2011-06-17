@@ -75,8 +75,8 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // do we have an explicit method name we always should invoke
-        boolean isExplicitMethod = ObjectHelper.isNotEmpty(method);
+        // do we have an explicit method name we always should invoke (either configured on endpoint or as a header)
+        String explicitMethodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, method, String.class);
 
         Object bean;
         BeanInfo beanInfo;
@@ -92,7 +92,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         // do we have a custom adapter for this POJO to a Processor
         // should not be invoked if an explicit method has been set
         Processor processor = getProcessor();
-        if (!isExplicitMethod && processor != null) {
+        if (explicitMethodName == null && processor != null) {
             LOG.trace("Using a custom adapter as bean invocation: {}", processor);
             try {
                 processor.process(exchange);
@@ -139,15 +139,13 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             in.setHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, isMultiParameterArray());
         }
 
-        String prevMethod = null;
         MethodInvocation invocation;
         if (methodObject != null) {
             invocation = beanInfo.createInvocation(methodObject, bean, exchange);
         } else {
-            // we just override the bean's invocation method name here
-            if (isExplicitMethod) {
-                prevMethod = in.getHeader(Exchange.BEAN_METHOD_NAME, String.class);
-                in.setHeader(Exchange.BEAN_METHOD_NAME, method);
+            // set explicit method name to invoke as a header, which is how BeanInfo can detect it
+            if (explicitMethodName != null) {
+                in.setHeader(Exchange.BEAN_METHOD_NAME, explicitMethodName);
             }
             try {
                 invocation = beanInfo.createInvocation(bean, exchange);
@@ -161,8 +159,9 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             throw new IllegalStateException("No method invocation could be created, no matching method could be found on: " + bean);
         }
 
-        // remove temporary header
+        // remove headers as they should not be propagated
         in.removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
+        in.removeHeader(Exchange.BEAN_METHOD_NAME);
 
         Object value = null;
         try {
@@ -185,10 +184,6 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
             exchange.setException(e);
             callback.done(true);
             return true;
-        } finally {
-            if (isExplicitMethod) {
-                in.setHeader(Exchange.BEAN_METHOD_NAME, prevMethod);
-            }
         }
 
         // if the method returns something then set the value returned on the Exchange
