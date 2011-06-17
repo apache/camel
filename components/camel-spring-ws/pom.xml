@@ -74,6 +74,7 @@
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws-test</artifactId>
             <version>${spring-ws-version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
