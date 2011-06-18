@@ -1478,8 +1478,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param uriDelimiter  is the delimiter that will be used to split up
      *                      the list of URIs in the routing slip.
      * @return the builder
+     * @deprecated prefer to use {@link #routingSlip(org.apache.camel.Expression, String)} instead
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type routingSlip(String header, String uriDelimiter) {
         RoutingSlipDefinition answer = new RoutingSlipDefinition(header, uriDelimiter);
         addOutput(answer);
@@ -1498,8 +1500,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param header  is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
      *                class will look in for the list of URIs to route the message to.
      * @return the builder
+     * @deprecated prefer to use {@link #routingSlip(org.apache.camel.Expression)} instead
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type routingSlip(String header) {
         RoutingSlipDefinition answer = new RoutingSlipDefinition(header);
         addOutput(answer);
@@ -1520,8 +1524,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param ignoreInvalidEndpoints if this parameter is true, routingSlip will ignore the endpoints which
      *                               cannot be resolved or a producer cannot be created or started 
      * @return the builder
+     * @deprecated prefer to use {@link #routingSlip()} instead
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type routingSlip(String header, String uriDelimiter, boolean ignoreInvalidEndpoints) {
         RoutingSlipDefinition answer = new RoutingSlipDefinition(header, uriDelimiter);
         answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
@@ -1543,8 +1549,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param ignoreInvalidEndpoints if this parameter is true, routingSlip will ignore the endpoints which
      *                               cannot be resolved or a producer cannot be created or started 
      * @return the builder
+     * @deprecated prefer to use {@link #routingSlip()} instead
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type routingSlip(String header, boolean ignoreInvalidEndpoints) {
         RoutingSlipDefinition answer = new RoutingSlipDefinition(header);
         answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
