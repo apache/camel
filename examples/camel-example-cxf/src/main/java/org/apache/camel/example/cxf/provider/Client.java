@@ -25,7 +25,6 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-import javax.xml.ws.WebServiceException;
 import javax.xml.ws.soap.SOAPBinding;
 
 /**
@@ -81,18 +80,12 @@ public final class Client {
         System.out.println("Send out the request: Hello Camel!!");
 
         // Invoke the endpoint synchronously
-        SOAPMessage reply = null;
-
-        try {
-            // Invoke endpoint operation and read response
-            reply = dispatch.invoke(request);
-        } catch (WebServiceException wse) {
-            wse.printStackTrace();
-        }
-
+        // Invoke endpoint operation and read response
+        SOAPMessage reply = dispatch.invoke(request);
+        
         // process the reply
         body = reply.getSOAPBody();
-
+        
         QName responseName = new QName("http://apache.org/hello_world_soap_http/types", "greetMeResponse");
 
         SOAPElement bodyElement = (SOAPElement)body.getChildElements(responseName).next();

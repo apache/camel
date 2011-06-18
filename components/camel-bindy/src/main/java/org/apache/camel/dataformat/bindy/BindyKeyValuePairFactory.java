@@ -210,7 +210,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     if (obj != null) {
 
                         // Check mandatory field
-                        if (keyValuePairField.required() && values == null) {
+                        if (keyValuePairField.required()) {
                             throw new IllegalArgumentException("The mandatory key/tag : " + key + " has not been defined !");
                         }
 

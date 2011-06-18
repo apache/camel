@@ -46,11 +46,8 @@ public class CxfNamespaceHandler implements NamespaceHandler {
         String s = element.getLocalName();
         if ("cxfEndpoint".equals(s)) {
             return new EndpointDefinitionParser().parse(element, context);
-        } else if ("server".equals(s)) {
-            //return new RsServerDefinitionParser(JaxWsServerFactoryBean.class).parse(element, context);
-        } else if ("client".equals(s)) {
-            //return new RsClientDefinitionParser(JaxWsProxyFactoryBean.class).parse(element, context);
         }
+        
         return null;
     }
 

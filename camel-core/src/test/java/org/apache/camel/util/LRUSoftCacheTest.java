@@ -132,10 +132,10 @@ public class LRUSoftCacheTest extends TestSupport {
         cache.put(1, "foo");
         cache.put(2, "bar");
 
-        Collection col = cache.values();
+        Collection<Object> col = cache.values();
         assertEquals(2, col.size());
 
-        Iterator it = col.iterator();
+        Iterator<Object> it = col.iterator();
         assertEquals("foo", it.next());
         assertEquals("bar", it.next());
 

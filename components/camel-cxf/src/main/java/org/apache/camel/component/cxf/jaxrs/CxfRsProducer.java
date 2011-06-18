@@ -122,10 +122,6 @@ public class CxfRsProducer extends DefaultProducer {
                 client.query(entry.getKey(), entry.getValue());
             }
         }
-        String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
-        if (queryString != null) {
-            
-        }
 
         CxfRsBinding binding = cxfRsEndpoint.getBinding();
 

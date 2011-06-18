@@ -44,7 +44,7 @@ public class Bank implements Processor {
         exchange.getOut().setBody("Bank processed the request.");
         // Sleep some time
         try {
-            Thread.sleep((int) (Math.random() * 10) * 100);
+            Thread.sleep((long) (Math.random() * 10) * 100);
         } catch (InterruptedException e) {
             // Discard
         }

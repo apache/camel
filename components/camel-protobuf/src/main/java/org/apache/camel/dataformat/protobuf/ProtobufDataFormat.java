@@ -66,9 +66,7 @@ public class ProtobufDataFormat implements DataFormat {
             if (instanceClassName == null) {
                 throw new CamelException("There is not defaultInstance for protobuf unmarshaling");
             } else {
-                if (defaultInstance == null) {
-                    defaultInstance = loadDefaultInstance(instanceClassName, exchange.getContext());
-                }
+                defaultInstance = loadDefaultInstance(instanceClassName, exchange.getContext());
             }
         }
         return defaultInstance;

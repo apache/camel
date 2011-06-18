@@ -392,11 +392,10 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
                 }
             }
 
-            if (xpathFactory == null) {
-                LOG.debug("Creating default XPathFactory");
-                xpathFactory = XPathFactory.newInstance();
-            }
+            LOG.debug("Creating default XPathFactory");
+            xpathFactory = XPathFactory.newInstance();
         }
+        
         return xpathFactory;
     }
 

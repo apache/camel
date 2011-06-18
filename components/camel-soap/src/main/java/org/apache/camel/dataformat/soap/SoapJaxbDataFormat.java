@@ -95,7 +95,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         if (nameStrategy instanceof ElementNameStrategy) {
             this.elementNameStrategy = (ElementNameStrategy) nameStrategy;
         } else {
-            new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of "
+            throw new IllegalArgumentException("The argument for setElementNameStrategy should be subClass of "
                     + ElementNameStrategy.class.getName());
         }
     }

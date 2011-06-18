@@ -31,7 +31,7 @@ import org.jsmpp.bean.TypeOfNumber;
 public class SmppConfiguration implements Cloneable {
 
     private String host = "localhost";
-    private Integer port = new Integer(2775);
+    private Integer port = Integer.valueOf(2775);
     private String systemId = "smppclient";
     private String password = "password";
     private String systemType = "cp";
