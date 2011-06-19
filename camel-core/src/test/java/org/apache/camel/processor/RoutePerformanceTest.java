@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,10 +43,9 @@ public class RoutePerformanceTest extends ContextTestSupport {
         MockEndpoint endpoint = getMockEndpoint(uri);
         endpoint.expectedMessageCount((int) dataSet.getSize());
         endpoint.expectedHeaderReceived("foo", 123);
-        // give 30 seconds for slow servers
-        endpoint.setResultWaitTime(30000);
 
-        assertMockEndpointsSatisfied();
+        // wait 30 sec for slow servers
+        MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
         System.out.println("RoutePerformanceTest: Sent: " + size + " Took: " + watch.taken() + " ms");
     }
