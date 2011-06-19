@@ -58,9 +58,9 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
             // lookup in context if no transaction template has been configured
             LOG.debug("No TransactionTemplate configured on TransactionErrorHandlerBuilder. Will try find it in the registry.");
 
-            Map<String, TransactedPolicy> map = routeContext.lookupByType(TransactedPolicy.class);
-            if (map != null && map.size() == 1) {
-                TransactedPolicy policy = map.values().iterator().next();
+            Map<String, TransactedPolicy> mapPolicy = routeContext.lookupByType(TransactedPolicy.class);
+            if (mapPolicy != null && mapPolicy.size() == 1) {
+                TransactedPolicy policy = mapPolicy.values().iterator().next();
                 if (policy != null && policy instanceof SpringTransactionPolicy) {
                     transactionTemplate = ((SpringTransactionPolicy) policy).getTransactionTemplate();
                 }
@@ -74,28 +74,28 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
             }
 
             if (transactionTemplate == null) {
-                Map<String, TransactionTemplate> map = routeContext.lookupByType(TransactionTemplate.class);
-                if (map != null && map.size() == 1) {
-                    transactionTemplate = map.values().iterator().next();
+                Map<String, TransactionTemplate> mapTemplate = routeContext.lookupByType(TransactionTemplate.class);
+                if (mapTemplate != null && mapTemplate.size() == 1) {
+                    transactionTemplate = mapTemplate.values().iterator().next();
                 }
-                if (map == null || map.isEmpty()) {
+                if (mapTemplate == null || mapTemplate.isEmpty()) {
                     LOG.trace("No TransactionTemplate found in registry.");
                 } else {
                     LOG.debug("Found {} TransactionTemplate in registry. Cannot determine which one to use. "
-                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", map.size());
+                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapTemplate.size());
                 }
             }
 
             if (transactionTemplate == null) {
-                Map<String, PlatformTransactionManager> map = routeContext.lookupByType(PlatformTransactionManager.class);
-                if (map != null && map.size() == 1) {
-                    transactionTemplate = new TransactionTemplate(map.values().iterator().next());
+                Map<String, PlatformTransactionManager> mapManager = routeContext.lookupByType(PlatformTransactionManager.class);
+                if (mapManager != null && mapManager.size() == 1) {
+                    transactionTemplate = new TransactionTemplate(mapManager.values().iterator().next());
                 }
-                if (map == null || map.isEmpty()) {
+                if (mapManager == null || mapManager.isEmpty()) {
                     LOG.trace("No PlatformTransactionManager found in registry.");
                 } else {
                     LOG.debug("Found {} PlatformTransactionManager in registry. Cannot determine which one to use for TransactionTemplate. "
-                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", map.size());
+                              + "Please configure a TransactionTemplate on the TransactionErrorHandlerBuilder", mapManager.size());
                 }
             }
 
