@@ -280,6 +280,10 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
             // clear exception so finally block can be executed
             final Exception e = exchange.getException();
             exchange.setException(null);
+            // but store the caught exception as a property
+            if (e != null) {
+                exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
+            }
             // store the last to endpoint as the failure endpoint
             exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
 
