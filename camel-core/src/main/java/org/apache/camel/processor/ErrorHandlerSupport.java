@@ -41,8 +41,8 @@ public abstract class ErrorHandlerSupport extends ServiceSupport implements Erro
 
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
 
-    private final Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
-    private ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
+    protected final Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
+    protected ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
 
     public void addExceptionPolicy(OnExceptionDefinition exceptionType) {
         Processor processor = exceptionType.getErrorHandler();
