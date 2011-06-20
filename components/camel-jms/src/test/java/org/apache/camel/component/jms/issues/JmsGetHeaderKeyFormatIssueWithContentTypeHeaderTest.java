@@ -76,7 +76,6 @@ public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends CamelTe
                             // do not mutate it
                             JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
                             assertNotNull("javax.jms.Message should not be null", msg.getJmsMessage());
-                            assertEquals("Should NOT have been muated", false, msg.shouldCreateNewMessage());
                         }
                     })
                     .to("activemq:queue:copy", "mock:result");

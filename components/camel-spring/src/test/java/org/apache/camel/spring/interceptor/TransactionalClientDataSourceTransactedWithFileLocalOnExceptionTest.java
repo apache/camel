@@ -34,11 +34,11 @@ public class TransactionalClientDataSourceTransactedWithFileLocalOnExceptionTest
                     .setBody(constant("Elephant in Action")).beanRef("bookService");
 
                 from("file://target/transacted/fail?moveFailed=../failed")
-                    .transacted()
                     .onException(IllegalArgumentException.class)
                         .handled(false)
                         .to("mock:error")
                     .end()
+                    .transacted()
                     .setBody(constant("Tiger in Action")).beanRef("bookService")
                     .setBody(constant("Donkey in Action")).beanRef("bookService");
             }

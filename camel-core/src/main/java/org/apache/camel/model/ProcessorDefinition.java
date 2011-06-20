@@ -276,7 +276,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             wrapChannelInErrorHandler(channel, routeContext);
         }
 
+        // do post init at the end
+        channel.postInitChannel(defn, routeContext);
         log.trace("{} wrapped in Channel: {}", defn, channel);
+
         return channel;
     }
 
@@ -632,7 +635,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return (Type) this;
     }
 
-
     /**
      * Sends the exchange to the given endpoint
      *
@@ -647,6 +649,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     
     /**
      * Sends the exchange with certain exchange pattern to the given endpoint
+     * <p/>
+     * Notice the existing MEP is preserved
      *
      * @param pattern the pattern to use for the message exchange
      * @param uri  the endpoint to send to
@@ -657,10 +661,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(new ToDefinition(uri, pattern));
         return (Type) this;
     }   
-    
 
     /**
      * Sends the exchange with certain exchange pattern to the given endpoint
+     * <p/>
+     * Notice the existing MEP is preserved
      *
      * @param pattern the pattern to use for the message exchange
      * @param endpoint  the endpoint to send to
@@ -685,7 +690,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         }
         return (Type) this;
     }
-
 
     /**
      * Sends the exchange to a list of endpoints
@@ -714,10 +718,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         }
         return (Type) this;
     }
-    
-    
+
     /**
      * Sends the exchange to a list of endpoints
+     * <p/>
+     * Notice the existing MEP is preserved
      *
      * @param pattern the pattern to use for the message exchanges
      * @param uris  list of endpoints to send to
@@ -733,6 +738,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * Sends the exchange to a list of endpoints
+     * <p/>
+     * Notice the existing MEP is preserved
      *
      * @param pattern the pattern to use for the message exchanges
      * @param endpoints  list of endpoints to send to
@@ -763,7 +770,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
-     * set the ExchangePattern {@link ExchangePattern} into the exchange
+     * set the {@link ExchangePattern} into the {@link Exchange}.
+     * <p/>
+     * The pattern set on the {@link Exchange} will
      *
      * @param exchangePattern  instance of {@link ExchangePattern}
      * @return the builder
@@ -778,9 +787,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
      * set the exchange's ExchangePattern {@link ExchangePattern} to be InOnly
      *
-     *
      * @return the builder
+     * @deprecated use {@link #setExchangePattern(org.apache.camel.ExchangePattern)} instead
      */
+    @Deprecated
     public Type inOnly() {
         return setExchangePattern(ExchangePattern.InOnly);
     }
@@ -789,6 +799,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends the message to the given endpoint using an
      * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
      * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
+     * <p/>
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
      * @param uri The endpoint uri which is used for sending the exchange
      * @return the builder
@@ -801,6 +813,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends the message to the given endpoint using an
      * <a href="http://camel.apache.org/event-message.html">Event Message</a> or 
      * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
+     * <p/>
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
      * @param endpoint The endpoint which is used for sending the exchange
      * @return the builder
@@ -809,11 +823,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return to(ExchangePattern.InOnly, endpoint);
     }
 
-
     /**
      * Sends the message to the given endpoints using an
      * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
      * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
+     * <p/>
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
      * @param uris  list of endpoints to send to
      * @return the builder
@@ -822,11 +837,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return to(ExchangePattern.InOnly, uris);
     }
 
-
     /**
      * Sends the message to the given endpoints using an
      * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
      * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
+     * <p/>
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
      * @param endpoints  list of endpoints to send to
      * @return the builder
@@ -839,6 +855,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends the message to the given endpoints using an
      * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
      * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
+     * <p/>
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
      * @param endpoints  list of endpoints to send to
      * @return the builder
@@ -847,14 +865,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return to(ExchangePattern.InOnly, endpoints);
     }
 
-
     /**
      * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
      * set the exchange's ExchangePattern {@link ExchangePattern} to be InOut
      *
-     *
      * @return the builder
+     * @deprecated use {@link #setExchangePattern(org.apache.camel.ExchangePattern)} instead
      */
+    @Deprecated
     public Type inOut() {
         return setExchangePattern(ExchangePattern.InOut);
     }
@@ -863,6 +881,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends the message to the given endpoint using an
      * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
      * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
+     * <p/>
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
      * @param uri The endpoint uri which is used for sending the exchange
      * @return the builder
@@ -871,11 +891,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return to(ExchangePattern.InOut, uri);
     }
 
-
     /**
      * Sends the message to the given endpoint using an
      * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
      * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
+     * <p/>
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
      * @param endpoint The endpoint which is used for sending the exchange
      * @return the builder
@@ -888,6 +909,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends the message to the given endpoints using an
      * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
      * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
+     * <p/>
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
      * @param uris  list of endpoints to send to
      * @return the builder
@@ -896,11 +919,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return to(ExchangePattern.InOut, uris);
     }
 
-
     /**
      * Sends the message to the given endpoints using an
      * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
      * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
+     * <p/>
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
      * @param endpoints  list of endpoints to send to
      * @return the builder
@@ -913,6 +937,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Sends the message to the given endpoints using an
      * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
      * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
+     * <p/>
+     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
      *
      * @param endpoints  list of endpoints to send to
      * @return the builder
@@ -1570,7 +1596,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression  to decide the destinations
      * @param uriDelimiter  is the delimiter that will be used to split up
      *                      the list of URIs in the routing slip.
-     * 
      * @return the builder
      */
     public RoutingSlipDefinition<Type> routingSlip(Expression expression, String uriDelimiter) {
@@ -1589,7 +1614,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * The route slip will be evaluated <i>once</i>, use {@link #dynamicRouter()} if you need even more dynamic routing.
      *
      * @param expression  to decide the destinations
-     * 
      * @return the builder
      */
     public RoutingSlipDefinition<Type> routingSlip(Expression expression) {
@@ -2171,6 +2195,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * Pushes the given block on the stack as current block
+     *
      * @param block  the block
      */
     void pushBlock(Block block) {
@@ -2179,6 +2204,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * Pops the block off the stack as current block
+     *
      * @return the block
      */
     Block popBlock() {
@@ -2549,7 +2575,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return (Type) this;
     }
 
-
     /**
      * Adds a processor which sets the exchange property
      *
@@ -2724,7 +2749,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
      * <p/>
      * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
-     * to obatin the additional data, where as pollEnrich uses a polling consumer.
+     * to obtain the additional data, where as pollEnrich uses a polling consumer.
      *
      * @param resourceRef            Reference of resource endpoint for obtaining additional data.
      * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
@@ -2813,7 +2838,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      * <p/>
      * The difference between this and {@link #enrich(String)} is that this uses a consumer
-     * to obatin the additional data, where as enrich uses a producer.
+     * to obtain the additional data, where as enrich uses a producer.
      * <p/>
      * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
      * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
@@ -2836,7 +2861,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
      * <p/>
      * The difference between this and {@link #enrich(String)} is that this uses a consumer
-     * to obatin the additional data, where as enrich uses a producer.
+     * to obtain the additional data, where as enrich uses a producer.
      * <p/>
      * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
      * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>

@@ -34,7 +34,7 @@ public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSup
 
     public void testGlobalOnRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World123");
+        mock.expectedBodiesReceived("Hello World3");
 
         template.sendBody("direct:start", "Hello World");
 

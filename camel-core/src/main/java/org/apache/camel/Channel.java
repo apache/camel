@@ -85,6 +85,15 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
     void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception;
 
     /**
+     * Post initializes the channel.
+     *
+     * @param outputDefinition  the route definition the {@link Channel} represents
+     * @param routeContext      the route context
+     * @throws Exception is thrown if some error occurred
+     */
+    void postInitChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception;
+
+    /**
      * If the initialized output definition contained outputs (children) then we need to
      * set the child so we can leverage fine grained tracing
      *

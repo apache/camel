@@ -19,20 +19,17 @@ package org.apache.camel.component.jms.issues;
 import java.util.Date;
 import java.util.List;
 import javax.jms.ConnectionFactory;
-import javax.jms.Message;
 
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.component.jms.JmsBinding;
-import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ExchangeHelper;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -84,14 +81,11 @@ public class ActiveMQPropagateHeadersTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("activemq:test.a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        // lets set the custom JMS headers using the JMS API
-                        assertNotNull(ExchangeHelper.getBinding(exchange, JmsBinding.class));
-                        JmsMessage in = (JmsMessage) exchange.getIn();
-                        assertNotNull(in);
-                        Message inMessage = in.getJmsMessage();
-                        inMessage.setJMSReplyTo(replyQueue);
-                        inMessage.setJMSCorrelationID(correlationID);
-                        inMessage.setJMSType(messageType);
+                        // set the JMS headers
+                        Message in = exchange.getIn();
+                        in.setHeader("JMSReplyTo", replyQueue);
+                        in.setHeader("JMSCorrelationID", correlationID);
+                        in.setHeader("JMSType", messageType);
                     }
                 // must set option to preserve message QoS as we send an InOnly but put a JMSReplyTo
                 // that does not work well on the consumer side, as it would assume it should send a reply

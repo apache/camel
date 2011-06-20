@@ -183,7 +183,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     //-------------------------------------------------------------------------
 
     @Override
-    protected void performAssertions(Exchange actual) throws Exception {
+    protected void performAssertions(Exchange actual, Exchange copy) throws Exception {
         int receivedCount = receivedCounter.incrementAndGet();
         long index = receivedCount - 1;
         Exchange expected = createExchange(index);
@@ -191,13 +191,13 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         // now lets assert that they are the same
         if (log.isDebugEnabled()) {
             log.debug("Received message: {} (DataSet index={}) = {}",
-                    new Object[]{index, actual.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), actual});
+                    new Object[]{index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy});
         }
 
-        assertMessageExpected(index, expected, actual);
+        assertMessageExpected(index, expected, copy);
 
         if (reporter != null) {
-            reporter.process(actual);
+            reporter.process(copy);
         }
 
         if (consumeDelay > 0) {

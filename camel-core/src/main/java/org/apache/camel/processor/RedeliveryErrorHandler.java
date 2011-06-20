@@ -67,6 +67,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * Contains the current redelivery data
      */
     protected class RedeliveryData {
+        Exchange original;
         boolean sync = true;
         int redeliveryCounter;
         long redeliveryDelay;
@@ -103,7 +104,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         public Boolean call() throws Exception {
             // prepare for redelivery
-            prepareExchangeForRedelivery(exchange);
+            prepareExchangeForRedelivery(exchange, data);
 
             // letting onRedeliver be executed at first
             deliverToOnRedeliveryProcessor(exchange, data);
@@ -206,10 +207,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return processErrorHandler(exchange, callback, new RedeliveryData());
     }
 
+    protected Exchange defensiveCopyExchange(Exchange exchange) {
+        // TODO: Optimize to only copy if redelivery is possible/enabled
+        return ExchangeHelper.createCopy(exchange, true);
+    }
+
     /**
      * Process the exchange using redelivery error handling.
      */
     protected boolean processErrorHandler(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
+
+        // do a defensive copy of the original Exchange, which is needed for redelivery so we can ensure the
+        // original Exchange is being redelivered, and not a mutated Exchange
+        data.original = defensiveCopyExchange(exchange);
 
         // use looping to have redelivery attempts
         while (true) {
@@ -298,7 +308,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 }
 
                 // prepare for redelivery
-                prepareExchangeForRedelivery(exchange);
+                prepareExchangeForRedelivery(exchange, data);
 
                 // letting onRedeliver be executed
                 deliverToOnRedeliveryProcessor(exchange, data);
@@ -502,8 +512,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected void prepareExchangeForContinue(Exchange exchange, RedeliveryData data) {
         Exception caught = exchange.getException();
 
-        // continue is a kind of redelivery so reuse the logic to prepare
-        prepareExchangeForRedelivery(exchange);
+        // we continue so clear any exceptions
+        exchange.setException(null);
+        // clear rollback flags
+        exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
+        // reset cached streams so they can be read again
+        MessageHelper.resetStreamCache(exchange.getIn());
+
         // its continued then remove traces of redelivery attempted and caught exception
         exchange.getIn().removeHeader(Exchange.REDELIVERED);
         exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
@@ -520,15 +535,37 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         logFailedDelivery(false, false, true, exchange, msg, data, null);
     }
 
-    protected void prepareExchangeForRedelivery(Exchange exchange) {
+    protected void prepareExchangeForRedelivery(Exchange exchange, RedeliveryData data) {
         // okay we will give it another go so clear the exception so we can try again
         exchange.setException(null);
 
         // clear rollback flags
         exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
 
+        // TODO: We may want to store these as state on RedelieryData so we keep them in case end user messes with Exchange
+        // and then put these on the exchange when doing a redelivery / fault processor
+
+        // preserve these headers
+        Integer redeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
+        Integer redeliveryMaxCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_MAX_COUNTER, Integer.class);
+        Boolean redelivered = exchange.getIn().getHeader(Exchange.REDELIVERED, Boolean.class);
+
+        // we are redelivering so copy from original back to exchange
+        exchange.getIn().copyFrom(data.original.getIn());
+        exchange.setOut(null);
         // reset cached streams so they can be read again
         MessageHelper.resetStreamCache(exchange.getIn());
+
+        // put back headers
+        if (redeliveryCounter != null) {
+            exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
+        }
+        if (redeliveryMaxCounter != null) {
+            exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
+        }
+        if (redelivered != null) {
+            exchange.getIn().setHeader(Exchange.REDELIVERED, redelivered);
+        }
     }
 
     protected void handleException(Exchange exchange, RedeliveryData data) {

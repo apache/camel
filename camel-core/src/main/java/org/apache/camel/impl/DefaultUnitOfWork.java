@@ -83,6 +83,8 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             this.originalInMessage = exchange.getIn().copy();
         }
 
+        // TODO: Optimize to only copy if useOriginalMessage has been enabled
+
         // mark the creation time when this Exchange was created
         if (exchange.getProperty(Exchange.CREATED_TIMESTAMP) == null) {
             exchange.setProperty(Exchange.CREATED_TIMESTAMP, new Date());

@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.quartz;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -41,21 +36,7 @@ public class QuartzRouteTest extends CamelTestSupport {
 
         // lets test the receive worked
         resultEndpoint.assertIsSatisfied();
-
-        List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : list) {
-            Message in = exchange.getIn();
-            log.debug("Received: " + in + " with headers: " + in.getHeaders());
-            // should be quartz message
-            QuartzMessage qm = exchange.getIn(QuartzMessage.class);
-            assertNotNull(qm.getJobExecutionContext());
-
-            Iterator iterator = exchange.getIn().getBody(Iterator.class);
-            // the iterator should not have any values
-            assertFalse(iterator.hasNext());
-        }
     }
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() {

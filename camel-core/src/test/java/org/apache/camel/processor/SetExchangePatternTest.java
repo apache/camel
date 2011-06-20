@@ -17,7 +17,9 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -53,6 +55,48 @@ public class SetExchangePatternTest extends ContextTestSupport {
 
     public void testSetExchangePatternInOnly() throws Exception {
         assertMessageReceivedWithPattern("direct:testSetExchangePatternInOnly", ExchangePattern.InOnly);
+    }
+
+    public void testPreserveOldMEPInOut() throws Exception {
+        // the mock should get an InOut MEP
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").message(0).exchangePattern().isEqualTo(ExchangePattern.InOut);
+
+        // we send an InOnly
+        Exchange out = template.send("direct:testInOut", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+                exchange.setPattern(ExchangePattern.InOnly);
+            }
+        });
+
+        // the MEP should be preserved
+        assertNotNull(out);
+        assertEquals(ExchangePattern.InOnly, out.getPattern());
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testPreserveOldMEPInOnly() throws Exception {
+        // the mock should get an InOnly MEP
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").message(0).exchangePattern().isEqualTo(ExchangePattern.InOnly);
+
+        // we send an InOut
+        Exchange out = template.send("direct:testInOnly", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+                exchange.setPattern(ExchangePattern.InOut);
+            }
+        });
+
+        // the MEP should be preserved
+        assertNotNull(out);
+        assertEquals(ExchangePattern.InOut, out.getPattern());
+
+        assertMockEndpointsSatisfied();
     }
 
 

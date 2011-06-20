@@ -95,7 +95,7 @@ public class EnricherTest extends ContextTestSupport {
         });
         assertEquals("bar", exchange.getIn().getHeader("foo"));
         assertEquals("test:blah", exchange.getIn().getBody());
-        assertFalse(exchange.hasOut());
+        assertTrue(exchange.hasOut());
         assertNull(exchange.getException());
     }
 

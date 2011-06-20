@@ -35,7 +35,7 @@ public class ExchangePatternProcessor implements Processor {
     }
    
     public void process(Exchange exchange) throws Exception {
-        exchange.setPattern(exchangePattern);        
+        exchange.setPattern(exchangePattern);
     }
 
     @Override

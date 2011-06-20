@@ -32,6 +32,7 @@ import org.apache.camel.Service;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.TraceInterceptor;
 import org.apache.camel.processor.interceptor.Tracer;
@@ -89,6 +90,8 @@ public class DefaultChannel extends ServiceSupport implements Channel {
         // the errorHandler is already decorated with interceptors
         // so it contain the entire chain of processors, so we can safely use it directly as output
         // if no error handler provided we use the output
+        // TODO: Camel 3.0 we should determine the output dynamically at runtime instead of having the
+        // the error handlers, interceptors, etc. woven in at design time
         return errorHandler != null ? errorHandler : output;
     }
 
@@ -204,6 +207,10 @@ public class DefaultChannel extends ServiceSupport implements Channel {
             if (strategy instanceof Tracer) {
                 continue;
             }
+            // skip stream caching as it must be wrapped as outer most, which we do later
+            if (strategy instanceof StreamCaching) {
+                continue;
+            }
             // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
             Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {
@@ -225,6 +232,21 @@ public class DefaultChannel extends ServiceSupport implements Channel {
 
         // sets the delegate to our wrapped output
         output = target;
+    }
+
+    @Override
+    public void postInitChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
+        for (InterceptStrategy strategy : interceptors) {
+            // apply stream caching at the end as it should be outer most
+            if (strategy instanceof StreamCaching) {
+                if (errorHandler != null) {
+                    errorHandler = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, errorHandler, null);
+                } else {
+                    output = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, output, null);
+                }
+                break;
+            }
+        }
     }
 
     private InterceptStrategy getOrCreateTracer() {

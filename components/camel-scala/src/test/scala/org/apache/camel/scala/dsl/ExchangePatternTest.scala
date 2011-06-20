@@ -37,7 +37,7 @@ class ExchangePatternTest extends ScalaTestSupport {
     getMockEndpoint("mock:a").expectedMessageCount(1)
     getMockEndpoint("mock:a").expectedExchangePattern(InOnly)
     getMockEndpoint("mock:result").expectedMessageCount(1)
-    getMockEndpoint("mock:result").expectedExchangePattern(InOnly)
+    getMockEndpoint("mock:result").expectedExchangePattern(InOut)
 
     template.requestBody("direct:a", "Hello World")
 
@@ -48,14 +48,14 @@ class ExchangePatternTest extends ScalaTestSupport {
     getMockEndpoint("mock:b").expectedMessageCount(1)
     getMockEndpoint("mock:b").expectedExchangePattern(InOut)
     getMockEndpoint("mock:result").expectedMessageCount(1)
-    getMockEndpoint("mock:result").expectedExchangePattern(InOut)
+    getMockEndpoint("mock:result").expectedExchangePattern(InOnly)
 
     template.sendBody("direct:b", "Hello World")
 
     assertMockEndpointsSatisfied
   }
 
-  def testRequstInOut() = {
+  def testRequestInOut() = {
     getMockEndpoint("mock:b").expectedMessageCount(1)
     getMockEndpoint("mock:b").expectedExchangePattern(InOut)
     getMockEndpoint("mock:result").expectedMessageCount(1)

@@ -43,13 +43,13 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -984,7 +984,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             if (reporter != null) {
                 reporter.process(exchange);
             }
-            performAssertions(exchange);
+            // copy the exchange so the mock stores the copy and not the actual exchange
+            Exchange copy = ExchangeHelper.createCopy(exchange, true);
+            performAssertions(exchange, copy);
         } catch (Throwable e) {
             // must catch java.lang.Throwable as AssertionException extends java.lang.Error
             failures.add(e);
@@ -996,8 +998,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
     }
 
-    protected void performAssertions(Exchange exchange) throws Exception {
-        Message in = exchange.getIn();
+    /**
+     * Performs the assertions on the incoming exchange.
+     *
+     * @param exchange   the actual exchange
+     * @param copy       a copy of the exchange (only store this)
+     * @throws Exception can be thrown if something went wrong
+     */
+    protected void performAssertions(Exchange exchange, Exchange copy) throws Exception {
+        Message in = copy.getIn();
         Object actualBody = in.getBody();
 
         if (headerName != null) {
@@ -1005,7 +1014,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
 
         if (propertyName != null) {
-            actualProperty = exchange.getProperty(propertyName);
+            actualProperty = copy.getProperty(propertyName);
         }
 
         if (expectedBodyValues != null) {
@@ -1021,23 +1030,25 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         // let counter be 0 index-based in the logs
         if (LOG.isDebugEnabled()) {
-            String msg = getEndpointUri() + " >>>> " + counter + " : " + exchange + " with body: " + actualBody;
-            if (exchange.getIn().hasHeaders()) {
-                msg += " and headers:" + exchange.getIn().getHeaders();
+            String msg = getEndpointUri() + " >>>> " + counter + " : " + copy + " with body: " + actualBody;
+            if (copy.getIn().hasHeaders()) {
+                msg += " and headers:" + copy.getIn().getHeaders();
             }
             LOG.debug(msg);
         }
         ++counter;
 
         // record timestamp when exchange was received
-        exchange.setProperty(Exchange.RECEIVED_TIMESTAMP, new Date());
-        receivedExchanges.add(exchange);
+        copy.setProperty(Exchange.RECEIVED_TIMESTAMP, new Date());
+        receivedExchanges.add(copy);
 
         Processor processor = processors.get(getReceivedCounter()) != null
                 ? processors.get(getReceivedCounter()) : defaultProcessor;
 
         if (processor != null) {
             try {
+                // must process the incoming exchange and NOT the copy as the idea
+                // is the end user can manipulate the exchange
                 processor.process(exchange);
             } catch (Exception e) {
                 // set exceptions on exchange so we can throw exceptions to simulate errors

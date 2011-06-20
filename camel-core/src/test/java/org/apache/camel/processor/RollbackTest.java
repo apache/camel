@@ -66,8 +66,8 @@ public class RollbackTest extends ContextTestSupport {
         assertIsInstanceOf(RollbackExchangeException.class, out.getException());
         assertEquals("Should be marked as rollback", true, out.isRollbackOnly());
         // should not try to redeliver if exchange was marked as rollback only
-        assertEquals(0, out.getOut().getHeader(Exchange.REDELIVERY_COUNTER));
-        assertEquals(false, out.getOut().getHeader(Exchange.REDELIVERED));
+        assertEquals(0, out.getIn().getHeader(Exchange.REDELIVERY_COUNTER));
+        assertEquals(false, out.getIn().getHeader(Exchange.REDELIVERED));
     }
 
     @Override

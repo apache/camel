@@ -25,7 +25,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -157,20 +156,14 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
      * @return a new exchange
      */
     protected Exchange createNextExchange(Exchange previousExchange) {
-        Exchange answer = new DefaultExchange(previousExchange);
-        // we must use the same id as this is a snapshot strategy where Camel copies a snapshot
-        // before processing the next step in the pipeline, so we have a snapshot of the exchange
-        // just before. This snapshot is used if Camel should do redeliveries (re try) using
-        // DeadLetterChannel. That is why it's important the id is the same, as it is the *same*
-        // exchange being routed.
-        answer.setExchangeId(previousExchange.getExchangeId());
-
-        answer.getProperties().putAll(previousExchange.getProperties());
+        Exchange answer = previousExchange;
 
         // now lets set the input of the next exchange to the output of the
         // previous message if it is not null
-        answer.setIn(previousExchange.hasOut() 
-            ? previousExchange.getOut().copy() : previousExchange.getIn().copy());
+        if (answer.hasOut()) {
+            answer.setIn(answer.getOut());
+            answer.setOut(null);
+        }
         return answer;
     }
 

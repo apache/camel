@@ -36,6 +36,7 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
@@ -192,9 +193,15 @@ public final class ExchangeHelper {
      * @return the copy
      */
     public static Exchange createCopy(Exchange exchange, boolean preserveExchangeId) {
-        Exchange copy = exchange.copy();
+        Exchange copy = new DefaultExchange(exchange);
         if (preserveExchangeId) {
+            // must preserve exchange id
             copy.setExchangeId(exchange.getExchangeId());
+        }
+        copy.getProperties().putAll(exchange.getProperties());
+        copy.setIn(exchange.getIn().copy());
+        if (exchange.hasOut()) {
+            copy.setOut(exchange.getOut().copy());
         }
         return copy;
     }
@@ -211,6 +218,18 @@ public final class ExchangeHelper {
         // --------------------------------------------------------------------
         //  TODO: merge logic with that of copyResultsPreservePattern()
         // --------------------------------------------------------------------
+
+        if (result == source) {
+            // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
+            // and the result is not failed
+            if (result.getPattern() == ExchangePattern.InOptionalOut) {
+                // keep as is
+            } else if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
+                // copy IN to OUT as we expect a OUT response
+                result.getOut().copyFrom(source.getIn());
+            }
+            return;
+        }
 
         if (result != source) {
             result.setException(source.getException());
@@ -257,8 +276,15 @@ public final class ExchangeHelper {
         //  TODO: merge logic with that of copyResults()
         // --------------------------------------------------------------------
 
-        if (source == result) {
-            // no need to copy
+        if (result == source) {
+            // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
+            // and the result is not failed
+            if (result.getPattern() == ExchangePattern.InOptionalOut) {
+                // keep as is
+            } else if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
+                // copy IN to OUT as we expect a OUT response
+                result.getOut().copyFrom(source.getIn());
+            }
             return;
         }
 

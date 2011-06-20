@@ -31,7 +31,7 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
 
     public void testOnExceptionAlterMessageBeforeRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World123");
+        mock.expectedBodiesReceived("Hello World3");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -40,7 +40,7 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
 
     public void testOnExceptionAlterMessageWithHeadersBeforeRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World123");
+        mock.expectedBodiesReceived("Hello World3");
         mock.expectedHeaderReceived("foo", "123");
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");

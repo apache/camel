@@ -76,12 +76,21 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             throw new IllegalStateException("SendProcessor has not been started: " + this);
         }
 
+        // we should preserve existing MEP so remember old MEP
+        // if you want to permanently to change the MEP then use .setExchangePattern in the DSL
+        final ExchangePattern existingPattern = exchange.getPattern();
+
         // send the exchange to the destination using a producer
         producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
             public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
                 exchange = configureExchange(exchange, pattern);
                 log.debug(">>>> {} {}", destination, exchange);
-                producer.process(exchange);
+                try {
+                    producer.process(exchange);
+                } finally {
+                    // restore previous MEP
+                    exchange.setPattern(existingPattern);
+                }
                 return exchange;
             }
         });
@@ -92,12 +101,24 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             throw new IllegalStateException("SendProcessor has not been started: " + this);
         }
 
+        // we should preserve existing MEP so remember old MEP
+        // if you want to permanently to change the MEP then use .setExchangePattern in the DSL
+        final ExchangePattern existingPattern = exchange.getPattern();
+
         // send the exchange to the destination using a producer
         return producerCache.doInAsyncProducer(destination, exchange, pattern, callback, new AsyncProducerCallback() {
-            public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, Exchange exchange, ExchangePattern pattern, AsyncCallback callback) {
-                exchange = configureExchange(exchange, pattern);
+            public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, final Exchange exchange,
+                                             ExchangePattern pattern, final AsyncCallback callback) {
+                final Exchange target = configureExchange(exchange, pattern);
                 log.debug(">>>> {} {}", destination, exchange);
-                return AsyncProcessorHelper.process(asyncProducer, exchange, callback);
+                return AsyncProcessorHelper.process(asyncProducer, target, new AsyncCallback() {
+                    public void done(boolean doneSync) {
+                        // restore previous MEP
+                        target.setPattern(existingPattern);
+                        // signal we are done
+                        callback.done(doneSync);
+                    }
+                });
             }
         });
     }
