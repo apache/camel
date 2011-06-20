@@ -855,6 +855,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             // instead of using ProcessorDefinition.wrapInErrorHandler)
             try {
                 processor = builder.createErrorHandler(routeContext, processor);
+                // must start the error handler
+                ServiceHelper.startServices(processor);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
@@ -931,7 +933,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processors);
+        ServiceHelper.stopServices(processors, errorHandlers);
         errorHandlers.clear();
     }
 
