@@ -118,7 +118,7 @@ public class MulticastRedeliverTest extends ContextTestSupport {
                             assertFalse("Should not have OUT", exchange.hasOut());
                             assertNull(exchange.getException());
 
-                            // mutate IN body
+                            // mutate OUT body
                             exchange.getOut().setBody("Bye World");
 
                             counter++;

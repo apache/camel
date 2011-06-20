@@ -27,7 +27,6 @@ import org.apache.camel.spi.UnitOfWork;
  * associated to a parent {@link UnitOfWork}.
  *
  * @see SubUnitOfWorkProcessor
- * @see org.apache.camel.spi.UnitOfWorkCallback
  */
 public class ChildUnitOfWorkProcessor extends UnitOfWorkProcessor {
 
