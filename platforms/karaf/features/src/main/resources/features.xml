@@ -88,11 +88,8 @@
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-io/${commons-io-bundle-version}</bundle>
     <feature version='${pom.version}'>camel-spring</feature>
     <feature>jetty</feature>
-    <bundle>mvn:org.apache.camel/camel-cxf/${pom.version}</bundle>
-  </feature>
-  <feature name='camel-cxf-transport' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <feature>camel-cxf</feature>
     <bundle>mvn:org.apache.camel/camel-cxf-transport/${pom.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-cxf/${pom.version}</bundle>
   </feature>
   <feature name='camel-cache' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
