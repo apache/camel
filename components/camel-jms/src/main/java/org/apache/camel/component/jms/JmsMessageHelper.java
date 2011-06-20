@@ -227,7 +227,7 @@ public final class JmsMessageHelper {
      * @throws javax.jms.JMSException is thrown if error setting the delivery mode
      */
     public static void setJMSDeliveryMode(Exchange exchange, Message message, Object deliveryMode) throws JMSException {
-        int mode = Message.DEFAULT_DELIVERY_MODE;
+        Integer mode = null;
 
         if (deliveryMode instanceof String) {
             String s = (String) deliveryMode;
@@ -252,8 +252,10 @@ public final class JmsMessageHelper {
             }
         }
 
-        message.setJMSDeliveryMode(mode);
-        message.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, mode);
+        if (mode != null) {
+            message.setJMSDeliveryMode(mode);
+            message.setIntProperty(JmsConstants.JMS_DELIVERY_MODE, mode);
+        }
     }
 
 }

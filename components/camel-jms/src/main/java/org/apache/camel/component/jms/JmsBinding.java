@@ -400,7 +400,10 @@ public class JmsBinding {
 
     protected Message createJmsMessage(Exception cause, Session session) throws JMSException {
         LOG.trace("Using JmsMessageType: {}", Object);
-        return session.createObjectMessage(cause);
+        Message answer = session.createObjectMessage(cause);
+        // ensure default delivery mode is used by default
+        answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
+        return answer;
     }
 
     protected Message createJmsMessage(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) throws JMSException {
@@ -410,7 +413,10 @@ public class JmsBinding {
         if (endpoint != null && endpoint.isTransferExchange()) {
             LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
             Serializable holder = DefaultExchangeHolder.marshal(exchange);
-            return session.createObjectMessage(holder);
+            Message answer = session.createObjectMessage(holder);
+            // ensure default delivery mode is used by default
+            answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
+            return answer;
         }
 
         // use a custom message converter
@@ -434,7 +440,10 @@ public class JmsBinding {
         // create the JmsMessage based on the type
         if (type != null) {
             LOG.trace("Using JmsMessageType: {}", type);
-            return createJmsMessageForType(exchange, body, headers, session, context, type);
+            Message answer = createJmsMessageForType(exchange, body, headers, session, context, type);
+            // ensure default delivery mode is used by default
+            answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
+            return answer;
         }
 
         // warn if the body could not be mapped
@@ -447,7 +456,10 @@ public class JmsBinding {
         }
 
         // return a default message
-        return session.createMessage();
+        Message answer = session.createMessage();
+        // ensure default delivery mode is used by default
+        answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);
+        return answer;
     }
 
     /**

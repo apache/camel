@@ -118,10 +118,10 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo")
-                    .to("log:foo")
                     .to("activemq:queue:bar?preserveMessageQos=true");
 
-                from("activemq:queue:bar").to("mock:bar");
+                from("activemq:queue:bar")
+                    .to("mock:bar");
             }
         };
     }

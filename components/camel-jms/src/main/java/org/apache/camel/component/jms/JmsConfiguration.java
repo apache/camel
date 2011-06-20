@@ -243,7 +243,8 @@ public class JmsConfiguration implements Cloneable {
                     // remove the temporary property
                     JmsMessageHelper.removeJmsProperty(message, JmsConstants.JMS_DELIVERY_MODE);
                 } else {
-                    deliveryMode = this.getDeliveryMode();
+                    // use the existing delivery mode from the message
+                    deliveryMode = message.getJMSDeliveryMode();
                 }
 
                 // need to log just before so the message is 100% correct when logged
