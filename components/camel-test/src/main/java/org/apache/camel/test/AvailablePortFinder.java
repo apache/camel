@@ -60,7 +60,7 @@ public final class AvailablePortFinder {
      *
      * @throws NoSuchElementException if there are no ports available
      */
-    public synchronized static int getNextAvailable() {
+    public static synchronized int getNextAvailable() {
         int next = getNextAvailable(currentMinPort.get());
         currentMinPort.set(next + 1);
         return next;
@@ -72,7 +72,7 @@ public final class AvailablePortFinder {
      * @param fromPort the currentMinPort to scan for availability
      * @throws NoSuchElementException if there are no ports available
      */
-    public synchronized static int getNextAvailable(int fromPort) {
+    public static synchronized int getNextAvailable(int fromPort) {
         if (fromPort < currentMinPort.get() || fromPort > MAX_PORT_NUMBER) {
             throw new IllegalArgumentException("Invalid start currentMinPort: " + fromPort);
         }
