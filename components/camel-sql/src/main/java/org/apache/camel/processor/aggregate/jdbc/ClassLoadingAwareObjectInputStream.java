@@ -23,25 +23,29 @@ import java.io.ObjectStreamClass;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 
+import org.apache.camel.CamelContext;
+
 /**
  * This class is copied from the Apache ActiveMQ project.
  */
 public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
 
-    private static final ClassLoader FALLBACK_CLASS_LOADER = ClassLoadingAwareObjectInputStream.class.getClassLoader();
     /**
      * <p>Maps primitive type names to corresponding class objects.</p>
      */
     private static final HashMap<String, Class> PRIM_CLASSES = new HashMap<String, Class>(8, 1.0F);
+    
+    private CamelContext camelContext;
 
-    public ClassLoadingAwareObjectInputStream(InputStream in) throws IOException {
+    public ClassLoadingAwareObjectInputStream(CamelContext camelContext, InputStream in) throws IOException {
         super(in);
+        this.camelContext = camelContext;
     }
 
     @Override
     protected Class<?> resolveClass(ObjectStreamClass classDesc) throws IOException, ClassNotFoundException {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        return load(classDesc.getName(), cl);
+        return camelContext.getClassResolver().resolveClass(classDesc.getName(), cl);
     }
 
     @Override
@@ -49,26 +53,13 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
         Class[] cinterfaces = new Class[interfaces.length];
         for (int i = 0; i < interfaces.length; i++) {
-            cinterfaces[i] = load(interfaces[i], cl);
+            cinterfaces[i] = camelContext.getClassResolver().resolveClass(interfaces[i], cl);
         }
 
         try {
             return Proxy.getProxyClass(cinterfaces[0].getClassLoader(), cinterfaces);
         } catch (IllegalArgumentException e) {
             throw new ClassNotFoundException(null, e);
-        }
-    }
-
-    private Class load(String className, ClassLoader cl) throws ClassNotFoundException {
-        try {
-            return Class.forName(className, false, cl);
-        } catch (ClassNotFoundException e) {
-            final Class clazz = PRIM_CLASSES.get(className);
-            if (clazz != null) {
-                return clazz;
-            } else {
-                return Class.forName(className, false, FALLBACK_CLASS_LOADER);
-            }
         }
     }
 

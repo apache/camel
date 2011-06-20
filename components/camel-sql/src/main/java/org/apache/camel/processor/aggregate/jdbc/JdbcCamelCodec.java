@@ -51,7 +51,7 @@ public final class JdbcCamelCodec {
     }
 
     public Exchange unmarshallExchange(CamelContext camelContext, byte[] buffer) throws IOException, ClassNotFoundException {
-        DefaultExchangeHolder pe = decode(buffer);
+        DefaultExchangeHolder pe = decode(camelContext, buffer);
         Exchange answer = new DefaultExchange(camelContext);
         DefaultExchangeHolder.unmarshal(answer, pe);
         // restore the from endpoint
@@ -74,9 +74,9 @@ public final class JdbcCamelCodec {
         return data;
     }
 
-    private DefaultExchangeHolder decode(byte[] dataIn) throws IOException, ClassNotFoundException {
+    private DefaultExchangeHolder decode(CamelContext camelContext, byte[] dataIn) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bytesIn = new ByteArrayInputStream(dataIn);
-        ObjectInputStream objectIn = new ClassLoadingAwareObjectInputStream(bytesIn);
+        ObjectInputStream objectIn = new ClassLoadingAwareObjectInputStream(camelContext, bytesIn);
         Object obj = objectIn.readObject();
         return (DefaultExchangeHolder) obj;
     }
