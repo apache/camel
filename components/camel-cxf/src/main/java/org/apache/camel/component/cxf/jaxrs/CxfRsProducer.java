@@ -209,8 +209,12 @@ public class CxfRsProducer extends DefaultProducer {
                 }
             }
         }
+        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
+        CxfRsBinding binding = cxfRsEndpoint.getBinding();
         if (exchange.getPattern().isOutCapable()) {
-            exchange.getOut().setBody(response);
+            LOG.trace("Response body = {}", response);
+            exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
+            exchange.getOut().setHeaders(binding.bindResponseHeadersToCamelHeaders(response, exchange));
         }
     }
     
