@@ -79,6 +79,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertNotNull("The response should not be null ", response);
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
+        assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
         // END SNIPPET: ProxyExample     
     }
     
@@ -105,6 +106,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertNotNull("The response should not be null ", response);
         assertEquals("Get a wrong customer id ", String.valueOf(response.get(0).getId()), "113");
         assertEquals("Get a wrong customer name", response.get(0).getName(), "Dan");
+        assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
     
     @Test
@@ -134,6 +136,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertNotNull("The response should not be null ", response);
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
+        assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
         // END SNIPPET: HttpExample 
     }
     
@@ -159,6 +162,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertNotNull("The response should not be null ", response);
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
+        assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
     
     @Test
@@ -242,10 +246,10 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         
         // get the response message 
         Customer response = (Customer) exchange.getOut().getBody();
-        System.out.println("Response is " + exchange.getOut().getHeaders());
         assertNotNull("The response should not be null ", response);
         assertTrue("Get a wrong customer id ", response.getId() != 8888);
         assertEquals("Get a wrong customer name", response.getName(), "Willem");
+        assertEquals("Get a wrong response code", 201, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
     }
     
     @Test

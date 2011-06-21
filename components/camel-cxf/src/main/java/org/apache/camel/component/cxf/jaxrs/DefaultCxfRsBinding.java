@@ -202,8 +202,6 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
                 }
             }
             
-            // put response code in Camel message header
-            answer.put(Exchange.HTTP_RESPONSE_CODE, ((Response)response).getStatus());
         }
         
         return answer;

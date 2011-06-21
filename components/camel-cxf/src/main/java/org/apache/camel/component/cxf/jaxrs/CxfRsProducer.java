@@ -148,6 +148,7 @@ public class CxfRsProducer extends DefaultProducer {
                     // Get the collection member type first
                     Type[] actualTypeArguments = ((ParameterizedType) genericType).getActualTypeArguments();
                     response = client.invokeAndGetCollection(httpMethod, body, (Class) actualTypeArguments[0]);
+                    
                 } else {
                     throw new CamelExchangeException("Header " + CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE + " not found in message", exchange);
                 }
@@ -155,6 +156,7 @@ public class CxfRsProducer extends DefaultProducer {
                 response = client.invoke(httpMethod, body, responseClass);
             }
         }
+        int statesCode = client.getResponse().getStatus();
         //Throw exception on a response > 207
         //http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
         if (throwException) {
@@ -170,6 +172,7 @@ public class CxfRsProducer extends DefaultProducer {
             LOG.trace("Response body = {}", response);
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getOut().setHeaders(binding.bindResponseHeadersToCamelHeaders(response, exchange));
+            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
         }
     }
 
@@ -200,7 +203,7 @@ public class CxfRsProducer extends DefaultProducer {
         // Will send out the message to
         // Need to deal with the sub resource class
         Object response = method.invoke(target, parameters);
-
+        int statesCode = target.getResponse().getStatus();
         if (throwException) {
             if (response instanceof Response) {
                 Integer respCode = ((Response) response).getStatus();
@@ -211,10 +214,12 @@ public class CxfRsProducer extends DefaultProducer {
         }
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
         CxfRsBinding binding = cxfRsEndpoint.getBinding();
+        
         if (exchange.getPattern().isOutCapable()) {
             LOG.trace("Response body = {}", response);
             exchange.getOut().setBody(binding.bindResponseToCamelBody(response, exchange));
             exchange.getOut().setHeaders(binding.bindResponseHeadersToCamelHeaders(response, exchange));
+            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
         }
     }
     
