@@ -39,6 +39,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import com.sun.jersey.api.view.Viewable;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
@@ -47,7 +49,6 @@ import org.apache.camel.view.RouteDotGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.jersey.api.view.Viewable;
 
 /**
  * A single Camel Route which is used to implement one or more

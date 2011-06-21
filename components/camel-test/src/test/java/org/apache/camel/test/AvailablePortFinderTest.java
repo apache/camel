@@ -16,10 +16,10 @@
  */
 package org.apache.camel.test;
 
+import java.net.ServerSocket;
+
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.net.ServerSocket;
 
 public class AvailablePortFinderTest {
 
