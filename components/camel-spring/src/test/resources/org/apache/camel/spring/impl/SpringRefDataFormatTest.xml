@@ -22,27 +22,29 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- this is our custom data format implementation -->
-    <bean id="reverse" class="org.apache.camel.impl.RefDataFormatTest$MyReverseDataFormat"/>
+  <!-- START SNIPPET: e1 -->
+  <!-- this is our custom data format implementation -->
+  <bean id="reverse" class="org.apache.camel.impl.RefDataFormatTest$MyReverseDataFormat"/>
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <from uri="direct:a"/>
-            <marshal>
-                <!-- refer to my custom data format -->
-                <custom ref="reverse"/>
-            </marshal>
-            <to uri="mock:a"/>
-        </route>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <from uri="direct:a"/>
+      <marshal>
+        <!-- refer to my custom data format -->
+        <custom ref="reverse"/>
+      </marshal>
+      <to uri="mock:a"/>
+    </route>
 
-        <route>
-            <from uri="direct:b"/>
-            <unmarshal>
-                <!-- refer to my custom data format -->
-                <custom ref="reverse"/>
-            </unmarshal>
-            <to uri="mock:b"/>
-        </route>
-    </camelContext>
+    <route>
+      <from uri="direct:b"/>
+      <unmarshal>
+        <!-- refer to my custom data format -->
+        <custom ref="reverse"/>
+      </unmarshal>
+      <to uri="mock:b"/>
+    </route>
+  </camelContext>
+  <!-- END SNIPPET: e1 -->
 
 </beans>

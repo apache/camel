@@ -34,7 +34,7 @@ import org.apache.camel.spi.DataFormat;
  */
 public class DataFormatServiceTest extends ContextTestSupport {
 
-    private final MyDataFormat my = new MyDataFormat();
+    protected final MyDataFormat my = new MyDataFormat();
 
     public void testMarshal() throws Exception {
         assertEquals(true, my.isStarted());
@@ -73,13 +73,19 @@ public class DataFormatServiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // START SNIPPET: e1
+                // marshal using our custom data format. (my is an instance of MyDataFormat)
                 from("direct:a").marshal(my).to("mock:a");
+
+                // unmarshal using our custom data format.
                 from("direct:b").unmarshal(my).to("mock:b");
+                // END SNIPPET: e1
             }
         };
     }
 
-    private class MyDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
+    // START SNIPPET: e2
+    public static class MyDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
         private CamelContext camelContext;
 
@@ -109,4 +115,5 @@ public class DataFormatServiceTest extends ContextTestSupport {
             // noop
         }
     }
+    // END SNIPPET: e2
 }

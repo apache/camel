@@ -57,13 +57,20 @@ public class RefDataFormatTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").marshal().custom("reverse").to("mock:a");
+                // START SNIPPET: e1
+                from("direct:a")
+                    .marshal().custom("reverse")
+                    .to("mock:a");
 
-                from("direct:b").unmarshal().custom("reverse").to("mock:b");
+                from("direct:b")
+                    .unmarshal().custom("reverse")
+                    .to("mock:b");
+                // END SNIPPET: e1
             }
         };
     }
 
+    // START SNIPPET: e2
     public static final class MyReverseDataFormat implements DataFormat {
 
         public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -87,5 +94,6 @@ public class RefDataFormatTest extends ContextTestSupport {
             return sb.toString();
         }
     }
+    // END SNIPPET: e2
 
 }
