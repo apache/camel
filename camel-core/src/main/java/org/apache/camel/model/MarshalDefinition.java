@@ -48,7 +48,6 @@ import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -121,7 +120,6 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         return ref;
     }
     
-    @Required
     public void setRef(String ref) {
         this.ref = ref;
     }
