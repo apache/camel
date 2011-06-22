@@ -23,8 +23,8 @@
 	<parent>
 		<groupId>org.apache.camel</groupId>
 		<artifactId>examples</artifactId>
-                <version>2.8-SNAPSHOT</version>
-                <relativePath>..</relativePath>
+        <version>2.8-SNAPSHOT</version>
+        <relativePath>..</relativePath>
 	</parent>
 
 	<artifactId>camel-example-cxf-osgi</artifactId>
@@ -124,7 +124,6 @@
 							org.apache.cxf.transport.http,
 							org.apache.cxf.transport.http.policy,
 							org.apache.cxf.transport.http_jetty,
-							org.apache.cxf.transport.http_osgi,
 							org.apache.cxf.transport.jms,
 							org.apache.cxf.transports.http,
 							org.apache.cxf.workqueue,
