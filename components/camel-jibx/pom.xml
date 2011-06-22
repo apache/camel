@@ -67,55 +67,42 @@
             <artifactId>log4j</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jibx</groupId>
-            <artifactId>jibx-bind</artifactId>
-            <version>${jibx-version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <!-- Use Maven Antrun plugin + JiBX Ant task to perform the binding
-             of the test classes. We will use Maven plugin when following issue
-             will be fixed - http://jira.codehaus.org/browse/JIBX-355 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <phase>process-test-classes</phase>
+    <!-- Use JiBX plugin to perform the binding of the test classes. -->
+    <!-- A profile is used to allow for skipping of the unit tests   -->
+    <profiles>
+        <profile>
+            <id>jibx-for-unit-tests</id>
+            <activation>
+                <property>
+                    <name>!maven.test.skip</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jibx</groupId>
+                        <artifactId>maven-jibx-plugin</artifactId>
+                        <version>1.2.3</version>
                         <configuration>
-                            <target>
-                                <taskdef name="bind" classname="org.jibx.binding.ant.CompileTask">
-                                    <classpath refid="maven.test.classpath" />
-                                </taskdef>
-                                <bind>
-                                    <classpath>
-                                        <pathelement path="target/test-classes" />
-                                    </classpath>
-                                    <bindingfileset dir="src/test/resources">
-                                        <include name="**/*-jibx.xml" />
-                                    </bindingfileset>
-                                </bind>
-                            </target>
+                            <bindingDirectory>src/test/resources</bindingDirectory>
+                            <includeSchemaBindings>
+                                <includeSchemaBinding>**/*-jibx.xml</includeSchemaBinding>
+                            </includeSchemaBindings>
                         </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.ant</groupId>
-                        <artifactId>ant</artifactId>
-                        <version>1.8.1</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-    </build>
+                        <executions>
+                            <execution>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>test-bind</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
