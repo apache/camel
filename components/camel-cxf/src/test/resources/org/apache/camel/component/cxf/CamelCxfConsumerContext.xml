@@ -24,6 +24,7 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+   <import resource="classpath:META-INF/cxf/cxf.xml"/>
    
    <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9003/CamelContext/RouterPort"
     		serviceClass="org.apache.hello_world_soap_http.GreeterImpl">
