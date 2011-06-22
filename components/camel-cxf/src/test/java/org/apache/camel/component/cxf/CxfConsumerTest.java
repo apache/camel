@@ -63,7 +63,7 @@ public class CxfConsumerTest extends CamelTestSupport {
                         assertNotNull("Should get the cxfMessage instance from message header", cxfMessage);
                         ServletRequest request = (ServletRequest)cxfMessage.get("HTTP.REQUEST");
                         assertNotNull("Should get the ServletRequest", request);
-                        assertNotNull("Should get the RemoteAddress" + request.getRemoteAddr());
+                        assertNotNull("Should get the RemoteAddress", request.getRemoteAddr());
                         // Get the parameter list
                         List<?> parameter = in.getBody(List.class);
                         // Get the operation name
