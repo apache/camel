@@ -42,17 +42,21 @@ public class CxfNamespaceHandler implements NamespaceHandler {
     }
 
     public Metadata parse(Element element, ParserContext context) {
-        Thread.currentThread().setContextClassLoader(BlueprintBus.class.getClassLoader());
-        String s = element.getLocalName();
-        if ("cxfEndpoint".equals(s)) {
-            return new EndpointDefinitionParser().parse(element, context);
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        Metadata answer = null;
+        try {
+            Thread.currentThread().setContextClassLoader(BlueprintBus.class.getClassLoader());
+            String s = element.getLocalName();
+            if ("cxfEndpoint".equals(s)) {
+                answer = new EndpointDefinitionParser().parse(element, context);
+            }
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
-        
-        return null;
+        return answer;
     }
 
     public ComponentMetadata decorate(Node node, ComponentMetadata componentMetadata, ParserContext parserContext) {
-        System.out.println("Decorate the node " + node + " " + componentMetadata);
         return null;
     }
 }
