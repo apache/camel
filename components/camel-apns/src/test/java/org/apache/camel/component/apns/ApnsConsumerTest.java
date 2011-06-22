@@ -53,7 +53,7 @@ public class ApnsConsumerTest extends CamelTestSupport {
         server.stop();
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = 10000)
     public void testConsumer() throws Exception {
 
         byte[] deviceTokenBytes = ApnsUtils.createRandomDeviceTokenBytes();
