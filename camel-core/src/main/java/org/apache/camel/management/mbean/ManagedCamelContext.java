@@ -17,11 +17,13 @@
 package org.apache.camel.management.mbean;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.model.RouteDefinition;
@@ -236,6 +238,42 @@ public class ManagedCamelContext {
 
         // add will remove existing route first
         context.addRouteDefinitions(def.getRoutes());
+    }
+
+    /**
+     * Creates the endpoint by the given uri
+     *
+     * @param uri uri of endpoint to create
+     * @return <tt>true</tt> if a new endpoint was created, <tt>false</tt> if the endpoint already existed
+     * @throws Exception is thrown if error occurred
+     */
+    @ManagedOperation(description = "Creates the endpoint by the given uri")
+    public boolean createEndpoint(String uri) throws Exception {
+        if (context.hasEndpoint(uri) != null) {
+            // endpoint already exists
+            return false;
+        }
+        // create new endpoint by just getting it
+        context.getEndpoint(uri);
+        return true;
+    }
+
+    /**
+     * Removes the endpoint by the given pattern
+     *
+     * @param pattern the pattern
+     * @return number of endpoints removed
+     * @throws Exception is thrown if error occurred
+     * @see CamelContext#removeEndpoints(String)
+     */
+    @ManagedOperation(description = "Removes endpoints by the given pattern")
+    public int removeEndpoints(String pattern) throws Exception {
+        Collection<Endpoint> removed = context.removeEndpoints(pattern);
+        if (removed == null) {
+            return 0;
+        } else {
+            return removed.size();
+        }
     }
 
 }
