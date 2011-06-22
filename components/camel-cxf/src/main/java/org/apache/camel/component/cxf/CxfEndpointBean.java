@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,6 @@
 package org.apache.camel.component.cxf;
 
 import java.util.List;
-
 import javax.xml.ws.handler.Handler;
 
 import org.apache.cxf.BusFactory;
@@ -27,9 +26,8 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.NamedBean;
 
-public class CxfEndpointBean extends AbstractServiceFactory
-    implements DisposableBean, BeanNameAware, NamedBean {
-    
+public class CxfEndpointBean extends AbstractServiceFactory implements DisposableBean, BeanNameAware, NamedBean {
+
     private List<Handler> handlers;
     private List<String> schemaLocations;
     private String beanName;
@@ -37,15 +35,15 @@ public class CxfEndpointBean extends AbstractServiceFactory
     public CxfEndpointBean() {
         this(new ReflectionServiceFactoryBean());
     }
-    
+
     public CxfEndpointBean(ReflectionServiceFactoryBean factory) {
         setServiceFactory(factory);
     }
-    
+
     public List<Handler> getHandlers() {
         return handlers;
     }
-    
+
     public void setHandlers(List<Handler> handlers) {
         this.handlers = handlers;
     }
@@ -71,5 +69,4 @@ public class CxfEndpointBean extends AbstractServiceFactory
     public List<String> getSchemaLocations() {
         return schemaLocations;
     }
-
 }

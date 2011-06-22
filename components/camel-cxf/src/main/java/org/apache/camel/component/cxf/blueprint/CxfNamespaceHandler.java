@@ -51,7 +51,8 @@ public class CxfNamespaceHandler implements NamespaceHandler {
                 answer = new EndpointDefinitionParser().parse(element, context);
             }
         } finally {
-            Thread.currentThread().setContextClassLoader(oldClassLoader);
+            //TODO https://issues.apache.org/jira/browse/CAMEL-4137
+            //Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
         return answer;
     }

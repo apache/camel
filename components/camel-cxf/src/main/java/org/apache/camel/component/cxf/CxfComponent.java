@@ -28,30 +28,27 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.cxf.message.Message;
 
 /**
- * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a> 
- * 
- * @version 
+ * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a>
  */
 public class CxfComponent extends HeaderFilterStrategyComponent {
-        
+
     public CxfComponent() {
     }
 
     public CxfComponent(CamelContext context) {
         super(context);
     }
-    
+
     /**
-     * Create a {@link CxfEndpoint} which, can be a Spring bean endpoint having 
+     * Create a {@link CxfEndpoint} which, can be a Spring bean endpoint having
      * URI format cxf:bean:<i>beanId</i> or transport address endpoint having URI format
-     * cxf://<i>transportAddress</i>. 
+     * cxf://<i>transportAddress</i>.
      */
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, 
-            Map<String, Object> parameters) throws Exception {
-        
-        CxfEndpoint result;
-        
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+
+        CxfEndpoint result = null;
+
         if (remaining.startsWith(CxfConstants.SPRING_CONTEXT_ENDPOINT)) {
             // Get the bean from the Spring context
             String beanId = remaining.substring(CxfConstants.SPRING_CONTEXT_ENDPOINT.length());
@@ -59,27 +56,29 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
                 beanId = beanId.substring(2);
             }
 
-            CxfEndpointBean bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, 
-                    CxfEndpointBean.class);
+            Object bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, Object.class);
+            if (bean instanceof CxfEndpointBean) {
+                CxfEndpointBean configBean = (CxfEndpointBean) bean;
+                result = new CxfSpringEndpoint(this, configBean);
 
-            result = new CxfSpringEndpoint(this, bean);
-           
-            // Apply Spring bean properties (including # notation referenced bean).  Note that the
-            // Spring bean properties values can be overridden by property defined in URI query.
-            // The super class (DefaultComponent) will invoke "setProperties" after this method 
-            // with to apply properties defined by URI query. 
-            if (bean.getProperties() != null) {
-                Map<String, Object> copy = new HashMap<String, Object>();
-                copy.putAll(bean.getProperties());     
-                setProperties(result, copy);      
-                result.setMtomEnabled(Boolean.valueOf((String)copy.get(Message.MTOM_ENABLED)));
+                // Apply Spring bean properties (including # notation referenced bean).  Note that the
+                // Spring bean properties values can be overridden by property defined in URI query.
+                // The super class (DefaultComponent) will invoke "setProperties" after this method
+                // with to apply properties defined by URI query.
+                if (configBean.getProperties() != null) {
+                    Map<String, Object> copy = new HashMap<String, Object>();
+                    copy.putAll(configBean.getProperties());
+                    setProperties(result, copy);
+                    result.setMtomEnabled(Boolean.valueOf((String) copy.get(Message.MTOM_ENABLED)));
+                }
+            } else if (bean instanceof CxfBlueprintEndpoint) {
+                result = (CxfBlueprintEndpoint) bean;
             }
-            
         } else {
             // endpoint URI does not specify a bean
             result = new CxfEndpoint(remaining, this);
         }
-        
+
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
 
@@ -88,16 +87,15 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         if (properties != null) {
             result.setProperties(properties);
             // set the properties of MTOM
-            result.setMtomEnabled(Boolean.valueOf((String)properties.get(Message.MTOM_ENABLED)));
+            result.setMtomEnabled(Boolean.valueOf((String) properties.get(Message.MTOM_ENABLED)));
         }
 
         return result;
     }
-    
+
     @Override
     protected void afterConfiguration(String uri, String remaining, Endpoint endpoint, Map<String, Object> parameters) throws Exception {
         CxfEndpoint cxfEndpoint = (CxfEndpoint) endpoint;
         cxfEndpoint.updateEndpointUri(uri);
     }
-        
 }

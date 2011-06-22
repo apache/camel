@@ -51,9 +51,9 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
     private BundleContext bundleContext;
     private BlueprintCamelContext blueprintCamelContext;
 
-    public CxfBlueprintEndpoint(String address, BlueprintCamelContext context) {
-        super(address, context);
-        this.blueprintCamelContext = context;
+    public CxfBlueprintEndpoint(String address) {
+        super(address);
+
     }
 
     public List<Handler> getHandlers() {
