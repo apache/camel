@@ -53,17 +53,127 @@
     <dependency>
       <groupId>org.apache.abdera</groupId>
       <artifactId>abdera-core</artifactId>
-      <version>0.4.0-incubating</version>
+      <version>${abdera-version}</version>
+      <exclusions>
+          <exclusion>
+              <groupId>org.apache.geronimo.specs</groupId>
+              <artifactId>geronimo-activation_1.0.2_spec</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>org.apache.geronimo.specs</groupId>
+              <artifactId>geronimo-stax-api_1.0_spec</artifactId>
+          </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.abdera</groupId>
       <artifactId>abdera-parser</artifactId>
-      <version>0.4.0-incubating</version>
+      <version>${abdera-version}</version>
+      <exclusions>
+          <exclusion>
+              <groupId>javax.mail</groupId>
+              <artifactId>mail</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>xml-apis</groupId>
+              <artifactId>xml-apis</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>stax</groupId>
+              <artifactId>stax-api</artifactId>
+          </exclusion>
+          <exclusion>
+              <artifactId>xmlParserAPIs</artifactId>
+              <groupId>xerces</groupId>
+          </exclusion>
+          <exclusion>
+              <artifactId>xercesImpl</artifactId>
+              <groupId>xerces</groupId>
+          </exclusion>
+          <exclusion>
+              <artifactId>xom</artifactId>
+              <groupId>xom</groupId>
+          </exclusion>
+          <exclusion>
+              <artifactId>xalan</artifactId>
+              <groupId>xalan</groupId>
+          </exclusion>
+          <exclusion>
+              <artifactId>xml-apis</artifactId>
+              <groupId>xml-apis</groupId>
+          </exclusion>
+          <exclusion>
+              <groupId>org.codehaus.woodstox</groupId>
+              <artifactId>wstx-asl</artifactId>
+          </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+        <groupId>org.apache.ws.commons.axiom</groupId>
+        <artifactId>axiom-api</artifactId>
+        <version>${axiom-version}</version>
+        <exclusions>
+            <exclusion>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>stax</groupId>
+                <artifactId>stax-api</artifactId>
+            </exclusion>
+            <exclusion>
+                <artifactId>xmlParserAPIs</artifactId>
+                <groupId>xerces</groupId>
+            </exclusion>
+            <exclusion>
+                <artifactId>xercesImpl</artifactId>
+                <groupId>xerces</groupId>
+            </exclusion>
+            <exclusion>
+                <artifactId>xom</artifactId>
+                <groupId>xom</groupId>
+            </exclusion>
+            <exclusion>
+                <artifactId>xalan</artifactId>
+                <groupId>xalan</groupId>
+            </exclusion>
+            <exclusion>
+                <artifactId>xml-apis</artifactId>
+                <groupId>xml-apis</groupId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.codehaus.woodstox</groupId>
+                <artifactId>wstx-asl</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.abdera</groupId>
-      <artifactId>abdera-extensions-main</artifactId>
-      <version>0.4.0-incubating</version>
+        <groupId>org.apache.ws.commons.axiom</groupId>
+        <artifactId>axiom-impl</artifactId>
+        <version>${axiom-version}</version>
+        <exclusions>
+            <exclusion>
+                <groupId>javax.mail</groupId>
+                <artifactId>mail</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>stax</groupId>
+                <artifactId>stax-api</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.codehaus.woodstox</groupId>
+                <artifactId>wstx-asl</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
 
     <!-- testing -->
