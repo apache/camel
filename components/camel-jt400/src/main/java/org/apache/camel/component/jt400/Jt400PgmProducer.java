@@ -154,4 +154,21 @@ public class Jt400PgmProducer extends DefaultProducer {
         }
         return outputMsg.toString();
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (!getISeriesEndpoint().getiSeries().isConnected()) {
+            LOG.info("Connecting to " + getISeriesEndpoint());
+            getISeriesEndpoint().getiSeries().connectService(AS400.COMMAND);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (getISeriesEndpoint().getiSeries().isConnected()) {
+            LOG.info("Disconnecting from " + getISeriesEndpoint());
+            getISeriesEndpoint().getiSeries().disconnectAllServices();
+        }
+    }
+
 }
