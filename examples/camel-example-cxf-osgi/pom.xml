@@ -39,10 +39,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-cxf</artifactId>
 		</dependency>
 		<dependency>
@@ -140,4 +136,35 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+	    <profile>
+			<id>spring</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+			<build>
+				<resources>
+					<resource>
+						<directory>${basedir}/src/profiles/spring</directory>
+					</resource>
+					<resource>
+						<directory>${basedir}/src/main/resources</directory>
+					</resource>
+				</resources>
+		    </build>
+		</profile>
+		<profile>
+			<id>blueprint</id>
+			<build>
+				<resources>
+					<resource>
+						<directory>${basedir}/src/profiles/blueprint</directory>
+					</resource>
+					<resource>
+						<directory>${basedir}/src/main/resources</directory>
+					</resource>
+				</resources>
+		    </build>
+		</profile>
+	</profiles>
 </project>

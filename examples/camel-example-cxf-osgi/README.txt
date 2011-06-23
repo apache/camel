@@ -13,6 +13,8 @@ the same port.
 
 You will need to compile this example first:
   mvn install
+If you want to test the bundle with blueprint configuration, you need to build the example with
+  mvn clean install -Pblueprint
 
 Remarks:
 - During the compilation phase, a unit test will be performed, this unit test simulates the
@@ -20,7 +22,7 @@ Remarks:
 - In Eclipse, I have used the following option when starting the junit test case. This option tells
   CXF that it must use log4j : -Dorg.apache.cxf.Logger=org.apache.cxf.common.logging.Log4jLogger
 
-To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
+To run the example on Apache ServiceMix 4.x or Apache Karaf 2.2.x
 
   1) launch the server
   karaf.bat
@@ -32,10 +34,13 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
  
   2) Add features required
   features:addUrl mvn:org.apache.camel.karaf/apache-camel/2.8.0/xml/features
-  features:install war
-  features:install cxf
+  features:install http
+  features:install camel-spring
   features:install camel-jaxb
   features:install camel-cxf
+  
+  if you want to test the example with blueprint, you should install 
+  features:install camel-blueprint
 
   Note: In this example we use Apache Camel 2.8.0 as the version. You should of course use the
         version number of Camel you are using.
