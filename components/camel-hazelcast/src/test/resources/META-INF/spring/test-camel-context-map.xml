@@ -25,7 +25,7 @@
 
 		<route>
 			<from uri="direct:put" />
-			<setHeader headerName="hazelcast.operation.type">
+			<setHeader headerName="HazelcastOperationType">
 				<constant>put</constant>
 			</setHeader>
 			<to uri="hazelcast:map:foo" />
@@ -33,7 +33,7 @@
 
 		<route>
 			<from uri="direct:update" />
-			<setHeader headerName="hazelcast.operation.type">
+			<setHeader headerName="HazelcastOperationType">
 				<constant>update</constant>
 			</setHeader>
 			<to uri="hazelcast:map:foo" />
@@ -41,7 +41,7 @@
 
 		<route>
 			<from uri="direct:get" />
-			<setHeader headerName="hazelcast.operation.type">
+			<setHeader headerName="HazelcastOperationType">
 				<constant>get</constant>
 			</setHeader>
 			<to uri="hazelcast:map:foo" />
@@ -50,7 +50,7 @@
 
 		<route>
 			<from uri="direct:delete" />
-			<setHeader headerName="hazelcast.operation.type">
+			<setHeader headerName="HazelcastOperationType">
 				<constant>delete</constant>
 			</setHeader>
 			<to uri="hazelcast:map:foo" />
@@ -58,7 +58,7 @@
 
 		<route>
 			<from uri="direct:query" />
-			<setHeader headerName="hazelcast.operation.type">
+			<setHeader headerName="HazelcastOperationType">
 				<constant>query</constant>
 			</setHeader>
 			<to uri="hazelcast:map:foo" />

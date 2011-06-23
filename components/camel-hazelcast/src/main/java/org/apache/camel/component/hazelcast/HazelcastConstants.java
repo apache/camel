@@ -32,23 +32,23 @@ public final class HazelcastConstants {
     /*
      * incoming header properties
      */
-    public static final String OBJECT_ID = "hazelcast.objectId";
-    public static final String OBJECT_POS = "hazelcast.objectIndex";
-    public static final String QUERY = "hazelcast.query";
+    public static final String OBJECT_ID = "HazelcastObjectId";
+    public static final String OBJECT_POS = "HazelcastObjectIndex";
+    public static final String QUERY = "HazelcastQuery";
 
     /*
      * outgoing header properties
      */
-    public static final String LISTENER_ACTION = "hazelcast.listener.action";
-    public static final String LISTENER_TYPE = "hazelcast.listener.type";
-    public static final String LISTENER_TIME = "hazelcast.listener.time";
-    public static final String INSTANCE_HOST = "hazelcast.instance.host";
-    public static final String INSTANCE_PORT = "hazelcast.instance.port";
-    public static final String CACHE_NAME = "hazelcast.cache.name";
-    public static final String CACHE_TYPE = "hazelcast.cache.type";
+    public static final String LISTENER_ACTION = "HazelcastListenerAction";
+    public static final String LISTENER_TYPE = "HazelcastListenerType";
+    public static final String LISTENER_TIME = "HazelcastListenerTime";
+    public static final String INSTANCE_HOST = "HazelcastInstanceHost";
+    public static final String INSTANCE_PORT = "HazelcastInstancePort";
+    public static final String CACHE_NAME = "HazelcastCacheName";
+    public static final String CACHE_TYPE = "HazelcastCacheType";
 
     // actions (put, delete, get, update)
-    public static final String OPERATION = "hazelcast.operation.type";
+    public static final String OPERATION = "HazelcastOperationType";
     public static final int PUT_OPERATION = 1;
     public static final int DELETE_OPERATION = 2;
     public static final int GET_OPERATION = 3;
