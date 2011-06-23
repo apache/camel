@@ -35,7 +35,7 @@ public class RestletFaultTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://localhost:9080/users/{username}?restletMethod=POST").process(new Processor() {
+                from("restlet:http://localhost:" + portNum + "/users/{username}?restletMethod=POST").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setFault(true);
                         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "404");
@@ -49,7 +49,7 @@ public class RestletFaultTest extends RestletTestSupport {
     
     @Test
     public void testFaultResponse() throws Exception {
-        HttpResponse response = doExecute(new HttpPost("http://localhost:9080/users/homer"));
+        HttpResponse response = doExecute(new HttpPost("http://localhost:" + portNum + "/users/homer"));
 
         assertHttpResponse(response, 404, "text/plain", "Application fault");
     }

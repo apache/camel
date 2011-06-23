@@ -31,7 +31,7 @@ public class RestletPostXmlRouteAndJSONAsReturnTest extends RestletTestSupport {
     private static final String REQUEST_MESSAGE_WITH_XML_TAG = 
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + REQUEST_MESSAGE;
 
-    private String url = "restlet:http://localhost:9087/users?restletMethod=POST";
+    private String url = "restlet:http://localhost:" + portNum + "/users?restletMethod=POST";
     
 
     @Override

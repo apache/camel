@@ -19,6 +19,7 @@ package org.apache.camel.component.restlet.route;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 
 /**
  * Route builder for RestletRouteBuilderAuthTest
@@ -30,8 +31,11 @@ public class TestRouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
+        // get port number dynamically
+        int port = AvailablePortFinder.getNextAvailable();
+
         // START SNIPPET: consumer_route
-        from("restlet:http://localhost:9080/securedOrders?restletMethod=post&restletRealm=#realm").process(new Processor() {
+        from("restlet:http://localhost:" + port + "/securedOrders?restletMethod=post&restletRealm=#realm").process(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getOut().setBody(
                         "received [" + exchange.getIn().getBody()
@@ -45,7 +49,7 @@ public class TestRouteBuilder extends RouteBuilder {
         // Note: restletMethod and restletRealmRef are stripped 
         // from the query before a request is sent as they are 
         // only processed by Camel.
-        from("direct:start-auth").to("restlet:http://localhost:9080/securedOrders?restletMethod=post");
+        from("direct:start-auth").to("restlet:http://localhost:" + port + "/securedOrders?restletMethod=post");
         // END SNIPPET: producer_route
       
     }

@@ -41,7 +41,7 @@ public class RestletPostXmlTest extends RestletTestSupport {
             @Override
             public void configure() throws Exception {
                 // enable POST support
-                from("restlet:http://localhost:9087/users/?restletMethods=post")
+                from("restlet:http://localhost:" + portNum + "/users/?restletMethods=post")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);
@@ -66,7 +66,7 @@ public class RestletPostXmlTest extends RestletTestSupport {
     }
     
     private void postRequestMessage(String message) throws Exception {
-        HttpPost post = new HttpPost("http://localhost:9087/users/");
+        HttpPost post = new HttpPost("http://localhost:" + portNum + "/users/");
         post.addHeader(Exchange.CONTENT_TYPE, "application/xml");
         post.setEntity(new StringEntity(message));
 
