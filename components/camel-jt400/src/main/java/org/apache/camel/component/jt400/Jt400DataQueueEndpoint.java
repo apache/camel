@@ -27,6 +27,8 @@ import org.apache.camel.CamelException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AS/400 Data queue endpoint
@@ -47,6 +49,8 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
          */
         binary;
     }
+    
+    private static final transient Logger LOG = LoggerFactory.getLogger(Jt400DataQueueEndpoint.class);
 
     private final AS400 system;
     private final String objectPath;
@@ -66,6 +70,12 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
         } catch (URISyntaxException e) {
             throw new CamelException("Unable to parse URI for " + endpointUri, e);
         }
+
+        try {
+            system.setGuiAvailable(false);
+        } catch (PropertyVetoException e) {
+            LOG.warn("Failed do disable AS/400 prompting in the environment running Camel.", e);
+        }
     }
 
     public void setCcsid(int ccsid) throws PropertyVetoException {
@@ -78,6 +88,10 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
 
     public Format getFormat() {
         return format;
+    }
+
+    public void setGuiAvailable(boolean guiAvailable) throws PropertyVetoException {
+        this.system.setGuiAvailable(guiAvailable);
     }
 
     @Override

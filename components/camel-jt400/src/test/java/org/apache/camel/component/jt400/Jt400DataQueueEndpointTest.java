@@ -32,7 +32,7 @@ public class Jt400DataQueueEndpointTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        endpoint = (Jt400DataQueueEndpoint)resolveMandatoryEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary");
+        endpoint = (Jt400DataQueueEndpoint)resolveMandatoryEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq?ccsid=500&format=binary&guiAvailable=true");
     }
 
     /**
@@ -44,5 +44,6 @@ public class Jt400DataQueueEndpointTest extends CamelTestSupport {
         assertEquals("host", endpoint.getSystem().getSystemName());
         assertEquals(500, endpoint.getSystem().getCcsid());
         assertEquals(Format.binary, endpoint.getFormat());
+        assertTrue(endpoint.getSystem().isGuiAvailable());
     }
 }

@@ -37,7 +37,7 @@ public class Jt400PgmEndpointTest extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         endpoint = (Jt400PgmEndpoint)resolveMandatoryEndpoint("jt400://" + USER + ":" + PASSWORD
-                                                              + "@" + HOST + PGM + "?outputFieldsIdx=1,2&fieldsLength=10,512,255");
+                                                              + "@" + HOST + PGM + "?guiAvailable=true&outputFieldsIdx=1,2&fieldsLength=10,512,255");
     }
 
     /**
@@ -48,6 +48,7 @@ public class Jt400PgmEndpointTest extends CamelTestSupport {
         assertEquals(USER, endpoint.getiSeries().getUserId());
         assertEquals(HOST, endpoint.getiSeries().getSystemName());
         assertEquals(PGM, endpoint.getProgramToExecute());
+        assertTrue(endpoint.getiSeries().isGuiAvailable());
         assertEquals(10, endpoint.getOutputFieldLength(0));
         assertEquals(512, endpoint.getOutputFieldLength(1));
         assertEquals(255, endpoint.getOutputFieldLength(2));

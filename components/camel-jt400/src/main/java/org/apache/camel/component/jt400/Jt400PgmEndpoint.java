@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jt400;
 
+import java.beans.PropertyVetoException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
@@ -30,8 +31,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Jt400PgmEndpoint extends DefaultEndpoint {
+    private static final transient Logger LOG = LoggerFactory.getLogger(Jt400PgmEndpoint.class);
 
     private String programToExecute;
 
@@ -52,6 +56,12 @@ public class Jt400PgmEndpoint extends DefaultEndpoint {
             programToExecute = uri.getPath();
         } catch (URISyntaxException e) {
             throw new CamelException("Unable to parse URI for " + endpointUri, e);
+        }
+
+        try {
+            iSeries.setGuiAvailable(false);
+        } catch (PropertyVetoException e) {
+            LOG.warn("Failed do disable AS/400 prompting in the environment running Camel.", e);
         }
     }
 
@@ -118,6 +128,14 @@ public class Jt400PgmEndpoint extends DefaultEndpoint {
                 outputFieldsLengthArray[i] = Integer.parseInt(str);
             }
         }
+    }
+
+    public void setGuiAvailable(boolean guiAvailable) throws PropertyVetoException {
+        this.iSeries.setGuiAvailable(guiAvailable);
+    }
+
+    public boolean isGuiAvailable() {
+        return iSeries != null && iSeries.isGuiAvailable();
     }
 
 }
