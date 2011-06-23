@@ -38,8 +38,8 @@ public class MultiPartInvokeImpl implements MultiPartInvoke {
     @Override
     public void foo(InE in, InE in1, Holder<InE> out, Holder<InE> out1) {
         LOG.info("Executing operation foo");
-        System.out.println(in);
-        System.out.println(in1);
+        //System.out.println(in);
+        //System.out.println(in1);
         try {
             InE outValue = in;
             out.value = outValue;

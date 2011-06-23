@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.CxfEndpointBean;
+import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.junit.Test;
 
@@ -35,9 +35,11 @@ public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
 
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
-        CxfEndpointBean routerEndpoint = (CxfEndpointBean)ctx.getBean("routerEndpoint");
+        CxfEndpoint routerEndpoint = (CxfEndpoint)ctx.getBean("routerEndpoint");
         assertEquals("Got the wrong endpoint address", routerEndpoint.getAddress(), "http://localhost:9000/router");
-        assertEquals("Got the wrong endpont service class", routerEndpoint.getServiceClass().getCanonicalName(), "org.apache.camel.component.cxf.HelloService");
+        assertEquals("Got the wrong endpont service class", 
+                     "org.apache.camel.component.cxf.HelloService", 
+                     routerEndpoint.getServiceClass().getName());
     }
 
     @Test

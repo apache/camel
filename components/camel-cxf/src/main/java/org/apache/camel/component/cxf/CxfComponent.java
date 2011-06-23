@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -56,29 +55,14 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
                 beanId = beanId.substring(2);
             }
 
-            Object bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, Object.class);
-            if (bean instanceof CxfEndpointBean) {
-                CxfEndpointBean configBean = (CxfEndpointBean) bean;
-                result = new CxfSpringEndpoint(this, configBean);
-
-                // Apply Spring bean properties (including # notation referenced bean).  Note that the
-                // Spring bean properties values can be overridden by property defined in URI query.
-                // The super class (DefaultComponent) will invoke "setProperties" after this method
-                // with to apply properties defined by URI query.
-                if (configBean.getProperties() != null) {
-                    Map<String, Object> copy = new HashMap<String, Object>();
-                    copy.putAll(configBean.getProperties());
-                    setProperties(result, copy);
-                    result.setMtomEnabled(Boolean.valueOf((String) copy.get(Message.MTOM_ENABLED)));
-                }
-            } else if (bean instanceof CxfBlueprintEndpoint) {
-                result = (CxfBlueprintEndpoint) bean;
-            }
+            result = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, CxfEndpoint.class);
         } else {
             // endpoint URI does not specify a bean
             result = new CxfEndpoint(remaining, this);
         }
-
+        if (result.getCamelContext() == null) {
+            result.setCamelContext(getCamelContext());
+        }
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
 
@@ -86,8 +70,10 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
         Map<String, Object> properties = IntrospectionSupport.extractProperties(parameters, "properties.");
         if (properties != null) {
             result.setProperties(properties);
+        }
+        if (result.getProperties() != null) {
             // set the properties of MTOM
-            result.setMtomEnabled(Boolean.valueOf((String) properties.get(Message.MTOM_ENABLED)));
+            result.setMtomEnabled(Boolean.valueOf((String) result.getProperties().get(Message.MTOM_ENABLED)));
         }
 
         return result;

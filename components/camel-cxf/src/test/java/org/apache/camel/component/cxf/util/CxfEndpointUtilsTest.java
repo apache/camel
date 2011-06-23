@@ -67,7 +67,7 @@ public class CxfEndpointUtilsTest extends Assert {
     @Test
     public void testGetProperties() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI());
-        QName service = CxfEndpointUtils.getQName(endpoint.getServiceName());
+        QName service = endpoint.getServiceName();
         assertEquals("We should get the right service name", service, SERVICE_NAME);
     }
 
@@ -80,13 +80,7 @@ public class CxfEndpointUtilsTest extends Assert {
     @Test
     public void testCheckServiceClassWithTheEndpoint() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
-        try {
-            CxfEndpointUtils.checkServiceClassName(endpoint.getServiceClass());
-            fail("Should get a CamelException here");
-        } catch (CamelException exception) {
-            assertNotNull("Should get a CamelException here", exception);
-            assertEquals("serviceClass is required for CXF endpoint configuration", exception.getMessage());
-        }
+        assertNull(endpoint.getServiceClass());
     }
 
     @Test

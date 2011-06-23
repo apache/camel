@@ -22,6 +22,7 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
+import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 
@@ -30,7 +31,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
 
     @Override
     protected Class<?> getBeanClass(Element arg0) {
-        return CxfSpringEndpointBean.class;
+        return CxfSpringEndpoint.class;
     }
 
     @Override

@@ -25,6 +25,9 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
+import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.endpoint.Client;
@@ -33,6 +36,10 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
+import org.apache.cxf.version.Version;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -40,35 +47,24 @@ import org.springframework.context.ConfigurableApplicationContext;
  *
  * @version 
  */
-public class CxfSpringEndpoint extends CxfEndpoint {
+public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContextAware {
 
-    private CxfEndpointBean bean;
     private String beanId;
     private ConfigurerImpl configurer;
-    private String serviceNamespace;
-    private String serviceLocalName;
-    private String endpointLocalName;
-    private String endpointNamespace;
-    
-    public CxfSpringEndpoint(CamelContext context, CxfEndpointBean bean) throws Exception {
-        super(bean.getAddress(), context);
-        init(bean);
+    private ApplicationContext applicationContext;
+
+    public CxfSpringEndpoint(CamelContext context, String address) throws Exception {
+        super(address, context);
     }
     
-    public CxfSpringEndpoint(CxfComponent component, CxfEndpointBean bean) throws Exception {
-        super(bean.getAddress(), component);
-        init(bean);
+    public CxfSpringEndpoint(CxfComponent component, String address) throws Exception {
+        super(address, component);
     }
-        
-    // override the 
-    private void init(CxfEndpointBean bean) throws Exception {
-        this.bean = bean;        
-        // create configurer
-        configurer = new ConfigurerImpl(((SpringCamelContext)getCamelContext())
-            .getApplicationContext());
+    
+    public CxfSpringEndpoint() {
+        super();
     }
 
-    
     /**
      * 
      * A help to get the service class.  The serviceClass classname in URI 
@@ -80,20 +76,11 @@ public class CxfSpringEndpoint extends CxfEndpoint {
         Class<?> answer = null;
         if (getServiceClass() != null) {
             // classname is specified in URI which overrides the bean properties
-            answer = ClassLoaderUtils.loadClass(getServiceClass(), getClass());
-        } else {
-            answer = bean.getServiceClass();
+            answer = getServiceClass();
         }
         return answer;
     }
     
-    protected Bus doGetBus() {
-        return bean.getBus();
-    }
-    
-    public CxfEndpointBean getBean() {
-        return bean;
-    }
 
     // Package private methods
     // -------------------------------------------------------------------------
@@ -250,40 +237,93 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     }
     
     public void setServiceNamespace(String serviceNamespace) {
-        this.serviceNamespace = serviceNamespace;
+        QName qn = getServiceName();
+        if (qn == null) {
+            setServiceName(new QName(serviceNamespace, "local"));
+        } else {
+            setServiceName(new QName(serviceNamespace, qn.getLocalPart()));
+        }
     }
 
     public String getServiceNamespace() {
-        return serviceNamespace;
+        QName qn = getServiceName();
+        if (qn == null) {
+            return null;
+        }
+        return qn.getNamespaceURI();
     }
 
     public void setServiceLocalName(String serviceLocalName) {
-        this.serviceLocalName = serviceLocalName;
+        QName qn = getServiceName();
+        if (qn == null) {
+            setServiceName(new QName("", serviceLocalName));
+        } else {
+            setServiceName(new QName(qn.getNamespaceURI(), serviceLocalName));
+        }
     }
 
     public String getServiceLocalName() {
-        return serviceLocalName;
+        QName qn = getServiceName();
+        if (qn == null) {
+            return null;
+        }
+        return qn.getLocalPart();
     }
 
     public String getEndpointLocalName() {
-        return endpointLocalName;
+        QName qn = getPortName();
+        if (qn == null) {
+            return null;
+        }
+        return qn.getLocalPart();
     }
 
     public void setEndpointLocalName(String endpointLocalName) {
-        this.endpointLocalName = endpointLocalName;
+        QName qn = getPortName();
+        if (qn == null) {
+            setPortName(new QName("", endpointLocalName));
+        } else {
+            setPortName(new QName(qn.getNamespaceURI(), endpointLocalName));
+        }
     }
 
     public void setEndpointNamespace(String endpointNamespace) {
-        this.endpointNamespace = endpointNamespace;
+        QName qn = getPortName();
+        if (qn == null) {
+            setPortName(new QName(endpointNamespace, "local"));
+        } else {
+            setPortName(new QName(endpointNamespace, qn.getLocalPart()));
+        }
     }
 
     public String getEndpointNamespace() {
-        return endpointNamespace;
+        QName qn = getPortName();
+        if (qn == null) {
+            return null;
+        }
+        return qn.getNamespaceURI();
     }
     
-    @Override
-    public String getWsdlURL() {
-        return bean.getWsdlURL();
+
+    @SuppressWarnings("deprecation")
+    public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+        applicationContext = ctx;
+        configurer = new ConfigurerImpl(applicationContext);
+
+        if (bus == null) {
+            if (Version.getCurrentVersion().startsWith("2.3")) {
+                // Don't relate on the DefaultBus
+                BusFactory factory = new SpringBusFactory(ctx);
+                bus = factory.createBus();               
+                BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(bus, ctx);
+            } else {
+                bus = BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx);
+            }
+        }
+    }
+    
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
 
 }

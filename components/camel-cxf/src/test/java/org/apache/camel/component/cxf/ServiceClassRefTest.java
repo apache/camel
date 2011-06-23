@@ -39,7 +39,8 @@ public class ServiceClassRefTest extends AbstractJUnit4SpringContextTests {
     public void testServiceClassNameCreatedByRefNotation() throws Exception {
         // verify the '#' notation works
         CxfEndpoint endpoint = context.getEndpoint("cxf:bean:fromEndpoint", CxfEndpoint.class);
-        assertEquals("org.apache.camel.component.cxf.HelloServiceImpl", endpoint.getServiceClass());
+        assertEquals("org.apache.camel.component.cxf.HelloServiceImpl", 
+                     endpoint.getServiceClass().getName());
         assertEquals(DataFormat.POJO, endpoint.getDataFormat());
         
         // verify values in bean properties are ok

@@ -49,7 +49,6 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
                 bean.addPropertyValue(propertyName, val);
             }
         }
-        
     }
 
     @Override

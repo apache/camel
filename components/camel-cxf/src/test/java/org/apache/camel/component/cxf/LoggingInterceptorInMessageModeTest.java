@@ -68,7 +68,7 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringCon
         LoggingOutInterceptor logInterceptor = null;
                   
         for (Interceptor<?> interceptor 
-            : context.getEndpoint("cxf:bean:serviceEndpoint", CxfSpringEndpoint.class).getBean()
+            : context.getEndpoint("cxf:bean:serviceEndpoint", CxfSpringEndpoint.class)
                                 .getOutInterceptors()) {
             if (interceptor instanceof LoggingOutInterceptor) {
                 logInterceptor = LoggingOutInterceptor.class.cast(interceptor);

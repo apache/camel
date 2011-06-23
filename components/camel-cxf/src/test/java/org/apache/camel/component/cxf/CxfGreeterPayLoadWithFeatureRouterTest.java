@@ -36,7 +36,7 @@ public class CxfGreeterPayLoadWithFeatureRouterTest extends CXFGreeterRouterTest
         CxfEndpoint endpoint = getMandatoryEndpoint("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD", 
                 CxfEndpoint.class);
         
-        assertEquals(TestCxfFeature.class, ((CxfSpringEndpoint)endpoint).getBean()
+        assertEquals(TestCxfFeature.class, ((CxfSpringEndpoint)endpoint)
                 .getFeatures().get(0).getClass());
         
         assertEquals(DataFormat.PAYLOAD, endpoint.getDataFormat());

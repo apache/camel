@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.camel.Converter;
@@ -35,7 +36,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
-import org.apache.camel.component.cxf.spring.CxfSpringEndpointBean;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.EndpointHelper;
@@ -84,6 +84,11 @@ public final class CxfConverter {
     }
     
     @Converter
+    public static QName toQName(String qname) {
+        return QName.valueOf(qname);
+    }
+    
+    @Converter
     public static Object[] toArray(Object object) {
         if (object instanceof Collection) {
             return ((Collection)object).toArray();
@@ -110,26 +115,6 @@ public final class CxfConverter {
         return baos.toString();
     }
     
-    @Converter
-    public static Endpoint toEndpoint(final CxfSpringEndpointBean endpointBean) throws Exception {
-        if (endpointBean == null) {
-            throw new IllegalArgumentException("The CxfEndpoint instance is null");
-        }
-        // CamelContext 
-        SpringCamelContext context = SpringCamelContext.springCamelContext(endpointBean.getApplicationContext());
-        // The beanId will be set from endpointBean's property        
-        CxfEndpoint answer = new CxfSpringEndpoint(context, endpointBean);
-        // check the properties map 
-        if (endpointBean.getProperties() != null) {
-            Map<String, Object> copy = new HashMap<String, Object>();
-            copy.putAll(endpointBean.getProperties());
-            EndpointHelper.setReferenceProperties(context, answer, copy);
-            EndpointHelper.setProperties(context, answer, copy);
-            answer.setMtomEnabled(Boolean.valueOf((String)copy.get(Message.MTOM_ENABLED)));
-        }
-        return answer;
-    }
-
     @Converter
     public static DataFormat toDataFormat(final String name) {
         return DataFormat.valueOf(name.toUpperCase());

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.spring;
 
-import org.apache.camel.component.cxf.CxfEndpointBean;
+import org.apache.camel.component.cxf.CxfEndpoint;
 import org.junit.Test;
 
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
@@ -27,9 +27,10 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
 
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
-        CxfEndpointBean routerEndpoint = (CxfEndpointBean)ctx.getBean("routerEndpoint");
+        CxfEndpoint routerEndpoint = (CxfEndpoint)ctx.getBean("routerEndpoint");
         assertEquals("Got the wrong endpoint address", "http://localhost:9000/router", routerEndpoint.getAddress());
-        assertEquals("Got the wrong endpont service class", "org.apache.camel.component.cxf.HelloService", routerEndpoint.getServiceClass().getCanonicalName());
+        assertEquals("Got the wrong endpont service class", "org.apache.camel.component.cxf.HelloService",
+                         routerEndpoint.getServiceClass().getName());
         assertEquals("Got the wrong handlers size", 1, routerEndpoint.getHandlers().size());
         assertEquals("Got the wrong schemalocations size", 1, routerEndpoint.getSchemaLocations().size());
         assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", routerEndpoint.getSchemaLocations().get(0));

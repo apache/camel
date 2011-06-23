@@ -56,7 +56,7 @@ public final class CxfEndpointUtils {
     // only used by test currently
     public static QName getPortName(final CxfEndpoint endpoint) {
         if (endpoint.getPortName() != null) {
-            return getQName(endpoint.getPortName());
+            return endpoint.getPortName();
         } else {
             String portLocalName = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.PORT_LOCALNAME);
             String portNamespace = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.PORT_NAMESPACE);
@@ -71,7 +71,7 @@ public final class CxfEndpointUtils {
     // only used by test currently
     public static QName getServiceName(final CxfEndpoint endpoint) {
         if (endpoint.getServiceName() != null) {
-            return getQName(endpoint.getServiceName());
+            return endpoint.getServiceName();
         } else {
             String serviceLocalName = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.SERVICE_LOCALNAME);
             String serviceNamespace = getCxfEndpointPropertyValue((CxfSpringEndpoint)endpoint, CxfConstants.SERVICE_NAMESPACE);
@@ -149,12 +149,7 @@ public final class CxfEndpointUtils {
     
     // only used by test currently
     public static String getCxfEndpointPropertyValue(CxfSpringEndpoint endpoint, String property) {
-        String result = null;
-        CxfEndpointBean cxfEndpointBean = endpoint.getBean();
-        if (cxfEndpointBean != null && cxfEndpointBean.getProperties() != null) {
-            result = (String) cxfEndpointBean.getProperties().get(property);
-        }
-        return result;
+        return (String)endpoint.getProperties().get(property);
     }
 
     /**

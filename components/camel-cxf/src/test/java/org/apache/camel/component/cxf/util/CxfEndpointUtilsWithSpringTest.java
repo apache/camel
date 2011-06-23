@@ -67,7 +67,8 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
     @Test
     public void testGetServiceClass() throws Exception {
         CxfEndpoint endpoint = createEndpoint("cxf:bean:helloServiceEndpoint?serviceClass=#helloServiceImpl");      
-        assertEquals("org.apache.camel.component.cxf.HelloServiceImpl", endpoint.getServiceClass());
+        assertEquals("org.apache.camel.component.cxf.HelloServiceImpl",
+                     endpoint.getServiceClass().getName());
     }
     
     @Test
@@ -79,15 +80,15 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
     @Test
     public void testGetProperties() throws Exception {
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint)createEndpoint(getEndpointURI());
-        QName service = endpoint.getBean().getServiceName();
-        assertEquals("We should get the right service name", service, SERVICE_NAME);
+        QName service = endpoint.getServiceName();
+        assertEquals("We should get the right service name", SERVICE_NAME, service);
         assertEquals("The cxf endpoint's DataFromat should be MESSAGE", DataFormat.MESSAGE, endpoint.getDataFormat());
         
         endpoint = (CxfSpringEndpoint)createEndpoint("cxf:bean:testPropertiesEndpoint");
         service = CxfEndpointUtils.getServiceName(endpoint);
-        assertEquals("We should get the right service name", service, SERVICE_NAME);
+        assertEquals("We should get the right service name", SERVICE_NAME, service);
         QName port = CxfEndpointUtils.getPortName(endpoint);
-        assertEquals("We should get the right endpoint name", port, PORT_NAME);
+        assertEquals("We should get the right endpoint name", PORT_NAME, port);
     }
 
     @Test
