@@ -18,6 +18,7 @@
 <assembly>
   <id>src</id>
   <formats>
+    <format>tar.gz</format>
     <format>zip</format>
   </formats>
   <fileSets>
@@ -26,53 +27,12 @@
       <directory>..</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
-        <include>**/*.jpeg</include>
-        <include>**/*.jpg</include>
-        <include>**/*.gif</include>
-        <include>**/*.png</include>
-        <include>**/*.exe</include>
-        <include>**/*.dll</include>
-        <include>**/*.jar</include>
-        <include>**/*.so</include>
-        <include>**/*.ks</include>
-        <include>**/*.ts</include>
-        <include>**/*.keystore</include>
-        <include>**/*.bin</include>
-        <include>**/*.jnilib</include>
-        <include>**/*.cert</include>
-        <include>assembly/src/release/bin/*/wrapper</include>
+        <include>**/*</include>
       </includes>
       <excludes>
         <exclude>**/eclipse-classes/**</exclude>
         <exclude>**/target/**</exclude>
-      </excludes>
-    </fileSet>
 
-    <!-- Text Files -->
-    <fileSet>
-      <directory>..</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>**/*</include>
-      </includes>
-      <excludes>
-        <exclude>**/*.jpeg</exclude>
-        <exclude>**/*.jpg</exclude>
-        <exclude>**/*.gif</exclude>
-        <exclude>**/*.png</exclude>
-        <exclude>**/*.exe</exclude>
-        <exclude>**/*.dll</exclude>
-        <exclude>**/*.jar</exclude>
-        <exclude>**/*.so</exclude>
-        <exclude>**/*.ks</exclude>
-        <exclude>**/*.ts</exclude>
-        <exclude>**/*.keystore</exclude>
-        <exclude>**/*.bin</exclude>
-        <exclude>**/*.jnilib</exclude>
-        <exclude>**/*.cert</exclude>
-        <exclude>assembly/src/release/bin/*/wrapper</exclude>
-
-        <exclude>**/target/**</exclude>
         <exclude>**/build/**</exclude>
         <!-- exclude>data/**</exclude>
         <exclude>*/data/**</exclude -->
@@ -90,9 +50,8 @@
         <exclude>**/*.iws</exclude>
 
         <exclude>**/cobertura.ser</exclude>
-
       </excludes>
-      <lineEnding>dos</lineEnding>
     </fileSet>
+
   </fileSets>
 </assembly>
