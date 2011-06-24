@@ -17,6 +17,9 @@
 package org.apache.camel.component.file.remote.sftp;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.Provider.Service;
+import java.security.Security;
 import java.util.Arrays;
 
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
@@ -45,7 +48,24 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR);
 
+        
+        
         canTest = false;
+        for (Provider p : Security.getProviders()) {
+            for (Service s : p.getServices()) {
+                if ("SunX509".equalsIgnoreCase(s.getAlgorithm())) {
+                    canTest = true;
+                }
+            }
+        }
+        if (!canTest) {
+            String name = System.getProperty("java.vendor");
+            System.out.println("SunX509 is not avail on this jdk [" 
+                + name + "] Testing is skipped!");
+            return;
+        }
+        canTest = false;
+        
         try {
             super.setUp();
 

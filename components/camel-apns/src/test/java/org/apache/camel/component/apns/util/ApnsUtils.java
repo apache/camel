@@ -16,10 +16,25 @@
  */
 package org.apache.camel.component.apns.util;
 
+import java.io.InputStream;
+import java.security.Provider;
+import java.security.Provider.Service;
+import java.security.SecureRandom;
+import java.security.Security;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
 import com.notnoop.apns.internal.ApnsFeedbackParsingUtilsAcessor;
 import com.notnoop.apns.internal.Utilities;
+import com.notnoop.apns.utils.ApnsServerStub;
 import com.notnoop.apns.utils.FixedCertificates;
 
 import org.apache.camel.CamelContext;
@@ -45,8 +60,63 @@ public final class ApnsUtils {
 
         return deviceToken;
     }
+    
+    public static ApnsServerStub prepareAndStartServer(int gatePort, int feedPort) {
+        InputStream stream = ClassLoader.getSystemResourceAsStream(FixedCertificates.SERVER_STORE);
+        SSLContext context = Utilities.newSSLContext(stream, FixedCertificates.SERVER_PASSWD, 
+                                                     "PKCS12", getAlgorithm());
 
-    public static ApnsServiceFactory createDefaultTestConfiguration(CamelContext camelContext) {
+        
+        ApnsServerStub server = new ApnsServerStub(
+                context.getServerSocketFactory(),
+                gatePort, feedPort);
+        server.start();
+        return server;
+    }
+    
+    public static String getAlgorithm() {
+        List<String> keys = new LinkedList<String>();
+        List<String> trusts = new LinkedList<String>();
+        for (Provider p : Security.getProviders()) {
+            for (Service s : p.getServices()) {
+                if ("KeyManagerFactory".equals(s.getType())
+                    && s.getAlgorithm().endsWith("509")) {
+                    keys.add(s.getAlgorithm());
+                } else if ("TrustManagerFactory".equals(s.getType())
+                    && s.getAlgorithm().endsWith("509")) {
+                    trusts.add(s.getAlgorithm());
+                }
+            }
+        }
+        keys.retainAll(trusts);
+        return keys.get(0);
+    }
+    
+    public static SSLContext clientContext() throws Exception {
+        InputStream stream = ClassLoader.getSystemResourceAsStream(FixedCertificates.CLIENT_STORE);
+        SSLContext context = Utilities.newSSLContext(stream, 
+                                                     FixedCertificates.CLIENT_PASSWD,
+                                                     "PKCS12",
+                                                     getAlgorithm());
+        context.init(null, new TrustManager[] {new X509TrustManager() {
+            public void checkClientTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
+            }
+
+            public void checkServerTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
+            }
+
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+            
+        }}, new SecureRandom());
+        return context;
+    }
+    
+    public static ApnsServiceFactory createDefaultTestConfiguration(CamelContext camelContext) 
+        throws Exception {
         ApnsServiceFactory apnsServiceFactory = new ApnsServiceFactory(camelContext);
 
         apnsServiceFactory.setFeedbackHost(FixedCertificates.TEST_HOST);
@@ -56,8 +126,7 @@ public final class ApnsUtils {
         // apnsServiceFactory.setCertificatePath("classpath:/" +
         // FixedCertificates.CLIENT_STORE);
         // apnsServiceFactory.setCertificatePassword(FixedCertificates.CLIENT_PASSWD);
-        apnsServiceFactory.setSslContext(FixedCertificates.clientContext());
-
+        apnsServiceFactory.setSslContext(clientContext());
         return apnsServiceFactory;
     }
 

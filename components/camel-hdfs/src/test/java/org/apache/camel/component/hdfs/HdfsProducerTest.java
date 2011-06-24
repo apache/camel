@@ -37,14 +37,28 @@ import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.util.ReflectionUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 public class HdfsProducerTest extends CamelTestSupport {
     
     private static final Path TEMP_DIR = new Path(new File("target/test/").getAbsolutePath());
 
+    //Hadoop doesn't run on IBM JDK
+    private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
+
+    @Before
+    public void setUp() throws Exception {
+        if (SKIP) {
+            return;
+        }
+        super.setUp();
+    }
     @Test
     public void testProducer() throws Exception {
+        if (SKIP) {
+            return;
+        }
         for (int i = 0; i < 10; ++i) {
             template.sendBody("direct:start1", "PAPPO" + i);
         }
@@ -65,6 +79,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteBoolean() throws Exception {
+        if (SKIP) {
+            return;
+        }
         Boolean aBoolean = true;
         template.sendBody("direct:write_boolean", aBoolean);
         stopCamelContext();
@@ -81,6 +98,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteByte() throws Exception {
+        if (SKIP) {
+            return;
+        }
         byte aByte = 8;
         template.sendBody("direct:write_byte", aByte);
         stopCamelContext();
@@ -97,6 +117,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteInt() throws Exception {
+        if (SKIP) {
+            return;
+        }
         int anInt = 1234;
         template.sendBody("direct:write_int", anInt);
         stopCamelContext();
@@ -113,6 +136,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteFloat() throws Exception {
+        if (SKIP) {
+            return;
+        }
         float aFloat = 12.34f;
         template.sendBody("direct:write_float", aFloat);
         stopCamelContext();
@@ -129,6 +155,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteDouble() throws Exception {
+        if (SKIP) {
+            return;
+        }
         double aDouble = 12.34d;
         template.sendBody("direct:write_double", aDouble);
         stopCamelContext();
@@ -145,6 +174,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteLong() throws Exception {
+        if (SKIP) {
+            return;
+        }
         long aLong = 1234567890;
         template.sendBody("direct:write_long", aLong);
         stopCamelContext();
@@ -161,6 +193,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteText() throws Exception {
+        if (SKIP) {
+            return;
+        }
         String txt = "CIAO MONDO !";
         template.sendBody("direct:write_text1", txt);
         stopCamelContext();
@@ -177,6 +212,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testWriteTextWithKey() throws Exception {
+        if (SKIP) {
+            return;
+        }
         String txtKey = "THEKEY";
         String txtValue = "CIAO MONDO !";
         template.sendBodyAndHeader("direct:write_text2", txtValue, "KEY", txtKey);
@@ -194,6 +232,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testMapWriteTextWithKey() throws Exception {
+        if (SKIP) {
+            return;
+        }
         String txtKey = "THEKEY";
         String txtValue = "CIAO MONDO !";
         template.sendBodyAndHeader("direct:write_text3", txtValue, "KEY", txtKey);
@@ -211,6 +252,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testArrayWriteText() throws Exception {
+        if (SKIP) {
+            return;
+        }
         String txtValue = "CIAO MONDO !";
         template.sendBody("direct:write_text4", txtValue);
         stopCamelContext();
@@ -225,6 +269,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Test
     public void testBloomMapWriteText() throws Exception {
+        if (SKIP) {
+            return;
+        }
         String txtKey = "THEKEY";
         String txtValue = "CIAO MONDO !";
         template.sendBodyAndHeader("direct:write_text5", txtValue, "KEY", txtKey);
@@ -242,6 +289,9 @@ public class HdfsProducerTest extends CamelTestSupport {
 
     @Override
     public void tearDown() throws Exception {
+        if (SKIP) {
+            return;
+        }
         super.tearDown();
         Thread.sleep(100);
         Configuration conf = new Configuration();

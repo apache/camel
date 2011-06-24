@@ -52,7 +52,7 @@ public class SpringApnsConsumerTest extends AbstractJUnit4SpringContextTests {
 
     @Before
     public void startup() throws InterruptedException {
-        server = ApnsServerStub.prepareAndStartServer(FixedCertificates.TEST_GATEWAY_PORT, FixedCertificates.TEST_FEEDBACK_PORT);
+        server = ApnsUtils.prepareAndStartServer(FixedCertificates.TEST_GATEWAY_PORT, FixedCertificates.TEST_FEEDBACK_PORT);
     }
 
     @After

@@ -36,12 +36,27 @@ import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.util.ReflectionUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 public class HdfsProducerFileWriteTest extends CamelTestSupport {
+    //Hadoop doesn't run on IBM JDK
+    private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
 
+    @Before
+    public void setUp() throws Exception {
+        if (SKIP) {
+            return;
+        }
+        super.setUp();
+    }
+    
     @Test
     public void testSimpleWriteFile() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-simple-write-file").getAbsolutePath());
 
         deleteDirectory("target/file-batch1");
@@ -77,6 +92,10 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
     @Test
     public void testSequenceWriteFile() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-simple-write-file1").getAbsolutePath());
         deleteDirectory("target/file-batch2");
 
@@ -116,6 +135,10 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
     @Test
     public void testSequenceKeyWriteFile() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-simple-write-file2").getAbsolutePath());
         deleteDirectory("target/file-batch3");
 
@@ -157,6 +180,10 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
     @Test
     public void testMapKeyWriteFile() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-simple-write-file1").getAbsolutePath());
         deleteDirectory("target/file-batch4");
 
@@ -197,6 +224,10 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
     @Test
     public void testSequenceKeyWriteBigFile() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-simple-write-file1").getAbsolutePath());
         deleteDirectory("target/file-batch5");
 
@@ -239,6 +270,10 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
     @Override
     public void tearDown() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         super.tearDown();
         Configuration conf = new Configuration();
         Path dir = new Path("target/test");

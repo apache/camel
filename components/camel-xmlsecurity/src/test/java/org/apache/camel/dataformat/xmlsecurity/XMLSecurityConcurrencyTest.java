@@ -22,20 +22,38 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.xml.security.encryption.XMLCipher;
+import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.junit.Test;
 
 /**
  * @version 
  */
 public class XMLSecurityConcurrencyTest extends CamelTestSupport {
+    private static final boolean HAS_3DES;
+    static {
+        boolean ok = false;
+        try {
+            XMLCipher.getInstance(XMLCipher.TRIPLEDES_KeyWrap);
+            ok = true;
+        } catch (XMLEncryptionException e) {
+        }
+        HAS_3DES = ok;
+    }
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
+        if (!HAS_3DES) {
+            return;
+        }
         doSendMessages(1, 1);
     }
 
     @Test
     public void testConcurrentProducers() throws Exception {
+        if (!HAS_3DES) {
+            return;
+        }
         doSendMessages(10, 5);
     }
 

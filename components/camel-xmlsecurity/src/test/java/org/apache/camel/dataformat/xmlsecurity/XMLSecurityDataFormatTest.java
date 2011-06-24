@@ -22,6 +22,7 @@ import java.net.URL;
 import java.security.KeyStore;
 import java.util.Map;
 
+import javax.crypto.Cipher;
 import javax.xml.transform.OutputKeys;
 
 import org.w3c.dom.Document;
@@ -35,12 +36,24 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.xml.security.encryption.XMLCipher;
+import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.junit.Test;
 
 /**
  * Unit test of the encryptXML data format.
  */
 public class XMLSecurityDataFormatTest extends CamelTestSupport {
+    private static final boolean HAS_3DES;
+    static {
+        boolean ok = false;
+        try {
+            XMLCipher.getInstance(XMLCipher.TRIPLEDES_KeyWrap);
+            ok = true;
+        } catch (XMLEncryptionException e) {
+        }
+        HAS_3DES = ok;
+    }
+    
     private static final String XML_FRAGMENT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<cheesesites>"
         + "<netherlands>"
@@ -144,6 +157,9 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testFullPayloadXMLEncryption() throws Exception {
+        if (!HAS_3DES) {
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -156,6 +172,9 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadXMLContentEncryption() throws Exception {       
+        if (!HAS_3DES) {
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -168,6 +187,9 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadMultiNodeXMLContentEncryption() throws Exception {
+        if (!HAS_3DES) {
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -180,6 +202,9 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadXMLElementEncryptionWithKey() throws Exception {
+        if (!HAS_3DES) {
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -278,6 +303,9 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     */
     @Test
     public void testFullPayloadXMLDecryption() throws Exception {
+        if (!HAS_3DES) {
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -290,6 +318,9 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testPartialPayloadXMLContentDecryption() throws Exception {
+        if (!HAS_3DES) {
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -302,6 +333,9 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testPartialPayloadMultiNodeXMLContentDecryption() throws Exception {
+        if (!HAS_3DES) {
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -314,6 +348,9 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadXMLElementDecryptionWithKey() throws Exception {
+        if (!HAS_3DES) {
+            return;
+        }
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")

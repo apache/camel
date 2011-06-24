@@ -20,6 +20,7 @@ import com.notnoop.apns.ApnsService;
 import com.notnoop.apns.utils.FixedCertificates;
 
 import org.apache.camel.component.apns.model.ConnectionStrategy;
+import org.apache.camel.component.apns.util.ApnsUtils;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,7 +28,7 @@ import org.junit.Test;
 public class ApnsServiceFactoryTest {
 
     @Test
-    public void testApnsServiceFactoryWithFixedCertificates() {
+    public void testApnsServiceFactoryWithFixedCertificates() throws Exception {
         ApnsServiceFactory apnsServiceFactory = createApnsServiceFactoryWithFixedCertificates();
         ApnsService apnsService = apnsServiceFactory.getApnsService();
 
@@ -35,7 +36,7 @@ public class ApnsServiceFactoryTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testApnsServiceFactoryAsPool0() {
+    public void testApnsServiceFactoryAsPool0() throws Exception {
         ApnsServiceFactory apnsServiceFactory = createApnsServiceFactoryWithFixedCertificatesAsPool(0);
         ApnsService apnsService = apnsServiceFactory.getApnsService();
 
@@ -43,7 +44,7 @@ public class ApnsServiceFactoryTest {
     }
 
     @Test
-    public void testApnsServiceFactoryAsPool1() {
+    public void testApnsServiceFactoryAsPool1() throws Exception {
         ApnsServiceFactory apnsServiceFactory = createApnsServiceFactoryWithFixedCertificatesAsPool(1);
         ApnsService apnsService = apnsServiceFactory.getApnsService();
 
@@ -55,19 +56,21 @@ public class ApnsServiceFactoryTest {
         Assert.assertTrue(apnsService instanceof ApnsService);
     }
 
-    public static ApnsServiceFactory createApnsServiceFactoryWithFixedCertificates() {
+    public static ApnsServiceFactory createApnsServiceFactoryWithFixedCertificates() 
+        throws Exception {
         ApnsServiceFactory apnsServiceFactory = new ApnsServiceFactory();
 
         apnsServiceFactory.setFeedbackHost(FixedCertificates.TEST_HOST);
         apnsServiceFactory.setFeedbackPort(FixedCertificates.TEST_FEEDBACK_PORT);
         apnsServiceFactory.setGatewayHost(FixedCertificates.TEST_HOST);
         apnsServiceFactory.setGatewayPort(FixedCertificates.TEST_GATEWAY_PORT);
-        apnsServiceFactory.setSslContext(FixedCertificates.clientContext());
+        apnsServiceFactory.setSslContext(ApnsUtils.clientContext());
 
         return apnsServiceFactory;
     }
 
-    private ApnsServiceFactory createApnsServiceFactoryWithFixedCertificatesAsPool(int poolSize) {
+    private ApnsServiceFactory createApnsServiceFactoryWithFixedCertificatesAsPool(int poolSize) 
+        throws Exception {
         ApnsServiceFactory apnsServiceFactory = createApnsServiceFactoryWithFixedCertificates();
         apnsServiceFactory.setConnectionStrategy(ConnectionStrategy.POOL);
 

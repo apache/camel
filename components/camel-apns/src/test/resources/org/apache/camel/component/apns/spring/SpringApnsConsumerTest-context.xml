@@ -36,7 +36,7 @@
 
   <bean id="apnsService" factory-bean="apnsServiceFactory" factory-method="getApnsService"/>
 
-  <bean id="sslContext" class="com.notnoop.apns.utils.FixedCertificates" factory-method="clientContext"/>
+  <bean id="sslContext" class="org.apache.camel.component.apns.util.ApnsUtils" factory-method="clientContext"/>
 
   <bean id="apns" class="org.apache.camel.component.apns.ApnsComponent">
     <property name="apnsService" ref="apnsService"/>

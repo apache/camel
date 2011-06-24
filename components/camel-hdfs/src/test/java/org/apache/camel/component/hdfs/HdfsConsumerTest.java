@@ -47,14 +47,30 @@ import static org.apache.hadoop.io.SequenceFile.CompressionType;
 import static org.apache.hadoop.io.SequenceFile.createWriter;
 
 public class HdfsConsumerTest extends CamelTestSupport {
+    //Hadoop doesn't run on IBM JDK
+    private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
+
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
+
+    @Before
+    public void setUp() throws Exception {
+        if (SKIP) {
+            return;
+        }
+        super.setUp();
+    }
+    
     @Test
     public void testSimpleConsumer() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-normal-file").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs = FileSystem.get(file.toUri(), conf);
@@ -79,6 +95,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadBoolean() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-boolean").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
@@ -108,6 +128,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadByte() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-byte").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
@@ -138,6 +162,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadFloat() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-float").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
@@ -168,6 +196,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadDouble() throws Exception {
+        if (SKIP) {
+            return;
+        }
         final Path file = new Path(new File("target/test/test-camel-double").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
@@ -198,6 +229,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadInt() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-int").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
@@ -228,6 +263,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadLong() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-long").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
@@ -258,6 +297,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadBytes() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-bytes").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
@@ -288,6 +331,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadString() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-string").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
@@ -318,6 +365,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Test
     public void testReadStringArrayFile() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         final Path file = new Path(new File("target/test/test-camel-string").getAbsolutePath());
         Configuration conf = new Configuration();
         FileSystem fs1 = FileSystem.get(file.toUri(), conf);
@@ -350,6 +401,10 @@ public class HdfsConsumerTest extends CamelTestSupport {
 
     @Override
     public void tearDown() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         super.tearDown();
         Thread.sleep(100);
         Configuration conf = new Configuration();

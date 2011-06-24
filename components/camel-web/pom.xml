@@ -551,7 +551,7 @@
                                 <id>unpack</id>
                                 <phase>generate-sources</phase>
                                 <goals>
-                                    <goal>unpack</goal>
+                                    <goal>copy</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -578,7 +578,7 @@
                                 <id>unpack</id>
                                 <phase>generate-sources</phase>
                                 <goals>
-                                    <goal>unpack</goal>
+                                    <goal>copy</goal>
                                 </goals>
                             </execution>
                         </executions>

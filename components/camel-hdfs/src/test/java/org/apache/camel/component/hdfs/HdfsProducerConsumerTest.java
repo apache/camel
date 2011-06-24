@@ -27,10 +27,21 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.junit.Before;
 import org.junit.Test;
 
 public class HdfsProducerConsumerTest extends CamelTestSupport {
+    //Hadoop doesn't run on IBM JDK
+    private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
 
+    @Before
+    public void setUp() throws Exception {
+        if (SKIP) {
+            return;
+        }
+        super.setUp();
+    }
+    
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -38,6 +49,9 @@ public class HdfsProducerConsumerTest extends CamelTestSupport {
 
     @Test
     public void testSimpleSplitWriteRead() throws Exception {
+        if (SKIP) {
+            return;
+        }
         final Path file = new Path(new File("target/test/test-camel-simple-write-file").getAbsolutePath());
 
         context.addRoutes(new RouteBuilder() {
@@ -67,6 +81,10 @@ public class HdfsProducerConsumerTest extends CamelTestSupport {
 
     @Override
     public void tearDown() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         super.tearDown();
         Thread.sleep(100);
         Configuration conf = new Configuration();

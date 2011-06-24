@@ -28,12 +28,23 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IOUtils;
+import org.junit.Before;
 import org.junit.Test;
 
 public class HdfsProducerSplitTest extends CamelTestSupport {
-    
+    //Hadoop doesn't run on IBM JDK
+    private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
+
     private static final Path BASE_FILE = new Path(new File("target/test/test-camel-simple-write-BASE_FILE").getAbsolutePath());
 
+    @Before
+    public void setUp() throws Exception {
+        if (SKIP) {
+            return;
+        }
+        super.setUp();
+    }
+    
     @Test
     public void testSimpleWriteFileWithMessageSplit() throws Exception {
         doTest(1);
@@ -46,6 +57,10 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
 
     @Test
     public void testSimpleWriteFileWithIdleSplit() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         for (int i = 0; i < 3; ++i) {
             template.sendBody("direct:start3", "CIAO" + i);
             Thread.sleep(2000);
@@ -75,6 +90,10 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
     }
 
     private void doTest(int routeNr) throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         for (int i = 0; i < 10; ++i) {
             template.sendBody("direct:start" + routeNr, "CIAO" + i);
         }
@@ -95,6 +114,10 @@ public class HdfsProducerSplitTest extends CamelTestSupport {
 
     @Override
     public void tearDown() throws Exception {
+        if (SKIP) {
+            return;
+        }
+
         super.tearDown();
         Thread.sleep(100);
         Configuration conf = new Configuration();
