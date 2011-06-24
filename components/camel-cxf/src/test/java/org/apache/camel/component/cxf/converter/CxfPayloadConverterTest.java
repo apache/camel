@@ -48,6 +48,7 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         super.setUp();
         File file = new File("src/test/resources/org/apache/camel/component/cxf/converter/test.xml");
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         document = documentBuilder.parse(file);
         document.getDocumentElement().normalize();
@@ -112,6 +113,15 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         exchange.getIn().setBody(payload);
         node = exchange.getIn().getBody(Node.class);
         assertNotNull(node);
+        
+        // To make sure we always get the element here
+        Element root = (Element) node;
+        assertEquals("root element name", "root", root.getNodeName());
+        assertEquals("root element namespace", "http://www.test.org/foo", root.getNamespaceURI());
+        Element bar = (Element) root.getElementsByTagName("bar").item(0);
+        assertEquals("child element name", "bar", bar.getNodeName());
+        assertEquals("child element namespace", "http://www.test.org/foo",
+            bar.getNamespaceURI());
     }
 
 }

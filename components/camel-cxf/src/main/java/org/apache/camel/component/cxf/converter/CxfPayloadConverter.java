@@ -69,6 +69,15 @@ public final class CxfPayloadConverter {
     public static <T> NodeList cxfPayloadToNodeList(CxfPayload<T> payload, Exchange exchange) {
         return new NodeListWrapper(payload.getBody());
     }
+    
+    @Converter
+    public static <T> Node cxfPayLoadToNode(CxfPayload<T> payload, Exchange exchange) {
+        List<Element> payloadBodyElements = payload.getBody();
+        if (payloadBodyElements.size() > 0) {
+            return payloadBodyElements.get(0);
+        }
+        return null;
+    }
 
     @SuppressWarnings("unchecked")
     @FallbackConverter
