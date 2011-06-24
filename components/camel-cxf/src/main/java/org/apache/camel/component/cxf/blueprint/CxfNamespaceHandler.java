@@ -21,16 +21,22 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
 import org.apache.aries.blueprint.NamespaceHandler;
 import org.apache.aries.blueprint.ParserContext;
 import org.apache.cxf.bus.blueprint.BlueprintBus;
 import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 
 public class CxfNamespaceHandler implements NamespaceHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(CxfNamespaceHandler.class);
 
     public URL getSchemaLocation(String s) {
         return getClass().getClassLoader().getResource("schema/blueprint/camel-cxf.xsd");
@@ -42,18 +48,16 @@ public class CxfNamespaceHandler implements NamespaceHandler {
     }
 
     public Metadata parse(Element element, ParserContext context) {
-        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         Metadata answer = null;
-        try {
-            Thread.currentThread().setContextClassLoader(BlueprintBus.class.getClassLoader());
-            String s = element.getLocalName();
-            if ("cxfEndpoint".equals(s)) {
-                answer = new EndpointDefinitionParser().parse(element, context);
-            }
-        } finally {
-            //TODO https://issues.apache.org/jira/browse/CAMEL-4137
-            //Thread.currentThread().setContextClassLoader(oldClassLoader);
+        String s = element.getLocalName();
+        // Setting the thread context classloader to workaround the issue BlueprintBus ClassLoader
+        // This line can be removed when CXF 2.4.2 is released.
+        Thread.currentThread().setContextClassLoader(BlueprintBus.class.getClassLoader());
+        if ("cxfEndpoint".equals(s)) {
+            LOG.debug("parsing the cxfEndpoint element");
+            answer = new EndpointDefinitionParser().parse(element, context);
         }
+        
         return answer;
     }
 
