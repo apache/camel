@@ -237,16 +237,35 @@
          </plugin>
       </plugins>
     </build>
-
+ 
     <profiles>
        <profile>
+          <id>snapshot</id>
+          <repositories>
+            <repository>
+              <id>pax.snapshot.repo</id>
+              <name>PAX SNAPSHOT Deploy Repository </name>
+              <url>https://oss.sonatype.org/content/repositories/ops4j-snapshots/</url>
+              <releases>
+                <enabled>false</enabled>
+              </releases>
+              <snapshots>
+                <enabled>true</enabled>
+              </snapshots>
+            </repository>
+          </repositories>
+       </profile>
+       <profile>
           <id>validate</id>
+          <properties>
+             <karaf-validate-version>2.2.2-SNAPSHOT</karaf-validate-version>
+          </properties>
           <build>
              <plugins>
                 <plugin>
                    <groupId>org.apache.karaf.tooling</groupId>
                    <artifactId>features-maven-plugin</artifactId>
-                   <version>${karaf-version}</version>
+                   <version>${karaf-validate-version}</version>
                    <configuration>
                        <file>${project.build.directory}/classes/${features.file}</file>
                        <karafConfig>${project.build.directory}/classes/config.properties</karafConfig>
