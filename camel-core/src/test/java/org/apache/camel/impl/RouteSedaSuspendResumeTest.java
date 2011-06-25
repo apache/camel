@@ -40,8 +40,7 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
         context.suspendRoute("foo");
 
-        // seda consumer doesnt support suspension so it will stop instead
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
+        assertEquals("Suspended", context.getRouteStatus("foo").name());
 
         template.sendBody("seda:foo", "B");
         mock.assertIsSatisfied(1000);

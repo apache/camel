@@ -51,8 +51,7 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
         mockBar.assertIsSatisfied();
         mock.assertIsSatisfied(1000);
 
-        // seda consumer doesnt support suspension so it will stop instead
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
+        assertEquals("Suspended", context.getRouteStatus("foo").name());
         assertEquals("Started", context.getRouteStatus("bar").name());
 
         log.info("Resuming");
