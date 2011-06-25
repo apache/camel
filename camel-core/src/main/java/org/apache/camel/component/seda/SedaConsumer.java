@@ -42,6 +42,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Consumer for the SEDA component.
+ * <p/>
+ * In this implementation there is a little <i>slack period</i> when you suspend/stop the consumer, by which
+ * the consumer may pickup a newly arrived messages and process it. That period is up till 1 second.
  *
  * @version 
  */
@@ -234,15 +237,16 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
     @Override
     protected void doResume() throws Exception {
-        setupTasks();
-        endpoint.onStarted(this);
+        doStart();
     }
 
     protected void doStop() throws Exception {
         endpoint.onStopped(this);
-        // must shutdown executor on stop to avoid overhead of having them running
-        // use shutdown now to force the tasks which are polling for new exchanges
-        // to stop immediately to avoid them picking up new exchanges arriving in the mean time
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // only shutdown thread pool when we shutdown
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceStrategy().shutdownNow(executor);
             executor = null;
