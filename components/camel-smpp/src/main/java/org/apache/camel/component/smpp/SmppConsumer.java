@@ -19,30 +19,20 @@ package org.apache.camel.component.smpp;
 import java.io.IOException;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.SynchronizedPDUSender;
-import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.BindType;
-import org.jsmpp.bean.DataSm;
-import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
-import org.jsmpp.extra.ProcessRequestException;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
-import org.jsmpp.session.DataSmResult;
 import org.jsmpp.session.MessageReceiverListener;
 import org.jsmpp.session.SMPPSession;
-import org.jsmpp.session.Session;
 import org.jsmpp.session.SessionStateListener;
 import org.jsmpp.util.DefaultComposer;
-import org.jsmpp.util.MessageIDGenerator;
-import org.jsmpp.util.MessageId;
-import org.jsmpp.util.RandomMessageIDGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,59 +69,7 @@ public class SmppConsumer extends DefaultConsumer {
                 }
             }
         };
-        this.messageReceiverListener = new MessageReceiverListener() {
-            private final MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
-
-            public void onAcceptAlertNotification(AlertNotification alertNotification) {
-                LOG.debug("Received an alertNotification {}", alertNotification);
-
-                try {
-                    Exchange exchange = getEndpoint().createOnAcceptAlertNotificationExchange(
-                            alertNotification);
-
-                    LOG.trace("Processing the new smpp exchange...");
-                    getProcessor().process(exchange);
-                    LOG.trace("Processed the new smpp exchange");
-                } catch (Exception e) {
-                    getExceptionHandler().handleException(e);
-                }
-            }
-
-            public void onAcceptDeliverSm(DeliverSm deliverSm) {
-                LOG.debug("Received a deliverSm {}", deliverSm);
-
-                try {
-                    Exchange exchange = getEndpoint().createOnAcceptDeliverSmExchange(deliverSm);
-
-                    LOG.trace("processing the new smpp exchange...");
-                    getProcessor().process(exchange);
-                    LOG.trace("processed the new smpp exchange");
-                } catch (Exception e) {
-                    getExceptionHandler().handleException(e);
-                }
-            }
-
-            public DataSmResult onAcceptDataSm(DataSm dataSm, Session session)
-                throws ProcessRequestException {
-                LOG.debug("Received a dataSm {}", dataSm);
-
-                MessageId newMessageId = messageIDGenerator.newMessageId();
-
-                try {
-                    Exchange exchange = getEndpoint().createOnAcceptDataSm(dataSm,
-                            newMessageId.getValue());
-
-                    LOG.trace("processing the new smpp exchange...");
-                    getProcessor().process(exchange);
-                    LOG.trace("processed the new smpp exchange");
-                } catch (Exception e) {
-                    getExceptionHandler().handleException(e);
-                    throw new ProcessRequestException(e.getMessage(), 255, e);
-                }
-
-                return new DataSmResult(newMessageId, dataSm.getOptionalParametes());
-            }
-        };
+        this.messageReceiverListener = new MessageReceiverListenerImpl(getEndpoint(), getProcessor(), getExceptionHandler());
     }
 
     @Override
