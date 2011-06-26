@@ -61,7 +61,7 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
         }
     }
 
-    public void onAcceptDeliverSm(DeliverSm deliverSm) {
+    public void onAcceptDeliverSm(DeliverSm deliverSm) throws ProcessRequestException {
         LOG.debug("Received a deliverSm {}", deliverSm);
 
         try {
@@ -72,6 +72,9 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
             LOG.trace("processed the new smpp exchange");
         } catch (Exception e) {
             exceptionHandler.handleException(e);
+            if (e instanceof ProcessRequestException) {
+                throw (ProcessRequestException) e;
+            }
         }
     }
 
@@ -88,6 +91,9 @@ public class MessageReceiverListenerImpl implements MessageReceiverListener {
             LOG.trace("processed the new smpp exchange");
         } catch (Exception e) {
             exceptionHandler.handleException(e);
+            if (e instanceof ProcessRequestException) {
+                throw (ProcessRequestException) e;
+            }
             throw new ProcessRequestException(e.getMessage(), 255, e);
         }
 
