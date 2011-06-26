@@ -282,7 +282,6 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
 
         @Override
         public void notify(EventObject event) throws Exception {
-            // if context
             ExchangeCompletedEvent completedEvent = (ExchangeCompletedEvent) event;
             for (Route route : routes) {
                 throttle(route, completedEvent.getExchange());
