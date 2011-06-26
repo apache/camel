@@ -865,6 +865,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public void addService(Object object) throws Exception {
+
+        // inject CamelContext
+        if (object instanceof CamelContextAware) {
+            CamelContextAware aware = (CamelContextAware) object;
+            aware.setCamelContext(this);
+        }
+
         if (object instanceof Service) {
             Service service = (Service) object;
 
@@ -885,9 +892,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
             // do not add endpoints as they have their own list
             if (singleton && !(service instanceof Endpoint)) {
-                servicesToClose.add(service);
+                // only add to list of services to close if its not already there
+                if (!hasService(service)) {
+                    servicesToClose.add(service);
+                }
             }
         }
+
+        // and then ensure service is started (as stated in the javadoc)
         startServices(object);
     }
 

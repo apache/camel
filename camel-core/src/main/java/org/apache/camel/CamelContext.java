@@ -140,9 +140,12 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     //-----------------------------------------------------------------------
 
     /**
-     * Adds a service, starting it so that it will be stopped with this context
+     * Adds a service to this context, which allows this context to control the lifecycle, ensuring
+     * the service is stopped when the context stops.
      * <p/>
-     * The added service will also be enlisted in JMX for management (if JMX is enabled)
+     * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}.
+     * The service will also be enlisted in JMX for management (if JMX is enabled).
+     * The service will be started, if its not already started.
      *
      * @param object the service
      * @throws Exception can be thrown when starting the service
@@ -150,7 +153,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void addService(Object object) throws Exception;
 
     /**
-     * Has the given service already been added?
+     * Has the given service already been added to this context?
      *
      * @param object the service
      * @return <tt>true</tt> if already added, <tt>false</tt> if not.

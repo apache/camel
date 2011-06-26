@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
@@ -324,4 +326,41 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals(false, ctx.isStarted());
         assertEquals(false, ctx.isSuspended());
     }
+
+    public void testAddServiceInjectCamelContext() throws Exception {
+        MyService my = new MyService();
+
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.addService(my);
+
+        assertEquals(ctx, my.getCamelContext());
+        assertEquals("Started", my.getStatus().name());
+
+        ctx.stop();
+        assertEquals("Stopped", my.getStatus().name());
+    }
+
+    private class MyService extends ServiceSupport implements CamelContextAware {
+
+        private CamelContext camelContext;
+
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        public void setCamelContext(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        @Override
+        protected void doStart() throws Exception {
+            // noop
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            // noop
+        }
+    }
+
 }
