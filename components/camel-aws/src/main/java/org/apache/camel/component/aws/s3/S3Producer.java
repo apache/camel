@@ -45,6 +45,16 @@ public class S3Producer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         
+        Long contentLength = exchange.getIn().getHeader(S3Constants.CONTENT_LENGTH, Long.class);
+        if (contentLength != null) {
+            objectMetadata.setContentLength(contentLength);
+        }
+        
+        String contentType = exchange.getIn().getHeader(S3Constants.CONTENT_TYPE, String.class);
+        if (contentType != null) {
+            objectMetadata.setContentType(contentType);
+        }
+        
         PutObjectRequest putObjectRequest = new PutObjectRequest(
                 getConfiguration().getBucketName(),
                 determineKey(exchange),
