@@ -28,6 +28,7 @@ import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementNamingStrategy;
+import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ServiceHelper;
 import org.fusesource.commons.management.Statistic;
@@ -50,6 +51,7 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
     private List<EventNotifier> eventNotifiers = new ArrayList<EventNotifier>();
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementNamingStrategy managementNamingStrategy;
+    private ManagementObjectStrategy managementObjectStrategy;
     private boolean onlyManageProcessorWithCustomId;
     private ManagementAgent managementAgent;
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
@@ -88,6 +90,17 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
 
     public void setManagementNamingStrategy(ManagementNamingStrategy managementNamingStrategy) {
         this.managementNamingStrategy = managementNamingStrategy;
+    }
+
+    public ManagementObjectStrategy getManagementObjectStrategy() {
+        if (managementObjectStrategy == null) {
+            managementObjectStrategy = new DefaultManagementObjectStrategy();
+        }
+        return managementObjectStrategy;
+    }
+
+    public void setManagementObjectStrategy(ManagementObjectStrategy managementObjectStrategy) {
+        this.managementObjectStrategy = managementObjectStrategy;
     }
 
     public ManagementAgent getManagementAgent() {

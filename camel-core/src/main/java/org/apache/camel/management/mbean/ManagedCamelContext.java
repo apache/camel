@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -253,9 +254,21 @@ public class ManagedCamelContext {
             // endpoint already exists
             return false;
         }
-        // create new endpoint by just getting it
-        context.getEndpoint(uri);
-        return true;
+
+        Endpoint endpoint = context.getEndpoint(uri);
+        if (endpoint != null) {
+            // ensure endpoint is registered, as the management strategy could have been configured to not always
+            // register new endpoints in JMX, so we need to check if its registered, and if not register it manually
+            ObjectName on = context.getManagementStrategy().getManagementNamingStrategy().getObjectNameForEndpoint(endpoint);
+            if (on != null && !context.getManagementStrategy().getManagementAgent().isRegistered(on)) {
+                // register endpoint as mbean
+                Object me = context.getManagementStrategy().getManagementObjectStrategy().getManagedObjectForEndpoint(context, endpoint);
+                context.getManagementStrategy().getManagementAgent().register(me, on);
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -268,6 +281,7 @@ public class ManagedCamelContext {
      */
     @ManagedOperation(description = "Removes endpoints by the given pattern")
     public int removeEndpoints(String pattern) throws Exception {
+        // endpoints is always removed from JMX if removed from context
         Collection<Endpoint> removed = context.removeEndpoints(pattern);
         if (removed == null) {
             return 0;

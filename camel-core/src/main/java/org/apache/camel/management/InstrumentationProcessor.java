@@ -48,11 +48,16 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor {
         return "Instrumentation" + (type != null ? ":" + type : "") + "[" + processor + "]";
     }
 
-    public void setCounter(ManagedPerformanceCounter counter) {
+    public void setCounter(Object counter) {
+        ManagedPerformanceCounter mpc = null;
+        if (counter instanceof ManagedPerformanceCounter) {
+            mpc = (ManagedPerformanceCounter) counter;
+        }
+
         if (this.counter instanceof DelegatePerformanceCounter) {
-            ((DelegatePerformanceCounter) this.counter).setCounter(counter);
+            ((DelegatePerformanceCounter) this.counter).setCounter(mpc);
         } else {
-            this.counter = counter;
+            this.counter = mpc;
         }
     }
 

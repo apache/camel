@@ -40,37 +40,18 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.impl.EndpointRegistry;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.ProducerCache;
-import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
-import org.apache.camel.management.mbean.ManagedBeanProcessor;
-import org.apache.camel.management.mbean.ManagedBrowsableEndpoint;
-import org.apache.camel.management.mbean.ManagedCamelContext;
-import org.apache.camel.management.mbean.ManagedComponent;
-import org.apache.camel.management.mbean.ManagedConsumer;
 import org.apache.camel.management.mbean.ManagedConsumerCache;
-import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEndpointRegistry;
-import org.apache.camel.management.mbean.ManagedErrorHandler;
-import org.apache.camel.management.mbean.ManagedEventNotifier;
-import org.apache.camel.management.mbean.ManagedPerformanceCounter;
-import org.apache.camel.management.mbean.ManagedProcessor;
-import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedProducerCache;
-import org.apache.camel.management.mbean.ManagedRoute;
-import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
-import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedService;
-import org.apache.camel.management.mbean.ManagedSuspendableRoute;
-import org.apache.camel.management.mbean.ManagedThreadPool;
-import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.AOPDefinition;
@@ -80,19 +61,13 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.processor.Delayer;
-import org.apache.camel.processor.DelegateAsyncProcessor;
-import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.processor.ErrorHandler;
-import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.interceptor.Tracer;
-import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementAware;
+import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
@@ -134,8 +109,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     }
 
     public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-        ManagedCamelContext mc = new ManagedCamelContext(context);
-        mc.init(context.getManagementStrategy());
+        Object mc = getManagementObjectStrategy().getManagedObjectForCamelContext(context);
 
         String managementName = context.getManagementName() != null ? context.getManagementName() : context.getName();
 
@@ -199,7 +173,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         initialized = true;
     }
 
-    private String findFreeName(ManagedCamelContext mc, CamelContextNameStrategy strategy, String managementName) throws MalformedObjectNameException {
+    private String findFreeName(Object mc, CamelContextNameStrategy strategy, String managementName) throws MalformedObjectNameException {
         boolean done = false;
         String name = null;
         // start from 2 as the existing name is considered the 1st
@@ -228,8 +202,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
         try {
-            ManagedCamelContext mc = new ManagedCamelContext(context);
-            mc.init(context.getManagementStrategy());
+            Object mc = getManagementObjectStrategy().getManagedObjectForCamelContext(context);
             // the context could have been removed already
             if (getManagementStrategy().isManaged(mc, null)) {
                 getManagementStrategy().unmanageObject(mc);
@@ -245,7 +218,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
         try {
-            Object mc = getManagedObjectForComponent(name, component);
+            Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);;
             getManagementStrategy().manageObject(mc);
         } catch (Exception e) {
             LOG.warn("Could not register Component MBean", e);
@@ -258,21 +231,10 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
         try {
-            Object mc = getManagedObjectForComponent(name, component);
+            Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);;
             getManagementStrategy().unmanageObject(mc);
         } catch (Exception e) {
             LOG.warn("Could not unregister Component MBean", e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object getManagedObjectForComponent(String name, Component component) {
-        if (component instanceof ManagementAware) {
-            return ((ManagementAware) component).getManagedObject(component);
-        } else {
-            ManagedComponent mc = new ManagedComponent(name, component);
-            mc.init(getManagementStrategy());
-            return mc;
         }
     }
 
@@ -290,12 +252,12 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         try {
-            Object managedObject = getManagedObjectForEndpoint(endpoint);
-            if (managedObject == null) {
+            Object me = getManagementObjectStrategy().getManagedObjectForEndpoint(camelContext, endpoint);
+            if (me == null) {
                 // endpoint should not be managed
                 return;
             }
-            getManagementStrategy().manageObject(managedObject);
+            getManagementStrategy().manageObject(me);
         } catch (Exception e) {
             LOG.warn("Could not register Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
         }
@@ -308,30 +270,10 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         try {
-            Object me = getManagedObjectForEndpoint(endpoint);
+            Object me = getManagementObjectStrategy().getManagedObjectForEndpoint(camelContext, endpoint);
             getManagementStrategy().unmanageObject(me);
         } catch (Exception e) {
             LOG.warn("Could not unregister Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object getManagedObjectForEndpoint(Endpoint endpoint) {
-        // we only want to manage singleton endpoints
-        if (!endpoint.isSingleton()) {
-            return null;
-        }
-
-        if (endpoint instanceof ManagementAware) {
-            return ((ManagementAware) endpoint).getManagedObject(endpoint);
-        } else if (endpoint instanceof BrowsableEndpoint) {
-            ManagedBrowsableEndpoint me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
-            me.init(getManagementStrategy());
-            return me;
-        } else {
-            ManagedEndpoint me = new ManagedEndpoint(endpoint);
-            me.init(getManagementStrategy());
-            return me;
         }
     }
 
@@ -386,7 +328,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return null;
         }
 
-        ManagedService answer = null;
+        Object answer = null;
 
         if (service instanceof ManagementAware) {
             return ((ManagementAware) service).getManagedObject(service);
@@ -396,18 +338,13 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             mt.init(getManagementStrategy());
             return mt;
         } else if (service instanceof EventNotifier) {
-            // special for event notifier
-            ManagedEventNotifier men = new ManagedEventNotifier(context, (EventNotifier) service);
-            men.init(getManagementStrategy());
-            return men;
+            answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
         } else if (service instanceof Producer) {
-            answer = new ManagedProducer(context, (Producer) service);
-        } else if (service instanceof ScheduledPollConsumer) {
-            answer = new ManagedScheduledPollConsumer(context, (ScheduledPollConsumer) service);
+            answer = getManagementObjectStrategy().getManagedObjectForProducer(context, (Producer) service);
         } else if (service instanceof Consumer) {
-            answer = new ManagedConsumer(context, (Consumer) service);
+            answer = getManagementObjectStrategy().getManagedObjectForConsumer(context, (Consumer) service);
         } else if (service instanceof Processor) {
-            // special for processors
+            // special for processors as we need to do some extra work
             return getManagedObjectForProcessor(context, (Processor) service, route);
         } else if (service instanceof ThrottlingInflightRoutePolicy) {
             answer = new ManagedThrottlingInflightRoutePolicy(context, (ThrottlingInflightRoutePolicy) service);
@@ -419,16 +356,16 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             answer = new ManagedEndpointRegistry(context, (EndpointRegistry) service);
         } else if (service != null) {
             // fallback as generic service
-            answer = new ManagedService(context, service);
+            answer = getManagementObjectStrategy().getManagedObjectForService(context, service);
         }
 
-        if (answer != null) {
-            answer.setRoute(route);
-            answer.init(getManagementStrategy());
+        if (answer != null && answer instanceof ManagedService) {
+            ManagedService ms = (ManagedService) answer;
+            ms.setRoute(route);
+            ms.init(getManagementStrategy());
             return answer;
         } else {
-            // not supported
-            return null;
+            return answer;
         }
     }
 
@@ -443,7 +380,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         // get the managed object as it can be a specialized type such as a Delayer/Throttler etc.
-        Object managedObject = createManagedObjectForProcessor(context, processor, holder.getKey(), route);
+        Object managedObject = getManagementObjectStrategy().getManagedObjectForProcessor(context, processor, holder.getKey(), route);
         // only manage if we have a name for it as otherwise we do not want to manage it anyway
         if (managedObject != null) {
             // is it a performance counter then we need to set our counter
@@ -451,65 +388,12 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
                 InstrumentationProcessor counter = holder.getValue();
                 if (counter != null) {
                     // change counter to us
-                    counter.setCounter((ManagedPerformanceCounter) managedObject);
+                    counter.setCounter(managedObject);
                 }
             }
         }
 
         return managedObject;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Object createManagedObjectForProcessor(CamelContext context, Processor processor,
-                                                   ProcessorDefinition definition, Route route) {
-        ManagedProcessor answer = null;
-
-        // unwrap delegates as we want the real target processor
-        Processor target = processor;
-        while (target != null) {
-
-            // skip error handlers
-            if (target instanceof ErrorHandler) {
-                return false;
-            }
-
-            // look for specialized processor which we should prefer to use
-            if (target instanceof Delayer) {
-                answer = new ManagedDelayer(context, (Delayer) target, definition);
-            } else if (target instanceof Throttler) {
-                answer = new ManagedThrottler(context, (Throttler) target, definition);
-            } else if (target instanceof SendProcessor) {
-                answer = new ManagedSendProcessor(context, (SendProcessor) target, definition);
-            } else if (target instanceof BeanProcessor) {
-                answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
-            } else if (target instanceof ManagementAware) {
-                return ((ManagementAware) target).getManagedObject(processor);
-            }
-
-            if (answer != null) {
-                // break out as we found an answer
-                break;
-            }
-
-            // no answer yet, so unwrap any delegates and try again
-            if (target instanceof DelegateProcessor) {
-                target = ((DelegateProcessor) target).getProcessor();
-            } else if (target instanceof DelegateAsyncProcessor) {
-                target = ((DelegateAsyncProcessor) target).getProcessor();
-            } else {
-                // no delegate so we dont have any target to try next
-                break;
-            }
-        }
-
-        if (answer == null) {
-            // fallback to a generic processor
-            answer = new ManagedProcessor(context, target, definition);
-        }
-
-        answer.setRoute(route);
-        answer.init(getManagementStrategy());
-        return answer;
     }
 
     public void onRoutesAdd(Collection<Route> routes) {
@@ -529,13 +413,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
                 continue;
             }
 
-            ManagedRoute mr;
-            if (route.supportsSuspension()) {
-                mr = new ManagedSuspendableRoute(camelContext, route);
-            } else {
-                mr = new ManagedRoute(camelContext, route);
-            }
-            mr.init(getManagementStrategy());
+            Object mr = getManagementObjectStrategy().getManagedObjectForRoute(camelContext, route);
 
             // skip already managed routes, for example if the route has been restarted
             if (getManagementStrategy().isManaged(mr, null)) {
@@ -571,8 +449,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         for (Route route : routes) {
-            ManagedRoute mr = new ManagedRoute(camelContext, route);
-            mr.init(getManagementStrategy());
+            Object mr = getManagementObjectStrategy().getManagedObjectForRoute(camelContext, route);
 
             // skip unmanaged routes
             if (!getManagementStrategy().isManaged(mr, null)) {
@@ -594,8 +471,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
 
-        ManagedErrorHandler me = new ManagedErrorHandler(routeContext, errorHandler, errorHandlerBuilder);
-        me.init(getManagementStrategy());
+        Object me = getManagementObjectStrategy().getManagedObjectForErrorHandler(camelContext, routeContext, errorHandler, errorHandlerBuilder);
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(me, null)) {
@@ -618,8 +494,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
 
-        ManagedThreadPool mtp = new ManagedThreadPool(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId);
-        mtp.init(getManagementStrategy());
+        Object mtp = getManagementObjectStrategy().getManagedObjectForThreadPool(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId);
 
         // skip already managed services, for example if a route has been restarted
         if (getManagementStrategy().isManaged(mtp, null)) {
@@ -723,7 +598,13 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     }
 
     private ManagementStrategy getManagementStrategy() {
+        ObjectHelper.notNull(camelContext, "CamelContext");
         return camelContext.getManagementStrategy();
+    }
+
+    private ManagementObjectStrategy getManagementObjectStrategy() {
+        ObjectHelper.notNull(camelContext, "CamelContext");
+        return camelContext.getManagementStrategy().getManagementObjectStrategy();
     }
 
     public void start() throws Exception {

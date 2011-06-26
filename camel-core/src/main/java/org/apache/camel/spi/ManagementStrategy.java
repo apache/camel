@@ -96,6 +96,20 @@ public interface ManagementStrategy extends org.fusesource.commons.management.Ma
     void setManagementNamingStrategy(ManagementNamingStrategy strategy);
 
     /**
+     * Gets the object strategy to use
+     *
+     * @return object strategy
+     */
+    ManagementObjectStrategy getManagementObjectStrategy();
+
+    /**
+     * Sets the object strategy to use
+     *
+     * @param strategy object strategy
+     */
+    void setManagementObjectStrategy(ManagementObjectStrategy strategy);
+
+    /**
      * Gets the management agent
      *
      * @return management agent

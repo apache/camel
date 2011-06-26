@@ -230,6 +230,8 @@ public interface ManagementAgent extends Service {
 
     /**
      * Whether to register mbeans when starting a new route
+     * <p/>
+     * This option is default <tt>true</tt>.
      *
      * @return <tt>true</tt> to register when starting a new route
      */
@@ -237,6 +239,8 @@ public interface ManagementAgent extends Service {
 
     /**
      * Whether to register mbeans when starting a new route
+     * <p/>
+     * This option is default <tt>true</tt>.
      *
      * @param registerNewRoutes <tt>true</tt> to register when starting a new route
      */
