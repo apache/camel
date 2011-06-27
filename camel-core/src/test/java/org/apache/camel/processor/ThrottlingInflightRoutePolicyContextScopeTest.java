@@ -38,7 +38,6 @@ public class ThrottlingInflightRoutePolicyContextScopeTest extends ContextTestSu
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("A");
-        result.setMinimumResultWaitTime(1000);
 
         // only 1 message will get completed as the throttler will suspend the consumer
         // when A is done
