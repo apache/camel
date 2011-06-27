@@ -16,11 +16,9 @@
  */
 package org.apache.camel.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -212,42 +210,4 @@ public class LRUSoftCacheTest extends TestSupport {
         cache.stop();
     }
 
-    public void testLRUSoftCacheNotRunOutOfMemory() throws Exception {
-        // we should not run out of memory using the soft cache
-        // if you run this test with LRUCache then you will run out of memory
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(500);
-        cache.start();
-
-        for (int i = 0; i < 500; i++) {
-            Object data = createData();
-            Integer key = new Integer(i);
-            log.info("Putting {}", key);
-            cache.put(key, data);
-        }
-
-        int size = cache.size();
-        log.info("Cache size {}", size);
-        assertTrue("Cache size should not be max, was: " + size, size < cache.getMaxCacheSize());
-
-        List<Integer> list = new ArrayList<Integer>(cache.keySet());
-        log.info("Keys: " + list);
-
-        // we cannot store all 1000 in the cache as the JVM have re-claimed some values from the soft cache
-        assertTrue("Cache size should not be max, was: " + list.size(), list.size() < cache.getMaxCacheSize());
-
-        // first key should not be 0
-        int first = list.get(0).intValue();
-        assertTrue("First key should not be 0, was: " + first, first != 0);
-
-        // last key should be 499
-        assertEquals(499, list.get(list.size() - 1).intValue());
-
-        cache.stop();
-    }
-
-    private Object createData() {
-        // 5mb data
-        byte[] buf = new byte[5 * 1024 * 1024];
-        return buf;
-    }
 }
