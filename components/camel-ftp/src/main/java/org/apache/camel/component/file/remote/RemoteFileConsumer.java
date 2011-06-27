@@ -39,11 +39,14 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         return (RemoteFileEndpoint<T>) super.getEndpoint();
     }
 
-    protected RemoteFileOperations getOperations() {
+    public RemoteFileOperations getOperations() {
         return (RemoteFileOperations) operations;
     }
 
     protected boolean prePollCheck() throws Exception {
+        if (log.isTraceEnabled()) {
+            log.trace("prePollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
+        }
         try {
             if (getEndpoint().getMaximumReconnectAttempts() > 0) {
                 // only use recoverable if we are allowed any re-connect attempts
@@ -71,6 +74,9 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     @Override
     protected void postPollCheck() {
+        if (log.isTraceEnabled()) {
+            log.trace("postPollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
+        }
         if (getEndpoint().isDisconnect()) {
             log.trace("postPollCheck disconnect from: {}", getEndpoint());
             disconnect();
