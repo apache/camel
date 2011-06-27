@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.Queue;
-
+import java.util.UUID;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.FolderNotFoundException;
@@ -43,10 +44,9 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 /**
  * A {@link org.apache.camel.Consumer Consumer} which consumes messages from JavaMail using a
  * {@link javax.mail.Transport Transport} and dispatches them to the {@link Processor}
- *
- * @version
  */
 public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
+    public static final String POP3_UID = "CamelPop3Uid";
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
     private static final transient Logger LOG = LoggerFactory.getLogger(MailConsumer.class);
 
@@ -239,6 +239,16 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
             Message message = messages[i];
             if (!message.getFlags().contains(Flags.Flag.DELETED)) {
                 Exchange exchange = getEndpoint().createExchange(message);
+
+                // If the protocol is POP3 we need to remember the uid on the exchange
+                // so we can find the mail message again later to be able to delete it
+                if (getEndpoint().getConfiguration().getProtocol().startsWith("pop3")) {
+                    String uid = generatePop3Uid(message);
+                    if (uid != null) {
+                        exchange.setProperty(POP3_UID, uid);
+                        LOG.trace("POP3 mail message using uid {}", uid);
+                    }
+                }
                 answer.add(exchange);
             } else {
                 if (LOG.isDebugEnabled()) {
@@ -273,11 +283,36 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
             if (!folder.isOpen()) {
                 folder.open(Folder.READ_WRITE);
             }
+
+            // If the protocol is POP3, the message needs to be synced with the folder via the UID.
+            // Otherwise setting the DELETE/SEEN flag won't delete the message.
+            String uid = (String) exchange.removeProperty(POP3_UID);
+            if (uid != null) {
+                int count = folder.getMessageCount();
+                Message found = null;
+                LOG.trace("Looking for POP3Message with UID {} from folder with {} mails", uid, count);
+                for (int i = 1; i <= count; ++i) {
+                    Message msg = folder.getMessage(i);
+                    if (uid.equals(generatePop3Uid(msg))) {
+                        LOG.debug("Found POP3Message with UID {} from folder with {} mails", uid, count);
+                        found = msg;
+                        break;
+                    }
+                }
+
+                if (found == null) {
+                    boolean delete = getEndpoint().getConfiguration().isDelete();
+                    LOG.warn("POP3message not found in folder. Message cannot be marked as " + (delete ? "DELETED" : "SEEN"));
+                } else {
+                    mail = found;
+                }
+            }
+
             if (getEndpoint().getConfiguration().isDelete()) {
-                LOG.debug("Exchange processed, so flagging message as DELETED");
+                LOG.trace("Exchange processed, so flagging message as DELETED");
                 mail.setFlag(Flags.Flag.DELETED, true);
             } else {
-                LOG.debug("Exchange processed, so flagging message as SEEN");
+                LOG.trace("Exchange processed, so flagging message as SEEN");
                 mail.setFlag(Flags.Flag.SEEN, true);
             }
         } catch (MessagingException e) {
@@ -299,6 +334,32 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         } else {
             LOG.warn("Exchange failed, so rolling back message status: " + exchange);
         }
+    }
+
+    /**
+     * Generates an UID of the POP3Message
+     *
+     * @param message the POP3Message
+     * @return the generated uid
+     */
+    protected String generatePop3Uid(Message message) {
+        String uid = null;
+
+        // create an UID based on message headers on the POP3Message, that ought to be unique
+        StringBuilder buffer = new StringBuilder();
+        try {
+            Enumeration it = message.getAllHeaders();
+            while (it.hasMoreElements()) {
+                buffer.append(it.nextElement()).append("\n");
+            }
+            if (buffer.length() > 0) {
+                uid = UUID.nameUUIDFromBytes(buffer.toString().getBytes()).toString();
+            }
+        } catch (MessagingException e) {
+            LOG.warn("Cannot reader headers from mail message. This exception will be ignored.", e);
+        }
+
+        return uid;
     }
 
     private void ensureIsConnected() throws MessagingException {
@@ -342,4 +403,5 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
     public MailEndpoint getEndpoint() {
         return (MailEndpoint) super.getEndpoint();
     }
+
 }
