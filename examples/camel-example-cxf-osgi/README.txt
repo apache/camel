@@ -13,8 +13,6 @@ the same port.
 
 You will need to compile this example first:
   mvn install
-If you want to test the bundle with blueprint configuration, you need to build the example with
-  mvn clean install -Pblueprint
 
 Remarks:
 - During the compilation phase, a unit test will be performed, this unit test simulates the
@@ -34,7 +32,7 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 2.2.x
  
   2) Add features required
   features:addUrl mvn:org.apache.camel.karaf/apache-camel/2.8.0/xml/features
-  features:install http
+  features:install war
   features:install camel-spring
   features:install camel-jaxb
   features:install camel-cxf
