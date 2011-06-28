@@ -46,6 +46,7 @@ public class EnricherTest extends ContextTestSupport {
 
     public void testEnrichInOnly() throws InterruptedException {
         mock.expectedBodiesReceived("test:blah");
+        mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "direct://enricher-constant-resource");
         template.sendBody("direct:enricher-test-1", "test");
         mock.assertIsSatisfied();
     }
@@ -61,6 +62,7 @@ public class EnricherTest extends ContextTestSupport {
         assertEquals("test", exchange.getIn().getBody());
         assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
         assertEquals("failed", exchange.getOut().getBody());
+        assertEquals("direct://enricher-fault-resource", exchange.getOut().getHeader(Exchange.TO_ENDPOINT));
         assertNull(exchange.getException());
     }
 

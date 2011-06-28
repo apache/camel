@@ -50,6 +50,7 @@ public class PollEnricherTest extends ContextTestSupport {
         Thread.sleep(250);
 
         mock.expectedBodiesReceived("test:blah");
+        mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo1");
         template.sendBody("direct:enricher-test-1", "test");
         mock.assertIsSatisfied();
     }
@@ -57,6 +58,7 @@ public class PollEnricherTest extends ContextTestSupport {
     public void testPollEnrichInOnlyWaitWithTimeout() throws InterruptedException {
         // this first try there is no data so we timeout
         mock.expectedBodiesReceived("test:blah");
+        mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo2");
         template.sendBody("direct:enricher-test-2", "test");
         // not expected data so we are not happy
         mock.assertIsNotSatisfied();
@@ -83,6 +85,7 @@ public class PollEnricherTest extends ContextTestSupport {
 
         long start = System.currentTimeMillis();
         mock.expectedBodiesReceived("test:blah");
+        mock.expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://foo3");
         t.start();
         template.sendBody("direct:enricher-test-3", "test");
         // should take approx 1 sec to complete as the other thread is sending a bit later and we wait
@@ -118,6 +121,7 @@ public class PollEnricherTest extends ContextTestSupport {
         assertEquals("bar", exchange.getIn().getHeader("foo"));
         assertEquals("test:blah", exchange.getIn().getBody());
         assertFalse(exchange.hasOut() && exchange.getOut().isFault());
+        assertEquals("seda://foo4", exchange.getOut().getHeader(Exchange.TO_ENDPOINT));
         assertNull(exchange.getException());
     }
 

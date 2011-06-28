@@ -150,6 +150,13 @@ public class PollEnricher extends ServiceSupport implements Processor {
                 }
             }
         }
+
+        // set header with the uri of the endpoint enriched so we can use that for tracing etc
+        if (exchange.hasOut()) {
+            exchange.getOut().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
+        } else {
+            exchange.getIn().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
+        }
     }
 
     /**
@@ -192,6 +199,12 @@ public class PollEnricher extends ServiceSupport implements Processor {
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (newExchange != null) {
                 copyResultsPreservePattern(oldExchange, newExchange);
+            } else {
+                // if no newExchange then there was no message from the external resource
+                // and therefore we should set an empty body to indicate this fact
+                // but keep headers/attachments as we want to propagate those
+                oldExchange.getIn().setBody(null);
+                oldExchange.setOut(null);
             }
             return oldExchange;
         }
