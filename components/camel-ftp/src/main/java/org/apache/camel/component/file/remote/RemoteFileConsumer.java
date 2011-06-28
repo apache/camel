@@ -39,7 +39,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         return (RemoteFileEndpoint<T>) super.getEndpoint();
     }
 
-    public RemoteFileOperations getOperations() {
+    protected RemoteFileOperations getOperations() {
         return (RemoteFileOperations) operations;
     }
 
