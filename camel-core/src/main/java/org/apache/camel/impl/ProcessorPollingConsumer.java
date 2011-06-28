@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.RejectedExecutionException;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -46,6 +48,11 @@ public class ProcessorPollingConsumer extends PollingConsumerSupport {
     }
 
     public Exchange receive() {
+        // must be started
+        if (!isRunAllowed() || !isStarted()) {
+            throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
+        }
+
         Exchange exchange = getEndpoint().createExchange();
         try {
             processor.process(exchange);

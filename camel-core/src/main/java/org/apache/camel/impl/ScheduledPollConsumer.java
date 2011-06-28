@@ -22,10 +22,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @version 
  */
-public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService {
+public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService, PollingConsumerPollingStrategy {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
     private final ScheduledExecutorService executor;
@@ -270,4 +272,23 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     protected void doSuspend() throws Exception {
         // dont stop/cancel the future task since we just check in the run method
     }
+
+    @Override
+    public void onStartup() throws Exception {
+        // start our self
+        ServiceHelper.startService(this);
+    }
+
+    @Override
+    public void beforePoll() throws Exception {
+        // resume our self
+        ServiceHelper.resumeService(this);
+    }
+
+    @Override
+    public void afterPoll() throws Exception {
+        // suspend our self
+        ServiceHelper.suspendService(this);
+    }
+
 }

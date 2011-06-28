@@ -18,11 +18,13 @@ package org.apache.camel.impl;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ServiceHelper;
@@ -56,11 +58,19 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     }
 
     public Exchange receive() {
+        // must be started
+        if (!isRunAllowed() || !isStarted()) {
+            throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
+        }
+
         while (isRunAllowed()) {
             try {
+                beforePoll();
                 return queue.take();
             } catch (InterruptedException e) {
                 handleInterruptedException(e);
+            } finally {
+                afterPoll();
             }
         }
         LOG.trace("Consumer is not running, so returning null");
@@ -68,11 +78,24 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     }
 
     public Exchange receive(long timeout) {
+        // must be started
+        if (!isRunAllowed() || !isStarted()) {
+            throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
+        }
+
+        // if the queue is empty and there is no wait then return null
+        if (timeout == 0 && queue.isEmpty()) {
+            return null;
+        }
+
         try {
+            beforePoll();
             return queue.poll(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             handleInterruptedException(e);
             return null;
+        } finally {
+            afterPoll();
         }
     }
 
@@ -92,10 +115,40 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         getInterruptedExceptionHandler().handleException(e);
     }
 
+    protected void beforePoll() {
+        if (consumer instanceof PollingConsumerPollingStrategy) {
+            PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
+            try {
+                strategy.beforePoll();
+            } catch (Exception e) {
+                LOG.debug("Error occurred before polling " + consumer + ". This exception will be ignored.", e);
+            }
+        }
+    }
+
+    protected void afterPoll() {
+        if (consumer instanceof PollingConsumerPollingStrategy) {
+            PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
+            try {
+                strategy.afterPoll();
+            } catch (Exception e) {
+                LOG.debug("Error occurred after polling " + consumer + ". This exception will be ignored.", e);
+            }
+        }
+    }
+
     protected void doStart() throws Exception {
         // lets add ourselves as a consumer
         consumer = getEndpoint().createConsumer(this);
-        ServiceHelper.startService(consumer);
+
+        // if the consumer has a polling strategy then invoke that
+        if (consumer instanceof PollingConsumerPollingStrategy) {
+            PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
+            strategy.onStartup();
+        } else {
+            // for regular consumers start it
+            ServiceHelper.startService(consumer);
+        }
     }
 
     protected void doStop() throws Exception {
