@@ -218,7 +218,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
         try {
-            Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);;
+            Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);
             getManagementStrategy().manageObject(mc);
         } catch (Exception e) {
             LOG.warn("Could not register Component MBean", e);
@@ -231,7 +231,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
             return;
         }
         try {
-            Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);;
+            Object mc = getManagementObjectStrategy().getManagedObjectForComponent(camelContext, component, name);
             getManagementStrategy().unmanageObject(mc);
         } catch (Exception e) {
             LOG.warn("Could not unregister Component MBean", e);
