@@ -17,16 +17,21 @@
 package org.apache.camel;
 
 /**
- * Strategy that allows consumers to influence the {@link PollingConsumer}.
+ * Strategy that allows {@link Consumer}s to influence the {@link PollingConsumer}.
+ * <p/>
+ * For example this is used by schedule based consumers to be able to suspend/resume
+ * upon polling using a {@link PollingConsumer}.
+ *
+ * @see org.apache.camel.impl.EventDrivenPollingConsumer
  */
 public interface PollingConsumerPollingStrategy {
 
     /**
-     * Callback invoked when the consumer is started.
+     * Callback invoked when the consumer is initialized such as when the {@link PollingConsumer} starts.
      *
-     * @throws Exception can be thrown if error starting.
+     * @throws Exception can be thrown if error initializing.
      */
-    void onStartup() throws Exception;
+    void onInit() throws Exception;
 
     /**
      * Callback invoked before the poll.

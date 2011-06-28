@@ -144,7 +144,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         // if the consumer has a polling strategy then invoke that
         if (consumer instanceof PollingConsumerPollingStrategy) {
             PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
-            strategy.onStartup();
+            strategy.onInit();
         } else {
             // for regular consumers start it
             ServiceHelper.startService(consumer);
