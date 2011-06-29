@@ -26,6 +26,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -190,6 +191,15 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }    
     
+    public void testExpressionExpectationOfProperty() throws InterruptedException {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.reset();
+
+        resultEndpoint.expectedPropertyReceived("number", 123);
+        template.sendBodyAndProperty("direct:a", "<foo><id>123</id></foo>", "number", XPathBuilder.xpath("/foo/id", Integer.class));
+        resultEndpoint.assertIsSatisfied();
+    }
+
     public void testAscending() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectsAscending().body();
@@ -767,6 +777,27 @@ public class MockEndpointTest extends ContextTestSupport {
         });
 
         mock.assertIsNotSatisfied();
+    }
+
+    public void testExpectedBodyTypeCoerce() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived(987);
+
+        // start with 0 (zero) to have it converted to the number and match 987
+        template.sendBody("direct:a", "0987");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testExpectedBodyExpression() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived(987);
+
+        // start with 0 (zero) to have it converted to the number and match 987
+        // and since its an expression it would be evaluated first as well
+        template.sendBody("direct:a", ExpressionBuilder.constantExpression("0987"));
+
+        assertMockEndpointsSatisfied();
     }
 
     protected void sendMessages(int... counters) {

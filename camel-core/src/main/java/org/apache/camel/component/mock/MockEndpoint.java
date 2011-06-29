@@ -488,15 +488,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                         }
 
                         Object actualValue = exchange.getIn().getHeader(key);
-                        if (actualValue instanceof Expression) {
-                            actualValue = ((Expression)actualValue).evaluate(exchange, expectedValue.getClass());
-                        } else if (actualValue instanceof Predicate) {
-                            actualValue = ((Predicate)actualValue).matches(exchange);
-                        } else if (expectedValue != null) {
-                            actualValue = getCamelContext().getTypeConverter().convertTo(expectedValue.getClass(), actualValue);
-                            assertTrue("There is no type conversion possible from " + actualValue.getClass().getName()
-                                    + " to " + expectedValue.getClass().getName(), actualValue != null);
-                        }
+                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
 
                         assertEquals("Header with name " + key + " for message: " + i, expectedValue, actualValue);
                     }
@@ -536,15 +528,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                         }
 
                         Object actualValue = exchange.getProperty(key);
-                        if (actualValue instanceof Expression) {
-                            actualValue = ((Expression)actualValue).evaluate(exchange, expectedValue.getClass());
-                        } else if (actualValue instanceof Predicate) {
-                            actualValue = ((Predicate)actualValue).matches(exchange);
-                        } else if (expectedValue != null) {
-                            actualValue = getCamelContext().getTypeConverter().convertTo(expectedValue.getClass(), actualValue);
-                            assertTrue("There is no type conversion possible from " + actualValue.getClass().getName()
-                                    + " to " + expectedValue.getClass().getName(), actualValue != null);
-                        }
+                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
 
                         assertEquals("Property with name " + key + " for message: " + i, expectedValue, actualValue);
                     }
@@ -574,12 +558,30 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                     if (i < actualBodyValues.size()) {
                         actualBody = actualBodyValues.get(i);
                     }
+                    actualBody = extractActualValue(exchange, actualBody, expectedBody);
 
-                    // TODO: coerce types before assertEquals
                     assertEquals("Body of message: " + i, expectedBody, actualBody);
                 }
             }
         });
+    }
+
+    private Object extractActualValue(Exchange exchange, Object actualValue, Object expectedValue) {
+        if (actualValue == null) {
+            return null;
+        }
+
+        if (actualValue instanceof Expression) {
+            actualValue = ((Expression)actualValue).evaluate(exchange, expectedValue != null ? expectedValue.getClass() : Object.class);
+        } else if (actualValue instanceof Predicate) {
+            actualValue = ((Predicate)actualValue).matches(exchange);
+        } else if (expectedValue != null) {
+            String from = actualValue.getClass().getName();
+            String to = expectedValue.getClass().getName();
+            actualValue = getCamelContext().getTypeConverter().convertTo(expectedValue.getClass(), actualValue);
+            assertTrue("There is no type conversion possible from " + from + " to " + to, actualValue != null);
+        }
+        return actualValue;
     }
 
     /**
@@ -1080,7 +1082,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             if (expectedBodyValues.size() > index) {
                 Object expectedBody = expectedBodyValues.get(index);
                 if (expectedBody != null) {
-                    actualBody = in.getBody(expectedBody.getClass());
+                    // prefer to convert body early, for example when using files
+                    // we need to read the content at this time
+                    Object body = in.getBody(expectedBody.getClass());
+                    if (body != null) {
+                        actualBody = body;
+                    }
                 }
                 actualBodyValues.add(actualBody);
             }
