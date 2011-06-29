@@ -31,14 +31,15 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfCustomerStartStopTest extends Assert {
-    
+    static final int PORT1 = AvailablePortFinder.getNextAvailable();  
+    static final int PORT2 = AvailablePortFinder.getNextAvailable();  
     @Test
     public void startAndStopService() throws Exception {
         CamelContext context = new DefaultCamelContext();
         // start a server    
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("cxf:http://localhost:7070/test?serviceClass=org.apache.camel.component.cxf.HelloService")
+                from("cxf:http://localhost:" + PORT1 + "/test?serviceClass=org.apache.camel.component.cxf.HelloService")
                     .to("log:endpoint");
             }
         });
@@ -48,16 +49,18 @@ public class CxfCustomerStartStopTest extends Assert {
         context.stop();
         Bus bus = BusFactory.getDefaultBus();
         JettyHTTPServerEngineFactory factory = bus.getExtension(JettyHTTPServerEngineFactory.class);
-        JettyHTTPServerEngine engine = factory.retrieveJettyHTTPServerEngine(7070);
+        JettyHTTPServerEngine engine = factory.retrieveJettyHTTPServerEngine(PORT1);
         assertNotNull("Jetty engine should be found there", engine);
         // Need to call the bus shutdown ourselves.
         bus.shutdown(true);
-        engine = factory.retrieveJettyHTTPServerEngine(7070);
+        engine = factory.retrieveJettyHTTPServerEngine(PORT1);
         assertNull("Jetty engine should be removed", engine);
     }
     
     @Test
     public void startAndStopServiceFromSpring() throws Exception {
+        System.setProperty("CamelCxfConsumerContext.port2", Integer.toString(PORT2));
+        
         ClassPathXmlApplicationContext applicationContext = 
             new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CamelCxfConsumerContext.xml");
         Bus bus = (Bus)applicationContext.getBean("cxf");
@@ -65,7 +68,7 @@ public class CxfCustomerStartStopTest extends Assert {
         applicationContext.close();
         JettyHTTPServerEngineFactory factory = bus.getExtension(JettyHTTPServerEngineFactory.class);
         // test if the port is still used
-        JettyHTTPServerEngine engine = factory.retrieveJettyHTTPServerEngine(9003);
+        JettyHTTPServerEngine engine = factory.retrieveJettyHTTPServerEngine(PORT2);
         assertNull("Jetty engine should be removed", engine);
     }
     

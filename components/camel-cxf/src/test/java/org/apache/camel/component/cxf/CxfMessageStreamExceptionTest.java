@@ -37,7 +37,7 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
                             exchange.getOut().setBody(fault);
                         }
 
-                    }).end().to(SERVICE_URI);
+                    }).end().to(serviceURI);
                 // END SNIPPET: onException
                 // START SNIPPET: MessageStreamFault
                 from(routerEndpointURI).process(new Processor() {

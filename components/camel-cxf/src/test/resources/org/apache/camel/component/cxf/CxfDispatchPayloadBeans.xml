@@ -24,14 +24,13 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-   <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
 
 
    <cxf:cxfEndpoint id="serviceEndpoint" xmlns:s="http://apache.org/hello_world_soap_http"
-		   address="http://localhost:9000/SoapContext/GreeterPort"
+		   address="http://localhost:${CxfDispatchPayloadTest.port}/SoapContext/GreeterPort"
 		   endpointName="s:GreeterPort" 
 		   serviceName="s:GreeterService"
 		   bus="#bus">

@@ -24,9 +24,11 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
 
 	<cxf:cxfEndpoint id="routerEndpoint"
+        address="http://localhost:${CxfWsdlFirstProcessorTest.port2}/PersonService/"
 		serviceClass="org.apache.camel.wsdl_first.Person"
 		endpointName="person:soap"
 		wsdlURL="person.wsdl"
@@ -41,7 +43,7 @@
     </cxf:cxfEndpoint> 
 
 	<cxf:cxfEndpoint id="serviceEndpoint"
-		address="http://localhost:9000/PersonService/"
+		address="http://localhost:${CxfWsdlFirstProcessorTest.port1}/PersonService/"
 		serviceClass="org.apache.camel.wsdl_first.Person"
 		endpointName="person:soap"		
 		serviceName="person:PersonService"

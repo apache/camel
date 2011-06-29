@@ -18,17 +18,31 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.test.AvailablePortFinder;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfRsProducerAddressOverrideTest extends CxfRsProducerTest {
+    private static int port1 = AvailablePortFinder.getNextAvailable(); 
+    private static int port2 = AvailablePortFinder.getNextAvailable(); 
+    
+    public int getPort1() {
+        return port1;
+    }
+    public int getPort2() {
+        return port2;
+    }
+    
+    
     @Override
-    protected AbstractXmlApplicationContext createApplicationContext() {        
+    protected AbstractXmlApplicationContext createApplicationContext() {       
+        System.setProperty("CxfRsProducerAddressOverrideTest.port1", Integer.toString(port1));
+        System.setProperty("CxfRsProducerAddressOverrideTest.port2", Integer.toString(port2));
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringProducerAddressOverride.xml");
     }
     
     protected void setupDestinationURL(Message inMessage) {
         inMessage.setHeader(Exchange.DESTINATION_OVERRIDE_URL, 
-            "http://localhost:9002");
+            "http://localhost:" + port1);
     }
 }

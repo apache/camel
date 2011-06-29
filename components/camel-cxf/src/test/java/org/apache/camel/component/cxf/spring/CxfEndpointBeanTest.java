@@ -17,10 +17,19 @@
 package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.component.cxf.CxfEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Test;
 
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
+    private static int port1 = AvailablePortFinder.getNextAvailable(); 
+    private static int port2 = AvailablePortFinder.getNextAvailable(); 
+    
+    static {
+        System.setProperty("CxfEndpointBeanTest.port1", Integer.toString(port1));
+        System.setProperty("CxfEndpointBeanTest.port2", Integer.toString(port2));
+    }
 
+    
     protected String[] getApplicationContextFiles() {
         return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeans.xml"};
     }
@@ -28,7 +37,7 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
         CxfEndpoint routerEndpoint = (CxfEndpoint)ctx.getBean("routerEndpoint");
-        assertEquals("Got the wrong endpoint address", "http://localhost:9000/router", routerEndpoint.getAddress());
+        assertEquals("Got the wrong endpoint address", "http://localhost:" + port1 + "/router", routerEndpoint.getAddress());
         assertEquals("Got the wrong endpont service class", "org.apache.camel.component.cxf.HelloService",
                          routerEndpoint.getServiceClass().getName());
         assertEquals("Got the wrong handlers size", 1, routerEndpoint.getHandlers().size());

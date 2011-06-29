@@ -24,8 +24,9 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:8092/PersonService/"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfNonWrapperTest.port1}/PersonService/"
                    serviceClass="org.apache.camel.non_wrapper.Person"
                    endpointName="person:soap"
                    serviceName="person:PersonService"

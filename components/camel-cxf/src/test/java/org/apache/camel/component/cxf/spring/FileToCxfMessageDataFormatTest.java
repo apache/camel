@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.HelloService;
 import org.apache.camel.component.cxf.HelloServiceImpl;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
@@ -31,6 +32,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version 
  */
 public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
+    private static int port1 = AvailablePortFinder.getNextAvailable(); 
 
     private Server server;
 
@@ -41,7 +43,7 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
         // set CXF
         ServerFactoryBean factory = new ServerFactoryBean();
 
-        factory.setAddress("http://localhost:9001/router");
+        factory.setAddress("http://localhost:" + port1 + "/router");
         factory.setServiceClass(HelloService.class);
         factory.setServiceBean(new HelloServiceImpl());
 
@@ -61,6 +63,7 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
+        System.setProperty("FileToCxfMessageDataFormatTest.port1", Integer.toString(port1));
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/spring/FileToCxfMessageDataFormatTest.xml");
     }
 

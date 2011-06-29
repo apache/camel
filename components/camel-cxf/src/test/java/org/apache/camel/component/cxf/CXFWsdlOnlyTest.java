@@ -19,10 +19,12 @@ package org.apache.camel.component.cxf;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
@@ -34,11 +36,22 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
-
+    
     private static Endpoint endpoint1;
     private static Endpoint endpoint2;
 
+    private static int port1 = AvailablePortFinder.getNextAvailable(); 
+    private static int port2 = AvailablePortFinder.getNextAvailable(); 
+    private static int port3 = AvailablePortFinder.getNextAvailable(); 
+    private static int port4 = AvailablePortFinder.getNextAvailable(); 
+        
+
     protected ClassPathXmlApplicationContext createApplicationContext() {
+        System.setProperty("CXFWsdlOnlyTest.port1", Integer.toString(port1));
+        System.setProperty("CXFWsdlOnlyTest.port2", Integer.toString(port2));
+        System.setProperty("CXFWsdlOnlyTest.port3", Integer.toString(port3));
+        System.setProperty("CXFWsdlOnlyTest.port4", Integer.toString(port4));
+        
         // When the Application is closed, the camel-cxf endpoint will be shutdown,
         // this will cause the issue of the new http server doesn't send the response back. 
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlOnlyBeans.xml");
@@ -51,10 +64,10 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
     @BeforeClass
     public static void startServices() {
         Object implementor = new PersonImpl();
-        String address = "http://localhost:9000/PersonService/";
+        String address = "http://localhost:" + port1 + "/PersonService/";
         endpoint1 = Endpoint.publish(address, implementor);
 
-        address = "http://localhost:9001/PersonService/";
+        address = "http://localhost:" + port2 + "/PersonService/";
         endpoint2 = Endpoint.publish(address, implementor);
     }
     
@@ -75,6 +88,10 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first",
                                                                 "PersonService"));
         Person client = ss.getSoap();
+        
+        ((BindingProvider)client).getRequestContext()
+            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                 "http://localhost:" + port3 + "/PersonService/");
         Holder<String> personId = new Holder<String>();
         personId.value = "hello";
         Holder<String> ssn = new Holder<String>();
@@ -95,6 +112,9 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         assertTrue(t instanceof UnknownPersonFault);
 
         Person client2 = ss.getSoap2();
+        ((BindingProvider)client2).getRequestContext()
+            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                 "http://localhost:" + port4 + "/PersonService/");
         Holder<String> personId2 = new Holder<String>();
         personId2.value = "hello";
         Holder<String> ssn2 = new Holder<String>();

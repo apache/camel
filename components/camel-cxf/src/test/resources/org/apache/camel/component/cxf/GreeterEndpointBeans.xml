@@ -24,16 +24,17 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-   <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
    <!-- Added the import for testing the CAMEL-329 -->
 
 
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9003/CamelContext/RouterPort"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfGreeterMessageRouterTest.port2}/CamelContext/RouterPort"
     		serviceClass="org.apache.hello_world_soap_http.GreeterImpl"/>
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/SoapContext/SoapPort"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfGreeterMessageRouterTest.port1}/SoapContext/SoapPort"
     		wsdlURL="testutils/hello_world.wsdl"
     		serviceClass="org.apache.hello_world_soap_http.Greeter"
     		endpointName="s:SoapPort"

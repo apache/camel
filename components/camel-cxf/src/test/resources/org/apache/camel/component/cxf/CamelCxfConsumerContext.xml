@@ -25,8 +25,10 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-   
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9003/CamelContext/RouterPort"
+
+   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CamelCxfConsumerContext.port2}/CamelContext/RouterPort"
     		serviceClass="org.apache.hello_world_soap_http.GreeterImpl">
    </cxf:cxfEndpoint>
    

@@ -24,15 +24,16 @@ import org.apache.camel.wsdl_first.UnknownPersonFault;
 
 // SET the fault message directly on the out message
 public class CxfConsumerFaultTest extends CxfConsumerPayloadFaultTest {
-    private static final String SERVICE_URI = "cxf://" + SERVICE_ADDRESS + "?" 
-        + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP
-        + "&serviceClass=org.apache.camel.wsdl_first.Person";
-   
+    
     @Override
     protected RouteBuilder createRouteBuilder() {
+        final String serviceURI = "cxf://" + serviceAddress + "?" 
+            + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP
+            + "&serviceClass=org.apache.camel.wsdl_first.Person";
+
         return new RouteBuilder() {
             public void configure() {
-                from(SERVICE_URI).process(new Processor() {
+                from(serviceURI).process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
                         // set the fault message here
                         org.apache.camel.wsdl_first.types.UnknownPersonFault faultDetail = new org.apache.camel.wsdl_first.types.UnknownPersonFault();

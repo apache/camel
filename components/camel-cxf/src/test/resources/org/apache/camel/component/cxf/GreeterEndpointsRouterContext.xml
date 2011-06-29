@@ -25,12 +25,12 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-   <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
    <!-- Added the import for testing the CAMEL-329 -->
 
+   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
    <!-- START SNIPPET: example -->
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9003/CamelContext/RouterPort"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFGreeterRouterTest.port2}/CamelContext/RouterPort"
     		serviceClass="org.apache.hello_world_soap_http.GreeterImpl">
         <cxf:outInterceptors>
             <!-- This interceptor will force the CXF server send the XML start document to client -->
@@ -43,7 +43,7 @@
    </cxf:cxfEndpoint>
    <!-- END SNIPPET: example --> 		
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/SoapContext/SoapPort"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFGreeterRouterTest.port1}/SoapContext/SoapPort"
     		wsdlURL="testutils/hello_world.wsdl"
     		serviceClass="org.apache.hello_world_soap_http.Greeter"
     		endpointName="s:SoapPort"

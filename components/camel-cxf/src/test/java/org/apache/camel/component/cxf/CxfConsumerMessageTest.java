@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
@@ -28,10 +29,6 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.Test;
 
 public class CxfConsumerMessageTest extends CamelTestSupport {
-    protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:28080/test";
-    protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
-        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
-    
     private static final String TEST_MESSAGE = "Hello World!";
     
     private static final String ECHO_METHOD = "ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\"";
@@ -45,10 +42,15 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
             + "<return xmlns=\"http://cxf.component.camel.apache.org/\">true</return>"
             + "</ns1:echoBooleanResponse></soap:Body></soap:Envelope>";
 
+    protected final String simpleEndpointAddress = "http://localhost:"
+        + AvailablePortFinder.getNextAvailable() + "/test";
+    protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
+        + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(SIMPLE_ENDPOINT_URI + "&dataFormat=MESSAGE").process(new Processor() {
+                from(simpleEndpointURI + "&dataFormat=MESSAGE").process(new Processor() {
                     public void process(final Exchange exchange) {
                         Message in = exchange.getIn();
                         // check the content-length header is filtered 
@@ -73,7 +75,7 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
     public void testInvokingServiceFromCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress(SIMPLE_ENDPOINT_ADDRESS);
+        clientBean.setAddress(simpleEndpointAddress);
         clientBean.setServiceClass(HelloService.class);
         clientBean.setBus(BusFactory.getDefaultBus());
 

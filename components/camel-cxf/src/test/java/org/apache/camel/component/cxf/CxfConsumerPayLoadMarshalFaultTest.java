@@ -40,7 +40,7 @@ public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultT
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(FROM_URI).process(new Processor() {
+                from(fromURI).process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
                         JAXBContext context = JAXBContext.newInstance("org.apache.camel.wsdl_first.types");
                         QName faultCode = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server");

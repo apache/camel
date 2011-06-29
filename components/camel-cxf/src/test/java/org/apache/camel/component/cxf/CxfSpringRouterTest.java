@@ -60,7 +60,7 @@ public class CxfSpringRouterTest extends CxfSimpleRouterTest {
 
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfEndpointBeans.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfSpringRouterBeans.xml");
     }
 
 }

@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
@@ -37,10 +38,6 @@ import org.junit.Test;
 
 
 public class CxfConsumerResponseTest extends CamelTestSupport {
-    protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:28080/test";
-    protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
-        + "?serviceClass=org.apache.camel.component.cxf.HelloService"
-        + "&publishedEndpointUrl=http://www.simple.com/services/test";
     
     private static final String ECHO_OPERATION = "echo";
     private static final String ECHO_BOOLEAN_OPERATION = "echoBoolean";
@@ -48,11 +45,19 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
     private static final String TEST_MESSAGE = "Hello World!";
     private static int pingCounter;
 
+    
+    protected final String simpleEndpointAddress = "http://localhost:"
+        + AvailablePortFinder.getNextAvailable() + "/test";
+    protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
+        + "?serviceClass=org.apache.camel.component.cxf.HelloService"
+        + "&publishedEndpointUrl=http://www.simple.com/services/test";
+    
+    
     // START SNIPPET: example
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(SIMPLE_ENDPOINT_URI).inOnly("log:test").choice().when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION)).process(new Processor() {
+                from(simpleEndpointURI).inOnly("log:test").choice().when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION)).process(new Processor() {
                     public void process(final Exchange exchange) {
                         assertEquals(DataFormat.POJO, exchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class));
                         Message in = exchange.getIn();
@@ -100,7 +105,7 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
     public void testInvokingServiceFromCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress(SIMPLE_ENDPOINT_ADDRESS);
+        clientBean.setAddress(simpleEndpointAddress);
         clientBean.setServiceClass(HelloService.class);
         clientBean.setBus(BusFactory.getDefaultBus());
 

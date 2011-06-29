@@ -26,9 +26,12 @@
        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
        http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
   
     <http:conduit name="{http://apache.org/hello_world_soap_http}SoapPort.http-conduit">
-      <http:client DecoupledEndpoint="http://localhost:9990/decoupled_endpoint"/>
+      <http:client DecoupledEndpoint="http://localhost:${WSAddressingTest.port2}/decoupled_endpoint"/>
     </http:conduit>
 
     <cxf:bus>

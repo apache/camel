@@ -20,6 +20,7 @@ import org.w3c.dom.Document;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -30,8 +31,9 @@ import org.junit.Test;
  * @version 
  */
 public class CxfJavaOnlyPayloadModeTest extends CamelTestSupport {
-    
-    private String url = "cxf://http://localhost:9002/helloworld"
+    private static int port1 = AvailablePortFinder.getNextAvailable(); 
+
+    private String url = "cxf://http://localhost:" + port1 + "/helloworld"
         + "?wsdlURL=classpath:person.wsdl"
         + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
         + "&portName={http://camel.apache.org/wsdl-first}soap"

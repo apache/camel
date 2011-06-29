@@ -19,10 +19,13 @@ package org.apache.camel.component.cxf;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class CxfConsumerStartTwiceTest extends Assert {
+    static final int PORT = AvailablePortFinder.getNextAvailable(); 
+    
     
     @Test
     public void startServiceTwice() throws Exception {
@@ -31,7 +34,7 @@ public class CxfConsumerStartTwiceTest extends Assert {
         //add the same route twice...
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("cxf:http://localhost:7070/test?serviceClass=org.apache.camel.component.cxf.HelloService")
+                from("cxf:http://localhost:" + PORT + "/test?serviceClass=org.apache.camel.component.cxf.HelloService")
                     .to("log:POJO");
             }
         });
@@ -39,7 +42,7 @@ public class CxfConsumerStartTwiceTest extends Assert {
        
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("cxf:http://localhost:7070/test?serviceClass=org.apache.camel.component.cxf.HelloService")
+                from("cxf:http://localhost:" + PORT + "/test?serviceClass=org.apache.camel.component.cxf.HelloService")
                     .to("log:POJO");
             }
         });            
@@ -49,7 +52,7 @@ public class CxfConsumerStartTwiceTest extends Assert {
             fail("Expect to catch an exception here");
         } catch (Exception ex) {
             assertTrue(ex.getMessage().endsWith(
-                "Multiple consumers for the same endpoint is not allowed: Endpoint[cxf://http://localhost:7070/test?serviceClass=org.apache.camel.component.cxf.HelloService]"));
+                "Multiple consumers for the same endpoint is not allowed: Endpoint[cxf://http://localhost:" + PORT + "/test?serviceClass=org.apache.camel.component.cxf.HelloService]"));
         }
                 
         context.stop();

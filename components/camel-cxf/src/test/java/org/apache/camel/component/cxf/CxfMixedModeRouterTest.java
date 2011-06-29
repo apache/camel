@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Server;
@@ -40,10 +41,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 
-public class CxfMixedModeRouterTest extends CamelTestSupport {    
+public class CxfMixedModeRouterTest extends CamelTestSupport {
+    protected static int port1 = AvailablePortFinder.getNextAvailable(); 
+    protected static int port2 = AvailablePortFinder.getNextAvailable(); 
+
     protected static Server server;
-    protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
-    protected static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
+    protected static final String ROUTER_ADDRESS = "http://localhost:" + port1 + "/router";
+    protected static final String SERVICE_ADDRESS = "http://localhost:" + port2 + "/helloworld";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
 
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";

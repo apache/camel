@@ -16,13 +16,38 @@
  */
 package org.apache.camel.component.cxf;
 
+import javax.xml.ws.Endpoint;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.hello_world_soap_http.GreeterImpl;
+import org.junit.BeforeClass;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * The Greeter test with the PAYLOAD date format
  */
-public class CxfGreeterPayLoadRouterTest  extends CXFGreeterRouterTest {
+public class CxfGreeterPayLoadRouterTest  extends AbstractCXFGreeterRouterTest {
+    private static int port1 = AvailablePortFinder.getNextAvailable(); 
+    private static int port2 = AvailablePortFinder.getNextAvailable();
+    static {
+        System.setProperty("CxfGreeterPayloadRouterTest.port1", Integer.toString(port1));
+        System.setProperty("CxfGreeterPayloadRouterTest.port2", Integer.toString(port2));
+    }
+    public String getPort1() {
+        return Integer.toString(port1);
+    }
+
+    public String getPort2() {
+        return Integer.toString(port2);
+    }
+
+    @BeforeClass
+    public static void startService() {
+        Object implementor = new GreeterImpl();
+        String address = "http://localhost:" + port1 + "/SoapContext/SoapPort";
+        endpoint = Endpoint.publish(address, implementor); 
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -37,7 +62,7 @@ public class CxfGreeterPayLoadRouterTest  extends CXFGreeterRouterTest {
     
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointBeans.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointPayloadBeans.xml");
     }
 
 

@@ -16,15 +16,36 @@
  */
 package org.apache.camel.component.cxf;
 
+import javax.xml.ws.Endpoint;
+
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
+import org.apache.camel.wsdl_first.PersonImpl;
+import org.junit.BeforeClass;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CxfWsdlFirstProcessorTest extends CxfWsdlFirstTest {
+public class CxfWsdlFirstProcessorTest extends AbstractCxfWsdlFirstTest {
+    private static int port1 = AvailablePortFinder.getNextAvailable(); 
+    private static int port2 = AvailablePortFinder.getNextAvailable(); 
+    static {
+        System.setProperty("CxfWsdlFirstProcessorTest.port1", Integer.toString(port1));
+        System.setProperty("CxfWsdlFirstProcessorTest.port2", Integer.toString(port2));
+    }
 
+    public String getPort() {
+        return Integer.toString(port2);
+    }
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstProcessor.xml");
     }
 
+    @BeforeClass
+    public static void startService() {
+        Object implementor = new PersonImpl();
+        String address = "http://localhost:" + port1 + "/PersonService/";
+        Endpoint.publish(address, implementor);
+    }
+    
     @Override
     protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) {
         assertEquals(2, fromHandler.getFaultCount());

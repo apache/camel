@@ -19,79 +19,49 @@ package org.apache.camel.component.cxf;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.Person;
+import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CxfWsdlFirstPayloadModeTest extends CxfWsdlFirstTest {
+public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
+    private static int port1 = AvailablePortFinder.getNextAvailable(); 
+    private static int port2 = AvailablePortFinder.getNextAvailable(); 
+    static {
+        System.setProperty("CxfWsdlFirstPayloadModeTest.port1", Integer.toString(port1));
+        System.setProperty("CxfWsdlFirstPayloadModeTest.port2", Integer.toString(port2));
+    }
+
+    public String getPort() {
+        return Integer.toString(port2);
+    }
+
+    @BeforeClass
+    public static void startService() {
+        Object implementor = new PersonImpl();
+        String address = "http://localhost:" + port1 + "/PersonService/";
+        Endpoint.publish(address, implementor);
+    }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstBeansPayloadMode.xml");
     }
     
-    @Test
-    @Override
-    public void testInvokingServiceFromCXFClient() throws Exception {
-
-        JaxwsTestHandler fromHandler = getMandatoryBean(JaxwsTestHandler.class, "fromEndpointJaxwsHandler");
-        fromHandler.reset();
-        
-        JaxwsTestHandler toHandler = getMandatoryBean(JaxwsTestHandler.class, "toEndpointJaxwsHandler");
-        toHandler.reset();
-
-        URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
-        PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first", "PersonService"));
-        Person client = ss.getSoap();
-        Holder<String> personId = new Holder<String>();
-        personId.value = "hello";
-        Holder<String> ssn = new Holder<String>();
-        Holder<String> name = new Holder<String>();
-
-        client.getPerson(personId, ssn, name);
-        assertEquals("we should get the right answer from router", "Bonjour", name.value);
-
-        Throwable t = null;
-        personId.value = "";
-        try {
-            client.getPerson(personId, ssn, name);
-            fail("We expect to get the UnknowPersonFault here");
-        } catch (UnknownPersonFault fault) {
-            // We expect to get fault here
-            t = fault;
-        }
-        
-        assertTrue(t instanceof UnknownPersonFault);
-        
-        // schema validation will throw a parse exception
-        personId.value = "Invoking getPerson with invalid length string, expecting exception...xxxxxxxxx";
-        try {            
-            client.getPerson(personId, ssn, name);
-            fail("We expect to get a message schema validation failure");        
-        } catch (Exception ex) {
-            assertEquals("Could not parse the XML stream.", ex.getMessage());         
-        }
-
-        verifyJaxwsHandlers(fromHandler, toHandler);
-    }
 
     @Test
     public void testInvokingServiceWithCamelProducer() throws Exception {
         // this test does not apply to PAYLOAD mode
     }
     
-    @Override
-    protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) { 
-        assertEquals(2, fromHandler.getFaultCount());
-        assertEquals(4, fromHandler.getMessageCount());
-        // Changed to use noErrorhandler and now the message will not be sent again.
-        assertEquals(3, toHandler.getMessageCount());
-        assertEquals(1, toHandler.getFaultCount());
-    }
+
 
 }

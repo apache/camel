@@ -23,9 +23,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.GreeterImpl;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 
 
@@ -33,7 +36,6 @@ import org.junit.BeforeClass;
  * Base class for testing arbitrary payload
  */
 public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
-    protected static Endpoint endpoint;
     protected static final String DISPATCH_NS = "http://camel.apache.org/cxf/jaxws/dispatch";
     protected static final String INVOKE_NAME = "Invoke";
     protected static final String INVOKE_ONEWAY_NAME = "InvokeOneWay";
@@ -48,15 +50,18 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
         + "</soap:Body></soap:Envelope>";
     private static DocumentBuilderFactory documentBuilderFactory;
 
-    @BeforeClass
-    public static void startService() {
+    protected Endpoint endpoint;
+    protected int port = AvailablePortFinder.getNextAvailable(); 
+
+    @Before
+    public void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:9000/SoapContext/GreeterPort";
+        String address = "http://localhost:" + port + "/SoapContext/GreeterPort";
         endpoint = Endpoint.publish(address, implementor); 
     }
     
-    @AfterClass
-    public static void stopService() {
+    @After
+    public void stopService() {
         if (endpoint != null) {
             endpoint.stop();
         }

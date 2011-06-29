@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
@@ -42,9 +43,15 @@ import static org.junit.Assert.assertNotNull;
  */
 @ContextConfiguration
 public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringContextTests {
-    
-    protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
-    protected static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
+    protected static int port1 = AvailablePortFinder.getNextAvailable(); 
+    protected static int port2 = AvailablePortFinder.getNextAvailable(); 
+    static {
+        System.setProperty("LoggingInterceptorInMessageModeTest.port1", Integer.toString(port1));
+        System.setProperty("LoggingInterceptorInMessageModeTest.port2", Integer.toString(port2));
+    }
+
+    protected static final String ROUTER_ADDRESS = "http://localhost:" + port1 + "/router";
+    protected static final String SERVICE_ADDRESS = "http://localhost:" + port2 + "/helloworld";
 
     @Autowired
     protected CamelContext context;

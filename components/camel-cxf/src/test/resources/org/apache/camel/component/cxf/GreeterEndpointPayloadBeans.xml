@@ -18,30 +18,27 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
+
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-    <cxf:cxfEndpoint id="routerEndpoint"
-                     address="http://localhost:${FileToCxfMessageDataFormatTest.port1}/router"
-                     serviceClass="org.apache.camel.component.cxf.HelloService">
-        <!-- use MESSAGE data format -->
-        <cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
-        </cxf:properties>
-    </cxf:cxfEndpoint>
+   <import resource="classpath:META-INF/cxf/cxf.xml"/>
+   <!-- Added the import for testing the CAMEL-329 -->
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <from uri="file:target/filetocxf"/>
-            <to uri="log:request"/>
-            <inOut uri="routerEndpoint"/>
-            <to uri="log:reply"/>
-            <to uri="mock:result"/>
-        </route>
-    </camelContext>
+
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfGreeterPayloadRouterTest.port2}/CamelContext/RouterPort"
+    		serviceClass="org.apache.hello_world_soap_http.GreeterImpl"/>
+
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfGreeterPayloadRouterTest.port1}/SoapContext/SoapPort"
+    		wsdlURL="testutils/hello_world.wsdl"
+    		serviceClass="org.apache.hello_world_soap_http.Greeter"
+    		endpointName="s:SoapPort"
+    		serviceName="s:SOAPService"
+    	xmlns:s="http://apache.org/hello_world_soap_http" />
 
 </beans>

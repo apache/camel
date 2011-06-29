@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.non_wrapper.Person;
@@ -26,13 +27,16 @@ import org.apache.camel.non_wrapper.PersonService;
 import org.apache.camel.non_wrapper.UnknownPersonFault;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfNonWrapperTest extends CamelSpringTestSupport {
-
+    int port1 = AvailablePortFinder.getNextAvailable(); 
+    
     protected ClassPathXmlApplicationContext createApplicationContext() {
+        System.setProperty("CxfNonWrapperTest.port1", Integer.toString(port1));
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/nonWrapperProcessor.xml");
     }
 
@@ -46,6 +50,10 @@ public class CxfNonWrapperTest extends CamelSpringTestSupport {
         URL wsdlURL = getClass().getClassLoader().getResource("person-non-wrapper.wsdl");
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/non-wrapper", "PersonService"));
         Person client = ss.getSoap();
+        ((BindingProvider)client).getRequestContext()
+            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                 "http://localhost:" + port1 + "/PersonService/");
+        
         GetPerson request = new GetPerson();
         request.setPersonId("hello");
         GetPersonResponse response = client.getPerson(request);

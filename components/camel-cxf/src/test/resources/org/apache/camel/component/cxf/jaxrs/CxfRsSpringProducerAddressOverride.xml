@@ -20,14 +20,15 @@
        xmlns:cxf="http://camel.apache.org/schema/cxf"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
   <jaxrs:server id="restService"
-		        address="http://localhost:9002" 
+		        address="http://localhost:${CxfRsProducerAddressOverrideTest.port1}" 
 		        staticSubresourceResolution="true">
     <jaxrs:serviceBeans>
       <ref bean="customerService"/>
@@ -42,6 +43,7 @@
   <cxf:rsClient id="rsClientHttp" address="http://badAddress"/>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <endpoint id="fromEndpoint" uri="jetty://http://localhost:${CxfRsProducerAddressOverrideTest.port2}/testQuery"/>
     <route>
        <from uri="direct://proxy"/>
        <to uri="cxfrs://bean://rsClientProxy"/>
@@ -51,7 +53,7 @@
        <to uri="cxfrs://bean://rsClientHttp"/>
     </route>
     <route>
-       <from uri="jetty://http://localhost:9003/testQuery"/>
+       <from ref="fromEndpoint"/>
        <process ref="myProcessor" />
     </route>
   </camelContext>

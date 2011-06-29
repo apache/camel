@@ -19,12 +19,14 @@ package org.apache.camel.component.cxf;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
@@ -34,7 +36,9 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -44,14 +48,17 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}soap";
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
     protected static Endpoint endpoint;
+    
+    protected int port1 = AvailablePortFinder.getNextAvailable(); 
+    protected int port2 = AvailablePortFinder.getNextAvailable(); 
 
-    @BeforeClass
-    public static void startService() {
-        endpoint = Endpoint.publish("http://localhost:8093/PersonService", new PersonImpl());
+    @Before
+    public void startService() {
+        endpoint = Endpoint.publish("http://localhost:" + port1 + "/PersonService", new PersonImpl());
     }
     
-    @AfterClass
-    public static void stopService() {
+    @After
+    public void stopService() {
         if (endpoint != null) {
             endpoint.stop();
         }
@@ -68,7 +75,7 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf://http://localhost:8092/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat())
+                from("cxf://http://localhost:" + port2 + "/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat())
                     .process(new Processor() {
 
                         @Override
@@ -77,7 +84,7 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
                         }
                         
                     })
-                    .to("cxf://http://localhost:8093/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat());
+                    .to("cxf://http://localhost:" + port1 + "/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat());
             }
         };
     }
@@ -94,6 +101,10 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
         Person client = ss.getSoap();
         
         Client c = ClientProxy.getClient(client);
+        
+        ((BindingProvider)client).getRequestContext()
+            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                 "http://localhost:" + port1 + "/PersonService");
         c.getInInterceptors().add(new LoggingInInterceptor());
         c.getOutInterceptors().add(new LoggingOutInterceptor());
         
@@ -112,7 +123,10 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
         PersonService ss = new PersonService(wsdlURL, QName.valueOf(getServiceName()));
 
         Person client = ss.getSoap();
-        
+        ((BindingProvider)client).getRequestContext()
+            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                 "http://localhost:" + port1 + "/PersonService");
+
         Client c = ClientProxy.getClient(client);
         c.getInInterceptors().add(new LoggingInInterceptor());
         c.getOutInterceptors().add(new LoggingOutInterceptor());

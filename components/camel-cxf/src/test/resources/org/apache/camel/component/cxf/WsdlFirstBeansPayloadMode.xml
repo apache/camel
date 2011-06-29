@@ -12,7 +12,15 @@
 		the specific language governing permissions and limitations under the
 		License.
 	--><beans xmlns="http://www.springframework.org/schema/beans" xmlns:camel="http://camel.apache.org/schema/spring" xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     ">
-	<cxf:cxfEndpoint xmlns:person="http://camel.apache.org/wsdl-first" endpointName="person:soap" id="routerEndpoint" serviceClass="org.apache.camel.wsdl_first.Person" serviceName="person:PersonService" wsdlURL="person.wsdl">
+
+
+           <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+
+     <cxf:cxfEndpoint xmlns:person="http://camel.apache.org/wsdl-first" 
+         address="http://localhost:${CxfWsdlFirstPayloadModeTest.port2}/PersonService/" 
+         endpointName="person:soap" id="routerEndpoint" serviceClass="org.apache.camel.wsdl_first.Person" 
+         serviceName="person:PersonService" wsdlURL="person.wsdl">
 		<cxf:properties>
 			<entry key="schema-validation-enabled" value="true"/>
 		</cxf:properties>
@@ -27,7 +35,8 @@
       </cxf:outInterceptors>
 	</cxf:cxfEndpoint>
 	
-	<cxf:cxfEndpoint xmlns:person="http://camel.apache.org/wsdl-first" address="http://localhost:9000/PersonService/" endpointName="person:soap" id="serviceEndpoint" serviceClass="org.apache.camel.wsdl_first.Person" serviceName="person:PersonService">
+	<cxf:cxfEndpoint xmlns:person="http://camel.apache.org/wsdl-first" address="http://localhost:${CxfWsdlFirstPayloadModeTest.port1}/PersonService/" 
+        endpointName="person:soap" id="serviceEndpoint" serviceClass="org.apache.camel.wsdl_first.Person" serviceName="person:PersonService">
 		<cxf:handlers>
           <ref bean="toEndpointJaxwsHandler"/> 
         </cxf:handlers>

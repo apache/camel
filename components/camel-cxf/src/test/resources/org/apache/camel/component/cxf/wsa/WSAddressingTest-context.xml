@@ -22,8 +22,11 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
   ">
+  
+     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+  
 	<cxf:cxfEndpoint id="routerEndpoint"
-		address="http://localhost:9000/SoapContext/SoapPort" endpointName="tns:SoapPort"
+		address="http://localhost:${WSAddressingTest.port0}/SoapContext/SoapPort" endpointName="tns:SoapPort"
 		serviceName="tns:SOAPService" wsdlURL="/wsdl/hello_world.wsdl"
 		serviceClass="org.apache.hello_world_soap_http.Greeter"
 		xmlns:tns="http://apache.org/hello_world_soap_http">
@@ -38,7 +41,7 @@
 		</cxf:features>
 	</cxf:cxfEndpoint>
 	<cxf:cxfEndpoint id="serviceEndpoint"
-		address="http://localhost:9001/SoapContext/SoapPort" endpointName="tns:SoapPort"
+		address="http://localhost:${WSAddressingTest.port1}/SoapContext/SoapPort" endpointName="tns:SoapPort"
 		serviceName="tns:SOAPService" wsdlURL="/wsdl/hello_world.wsdl"
 		serviceClass="org.apache.hello_world_soap_http.Greeter"		
 		xmlns:tns="http://apache.org/hello_world_soap_http">

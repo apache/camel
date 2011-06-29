@@ -20,8 +20,9 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
      
-	<cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
+	<cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${LoggingInterceptorInMessageModeTest.port1}/router"
 		serviceClass="org.apache.camel.component.cxf.HelloService">
 		<cxf:properties>
 			<entry key="dataFormat" value="MESSAGE"/>
@@ -34,7 +35,7 @@
          <constructor-arg value="write"/> 
     </bean>
     		
-	<cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
+	<cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${LoggingInterceptorInMessageModeTest.port2}/helloworld"
 		serviceClass="org.apache.camel.component.cxf.HelloService">
 		<cxf:outInterceptors>
 		    <ref bean="loggingOutInterceptor"/>

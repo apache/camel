@@ -21,6 +21,7 @@ import java.io.StringReader;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 import org.w3c.dom.Element;
@@ -28,6 +29,7 @@ import org.w3c.dom.Element;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
@@ -51,18 +53,23 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
     protected static final String SERVICE_NAME = "{http://camel.apache.org/wsdl-first}PersonService";
     protected static final String SERVICE_NAME_PROP =  "serviceName=" + SERVICE_NAME;
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
-    protected static final String SERVICE_ADDRESS = "http://localhost:8092/PersonService";
     
-    protected static final String FROM_URI = "cxf://" + SERVICE_ADDRESS + "?" 
-        + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=" + DataFormat.PAYLOAD;
 
     protected static final String DETAILS = "<detail><UnknownPersonFault xmlns=\"http://camel.apache.org/wsdl-first/types\">"
         + "<personId></personId></UnknownPersonFault></detail>";
+    
+
+    
+    protected final int port = AvailablePortFinder.getNextAvailable();
+    protected final String serviceAddress = "http://localhost:" + port + "/PersonService";
+    protected final String fromURI = "cxf://" + serviceAddress + "?" 
+        + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=" + DataFormat.PAYLOAD;
+    
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(FROM_URI).process(new Processor() {
+                from(fromURI).process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
                         QName faultCode = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server");
                         SoapFault fault = new SoapFault("Get the null value of person name", faultCode);
@@ -75,7 +82,7 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
             }
         };
     }
-    
+
     @Test
     public void testInvokingFromCxfClient() throws Exception {
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
@@ -86,6 +93,8 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
         Client c = ClientProxy.getClient(client);
         c.getInInterceptors().add(new LoggingInInterceptor());
         c.getOutInterceptors().add(new LoggingOutInterceptor());
+        ((BindingProvider)client).getRequestContext()
+            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, serviceAddress);
         
         Holder<String> personId = new Holder<String>();
         personId.value = "";

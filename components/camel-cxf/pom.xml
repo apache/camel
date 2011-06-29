@@ -211,9 +211,12 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <forkMode>pertest</forkMode>
           <childDelegation>false</childDelegation>
-          <useFile>true</useFile>
+          <forkMode>pertest</forkMode>
+          <!--forkMode>once</forkMode>
+          <reportFormat>brief</reportFormat>
+          <useFile>false</useFile-->
+          <runOrder>alphabetical</runOrder>
           <systemPropertyVariables>
             <java.util.logging.config.file>${basedir}/target/test-classes/logging.properties</java.util.logging.config.file>
           </systemPropertyVariables>

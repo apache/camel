@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
@@ -37,7 +38,8 @@ import org.junit.Test;
 
 
 public class CxfConsumerTest extends CamelTestSupport {
-    protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:28080/test";
+    protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:"
+        + AvailablePortFinder.getNextAvailable() + "/test";
     protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
         + "?serviceClass=org.apache.camel.component.cxf.HelloService"
         + "&publishedEndpointUrl=http://www.simple.com/services/test";

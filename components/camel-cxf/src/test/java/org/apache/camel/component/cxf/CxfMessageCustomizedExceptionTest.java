@@ -27,7 +27,7 @@ public class CxfMessageCustomizedExceptionTest extends CxfCustomizedExceptionTes
     @Before
     @Override
     public void setUp() throws Exception {
-        routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&DataFormat=MESSAGE";
+        routerEndpointURI = "cxf://" + routerAddress + "?" + SERVICE_CLASS + "&DataFormat=MESSAGE";
         super.setUp();
     }
 }

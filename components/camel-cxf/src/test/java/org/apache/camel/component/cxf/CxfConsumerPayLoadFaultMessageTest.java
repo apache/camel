@@ -39,7 +39,7 @@ public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultT
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(FROM_URI).process(new Processor() {
+                from(fromURI).process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
                         Element details = DOMUtils.readXml(new StringReader(FAULTS)).getDocumentElement();
                         List<Element> outElements = new ArrayList<Element>();

@@ -23,25 +23,15 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-    <cxf:cxfEndpoint id="routerEndpoint"
-                     address="http://localhost:${FileToCxfMessageDataFormatTest.port1}/router"
-                     serviceClass="org.apache.camel.component.cxf.HelloService">
-        <!-- use MESSAGE data format -->
-        <cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
-        </cxf:properties>
-    </cxf:cxfEndpoint>
+  <bean id="fromEndpointJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler"/>
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <from uri="file:target/filetocxf"/>
-            <to uri="log:request"/>
-            <inOut uri="routerEndpoint"/>
-            <to uri="log:reply"/>
-            <to uri="mock:result"/>
-        </route>
-    </camelContext>
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
+    serviceClass="org.apache.camel.component.cxf.HelloService">
+  </cxf:cxfEndpoint>
+
+
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
+    serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
 </beans>

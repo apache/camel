@@ -33,6 +33,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.Bus;
@@ -46,16 +47,11 @@ import org.junit.Test;
 
 public class CxfCustomizedExceptionTest extends CamelTestSupport {
 
-    protected static final String ROUTER_ADDRESS = "http://localhost:9002/router";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
-    protected static String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
-    protected static final String SERVICE_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
     private static final String DETAIL_TEXT = "This is a detail text node";
     private static final SoapFault SOAP_FAULT;
 
-    private Bus bus;
-   
     static {
         // START SNIPPET: FaultDefine
         SOAP_FAULT = new SoapFault(EXCEPTION_MESSAGE, SoapFault.FAULT_CODE_CLIENT);
@@ -65,6 +61,14 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
         detail.appendChild(tn);
         // END SNIPPET: FaultDefine
     }    
+    
+    protected String routerAddress = "http://localhost:" + AvailablePortFinder.getNextAvailable() 
+        + "/router";
+    protected String routerEndpointURI = "cxf://" + routerAddress + "?" + SERVICE_CLASS;
+    protected String serviceURI = "cxf://" + routerAddress + "?" + SERVICE_CLASS;
+
+    private Bus bus;
+    
 
     @Override
     @Before
@@ -99,7 +103,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
                             
                         })                
                         .end() 
-                    .to(SERVICE_URI);
+                    .to(serviceURI);
                 // END SNIPPET: onException
                 // START SNIPPET: ThrowFault
                 from(routerEndpointURI).setFaultBody(constant(SOAP_FAULT));
@@ -125,7 +129,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
     public void testInvokingServiceFromCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress(ROUTER_ADDRESS);
+        clientBean.setAddress(routerAddress);
         clientBean.setServiceClass(HelloService.class);
         clientBean.setBus(bus);
 
@@ -146,7 +150,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
     
     @Test
     public void testInvokingServiceFromHTTPURL() throws Exception {
-        URL url = new URL(ROUTER_ADDRESS);
+        URL url = new URL(routerAddress);
         URLConnection urlConnection = url.openConnection();
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(true);
