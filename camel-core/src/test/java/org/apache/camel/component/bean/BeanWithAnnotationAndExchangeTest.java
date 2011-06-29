@@ -34,7 +34,6 @@ public class BeanWithAnnotationAndExchangeTest extends ContextTestSupport {
     public void testBeanWithAnnotationAndExchangeTest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("StartMyBean");
-        mock.expectedHeaderReceived("foo", "bar");
         mock.expectedHeaderReceived("user", "admin");
 
         template.requestBody("direct:in", "Start");

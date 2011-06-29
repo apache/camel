@@ -52,7 +52,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Message.class);
 
-        mock.expectedHeaderReceived(HL7Constants.HL7_SENDING_APPLICATION, "MYSERVER");
+        mock.expectedHeaderReceived(HL7Constants.HL7_SENDING_APPLICATION, "MYSENDER");
         mock.expectedHeaderReceived(HL7Constants.HL7_SENDING_FACILITY, "MYSENDERAPP");
         mock.expectedHeaderReceived(HL7Constants.HL7_RECEIVING_APPLICATION, "MYCLIENT");
         mock.expectedHeaderReceived(HL7Constants.HL7_RECEIVING_FACILITY, "MYCLIENTAPP");
