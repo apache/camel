@@ -61,6 +61,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private boolean ignoreJAXBElement = true;
     private boolean filterNonXmlChars;
     private String encoding;
+    private boolean fragment;
     // partial support
     private QName partNamespace;
     private String partClass;
@@ -91,6 +92,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             }
             if (charset != null) {
                 marshaller.setProperty(Marshaller.JAXB_ENCODING, charset);
+            }
+            if (isFragment()) {
+                marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             }
 
             marshal(exchange, graph, stream, marshaller);
@@ -200,6 +204,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+    
+    public boolean isFragment() {
+        return fragment;
+    }
+    
+    public void setFragment(boolean fragment) {
+        this.fragment = fragment;
     }
 
     public boolean isFilterNonXmlChars() {

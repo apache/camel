@@ -42,10 +42,13 @@ public class SpringDataFormatPartialTest extends CamelSpringTestSupport {
         XPathExpression xpath = new XPathExpression("count(//*[namespace-uri() = 'http://example.camel.org/apache' and local-name() = 'po']) = 1");
         xpath.setResultType(Boolean.class);
         mock.allMessages().body().matches(xpath);
-
-        template.sendBody("direct:marshal", bean);
-
+        
+        template.sendBody("direct:marshal", bean);        
         mock.assertIsSatisfied();
+        
+        //To make sure there is no XML declaration.
+        assertFalse("There should have no XML declaration.", 
+                    mock.getExchanges().get(0).getIn().getBody(String.class).startsWith("<?xml version="));
     }
 
     @Test

@@ -29,6 +29,7 @@
             <marshal>
                 <jaxb prettyPrint="false" contextPath="org.apache.camel.example"
                     partClass="org.apache.camel.example.PurchaseOrder"
+                    fragment="true"
                     partNamespace="{http://example.camel.org/apache}po" />
             </marshal>
             <to uri="mock:marshal"/>

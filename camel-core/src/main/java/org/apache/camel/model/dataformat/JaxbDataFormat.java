@@ -44,6 +44,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private Boolean filterNonXmlChars;
     @XmlAttribute
     private String encoding;
+    @XmlAttribute
+    private Boolean fragment;
     // Partial encoding
     @XmlAttribute
     private String partClass;
@@ -81,6 +83,14 @@ public class JaxbDataFormat extends DataFormatDefinition {
 
     public void setIgnoreJAXBElement(Boolean ignoreJAXBElement) {
         this.ignoreJAXBElement = ignoreJAXBElement;
+    }
+    
+    public void setFragment(Boolean fragment) {
+        this.fragment = fragment;
+    }
+    
+    public Boolean getFragment() {
+        return fragment;
     }
 
     public Boolean getFilterNonXmlChars() {
@@ -134,6 +144,12 @@ public class JaxbDataFormat extends DataFormatDefinition {
             setProperty(dataFormat, "filterNonXmlChars", Boolean.TRUE);
         } else { // the default value is false
             setProperty(dataFormat, "filterNonXmlChars", Boolean.FALSE);
+        }
+        answer = ObjectHelper.toBoolean(getFragment());
+        if (answer != null && answer) {
+            setProperty(dataFormat, "fragment", Boolean.TRUE);
+        } else { // the default value is false
+            setProperty(dataFormat, "fragment", Boolean.FALSE);
         }
         if (partClass != null) {
             setProperty(dataFormat, "partClass", partClass);
