@@ -38,10 +38,10 @@ public class TokenizeLanguage implements Language, IsSingleton {
     }
 
     public static Expression tokenize(String token, boolean regex) {
-        TokenizeLanguage langugage = new TokenizeLanguage();
-        langugage.setToken(token);
-        langugage.setRegex(regex);
-        return langugage.createExpression(null);
+        TokenizeLanguage language = new TokenizeLanguage();
+        language.setToken(token);
+        language.setRegex(regex);
+        return language.createExpression(null);
     }
 
     public static Expression tokenize(String headerName, String token) {
@@ -49,11 +49,11 @@ public class TokenizeLanguage implements Language, IsSingleton {
     }
 
     public static Expression tokenize(String headerName, String token, boolean regex) {
-        TokenizeLanguage langugage = new TokenizeLanguage();
-        langugage.setHeaderName(headerName);
-        langugage.setToken(token);
-        langugage.setRegex(regex);
-        return langugage.createExpression(null);
+        TokenizeLanguage language = new TokenizeLanguage();
+        language.setHeaderName(headerName);
+        language.setToken(token);
+        language.setRegex(regex);
+        return language.createExpression(null);
     }
 
     public Predicate createPredicate(String expression) {

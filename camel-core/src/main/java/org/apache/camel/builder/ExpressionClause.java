@@ -391,6 +391,39 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token) {
+        return delegate.tokenize(token);
+    }
+
+    /**
+     * Evaluates a token expression on the given header
+     *
+     * @param token the token
+     * @param headerName name of header to tokenize
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, String headerName) {
+        return delegate.tokenize(token, headerName);
+    }
+
+    /**
+     * Evaluates a token expression on the given header
+     *
+     * @param token the token
+     * @param headerName name of header to tokenize
+     * @param regex whether the token is a regular expression or not
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, String headerName, boolean regex) {
+        return delegate.tokenize(token, headerName, regex);
+    }
+
+    /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a>
      * 

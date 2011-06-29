@@ -39,6 +39,7 @@ import org.apache.camel.model.language.RubyExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.SqlExpression;
+import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.spi.Language;
@@ -427,6 +428,44 @@ public class ExpressionClauseSupport<T> {
     public T simple(String text, Class<?> resultType) {
         SimpleExpression expression = new SimpleExpression(text);
         expression.setResultType(resultType);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates a token expression on the message body
+     *
+     * @param token the token
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token) {
+        return tokenize(token, null, false);
+    }
+
+    /**
+     * Evaluates a token expression on the given header
+     *
+     * @param token the token
+     * @param headerName name of header to tokenize
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, String headerName) {
+        return tokenize(token, headerName, false);
+    }
+
+    /**
+     * Evaluates a token expression on the given header
+     *
+     * @param token the token
+     * @param headerName name of header to tokenize
+     * @param regex whether the token is a regular expression or not
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenize(String token, String headerName, boolean regex) {
+        TokenizerExpression expression = new TokenizerExpression();
+        expression.setToken(token);
+        expression.setHeaderName(headerName);
+        expression.setRegex(regex);
         setExpressionType(expression);
         return result;
     }
