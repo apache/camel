@@ -41,7 +41,7 @@ import org.apache.commons.httpclient.methods.multipart.StringPart;
 import org.eclipse.jetty.servlets.MultiPartFilter;
 import org.junit.Test;
 
-public class MultiPartFormWithCustomFilterTest extends CamelTestSupport {
+public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
     private static class MyMultipartFilter extends MultiPartFilter {
         @Override
@@ -57,7 +57,7 @@ public class MultiPartFormWithCustomFilterTest extends CamelTestSupport {
     public void testSendMultiPartForm() throws Exception {
         HttpClient httpclient = new HttpClient();
         File file = new File("src/main/resources/META-INF/NOTICE.txt");
-        PostMethod httppost = new PostMethod("http://localhost:9080/test");
+        PostMethod httppost = new PostMethod("http://localhost:" + getPort() + "/test");
         Part[] parts = {
             new StringPart("comment", "A binary file of some kind"),
             new FilePart(file.getName(), file)
@@ -81,7 +81,7 @@ public class MultiPartFormWithCustomFilterTest extends CamelTestSupport {
 
         File file = new File("src/main/resources/META-INF/NOTICE.txt");
 
-        PostMethod httppost = new PostMethod("http://localhost:9080/test2");
+        PostMethod httppost = new PostMethod("http://localhost:" + getPort() + "/test2");
         Part[] parts = {
             new StringPart("comment", "A binary file of some kind"),
             new FilePart(file.getName(), file)
@@ -112,7 +112,7 @@ public class MultiPartFormWithCustomFilterTest extends CamelTestSupport {
                 // The option works rightly from Camel 2.4.0
                 getContext().getProperties().put("CamelJettyTempDir", "target");
                 
-                from("jetty://http://localhost:9080/test?multipartFilterRef=myMultipartFilter").process(new Processor() {
+                from("jetty://http://localhost:{{port}}/test?multipartFilterRef=myMultipartFilter").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         assertEquals("Get a wrong attachement size", 1, in.getAttachments().size());
@@ -136,7 +136,7 @@ public class MultiPartFormWithCustomFilterTest extends CamelTestSupport {
                 // END SNIPPET: e1
 
                 // Test to ensure that setting a multipartFilterRef overrides the enableMultipartFilter=false parameter
-                from("jetty://http://localhost:9080/test2?multipartFilterRef=myMultipartFilter&enableMultipartFilter=false").process(new Processor() {
+                from("jetty://http://localhost:{{port}}/test2?multipartFilterRef=myMultipartFilter&enableMultipartFilter=false").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         assertEquals("Get a wrong attachement size", 1, in.getAttachments().size());

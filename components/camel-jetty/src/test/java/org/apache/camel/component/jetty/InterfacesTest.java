@@ -24,12 +24,16 @@ import java.net.URL;
 import java.util.Enumeration;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class InterfacesTest extends CamelTestSupport {
+public class InterfacesTest extends BaseJettyTest {
     private static boolean isMacOS = System.getProperty("os.name").startsWith("Mac");
     private String remoteInterfaceAddress;
+
+    private int port1;
+    private int port2;
+    private int port3;
+    private int port4;
 
     public InterfacesTest() throws IOException {
         // Retrieve an address of some remote network interface
@@ -57,20 +61,20 @@ public class InterfacesTest extends CamelTestSupport {
         int expectedMessages = (remoteInterfaceAddress != null) ? 3 : 2;
         getMockEndpoint("mock:endpoint").expectedMessageCount(expectedMessages);
         
-        URL localUrl = new URL("http://localhost:4567/testRoute");
+        URL localUrl = new URL("http://localhost:" + port1 + "/testRoute");
         String localResponse = context.getTypeConverter().convertTo(String.class, localUrl.openStream());
         assertEquals("local", localResponse);
        
         if (!isMacOS) {
-            localUrl = new URL("http://127.0.0.1:4568/testRoute");
+            localUrl = new URL("http://127.0.0.1:" + port2 + "/testRoute");
         } else {
-            localUrl = new URL("http://localhost:4568/testRoute");
+            localUrl = new URL("http://localhost:" + port2 + "/testRoute");
         }
         localResponse = context.getTypeConverter().convertTo(String.class, localUrl.openStream());
         assertEquals("local-differentPort", localResponse);
         
         if (remoteInterfaceAddress != null) {            
-            URL url = new URL("http://" + remoteInterfaceAddress + ":4560/testRoute");
+            URL url = new URL("http://" + remoteInterfaceAddress + ":" + port3 + "/testRoute");
             String remoteResponse = context.getTypeConverter().convertTo(String.class, url.openStream());
             assertEquals("remote", remoteResponse);
         }
@@ -83,12 +87,12 @@ public class InterfacesTest extends CamelTestSupport {
         int expectedMessages = (remoteInterfaceAddress != null) ? 2 : 1;
         getMockEndpoint("mock:endpoint").expectedMessageCount(expectedMessages);
         
-        URL localUrl = new URL("http://localhost:4569/allInterfaces");
+        URL localUrl = new URL("http://localhost:" + port4 + "/allInterfaces");
         String localResponse = context.getTypeConverter().convertTo(String.class, localUrl.openStream());
         assertEquals("allInterfaces", localResponse);
         
         if (remoteInterfaceAddress != null) {
-            URL url = new URL("http://" + remoteInterfaceAddress + ":4569/allInterfaces");
+            URL url = new URL("http://" + remoteInterfaceAddress + ":" + port4 + "/allInterfaces");
             String remoteResponse = context.getTypeConverter().convertTo(String.class, url.openStream());
             assertEquals("allInterfaces", remoteResponse);
         }
@@ -102,21 +106,26 @@ public class InterfacesTest extends CamelTestSupport {
         
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:4567/testRoute")
+                port1 = getPort();
+                port2 = getNextPort();
+                port3 = getNextPort();
+                port4 = getNextPort();
+
+                from("jetty:http://localhost:" + port1 + "/testRoute")
                     .setBody().constant("local")
                     .to("mock:endpoint");
                 
-                from("jetty:http://localhost:4568/testRoute")
+                from("jetty:http://localhost:" + port2 + "/testRoute")
                     .setBody().constant("local-differentPort")
                     .to("mock:endpoint");
                 
                 if (remoteInterfaceAddress != null) {
-                    from("jetty:http://" + remoteInterfaceAddress + ":4560/testRoute")
+                    from("jetty:http://" + remoteInterfaceAddress + ":" + port3 + "/testRoute")
                         .setBody().constant("remote")
                         .to("mock:endpoint");
                 }
                 
-                from("jetty:http://0.0.0.0:4569/allInterfaces")
+                from("jetty:http://0.0.0.0:" + port4 + "/allInterfaces")
                     .setBody().constant("allInterfaces")
                     .to("mock:endpoint");
                 
