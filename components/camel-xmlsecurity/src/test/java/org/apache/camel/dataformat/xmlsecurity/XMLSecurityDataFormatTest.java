@@ -35,7 +35,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.xml.security.encryption.XMLCipher;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -191,7 +190,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         testEncryption();
     }
 
-    @Ignore
     @Test
     public void testPartialPayloadXMLElementEncryptionWithKeyAndAlgorithm() throws Exception {
         final byte[] bits128 = {
@@ -326,7 +324,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         testDecryption();
     }
 
-    @Ignore
     @Test
     public void testPartialPayloadXMLContentDecryptionWithKeyAndAlgorithm() throws Exception {
         final byte[] bits128 = {
