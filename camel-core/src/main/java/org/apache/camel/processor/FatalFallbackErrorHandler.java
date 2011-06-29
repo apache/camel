@@ -44,10 +44,19 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                 if (exchange.getException() != null) {
                     // an exception occurred during processing onException
 
-                    // log a warning
-                    LOG.error("Exception occurred while processing exchangeId: " + exchange.getExchangeId()
-                            + " using: [" + processor + "] caused by: "
-                            + exchange.getException().getMessage(), exchange.getException());
+                    // log detailed error message with as much detail as possible
+                    Throwable previous = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+                    String msg = "Exception occurred while trying to handle previously thrown exception on exchangeId: "
+                            + exchange.getExchangeId() + " using: [" + processor + "].";
+                    if (previous != null) {
+                        msg += " The previous and the new exception will be logged in the following.";
+                        LOG.error(msg);
+                        LOG.error("\\--> Previous exception on exchangeId: " + exchange.getExchangeId() , previous);
+                        LOG.error("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
+                    } else {
+                        LOG.error(msg);
+                        LOG.error("\\--> New exception on exchangeId: " + exchange.getExchangeId(), exchange.getException());
+                    }
 
                     // we can propagated that exception to the caught property on the exchange
                     // which will shadow any previously caught exception and cause this new exception
