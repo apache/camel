@@ -91,8 +91,6 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
     protected void printRoute(PrintWriter writer, final RouteDefinition route, NodeData nodeData) {
         printNode(writer, nodeData);
 
-        // TODO we should add a transactional client / event driven consumer / polling client
-
         NodeData from = nodeData;
         for (ProcessorDefinition<?> output : route.getOutputs()) {
             NodeData newData = printNode(writer, from, output);

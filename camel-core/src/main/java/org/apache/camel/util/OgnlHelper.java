@@ -46,8 +46,6 @@ public final class OgnlHelper {
             return false;
         }
 
-        // TODO: if possible used regexp to parse if its valid/invalid
-
         // the brackets should come in pair
         int bracketBegin = StringHelper.countChar(expression, '[');
         int bracketEnd = StringHelper.countChar(expression, ']');
@@ -66,8 +64,6 @@ public final class OgnlHelper {
         if (!expression.contains(".") && !expression.contains("[") && !expression.contains("]")) {
             return false;
         }
-
-        // TODO: if possible used regexp to parse if its valid/invalid
 
         // the brackets should come in pair
         int bracketBegin = StringHelper.countChar(expression, '[');

@@ -92,7 +92,6 @@ public class FileConfigureTest extends ContextTestSupport {
         FileEndpoint endpoint = resolveMandatoryEndpoint(endpointUri, FileEndpoint.class);
         assertNotNull("Could not find endpoint: " + endpointUri, endpoint);
 
-        // TODO: absolute also
         if (!absolute) {
             File file = endpoint.getFile();
             String path = file.getPath();

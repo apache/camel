@@ -656,8 +656,6 @@ public class ExpressionClauseSupport<T> {
         return result;
     }
 
-    // TODO: Add support for TokenizerExpression
-
     // Properties
     // -------------------------------------------------------------------------
     public String getLanguage() {

@@ -117,9 +117,6 @@ public class NodeData {
             this.nodeType = "Resequencer";
         } else if (node instanceof BeanDefinition) {
             BeanDefinition beanRef = (BeanDefinition) node;
-
-            // TODO
-            //this.image = imagePrefix + "Bean.png";
             this.nodeType = "Bean Ref";
             this.label = beanRef.getLabel() + " Bean"; 
             this.shape = "box";
@@ -127,7 +124,6 @@ public class NodeData {
 
         // lets auto-default as many values as we can
         if (isEmpty(this.nodeType) && node != null) {
-            // TODO we could add this to the model?
             String name = node.getClass().getName();
             int idx = name.lastIndexOf('.');
             if (idx > 0) {

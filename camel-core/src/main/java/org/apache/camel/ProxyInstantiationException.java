@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.RuntimeCamelException;
+package org.apache.camel;
 
 /**
  * A proxy creation failed trying to create a proxy of a given type and on an given endpoint
@@ -25,9 +22,7 @@ import org.apache.camel.RuntimeCamelException;
  * @version 
  */
 public class ProxyInstantiationException extends RuntimeCamelException {
-    private static final long serialVersionUID = -2050115486047385507L;
-
-    // TODO: Move to org.apache.camel package
+    private static final long serialVersionUID = -2050115486047385506L;
 
     private final Class<?> type;
     private final Endpoint endpoint;

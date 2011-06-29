@@ -134,9 +134,7 @@ public final class IOConverter {
     }
     
     @Converter
-    @Deprecated
     public static Writer toWriter(OutputStream out, Exchange exchange) throws IOException {
-        // TODO: Why is this method deprecated?
         return new OutputStreamWriter(out, getCharsetName(exchange));
     }
 
