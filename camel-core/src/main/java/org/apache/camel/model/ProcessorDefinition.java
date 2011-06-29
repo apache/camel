@@ -73,8 +73,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.builder.Builder.body;
-
 /**
  * Base class for processor types that most XML types extend.
  */
@@ -501,7 +499,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         if (log.isTraceEnabled()) {
             log.trace("Resolving known fields for: " + definition);
         }
-
         // find all String getter/setter
         Map<Object, Object> properties = new HashMap<Object, Object>();
         IntrospectionSupport.getProperties(definition, properties, null);
@@ -519,7 +516,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 if (value instanceof String) {
                     // we can only resolve String typed values
                     String text = (String) value;
-
                     // is the value a known field (currently we only support constants from Exchange.class)
                     if (text.startsWith("Exchange.")) {
                         String field = ObjectHelper.after(text, "Exchange.");
@@ -543,7 +539,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         if (errorHandlerRef != null) {
             return new ErrorHandlerBuilderRef(errorHandlerRef);
         }
-
         // return a reference to the default error handler
         return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
     }
@@ -842,7 +837,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return to(ExchangePattern.InOut, uri);
     }
 
-
     /**
      * Sends the message to the given endpoint using an
      * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
@@ -901,10 +895,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type id(String id) {
         if (getOutputs().isEmpty()) {
-            // set id on this
-            setId(id);
+            setId(id);  // set the id on this
         } else {
-            // set it on last output as this is what the user means to do
+            // set id on last output as this is what the user means to do
             // for Block(s) with non empty getOutputs() the id probably refers
             //  to the last definition in the current Block
             List<ProcessorDefinition> outputs = getOutputs();
@@ -918,7 +911,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             }
             outputs.get(outputs.size() - 1).setId(id);
         }
-
         return (Type) this;
     }
 
@@ -931,12 +923,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type routeId(String id) {
         ProcessorDefinition def = this;
-
         RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
         if (route != null) {
             route.setId(id);
         }
-
         return (Type) this;
     }
 
@@ -1108,12 +1098,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         if (defn instanceof TryDefinition || defn instanceof ChoiceDefinition) {
             popBlock();
         }
-
         if (blocks.isEmpty()) {
-            if (parent == null) {
-                return this.endParent();
-            }
-            return parent.endParent();
+            return parent == null ? this.endParent() : parent.endParent();
         }
         popBlock();
         return this.endParent();
@@ -2467,7 +2453,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
-
 
     /**
      * Adds a processor which sets the exchange property

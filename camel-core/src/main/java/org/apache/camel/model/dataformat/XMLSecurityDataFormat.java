@@ -145,7 +145,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
     }
     
     public String getKeyCipherAlgorithm() {
-    	return keyCipherAlgorithm;
+        return keyCipherAlgorithm;
     }
     
     public void setRecipientKeyAlias(String recipientKeyAlias) {
@@ -153,6 +153,6 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
     }
     
     public String getRecipientKeyAlias() {
-    	return recipientKeyAlias;
+        return recipientKeyAlias;
     }
 }
