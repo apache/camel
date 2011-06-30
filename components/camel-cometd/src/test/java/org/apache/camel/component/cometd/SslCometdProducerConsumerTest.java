@@ -22,8 +22,9 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -31,10 +32,9 @@ import org.junit.Test;
  */
 public class SslCometdProducerConsumerTest extends CamelTestSupport {
 
-    private static final String URI = "cometds://127.0.0.1:9080/service/test?baseResource=file:./target/test-classes/webapp&"
-            + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
-
-    protected String pwd = "changeit";
+    private int port;
+    private String uri;
+    private String pwd = "changeit";
 
     @Test
     public void testProducer() throws Exception {
@@ -50,10 +50,13 @@ public class SslCometdProducerConsumerTest extends CamelTestSupport {
     }
 
     @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        stopCamelContext();
+    @Before
+    public void setUp() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(23500);
+        uri = "cometds://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
+                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+
+        super.setUp();
     }
 
     @Override
@@ -67,8 +70,9 @@ public class SslCometdProducerConsumerTest extends CamelTestSupport {
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
                 component.setSslKeystore(keyStoreUrl.getPath());
 
-                from("direct:input").to(URI);
-                from(URI).to("mock:test");
+                from("direct:input").to(uri);
+
+                from(uri).to("mock:test");
             }
         };
     }

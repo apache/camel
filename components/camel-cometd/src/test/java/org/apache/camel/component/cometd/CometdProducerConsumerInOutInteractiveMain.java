@@ -26,7 +26,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
+import org.junit.Ignore;
 
+@Ignore("Run this test manually")
 public class CometdProducerConsumerInOutInteractiveMain {
 
     private static final String URI = "cometd://127.0.0.1:9091/service/test?baseResource=file:./src/test/resources/webapp&"
