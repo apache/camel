@@ -135,7 +135,8 @@
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xstream</include>
-        <!-- these two jars is mandatory -->
+        <include>org.apache.camel.karaf:camel-karaf-commands</include>
+        <!-- these two jars are mandatory -->
         <include>org.slf4j:slf4j-api</include>
         <include>org.fusesource.commonman:commons-management</include>
       </includes>
