@@ -22,21 +22,27 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class LoanBrokerServerTest extends TestSupport {
+public class LoanBrokerQueueServerTest extends TestSupport {
     
     @Test
     public void startLoanBroker() throws Exception {
         deleteDirectory("activemq-data");
-
-        AbstractApplicationContext applicationContext =
-            new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/queueCamelContext.xml"});
-
-        CamelContext camelContext = (CamelContext)applicationContext.getBean("myCamel");
-        assertNotNull("The camel context should not be null", camelContext);
-
-        Thread.sleep(2000);
-        camelContext.stop();
-        applicationContext.stop();        
+        
+        JmsBroker broker = new JmsBroker("tcp://localhost:61616");
+        broker.start();
+        try {
+            AbstractApplicationContext applicationContext =
+                new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/queueCamelContext.xml"});
+    
+            CamelContext camelContext = (CamelContext)applicationContext.getBean("queue");
+            assertNotNull("The camel context should not be null", camelContext);
+    
+            Thread.sleep(2000);
+            camelContext.stop();
+            applicationContext.stop(); 
+        } finally {
+            broker.stop();
+        }
     }
 
 }

@@ -34,10 +34,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LoanBrokerTest extends TestSupport {
-    private CamelContext camelContext;
-    private JmsBroker broker;
-    private ProducerTemplate template;
+public class LoanBrokerQueueTest extends TestSupport {
+    protected CamelContext camelContext;
+    protected JmsBroker broker;
+    protected ProducerTemplate template;
  
     @Before
     public void startServices() throws Exception {
