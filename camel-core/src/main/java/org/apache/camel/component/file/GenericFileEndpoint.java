@@ -173,7 +173,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
         try {
             Method factoryMethod = factory.getMethod("createGenericFileProcessStrategy", CamelContext.class, Map.class);
-            return (GenericFileProcessStrategy<T>) ObjectHelper.invokeMethod(factoryMethod, null, getCamelContext(), getParamsAsMap());
+            Map<String, Object> params = getParamsAsMap();
+            log.debug("Parameters for Generic file process strategy {}", params);
+            return (GenericFileProcessStrategy<T>) ObjectHelper.invokeMethod(factoryMethod, null, getCamelContext(), params);
         } catch (NoSuchMethodException e) {
             throw new TypeNotPresentException(factory.getSimpleName() + ".createGenericFileProcessStrategy method not found", e);
         }

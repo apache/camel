@@ -14,22 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.strategy;
-
-import org.apache.camel.builder.RouteBuilder;
+package org.apache.camel.component.file.remote;
 
 /**
- * @version 
+ *
  */
-public class FileChangedReadLockTimeoutTest extends FileChangedReadLockTest {
+public class FtpChangedReadLockTimeoutTest extends FtpChangedReadLockTest {
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("file:target/changed/in?readLock=changed&readLockTimeout=2500").to("file:target/changed/out", "mock:result");
-            }
-        };
+    protected String getFtpUrl() {
+        // will timeout, but the scheduler will pickup the file later
+        return super.getFtpUrl() + "&readLockTimeout=2500";
     }
+
 }

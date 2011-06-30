@@ -14,28 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.strategy;
+package org.apache.camel.component.file.remote;
 
 import java.io.File;
 import java.io.FileOutputStream;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ *
  */
-public class FileChangedReadLockTest extends ContextTestSupport {
+public class FtpChangedReadLockTest extends FtpServerTestSupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(FileChangedReadLockTest.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(FtpChangedReadLockTest.class);
 
+    protected String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/changed?password=admin&readLock=changed&readLockCheckInterval=1000&delete=true";
+    }
+
+    @Test
     public void testChangedReadLock() throws Exception {
-        deleteDirectory("target/changed/");
-        createDirectory("target/changed/in");
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/changed/out/slowfile.dat");
@@ -55,7 +57,8 @@ public class FileChangedReadLockTest extends ContextTestSupport {
     private void writeSlowFile() throws Exception {
         LOG.debug("Writing slow file...");
 
-        FileOutputStream fos = new FileOutputStream("target/changed/in/slowfile.dat");
+        createDirectory(FTP_ROOT_DIR + "/changed");
+        FileOutputStream fos = new FileOutputStream(FTP_ROOT_DIR + "changed/slowfile.dat", true);
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + "\n").getBytes());
             LOG.debug("Writing line " + i);
@@ -72,8 +75,9 @@ public class FileChangedReadLockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?readLock=changed").to("file:target/changed/out", "mock:result");
+                from(getFtpUrl()).to("file:target/changed/out", "mock:result");
             }
         };
     }
+
 }

@@ -36,11 +36,17 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
     public RemoteFileEndpoint() {
         // no args constructor for spring bean endpoint configuration
+        // for ftp we need to use higher interval/checkout that for files
+        setReadLockTimeout(20000);
+        setReadLockCheckInterval(5000);
     }
 
     public RemoteFileEndpoint(String uri, RemoteFileComponent<T> component, RemoteFileConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+        // for ftp we need to use higher interval/checkout that for files
+        setReadLockTimeout(20000);
+        setReadLockCheckInterval(5000);
     }
 
     @Override
