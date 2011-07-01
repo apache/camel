@@ -16,15 +16,15 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.MessageHelper;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Default {@link TraceEventMessage}.
@@ -47,6 +47,7 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     private String outBody;
     private String outBodyType;
     private String causedByException;
+    private String routeId;
     private final transient Exchange tracedExchange;
 
     /**
@@ -66,6 +67,7 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
         this.previousNode = extractFromNode(exchange);
         this.toNode = extractToNode(exchange);
         this.exchangeId = exchange.getExchangeId();
+        this.routeId = exchange.getFromRouteId();
         this.shortExchangeId = extractShortExchangeId(exchange);
         this.exchangePattern = exchange.getPattern().toString();
         this.properties = exchange.getProperties().isEmpty() ? null : exchange.getProperties().toString();
@@ -127,6 +129,10 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
 
     public String getExchangeId() {
         return exchangeId;
+    }
+
+    public String getRouteId() {
+        return routeId;
     }
 
     public String getShortExchangeId() {
@@ -191,6 +197,10 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
 
     public void setExchangeId(String exchangeId) {
         this.exchangeId = exchangeId;
+    }
+
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public void setShortExchangeId(String shortExchangeId) {
