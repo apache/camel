@@ -68,7 +68,7 @@ public class MulticastParallelTimeout3Test extends ContextTestSupport {
 
                 from("direct:b").to("mock:B").setBody(constant("B"));
 
-                from("direct:c").delay(500).to("mock:C").setBody(constant("C"));
+                from("direct:c").delay(1000).to("mock:C").setBody(constant("C"));
                 // END SNIPPET: e1
             }
         };
