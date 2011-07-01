@@ -16,16 +16,12 @@
  */
 package org.apache.camel.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.TestSupport;
+import org.apache.camel.*;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 /**
  * Unit test of the string data format.
@@ -37,6 +33,7 @@ public class StringDataFormatTest extends TestSupport {
 
     protected void setUp() throws Exception {
         context = new DefaultCamelContext();
+        context.setTracing(true);
         template = context.createProducerTemplate();
         template.start();
     }

@@ -28,10 +28,12 @@ import org.apache.camel.management.event.ExchangeSentEvent;
 public class MyLoggingSentEventNotifer extends EventNotifierSupport {
 
     public void notify(EventObject event) throws Exception {
+
         if (event instanceof ExchangeSentEvent) {
             ExchangeSentEvent sent = (ExchangeSentEvent) event;
             log.info("Took " + sent.getTimeTaken() + " millis to send to: " + sent.getEndpoint());
         }
+
     }
 
     public boolean isEnabled(EventObject event) {

@@ -64,6 +64,7 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+
             public void configure() {
                 // START SNIPPET: example
                 from("direct:a").routingSlip(ROUTING_SLIP_HEADER).to("mock:y");

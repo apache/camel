@@ -46,15 +46,17 @@ public class OnExceptionContinueSubRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class).continued(true).logContinued(true);
+                //onException(IllegalArgumentException.class).continued(true).logContinued(true);
 
                 from("direct:start")
+                    .onException(IllegalArgumentException.class).continued(true).logContinued(true).end()
                     .to("mock:start")
                     .to("direct:b")
                     .to("direct:c")
                     .to("mock:result");
 
                 from("direct:b")
+                    .errorHandler(noErrorHandler())
                     .to("mock:b")
                     .throwException(new IllegalArgumentException("Forced"));
 

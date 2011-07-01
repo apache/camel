@@ -16,13 +16,6 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.camel.Processor;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.CastorDataFormat;
@@ -49,6 +42,8 @@ import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
+
+import javax.xml.bind.annotation.*;
 
 /**
  * Unmarshals the binary payload using the given {@link DataFormatDefinition}
@@ -136,5 +131,14 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     public Processor createProcessor(RouteContext routeContext) {
         DataFormat dataFormat = DataFormatDefinition.getDataFormat(routeContext, getDataFormatType(), ref);
         return new UnmarshalProcessor(dataFormat);
+    }
+
+    @Override
+    public String getLabel() {
+        if (dataFormatType != null) {
+            return "unmarshal[" + dataFormatType + "]";
+        } else {
+            return "unmarshal[ref:" + ref + "]";
+        }
     }
 }
