@@ -23,6 +23,7 @@ import java.util.UUID;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.FolderNotFoundException;
+import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Store;
@@ -350,9 +351,14 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         try {
             Enumeration it = message.getAllHeaders();
             while (it.hasMoreElements()) {
-                buffer.append(it.nextElement()).append("\n");
+                Header header = (Header) it.nextElement();
+                buffer.append(header.getName())
+                  .append("=")
+                  .append(header.getValue())
+                  .append("\n");
             }
             if (buffer.length() > 0) {
+                LOG.debug("Generating UID from the following:\n" + buffer);
                 uid = UUID.nameUUIDFromBytes(buffer.toString().getBytes()).toString();
             }
         } catch (MessagingException e) {
