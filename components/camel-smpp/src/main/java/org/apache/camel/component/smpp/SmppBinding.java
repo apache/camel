@@ -30,6 +30,7 @@ import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.OctetString;
+import org.jsmpp.bean.OptionalParameters;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.util.AbsoluteTimeFormatter;
 import org.jsmpp.util.TimeFormatter;
@@ -90,9 +91,22 @@ public class SmppBinding {
      */
     public SubmitSm createSubmitSm(Exchange exchange) throws UnsupportedEncodingException {
         Message in = exchange.getIn();
-
+        String body = exchange.getIn().getBody(String.class);
+        
         SubmitSm submitSm = new SubmitSm();
-        submitSm.setShortMessage(exchange.getIn().getBody(String.class).getBytes(configuration.getEncoding()));
+        
+        if (body != null) {
+            byte[] shortMessage = body.getBytes(configuration.getEncoding());
+            
+            if (shortMessage.length < 255) {
+                submitSm.setShortMessage(shortMessage);
+            } else {
+                submitSm.setShortMessage(new byte[0]);
+                OptionalParameter messagePayloadTLV = OptionalParameters.deserialize(OptionalParameter.Tag.MESSAGE_PAYLOAD.code(), shortMessage);
+
+                submitSm.setOptionalParametes(messagePayloadTLV);
+            }
+        }
 
         if (in.getHeaders().containsKey(DEST_ADDR)) {
             submitSm.setDestAddress(in.getHeader(DEST_ADDR, String.class));
