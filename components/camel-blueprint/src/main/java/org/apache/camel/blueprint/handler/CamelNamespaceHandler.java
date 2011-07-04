@@ -44,7 +44,6 @@ import org.apache.aries.blueprint.mutable.MutableBeanMetadata;
 import org.apache.aries.blueprint.mutable.MutablePassThroughMetadata;
 import org.apache.aries.blueprint.mutable.MutableRefMetadata;
 import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
-import org.apache.aries.blueprint.mutable.MutableValueMetadata;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.EndpointInject;
@@ -87,7 +86,6 @@ import org.osgi.service.blueprint.reflect.BeanMetadata;
 import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
 import org.osgi.service.blueprint.reflect.RefMetadata;
-import org.osgi.service.blueprint.reflect.ValueMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
