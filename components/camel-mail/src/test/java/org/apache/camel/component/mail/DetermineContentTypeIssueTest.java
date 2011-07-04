@@ -17,7 +17,6 @@
 package org.apache.camel.component.mail;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.ExchangeTestSupport;
 import org.junit.Test;
 
