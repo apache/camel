@@ -37,7 +37,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
 
-    protected boolean pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList) {
+    @Override
+    protected boolean pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList, int depth) {
         String currentDir = null;
         if (isStepwise()) {
             // must remember current dir so we stay in that directory after the poll

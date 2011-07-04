@@ -35,8 +35,11 @@ public class FileConsumer extends GenericFileConsumer<File> {
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
 
-    protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList) {
+    @Override
+    protected boolean pollDirectory(String fileName, List<GenericFile<File>> fileList, int depth) {
         log.trace("pollDirectory from fileName: {}", fileName);
+
+        depth++;
 
         File directory = new File(fileName);
         if (!directory.exists() || !directory.isDirectory()) {
@@ -78,17 +81,17 @@ public class FileConsumer extends GenericFileConsumer<File> {
             GenericFile<File> gf = asGenericFile(endpointPath, file);
 
             if (file.isDirectory()) {
-                if (endpoint.isRecursive() && isValidFile(gf, true)) {
+                if (endpoint.isRecursive() && isValidFile(gf, true) && depth < endpoint.getMaxDepth()) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = fileName + File.separator + file.getName();
-                    boolean canPollMore = pollDirectory(subDirectory, fileList);
+                    boolean canPollMore = pollDirectory(subDirectory, fileList, depth);
                     if (!canPollMore) {
                         return false;
                     }
                 }
             } else {
                 // Windows can report false to a file on a share so regard it always as a file (if its not a directory)
-                if (isValidFile(gf, false)) {
+                if (isValidFile(gf, false) && depth >= endpoint.minDepth) {
                     if (isInProgress(gf)) {
                         if (log.isTraceEnabled()) {
                             log.trace("Skipping as file is already in progress: {}", gf.getFileName());
@@ -99,6 +102,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
                         fileList.add(gf);
                     }
                 }
+
             }
         }
 

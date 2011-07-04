@@ -78,7 +78,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
 
         // time how long time it takes to poll
         StopWatch stop = new StopWatch();
-        boolean limitHit = !pollDirectory(name, files);
+        boolean limitHit = !pollDirectory(name, files, 0);
         long delta = stop.stop();
         if (log.isDebugEnabled()) {
             log.debug("Took {} to poll: {}", TimeUtils.printDuration(delta), name);
@@ -150,7 +150,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             // process the current exchange
             processExchange(exchange);
         }
-        
+
         // remove the file from the in progress list in case the batch was limited by max messages per poll
         while (exchanges.size() > 0) {
             Exchange exchange = (Exchange) exchanges.poll();
@@ -237,7 +237,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      * @param fileList current list of files gathered
      * @return whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been hit
      */
-    protected abstract boolean pollDirectory(String fileName, List<GenericFile<T>> fileList);
+    protected abstract boolean pollDirectory(String fileName, List<GenericFile<T>> fileList, int depth);
 
     /**
      * Sets the operations to be used.
@@ -450,7 +450,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             fileExpressionResult = endpoint.getFileName().evaluate(dummy, String.class);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     private GenericFile<T> getExchangeFileProperty(Exchange exchange) {
         return (GenericFile<T>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
@@ -459,7 +459,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        
+
         // prepare on startup
         endpoint.getGenericFileProcessStrategy().prepareOnStartup(operations, endpoint);
     }

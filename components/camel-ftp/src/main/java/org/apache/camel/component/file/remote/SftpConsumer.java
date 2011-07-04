@@ -36,7 +36,8 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
 
-    protected boolean pollDirectory(String fileName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
+    @Override
+    protected boolean pollDirectory(String fileName, List<GenericFile<ChannelSftp.LsEntry>> fileList, int depth) {
         String currentDir = null;
         if (isStepwise()) {
             // must remember current dir so we stay in that directory after the poll

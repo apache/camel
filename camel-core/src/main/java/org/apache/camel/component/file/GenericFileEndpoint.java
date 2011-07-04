@@ -69,6 +69,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected boolean delete;
     protected boolean flatten;
     protected int maxMessagesPerPoll;
+    protected int maxDepth = Integer.MAX_VALUE;
+    protected int minDepth;
     protected String tempPrefix;
     protected Expression tempFileName;
     protected boolean eagerDeleteTargetFile = true;
@@ -512,6 +514,23 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+    public int getMaxDepth() {
+        return maxDepth;
+    }
+
+    public void setMaxDepth(int maxDepth) {
+        this.maxDepth = maxDepth;
+    }
+
+    public int getMinDepth() {
+
+        return minDepth;
+    }
+
+    public void setMinDepth(int minDepth) {
+        this.minDepth = minDepth;
     }
 
     public IdempotentRepository<String> getInProgressRepository() {
