@@ -18,9 +18,7 @@ package org.apache.camel.core.osgi;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
