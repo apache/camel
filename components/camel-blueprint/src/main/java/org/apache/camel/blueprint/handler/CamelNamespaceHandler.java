@@ -191,6 +191,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         factory2.setDestroyMethod("destroy");
         factory2.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
         factory2.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
+        context.getComponentDefinitionRegistry().registerComponentDefinition(factory2);
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
         ctx.setId(contextId);
@@ -614,7 +615,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         }
 
         public void process(ComponentDefinitionRegistry componentDefinitionRegistry) {
-            CamelContext camelContext = (CamelContext) blueprintContainer.getComponentInstance(camelContextName);
+            CamelContextFactoryBean ccfb = (CamelContextFactoryBean) blueprintContainer.getComponentInstance(".camelBlueprint.factory." + camelContextName);
+            CamelContext camelContext = ccfb.getContext();
 
             Set<String> components = new HashSet<String>();
             Set<String> languages = new HashSet<String>();
