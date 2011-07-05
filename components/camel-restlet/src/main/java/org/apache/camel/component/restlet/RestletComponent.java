@@ -39,24 +39,34 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Camel component embedded Restlet that produces and consumes exchanges.
- *
- * @version 
+ * 
+ * @version
  */
 public class RestletComponent extends HeaderFilterStrategyComponent {
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
 
     private final Map<String, Server> servers = new HashMap<String, Server>();
     private final Map<String, MethodBasedRouter> routers = new HashMap<String, MethodBasedRouter>();
-    private final Component component = new Component();
-    
+    private final Component component;
+
+    public RestletComponent() {
+        this.component = new Component();
+    }
+
+    public RestletComponent(Component component) {
+        // Allow the Component to be injected, so that the RestletServlet may be
+        // configured within a webapp
+        this.component = component;
+    }
+
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        
+
         RestletEndpoint result = new RestletEndpoint(this, remaining);
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
-        
+
         // construct URI so we can use it to get the splitted information
         URI u = new URI(UnsafeUriCharactersEncoder.encode(remaining));
         String protocol = u.getScheme();
@@ -81,36 +91,36 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
 
         return result;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         component.start();
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         component.stop();
-        // routers map entries are removed as consumer stops and servers map 
+        // routers map entries are removed as consumer stops and servers map
         // is not touch so to keep in sync with component's servers
         super.doStop();
     }
-    
+
     @Override
     protected boolean useIntrospectionOnEndpoint() {
-        // we invoke setProperties ourselves so we can construct "user" uri on 
+        // we invoke setProperties ourselves so we can construct "user" uri on
         // on the remaining parameters
         return false;
     }
-    
+
     public void connect(RestletConsumer consumer) throws Exception {
         RestletEndpoint endpoint = (RestletEndpoint)consumer.getEndpoint();
         addServerIfNecessary(endpoint);
-        
+
         if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
             attachUriPatternToRestlet(endpoint.getUriPattern(), endpoint, consumer.getRestlet());
         }
-        
+
         if (endpoint.getRestletUriPatterns() != null) {
             for (String uriPattern : endpoint.getRestletUriPatterns()) {
                 attachUriPatternToRestlet(uriPattern, endpoint, consumer.getRestlet());
@@ -120,19 +130,19 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
 
     public void disconnect(RestletConsumer consumer) throws Exception {
         RestletEndpoint endpoint = (RestletEndpoint)consumer.getEndpoint();
-        
+
         List<MethodBasedRouter> routers = new ArrayList<MethodBasedRouter>();
-        
+
         if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
             routers.add(getMethodRouter(endpoint.getUriPattern()));
         }
-        
+
         if (endpoint.getRestletUriPatterns() != null) {
             for (String uriPattern : endpoint.getRestletUriPatterns()) {
                 routers.add(getMethodRouter(uriPattern));
             }
         }
-        
+
         for (MethodBasedRouter router : routers) {
             if (endpoint.getRestletMethods() != null) {
                 Method[] methods = endpoint.getRestletMethods();
@@ -144,11 +154,12 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
             }
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Detached restlet uriPattern: {} method: {}", router.getUriPattern(), endpoint.getRestletMethod());
+                LOG.debug("Detached restlet uriPattern: {} method: {}", router.getUriPattern(),
+                          endpoint.getRestletMethod());
             }
         }
-    }    
-    
+    }
+
     private MethodBasedRouter getMethodRouter(String uriPattern) {
         synchronized (routers) {
             MethodBasedRouter result = routers.get(uriPattern);
@@ -158,34 +169,35 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
                 routers.put(uriPattern, result);
             }
             return result;
-        }    
+        }
     }
-    
+
     private void addServerIfNecessary(RestletEndpoint endpoint) throws Exception {
         String key = buildKey(endpoint);
         Server server;
         synchronized (servers) {
             server = servers.get(key);
             if (server == null) {
-                server = component.getServers().add(Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
+                server = component.getServers().add(Protocol.valueOf(endpoint.getProtocol()),
+                                                    endpoint.getPort());
                 servers.put(key, server);
                 LOG.debug("Added server: {}", key);
                 server.start();
             }
         }
     }
-    
+
     private static String buildKey(RestletEndpoint endpoint) {
         return endpoint.getHost() + ":" + endpoint.getPort();
     }
-    
+
     private void attachUriPatternToRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) {
         MethodBasedRouter router = getMethodRouter(uriPattern);
-        
+
         Map<String, String> realm = endpoint.getRestletRealm();
         if (realm != null && realm.size() > 0) {
-            ChallengeAuthenticator guard = new ChallengeAuthenticator(component.getContext().createChildContext(),
-                    ChallengeScheme.HTTP_BASIC, "Camel-Restlet Endpoint Realm");
+            ChallengeAuthenticator guard = new ChallengeAuthenticator(component.getContext()
+                .createChildContext(), ChallengeScheme.HTTP_BASIC, "Camel-Restlet Endpoint Realm");
             MapVerifier verifier = new MapVerifier();
             for (Map.Entry<String, String> entry : realm.entrySet()) {
                 verifier.getLocalSecrets().put(entry.getKey(), entry.getValue().toCharArray());
@@ -195,20 +207,21 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
             target = guard;
             LOG.debug("Target has been set to guard: {}", guard);
         }
-        
+
         if (endpoint.getRestletMethods() != null) {
             Method[] methods = endpoint.getRestletMethods();
             for (Method method : methods) {
-                router.addRoute(method, target);   
+                router.addRoute(method, target);
                 LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
             }
         } else {
             router.addRoute(endpoint.getRestletMethod(), target);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, endpoint.getRestletMethod());
+                LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern,
+                          endpoint.getRestletMethod());
             }
         }
-        
+
         if (!router.hasBeenAttached()) {
             component.getDefaultHost().attach(uriPattern, router);
             LOG.debug("Attached methodRouter uriPattern: {}", uriPattern);
@@ -216,4 +229,3 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     }
 
 }
-
