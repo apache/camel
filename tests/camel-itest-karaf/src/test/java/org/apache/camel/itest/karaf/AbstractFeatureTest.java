@@ -132,16 +132,13 @@ public abstract class AbstractFeatureTest {
     }
     
     public static UrlReference getCamelKarafFeatureUrl() {
-        String springVersion = System.getProperty("springVersion");
-        System.out.println("*** The spring version is " + springVersion + " ***");
-
         String type = "xml/features";
         return mavenBundle().groupId("org.apache.camel.karaf").
             artifactId("apache-camel").versionAsInProject().type(type);
     }
     
     public static UrlReference getKarafFeatureUrl() {
-        String karafVersion = "2.2.2";
+        String karafVersion = System.getProperty("karafVersion");
         System.out.println("*** The karaf version is " + karafVersion + " ***");
 
         String type = "xml/features";

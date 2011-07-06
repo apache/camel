@@ -143,7 +143,7 @@
                         <exclude>**/*Cxf*.*</exclude>
                     </excludes>
                     <systemPropertyVariables>
-                        <springVersion>${spring-version}</springVersion>
+                        <karafVersion>${karaf-version}</karafVersion>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -180,7 +180,7 @@
                                 <exclude>**/*Test.*</exclude>
                             </excludes>
                             <systemPropertyVariables>
-                                <springVersion>${spring-version}</springVersion>
+                                <karafVersion>${karaf-version}</karafVersion>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>

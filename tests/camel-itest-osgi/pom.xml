@@ -344,7 +344,6 @@
                   <exclude>**/FIXMETest.*</exclude>
               </excludes>
               <systemPropertyVariables>
-                  <springVersion>${spring-version}</springVersion>
                   <karafVersion>${karaf-version}</karafVersion>
               </systemPropertyVariables>
           </configuration>
@@ -408,7 +407,7 @@
                             <exclude>**/JaxbFallbackConverterTest.*</exclude>
                         </excludes>               
                         <systemPropertyVariables>
-                            <springVersion>${spring-version}</springVersion>
+                            <karafVersion>${karaf-version}</karafVersion>
                         </systemPropertyVariables>
                     </configuration>
                 </plugin>
