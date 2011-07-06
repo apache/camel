@@ -99,7 +99,7 @@ public class OnExceptionHandleAndTransformWithDefaultErrorHandlerTest extends Co
         });
 
 
-        Exchange exch = template.request("direct:start",new Processor() {
+        Exchange exch = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
             }

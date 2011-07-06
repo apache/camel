@@ -16,15 +16,15 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import java.io.Serializable;
+import java.util.Date;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.util.MessageHelper;
-
-import java.io.Serializable;
-import java.util.Date;
 
 /**
  * Default {@link TraceEventMessage}.
