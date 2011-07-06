@@ -71,7 +71,7 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
                 tracer.setUseJpa(true);
                 getContext().addInterceptStrategy(tracer);
 
-                from("direct:start").to("mock:result");
+                from("direct:start").routeId("foo").to("mock:result");
             }
         };
     }
@@ -86,6 +86,7 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
         assertNotNull(db.getId());
         assertEquals("direct://start", db.getFromEndpointUri());
         assertEquals("mock://result", db.getToNode());
+        assertEquals("foo", db.getRouteId());
     }
 
     @SuppressWarnings("unchecked")

@@ -56,6 +56,7 @@ public class JpaTraceEventMessage implements TraceEventMessage, Serializable {
     protected String outBody;
     protected String outBodyType;
     protected String causedByException;
+    protected String routeId;
 
     public JpaTraceEventMessage() {
     }
@@ -195,6 +196,14 @@ public class JpaTraceEventMessage implements TraceEventMessage, Serializable {
 
     public void setCausedByException(String causedByException) {
         this.causedByException = causedByException;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Transient
