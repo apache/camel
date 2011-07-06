@@ -109,6 +109,26 @@ public class LRUSoftCacheTest extends TestSupport {
         cache.stop();
     }
 
+    public void testLRUSoftCachePutAllAnotherLRUSoftCache() throws Exception {
+        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
+        cache.start();
+
+        LRUSoftCache<Integer, Object> cache2 = new LRUSoftCache<Integer, Object>(1000);
+        cache2.start();
+        cache2.put(1, "foo");
+        cache2.put(2, "bar");
+
+        cache.putAll(cache2);
+
+        assertEquals("foo", cache.get(1));
+        assertEquals("bar", cache.get(2));
+        assertEquals(null, cache.get(3));
+        assertEquals(2, cache.size());
+
+        cache.stop();
+        cache2.stop();
+    }
+
     public void testLRUSoftCacheRemove() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
         cache.start();

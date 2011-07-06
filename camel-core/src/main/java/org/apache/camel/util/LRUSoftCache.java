@@ -76,7 +76,6 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
-        // do not use entrySet but copy one by one
         for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
