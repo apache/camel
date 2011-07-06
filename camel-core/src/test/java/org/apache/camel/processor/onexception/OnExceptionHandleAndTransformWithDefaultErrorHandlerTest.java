@@ -17,11 +17,9 @@
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit test inspired by end user
@@ -85,28 +83,19 @@ public class OnExceptionHandleAndTransformWithDefaultErrorHandlerTest extends Co
                 // but we want to return a fixed text response, so we transform OUT body and return a nice message
                 // using the simple language where we want insert the exception message
                 onException(MyFunctionalException.class)
-                        .handled(false)
+                        .handled(true)
                         .transform().simple("Error reported: ${exception.message} - cannot process this message.");
                 // END SNIPPET: e3
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new MyFunctionalException("Out of order");
-
                     }
                 });
             }
         });
 
-
-        Exchange exch = template.request("direct:start", new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("Hello World");
-            }
-        });
-
-        // Object out = template.requestBody("direct:start", "Hello World");
-        Object out = exch.getOut().getBody();
+        Object out = template.requestBody("direct:start", "Hello World");
         assertEquals("Error reported: Out of order - cannot process this message.", out);
     }
 
