@@ -107,6 +107,9 @@
     <jsch-version>0.1.44-1</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
+    <!-- TODO: when updating karaf, also update the file:
+         tests/camel-itest-karaf/org/apache/camel/itest/karaf/AbstractFeatureTest.java
+    -->
     <karaf-version>2.2.2</karaf-version>
     <log4j-version>1.2.16</log4j-version>
     <lucene-version>3.0.3</lucene-version>
