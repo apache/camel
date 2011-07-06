@@ -116,6 +116,11 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         return "marshal";
     }
 
+    @Override
+    public String getLabel() {
+        return toString();
+    }
+
     public String getRef() {
         return ref;
     }
