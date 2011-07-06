@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,7 +28,6 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
         deleteDirectory("target/depth");
         super.setUp();
     }
-
 
     public void testDepth() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -50,12 +50,12 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
 
         mock.expectedBodiesReceivedInAnyOrder("a2", "b2", "a3", "b3");
 
-        template.sendBodyAndHeader("file:target2/depth/2", "a", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target2/depth/2", "b", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("file:target2/depth/2/bar", "b2", Exchange.FILE_NAME, "b2.txt");
-        template.sendBodyAndHeader("file:target2/depth/2/foo", "a2", Exchange.FILE_NAME, "a2.txt");
-        template.sendBodyAndHeader("file:target2/depth/2/foo/bar", "a3", Exchange.FILE_NAME, "a3.txt");
-        template.sendBodyAndHeader("file:target2/depth/2/bar/foo", "b3", Exchange.FILE_NAME, "b3.txt");
+        template.sendBodyAndHeader("file:target/depth2/2", "a", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/depth2/2", "b", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/depth2/2/bar", "b2", Exchange.FILE_NAME, "b2.txt");
+        template.sendBodyAndHeader("file:target/depth2/2/foo", "a2", Exchange.FILE_NAME, "a2.txt");
+        template.sendBodyAndHeader("file:target/depth2/2/foo/bar", "a3", Exchange.FILE_NAME, "a3.txt");
+        template.sendBodyAndHeader("file:target/depth2/2/bar/foo", "b3", Exchange.FILE_NAME, "b3.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -85,7 +85,7 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
                     .convertBodyTo(String.class)
                     .to("mock:result");
 
-                from("file:target2/depth/2?recursive=true&minDepth=2&maxDepth=99")
+                from("file:target/depth2/2?recursive=true&minDepth=2&maxDepth=99")
                     .convertBodyTo(String.class)
                     .to("mock:result");
 
