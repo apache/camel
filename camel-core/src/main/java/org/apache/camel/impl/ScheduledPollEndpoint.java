@@ -91,7 +91,8 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         Object timeUnit = options.remove("timeUnit");
         Object useFixedDelay = options.remove("useFixedDelay");
         Object pollStrategy = options.remove("pollStrategy");
-        if (initialDelay != null || delay != null || timeUnit != null || useFixedDelay != null || pollStrategy != null) {
+        Object runLoggingLevel = options.remove("runLoggingLevel");
+        if (initialDelay != null || delay != null || timeUnit != null || useFixedDelay != null || pollStrategy != null || runLoggingLevel != null) {
             if (consumerProperties == null) {
                 consumerProperties = new HashMap<String, Object>();
             }
@@ -109,6 +110,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             }
             if (pollStrategy != null) {
                 consumerProperties.put("pollStrategy", pollStrategy);
+            }
+            if (runLoggingLevel != null) {
+                consumerProperties.put("runLoggingLevel", runLoggingLevel);
             }
         }
     }
