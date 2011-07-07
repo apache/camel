@@ -25,6 +25,8 @@ import org.apache.abdera.parser.ParseException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumer to poll atom feeds and return each entry from the feed step by step.
@@ -32,6 +34,7 @@ import org.apache.camel.component.feed.FeedEntryPollingConsumer;
  * @version 
  */
 public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
+    private static final transient Logger LOG = LoggerFactory.getLogger(AtomEntryPollingConsumer.class);
     private Document<Feed> document;
 
     public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {
@@ -40,7 +43,16 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
     
     private Document<Feed> getDocument() throws IOException, ParseException {
         if (document == null) {
-            document = AtomUtils.parseDocument(endpoint.getFeedUri());
+            ClassLoader old = Thread.currentThread().getContextClassLoader();
+            try {
+                if (endpoint.getCamelContext().getApplicationContextClassLoader() != null) {
+                    Thread.currentThread().setContextClassLoader(endpoint.getCamelContext().getApplicationContextClassLoader());
+                    LOG.debug("set the TCCL to be " + endpoint.getCamelContext().getApplicationContextClassLoader());
+                }
+                document = AtomUtils.parseDocument(endpoint.getFeedUri());
+            } finally {
+                Thread.currentThread().setContextClassLoader(old);
+            }
             Feed root = document.getRoot();
             if (endpoint.isSortEntries()) {
                 sortEntries(root);

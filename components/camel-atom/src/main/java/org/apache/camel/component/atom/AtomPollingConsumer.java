@@ -22,6 +22,8 @@ import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Feed;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.FeedPollingConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Consumer to poll atom feeds and return the full feed.
@@ -29,6 +31,7 @@ import org.apache.camel.component.feed.FeedPollingConsumer;
  * @version 
  */
 public class AtomPollingConsumer extends FeedPollingConsumer {
+    private static final transient Logger LOG = LoggerFactory.getLogger(AtomPollingConsumer.class);
 
     public AtomPollingConsumer(AtomEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -36,7 +39,16 @@ public class AtomPollingConsumer extends FeedPollingConsumer {
 
     @Override
     protected Object createFeed() throws IOException {
-        Document<Feed> document = AtomUtils.parseDocument(endpoint.getFeedUri());
-        return document.getRoot();
+        ClassLoader old = Thread.currentThread().getContextClassLoader();
+        try {
+            if (endpoint.getCamelContext().getApplicationContextClassLoader() != null) {
+                Thread.currentThread().setContextClassLoader(endpoint.getCamelContext().getApplicationContextClassLoader());
+                LOG.debug("set the TCCL to be " + endpoint.getCamelContext().getApplicationContextClassLoader());
+            }
+            Document<Feed> document = AtomUtils.parseDocument(endpoint.getFeedUri());
+            return document.getRoot();
+        } finally {
+            Thread.currentThread().setContextClassLoader(old);
+        }
     }
 }
