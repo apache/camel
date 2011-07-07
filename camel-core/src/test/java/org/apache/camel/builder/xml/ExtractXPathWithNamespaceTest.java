@@ -16,7 +16,10 @@
  */
 package org.apache.camel.builder.xml;
 
+import junit.framework.Assert;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -48,11 +51,11 @@ public class ExtractXPathWithNamespaceTest extends ContextTestSupport {
     public void testXPathWithNamespaceDifferentNamespace() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<number xmlns=\"http://acme.com/cake\">55</number>");
-        mock.expectedHeaderReceived("foo", 0);
 
         template.sendBody("direct:in", "<number xmlns=\"http://acme.com/cake\">55</number>");
 
         mock.assertIsSatisfied();
+        Assert.assertNull(mock.getExchanges().get(0).getIn().getHeader("foo"));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
