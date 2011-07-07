@@ -16,7 +16,9 @@
  */
 package org.apache.camel.converter;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -24,7 +26,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ObjectHelper;
@@ -118,7 +119,7 @@ public class ObjectHelperTest extends TestCase {
         it.next();
         assertFalse(it.hasNext());
     }
-    
+
     public void testGetCamelContextPropertiesWithPrefix() {
         CamelContext context = new DefaultCamelContext();
         Map<String, String> properties = context.getProperties();
@@ -130,6 +131,24 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("Get a wrong size properties", 2, result.size());
         assertEquals("It should contain the test1", "test1", result.get("test1"));
         assertEquals("It should contain the test2", "test2", result.get("test2"));
+    }
+
+    public void testEvaluateAsPredicate() throws Exception {
+        assertEquals(false, ObjectHelper.evaluateValuePredicate(null));
+        assertEquals(true, ObjectHelper.evaluateValuePredicate(123));
+
+        assertEquals(true, ObjectHelper.evaluateValuePredicate("true"));
+        assertEquals(true, ObjectHelper.evaluateValuePredicate("TRUE"));
+        assertEquals(false, ObjectHelper.evaluateValuePredicate("false"));
+        assertEquals(false, ObjectHelper.evaluateValuePredicate("FALSE"));
+        assertEquals(true, ObjectHelper.evaluateValuePredicate("foobar"));
+        assertEquals(true, ObjectHelper.evaluateValuePredicate(""));
+        assertEquals(true, ObjectHelper.evaluateValuePredicate(" "));
+
+        List<String> list = new ArrayList<String>();
+        assertEquals(false, ObjectHelper.evaluateValuePredicate(list));
+        list.add("foo");
+        assertEquals(true, ObjectHelper.evaluateValuePredicate(list));
     }
 
 }
