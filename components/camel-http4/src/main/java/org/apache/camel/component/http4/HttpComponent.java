@@ -88,9 +88,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      * Creates the HttpClientConfigurer based on the given parameters
      *
      * @param parameters the map of parameters
+     * @param secure whether the endpoint is secure (eg https4)
      * @return the configurer
      */
-    protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters) {
+    protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, boolean secure) {
         // prefer to use endpoint configured over component configured
         HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
         if (configurer == null) {
@@ -104,7 +105,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
 
         configurer = configureBasicAuthentication(parameters, configurer);
-        configurer = configureHttpProxy(parameters, configurer);
+        configurer = configureHttpProxy(parameters, configurer, secure);
 
         return configurer;
     }
@@ -123,7 +124,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return configurer;
     }
 
-    private HttpClientConfigurer configureHttpProxy(Map<String, Object> parameters, HttpClientConfigurer configurer) {
+    private HttpClientConfigurer configureHttpProxy(Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure) {
+        String proxyAuthScheme = getAndRemoveParameter(parameters, "proxyAuthScheme", String.class);
+        if (proxyAuthScheme == null) {
+            // fallback and use either http4 or https4 depending on secure
+            proxyAuthScheme = secure ? "https4" : "http4";
+        }
         String proxyAuthHost = getAndRemoveParameter(parameters, "proxyAuthHost", String.class);
         Integer proxyAuthPort = getAndRemoveParameter(parameters, "proxyAuthPort", Integer.class);
         
@@ -132,12 +138,12 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             String proxyAuthPassword = getAndRemoveParameter(parameters, "proxyAuthPassword", String.class);
             String proxyAuthDomain = getAndRemoveParameter(parameters, "proxyAuthDomain", String.class);
             String proxyAuthNtHost = getAndRemoveParameter(parameters, "proxyAuthNtHost", String.class);
-            
+
             if (proxyAuthUsername != null && proxyAuthPassword != null) {
                 return CompositeHttpConfigurer.combineConfigurers(
-                    configurer, new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort, proxyAuthUsername, proxyAuthPassword, proxyAuthDomain, proxyAuthNtHost));
+                    configurer, new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort, proxyAuthScheme, proxyAuthUsername, proxyAuthPassword, proxyAuthDomain, proxyAuthNtHost));
             } else {
-                return CompositeHttpConfigurer.combineConfigurers(configurer, new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort));
+                return CompositeHttpConfigurer.combineConfigurers(configurer, new ProxyHttpClientConfigurer(proxyAuthHost, proxyAuthPort, proxyAuthScheme));
             }
         }
         
@@ -176,8 +182,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             sslContextParameters = this.sslContextParameters;
         }
         
+        boolean secure = isSecureConnection(uri);
+
         // create the configurer to use for this endpoint
-        HttpClientConfigurer configurer = createHttpClientConfigurer(parameters);
+        HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, secure);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
@@ -193,10 +201,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
 
         // register port on schema registry
-        boolean secure = isSecureConnection(uri);
         int port = getPort(httpUri);
         registerPort(secure, x509HostnameVerifier, port, sslContextParameters);
-        
+
         // create the endpoint
         HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, httpUri, clientParams, clientConnectionManager, configurer);
         setProperties(endpoint, parameters);
@@ -229,7 +236,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected void registerPort(boolean secure, X509HostnameVerifier x509HostnameVerifier, int port, SSLContextParameters sslContextParams) throws Exception {
         SchemeRegistry registry = clientConnectionManager.getSchemeRegistry();
         if (secure) {
-            SSLSocketFactory socketFactory = null;
+            SSLSocketFactory socketFactory;
             if (sslContextParams == null) {
                 socketFactory = SSLSocketFactory.getSocketFactory();
             } else {

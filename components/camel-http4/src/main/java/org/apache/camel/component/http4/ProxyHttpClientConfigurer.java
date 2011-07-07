@@ -32,19 +32,20 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
 
     private final String host;
     private final Integer port;
-
+    private final String scheme;
     private final String username;
     private final String password;
     private final String domain;
     private final String ntHost;
 
-    public ProxyHttpClientConfigurer(String host, Integer port) {
-        this(host, port, null, null, null, null);
+    public ProxyHttpClientConfigurer(String host, Integer port, String scheme) {
+        this(host, port, scheme, null, null, null, null);
     }
 
-    public ProxyHttpClientConfigurer(String host, Integer port, String username, String password, String domain, String ntHost) {
+    public ProxyHttpClientConfigurer(String host, Integer port, String scheme, String username, String password, String domain, String ntHost) {
         this.host = host;
         this.port = port;
+        this.scheme = scheme;
         this.username = username;
         this.password = password;
         this.domain = domain;
@@ -52,7 +53,7 @@ public class ProxyHttpClientConfigurer implements HttpClientConfigurer {
     }
 
     public void configureHttpClient(HttpClient client) {
-        client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, new HttpHost(host, port));
+        client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, new HttpHost(host, port, scheme));
 
         if (username != null && password != null) {
             Credentials defaultcreds;
