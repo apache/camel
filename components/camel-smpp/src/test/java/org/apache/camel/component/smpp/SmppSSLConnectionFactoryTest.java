@@ -29,7 +29,6 @@ import static org.junit.Assert.*;
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppSSLConnectionFactory</code>
  * 
  * @version 
- * @author cmueller
  */
 public class SmppSSLConnectionFactoryTest {
 
@@ -54,7 +53,9 @@ public class SmppSSLConnectionFactoryTest {
             assertNotNull(connection);
             assertTrue(connection.isOpen());            
         } finally {
-            connection.close();
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 }

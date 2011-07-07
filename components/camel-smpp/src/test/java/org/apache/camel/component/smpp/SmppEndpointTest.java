@@ -43,7 +43,6 @@ import static org.junit.Assert.assertTrue;
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppEndpoint</code>
  * 
  * @version 
- * @author muellerc
  */
 public class SmppEndpointTest {
     

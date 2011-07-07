@@ -39,7 +39,6 @@ import org.jsmpp.util.TimeFormatter;
  * {@link SmppMessage} to and from a SMPP {@link Command}
  * 
  * @version 
- * @author muellerc
  */
 public class SmppBinding {
 
@@ -96,84 +95,82 @@ public class SmppBinding {
         submitSm.setShortMessage(exchange.getIn().getBody(String.class).getBytes(configuration.getEncoding()));
 
         if (in.getHeaders().containsKey(DEST_ADDR)) {
-            submitSm.setDestAddress((String) in.getHeader(DEST_ADDR));
+            submitSm.setDestAddress(in.getHeader(DEST_ADDR, String.class));
         } else {
             submitSm.setDestAddress(configuration.getDestAddr());
         }
 
         if (in.getHeaders().containsKey(DEST_ADDR_TON)) {
-            submitSm.setDestAddrTon((Byte) in.getHeader(DEST_ADDR_TON));
+            submitSm.setDestAddrTon(in.getHeader(DEST_ADDR_TON, Byte.class));
         } else {
             submitSm.setDestAddrTon(configuration.getDestAddrTon());
         }
 
         if (in.getHeaders().containsKey(DEST_ADDR_NPI)) {
-            submitSm.setDestAddrNpi((Byte) in.getHeader(DEST_ADDR_NPI));
+            submitSm.setDestAddrNpi(in.getHeader(DEST_ADDR_NPI, Byte.class));
         } else {
             submitSm.setDestAddrNpi(configuration.getDestAddrNpi());
         }
 
         if (in.getHeaders().containsKey(SOURCE_ADDR)) {
-            submitSm.setSourceAddr((String) in.getHeader(SOURCE_ADDR));
+            submitSm.setSourceAddr(in.getHeader(SOURCE_ADDR, String.class));
         } else {
             submitSm.setSourceAddr(configuration.getSourceAddr());
         }
 
         if (in.getHeaders().containsKey(SOURCE_ADDR_TON)) {
-            submitSm.setSourceAddrTon((Byte) in.getHeader(SOURCE_ADDR_TON));
+            submitSm.setSourceAddrTon(in.getHeader(SOURCE_ADDR_TON, Byte.class));
         } else {
             submitSm.setSourceAddrTon(configuration.getSourceAddrTon());
         }
 
         if (in.getHeaders().containsKey(SOURCE_ADDR_NPI)) {
-            submitSm.setSourceAddrNpi((Byte) in.getHeader(SOURCE_ADDR_NPI));
+            submitSm.setSourceAddrNpi(in.getHeader(SOURCE_ADDR_NPI, Byte.class));
         } else {
             submitSm.setSourceAddrNpi(configuration.getSourceAddrNpi());
         }
 
         if (in.getHeaders().containsKey(SERVICE_TYPE)) {
-            submitSm.setServiceType((String) in.getHeader(SERVICE_TYPE));
+            submitSm.setServiceType(in.getHeader(SERVICE_TYPE, String.class));
         } else {
             submitSm.setServiceType(configuration.getServiceType());
         }
 
         if (in.getHeaders().containsKey(REGISTERED_DELIVERY)) {
-            submitSm.setRegisteredDelivery((Byte) in.getHeader(REGISTERED_DELIVERY));
+            submitSm.setRegisteredDelivery(in.getHeader(REGISTERED_DELIVERY, Byte.class));
         } else {
             submitSm.setRegisteredDelivery(configuration.getRegisteredDelivery());
         }
 
         if (in.getHeaders().containsKey(PROTOCOL_ID)) {
-            submitSm.setProtocolId((Byte) in.getHeader(PROTOCOL_ID));
+            submitSm.setProtocolId(in.getHeader(PROTOCOL_ID, Byte.class));
         } else {
             submitSm.setProtocolId(configuration.getProtocolId());
         }
 
         if (in.getHeaders().containsKey(PRIORITY_FLAG)) {
-            submitSm.setPriorityFlag((Byte) in.getHeader(PRIORITY_FLAG));
+            submitSm.setPriorityFlag(in.getHeader(PRIORITY_FLAG, Byte.class));
         } else {
             submitSm.setPriorityFlag(configuration.getPriorityFlag());
         }
 
         if (in.getHeaders().containsKey(SCHEDULE_DELIVERY_TIME)) {
-            submitSm.setScheduleDeliveryTime(timeFormatter.format((Date) in.getHeader(SCHEDULE_DELIVERY_TIME)));
+            submitSm.setScheduleDeliveryTime(timeFormatter.format(in.getHeader(SCHEDULE_DELIVERY_TIME, Date.class)));
         } 
 
         if (in.getHeaders().containsKey(VALIDITY_PERIOD)) {
-            submitSm.setValidityPeriod(timeFormatter.format((Date) in.getHeader(VALIDITY_PERIOD)));
+            submitSm.setValidityPeriod(timeFormatter.format(in.getHeader(VALIDITY_PERIOD, Date.class)));
         }
 
         if (in.getHeaders().containsKey(REPLACE_IF_PRESENT_FLAG)) {
-            submitSm.setReplaceIfPresent((Byte) in.getHeader(REPLACE_IF_PRESENT_FLAG));
+            submitSm.setReplaceIfPresent(in.getHeader(REPLACE_IF_PRESENT_FLAG, Byte.class));
         } else {
             submitSm.setReplaceIfPresent(configuration.getReplaceIfPresentFlag());
         }
         
         if (in.getHeaders().containsKey(DATA_CODING)) {
-            System.out.println("1");
-            submitSm.setDataCoding((Byte) in.getHeader(DATA_CODING));
+            submitSm.setDataCoding(in.getHeader(DATA_CODING, Byte.class));
         } else {
-            System.out.println("2");
             submitSm.setDataCoding(configuration.getDataCoding());
         }
 
