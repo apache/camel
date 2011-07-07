@@ -21,7 +21,7 @@ import net.sf.ehcache.Ehcache;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.cache.CacheManagerFactory;
+import org.apache.camel.component.cache.DefaultCacheManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,7 @@ public class CacheBasedMessageBodyReplacer extends CacheValidate implements Proc
 
     public void process(Exchange exchange) throws Exception {
         // Cache the buffer to the specified Cache against the specified key
-        cacheManager = new CacheManagerFactory().instantiateCacheManager();
+        cacheManager = new DefaultCacheManagerFactory().instantiateCacheManager();
 
         if (isValid(cacheManager, cacheName, key)) {
             cache = cacheManager.getCache(cacheName);
