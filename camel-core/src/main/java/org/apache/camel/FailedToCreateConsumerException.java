@@ -26,6 +26,11 @@ public class FailedToCreateConsumerException extends RuntimeCamelException {
 
     private final String uri;
 
+    public FailedToCreateConsumerException(String endpointURI, Throwable cause) {
+        super("Failed to create Consumer for endpoint for: " + endpointURI + ". Reason: " + cause, cause);
+        this.uri = endpointURI;
+    }
+
     public FailedToCreateConsumerException(Endpoint endpoint, Throwable cause) {
         super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + cause, cause);
         this.uri = endpoint.getEndpointUri();
