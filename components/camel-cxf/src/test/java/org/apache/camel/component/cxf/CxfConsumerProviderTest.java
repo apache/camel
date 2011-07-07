@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.cxf;
 
-import java.util.List;
 
 import org.w3c.dom.Node;
 
@@ -27,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.frontend.ClientFactoryBean;
-import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.Test;
 
 public class CxfConsumerProviderTest extends CamelTestSupport {
@@ -52,7 +48,7 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
-                from(SIMPLE_ENDPOINT_URI).process(new Processor() {
+                from(getFromEndpointUri()).process(new Processor() {
                     public void process(final Exchange exchange) {
                         Message in = exchange.getIn();
                         // Get the parameter list
@@ -87,5 +83,9 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
         assertTrue("Get a wrong response ", response.endsWith(RESPONSE_MESSAGE_END));
     }
 
+    
+    protected String getFromEndpointUri() {
+        return SIMPLE_ENDPOINT_URI;
+    }
 
 }
