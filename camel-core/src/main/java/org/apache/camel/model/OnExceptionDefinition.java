@@ -85,6 +85,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     private Predicate retryWhilePolicy;
     @XmlTransient
     private Processor onRedelivery;
+    @XmlTransient
+    private Boolean routeScoped;
 
     public OnExceptionDefinition() {
     }
@@ -96,6 +98,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     public OnExceptionDefinition(Class exceptionType) {
         exceptionClasses = new ArrayList<Class>();
         exceptionClasses.add(exceptionType);
+    }
+
+    public boolean isRouteScoped() {
+        // is context scoped by default
+        return routeScoped != null ? routeScoped : false;
     }
 
     @Override
@@ -138,6 +145,14 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
+        // assign whether this was a route scoped onException or not
+        // we need to know this later when setting the parent, as only route scoped should have parent
+        // Note: this logic can possible be removed when the Camel routing engine decides at runtime
+        // to apply onException in a more dynamic fashion than current code base
+        // and therefore is in a better position to decide among context/route scoped OnException at runtime
+        if (routeScoped == null) {
+            routeScoped = super.getParent() != null;
+        }
 
         setHandledFromExpressionType(routeContext);
         setContinuedFromExpressionType(routeContext);

@@ -51,8 +51,14 @@ public abstract class ErrorHandlerSupport extends ServiceSupport implements Erro
         List<Class> list = exceptionType.getExceptionClasses();
 
         for (Class clazz : list) {
-            RouteDefinition route = ProcessorDefinitionHelper.getRoute(exceptionType);
-            String routeId = route != null ? route.getId() : null;
+            String routeId = null;
+            // only get the route id, if the exception type is route scoped
+            if (exceptionType.isRouteScoped()) {
+                RouteDefinition route = ProcessorDefinitionHelper.getRoute(exceptionType);
+                if (route != null) {
+                    routeId = route.getId();
+                }
+            }
             ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, exceptionType.getOnWhen());
             exceptionPolicies.put(key, exceptionType);
         }
