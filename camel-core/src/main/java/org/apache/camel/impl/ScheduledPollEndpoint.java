@@ -59,14 +59,18 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
 
     protected void configureConsumer(Consumer consumer) throws Exception {
         if (consumerProperties != null) {
+            // use a defensive copy of the consumer properties as the methods below will remove the used properties
+            // and in case we restart routes, we need access to the original consumer properties again
+            Map<String, Object> copy = new HashMap<String, Object>(consumerProperties);
+
             // set reference properties first as they use # syntax that fools the regular properties setter
-            EndpointHelper.setReferenceProperties(getCamelContext(), consumer, consumerProperties);
-            EndpointHelper.setProperties(getCamelContext(), consumer, consumerProperties);
-            if (!this.isLenientProperties() && consumerProperties.size() > 0) {
-                throw new ResolveEndpointFailedException(this.getEndpointUri(), "There are " + consumerProperties.size()
+            EndpointHelper.setReferenceProperties(getCamelContext(), consumer, copy);
+            EndpointHelper.setProperties(getCamelContext(), consumer, copy);
+            if (!this.isLenientProperties() && copy.size() > 0) {
+                throw new ResolveEndpointFailedException(this.getEndpointUri(), "There are " + copy.size()
                     + " parameters that couldn't be set on the endpoint consumer."
                     + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
-                    + " Unknown consumer parameters=[" + consumerProperties + "]");
+                    + " Unknown consumer parameters=[" + copy + "]");
             }
         }
     }
