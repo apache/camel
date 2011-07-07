@@ -107,7 +107,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Document doc = node.getOwnerDocument();
             if (((Element) node).getNamespaceURI().equals(BLUEPRINT_NS)) {
-                doc.renameNode(node, SPRING_NS, node.getNodeName());
+                doc.renameNode(node, SPRING_NS, node.getLocalName());
             }
         }
         NodeList list = node.getChildNodes();
@@ -127,7 +127,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     public Metadata parse(Element element, ParserContext context) {
         renameNamespaceRecursive(element);
-        if (element.getNodeName().equals(CAMEL_CONTEXT)) {
+        if (element.getLocalName().equals(CAMEL_CONTEXT)) {
             // Find the id, generate one if needed
             String contextId = element.getAttribute("id");
             boolean implicitId = false;
@@ -212,7 +212,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
             return ctx;
         }
-        if (element.getNodeName().equals(ROUTE_CONTEXT)) {
+        if (element.getLocalName().equals(ROUTE_CONTEXT)) {
             // now lets parse the routes with JAXB
             Binder<Node> binder;
             try {
