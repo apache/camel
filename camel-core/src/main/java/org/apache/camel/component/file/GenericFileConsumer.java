@@ -235,6 +235,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      *
      * @param fileName current directory or file
      * @param fileList current list of files gathered
+     * @param depth the current depth of the directory (will start from 0)
      * @return whether or not to continue polling, <tt>false</tt> means the maxMessagesPerPoll limit has been hit
      */
     protected abstract boolean pollDirectory(String fileName, List<GenericFile<T>> fileList, int depth);
