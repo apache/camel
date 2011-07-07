@@ -46,7 +46,7 @@ public interface ProcessorFactory {
      * @return the created processor, or <tt>null</tt> to let the default implementation in Camel create the processor.
      * @throws Exception can be thrown if error creating the processor
      */
-    Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition definition, boolean mandatory) throws Exception;
+    Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition<?> definition, boolean mandatory) throws Exception;
 
     /**
      * Creates the processor.
@@ -56,6 +56,6 @@ public interface ProcessorFactory {
      * @return the created processor, or <tt>null</tt> to let the default implementation in Camel create the processor.
      * @throws Exception can be thrown if error creating the processor
      */
-    Processor createProcessor(RouteContext routeContext, ProcessorDefinition definition) throws Exception;
+    Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> definition) throws Exception;
 
 }
