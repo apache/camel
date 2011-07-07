@@ -26,6 +26,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class RouteRemove2Test extends ContextTestSupport {
 
     public void testRemove() throws Exception {
+        DefaultCamelContext defaultContext = (DefaultCamelContext) context;
+        assertEquals("2 routes to start with", 2, context.getRoutes().size());
+        assertEquals("2 routes to start with", 2, context.getRouteDefinitions().size());
+        assertEquals("2 routes to start with", 2, defaultContext.getRouteStartupOrder().size());
+        assertEquals("2 routes to start with", 2, defaultContext.getRouteServices().size());
+
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         template.sendBody("seda:foo", "Hello World");
@@ -58,6 +64,11 @@ public class RouteRemove2Test extends ContextTestSupport {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         template.sendBody("seda:bar", "Hello World");
         assertMockEndpointsSatisfied();
+
+        assertEquals("1 routes to end with", 1, context.getRoutes().size());
+        assertEquals("1 routes to end with", 1, context.getRouteDefinitions().size());
+        assertEquals("1 routes to end with", 1, defaultContext.getRouteStartupOrder().size());
+        assertEquals("1 routes to end with", 1, defaultContext.getRouteServices().size());
     }
 
     @Override
