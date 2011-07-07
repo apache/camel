@@ -30,6 +30,7 @@ import org.apache.camel.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Converter
 public final class Rfc3164SyslogConverter {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(Rfc3164SyslogConverter.class);
@@ -89,8 +90,7 @@ public final class Rfc3164SyslogConverter {
         cal.setTime(message.getTimestamp());
 
         String firstLetter = MONTHS.values()[cal.get(Calendar.MONTH)].toString().substring(0, 1);  // Get first letter
-        String remainder = MONTHS.values()[cal.get(Calendar.MONTH)].toString()
-            .substring(1);    // Get remainder of word.
+        String remainder = MONTHS.values()[cal.get(Calendar.MONTH)].toString().substring(1);    // Get remainder of word.
         String capitalized = firstLetter.toUpperCase() + remainder.toLowerCase();
 
         sbr.append(capitalized);
