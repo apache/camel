@@ -27,6 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.component.cxf.CxfPayload;
@@ -37,6 +38,7 @@ import org.junit.Test;
 public class CxfPayloadConverterTest extends ExchangeTestSupport {
     private Document document;
     private CxfPayload<String[]> payload;
+    private CxfPayload<String[]> emptyPayload;
     private FileInputStream inputStream;
 
     @Override
@@ -45,12 +47,14 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         super.setUp();
         File file = new File("src/test/resources/org/apache/camel/component/cxf/converter/test.xml");
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         document = documentBuilder.parse(file);
         document.getDocumentElement().normalize();
         List<Element> body = new ArrayList<Element>();
         body.add(document.getDocumentElement());
         payload = new CxfPayload<String[]>(new ArrayList<String[]>(), body);
+        emptyPayload = new CxfPayload<String[]>(new ArrayList<String[]>(), new ArrayList<Element>());
         inputStream = new FileInputStream(file);
     }
 
@@ -90,6 +94,33 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         exchange.getIn().setBody(payload);
         InputStream inputStream = exchange.getIn().getBody(InputStream.class);
         assertTrue(inputStream instanceof InputStream);       
+    }
+
+    @Test
+    public void testCxfPayloadToNode() {
+        // call the payload conversion that works
+        exchange.getIn().setBody(payload);
+        Node node = exchange.getIn().getBody(Node.class);
+        assertNotNull(node);
+        
+        // do the empty conversion
+        exchange.getIn().setBody(emptyPayload);
+        node = exchange.getIn().getBody(Node.class);
+        assertNull(node);
+
+        // do the same one that worked before
+        exchange.getIn().setBody(payload);
+        node = exchange.getIn().getBody(Node.class);
+        assertNotNull(node);
+        
+        // To make sure we always get the element here
+        Element root = (Element) node;
+        assertEquals("root element name", "root", root.getNodeName());
+        assertEquals("root element namespace", "http://www.test.org/foo", root.getNamespaceURI());
+        Element bar = (Element) root.getElementsByTagName("bar").item(0);
+        assertEquals("child element name", "bar", bar.getNodeName());
+        assertEquals("child element namespace", "http://www.test.org/foo",
+            bar.getNamespaceURI());
     }
 
 }
