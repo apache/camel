@@ -21,6 +21,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
@@ -30,7 +32,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.io.CachedOutputStream;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -74,6 +78,28 @@ public class CxfMessageHelperTest extends Assert {
         assertNotNull("The input stream should not be null", is);
         assertEquals("Don't get the right message", toString(is), REQUEST_STRING);
 
+        // transport header's case insensitiveness
+        // String
+        exchange.getIn().setBody("hello world");
+        exchange.getIn().setHeader("soapAction", "urn:hello:world");
+        message = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, exchange, false);
+        // test message
+        Map<String, List<String>> headers = CastUtils.cast((Map)message.get(Message.PROTOCOL_HEADERS));
+        
+        // verify there is no duplicate
+        assertNotNull("The headers must be present", headers);
+        assertTrue("There must be one header entry", headers.size() == 1);
+        
+        // verify the soapaction can be retrieved in case-insensitive ways
+        verifyHeader(headers, "soapaction", "urn:hello:world");
+        verifyHeader(headers, "SoapAction", "urn:hello:world");
+        verifyHeader(headers, "SOAPAction", "urn:hello:world");
+    }
+
+    private void verifyHeader(Map<String, List<String>> headers, String name, String value) {
+        List<String> values = headers.get(name);
+        assertTrue("The entry must be available", values != null && values.size() == 1);
+        assertEquals("The value must match", values.get(0), value);
     }
 
     private String toString(InputStream is) throws IOException {
