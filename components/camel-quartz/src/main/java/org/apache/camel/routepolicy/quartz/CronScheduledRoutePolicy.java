@@ -45,11 +45,9 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
                 setTimeUnit(TimeUnit.MILLISECONDS);
             }
 
+            // validate time options has been configured
             if ((getRouteStartTime() == null) && (getRouteStopTime() == null) && (getRouteSuspendTime() == null) && (getRouteResumeTime() == null)) {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Scheduled Route Policy for route " + route.getId() + " is not set since the no start, stop and/or suspend times are specified");
-                }
-                return;
+                throw new IllegalArgumentException("Scheduled Route Policy for route {} has no stop/stop/suspend/resume times specified");
             }
         
             if (scheduledRouteDetails == null) {
@@ -94,9 +92,6 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.routepolicy.quartz.ScheduledRoutePolicy#createTrigger(org.apache.camel.routepolicy.quartz.ScheduledRoutePolicyConstants.Action)
-     */
     @Override
     protected Trigger createTrigger(Action action, Route route) throws Exception {
         CronTrigger trigger = null;

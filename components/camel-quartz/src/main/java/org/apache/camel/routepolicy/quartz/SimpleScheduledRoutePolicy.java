@@ -54,13 +54,11 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
                 setTimeUnit(TimeUnit.MILLISECONDS);
             }
             
+            // validate time options has been configured
             if ((getRouteStartDate() == null) && (getRouteStopDate() == null) && (getRouteSuspendDate() == null) && (getRouteResumeDate() == null)) {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Scheduled Route Policy for route " + route.getId() + " is not set since the no start, stop and/or suspend times are specified");
-                }
-                return;
+                throw new IllegalArgumentException("Scheduled Route Policy for route {} has no stop/stop/suspend/resume times specified");
             }
-        
+
             if (scheduledRouteDetails == null) {
                 scheduledRouteDetails = new ScheduledRouteDetails();
                 scheduledRouteDetails.setRoute(route);

@@ -54,17 +54,13 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
             if (routeStatus == ServiceStatus.Started) {
                 stopConsumer(route.getConsumer());
             } else {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Route is not in a started state and cannot be suspended. The current route state is " + routeStatus);
-                }
+                LOG.warn("Route is not in a started state and cannot be suspended. The current route state is {}", routeStatus);
             }
         } else if (action == Action.RESUME) {
             if (routeStatus == ServiceStatus.Started) {
                 startConsumer(route.getConsumer());
             } else {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Route is not in a started state and cannot be resumed. The current route state is " + routeStatus);
-                }
+                LOG.warn("Route is not in a started state and cannot be resumed. The current route state is {}", routeStatus);
             }
         }       
     }

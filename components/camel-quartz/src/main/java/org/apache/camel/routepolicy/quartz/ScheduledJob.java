@@ -29,13 +29,8 @@ import org.quartz.SchedulerException;
 
 public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyConstants {
     private static final long serialVersionUID = 26L;
-    private Route storedRoute;    
-    
-    /* (non-Javadoc)
-     * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
-     */
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
+    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         SchedulerContext schedulerContext;
         try {
             schedulerContext = jobExecutionContext.getScheduler().getContext();
@@ -45,7 +40,7 @@ public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyCons
         
         ScheduledJobState state = (ScheduledJobState) schedulerContext.get(jobExecutionContext.getJobDetail().getName());
         Action storedAction = state.getAction(); 
-        storedRoute = state.getRoute();
+        Route storedRoute = state.getRoute();
         
         List<RoutePolicy> policyList = storedRoute.getRouteContext().getRoutePolicyList();
         for (RoutePolicy policy : policyList) {
@@ -54,7 +49,8 @@ public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyCons
                     ((ScheduledRoutePolicy)policy).onJobExecute(storedAction, storedRoute);
                 }
             } catch (Exception e) {
-                throw new JobExecutionException("Failed to execute Scheduled Job for route " + storedRoute.getId() + " with trigger name: " + jobExecutionContext.getTrigger().getFullName());
+                throw new JobExecutionException("Failed to execute Scheduled Job for route " + storedRoute.getId()
+                        + " with trigger name: " + jobExecutionContext.getTrigger().getFullName(), e);
             }
         }
     }
