@@ -346,16 +346,14 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
     protected String generatePop3Uid(Message message) {
         String uid = null;
 
-        // create an UID based on message headers on the POP3Message, that ought to be unique
+        // create an UID based on message headers on the POP3Message, that ought
+        // to be unique
         StringBuilder buffer = new StringBuilder();
         try {
             Enumeration it = message.getAllHeaders();
             while (it.hasMoreElements()) {
-                Header header = (Header) it.nextElement();
-                buffer.append(header.getName())
-                  .append("=")
-                  .append(header.getValue())
-                  .append("\n");
+                Header header = (Header)it.nextElement();
+                buffer.append(header.getName()).append("=").append(header.getValue()).append("\n");
             }
             if (buffer.length() > 0) {
                 LOG.debug("Generating UID from the following:\n" + buffer);
