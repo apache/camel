@@ -17,7 +17,6 @@
 package org.apache.camel.component.mail;
 
 import java.util.Map;
-
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
@@ -34,14 +33,12 @@ import org.jvnet.mock_javamail.Mailbox;
 /**
  * Unit test for Camel attachments and Mail attachments.
  */
-public class MailAttachmentTest extends CamelTestSupport {
+public class MailAttachmentsUmlautIssueTest extends CamelTestSupport {
 
     @Test
     public void testSendAndReceiveMailWithAttachments() throws Exception {
         // clear mailbox
         Mailbox.clearAll();
-
-        // START SNIPPET: e1
 
         // create an exchange with a normal body and attachment to be produced as email
         Endpoint endpoint = context.getEndpoint("smtp://james@mymailserver.com?password=secret");
@@ -50,7 +47,10 @@ public class MailAttachmentTest extends CamelTestSupport {
         Exchange exchange = endpoint.createExchange();
         Message in = exchange.getIn();
         in.setBody("Hello World");
-        in.addAttachment("logo.jpeg", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
+        // unicode 00DC is german umlaut
+        String name = "logo2\u00DC";
+        // use existing logo.jpeg file, but lets name it with the umlaut
+        in.addAttachment(name, new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
 
         // create a producer that can produce the exchange (= send the mail)
         Producer producer = endpoint.createProducer();
@@ -58,8 +58,6 @@ public class MailAttachmentTest extends CamelTestSupport {
         producer.start();
         // and let it go (processes the exchange by sending the email)
         producer.process(exchange);
-
-        // END SNIPPET: e1
 
         // need some time for the mail to arrive on the inbox (consumed and sent to the mock)
         Thread.sleep(2000);
@@ -77,11 +75,11 @@ public class MailAttachmentTest extends CamelTestSupport {
         assertNotNull("Should have attachments", attachments);
         assertEquals(1, attachments.size());
 
-        DataHandler handler = out.getIn().getAttachment("logo.jpeg");
-        assertNotNull("The logo should be there", handler);
+        DataHandler handler = out.getIn().getAttachment(name);
+        assertNotNull("The " + name + " should be there", handler);
 
-        assertEquals("image/jpeg; name=logo.jpeg", handler.getContentType());
-        assertEquals("Handler name should be the file name", "logo.jpeg", handler.getName());
+        assertEquals("image/jpeg; name=\"" + name + "\"", handler.getContentType());
+        assertEquals("Handler name should be the file name", name, handler.getName());
 
         producer.stop();
     }

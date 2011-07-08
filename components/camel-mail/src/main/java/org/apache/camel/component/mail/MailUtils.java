@@ -18,10 +18,11 @@ package org.apache.camel.component.mail;
 
 import java.text.DateFormat;
 import java.util.Date;
-
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Mail utility class.
@@ -137,4 +138,94 @@ public final class MailUtils {
             return message.toString();
         }
     }
+
+    /**
+     * Pads the content-type so it has a space after semi colon that separate pairs.
+     * <p/>
+     * This is needed as some mail servers will choke otherwise
+     *
+     * @param contentType the content type
+     * @return the padded content type
+     */
+    public static String padContentType(String contentType) {
+        StringBuilder sb = new StringBuilder();
+        String[] parts = contentType.split(";");
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            if (ObjectHelper.isNotEmpty(part)) {
+                part = part.trim();
+                sb.append(part);
+                if (i < parts.length - 1) {
+                    sb.append("; ");
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Replaces the charset in the content-type
+     *
+     * @param contentType the content-type
+     * @param charset  the charset to replace, can be <tt>null</tt> to remove charset
+     * @return the content-type with replaced charset
+     */
+    public static String replaceCharSet(String contentType, String charset) {
+        boolean replaced = false;
+        StringBuilder sb = new StringBuilder();
+        String[] parts = contentType.split(";");
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            part = part.trim();
+            if (!part.startsWith("charset")) {
+                part = part.trim();
+                if (sb.length() > 0) {
+                    sb.append("; ");
+                }
+                sb.append(part);
+            } else if (charset != null) {
+                // replace with new charset
+                if (sb.length() > 0) {
+                    sb.append("; ");
+                }
+                sb.append("charset=");
+                sb.append(charset);
+                replaced = true;
+            }
+        }
+
+        // if we did not replace any existing charset, then append new charset at the end
+        if (!replaced && charset != null) {
+            if (sb.length() > 0) {
+                sb.append("; ");
+            }
+            sb.append("charset=");
+            sb.append(charset);
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Gets the charset from the content-type
+     *
+     * @param contentType the content-type
+     * @return the charset, or <tt>null</tt> if no charset existed
+     */
+    public static String getCharSetFromContentType(String contentType) {
+        if (contentType == null) {
+            return null;
+        }
+
+        String[] parts = contentType.split(";");
+        for (int i = 0; i < parts.length; i++) {
+            String part = parts[i];
+            part = part.trim();
+            if (part.startsWith("charset")) {
+                return ObjectHelper.after(part, "charset=");
+            }
+        }
+        return null;
+    }
+
 }
