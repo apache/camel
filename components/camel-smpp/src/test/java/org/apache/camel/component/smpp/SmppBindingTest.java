@@ -148,6 +148,31 @@ public class SmppBindingTest {
         //assertEquals(0, submitSm.getCommandStatus());
         //assertEquals(0, submitSm.getSequenceNumber());
     }
+    
+    @Test
+    public void createSubmitSmWithLongMessageBody() throws UnsupportedEncodingException {
+        String payload = "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+            + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+            + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "; // 270 chars
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        exchange.getIn().setBody(payload);
+        SubmitSm submitSm = binding.createSubmitSm(exchange);
+
+        assertArrayEquals(new byte[0], submitSm.getShortMessage());
+        
+        OptionalParameter[] optionalParametes = submitSm.getOptionalParametes();
+        assertEquals(1, optionalParametes.length);
+        
+        OptionalParameter messagePayloadTLV = optionalParametes[0];
+        assertEquals(OptionalParameter.Tag.MESSAGE_PAYLOAD.code(), messagePayloadTLV.tag);
+        byte[] expectedTLV = new byte[274];
+        expectedTLV[0] = 4;
+        expectedTLV[1] = 36;
+        expectedTLV[2] = 1;
+        expectedTLV[3] = 14;
+        System.arraycopy(payload.getBytes(), 0, expectedTLV, 4, 270);
+        assertArrayEquals(expectedTLV, messagePayloadTLV.serialize());
+    }
 
     @Test
     public void createSmppMessageFromAlertNotificationShouldReturnASmppMessage() {

@@ -27,6 +27,7 @@ import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.GeneralDataCoding;
 import org.jsmpp.bean.MessageClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.SubmitSm;
@@ -110,6 +111,7 @@ public class SmppProducerTest {
         expect(submitSm.getReplaceIfPresent()).andReturn((byte) 0);
         expect(submitSm.getDataCoding()).andReturn((byte) 0);
         expect(submitSm.getShortMessage()).andReturn("Hello SMPP world!".getBytes("ISO-8859-1"));
+        expect(submitSm.getOptionalParametes()).andReturn(new OptionalParameter[]{});
     }
     
     @Test
@@ -277,6 +279,7 @@ public class SmppProducerTest {
         expect(submitSm.getReplaceIfPresent()).andReturn((byte) 0);
         expect(submitSm.getDataCoding()).andReturn((byte) 4);
         expect(submitSm.getShortMessage()).andReturn("Hello SMPP world!".getBytes("ISO-8859-1"));
+        expect(submitSm.getOptionalParametes()).andReturn(new OptionalParameter[]{});
         expect(session.submitShortMessage(
                 eq("CMT"),
                 eq(TypeOfNumber.UNKNOWN),

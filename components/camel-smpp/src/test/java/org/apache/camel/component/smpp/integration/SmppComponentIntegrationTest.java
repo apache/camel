@@ -91,6 +91,27 @@ public class SmppComponentIntegrationTest extends CamelTestSupport {
         
         assertNotNull(exchange.getIn().getHeader(SmppBinding.ID));
     }
+    
+    @Test
+    public void sendLongMessage() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+        
+        Endpoint start = getMandatoryEndpoint("direct:start");
+        Exchange exchange = start.createExchange();
+        exchange.setPattern(ExchangePattern.InOnly);
+        exchange.getIn().setBody("Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "); // 270 chars
+
+        template.send(start, exchange);
+        
+        assertMockEndpointsSatisfied();
+        Exchange resultExchange = result.getExchanges().get(0);
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppBinding.MESSAGE_TYPE));
+        
+        assertNotNull(exchange.getIn().getHeader(SmppBinding.ID));
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

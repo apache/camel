@@ -146,7 +146,8 @@ public class SmppProducer extends DefaultProducer {
                         MessageClass.CLASS1,
                         Alphabet.valueOf(submitSm.getDataCoding())),
                 (byte) 0,
-                submitSm.getShortMessage());
+                submitSm.getShortMessage(),
+                submitSm.getOptionalParametes());
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sent a short message for exchange id '"
