@@ -50,10 +50,14 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
     static {
         ROOT_INDEXES_FACTORY.setKeyCodec(StringCodec.INSTANCE);
         ROOT_INDEXES_FACTORY.setValueCodec(IntegerCodec.INSTANCE);
-        ROOT_INDEXES_FACTORY.setDeferredEncoding(true);
+        //ROOT_INDEXES_FACTORY.setDeferredEncoding(true);
+        // TODO: use false due CAMEL-3826 until root cause is fixed in hawtdb
+        ROOT_INDEXES_FACTORY.setDeferredEncoding(false);
         INDEX_FACTORY.setKeyCodec(BufferCodec.INSTANCE);
         INDEX_FACTORY.setValueCodec(BufferCodec.INSTANCE);
-        INDEX_FACTORY.setDeferredEncoding(true);
+        //INDEX_FACTORY.setDeferredEncoding(true);
+        // TODO: use false due CAMEL-3826 until root cause is fixed in hawtdb
+        INDEX_FACTORY.setDeferredEncoding(false);
     }
 
     public HawtDBFile() {
