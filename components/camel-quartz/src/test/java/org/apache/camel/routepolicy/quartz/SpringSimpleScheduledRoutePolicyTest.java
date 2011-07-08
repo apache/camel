@@ -20,8 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringSimpleScheduledRoutePolicyTest extends
-        SpringScheduledRoutePolicyTest { 
+public class SpringSimpleScheduledRoutePolicyTest extends SpringScheduledRoutePolicyTest {
     
     @Before
     public void setUp() {

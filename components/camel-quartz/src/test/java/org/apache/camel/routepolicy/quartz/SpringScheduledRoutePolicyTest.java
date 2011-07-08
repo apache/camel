@@ -123,8 +123,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
         return applicationContext;
     }
 
-    public void setApplicationContext(
-            ClassPathXmlApplicationContext applicationContext) {
+    public void setApplicationContext(ClassPathXmlApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 

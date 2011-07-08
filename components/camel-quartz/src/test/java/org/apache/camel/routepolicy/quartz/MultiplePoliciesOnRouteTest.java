@@ -37,14 +37,6 @@ public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
     private String url = "seda:foo?concurrentConsumers=20";
     private int size = 100;
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.test.junit4.CamelTestSupport#s;etUp()
-     */
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = new JndiRegistry(createJndiContext());
@@ -53,9 +45,6 @@ public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
         return registry;
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.test.junit4.CamelTestSupport#isUseRouteBuilder()
-     */
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -80,11 +69,9 @@ public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
     @Test
     public void testMultiplePoliciesOnRoute() throws Exception {
         MockEndpoint success = (MockEndpoint) context.getEndpoint("mock:success");        
-        
         success.expectedMinimumMessageCount(size - 10);
         
         context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
-        context.getComponent("quartz", QuartzComponent.class).start();
         context.addRoutes(new RouteBuilder() {
             public void configure() {   
                 from(url)
@@ -95,6 +82,7 @@ public class MultiplePoliciesOnRouteTest extends CamelTestSupport {
             }
         });
         context.start();
+
         assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);
         for (int i = 0; i < size; i++) {
             template.sendBody(url, "Message " + i);

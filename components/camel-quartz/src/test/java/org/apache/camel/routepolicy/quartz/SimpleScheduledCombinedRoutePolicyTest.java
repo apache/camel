@@ -32,17 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.test.junit4.CamelTestSupport#s;etUp()
-     */
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-    
-    /* (non-Javadoc)
-     * @see org.apache.camel.test.junit4.CamelTestSupport#isUseRouteBuilder()
-     */
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -51,11 +40,9 @@ public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
     @Test
     public void testScheduledStartAndStopRoutePolicy() throws Exception {
         MockEndpoint success = (MockEndpoint) context.getEndpoint("mock:success");        
-        
         success.expectedMessageCount(1);
         
         context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
-        context.getComponent("quartz", QuartzComponent.class).start();
         context.addRoutes(new RouteBuilder() {
             public void configure() {   
                 SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();

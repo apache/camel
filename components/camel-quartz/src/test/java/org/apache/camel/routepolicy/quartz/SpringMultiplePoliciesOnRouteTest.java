@@ -44,12 +44,8 @@ public class SpringMultiplePoliciesOnRouteTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.test.CamelSpringTestSupport#createApplicationContext()
-     */
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        // TODO Auto-generated method stub
         return new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/MultiplePolicies.xml");
     }
     
