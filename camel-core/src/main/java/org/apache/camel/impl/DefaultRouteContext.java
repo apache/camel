@@ -155,16 +155,18 @@ public class DefaultRouteContext implements RouteContext {
             RoutePolicyProcessor routePolicyProcessor = null;
             List<RoutePolicy> routePolicyList = getRoutePolicyList();
             if (routePolicyList != null && !routePolicyList.isEmpty()) {
-                routePolicyProcessor = new RoutePolicyProcessor(unitOfWorkProcessor, routePolicyList);
-
-                // add it as service if we have not already done that (eg possible if two routes have the same service)
-                if (!camelContext.hasService(routePolicyProcessor)) {
-                    try {
-                        camelContext.addService(routePolicyProcessor);
-                    } catch (Exception e) {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                for (RoutePolicy policy : routePolicyList) {
+                    // add policy as service if we have not already done that (eg possible if two routes have the same service)
+                    // this ensures Camel can control the lifecycle of the policy
+                    if (!camelContext.hasService(policy)) {
+                        try {
+                            camelContext.addService(policy);
+                        } catch (Exception e) {
+                            throw ObjectHelper.wrapRuntimeCamelException(e);
+                        }
                     }
                 }
+                routePolicyProcessor = new RoutePolicyProcessor(unitOfWorkProcessor, routePolicyList);
                 target = routePolicyProcessor;
             } else {
                 target = unitOfWorkProcessor;
