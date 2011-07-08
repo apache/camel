@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -180,7 +181,20 @@ public class BeanExpression implements Expression, Predicate {
 
             // loop and invoke each method
             Object beanToCall = bean;
-            List<String> methods = OgnlHelper.splitOgnl(ognl);
+
+            // Split ognl except
+            // when this is not a Map, Array
+            // and we would like to keep the dots
+            // within the key name
+            List<String> methods;
+
+            if (ognl.startsWith("[") && ognl.endsWith("]")) {
+               methods = new ArrayList<String>();
+               methods.add(ognl);
+            } else {
+               methods = OgnlHelper.splitOgnl(ognl);
+            }
+
             for (String methodName : methods) {
                 BeanHolder holder = new ConstantBeanHolder(beanToCall, exchange.getContext());
 

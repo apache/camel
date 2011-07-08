@@ -389,6 +389,14 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${header.unknown[cool]}", null);
     }
 
+    public void testOGNLHeaderMapWithDot() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("this.code","This code");
+        exchange.getIn().setHeader("wicket", map);
+
+        assertExpression("${header.wicket[this.code]}","This code");
+    }
+
     public void testOGNLHeaderMapNotMap() throws Exception {
         try {
             assertExpression("${header.foo[bar]}", null);
@@ -416,6 +424,14 @@ public class SimpleTest extends LanguageTestSupport {
 
         assertExpression("${in.body[foo]}", "Camel");
         assertExpression("${in.body[bar]}", 6);
+    }
+
+    public void testBodyOGNLAsMapWithDot() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("foo.bar", "Camel");
+        exchange.getIn().setBody(map);
+
+        assertExpression("${in.body[foo.bar]}", "Camel");
     }
     
     public void testBodyOGNLAsMapShorthand() throws Exception {
