@@ -65,6 +65,23 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
         }
     }
     
+
+    @Test
+    public void testGetCustomerWithQuery() throws Exception {      
+        HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers?id=123");
+        get.addHeader("Accept" , "application/json");
+        HttpClient httpclient = new DefaultHttpClient();
+
+        try {
+            HttpResponse response = httpclient.execute(get);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", 
+                         EntityUtils.toString(response.getEntity()));
+        } finally {
+            httpclient.getConnectionManager().shutdown();
+        }
+    }
+    
     @Test
     public void testGetCustomers() throws Exception {      
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/");
