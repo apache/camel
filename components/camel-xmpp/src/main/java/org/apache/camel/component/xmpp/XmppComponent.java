@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ public class XmppComponent extends DefaultComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(XmppComponent.class);
 
     //keep a cache of endpoints so they can be properly cleaned up
-    Map<String, XmppEndpoint> endpointCache = new HashMap<String, XmppEndpoint>();
+    private final Map<String, XmppEndpoint> endpointCache = new HashMap<String, XmppEndpoint>();
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -73,10 +74,9 @@ public class XmppComponent extends DefaultComponent {
     }
 
     @Override
-    protected synchronized void doStop() throws Exception {
-        for (Map.Entry<String, XmppEndpoint> entry : endpointCache.entrySet()) {
-            entry.getValue().destroy();
-        }
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(endpointCache.values());
         endpointCache.clear();
     }
+
 }

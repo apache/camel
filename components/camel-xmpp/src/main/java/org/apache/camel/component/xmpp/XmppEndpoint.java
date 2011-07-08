@@ -215,12 +215,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return "Chat:" + getParticipant() + ":" + getUser();
     }
 
-    protected synchronized void destroy() throws Exception {
-        if (connection != null) {
-            connection.disconnect();
-        }
-    }
-
     // Properties
     // -------------------------------------------------------------------------
     public XmppBinding getBinding() {
@@ -337,5 +331,14 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
+    @Override
+    protected void doStop() throws Exception {
+        if (connection != null) {
+            connection.disconnect();
+        }
+        connection = null;
+        binding = null;
+    }
 
 }
