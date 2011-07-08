@@ -48,7 +48,6 @@
     <bundle>mvn:org.apache.camel/camel-test/${pom.version}</bundle>
   </feature> 
   <feature name='cxf' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool/${commons-pool-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
     <bundle dependency="true">mvn:org.springframework/spring-jms/${spring-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/${asm-bundle-version}</bundle>
@@ -90,7 +89,7 @@
   <feature name='camel-cxf' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-spring</feature>
     <feature>jetty</feature>
-    <feature version='[2.3,3)'>cxf</feature>
+    <feature version='[2.3,2.6)'>cxf</feature>
     <bundle>mvn:org.apache.camel/camel-cxf/${pom.version}</bundle>
   </feature>
   <feature name='camel-cache' version='${pom.version}' resolver='(obr)' start-level='50'>
