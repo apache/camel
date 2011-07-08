@@ -63,6 +63,10 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
         this.eventNotifiers.add(eventNotifier);
     }
 
+    public boolean removeEventNotifier(EventNotifier eventNotifier) {
+        return eventNotifiers.remove(eventNotifier);
+    }
+
     public void setEventNotifiers(List<EventNotifier> eventNotifiers) {
         this.eventNotifiers = eventNotifiers;
     }
