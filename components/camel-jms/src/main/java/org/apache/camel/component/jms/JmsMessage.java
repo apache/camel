@@ -69,13 +69,23 @@ public class JmsMessage extends DefaultMessage {
                 copyMessageId = false;
             }
         }
-
         if (copyMessageId) {
             setMessageId(that.getMessageId());
         }
+
+        // copy body and fault flag
         setBody(that.getBody());
-        getHeaders().putAll(that.getHeaders());
-        getAttachments().putAll(that.getAttachments());
+        setFault(that.isFault());
+
+        // we have already cleared the headers
+        if (that.hasHeaders()) {
+            getHeaders().putAll(that.getHeaders());
+        }
+
+        getAttachments().clear();
+        if (that.hasAttachments()) {
+            getAttachments().putAll(that.getAttachments());
+        }
     }
 
     /**
