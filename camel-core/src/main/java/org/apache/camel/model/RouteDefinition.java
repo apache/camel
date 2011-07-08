@@ -222,12 +222,15 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
 
         // we can only advice with a route builder without any routes
-        if (!routes.getRoutes().isEmpty()) {
+        if (!builder.getRouteCollection().getRoutes().isEmpty()) {
             throw new IllegalArgumentException("You can only advice from a RouteBuilder which has no existing routes."
                     + " Remove all routes from the route builder.");
         }
-        // we can not advice with error handlers
-        if (routes.getErrorHandlerBuilder() != null) {
+        // we can not advice with error handlers (if you added a new error handler in the route builder)
+        // we must check the error handler on builder is not the same as on camel context, as that would be the default
+        // context scoped error handler, in case no error handlers was configured
+        if (builder.getRouteCollection().getErrorHandlerBuilder() != null
+                && camelContext.getErrorHandlerBuilder() != builder.getRouteCollection().getErrorHandlerBuilder() ) {
             throw new IllegalArgumentException("You can not advice with error handlers. Remove the error handlers from the route builder.");
         }
 

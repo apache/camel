@@ -22,16 +22,22 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <packageScan>
-            <package>org.apache.camel.spring.issues</package>
-            <excludes>**/*MyInjectionRouteBuilder*</excludes>
-            <excludes>**/*SampleInitializingRouteBuilder*</excludes>
-            <excludes>**/*SpringAdviceWithContextScopedErrorHandlerIssueTest*</excludes>
-            <excludes>**/*SpringAdviceWithRouteScopedErrorHandlerIssueTest*</excludes>
-            <excludes>**/*MyCoolRoute*</excludes>
-            <excludes>*contextscan*</excludes>
-        </packageScan>
+    <!-- use a context scoped error handler -->
+    <camelContext errorHandlerRef="myDLC" xmlns="http://camel.apache.org/schema/spring">
+
+        <!-- dead letter channel -->
+        <errorHandler id="myDLC" deadLetterUri="mock:error" type="DeadLetterChannel"/>
+
+        <!-- routes -->
+        <route id="route-a">
+            <from uri="direct:start"/>
+            <to uri="direct:bar"/>
+        </route>
+
+        <route id="route-b">
+            <from uri="direct:bar"/>
+            <to uri="mock:bar"/>
+        </route>
     </camelContext>
 
 </beans>
