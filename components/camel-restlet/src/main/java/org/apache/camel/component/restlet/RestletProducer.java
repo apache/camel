@@ -111,11 +111,46 @@ public class RestletProducer extends DefaultProducer {
             matcher.reset(uri);
         }
 
+        String query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        if (query != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Adding query: " + query + " to uri: " + uri);
+            }
+            uri = addQueryToUri(uri, query);
+        }
+        
         if (LOG.isDebugEnabled()) {
             LOG.debug("Using uri: " + uri);
         }
 
         return uri;
+    }
+
+
+    protected static String addQueryToUri(String uri, String query) {
+        if (uri == null || uri.length() == 0) {
+            return uri;
+        }
+
+        StringBuffer answer = new StringBuffer();
+
+        int index = uri.indexOf('?');
+        if (index < 0) {
+            answer.append(uri);
+            answer.append("?");
+            answer.append(query);
+        } else {
+            answer.append(uri.substring(0, index));
+            answer.append("?");            
+            answer.append(query);
+            String remaining = uri.substring(index + 1);
+            if (remaining.length() > 0) {
+                answer.append("&");
+                answer.append(remaining);
+            }
+        }
+        return answer.toString();
+        
     }
 
     protected RestletOperationException populateRestletProducerException(Exchange exchange, Response response, int responseCode) {
