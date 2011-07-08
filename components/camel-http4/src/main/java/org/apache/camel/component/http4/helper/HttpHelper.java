@@ -265,6 +265,10 @@ public final class HttpHelper {
             throw new ProtocolException("Invalid HTTP minor version number: " + s);
         }
         return new HttpVersion(major, minor);
-
     }
+
+    public static boolean isSecureConnection(String uri) {
+        return uri.startsWith("https");
+    }
+
 }

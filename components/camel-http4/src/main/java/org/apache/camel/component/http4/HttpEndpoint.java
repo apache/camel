@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
+import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -117,6 +118,10 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
             String host = getCamelContext().getProperties().get("http.proxyHost");
             int port = Integer.parseInt(getCamelContext().getProperties().get("http.proxyPort"));
             String scheme = getCamelContext().getProperties().get("http.proxyScheme");
+            // fallback and use either http4 or https4 depending on secure
+            if (scheme == null) {
+                scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https4" : "http4";
+            }
 
             LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
             HttpHost proxy = new HttpHost(host, port, scheme);

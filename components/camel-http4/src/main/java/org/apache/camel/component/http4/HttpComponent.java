@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
@@ -182,7 +183,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             sslContextParameters = this.sslContextParameters;
         }
         
-        boolean secure = isSecureConnection(uri);
+        boolean secure = HttpHelper.isSecureConnection(uri);
 
         // create the configurer to use for this endpoint
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, secure);
@@ -299,10 +300,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         IntrospectionSupport.setProperties(httpProtocolParamBean, parameters, "httpClient.");
 
         return clientParams;
-    }
-
-    private boolean isSecureConnection(String uri) {
-        return uri.startsWith("https");
     }
 
     @Override
