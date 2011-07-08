@@ -65,7 +65,6 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
             if (getRouteStartTime() != null) {
                 scheduleRoute(Action.START);
             }
-
             if (getRouteStopTime() != null) {
                 scheduleRoute(Action.STOP);
             }
