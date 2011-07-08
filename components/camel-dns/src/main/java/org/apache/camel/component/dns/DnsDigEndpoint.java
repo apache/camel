@@ -68,7 +68,7 @@ public class DnsDigEndpoint extends DefaultEndpoint {
                 Record rec = Record.newRecord(name, type, dclass);
                 Message query = Message.newQuery(rec);
                 Message response = resolver.send(query);
-                exchange.getOut().setBody(response);
+                exchange.getIn().setBody(response);
             }
         };
     }
@@ -76,5 +76,4 @@ public class DnsDigEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return false;
     }
-
 }

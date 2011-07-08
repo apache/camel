@@ -62,9 +62,9 @@ public class WikipediaEndpoint extends DefaultEndpoint {
                 Message response = resolver.send(query);
                 Record[] records = response.getSectionArray(Section.ANSWER);
                 if (records.length > 0) {
-                    exchange.getOut().setBody(records[0].rdataToString());
+                    exchange.getIn().setBody(records[0].rdataToString());
                 } else {
-                    exchange.getOut().setBody(null);
+                    exchange.getIn().setBody(null);
                 }
             }
         };
@@ -73,5 +73,4 @@ public class WikipediaEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return false;
     }
-
 }

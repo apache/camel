@@ -71,9 +71,9 @@ public class DnsLookupEndpoint extends DefaultEndpoint {
 
                 lookup.run();
                 if (lookup.getAnswers() != null) {
-                    exchange.getOut().setBody(lookup.getAnswers());
+                    exchange.getIn().setBody(lookup.getAnswers());
                 } else {
-                    exchange.getOut().setBody(lookup.getErrorString());
+                    exchange.getIn().setBody(lookup.getErrorString());
                 }
             }
         };
@@ -82,5 +82,4 @@ public class DnsLookupEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return false;
     }
-
 }
