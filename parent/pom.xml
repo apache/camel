@@ -55,6 +55,8 @@
     <commons-logging-version>1.1.1</commons-logging-version>
     <commons-net-version>2.2</commons-net-version>
     <commons-pool-version>1.5.4</commons-pool-version>
+    <!-- When updating cxf-version, may need to change CXF version range in 
+         platforms/karaf/features/src/main/resources/features.xml -->
     <cxf-version>2.4.1</cxf-version>
     <cxf-xjc-utils-version>2.3.2</cxf-xjc-utils-version>
     <derby-version>10.4.2.0</derby-version>
