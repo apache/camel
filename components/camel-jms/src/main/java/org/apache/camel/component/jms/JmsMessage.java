@@ -107,6 +107,17 @@ public class JmsMessage extends DefaultMessage {
         this.jmsMessage = jmsMessage;
     }
 
+    @Override
+    public void setBody(Object body) {
+        super.setBody(body);
+        if (body == null) {
+            // preserver headers even if we set body to null
+            ensureInitialHeaders();
+            // remove underlying jmsMessage since we mutated body to null
+            jmsMessage = null;
+        }
+    }
+
     public Object getHeader(String name) {
         Object answer = null;
 
