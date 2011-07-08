@@ -52,8 +52,8 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private boolean multipleConsumers;
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     private long timeout = 30000;
-    private volatile Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
-    private volatile Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
+    private final Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
+    private final Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
     private volatile MulticastProcessor consumerMulticastProcessor;
     private volatile boolean multicastStarted;
 
