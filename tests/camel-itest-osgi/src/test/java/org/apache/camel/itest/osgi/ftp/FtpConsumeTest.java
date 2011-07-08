@@ -18,6 +18,7 @@ package org.apache.camel.itest.osgi.ftp;
 
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.apache.karaf.testing.Helper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -32,6 +33,7 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
+@Ignore("Maven barfs with: Duplicate test set 'org.apache.camel.itest.osgi.ftp.FtpConsumeTest'")
 public class FtpConsumeTest extends OSGiIntegrationSpringTestSupport {
 
     @Override

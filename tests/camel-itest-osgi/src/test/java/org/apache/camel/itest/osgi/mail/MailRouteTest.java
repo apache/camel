@@ -30,6 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.karaf.testing.Helper;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.jvnet.mock_javamail.Mailbox;
@@ -44,6 +45,7 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
+@Ignore("Does not work anymore as the mock javamail does not kick in as mail provider")
 public class MailRouteTest extends OSGiIntegrationTestSupport {
 
     @Test
