@@ -102,6 +102,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             } catch (Exception e) {
                 // ignore as we will try to recover connection
                 noop = false;
+                // mark as not logged in, since the noop failed
+                loggedIn = false;
             }
         }
 
@@ -191,7 +193,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
     }
 
     protected void connectIfNecessary() throws GenericFileOperationFailedException {
-        if (!loggedIn) {
+        if (!getOperations().isConnected()) {
             if (log.isDebugEnabled()) {
                 log.debug("Not already connected/logged in. Connecting to: " + getEndpoint());
             }
