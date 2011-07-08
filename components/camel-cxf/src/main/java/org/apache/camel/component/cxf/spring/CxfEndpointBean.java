@@ -34,7 +34,7 @@ public class CxfEndpointBean extends AbstractServiceFactory
     private String beanName;
 
     public CxfEndpointBean() {
-        this(new ReflectionServiceFactoryBean());
+        this(new CxfReflectionServiceFactoryBean());
     }
     
     public CxfEndpointBean(ReflectionServiceFactoryBean factory) {
