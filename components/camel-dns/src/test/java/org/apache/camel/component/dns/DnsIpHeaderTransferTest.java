@@ -23,6 +23,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -68,13 +69,14 @@ public class DnsIpHeaderTransferTest extends CamelTestSupport {
     }
 
     @Test
+    @Ignore("Run manually, performs DNS lookup to remote apache.org server")
     public void testValidIPRequests() throws Exception {
         resultEndpoint.expectedMessageCount(1);
 
-        resultEndpoint.expectedBodiesReceived("192.0.32.10");
+        resultEndpoint.expectedBodiesReceived("140.211.11.131");
         resultEndpoint.expectedHeaderReceived("foo", "bar");
 
-        template.sendBodyAndHeader("hello", "dns.domain", "www.example.com");
+        template.sendBodyAndHeader("hello", "dns.domain", "www.apache.org");
         resultEndpoint.assertIsSatisfied();
     }
 }
