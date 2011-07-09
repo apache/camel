@@ -46,13 +46,13 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.junit.AfterClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 
 /**
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes
@@ -70,6 +70,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private static final AtomicBoolean INIT = new AtomicBoolean();
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
+    private final StopWatch watch = new StopWatch();
 
     /**
      * Use the RouteBuilder or not
@@ -143,6 +144,9 @@ public abstract class CamelTestSupport extends TestSupport {
             // test is per test so always setup
             doSetUp();
         }
+
+        // only start timing after all the setup
+        watch.restart();
     }
 
     protected void doSetUp() throws Exception {
@@ -200,8 +204,11 @@ public abstract class CamelTestSupport extends TestSupport {
 
     @AfterMethod
     public void tearDown() throws Exception {
+        long time = watch.stop();
+
         log.info("********************************************************************************");
         log.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
+        log.info("Took: " + TimeUtils.printDuration(time) + " ("  + time + " millis)");
         log.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {

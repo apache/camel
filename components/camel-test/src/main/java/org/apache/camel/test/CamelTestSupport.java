@@ -45,6 +45,8 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes
@@ -60,6 +62,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private boolean useRouteBuilder = true;
     private Service camelContextService;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
+    private final StopWatch watch = new StopWatch();
 
     /**
      * Use the RouteBuilder or not
@@ -153,11 +156,19 @@ public abstract class CamelTestSupport extends TestSupport {
         log.debug("Routing Rules are: " + context.getRoutes());
 
         assertValidContext(context);
+
+        // only start timing after all the setup
+        watch.restart();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        log.info("Testing done: " + this);
+        long time = watch.stop();
+
+        log.info("********************************************************************************");
+        log.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
+        log.info("Took: " + TimeUtils.printDuration(time) + " ("  + time + " millis)");
+        log.info("********************************************************************************");
 
         log.debug("tearDown test: " + getName());
         if (consumer != null) {

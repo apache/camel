@@ -46,6 +46,8 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -68,6 +70,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private static final AtomicBoolean INIT = new AtomicBoolean();
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
+    private final StopWatch watch = new StopWatch();
 
     /**
      * Use the RouteBuilder or not
@@ -148,6 +151,9 @@ public abstract class CamelTestSupport extends TestSupport {
             doSetUp();
             doPostSetup();
         }
+
+        // only start timing after all the setup
+        watch.restart();
     }
 
     /**
@@ -219,8 +225,11 @@ public abstract class CamelTestSupport extends TestSupport {
 
     @After
     public void tearDown() throws Exception {
+        long time = watch.stop();
+
         log.info("********************************************************************************");
         log.info("Testing done: " + getTestMethodName() + "(" + getClass().getName() + ")");
+        log.info("Took: " + TimeUtils.printDuration(time) + " ("  + time + " millis)");
         log.info("********************************************************************************");
 
         if (isCreateCamelContextPerClass()) {
