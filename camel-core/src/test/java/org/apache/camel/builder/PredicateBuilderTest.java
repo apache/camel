@@ -122,6 +122,19 @@ public class PredicateBuilderTest extends TestSupport {
         assertDoesNotMatch(header("size").endsWith(9));
     }
 
+    public void testNot() throws Exception {
+        assertMatches(body().not().isInstanceOf(Integer.class));
+        assertMatches(header("name").not().isEqualTo("Claus"));
+        assertMatches(header("size").not().isLessThan(7));
+
+        try {
+            assertMatches(header("name").not().isEqualTo("James"));
+            fail("Should fail");
+        } catch (AssertionError e) {
+            // expected
+        }
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();

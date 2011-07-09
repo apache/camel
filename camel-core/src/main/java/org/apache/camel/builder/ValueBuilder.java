@@ -31,6 +31,7 @@ import org.apache.camel.Predicate;
  */
 public class ValueBuilder implements Expression {
     private Expression expression;
+    private boolean not;
 
     public ValueBuilder(Expression expression) {
         this.expression = expression;
@@ -249,6 +250,16 @@ public class ValueBuilder implements Expression {
         return new ValueBuilder(newExp);
     }
 
+    /**
+     * Negates the built expression.
+     *
+     * @return the current builder
+     */
+    public ValueBuilder not() {
+        not = true;
+        return this;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -257,7 +268,11 @@ public class ValueBuilder implements Expression {
      * predicate in different ways
      */
     protected Predicate onNewPredicate(Predicate predicate) {
-        return predicate;
+        if (not) {
+            return PredicateBuilder.not(predicate);
+        } else {
+            return predicate;
+        }
     }
 
     protected Expression asExpression(Object value) {

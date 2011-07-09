@@ -143,6 +143,7 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
         }
 
         protected Predicate onNewPredicate(Predicate predicate) {
+            predicate = super.onNewPredicate(predicate);
             addPredicate(predicate);
             return predicate;
         }
