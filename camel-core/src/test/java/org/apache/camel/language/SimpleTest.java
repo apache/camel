@@ -391,10 +391,10 @@ public class SimpleTest extends LanguageTestSupport {
 
     public void testOGNLHeaderMapWithDot() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("this.code","This code");
+        map.put("this.code", "This code");
         exchange.getIn().setHeader("wicket", map);
 
-        assertExpression("${header.wicket[this.code]}","This code");
+        assertExpression("${header.wicket[this.code]}", "This code");
     }
 
     public void testOGNLHeaderMapNotMap() throws Exception {

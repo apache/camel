@@ -189,10 +189,10 @@ public class BeanExpression implements Expression, Predicate {
             List<String> methods;
 
             if (ognl.startsWith("[") && ognl.endsWith("]")) {
-               methods = new ArrayList<String>();
-               methods.add(ognl);
+                methods = new ArrayList<String>();
+                methods.add(ognl);
             } else {
-               methods = OgnlHelper.splitOgnl(ognl);
+                methods = OgnlHelper.splitOgnl(ognl);
             }
 
             for (String methodName : methods) {
