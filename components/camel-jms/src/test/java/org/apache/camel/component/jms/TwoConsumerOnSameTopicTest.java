@@ -32,6 +32,9 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
 
     @Test
     public void testTwoConsumerOnSameTopic() throws Exception {
+        // give a bit of time for AMQ to properly setup topic subscribers
+        Thread.sleep(500);
+
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
 
@@ -42,6 +45,9 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
 
     @Test
     public void testStopOneRoute() throws Exception {
+        // give a bit of time for AMQ to properly setup topic subscribers
+        Thread.sleep(500);
+
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
         template.sendBody("activemq:topic:foo", "Hello World");
@@ -60,6 +66,9 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
 
     @Test
     public void testStopAndStartOneRoute() throws Exception {
+        // give a bit of time for AMQ to properly setup topic subscribers
+        Thread.sleep(500);
+
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
         template.sendBody("activemq:topic:foo", "Hello World");
@@ -88,6 +97,9 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
 
     @Test
     public void testRemoveOneRoute() throws Exception {
+        // give a bit of time for AMQ to properly setup topic subscribers
+        Thread.sleep(500);
+
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
         template.sendBody("activemq:topic:foo", "Hello World");
@@ -106,9 +118,12 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
+        deleteDirectory("activemq-data");
+
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        // must be persistent to rember the messages
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
