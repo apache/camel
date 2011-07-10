@@ -16,7 +16,6 @@
  */
 package org.apache.camel.scala.dsl;
  
-import org.w3c.dom.Document
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import builder.RouteBuilder
 
@@ -47,10 +46,9 @@ class AggregatorTest extends ScalaTestSupport {
 
   val builder =
     new RouteBuilder {
-       //START SNIPPET: simple
-       "direct:a" aggregate (_.in[String].substring(0, 7), new UseLatestAggregationStrategy()) completionSize(100) to "mock:a"
-       //END SNIPPET: simple
-       
+       "direct:a" ==> {
+         aggregate (_.in[String].substring(0, 7), new UseLatestAggregationStrategy()) completionSize(100) to "mock:a" }
+
        //START SNIPPET: block
        "direct:b" ==> {
          aggregate(_.in[String].substring(0,7), new UseLatestAggregationStrategy()).completionSize(100) {
