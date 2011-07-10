@@ -316,6 +316,65 @@ public class NotifyBuilder {
     }
 
     /**
+     * Sets a condition when tne <tt>n'th</tt> (by index) {@link Exchange} is done being processed.
+     * <p/>
+     * The difference between <i>done</i> and <i>completed</i> is that done can also include failed
+     * messages, where as completed is only successful processed messages.
+     *
+     * @param index the message by index to be done
+     * @return the builder
+     */
+    public NotifyBuilder whenDoneByIndex(final int index) {
+        stack.add(new EventPredicateSupport() {
+            private int current;
+            private String id;
+            private boolean done;
+
+            @Override
+            public boolean onExchangeCreated(Exchange exchange) {
+                if (current == index) {
+                    id = exchange.getExchangeId();
+                }
+                current++;
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeCompleted(Exchange exchange) {
+                if (exchange.getExchangeId().equals(id)) {
+                    done = true;
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeFailed(Exchange exchange) {
+                if (exchange.getExchangeId().equals(id)) {
+                    done = true;
+                }
+                return true;
+            }
+
+            public boolean matches() {
+                return done;
+            }
+
+            @Override
+            public void reset() {
+                current = 0;
+                id = null;
+                done = false;
+            }
+
+            @Override
+            public String toString() {
+                return "whenDoneByIndex(" + index + ")";
+            }
+        });
+        return this;
+    }
+
+    /**
      * Sets a condition when <tt>number</tt> of {@link Exchange} has been completed.
      * <p/>
      * The number matching is <i>at least</i> based which means that if more messages received
