@@ -129,7 +129,7 @@
     <qpid-version>0.10</qpid-version>
     <quartz-version>1.8.4</quartz-version>
     <quickfix-version>1.5.0</quickfix-version>
-    <restlet-version>2.0.5</restlet-version>
+    <restlet-version>2.0.8</restlet-version>
     <rome-version>1.0</rome-version>
     <saxon-version>9.1.0.8</saxon-version>
     <scala-version>2.8.1</scala-version>
