@@ -24,15 +24,12 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
  */
 class MyRouteBuilder extends RouteBuilder {
 
-   //an example for the simple DSL syntax...
-   "timer://foo?fixedRate=true&delay=0&period=10s" setbody("simple test") to "log:simple"
-
-   // an example of a Processor method
+    // an example of a Processor method
    val myProcessorMethod = (exchange: Exchange) => {
      exchange.getIn.setBody("block test")
    }
    
-   // ...and another one using Scala blocks
+   // a route using Scala blocks
    "timer://foo?fixedRate=true&delay=5s&period=10s" ==> {
       process(myProcessorMethod)
       to("log:block")
