@@ -44,7 +44,7 @@ public class FileProduceAppendTest extends ContextTestSupport {
         mock.expectedFileExists("target/test-file-append/hello.txt", "Hello World");
 
         // create a file with some content we want to append to the existing file
-        File in = new File("target/test-file-append/world.txt").getAbsoluteFile();
+        File in = new File("target/test-file-append/world.txt");
         template.sendBody("direct:start", in);
 
         assertMockEndpointsSatisfied();

@@ -77,7 +77,6 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
                 from(url).routeId("foo").noAutoStartup()
                     // let it complete all tasks during shutdown
                     .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
-                    .delay(1000)
                     .process(new MyProcessor())
                     .to("mock:bar");
             }
@@ -88,6 +87,7 @@ public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
     public static class MyProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
+            Thread.sleep(500);
             counter.incrementAndGet();
         }
     }
