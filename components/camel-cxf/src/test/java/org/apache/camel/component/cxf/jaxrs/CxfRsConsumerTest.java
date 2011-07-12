@@ -44,9 +44,9 @@ import org.junit.Test;
 
 public class CxfRsConsumerTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
-    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:9000/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
-    
     // START SNIPPET: example
+    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:9000/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
