@@ -21,6 +21,7 @@ import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -55,23 +56,23 @@ public class MailShutdownCompleteAllTasksTest extends CamelTestSupport {
                 from("pop3://jones@localhost?password=secret&initialDelay=2s").routeId("route1")
                         // let it complete all tasks during shutdown
                         .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
-                        .delay(1000).to("seda:foo");
-
-                from("seda:foo").routeId("route2").to("mock:bar");
+                        .delay(500).to("mock:bar");
             }
         });
         context.start();
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
-        bar.expectedMinimumMessageCount(2);
+        bar.expectedMinimumMessageCount(1);
 
         assertMockEndpointsSatisfied();
+
+        int batch = bar.getReceivedExchanges().get(0).getProperty(Exchange.BATCH_SIZE, int.class);
 
         // shutdown during processing
         context.stop();
 
-        // should route all 5
-        assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
+        // should route all
+        assertEquals("Should complete all messages", batch, bar.getReceivedCounter());
     }
 
     private void prepareMailbox() throws Exception {
