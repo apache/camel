@@ -55,7 +55,7 @@ public class ApnsProducerTest extends CamelTestSupport {
         server.stop();
     }
 
-    @Test(timeout = 3000)
+    @Test(timeout = 5000)
     public void testProducer() throws Exception {
         String message = "Hello World";
         String messagePayload = APNS.newPayload().alertBody(message).build();

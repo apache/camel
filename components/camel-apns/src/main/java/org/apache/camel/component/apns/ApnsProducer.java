@@ -32,13 +32,16 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ApnsProducer extends DefaultProducer {
 
-    private ApnsEndpoint endpoint;
     private List<String> tokenList;
 
     public ApnsProducer(ApnsEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
         initiate(endpoint);
+    }
+
+    @Override
+    public ApnsEndpoint getEndpoint() {
+        return (ApnsEndpoint) super.getEndpoint();
     }
 
     private void initiate(ApnsEndpoint apnsEndpoint) {
@@ -62,7 +65,7 @@ public class ApnsProducer extends DefaultProducer {
     private void notify(Exchange exchange) throws ApnsException {
         String message = exchange.getIn().getBody(String.class);
 
-        Collection<String> tokens = null;
+        Collection<String> tokens;
         if (isTokensConfiguredUsingUri()) {
             if (hasTokensHeader(exchange)) {
                 throw new IllegalArgumentException("Tokens already configured on endpoint " + ApnsConstants.HEADER_TOKENS);
@@ -82,7 +85,7 @@ public class ApnsProducer extends DefaultProducer {
             payload = message;
         }
 
-        endpoint.getApnsService().push(tokens, payload);
+        getEndpoint().getApnsService().push(tokens, payload);
     }
 
     public String getHeaderTokens(Exchange exchange) {

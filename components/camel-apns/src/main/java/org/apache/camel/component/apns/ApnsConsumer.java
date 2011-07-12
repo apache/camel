@@ -30,7 +30,6 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 
 public class ApnsConsumer extends ScheduledPollConsumer {
 
-    // TODO: Is the delay relay 3600 seconds?
     private static final int DEFAULT_CONSUME_INITIAL_DELAY = 10;
     private static final int DEFAULT_CONSUME_DELAY = 3600;
     private static final boolean DEFAULT_APNS_FIXED_DELAY = true;

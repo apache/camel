@@ -54,7 +54,7 @@ public class ApnsProducerWithoutTokensHeaderTest extends CamelTestSupport {
         server.stop();
     }
 
-    @Test(timeout = 3000)
+    @Test(timeout = 5000)
     public void testProducerWithoutTokenHeader() throws Exception {
         String message = "Hello World";
         String messagePayload = APNS.newPayload().alertBody(message).build();

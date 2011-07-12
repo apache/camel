@@ -33,8 +33,7 @@ import org.apache.camel.impl.ScheduledPollEndpoint;
  */
 public class ApnsEndpoint extends ScheduledPollEndpoint {
 
-    private CopyOnWriteArraySet<DefaultConsumer> consumers = new CopyOnWriteArraySet<DefaultConsumer>();
-
+    private final CopyOnWriteArraySet<DefaultConsumer> consumers = new CopyOnWriteArraySet<DefaultConsumer>();
     private String tokens;
 
     public ApnsEndpoint(String uri, ApnsComponent component) {
@@ -66,10 +65,8 @@ public class ApnsEndpoint extends ScheduledPollEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-
         ApnsConsumer apnsConsumer = new ApnsConsumer(this, processor);
         configureConsumer(apnsConsumer);
-
         return apnsConsumer;
     }
 
