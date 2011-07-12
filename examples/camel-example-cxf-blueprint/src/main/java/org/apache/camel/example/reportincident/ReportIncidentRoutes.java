@@ -29,12 +29,15 @@ public class ReportIncidentRoutes extends RouteBuilder {
     public void configure() throws Exception {
         // webservice response for OK
         OutputReportIncident ok = new OutputReportIncident();
-        ok.setCode("0");
+        ok.setCode("OK");
+        OutputReportIncident accepted = new OutputReportIncident();
+        accepted.setCode("Accepted");
 
         from("cxf:bean:reportIncident")
             .convertBodyTo(InputReportIncident.class)
             .setHeader(Exchange.FILE_NAME, constant("request-${date:now:yyyy-MM-dd-HHmmssSSS}"))
-            .to("file://target/inbox/")
-            .transform(constant(ok));
+            .wireTap("file://target/inbox/")
+            .choice().when(simple("${body.givenName} == 'Claus'")).transform(constant(ok))
+            .otherwise().transform(constant(accepted));
     }
 }

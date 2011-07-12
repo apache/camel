@@ -16,20 +16,19 @@
  */
 package org.apache.camel.example.reportincident;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Unit test of our routes
  */
-public class ReportIncidentRoutesClient {
+public class ReportIncidentRoutesClientTest extends CamelSpringTestSupport {
 
     // should be the same address as we have in our route
-    private static final String URL = "http://localhost:8181/cxf/camel-example-cxf-osgi/webservices/incident";
+    private static final String URL = "http://localhost:8181/cxf/camel-example-cxf-blueprint/webservices/incident";
    
     protected static ReportIncidentEndpoint createCXFClient() {
         // we use CXF to create a client for us as its easier than JAXWS and works
@@ -61,10 +60,19 @@ public class ReportIncidentRoutesClient {
         OutputReportIncident out = client.reportIncident(input);
 
         // assert we got a OK back
-        assertEquals("0", out.getCode());
+        assertEquals("OK", out.getCode());
+        
+        // test the input with other users
+        input.setGivenName("Guest");
+        out = client.reportIncident(input);
+        
+        // assert we got a Accept back
+        assertEquals("Accepted", out.getCode());
 
-        // let some time pass to allow Camel to pickup the file and send it as an email
-        Thread.sleep(3000);
+    }
 
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(new String[] {"camel-context.xml"});
     }
 }
