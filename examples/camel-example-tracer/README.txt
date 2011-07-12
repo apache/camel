@@ -60,9 +60,8 @@ to return as response in the console.
 
 To stop the example hit ctrl + c
 
-
-For the latest & greatest documentation on how to use this example please see
-  http://camel.apache.org/tracer-example.htmls
+This example is documented at
+  http://camel.apache.org/tracer-example.html
 
 If you hit any problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html

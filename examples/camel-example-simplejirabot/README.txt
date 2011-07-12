@@ -1,8 +1,8 @@
 Camel-RSS to Camel-IRC Example
 ==============================
 
-This example shows how to work with the Camel-RSS and Camel-irc components. It can be run using
-Maven.
+This example shows how to work with the Camel-RSS and Camel-irc components.
+It can be run using Maven.
 
 The example creates a route that pulls from the Jira RSS feed for Camel,
 extracts the title then sends that to the irc endpoint which posts it in an IRC channel.
@@ -27,6 +27,8 @@ src/main/resources/META-INF/spring in each module
 
 To stop the example hit ctrl + c
 
+This example is documented at
+  http://camel.apache.org/simple-jira-bot.html
 
 If you hit any problems please talk to us on the Camel Forums
   http://camel.apache.org/discussion-forums.html
