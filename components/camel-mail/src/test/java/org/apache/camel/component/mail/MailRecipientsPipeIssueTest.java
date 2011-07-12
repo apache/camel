@@ -50,7 +50,7 @@ public class MailRecipientsPipeIssueTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String recipients = "&To=camel|pipes@riders.org;easy@riders.org&From=you@apache.org";
+                String recipients = "&To=camel|pipes@riders.org;easy@riders.org";
 
                 from("direct:a").to("smtp://you@mymailserver.com?password=secret&From=you@apache.org" + recipients);
             }
