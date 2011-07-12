@@ -15,12 +15,12 @@ You will need to compile this example first:
   mvn install
 
 
-To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
+To run the example on Apache ServiceMix 4.x or Apache Karaf 2.x
 
   1) launch the server
   karaf.bat
   
-  For Karaf 2.0 : edit the file jre.properties to add the following packages to be exported
+  For Karaf 2.2 : edit the file jre.properties to add the following packages to be exported
   jre-1.6=, \
  com.sun.org.apache.xerces.internal.dom, \
  com.sun.org.apache.xerces.internal.jaxp, \

@@ -10,9 +10,6 @@ uses the InOnly exchange pattern; the other is web service version which shows
 how to integrate the credit agency and bank web services together and it uses
 the InOut exchange pattern.
 
-For the latest & greatest documentation on how to use this example please see:
-  http://cwiki.apache.org/CAMEL/example-loan-broker.html
-
 You will need to compile this example first:
   mvn compile
 
@@ -59,6 +56,8 @@ To run the example with Ant
 
 To stop the example hit ctrl + c
 
+This example is documented at
+  http://camel.apache.org/loan-broker-example.html
 
 If you hit an problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html

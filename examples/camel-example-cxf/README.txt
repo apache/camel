@@ -35,10 +35,10 @@ To run the example with Ant
     http://activemq.apache.org/
     Apache CXF
     http://cxf.apache.org/
-    Spring 2.5
-    http://www.springframework.org/download
-    Jetty6
-    http://dist.codehaus.org/jetty/
+    Spring
+    http://www.springframework.org/
+    Jetty
+    http://www.eclipse.org/jetty/
 
 
   b. Export / Set home directories for the above as follows
@@ -68,7 +68,7 @@ To run the example with Ant
 
 To stop the example hit ctrl + c
 
-For the latest & greatest documentation on how to use this example please see
+This example is documented at
   http://camel.apache.org/cxf-example.html
 
 If you hit any problems please let us know on the Camel Forums

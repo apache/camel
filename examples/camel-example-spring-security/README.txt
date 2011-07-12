@@ -22,7 +22,7 @@ or use browser to access upper urls with the user/password
 ("jim/jimspassword" with the admin and user role  or "rob/robspassword" with user role).
 
 
-For the latest & greatest documentation on how to use this example please see
+This example is documented at
   http://camel.apache.org/spring-security-example.html
 
 If you hit any problems please talk to us on the Camel Forums

@@ -20,12 +20,12 @@ Remarks:
 - In Eclipse, I have used the following option when starting the junit test case. This option tells
   CXF that it must use log4j : -Dorg.apache.cxf.Logger=org.apache.cxf.common.logging.Log4jLogger
 
-To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
+To run the example on Apache ServiceMix 4.x or Apache Karaf 2.x
 
   1) launch the server
   karaf.bat
   
-  For Karaf 2.0 : edit the file jre.properties to add the following packages to be exported
+  For Karaf: edit the file jre.properties to add the following packages to be exported
   jre-1.6=, \
  com.sun.org.apache.xerces.internal.dom, \
  com.sun.org.apache.xerces.internal.jaxp, \
@@ -106,8 +106,7 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 1.x / 2.x
  6) Check email
  Check through a POP request that a message has been published in the mailbox of someone (email address : incident@mycompany.com)
 
-
-For the latest & greatest documentation on how to use this example please see
+This example is documented at
   http://camel.apache.org/tutorial-example-reportincident-wssecurity.html
 
 If you hit any problems please let us know on the Camel Forums

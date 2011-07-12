@@ -60,6 +60,7 @@ to return as response in the console.
 
 To stop the example hit ctrl + c
 
+
 This example is documented at
   http://camel.apache.org/tracer-example.html
 

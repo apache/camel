@@ -23,7 +23,7 @@ it out online such as SoapUI.
 
 This project uses log4j as the logging and log4j.properties is located in src/main/resources 
 
-For the latest & greatest documentation on how to use this example please see
+This example is documented at
   http://camel.apache.org/tutorial-axis-camel.html
 
 If you hit any problems please talk to us on the Camel Forums

@@ -46,7 +46,7 @@ its expected message and when it's overdue Camel reports this as an error.
 
 To stop the example hit ctrl + c
 
-For the latest & greatest documentation on how to use this example please see
+This example is documented at
   http://camel.apache.org/bam-example.html
 
 If you hit any problems please let us know on the Camel Forums

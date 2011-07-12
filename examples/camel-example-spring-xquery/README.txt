@@ -40,7 +40,7 @@ at src/main/resources/META-INF/spring
 To stop the example hit ctrl + c
 
 
-For the latest & greatest documentation on how to use this example please see
+This example is documented at
   http://camel.apache.org/spring-xquery-example.html
 
 If you hit any problems please let us know on the Camel Forums

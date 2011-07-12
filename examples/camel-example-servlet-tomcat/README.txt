@@ -17,7 +17,8 @@ And then hit this url from a webbrowser which has further instructions
 The servlet is located at (use correct version number)
   http://localhost:8080/camel-example-tomcat-2.7/camel
 
-For the latest & greatest documentation on how to use this example please see
+
+This example is documented at
   http://camel.apache.org/servlet-tomcat-example.html
 
 If you hit any problems please let us know on the Camel Forums

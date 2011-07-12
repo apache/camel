@@ -43,7 +43,7 @@ src/main/resources/guicejndi.properties
 
 To stop the example hit ctrl + c
 
-For the latest & greatest documentation on how to use this example please see
+This example is documented at
   http://camel.apache.org/guice-jms-example.html
 
 If you hit any problems please talk to us on the Camel Forums

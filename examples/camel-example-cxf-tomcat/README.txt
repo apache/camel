@@ -14,7 +14,7 @@ deploy folder of Apache Tomcat.
 The webservice is located at (use correct version number)
   http://localhost:8080/camel-example-cxf-tomcat-2.5/webservices/incident?wsdl
 
-For the latest & greatest documentation on how to use this example please see
+This example is documented at
   http://camel.apache.org/cxf-tomcat-example.html
 
 If you hit any problems please let us know on the Camel Forums

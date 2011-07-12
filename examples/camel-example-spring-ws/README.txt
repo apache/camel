@@ -21,7 +21,8 @@ To stop the server hit ctrl + c
 You can test the web service using for example SOAP-UI. This excellent tool is freely available from http://www.soapui.org. 
 There's a ready to use SOAP-UI project available in the "client" directory. 
 
-For the latest & greatest documentation on how to use this example please see
+
+This example is documented at
   http://camel.apache.org/spring-ws-example.html
 
 If you hit any problems please talk to us on the Camel Forums

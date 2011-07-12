@@ -25,7 +25,7 @@ To run the example with Ant
     Apache CXF
     http://cxf.apache.org/
     Spring
-    http://www.springframework.org/download
+    http://www.springframework.org/
     Jetty
     http://www.eclipse.org/jetty/
 
@@ -49,7 +49,7 @@ The webservice WSDL is exposed at:
 
 To stop the example hit ctrl + c
 
-For the latest & greatest documentation on how to use this example please see
+This example is documented at
   http://camel.apache.org/cxf-proxy-example.html
 
 If you hit any problems please let us know on the Camel Forums

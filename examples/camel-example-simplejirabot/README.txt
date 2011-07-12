@@ -20,12 +20,12 @@ To run the XML Configuration example type
   cd xmlconf
   mvn camel:run
 
-
 You can see the routing rules by looking at the java code in the
 src/main/java directory and the Spring XML configuration lives in
 src/main/resources/META-INF/spring in each module
 
 To stop the example hit ctrl + c
+
 
 This example is documented at
   http://camel.apache.org/simple-jira-bot.html

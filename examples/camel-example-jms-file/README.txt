@@ -6,10 +6,6 @@ Maven or Ant.
 
 The example consumes messages from a queue and writes them to the file
 system.
-
-For the latest & greatest documentation on how to use this example
-please see 
-  http://camel.apache.org/walk-through-an-example.html
   
 You will need to compile this example first:
   mvn compile
@@ -38,6 +34,8 @@ To run the example with Ant
 
 To stop the example hit ctrl + c
 
+This example is documented at
+  http://camel.apache.org/walk-through-an-example.html
 
 If you hit an problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
