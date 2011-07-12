@@ -22,7 +22,9 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +76,28 @@ public final class URISupport {
                     if (p >= 0) {
                         String name = URLDecoder.decode(parameter.substring(0, p), CHARSET);
                         String value = URLDecoder.decode(parameter.substring(p + 1), CHARSET);
-                        rc.put(name, value);
+
+                        // does the key already exist?
+                        if (rc.containsKey(name)) {
+                            // yes it does, so make sure we can support multiple values, but using a list
+                            // to hold the multiple values
+                            Object existing = rc.get(name);
+                            List<String> list;
+                            if (existing instanceof List) {
+                                list = CastUtils.cast((List<?>) existing);
+                            } else {
+                                // create a new list to hold the multiple values
+                                list = new ArrayList<String>();
+                                String s = existing != null ? existing.toString() : null;
+                                if (s != null) {
+                                    list.add(s);
+                                }
+                            }
+                            list.add(value);
+                            rc.put(name, list);
+                        } else {
+                            rc.put(name, value);
+                        }
                     } else {
                         rc.put(parameter, null);
                     }
@@ -134,6 +157,7 @@ public final class URISupport {
         return value;
     }
 
+    @SuppressWarnings("unchecked")
     public static String createQueryString(Map<Object, Object> options) throws URISyntaxException {
         try {
             if (options.size() > 0) {
@@ -147,12 +171,23 @@ public final class URISupport {
                     }
 
                     String key = (String) o;
-                    String value = (String) options.get(key);
-                    rc.append(URLEncoder.encode(key, CHARSET));
-                    // only append if value is not null
-                    if (value != null) {
-                        rc.append("=");
-                        rc.append(URLEncoder.encode(value, CHARSET));
+                    Object value = options.get(key);
+
+                    // the value may be a list since the same key has multiple values
+                    if (value instanceof List) {
+                        List<String> list = (List<String>) value;
+                        for (Iterator<String> it = list.iterator(); it.hasNext();) {
+                            String s = it.next();
+                            appendQueryStringParameter(key, s, rc);
+                            // append & separator if there is more in the list to append
+                            if (it.hasNext()) {
+                                rc.append("&");
+                            }
+                        }
+                    } else {
+                        // use the value as a String
+                        String s = value != null ? value.toString() : null;
+                        appendQueryStringParameter(key, s, rc);
                     }
                 }
                 return rc.toString();
@@ -165,6 +200,16 @@ public final class URISupport {
             throw se;
         }
     }
+
+    private static void appendQueryStringParameter(String key, String value, StringBuilder rc) throws UnsupportedEncodingException {
+        rc.append(URLEncoder.encode(key, CHARSET));
+        // only append if value is not null
+        if (value != null) {
+            rc.append("=");
+            rc.append(URLEncoder.encode(value, CHARSET));
+        }
+    }
+
 
     /**
      * Creates a URI from the original URI and the remaining parameters

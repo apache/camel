@@ -143,4 +143,12 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals("http://localhost:23271/myapp/mytest?foo=abc+def&bar=123%2C456&name=S%C3%B8ren", out.toASCIIString());
     }
 
+    public void testNormalizeEndpointUriWithDualParameters() throws Exception {
+        String out1 = URISupport.normalizeUri("smtp://localhost?to=foo&to=bar&from=me");
+        assertEquals("smtp://localhost?from=me&to=foo&to=bar", out1);
+
+        String out2 = URISupport.normalizeUri("smtp://localhost?to=foo&to=bar&from=me&from=you");
+        assertEquals("smtp://localhost?from=me&from=you&to=foo&to=bar", out2);
+    }
+
 }
