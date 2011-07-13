@@ -42,11 +42,6 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfBlueprintEndpoint.class);
 
-    protected Map<String, Object> properties;
-
-    private List<Handler> handlers;
-    private List<String> schemaLocations;
-
     private BlueprintContainer blueprintContainer;
     private BundleContext bundleContext;
     private BlueprintCamelContext blueprintCamelContext;
@@ -54,14 +49,6 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
     public CxfBlueprintEndpoint(String address, BundleContext context) {
         super(address);
         bundleContext = context;
-    }
-
-    public List<Handler> getHandlers() {
-        return handlers;
-    }
-
-    public void setHandlers(List<Handler> handlers) {
-        this.handlers = handlers;
     }
 
     public void destroy() {
@@ -157,14 +144,6 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
         return answer;
     }
 
-    public void setSchemaLocations(List<String> schemaLocations) {
-        this.schemaLocations = schemaLocations;
-    }
-
-    public List<String> getSchemaLocations() {
-        return schemaLocations;
-    }
-
     public BlueprintContainer getBlueprintContainer() {
         return blueprintContainer;
     }
@@ -187,14 +166,6 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
 
     public void setBlueprintCamelContext(BlueprintCamelContext blueprintCamelContext) {
         this.blueprintCamelContext = blueprintCamelContext;
-    }
-
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
     }
 
     public CxfBlueprintEndpoint getBean() {

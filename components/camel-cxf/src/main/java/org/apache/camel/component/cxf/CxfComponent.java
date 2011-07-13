@@ -56,6 +56,10 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
             }
 
             result = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, CxfEndpoint.class);
+            // need to set the CamelContext value 
+            if (result.getCamelContext() == null) {
+                result.setCamelContext(getCamelContext());
+            }
         } else {
             // endpoint URI does not specify a bean
             result = new CxfEndpoint(remaining, this);
