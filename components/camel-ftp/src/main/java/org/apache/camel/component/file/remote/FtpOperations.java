@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * FTP remote file operations
  */
 public class FtpOperations implements RemoteFileOperations<FTPFile> {
-    
+
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected final FTPClient client;
     protected final FTPClientConfig clientConfig;
@@ -207,11 +207,39 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         log.debug("Deleting file: {}", name);
+
+        boolean result;
+        String target = name;
+        String currentDir = null;
+
         try {
-            return this.client.deleteFile(name);
+            if (endpoint.getConfiguration().isStepwise()) {
+                // remember current directory
+                currentDir = getCurrentDirectory();
+                target = FileUtil.stripPath(name);
+
+                try {
+                    changeCurrentDirectory(FileUtil.onlyPath(name));
+                } catch (GenericFileOperationFailedException e) {
+                    // we could not change directory, try to change back before
+                    changeCurrentDirectory(currentDir);
+                    throw e;
+                }
+            }
+
+            // delete the file
+            result = client.deleteFile(target);
+
+            // change back to previous directory
+            if (currentDir != null) {
+                changeCurrentDirectory(currentDir);
+            }
+
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
+
+        return result;
     }
 
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
@@ -311,7 +339,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     @SuppressWarnings("unchecked")
     private boolean retrieveFileToFileInLocalWorkDirectory(String name, Exchange exchange) throws GenericFileOperationFailedException {
-        File temp;        
+        File temp;
         File local = new File(FileUtil.normalizePath(endpoint.getLocalWorkDirectory()));
         OutputStream os;
         try {
@@ -319,7 +347,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             GenericFile<FTPFile> target = (GenericFile<FTPFile>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             String relativeName = target.getRelativeFilePath();
-            
+
             temp = new File(local, relativeName + ".inprogress");
             local = new File(local, relativeName);
 
@@ -335,7 +363,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             if (local.exists()) {
                 if (!FileUtil.deleteFile(local)) {
                     throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + local);
-                }                
+                }
             }
 
             // create new temp local work file
@@ -349,7 +377,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             // set header with the path to the local work file            
             exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, local.getPath());
 
-        } catch (Exception e) {            
+        } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
         }
 
@@ -376,7 +404,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             }
 
             result = client.retrieveFile(remoteName, os);
-            
+
             // change back to current directory
             if (endpoint.getConfiguration().isStepwise()) {
                 changeCurrentDirectory(currentDir);
