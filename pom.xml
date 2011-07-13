@@ -210,7 +210,7 @@
           <configuration>
             <!--<tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>-->
             <!--<useReleaseProfile>false</useReleaseProfile>-->
-            <!--<preparationGoals>clean install</preparationGoals>-->
+            <preparationGoals>clean install</preparationGoals>
             <!--<goals>deploy</goals>-->
             <arguments>-Papache-release,enable-schemagen,sourcecheck,hibernate-derby</arguments>
             <autoVersionSubmodules>true</autoVersionSubmodules>
