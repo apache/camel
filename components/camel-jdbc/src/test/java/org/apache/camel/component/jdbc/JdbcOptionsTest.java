@@ -115,7 +115,7 @@ public class JdbcOptionsTest extends CamelTestSupport {
             template.sendBody("jdbc:xxx", "Hello World");
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
-            assertEquals("registry entry called xxx of type javax.sql.DataSource must be specified", 
+            assertEquals("No bean could be found in the registry for: xxx of type: javax.sql.DataSource",
                 e.getCause().getMessage());
         }
     }

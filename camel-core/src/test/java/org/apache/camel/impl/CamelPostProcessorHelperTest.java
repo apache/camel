@@ -23,6 +23,7 @@ import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
@@ -251,8 +252,8 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         try {
             helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             fail("Should throw exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("registry entry called unknown of type org.apache.camel.Endpoint must be specified", e.getMessage());
+        } catch (NoSuchBeanException e) {
+            assertEquals("No bean could be found in the registry for: unknown of type: org.apache.camel.Endpoint", e.getMessage());
         }
     }
 
