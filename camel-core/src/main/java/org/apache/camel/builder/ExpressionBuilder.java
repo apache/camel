@@ -1562,13 +1562,7 @@ public final class ExpressionBuilder {
 
             // Split ognl except when this is not a Map, Array
             // and we would like to keep the dots within the key name
-            List<String> methods;
-            if (ognl.startsWith("[") && ognl.endsWith("]")) {
-                methods = new ArrayList<String>();
-                methods.add(ognl);
-            } else {
-                methods = OgnlHelper.splitOgnl(ognl);
-            }
+            List<String> methods = OgnlHelper.splitOgnl(ognl);
 
             // remove any OGNL operators so we got the pure key name
             String key = OgnlHelper.removeOperators(methods.get(0));

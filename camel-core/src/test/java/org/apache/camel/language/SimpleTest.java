@@ -134,6 +134,43 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
     
+    public void testOGNLBodyListAndMap() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("cool", "Camel rocks");
+        map.put("dude", "Hey dude");
+        map.put("code", 4321);
+
+        List<Map> lines = new ArrayList<Map>();
+        lines.add(map);
+
+        exchange.getIn().setBody(lines);
+
+        assertExpression("${in.body[0][cool]}", "Camel rocks");
+        assertExpression("${body[0][cool]}", "Camel rocks");
+        assertExpression("${in.body[0][code]}", 4321);
+        assertExpression("${body[0][code]}", 4321);
+    }
+
+    public void testOGNLBodyListAndMapAndMethod() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("camel", new OrderLine(123, "Camel in Action"));
+        map.put("amq", new OrderLine(456, "ActiveMQ in Action"));
+
+        List<Map> lines = new ArrayList<Map>();
+        lines.add(map);
+
+        exchange.getIn().setBody(lines);
+
+        assertExpression("${in.body[0][camel].id}", 123);
+        assertExpression("${in.body[0][camel].name}", "Camel in Action");
+        assertExpression("${in.body[0][camel].getId}", 123);
+        assertExpression("${in.body[0][camel].getName}", "Camel in Action");
+        assertExpression("${body[0][camel].id}", 123);
+        assertExpression("${body[0][camel].name}", "Camel in Action");
+        assertExpression("${body[0][camel].getId}", 123);
+        assertExpression("${body[0][camel].getName}", "Camel in Action");
+    }
+
     public void testOGNLPropertyList() throws Exception {
         List<String> lines = new ArrayList<String>();
         lines.add("Camel in Action");

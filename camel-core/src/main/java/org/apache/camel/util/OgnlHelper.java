@@ -166,19 +166,29 @@ public final class OgnlHelper {
      * So use a bit ugly/low-level java code to split the ognl into methods.
      */
     public static List<String> splitOgnl(String ognl) {
-        // TODO: if possible use reg exp to split instead
-
         List<String> methods = new ArrayList<String>();
 
         StringBuilder sb = new StringBuilder();
+
+        int j = 0; // j is used as counter per method
+        boolean squareBracket = false; // special to keep track if we are inside a square bracket block - (eg [foo])
         for (int i = 0; i < ognl.length(); i++) {
             char ch = ognl.charAt(i);
-            // special for starting
-            if (i == 0 || (i == 1 && ognl.charAt(0) == '?')
-                    || (ch != '.' && ch != '?')) {
+            // special for starting a new method
+            if (j == 0 || (j == 1 && ognl.charAt(i - 1) == '?')
+                    || (ch != '.' && ch != '?' && ch != ']')) {
                 sb.append(ch);
+                // special if we are doing square bracket
+                if (ch == '[') {
+                    squareBracket = true;
+                }
+                j++; // advance
             } else {
-                if (ch == '.') {
+                if (ch == '.' && !squareBracket) {
+                    // only treat dot as a method separator if not inside a square bracket block
+                    // as dots can be used in key names when accessing maps
+
+                    // a dit denotes end of this method and a new method is to be invoked
                     String s = sb.toString();
 
                     // reset sb
@@ -192,12 +202,40 @@ public final class OgnlHelper {
 
                     // add the method
                     methods.add(s);
+
+                    // reset j to begin a new method
+                    j = 0;
+                } else if (ch == ']') {
+                    // append ending ] to method name
+                    sb.append(ch);
+                    String s = sb.toString();
+
+                    // reset sb
+                    sb.setLength(0);
+
+                    // add the method
+                    methods.add(s);
+
+                    // reset j to begin a new method
+                    j = 0;
+
+                    // no more square bracket
+                    squareBracket = false;
                 }
-                // and dont lose the char
-                sb.append(ch);
+
+                // and dont lose the char if its not an ] end marker (as we already added that)
+                if (ch != ']') {
+                    sb.append(ch);
+                }
+
+                // only advance if already begun on the new method
+                if (j > 0) {
+                    j++;
+                }
             }
         }
-        // add remainder in buffer
+
+        // add remainder in buffer when reached end of data
         if (sb.length() > 0) {
             methods.add(sb.toString());
         }
