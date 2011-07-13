@@ -223,7 +223,10 @@ public class MailBinding {
     public Object extractBodyFromMail(Exchange exchange, MailMessage mailMessage) {
         Message message = mailMessage.getMessage();
         try {
-            return message.getContent();
+            if (((MailEndpoint)exchange.getFromEndpoint()).getConfiguration().isMapMailMessage()) {
+                return message.getContent();
+            }
+            return message; // raw message
         } catch (Exception e) {
             // try to fix message in case it has an unsupported encoding in the Content-Type header
             UnsupportedEncodingException uee = ObjectHelper.getException(UnsupportedEncodingException.class, e);

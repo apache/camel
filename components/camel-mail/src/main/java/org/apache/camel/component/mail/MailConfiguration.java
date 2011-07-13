@@ -46,6 +46,7 @@ public class MailConfiguration implements Cloneable {
     private String password;
     private String subject;
     private Session session;
+    private boolean mapMailMessage = true;
     private String defaultEncoding;
     private String from = MailConstants.MAIL_DEFAULT_FROM;
     private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
@@ -339,6 +340,14 @@ public class MailConfiguration implements Cloneable {
 
     public void setDelete(boolean delete) {
         this.delete = delete;
+    }
+
+    public boolean isMapMailMessage() {
+        return mapMailMessage;
+    }
+
+    public void setMapMailMessage(boolean mapMailMessage) {
+        this.mapMailMessage = mapMailMessage;
     }
 
     public String getFolderName() {
