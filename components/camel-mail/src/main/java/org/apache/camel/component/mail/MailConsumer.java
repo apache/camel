@@ -355,9 +355,9 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
             while (it.hasMoreElements()) {
                 Header header = (Header) it.nextElement();
                 buffer.append(header.getName())
-                  .append("=")
-                  .append(header.getValue())
-                  .append("\n");
+                    .append("=")
+                    .append(header.getValue())
+                    .append("\n");
             }
             if (buffer.length() > 0) {
                 LOG.debug("Generating UID from the following:\n" + buffer);

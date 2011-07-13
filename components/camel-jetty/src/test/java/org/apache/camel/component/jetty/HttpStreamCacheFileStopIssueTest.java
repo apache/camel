@@ -52,7 +52,7 @@ public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
         String[] files = file.list();
         assertEquals("There should be no files", 0, files.length);
 
-       assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Override
