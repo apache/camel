@@ -149,6 +149,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getResourceClasses() != null) {
             cfb.setResourceClass(getResourceClasses().get(0));
         }
+        cfb.setThreadSafe(true);
     }
 
     public JAXRSServerFactoryBean createJAXRSServerFactoryBean() {
