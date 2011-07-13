@@ -8,9 +8,6 @@ The example can be run using Maven.
 
 Its an interactive example where you can type in some numbers which then are aggregated.
 
-For the latest & greatest documentation on how to use this example please see:
-  http://camel.apache.org/aggregate-example.html
-
 You will need to compile this example first:
   mvn compile
 
