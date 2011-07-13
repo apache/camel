@@ -156,6 +156,9 @@ and check the result in the log of loadbalancer
 ...
 
 
+This example is documented at
+  http://camel.apache.org/loadbalancing-mina-example.html
+
 If you hit an problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
 

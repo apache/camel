@@ -19,9 +19,6 @@ And for the Client we have a total of three flavors:
 - Using Spring Remoting for powerful "Client doesn't know at all its a remote call"
 - And using the Message Endpoint pattern using the neutral Camel API
 
-For the latest & greatest documentation on how to use this example please see:
-  http://camel.apache.org/tutorial-jmsremoting.html
-
 You will need to compile this example first:
   mvn compile
 
@@ -52,6 +49,9 @@ To run the example with Ant
 
 To stop the example hit ctrl + c
 
+
+This example is documented at
+  http://camel.apache.org/tutorial-jmsremoting.html
 
 If you hit an problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html

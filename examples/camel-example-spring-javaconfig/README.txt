@@ -35,7 +35,7 @@ To stop the example hit ctrl + c
 
 
 This example is documented at
-  http://camel.apache.org/spring-example.html
+  http://camel.apache.org/spring-java-config-example.html
 
 If you hit any problems please talk to us on the Camel Forums
   http://camel.apache.org/discussion-forums.html

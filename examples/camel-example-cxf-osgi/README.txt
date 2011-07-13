@@ -83,6 +83,9 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 2.2.x
  Check the folder "target/inbox/" in your file system that a message has been arrived.
 
 
+This example is documented at
+  http://camel.apache.org/cxf-example-osgi.html
+
 If you hit any problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
 
