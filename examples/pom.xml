@@ -47,14 +47,14 @@
     <module>camel-example-guice-jms</module>
     <module>camel-example-jmx</module>
     <module>camel-example-jms-file</module>
-    <module>camel-example-loadbalancing-mina</module>
+    <module>camel-example-loadbalancing</module>
     <module>camel-example-loan-broker</module>
     <module>camel-example-management</module>
     <module>camel-example-osgi</module>
     <module>camel-example-osgi-rmi</module>
     <module>camel-example-pojo-messaging</module>
     <module>camel-example-reportincident</module>
-    <module>camel-example-reportincident-ws-security-osgi</module>
+    <module>camel-example-reportincident-wssecurity</module>
     <module>camel-example-route-throttling</module>
     <module>camel-example-servlet-tomcat</module>
     <module>camel-example-simplejirabot</module>
