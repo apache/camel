@@ -79,6 +79,8 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
         checkBeanType(JAXRSClientFactoryBean.class);
         configure(cfb);      
         cfb.setAddress(address);
+        // Need to enable the option of ThreadSafe
+        cfb.setThreadSafe(true);
     }
     
     public String getBeanId() {
