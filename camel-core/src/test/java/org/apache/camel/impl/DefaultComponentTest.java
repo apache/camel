@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NoSuchBeanException;
 
 /**
  * Unit test for helper methods on the DefaultComponent.
@@ -99,8 +100,8 @@ public class DefaultComponentTest extends ContextTestSupport {
         try {
             my.resolveAndRemoveReferenceParameter(parameters, "date", Date.class);
             fail("returned without finding object in registry");
-        } catch (IllegalArgumentException e) {
-            // test passes
+        } catch (NoSuchBeanException e) {
+            assertEquals("No bean could be found in the registry for: somewhen of type: java.util.Date", e.getMessage());
         }
     }
 
@@ -184,8 +185,8 @@ public class DefaultComponentTest extends ContextTestSupport {
         try {
             my.resolveAndRemoveReferenceListParameter(parameters, "dates", Date.class);
             fail("returned without finding object in registry");
-        } catch (IllegalArgumentException e) {
-            // test passes
+        } catch (NoSuchBeanException e) {
+            assertEquals("No bean could be found in the registry for: bean3 of type: java.util.Date", e.getMessage());
         }
     }
 

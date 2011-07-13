@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -107,21 +108,25 @@ public final class CamelContextHelper {
 
     /**
      * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext} or throws IllegalArgumentException if not found.
+     * {@link CamelContext} or throws NoSuchBeanException if not found.
      */
     public static Object mandatoryLookup(CamelContext context, String name) {
         Object answer = lookup(context, name);
-        notNull(answer, "registry entry called " + name);
+        if (answer == null) {
+            throw new NoSuchBeanException(name);
+        }
         return answer;
     }
 
     /**
      * Look up the given named bean of the given type in the {@link org.apache.camel.spi.Registry} on the
-     * {@link CamelContext} or throws IllegalArgumentException if not found.
+     * {@link CamelContext} or throws NoSuchBeanException if not found.
      */
     public static <T> T mandatoryLookup(CamelContext context, String name, Class<T> beanType) {
         T answer = lookup(context, name, beanType);
-        notNull(answer, "registry entry called " + name + " of type " + beanType.getName());
+        if (answer == null) {
+            throw new NoSuchBeanException(name, beanType.getName());
+        }
         return answer;
     }
 

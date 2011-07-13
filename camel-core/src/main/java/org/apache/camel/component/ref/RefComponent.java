@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.CamelContextHelper;
 
 /**
  * Component for lookup of existing endpoints bound in the {@link org.apache.camel.spi.Registry}.
@@ -42,13 +43,15 @@ public class RefComponent extends DefaultComponent {
     }
 
     /**
-     * Looks up an endpoint for a given name.
-     *
+     * Looks up a mandatory endpoint for a given name.
+     * <p/>
      * Derived classes could use this name as a logical name and look it up on some registry.
+     * <p/>
+     * The default implementation will do a mandatory look up the name in the {@link org.apache.camel.spi.Registry}.
      *
-     * The default implementation will look up the name in the registry of the {@link #getCamelContext()} property
+     * @throws org.apache.camel.NoSuchBeanException if not found in the {@link org.apache.camel.spi.Registry}
      */
     protected Endpoint lookupEndpoint(String name, Map<String, Object> parameters) {
-        return getCamelContext().getRegistry().lookup(name, Endpoint.class);
+        return CamelContextHelper.mandatoryLookup(getCamelContext(), name, Endpoint.class);
     }
 }
