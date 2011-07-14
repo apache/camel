@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Map;
 import javax.activation.DataHandler;
 import javax.servlet.ServletOutputStream;
@@ -83,14 +84,16 @@ public class DefaultHttpBinding implements HttpBinding {
         Enumeration names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             String name = (String)names.nextElement();
-            Object value = request.getHeader(name);
-            // mapping the content-type 
+            String value = request.getHeader(name);
+            // use http helper to extract parameter value as it may contain multiple values
+            Object extracted = HttpHelper.extractHttpParameterValue(value);
+            // mapping the content-type
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
             if (headerFilterStrategy != null
-                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                headers.put(name, value);
+                && !headerFilterStrategy.applyFilterToExternalHeaders(name, extracted, message.getExchange())) {
+                HttpHelper.appendHeader(headers, name, extracted);
             }
         }
                 
@@ -143,18 +146,24 @@ public class DefaultHttpBinding implements HttpBinding {
         
         populateAttachments(request, message);
     }
-    
+
     protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
         //we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
         Enumeration names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = (String)names.nextElement();
-            Object value = request.getParameter(name);
-            LOG.trace("HTTP header {} = {}", name, value);
-            if (headerFilterStrategy != null
-                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                headers.put(name, value);
+            // there may be multiple values for the same name
+            String[] values = request.getParameterValues(name);
+            LOG.trace("HTTP parameter {} = {}", name, values);
+
+            if (values != null) {
+                for (String value : values) {
+                    if (headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                        HttpHelper.appendHeader(headers, name, value);
+                    }
+                }
             }
         }
 
@@ -175,7 +184,7 @@ public class DefaultHttpBinding implements HttpBinding {
                     String value = URLDecoder.decode(pair[1], charset);
                     if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                        headers.put(name, value);
+                        HttpHelper.appendHeader(headers, name, value);
                     }
                 } else {
                     throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
@@ -263,9 +272,14 @@ public class DefaultHttpBinding implements HttpBinding {
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-            if (value != null && headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                response.setHeader(key, value.toString());
+            // use an iterator as there can be multiple values. (must not use a delimiter)
+            final Iterator it = ObjectHelper.createIterator(value, null);
+            while (it.hasNext()) {
+                String headerValue = exchange.getContext().getTypeConverter().convertTo(String.class, it.next());
+                if (headerValue != null && headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
+                    response.addHeader(key, headerValue);
+                }
             }
         }
 

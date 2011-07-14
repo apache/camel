@@ -23,6 +23,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.activation.DataHandler;
@@ -43,6 +44,8 @@ import org.apache.camel.util.GZIPHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Binding between {@link HttpMessage} and {@link HttpServletResponse}.
@@ -51,6 +54,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultHttpBinding implements HttpBinding {
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
     private boolean useReaderForPayload;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private HttpEndpoint endpoint;
@@ -86,7 +90,7 @@ public class DefaultHttpBinding implements HttpBinding {
             }
             if (headerFilterStrategy != null
                     && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                headers.put(name, value);
+                HttpHelper.appendHeader(headers, name, value);
             }
         }
 
@@ -137,10 +141,17 @@ public class DefaultHttpBinding implements HttpBinding {
         Enumeration names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
-            Object value = request.getParameter(name);
-            if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                headers.put(name, value);
+            // there may be multiple values for the same name
+            String[] values = request.getParameterValues(name);
+            LOG.trace("HTTP parameter {} = {}", name, values);
+
+            if (values != null) {
+                for (String value : values) {
+                    if (headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                        HttpHelper.appendHeader(headers, name, value);
+                    }
+                }
             }
         }
         if (request.getMethod().equals("POST") && request.getContentType() != null
@@ -240,11 +251,18 @@ public class DefaultHttpBinding implements HttpBinding {
         }
 
         // append headers
-        for (String key : message.getHeaders().keySet()) {
-            String value = message.getHeader(key, String.class);
-            if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                response.setHeader(key, value);
+        // must use entrySet to ensure case of keys is preserved
+        for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            // use an iterator as there can be multiple values. (must not use a delimiter)
+            final Iterator it = ObjectHelper.createIterator(value, null);
+            while (it.hasNext()) {
+                String headerValue = exchange.getContext().getTypeConverter().convertTo(String.class, it.next());
+                if (headerValue != null && headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
+                    response.addHeader(key, headerValue);
+                }
             }
         }
 

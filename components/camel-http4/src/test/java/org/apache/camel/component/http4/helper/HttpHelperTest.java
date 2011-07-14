@@ -18,6 +18,9 @@ package org.apache.camel.component.http4.helper;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -29,8 +32,39 @@ import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class HttpHelperTest {
+
+    @Test
+    public void testAppendHeader() throws Exception {
+        Map headers = new HashMap();
+        HttpHelper.appendHeader(headers, "foo", "a");
+        HttpHelper.appendHeader(headers, "bar", "b");
+        HttpHelper.appendHeader(headers, "baz", "c");
+
+        assertEquals(3, headers.size());
+        assertEquals("a", headers.get("foo"));
+        assertEquals("b", headers.get("bar"));
+        assertEquals("c", headers.get("baz"));
+    }
+
+    @Test
+    public void testAppendHeaderMultipleValues() throws Exception {
+        Map headers = new HashMap();
+        HttpHelper.appendHeader(headers, "foo", "a");
+        HttpHelper.appendHeader(headers, "bar", "b");
+        HttpHelper.appendHeader(headers, "bar", "c");
+
+        assertEquals(2, headers.size());
+        assertEquals("a", headers.get("foo"));
+
+        List list = (List) headers.get("bar");
+        assertNotNull(list);
+        assertEquals(2, list.size());
+        assertEquals("b", list.get(0));
+        assertEquals("c", list.get(1));
+    }
 
     @Test
     public void createURLShouldReturnTheHeaderURIIfNotBridgeEndpoint() throws URISyntaxException {

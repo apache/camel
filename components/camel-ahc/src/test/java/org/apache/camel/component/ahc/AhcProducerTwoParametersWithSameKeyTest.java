@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty.jettyproducer;
+package org.apache.camel.component.ahc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,25 +22,16 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
 /**
  *
  */
-public class HttpJettyProducerTwoParametersWithSameKeyTest extends BaseJettyTest {
+public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
 
     @Test
     public void testTwoParametersWithSameKey() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
-        // give Jetty time to startup properly
-        Thread.sleep(1000);
-
-        Exchange out = template.request("jetty:http://localhost:{{port}}/myapp?from=me&to=foo&to=bar", null);
+        Exchange out = template.request("ahc:http://localhost:{{port}}/myapp?from=me&to=foo&to=bar", null);
 
         assertNotNull(out);
         assertFalse("Should not fail", out.isFailed());
@@ -48,6 +39,7 @@ public class HttpJettyProducerTwoParametersWithSameKeyTest extends BaseJettyTest
         assertEquals("yes", out.getOut().getHeader("bar"));
 
         List foo = out.getOut().getHeader("foo", List.class);
+        assertNotNull(foo);
         assertEquals(2, foo.size());
         assertEquals("123", foo.get(0));
         assertEquals("456", foo.get(1));
@@ -55,15 +47,7 @@ public class HttpJettyProducerTwoParametersWithSameKeyTest extends BaseJettyTest
 
     @Test
     public void testTwoHeadersWithSameKeyHeader() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
-        // give Jetty time to startup properly
-        Thread.sleep(1000);
-
-        Exchange out = template.request("jetty:http://localhost:{{port}}/myapp", new Processor() {
+        Exchange out = template.request("ahc:http://localhost:{{port}}/myapp", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(null);
                 exchange.getIn().setHeader("from", "me");
@@ -96,11 +80,11 @@ public class HttpJettyProducerTwoParametersWithSameKeyTest extends BaseJettyTest
                         String from = exchange.getIn().getHeader("from", String.class);
                         assertEquals("me", from);
 
-                        List values = exchange.getIn().getHeader("to", List.class);
-                        assertNotNull(values);
-                        assertEquals(2, values.size());
-                        assertEquals("foo", values.get(0));
-                        assertEquals("bar", values.get(1));
+                        List to = exchange.getIn().getHeader("to", List.class);
+                        assertNotNull(to);
+                        assertEquals(2, to.size());
+                        assertEquals("foo", to.get(0));
+                        assertEquals("bar", to.get(1));
 
                         // response
                         exchange.getOut().setBody("OK");
