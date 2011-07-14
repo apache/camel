@@ -71,4 +71,32 @@ public class MessageHelperTest extends TestCase {
         assertEquals("iso-8859-1", MessageHelper.getContentEncoding(message));
     }
 
+    public void testCopyHeaders() throws Exception {
+        Message source = message;
+        Message target = new DefaultMessage();
+
+        source.setHeader("foo", 123);
+        source.setHeader("bar", 456);
+        target.setHeader("bar", "yes");
+
+        MessageHelper.copyHeaders(source, target, false);
+
+        assertEquals(123, target.getHeader("foo"));
+        assertEquals("yes", target.getHeader("bar"));
+    }
+
+    public void testCopyHeadersOverride() throws Exception {
+        Message source = message;
+        Message target = new DefaultMessage();
+
+        source.setHeader("foo", 123);
+        source.setHeader("bar", 456);
+        target.setHeader("bar", "yes");
+
+        MessageHelper.copyHeaders(source, target, true);
+
+        assertEquals(123, target.getHeader("foo"));
+        assertEquals(456, target.getHeader("bar"));
+    }
+
 }
