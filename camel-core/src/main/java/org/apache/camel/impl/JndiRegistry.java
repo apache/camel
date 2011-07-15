@@ -24,6 +24,7 @@ import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
 
@@ -43,8 +44,20 @@ public class JndiRegistry implements Registry {
     }
 
     public <T> T lookup(String name, Class<T> type) {
-        Object value = lookup(name);
-        return type.cast(value);
+        Object answer = lookup(name);
+
+        // just to be safe
+        if (answer == null) {
+            return null;
+        }
+
+        try {
+            return type.cast(answer);
+        } catch (Throwable e) {
+            String msg = "Found bean: " + name + " in JNDI Context: " + context
+                    + " of type: " + answer.getClass().getName() + " expected type was: " + type;
+            throw new NoSuchBeanException(name, msg, e);
+        }
     }
 
     public Object lookup(String name) {

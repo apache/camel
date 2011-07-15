@@ -40,6 +40,11 @@ public class NoSuchBeanException extends RuntimeCamelException {
         this.name = name;
     }
 
+    public NoSuchBeanException(String name, String message, Throwable cause) {
+        super(message, cause);
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

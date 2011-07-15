@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
 
 /**
@@ -33,8 +34,20 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
     }
 
     public <T> T lookup(String name, Class<T> type) {
-        Object o = lookup(name);
-        return type.cast(o);
+        Object answer = lookup(name);
+
+        // just to be safe
+        if (answer == null) {
+            return null;
+        }
+
+        try {
+            return type.cast(answer);
+        } catch (Throwable e) {
+            String msg = "Found bean: " + name + " in SimpleRegistry: " + this
+                    + " of type: " + answer.getClass().getName() + " expected type was: " + type;
+            throw new NoSuchBeanException(name, msg, e);
+        }
     }
 
     public <T> Map<String, T> lookupByType(Class<T> type) {
