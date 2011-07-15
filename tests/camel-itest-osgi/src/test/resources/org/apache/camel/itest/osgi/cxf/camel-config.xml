@@ -27,9 +27,7 @@
 
     <!-- needed cxf imports -->
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
-    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
-    <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
-
+    
     <!-- use a bean to start and stop the real web service (is not Camel specific) -->
     <!-- in a real use-case the real web service would be located on another server
          but we simulate this in the same JVM -->
@@ -45,8 +43,7 @@
     <!-- this is the CXF webservice we use as front end -->
     <cxf:cxfEndpoint id="reportIncident"
                      address="http://localhost:9080/camel-itest-osgi/webservices/incident"
-                     serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"
-                     wsdlURL="report_incident.wsdl"/>
+                     serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"/>
 
     <!-- this is the camel route which proxy the web service and forward it to the real web service -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">

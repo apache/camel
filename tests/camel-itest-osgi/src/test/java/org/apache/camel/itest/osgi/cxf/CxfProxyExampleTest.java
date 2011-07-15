@@ -50,8 +50,7 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
         factory.setAddress("http://localhost:9080/camel-itest-osgi/webservices/incident");
         return (ReportIncidentEndpoint) factory.create();
     }
-
-    @Ignore("CXF bundle can't be installed in Karaf")
+    
     @Test
     public void testCxfProxy() throws Exception {
         // create input parameter
@@ -71,6 +70,7 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
 
         // assert we got a OK back
         assertEquals("OK;456", out.getCode());
+        LOG.warn("Finish the testing");
     }
 
     @Override
@@ -84,17 +84,11 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                  Helper.setLogLevel("WARN")),
-                  
-            // install the spring, http features first
-            scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
+            getDefaultCamelKarafOptions(),
            
             // using the features to install the camel components
             scanFeatures(getCamelKarafFeatureUrl(),
-                                "spring", "spring-dm", "camel-core", "camel-spring", "camel-http", "camel-test", "camel-cxf"),
+                         "camel-http", "camel-cxf"),
                                         
             // need to install the generated src as the pax-exam doesn't wrap this bundles
             provision(newBundle()
@@ -103,11 +97,7 @@ public class CxfProxyExampleTest extends OSGiIntegrationSpringTestSupport {
                             .add(org.apache.camel.example.reportincident.ReportIncidentEndpoint.class)
                             .add(org.apache.camel.example.reportincident.ReportIncidentEndpointService.class)
                             .add(org.apache.camel.example.reportincident.ObjectFactory.class)
-                            .build(withBnd())),
-                            
-            workingDirectory("target/paxrunner/"),
-                  
-            felix(), equinox());
+                            .build(withBnd())));
           
         return options;
     }
