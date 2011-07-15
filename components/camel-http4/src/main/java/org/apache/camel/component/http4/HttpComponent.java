@@ -140,9 +140,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             String proxyAuthPassword = getAndRemoveParameter(parameters, "proxyAuthPassword", String.class);
             String proxyAuthDomain = getAndRemoveParameter(parameters, "proxyAuthDomain", String.class);
             String proxyAuthNtHost = getAndRemoveParameter(parameters, "proxyAuthNtHost", String.class);
+            boolean secureProxy = HttpHelper.isSecureConnection(proxyAuthScheme);
 
             // register scheme for proxy
-            registerPort(secure, x509HostnameVerifier, proxyAuthPort, sslContextParameters);
+            registerPort(secureProxy, x509HostnameVerifier, proxyAuthPort, sslContextParameters);
 
             if (proxyAuthUsername != null && proxyAuthPassword != null) {
                 return CompositeHttpConfigurer.combineConfigurers(
