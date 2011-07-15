@@ -117,6 +117,22 @@ public abstract class CamelTestSupport extends TestSupport {
     public Service getCamelContextService() {
         return camelContextService;
     }
+    
+    public Service camelContextService() {
+        return camelContextService;
+    }
+    
+    public CamelContext context() {
+        return context;
+    }
+    
+    public ProducerTemplate template() {
+        return template;
+    }
+    
+    public ConsumerTemplate consumer() {
+        return consumer;
+    }
 
     /**
      * Allows a service to be registered a separate lifecycle service to start
