@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-org.apache.camel.component.exec
+org.apache.camel.component.exec.ExecResultConverter

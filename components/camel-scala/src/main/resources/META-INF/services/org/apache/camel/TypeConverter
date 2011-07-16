@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-org.apache.camel.scala.converter
+org.apache.camel.scala.converter.ScalaTypeConverter

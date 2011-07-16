@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-org.apache.camel.component.restlet.converter
+org.apache.camel.component.restlet.converter.RestletConverter

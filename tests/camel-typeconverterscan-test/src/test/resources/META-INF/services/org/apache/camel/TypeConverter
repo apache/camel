@@ -15,4 +15,5 @@
 # limitations under the License.
 #
 
-org.apache.camel.component.mina.MinaConverter
+# must use a package name to test scanning packages
+org.apache.camel.tests.typeconverterscan

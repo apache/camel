@@ -21,9 +21,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 import static java.lang.reflect.Modifier.isAbstract;
@@ -41,12 +43,23 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A class which will auto-discover converter objects and methods to pre-load
- * the registry of converters on startup
+ * A class which will auto-discover {@link Converter} objects and methods to pre-load
+ * the {@link TypeConverterRegistry} of converters on startup.
+ * <p/>
+ * This implementation supports scanning for type converters in JAR files. The {@link #META_INF_SERVICES}
+ * contains a list of packages or FQN class names for {@link Converter} classes. The FQN class names
+ * is loaded first and directly by the class loader.
+ * <p/>
+ * The {@link PackageScanClassResolver} is being used to scan packages for {@link Converter} classes and
+ * this procedure is slower than loading the {@link Converter} classes directly by its FQN class name.
+ * Therefore its recommended to specify FQN class names in the {@link #META_INF_SERVICES} file.
+ * Likewise the procedure for scanning using {@link PackageScanClassResolver} may require custom implementations
+ * to work in various containers such as JBoss, OSGi, etc.
  *
  * @version 
  */
@@ -77,21 +90,36 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         // if we only have camel-core on the classpath then we have already pre-loaded all its type converters
         // but we exposed the "org.apache.camel.core" package in camel-core. This ensures there is at least one
         // packageName to scan, which triggers the scanning process. That allows us to ensure that we look for
-        // type converters in all the JARs.
+        // META-INF/services in all the JARs.
         if (packageNames.length == 1 && "org.apache.camel.core".equals(packageNames[0])) {
             LOG.debug("No additional package names found in classpath for annotated type converters.");
             // no additional package names found to load type converters so break out
             return;
         }
 
-        LOG.trace("Found converter packages to scan: {}", packageNames);
-        Set<Class<?>> classes = resolver.findAnnotated(Converter.class, packageNames);
-        if (classes == null || classes.isEmpty()) {
-            throw new TypeConverterLoaderException("Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));
+        // now filter out org.apache.camel.core as its not needed anymore (it was just a dummy)
+        packageNames = filterUnwantedPackage("org.apache.camel.core", packageNames);
+
+        // filter out package names which can be loaded as a class directly so we avoid package scanning which
+        // is much slower and does not work 100% in all runtime containers
+        Set<Class<?>> classes = new HashSet<Class<?>>();
+        packageNames = filterPackageNamesOnly(resolver, packageNames, classes);
+        if (!classes.isEmpty()) {
+            LOG.info("Loaded " + classes.size() + " @Converter classes");
         }
 
-        LOG.info("Found " + packageNames.length + " packages with " + classes.size() + " @Converter classes to load");
+        // if there is any packages to scan and load @Converter classes, then do it
+        if (packageNames != null && packageNames.length > 0) {
+            LOG.trace("Found converter packages to scan: {}", packageNames);
+            Set<Class<?>> scannedClasses = resolver.findAnnotated(Converter.class, packageNames);
+            if (scannedClasses.isEmpty()) {
+                throw new TypeConverterLoaderException("Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));
+            }
+            LOG.info("Found " + packageNames.length + " packages with " + scannedClasses.size() + " @Converter classes to load");
+            classes.addAll(scannedClasses);
+        }
 
+        // load all the found classes into the type converter registry
         for (Class type : classes) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Loading converter class: {}", ObjectHelper.name(type));
@@ -102,6 +130,57 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         // now clear the maps so we do not hold references
         visitedClasses.clear();
         visitedURIs.clear();
+    }
+
+    /**
+     * Filters the given list of packages and returns an array of <b>only</b> package names.
+     * <p/>
+     * This implementation will check the given list of packages, and if it contains a class name,
+     * that class will be loaded directly and added to the list of classes. This optimizes the
+     * type converter to avoid excessive file scanning for .class files.
+     *
+     * @param resolver the class resolver
+     * @param packageNames the package names
+     * @param classes to add loaded @Converter classes
+     * @return the filtered package names
+     */
+    protected String[] filterPackageNamesOnly(PackageScanClassResolver resolver, String[] packageNames, Set<Class<?>> classes) {
+        if (packageNames == null || packageNames.length == 0) {
+            return packageNames;
+        }
+
+        // optimize for CorePackageScanClassResolver
+        if (resolver.getClassLoaders().isEmpty()) {
+            return packageNames;
+        }
+
+        // the filtered packages to return
+        List<String> packages = new ArrayList<String>();
+
+        // try to load it as a class first
+        for (String name : packageNames) {
+            // must be a FQN class name by having an upper case letter
+            if (StringHelper.hasUpperCase(name)) {
+                for (ClassLoader loader : resolver.getClassLoaders()) {
+                    try {
+                        Class<?> clazz = loader.loadClass(name);
+                        LOG.trace("Loaded {} as class {}", name, clazz);
+                        classes.add(clazz);
+                        // class founder, so no need to load it with another class loader
+                        break;
+                    } catch (Throwable e) {
+                        // ignore as its not a class (will be package scan afterwards)
+                        packages.add(name);
+                    }
+                }
+            } else {
+                // ignore as its not a class (will be package scan afterwards)
+                packages.add(name);
+            }
+        }
+
+        // return the packages which is not FQN classes
+        return packages.toArray(new String[packages.size()]);
     }
 
     /**
@@ -282,4 +361,25 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 || (parameterTypes.length == 4 && Exchange.class.isAssignableFrom(parameterTypes[1]))
                 && (TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1])));
     }
+
+    /**
+     * Filters the given list of packages
+     *
+     * @param name  the name to filter out
+     * @param packageNames the packages
+     * @return he packages without the given name
+     */
+    protected static String[] filterUnwantedPackage(String name, String[] packageNames) {
+        // the filtered packages to return
+        List<String> packages = new ArrayList<String>();
+
+        for (String s : packageNames) {
+            if (!name.equals(s)) {
+                packages.add(s);
+            }
+        }
+
+        return packages.toArray(new String[packages.size()]);
+    }
+
 }

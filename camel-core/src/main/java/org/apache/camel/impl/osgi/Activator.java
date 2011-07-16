@@ -56,6 +56,7 @@ import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -295,34 +296,76 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 PackageScanFilter test = new AnnotatedWithPackageScanFilter(Converter.class, true);
                 Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
                 Set<String> packages = getConverterPackages(bundle.getEntry(META_INF_TYPE_CONVERTER));
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Found {} {} packages: {}", new Object[]{packages.size(), META_INF_TYPE_CONVERTER, packages});
+                }
+                // if we only have camel-core on the classpath then we have already pre-loaded all its type converters
+                // but we exposed the "org.apache.camel.core" package in camel-core. This ensures there is at least one
+                // packageName to scan, which triggers the scanning process. That allows us to ensure that we look for
+                // META-INF/services in all the JARs.
+                if (packages.size() == 1 && "org.apache.camel.core".equals(packages.iterator().next())) {
+                    LOG.debug("No additional package names found in classpath for annotated type converters.");
+                    // no additional package names found to load type converters so break out
+                    return;
+                }
+
+                // now filter out org.apache.camel.core as its not needed anymore (it was just a dummy)
+                packages.remove("org.apache.camel.core");
+
                 for (String pkg : packages) {
+
+                    if (StringHelper.hasUpperCase(pkg)) {
+                        // its a FQN class name so load it directly
+                        LOG.trace("Loading {} class", pkg);
+                        try {
+                            Class clazz = bundle.loadClass(pkg);
+                            if (test.matches(clazz)) {
+                                classes.add(clazz);
+                            }
+                            // the class could be found and loaded so continue to next
+                            continue;
+                        } catch (Throwable t) {
+                            // Ignore
+                            LOG.trace("Failed to load " + pkg + " class due " + t.getMessage() + ". This exception will be ignored.", t);
+                        }
+                    }
+
+                    // its not a FQN but a package name so scan for classes in the bundle
                     Enumeration<URL> e = bundle.findEntries("/" + pkg.replace('.', '/'), "*.class", true);
                     while (e != null && e.hasMoreElements()) {
                         String path = e.nextElement().getPath();
                         String externalName = path.substring(path.charAt(0) == '/' ? 1 : 0, path.indexOf('.')).replace('/', '.');
+                        LOG.trace("Loading {} class", externalName);
                         try {
                             Class clazz = bundle.loadClass(externalName);
                             if (test.matches(clazz)) {
-                                classes.add(bundle.loadClass(externalName));
+                                classes.add(clazz);
                             }
                         } catch (Throwable t) {
                             // Ignore
+                            LOG.trace("Failed to load " + externalName + " class due " + t.getMessage() + ". This exception will be ignored.", t);
                         }
                     }
                 }
+
+                // load the classes into type converter registry
                 LOG.info("Found {} @Converter classes to load", classes.size());
                 for (Class type : classes) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Loading converter class: {}", ObjectHelper.name(type));
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Loading converter class: {}", ObjectHelper.name(type));
                     }
                     loadConverterMethods(registry, type);
                 }
+
+                // register fallback converters
                 URL fallbackUrl = bundle.getEntry(META_INF_FALLBACK_TYPE_CONVERTER);
                 if (fallbackUrl != null) {
                     TypeConverter tc = createInstance("FallbackTypeConverter", fallbackUrl, registry.getInjector());
                     registry.addFallbackTypeConverter(tc, false);
                 }
-                // Clear info
+
+                // now clear the maps so we do not hold references
                 visitedClasses.clear();
                 visitedURIs.clear();
             }

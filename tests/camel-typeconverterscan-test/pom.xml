@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -15,6 +16,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
@@ -23,31 +25,42 @@
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
     <version>2.9-SNAPSHOT</version>
-    <relativePath>../parent</relativePath>
+    <relativePath>../../parent</relativePath>
   </parent>
 
-  <artifactId>tests</artifactId>
-  <name>Camel :: Tests</name>
-  <description>Camel Tests</description>
-  <packaging>pom</packaging>
+  <artifactId>camel-typeconverterscan-test</artifactId>
+  <name>Camel :: TypeConverter Scan Tests</name>
+  <description>Tests the type converter package scanning</description>
 
-  <modules>
-    <module>test-bundles</module>
-    <module>camel-itest-standalone</module>
-    <module>camel-itest</module>
-    <module>camel-partial-classpath-test</module>
-    <module>camel-typeconverterscan-test</module>
-    <module>camel-itest-osgi</module>
-  </modules>
+  <dependencies>
 
-  <profiles>
-    <profile>
-      <!-- default profile enables checkstyle and Xlint stuff -->
-      <id>osgi.test</id>
-      <modules>
-        <module>camel-itest-karaf</module>
-      </modules>
-    </profile>
-  </profiles>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+ 
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
 
 </project>
