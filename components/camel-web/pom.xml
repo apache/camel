@@ -104,10 +104,52 @@
             <artifactId>spring-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-json</artifactId>
-            <version>${jersey-version}</version>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-json</artifactId>
+          <version>${jersey-version}</version>
+          <exclusions>
+            <!-- exclude jackson so we can use the version by camel-jackson -->
+            <exclusion>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-jaxrs</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-xc</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
+
+        <!-- jackson for jersey-json -->
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>${jackson-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>${jackson-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>${jackson-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-xc</artifactId>
+            <version>${jackson-version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-atom</artifactId>
@@ -780,6 +822,7 @@
                         </exclusion>
                     </exclusions>
                 </dependency>
+
                 <dependency>
                     <groupId>com.sun.jersey</groupId>
                     <artifactId>jersey-json</artifactId>
@@ -801,8 +844,46 @@
                             <groupId>org.apache.servicemix.bundles</groupId>
                             <artifactId>org.apache.servicemix.bundles.jaxb-impl</artifactId>
                         </exclusion>
+                        <exclusion>
+                            <groupId>org.codehaus.jackson</groupId>
+                            <artifactId>jackson-core-asl</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.codehaus.jackson</groupId>
+                            <artifactId>jackson-mapper-asl</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.codehaus.jackson</groupId>
+                            <artifactId>jackson-jaxrs</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>org.codehaus.jackson</groupId>
+                            <artifactId>jackson-xc</artifactId>
+                        </exclusion>
                     </exclusions>
                 </dependency>
+		        <!-- jackson for jersey-json -->
+		        <dependency>
+		            <groupId>org.codehaus.jackson</groupId>
+		            <artifactId>jackson-core-asl</artifactId>
+		            <version>${jackson-version}</version>
+		        </dependency>
+		        <dependency>
+		            <groupId>org.codehaus.jackson</groupId>
+		            <artifactId>jackson-mapper-asl</artifactId>
+		            <version>${jackson-version}</version>
+		        </dependency>
+		        <dependency>
+		            <groupId>org.codehaus.jackson</groupId>
+		            <artifactId>jackson-jaxrs</artifactId>
+		            <version>${jackson-version}</version>
+		        </dependency>
+		        <dependency>
+		            <groupId>org.codehaus.jackson</groupId>
+		            <artifactId>jackson-xc</artifactId>
+		            <version>${jackson-version}</version>
+		        </dependency>
+
                 <dependency>
                     <groupId>com.sun.jersey</groupId>
                     <artifactId>jersey-atom</artifactId>
