@@ -17,7 +17,6 @@
 package org.apache.camel.example.docs;
 
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
  * A simple content based router example

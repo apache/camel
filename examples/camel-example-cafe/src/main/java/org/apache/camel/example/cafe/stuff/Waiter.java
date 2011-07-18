@@ -18,7 +18,6 @@ package org.apache.camel.example.cafe.stuff;
 
 import java.util.List;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.example.cafe.Delivery;
 import org.apache.camel.example.cafe.Drink;
 

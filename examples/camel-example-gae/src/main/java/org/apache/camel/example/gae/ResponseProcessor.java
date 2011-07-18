@@ -17,7 +17,6 @@
 package org.apache.camel.example.gae;
 
 import com.google.appengine.api.users.UserServiceFactory;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 

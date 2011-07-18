@@ -16,9 +16,6 @@
  */
 package org.apache.camel.example.cafe;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
