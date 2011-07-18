@@ -344,6 +344,12 @@ public class HttpProducer extends DefaultProducer {
             }
         }
 
+        // there must be a host on the method
+        if (method.getHostConfiguration().getHost() == null) {
+            throw new IllegalArgumentException("Invalid uri: " + url
+                    + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: " + getEndpoint());
+        }
+
         return method;
     }
 

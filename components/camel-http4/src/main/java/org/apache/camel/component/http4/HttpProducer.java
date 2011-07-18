@@ -333,6 +333,11 @@ public class HttpProducer extends DefaultProducer {
             queryString = getEndpoint().getHttpUri().getRawQuery();
         }
 
+        if (uri.getScheme() == null || uri.getHost() == null) {
+            throw new IllegalArgumentException("Invalid uri: " + uri
+                    + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: " + getEndpoint());
+        }
+
         StringBuilder builder = new StringBuilder(uri.getScheme()).append("://").append(uri.getHost());
 
         if (uri.getPort() != -1) {
