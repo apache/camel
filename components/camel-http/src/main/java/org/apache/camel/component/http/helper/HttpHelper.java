@@ -22,6 +22,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,6 +37,7 @@ import org.apache.camel.component.http.HttpMethods;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 
 public final class HttpHelper {
 
@@ -234,4 +238,68 @@ public final class HttpHelper {
 
         return answer;
     }
+
+    /**
+     * Appends the key/value to the headers.
+     * <p/>
+     * This implementation supports keys with multiple values. In such situations the value
+     * will be a {@link java.util.List} that contains the multiple values.
+     *
+     * @param headers  headers
+     * @param key      the key
+     * @param value    the value
+     */
+    @SuppressWarnings("unchecked")
+    public static void appendHeader(Map headers, String key, Object value) {
+        if (headers.containsKey(key)) {
+            Object existing = headers.get(key);
+            List list;
+            if (existing instanceof List) {
+                list = (List) existing;
+            } else {
+                list = new ArrayList();
+                list.add(existing);
+            }
+            list.add(value);
+            value = list;
+        }
+
+        headers.put(key, value);
+    }
+
+    /**
+     * Extracts the parameter value.
+     * <p/>
+     * This implementation supports HTTP multi value parameters which
+     * is based on the syntax of <tt>[value1, value2, value3]</tt> by returning
+     * a {@link List} containing the values.
+     * <p/>
+     * If the value is not a HTTP mulit value the value is returned as is.
+     *
+     * @param value the parameter value
+     * @return the extracted parameter value, see more details in javadoc.
+     */
+    @SuppressWarnings("unchecked")
+    public static Object extractHttpParameterValue(String value) {
+        if (value == null || ObjectHelper.isEmpty(value)) {
+            return value;
+        }
+
+        // trim value before checking for multiple parameters
+        String trimmed = value.trim();
+
+        if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+            // remove the [ ] markers
+            trimmed = trimmed.substring(1, trimmed.length() - 1);
+            List list = new ArrayList<String>();
+            String[] values = trimmed.split(",");
+            for (String s : values) {
+                list.add(s.trim());
+            }
+            return list;
+        }
+
+        return value;
+    }
+
 }

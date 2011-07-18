@@ -24,7 +24,6 @@ import org.apache.camel.util.CastUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaTemplate;
-import org.springframework.util.ClassUtils;
 
 /**
  * A Message Transformer of an XML document to a Customer entity bean

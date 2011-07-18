@@ -15,4 +15,5 @@
 # limitations under the License.
 #
 
-org.apache.camel.component.http4
+org.apache.camel.component.http4.HttpConverter
+org.apache.camel.component.http4.HttpEntityConverter

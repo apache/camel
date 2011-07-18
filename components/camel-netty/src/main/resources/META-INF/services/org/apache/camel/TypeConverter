@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-org.apache.camel.component.netty
+org.apache.camel.component.netty.NettyConverter

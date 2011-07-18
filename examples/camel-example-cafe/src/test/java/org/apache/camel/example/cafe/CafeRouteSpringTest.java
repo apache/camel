@@ -17,7 +17,6 @@
 package org.apache.camel.example.cafe;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.example.cafe.test.TestDrinkRouter;
 import org.apache.camel.example.cafe.test.TestWaiter;
 import org.junit.After;

@@ -21,9 +21,7 @@ import org.apache.camel.example.cxf.jaxrs.resources.BookNotFoundFault;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.cxf.BusFactory;
-
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

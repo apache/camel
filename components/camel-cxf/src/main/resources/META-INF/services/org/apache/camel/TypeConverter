@@ -15,4 +15,5 @@
 # limitations under the License.
 #
 
-org.apache.camel.component.cxf.converter
+org.apache.camel.component.cxf.converter.CxfConverter
+org.apache.camel.component.cxf.converter.CxfPayloadConverter

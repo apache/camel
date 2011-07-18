@@ -18,7 +18,6 @@ package org.apache.camel.example.cxf.jaxrs.resources;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 

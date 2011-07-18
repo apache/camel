@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;
 
@@ -40,8 +40,50 @@ public class HttpJettyProducerTwoParametersWithSameKeyTest extends BaseJettyTest
         // give Jetty time to startup properly
         Thread.sleep(1000);
 
-        Exchange a = template.request("jetty:http://localhost:{{port}}/myapp?from=me&to=foo&to=bar", null);
-        assertNotNull(a);
+        Exchange out = template.request("jetty:http://localhost:{{port}}/myapp?from=me&to=foo&to=bar", null);
+
+        assertNotNull(out);
+        assertFalse("Should not fail", out.isFailed());
+        assertEquals("OK", out.getOut().getBody(String.class));
+        assertEquals("yes", out.getOut().getHeader("bar"));
+
+        List foo = out.getOut().getHeader("foo", List.class);
+        assertEquals(2, foo.size());
+        assertEquals("123", foo.get(0));
+        assertEquals("456", foo.get(1));
+    }
+
+    @Test
+    public void testTwoHeadersWithSameKeyHeader() throws Exception {
+        // these tests does not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
+        Exchange out = template.request("jetty:http://localhost:{{port}}/myapp", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(null);
+                exchange.getIn().setHeader("from", "me");
+                List<String> list = new ArrayList<String>();
+                list.add("foo");
+                list.add("bar");
+                exchange.getIn().setHeader("to", list);
+            }
+        });
+
+        assertNotNull(out);
+        assertFalse("Should not fail", out.isFailed());
+        assertEquals("OK", out.getOut().getBody(String.class));
+        assertEquals("yes", out.getOut().getHeader("bar"));
+
+        List foo = out.getOut().getHeader("foo", List.class);
+        assertNotNull(foo);
+        assertEquals(2, foo.size());
+        assertEquals("123", foo.get(0));
+        assertEquals("456", foo.get(1));
     }
 
     @Override
@@ -54,16 +96,20 @@ public class HttpJettyProducerTwoParametersWithSameKeyTest extends BaseJettyTest
                         String from = exchange.getIn().getHeader("from", String.class);
                         assertEquals("me", from);
 
-                        HttpServletRequest req = exchange.getIn(HttpMessage.class).getRequest();
-
-                        // TODO: Http/Jetty should support headers with multiple values
-                        String[] values = req.getParameterValues("to");
+                        List values = exchange.getIn().getHeader("to", List.class);
                         assertNotNull(values);
-                        assertEquals(2, values.length);
-                        assertEquals("foo", values[0]);
-                        assertEquals("bar", values[1]);
+                        assertEquals(2, values.size());
+                        assertEquals("foo", values.get(0));
+                        assertEquals("bar", values.get(1));
 
+                        // response
                         exchange.getOut().setBody("OK");
+                        // use multiple values for the foo header in the reply
+                        List list = new ArrayList();
+                        list.add(123);
+                        list.add(456);
+                        exchange.getOut().setHeader("foo", list);
+                        exchange.getOut().setHeader("bar", "yes");
                     }
                 });
             }

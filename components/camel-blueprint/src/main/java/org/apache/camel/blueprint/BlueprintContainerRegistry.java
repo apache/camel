@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.aries.blueprint.ExtendedBeanMetadata;
 import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
@@ -39,10 +40,24 @@ public class BlueprintContainerRegistry implements Registry {
     }
 
     public <T> T lookup(String name, Class<T> type) {
+        Object answer;
         try {
-            return type.cast(blueprintContainer.getComponentInstance(name));
+            answer = blueprintContainer.getComponentInstance(name);
         } catch (NoSuchComponentException e) {
             return null;
+        }
+
+        // just to be safe
+        if (answer == null) {
+            return null;
+        }
+
+        try {
+            return type.cast(answer);
+        } catch (Throwable e) {
+            String msg = "Found bean: " + name + " in BlueprintContainer: " + blueprintContainer
+                    + " of type: " + answer.getClass().getName() + " expected type was: " + type;
+            throw new NoSuchBeanException(name, msg, e);
         }
     }
 

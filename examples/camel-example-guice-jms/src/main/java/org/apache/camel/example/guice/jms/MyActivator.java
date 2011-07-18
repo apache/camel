@@ -18,7 +18,6 @@ package org.apache.camel.example.guice.jms;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.osgi.framework.BundleActivator;

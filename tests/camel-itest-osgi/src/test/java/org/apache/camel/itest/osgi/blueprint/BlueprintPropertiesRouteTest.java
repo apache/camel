@@ -74,31 +74,16 @@ public class BlueprintPropertiesRouteTest extends OSGiBlueprintTestSupport {
     public static Option[] configure() throws Exception {
 
         Option[] options = combine(
-                // Default karaf environment
-                Helper.getDefaultOptions(
-                    // this is how you set the default log level when using pax logging (logProfile)
-                    Helper.setLogLevel("INFO")),
+                getDefaultCamelKarafOptions(),
+
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", BlueprintPropertiesRouteTest.class.getResource("blueprint-17.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, BlueprintPropertiesRouteTest.class.getName())
                         .build()).noStart(),
 
-                // install the spring dm profile
-                profile("spring.dm").version("1.2.0"),
-                mavenBundle("org.apache.aries.blueprint", "org.apache.aries.blueprint", "0.2-incubating"),
-
-                // install blueprint requirements
-                mavenBundle("org.apache.felix", "org.apache.felix.configadmin"),
-
-                // install the spring, http features first
-                scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-core", "camel-blueprint", "camel-test"),
-
-                workingDirectory("target/paxrunner/"),
-
-                felix()/*, equinox()*/);
+                                    "camel-blueprint"));
 
         return options;
     }

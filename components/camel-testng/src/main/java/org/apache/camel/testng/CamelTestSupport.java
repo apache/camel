@@ -296,6 +296,22 @@ public abstract class CamelTestSupport extends TestSupport {
             template = null;
         }
     }
+    
+    public Service camelContextService() {
+        return camelContextService;
+    }
+    
+    public CamelContext context() {
+        return context;
+    }
+    
+    public ProducerTemplate template() {
+        return template;
+    }
+    
+    public ConsumerTemplate consumer() {
+        return consumer;
+    }
 
     protected void startCamelContext() throws Exception {
         if (camelContextService != null) {

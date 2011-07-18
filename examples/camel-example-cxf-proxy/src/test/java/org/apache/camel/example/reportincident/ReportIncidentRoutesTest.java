@@ -20,6 +20,7 @@ package org.apache.camel.example.reportincident;
 import org.apache.camel.spring.Main;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 /**

@@ -91,8 +91,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
      * @param parameters the map of parameters
      * @param secure whether the endpoint is secure (eg https4)
      * @return the configurer
+     * @throws Exception is thrown if error creating configurer
      */
-    protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, boolean secure) {
+    protected HttpClientConfigurer createHttpClientConfigurer(Map<String, Object> parameters, boolean secure) throws Exception {
         // prefer to use endpoint configured over component configured
         HttpClientConfigurer configurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
         if (configurer == null) {
@@ -125,7 +126,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         return configurer;
     }
 
-    private HttpClientConfigurer configureHttpProxy(Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure) {
+    private HttpClientConfigurer configureHttpProxy(Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure) throws Exception {
         String proxyAuthScheme = getAndRemoveParameter(parameters, "proxyAuthScheme", String.class);
         if (proxyAuthScheme == null) {
             // fallback and use either http4 or https4 depending on secure
@@ -139,6 +140,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             String proxyAuthPassword = getAndRemoveParameter(parameters, "proxyAuthPassword", String.class);
             String proxyAuthDomain = getAndRemoveParameter(parameters, "proxyAuthDomain", String.class);
             String proxyAuthNtHost = getAndRemoveParameter(parameters, "proxyAuthNtHost", String.class);
+            boolean secureProxy = HttpHelper.isSecureConnection(proxyAuthScheme);
+
+            // register scheme for proxy
+            registerPort(secureProxy, x509HostnameVerifier, proxyAuthPort, sslContextParameters);
 
             if (proxyAuthUsername != null && proxyAuthPassword != null) {
                 return CompositeHttpConfigurer.combineConfigurers(

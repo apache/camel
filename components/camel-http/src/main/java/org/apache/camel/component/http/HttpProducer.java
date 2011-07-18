@@ -22,7 +22,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelExchangeException;
@@ -37,6 +40,9 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.GZIPHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -68,8 +74,16 @@ public class HttpProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+        // if we bridge endpoint then we need to skip matching headers with the HTTP_QUERY to avoid sending
+        // duplicated headers to the receiver, so use this skipRequestHeaders as the list of headers to skip
+        Map<String, Object> skipRequestHeaders = null;
+
         if (getEndpoint().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+            String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+            if (queryString != null) {
+                skipRequestHeaders = URISupport.parseQuery(queryString);
+            }
         }
         HttpMethod method = createMethod(exchange);
         Message in = exchange.getIn();
@@ -84,9 +98,41 @@ public class HttpProducer extends DefaultProducer {
 
         // propagate headers as HTTP headers
         for (Map.Entry<String, Object> entry : in.getHeaders().entrySet()) {
-            String headerValue = in.getHeader(entry.getKey(), String.class);
-            if (strategy != null && !strategy.applyFilterToCamelHeaders(entry.getKey(), headerValue, exchange)) {
-                method.addRequestHeader(entry.getKey(), headerValue);
+            String key = entry.getKey();
+            Object headerValue = in.getHeader(key);
+
+            if (headerValue != null) {
+                // use an iterator as there can be multiple values. (must not use a delimiter)
+                final Iterator it = ObjectHelper.createIterator(headerValue, null);
+
+                // the value to add as request header
+                final List<String> values = new ArrayList<String>();
+
+                // if its a multi value then check each value if we can add it and for multi values they
+                // should be combined into a single value
+                while (it.hasNext()) {
+                    String value = exchange.getContext().getTypeConverter().convertTo(String.class, it.next());
+
+                    // we should not add headers for the parameters in the uri if we bridge the endpoint
+                    // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
+                    if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
+                        Object skipValue = skipRequestHeaders.get(key);
+                        if (ObjectHelper.equal(skipValue, value)) {
+                            continue;
+                        }
+                    }
+                    if (value != null && strategy != null && !strategy.applyFilterToCamelHeaders(key, value, exchange)) {
+                        values.add(value);
+                    }
+                }
+
+                // add the value(s) as a http request header
+                if (values.size() > 0) {
+                    // use the default toString of a ArrayList to create in the form [xxx, yyy]
+                    // if multi valued, for a single value, then just output the value as is
+                    String s =  values.size() > 1 ? values.toString() : values.get(0);
+                    method.addRequestHeader(key, s);
+                }
             }
         }
 
@@ -125,7 +171,6 @@ public class HttpProducer extends DefaultProducer {
         Object response = extractResponseBody(method, exchange);
         Message answer = exchange.getOut();
 
-        answer.setHeaders(in.getHeaders());
         answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
         answer.setBody(response);
 
@@ -137,10 +182,16 @@ public class HttpProducer extends DefaultProducer {
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
-            if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                answer.setHeader(name, value);
+            // use http helper to extract parameter value as it may contain multiple values
+            Object extracted = HttpHelper.extractHttpParameterValue(value);
+            if (strategy != null && !strategy.applyFilterToExternalHeaders(name, extracted, exchange)) {
+                HttpHelper.appendHeader(answer.getHeaders(), name, extracted);
             }
         }
+
+        // preserve headers from in by copying any non existing headers
+        // to avoid overriding existing headers with old values
+        MessageHelper.copyHeaders(exchange.getIn(), answer, false);
     }
 
     protected Exception populateHttpOperationFailedException(Exchange exchange, HttpMethod method, int responseCode) throws IOException, ClassNotFoundException {
@@ -291,6 +342,12 @@ public class HttpProducer extends DefaultProducer {
             if (requestEntity != null && requestEntity.getContentType() == null) {
                 LOG.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
             }
+        }
+
+        // there must be a host on the method
+        if (method.getHostConfiguration().getHost() == null) {
+            throw new IllegalArgumentException("Invalid uri: " + url
+                    + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: " + getEndpoint());
         }
 
         return method;

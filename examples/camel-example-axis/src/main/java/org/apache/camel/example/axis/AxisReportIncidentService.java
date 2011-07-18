@@ -17,7 +17,6 @@
 package org.apache.camel.example.axis;
 
 import java.rmi.RemoteException;
-
 import javax.xml.rpc.ServiceException;
 
 import org.apache.camel.example.reportincident.InputReportIncident;

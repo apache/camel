@@ -90,4 +90,24 @@ public final class StringHelper {
         return text.replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
     }
 
+    /**
+     * Determines if the string has at least one letter in upper case
+     * @param text the text
+     * @return <tt>true</tt> if at least one letter is upper case, <tt>false</tt> otherwise
+     */
+    public static boolean hasUpperCase(String text) {
+        if (text == null) {
+            return false;
+        }
+
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (Character.isUpperCase(ch)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

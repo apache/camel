@@ -309,4 +309,26 @@ public final class MessageHelper {
         return sb.toString();
     }
 
+    /**
+     * Copies the headers from the source to the target message.
+     *
+     * @param source the source message
+     * @param target the target message
+     * @param override whether to override existing headers
+     */
+    public static void copyHeaders(Message source, Message target, boolean override) {
+        if (!source.hasHeaders()) {
+            return;
+        }
+
+        for (Map.Entry<String, Object> entry : source.getHeaders().entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (target.getHeader(key) == null || override) {
+                target.setHeader(key, value);
+            }
+        }
+    }
+
 }

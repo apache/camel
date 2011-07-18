@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.Map;
 
 import junit.framework.TestCase;
+import org.apache.camel.NoSuchBeanException;
 
 public class SimpleRegistryTest extends TestCase {
 
@@ -46,8 +47,10 @@ public class SimpleRegistryTest extends TestCase {
         try {
             registry.lookup("a", Float.class);
             fail();
-        } catch (ClassCastException e) {
+        } catch (NoSuchBeanException e) {
             // expected
+            assertEquals("a", e.getName());
+            assertTrue(e.getMessage().endsWith("of type: java.lang.String expected type was: class java.lang.Float"));
         }
     }
     

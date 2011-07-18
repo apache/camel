@@ -18,14 +18,12 @@ package org.apache.camel.example.guice.jms;
 
 import java.util.Properties;
 import java.util.Set;
-
 import javax.naming.Context;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.ProvisionException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.impl.DefaultCamelContext;

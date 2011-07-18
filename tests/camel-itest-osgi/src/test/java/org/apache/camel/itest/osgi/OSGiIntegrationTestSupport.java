@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.osgi;
-
+import java.net.URL;
 import org.apache.camel.CamelContext;
 import org.apache.camel.osgi.CamelContextFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -87,13 +87,30 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             artifactId("standard").version(karafVersion).type(type);
     }
     
+    private static URL getResource(String location) {
+        URL url = null;
+        if (Thread.currentThread().getContextClassLoader() != null) {
+            url = Thread.currentThread().getContextClassLoader().getResource(location);
+        }
+        if (url == null) {
+            url = Helper.class.getResource(location);
+        }
+        if (url == null) {
+            throw new RuntimeException("Unable to find resource " + location);
+        }
+        return url;
+    }
+    
     public static Option[] getDefaultCamelKarafOptions() {
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),
-                                         
+            // Set the karaf environment with some customer configuration
+            combine(
+                Helper.getDefaultConfigOptions(
+                    Helper.getDefaultSystemOptions(),
+                    getResource("/org/apache/camel/itest/karaf/config.properties"),
+                    // this is how you set the default log level when using pax logging (logProfile)
+                    Helper.setLogLevel("WARN")),
+                Helper.getDefaultProvisioningOptions()),                             
             // install the spring, http features first
             scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
 
@@ -101,10 +118,10 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             scanFeatures(getCamelKarafFeatureUrl(),                         
                 "camel-core", "camel-spring", "camel-test"),
                                    
-            workingDirectory("target/paxrunner/"),
+            workingDirectory("target/paxrunner/"));
 
-            equinox(),
-            felix());
+            //equinox(),
+            //felix());
         return options;
     }
 

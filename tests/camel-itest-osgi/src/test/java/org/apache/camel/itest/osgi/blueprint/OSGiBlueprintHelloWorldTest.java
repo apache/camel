@@ -77,26 +77,16 @@ public class OSGiBlueprintHelloWorldTest extends OSGiBlueprintTestSupport {
     public static Option[] configure() throws Exception {
 
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-                // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),
+                getDefaultCamelKarafOptions(),
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-13.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, OSGiBlueprintHelloWorldTest.class.getName())
                         .build()).noStart(),
-                        
-                // install the http features first
-                scanFeatures(getKarafFeatureUrl(), "jetty"),
-
+                
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-core", "camel-blueprint", "camel-test"),
-
-                workingDirectory("target/paxrunner/"),
-
-                felix(), equinox());
+                        "camel-blueprint"));
 
         return options;
     }

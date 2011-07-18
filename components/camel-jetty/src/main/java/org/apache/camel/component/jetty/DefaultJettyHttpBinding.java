@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -28,6 +29,7 @@ import org.apache.camel.component.http.HttpHeaderFilterStrategy;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,21 +91,29 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
                                     Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
         Message answer = exchange.getOut();
 
-        answer.setHeaders(in.getHeaders());
         answer.setHeader(Exchange.HTTP_RESPONSE_CODE, responseCode);
 
-        // propagate HTTP response headers
-        // must use entrySet to ensure case of keys is preserved
-        for (Map.Entry<String, String> entry : httpExchange.getHeaders().entrySet()) {
-            String name = entry.getKey();
-            String value = entry.getValue();
-            if (name.toLowerCase().equals("content-type")) {
-                name = Exchange.CONTENT_TYPE;
-            }
-            if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                answer.setHeader(name, value);
+        // must use response fields to get the http headers as
+        // httpExchange.getHeaders() does not work well with multi valued headers
+        Enumeration<String> names = httpExchange.getResponseFields().getFieldNames();
+        while (names.hasMoreElements()) {
+            String name = names.nextElement();
+            Enumeration<String> values = httpExchange.getResponseFields().getValues(name);
+            while (values.hasMoreElements()) {
+                String value = values.nextElement();
+
+                if (name.toLowerCase().equals("content-type")) {
+                    name = Exchange.CONTENT_TYPE;
+                }
+                if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                    HttpHelper.appendHeader(answer.getHeaders(), name, value);
+                }
             }
         }
+
+        // preserve headers from in by copying any non existing headers
+        // to avoid overriding existing headers with old values
+        MessageHelper.copyHeaders(exchange.getIn(), answer, false);
 
         // extract body after headers has been set as we want to ensure content-type from Jetty HttpExchange
         // has been populated first

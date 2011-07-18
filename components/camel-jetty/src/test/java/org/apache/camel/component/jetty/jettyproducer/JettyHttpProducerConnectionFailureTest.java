@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jetty.jettyproducer;
 
-import java.net.ConnectException;
+import java.io.IOException;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,7 +50,7 @@ public class JettyHttpProducerConnectionFailureTest extends BaseJettyTest {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertIsInstanceOf(ConnectException.class, cause.getCause());
+            assertIsInstanceOf(IOException.class, cause.getCause());
         }
 
         assertMockEndpointsSatisfied();

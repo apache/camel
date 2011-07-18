@@ -37,14 +37,11 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 2.2.x
   features:install camel-jaxb
   features:install camel-cxf
   
-  if you want to test the example with blueprint, you should install 
-  features:install camel-blueprint
-
   Note: In this example we use Apache Camel 2.8.0 as the version. You should of course use the
         version number of Camel you are using.
 
   3) Deploy our example
-  osgi:install -s mvn:org.apache.camel/camel-example-cxf-osgi
+  osgi:install -s mvn:org.apache.camel/camel-example-cxf-osgi/2.8.0
   
   4) Verify that your service is available using in the browser the following url. We assume you
   use the default PAX Web configuration which use the port 8181 for http. If you would like to use

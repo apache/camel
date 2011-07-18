@@ -18,6 +18,7 @@ package org.apache.camel.example.etl;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringRouteBuilder;
+
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**

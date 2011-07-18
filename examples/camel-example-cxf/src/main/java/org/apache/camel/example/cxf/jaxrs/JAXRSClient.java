@@ -17,7 +17,6 @@
 package org.apache.camel.example.cxf.jaxrs;
 
 import java.util.Collections;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 

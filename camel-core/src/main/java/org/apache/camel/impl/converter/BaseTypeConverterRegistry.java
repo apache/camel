@@ -383,7 +383,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     /**
      * Loads the core type converters which is mandatory to use Camel
      */
-    protected void loadCoreTypeConverters() throws Exception {
+    public void loadCoreTypeConverters() throws Exception {
         int before = typeMappings.size();
 
         // load all the type converters from camel-core

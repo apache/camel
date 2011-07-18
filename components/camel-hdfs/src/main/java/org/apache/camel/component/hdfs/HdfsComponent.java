@@ -23,18 +23,20 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.hadoop.fs.FsUrlStreamHandlerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HdfsComponent extends DefaultComponent {
 
-    static {
-        URL.setURLStreamHandlerFactory(new FsUrlStreamHandlerFactory());
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(HdfsComponent.class);
 
     public HdfsComponent() {
+        initHdfs();
     }
 
     public HdfsComponent(CamelContext context) {
         super(context);
+        initHdfs();
     }
 
     @SuppressWarnings("unchecked")
@@ -42,6 +44,15 @@ public class HdfsComponent extends DefaultComponent {
         HdfsEndpoint hdfsEndpoint = new HdfsEndpoint(uri, this.getCamelContext());
         setProperties(hdfsEndpoint.getConfig(), parameters);
         return hdfsEndpoint;
+    }
+
+    protected void initHdfs() {
+        try {
+            URL.setURLStreamHandlerFactory(new FsUrlStreamHandlerFactory());
+        } catch (Throwable e) {
+            // ignore as its most likely already set
+            LOG.debug("Cannot set URLStreamHandlerFactory due " + e.getMessage() + ". This exception will be ignored.", e);
+        }
     }
 
 }

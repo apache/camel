@@ -17,6 +17,7 @@
 package org.apache.camel.example.cxf;
 
 import java.util.logging.Logger;
+
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.apache.hello_world_soap_http.types.FaultDetail;

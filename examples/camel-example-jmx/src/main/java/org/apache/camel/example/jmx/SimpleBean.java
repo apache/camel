@@ -26,6 +26,8 @@ import javax.management.NotificationBroadcasterSupport;
  * such as an attribute being changed.
  */
 public class SimpleBean extends NotificationBroadcasterSupport implements ISimpleMXBean {
+
+    private static final long serialVersionUID = 1L;
     private int sequence;
     private int tick;
 

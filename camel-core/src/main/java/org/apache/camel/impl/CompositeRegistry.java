@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
 
 /**
@@ -44,9 +45,18 @@ public class CompositeRegistry implements Registry {
     public <T> T lookup(String name, Class<T> type) {
         T answer = null;
         for (Registry registry : registryList) {
-            answer = registry.lookup(name, type);
-            if (answer != null) {
-                break;
+            try {
+                answer = registry.lookup(name, type);
+                if (answer != null) {
+                    break;
+                }
+            } catch (Throwable e) {
+                // do not double wrap the exception
+                if (e instanceof NoSuchBeanException) {
+                    throw (NoSuchBeanException) e;
+                }
+                throw new NoSuchBeanException(name, "Cannot lookup: " + name + " from registry: " + registry
+                        + " with expected type: " + type + " due: " + e.getMessage(), e);
             }
         }
         return answer;

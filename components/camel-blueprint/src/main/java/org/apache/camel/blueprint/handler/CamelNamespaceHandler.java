@@ -178,7 +178,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         CamelContextFactoryBean ccfb = (CamelContextFactoryBean) value;
         ccfb.setImplicitId(implicitId);
-
+        
         MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
         factory.setId(".camelBlueprint.passThrough." + contextId);
         factory.setObject(new PassThroughCallable<Object>(value));
@@ -404,6 +404,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         e.setRuntimeClass(fact.getObjectType());
         e.setFactoryComponent(ef);
         e.setFactoryMethod("getObject");
+        e.addDependsOn(".camelBlueprint.processor.bean." + contextId);
 
         context.getComponentDefinitionRegistry().registerComponentDefinition(e);
     }

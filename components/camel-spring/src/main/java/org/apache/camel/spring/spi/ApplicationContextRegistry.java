@@ -18,6 +18,7 @@ package org.apache.camel.spring.spi;
 
 import java.util.Map;
 
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -37,13 +38,26 @@ public class ApplicationContextRegistry implements Registry {
     }
 
     public <T> T lookup(String name, Class<T> type) {
+        Object answer;
         try {
-            Object value = applicationContext.getBean(name, type);
-            return type.cast(value);
+            answer = applicationContext.getBean(name, type);
         } catch (NoSuchBeanDefinitionException e) {
             return null;
         } catch (BeanNotOfRequiredTypeException e) {
             return null;
+        }
+
+        // just to be safe
+        if (answer == null) {
+            return null;
+        }
+
+        try {
+            return type.cast(answer);
+        } catch (Throwable e) {
+            String msg = "Found bean: " + name + " in ApplicationContext: " + applicationContext
+                    + " of type: " + answer.getClass().getName() + " expected type was: " + type;
+            throw new NoSuchBeanException(name, msg, e);
         }
     }
 

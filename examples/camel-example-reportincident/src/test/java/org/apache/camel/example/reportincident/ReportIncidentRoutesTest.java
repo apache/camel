@@ -16,7 +16,6 @@
  */
 package org.apache.camel.example.reportincident;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;

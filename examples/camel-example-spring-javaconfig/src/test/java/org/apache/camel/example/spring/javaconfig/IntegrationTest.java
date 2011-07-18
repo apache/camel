@@ -18,10 +18,8 @@ package org.apache.camel.example.spring.javaconfig;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.javaconfig.Main;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

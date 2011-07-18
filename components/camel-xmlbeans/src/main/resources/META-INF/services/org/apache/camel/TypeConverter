@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-org.apache.camel.converter.xmlbeans
+org.apache.camel.converter.xmlbeans.XmlBeansConverter

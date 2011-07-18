@@ -58,4 +58,15 @@ public class StringHelperTest extends TestCase {
         assertEquals("foo", StringHelper.removeQuotes("'foo\""));
     }
 
+    public void testHasUpper() throws Exception {
+        assertEquals(false, StringHelper.hasUpperCase(null));
+        assertEquals(false, StringHelper.hasUpperCase(""));
+        assertEquals(false, StringHelper.hasUpperCase(" "));
+        assertEquals(false, StringHelper.hasUpperCase("com.foo"));
+        assertEquals(false, StringHelper.hasUpperCase("com.foo.123"));
+
+        assertEquals(true, StringHelper.hasUpperCase("com.foo.MyClass"));
+        assertEquals(true, StringHelper.hasUpperCase("com.foo.My"));
+    }
+
 }
