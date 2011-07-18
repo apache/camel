@@ -21,6 +21,8 @@ import org.apache.camel.spring.Main;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Unit test of our routes
  */
