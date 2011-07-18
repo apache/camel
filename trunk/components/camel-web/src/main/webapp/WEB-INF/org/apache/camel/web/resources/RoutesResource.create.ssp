@@ -1,0 +1,41 @@
+<%@ import val it: RoutesResource %>
+
+#{ attributes("title") = "Create New Route"}#
+
+  <script type='text/javascript' src="${uri("/js/dojo/dojo.js")}"></script>
+  <script type='text/javascript' src="${uri("/js/route.js")}"></script>
+
+
+<form id="routeForm" action="${uri("/routes")}" method="post">
+<table>
+  <tr>
+    <td>
+      <h2>Create New Route</h2>
+    </td>
+    <td>
+      <input type="submit" value="Save">&nbsp; as &nbsp;<select
+			id="language" name="language">
+			<option value="Xml" selected>Xml</option>
+		</select>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><textarea id="route" name="route"
+			onchange="dojo.byId('edited').value = true;"
+			style="width: 800px; height: 300px; border: 10px solid #ddd; -moz-border-radius: 10px; -webkit-border-radius: 10px;">
+<route xmlns="http://camel.apache.org/schema/spring">
+  <description>This is an example route.</description>
+  <from uri="seda:Some.Endpoint"/>
+  <to uri="seda:Some.Other.Endpoint"/>
+</route>
+			</textarea>
+    </td>
+  </tr>
+</table>
+
+<div class="error">${it.getError}</div>
+
+</form>
+
+
+

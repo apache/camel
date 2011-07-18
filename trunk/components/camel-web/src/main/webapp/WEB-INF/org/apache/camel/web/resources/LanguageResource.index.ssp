@@ -1,0 +1,15 @@
+<%@ import val it: LanguageResource %>
+
+#{ attributes("title") = it.getId}#
+
+
+<h1>${it.getId}</h1>
+
+<p>
+  Welcome to the ${it.getId} language.
+</p>
+<p>
+  For more information see the <a href="http://camel.apache.org/${it.getId}.html">documentation</a>
+</p>
+
+

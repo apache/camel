@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         version="2.4">
+
+  <description>
+    Apache Camel Web Console
+  </description>
+
+  <display-name>Camel Console</display-name>
+
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <filter>
+    <filter-name>Jersey Filter</filter-name>
+    <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
+    <init-param>
+      <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
+      <param-value>org.apache.camel.web.util.CamelResourceConfig</param-value>
+    </init-param>
+    <init-param>
+      <param-name>com.sun.jersey.config.feature.FilterForwardOn404</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <!--
+    TODO scrap this when we move to latest jersey: 1.4-ea05
+    -->
+    <init-param>
+      <param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>
+      <param-value>/(images|css|js)/.*</param-value>
+    </init-param>
+    <init-param>
+      <param-name>com.sun.jersey.config.feature.ImplicitViewables</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>com.sun.jersey.config.feature.Trace</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>com.sun.jersey.config.feature.Redirect</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
+      <param-name>com.sun.jersey.config.property.packages</param-name>
+      <param-value>org.apache.camel.web:</param-value>
+    </init-param>
+    <init-param>
+      <param-name>com.sun.jersey.config.property.WadlResourceUri</param-name>
+      <param-value>/api</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>Jersey Filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <servlet>
+    <servlet-name>TemplateEngineServlet</servlet-name>
+    <servlet-class>org.fusesource.scalate.servlet.TemplateEngineServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>TemplateEngineServlet</servlet-name>
+    <url-pattern>*.mustache</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>TemplateEngineServlet</servlet-name>
+    <url-pattern>*.scaml</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>TemplateEngineServlet</servlet-name>
+    <url-pattern>*.ssp</url-pattern>
+  </servlet-mapping>
+
+  <error-page>
+    <error-code>500</error-code>
+    <location>/WEB-INF/scalate/errors/500.scaml</location>
+  </error-page>
+</web-app>

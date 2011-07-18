@@ -1,0 +1,201 @@
+.dojoxGrid {
+	position: relative;
+	background-color: #EBEADB;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	-moz-outline-style: none;
+	outline: none;
+	overflow: hidden;
+	height: 0;
+}
+.dojoxGrid table {
+	padding: 0;
+}
+.dojoxGrid td {
+	-moz-outline: none;
+}
+.dojoxGrid-master-header {
+	position: relative;
+}
+.dojoxGrid-master-view  {
+	position: relative;
+}
+.dojoxGrid-view {
+	position: absolute;
+	overflow: hidden;
+}
+.dojoxGrid-header {
+	position: absolute;
+	overflow: hidden;
+}
+.dojoxGrid-header {
+	background-color: #E8E1CF;
+}
+.dojoxGrid-header table {
+	text-align: center;
+}
+.dojoxGrid-header .dojoxGrid-cell-content {
+	text-align: center;
+}
+.dojoxGrid-header .dojoxGrid-cell { 
+	border: 1px solid;
+	border-color: #F6F4EB #ACA899 #ACA899 #F6F4EB;
+	background: url(../compat/_grid/images/grid_dx_gradient.gif) #E8E1CF top repeat-x;
+	padding-bottom: 2px;
+}
+.dojoxGrid-header .dojoxGrid-cell-over {
+	background-image: none;
+	background-color: white;
+	border-bottom-color: #FEBE47;
+	margin-bottom: 0;
+	padding-bottom: 0;
+	border-bottom-width: 3px;
+}
+.dojoxGrid-sort-down {
+	background: url(../compat/_grid/images/grid_sort_down.gif) left no-repeat; 
+	padding-left:16px;
+	margin-left:4px;
+}
+.dojoxGrid-sort-up {
+	background: url(../compat/_grid/images/grid_sort_up.gif) left no-repeat; 
+	padding-left:16px;
+	margin-left:4px;
+}
+.dojoxGrid-scrollbox {
+	position: relative;
+	overflow: scroll;
+	background-color: white;
+	width: 100%;
+}
+.dojoxGrid-content {
+	position: relative;
+	overflow: hidden;
+	 -moz-outline-style: none;
+	outline: none;
+}
+.dojoxGrid-rowbar { 
+	border: 1px solid;
+	border-color: #F6F4EB #ACA899 #ACA899 #F6F4EB;
+	border-top: none;
+	background: url(../compat/_grid/images/grid_dx_gradient.gif) #E8E1CF top repeat-x;
+}
+.dojoxGrid-rowbar-inner {
+	border-top: 1px solid #F6F4EB;
+}
+.dojoxGrid-rowbar-over {
+	background-image: none;
+	background-color: white;
+	border-top-color: #FEBE47;
+	border-bottom-color: #FEBE47;
+}
+.dojoxGrid-rowbar-selected {
+	background-color: #D9E8F9;
+	background-image: none;
+	
+	background-position: center;
+	background-repeat: no-repeat;
+}
+.dojoxGrid-row {
+	position: relative;
+	width: 9000em;
+}
+.dojoxGrid-row {
+	
+	border: 1px solid #E8E4D8;
+	border-color: #F8F7F1;
+	
+	border-left: none;
+	border-right: none;
+	background-color: white;
+	border-top: none;
+}
+.dojoxGrid-row-over {
+	border-top-color: #FEBE47;
+	border-bottom-color: #FEBE47;
+	
+	
+	
+}
+.dojoxGrid-row-odd {
+	background-color: #FFFDF3;
+	
+}
+.dojoxGrid-row-selected {
+	background-color: #D9E8F9;
+}
+.dojoxGrid-row-table {
+	table-layout: fixed;
+	width: 0;
+}
+.dojoxGrid-invisible {
+	visibility: hidden;
+}		
+.Xdojo-ie .dojoxGrid-invisible {
+	display: none;
+}		
+.dojoxGrid-invisible td, .dojoxGrid-header .dojoxGrid-invisible td {
+	border-top-width: 0;
+	border-bottom-width: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	height: 0;
+	overflow: hidden;
+}
+.dojoxGrid-cell {
+	border: 1px solid;
+	border-color: #EBEADB;
+	border-right-color: #D5CDB5;
+	padding: 3px 3px 3px 3px;
+	text-align: left;
+	overflow: hidden;
+}
+.dojoxGrid-cell-focus {
+	border: 1px dashed blue;
+}
+.dojoxGrid-cell-over {
+	border: 1px dotted #FEBE47;
+}
+.dojoxGrid-cell-focus.dojoxGrid-cell-over {
+	border: 1px dotted green;
+}
+.dojoxGrid-cell-clip {
+	width: 100%;
+	overflow: hidden;
+	white-space:nowrap;
+	text-overflow: ellipsis;
+}
+.dojoxGrid-row-editing td {
+	background-color: #F4FFF4;
+}
+.dojoxGrid-row-inserting td {
+	background-color: #F4FFF4;
+}
+.dojoxGrid-row-inflight td {
+	background-color: #F2F7B7;
+}
+.dojoxGrid-row-error td {
+	background-color: #F8B8B6;
+}
+.dojoxGrid-input, .dojoxGrid-select, .dojoxGrid-textarea {
+	margin: 0;
+	padding: 0;
+	border-style: none;
+	width: 100%;
+	font-size: 100%;
+	font-family: inherit;
+}
+.dojoxGrid-hidden-focus {
+	position: absolute;
+	left: -1000px;
+	top: -1000px;
+	height: 0px, width: 0px;
+}
+.gridArrowButtonChar {
+	display:none !important;
+}
+.dijit_a11y .gridArrowButtonChar {
+	display:inline !important;
+}
+.dijit_a11y .dojoxGrid-sort-down, .dijit_a11y .dojoxGrid-sort-up {
+	margin-left: 0;
+	padding-left: 0;
+}

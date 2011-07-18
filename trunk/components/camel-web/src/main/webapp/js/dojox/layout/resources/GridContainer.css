@@ -1,0 +1,73 @@
+
+.gridContainer * {
+	zoom:1;
+}
+.oafDndHandle {
+	cursor: move;
+}
+.gridContainer {
+	display:block;	
+	position: relative;
+	background:#FFF;	
+	margin:0px;	
+	padding:10px;
+}
+	
+.gridContainer .dojoDndAvatarHeader	{
+	display:none;
+}
+.gridContainerTable {
+	width:100%;	
+	border:1px solid #F60;
+	height: 100%;
+}
+.gridContainerPopup {
+	position: absolute;
+	top:40%;
+	left:40%;
+	width: 200px;
+	height: auto;	
+	border: 1px solid #F60;
+	background-color: #FFF;
+	text-align: center;
+	padding: 10px;
+}
+.gridContainerTable tbody.gridContainerBody, .gridContainerTable tr.gridContainerRow {
+	height: 100%;
+}
+.gridContainerZone {
+	vertical-align: top;	
+	padding:12px;	
+	background-color: #FDFDFD;	 
+	height: 100%;
+}
+.gridContainerZone .serviceWidgetTitleText h2 {
+	position: relative;
+}
+.gridContainerGrip {
+	cursor:default;
+	position:absolute;	
+	width:5px;	
+	padding: 0px;	
+	margin:0px;
+	background-image: url(images/pixel.gif);
+	background-color: #ededed;
+}
+.tundra .gridContainerGrip {
+	border-left:1px solid #a7a7a7;
+	border-right:1px solid #a7a7a7;
+}
+	
+.gridContainerGripShow, .gridContainerGrip:focus {
+	cursor:e-resize;	
+	position:absolute;	
+	width:5px;	
+	padding:0px;	
+	margin:0px;
+	background-color: #a7a7a7;	
+	background-image: url(images/grip_bg.gif);
+}
+.tundra .gridContainerGripShow, .tundra .gridContainerGrid:focus {
+	border-left:1px solid #aeaeae;
+	border-right:1px solid #aeaeae;
+}
