@@ -12,7 +12,7 @@ To run the example deploy it in Apache Tomcat by copying the .war to the
 deploy folder of Apache Tomcat.
 
 The webservice is located at (use correct version number)
-  http://localhost:8080/camel-example-cxf-tomcat-2.5/webservices/incident?wsdl
+  http://localhost:8080/camel-example-cxf-tomcat-2.8.0/webservices/incident?wsdl
 
 This example is documented at
   http://camel.apache.org/cxf-tomcat-example.html
