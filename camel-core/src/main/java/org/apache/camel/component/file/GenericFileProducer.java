@@ -281,10 +281,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         // flatten name
         if (name != null && endpoint.isFlatten()) {
-            int pos = name.lastIndexOf(getFileSeparator());
-            if (pos == -1) {
-                pos = name.lastIndexOf('/');
-            }
+            // check for both windows and unix separators
+            int pos = Math.max(name.lastIndexOf("/"), name.lastIndexOf("\\"));
             if (pos != -1) {
                 name = name.substring(pos + 1);
             }
@@ -292,11 +290,15 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         // compute path by adding endpoint starting directory
         String endpointPath = endpoint.getConfiguration().getDirectory();
-        // Its a directory so we should use it as a base path for the filename
-        // If the path isn't empty, we need to add a trailing / if it isn't already there
         String baseDir = "";
         if (endpointPath.length() > 0) {
-            baseDir = endpointPath + (endpointPath.endsWith(getFileSeparator()) ? "" : getFileSeparator());
+            // Its a directory so we should use it as a base path for the filename
+            // If the path isn't empty, we need to add a trailing / if it isn't already there
+            baseDir = endpointPath;
+            boolean trailingSlash = endpointPath.endsWith("/") || endpointPath.endsWith("\\");
+            if (!trailingSlash) {
+                baseDir += getFileSeparator();
+            }
         }
         if (name != null) {
             answer = baseDir + name;
@@ -314,8 +316,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     public String createTempFileName(Exchange exchange, String fileName) {
-        // must normalize path to cater for Windows and other OS
-        fileName = normalizePath(fileName);
+        String answer = fileName;
 
         String tempName;
         if (exchange.getIn().getHeader(Exchange.FILE_NAME) == null) {
@@ -328,15 +329,24 @@ public class GenericFileProducer<T> extends DefaultProducer {
             tempName = endpoint.getTempFileName().evaluate(exchange, String.class);
         }
 
-        int path = fileName.lastIndexOf(getFileSeparator());
-        if (path == -1) {
-            // no path
-            return tempName;
+        // check for both windows and unix separators
+        int pos = Math.max(answer.lastIndexOf("/"), answer.lastIndexOf("\\"));
+        if (pos == -1) {
+            // no path so use temp name as calculated
+            answer = tempName;
         } else {
-            StringBuilder sb = new StringBuilder(fileName.substring(0, path + 1));
+            // path should be prefixed before the temp name
+            StringBuilder sb = new StringBuilder(answer.substring(0, pos + 1));
             sb.append(tempName);
-            return sb.toString();
+            answer = sb.toString();
         }
+
+        if (endpoint.getConfiguration().needToNormalize()) {
+            // must normalize path to cater for Windows and other OS
+            answer = normalizePath(answer);
+        }
+
+        return answer;
     }
 
     @Override
