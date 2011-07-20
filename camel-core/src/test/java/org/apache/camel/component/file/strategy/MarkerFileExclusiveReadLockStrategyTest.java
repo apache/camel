@@ -59,7 +59,8 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
         content = context.getTypeConverter().convertTo(String.class, new File("target/marker/out/file2.dat").getAbsoluteFile());
         lines = content.split("\n");
         for (int i = 0; i < 20; i++) {
-            assertEquals("Line " + i, lines[i]);
+            // there may be windows line terminators
+            assertTrue(lines[i].startsWith("Line " + i));
         }
 
         waitUntilCompleted();
