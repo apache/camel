@@ -20,19 +20,19 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <camel:route>
-            <camel:from uri="timer://myTimer?fixedRate=true&amp;period=2000"/>
-            <camel:bean ref="myTransform" method="transform"/>
-            <camel:to uri="log:ExampleRouter"/>
-        </camel:route>
-    </camelContext>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <from uri="timer://myTimer?fixedRate=true&amp;period=2000"/>
+      <bean ref="myTransform" method="transform"/>
+      <to uri="log:ExampleRouter"/>
+    </route>
+  </camelContext>
 
-    <bean id="myTransform" class="org.apache.camel.example.osgi.MyTransform">
-        <property name="prefix" value="SpringDSL"/>
-    </bean>
+  <bean id="myTransform" class="org.apache.camel.example.osgi.MyTransform">
+    <property name="prefix" value="SpringDSL"/>
+  </bean>
 
 </beans>

@@ -30,8 +30,7 @@ If the dot executable is in your path, .svg images will be generated for
 any .dot files under
   target/site/cameldoc
 
-You can see the routing rules by looking at the java code in the
-src/main/java directory and the Spring XML configuration file in
+You can see the routing rules by looking the Spring XML configuration file in
 src/main/resources/META-INF/spring
 
 If you hit any problems please let us know on the Camel Forums

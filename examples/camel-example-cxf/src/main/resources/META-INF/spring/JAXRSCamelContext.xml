@@ -23,13 +23,13 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <import resource="classpath:META-INF/cxf/cxf.xml" />
-  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
-  <import resource="classpath:META-INF/cxf/cxf-extension-jms.xml" />
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-jms.xml"/>
 
   <camel:camelContext id="cxfrs_context">
-    <camel:package>org.apache.camel.example.cxf.jaxrs</camel:package>    
+    <camel:package>org.apache.camel.example.cxf.jaxrs</camel:package>
   </camel:camelContext>
 
 </beans>

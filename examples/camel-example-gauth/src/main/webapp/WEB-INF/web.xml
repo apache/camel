@@ -17,40 +17,39 @@
   limitations under the License.
 -->
 
-<web-app 
-xmlns="http://java.sun.com/xml/ns/javaee"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-xsi:schemaLocation="
-http://java.sun.com/xml/ns/javaee
-http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
-    
-    <servlet>
-        <servlet-name>CamelServlet</servlet-name>
-        <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>context-camel.xml</param-value>
-        </init-param>
-    </servlet>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="
+           http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
 
-    <servlet>
-        <servlet-name>oauth</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>/WEB-INF/classes/context-web.xml</param-value>
-        </init-param>       
-    </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>oauth</servlet-name>
-        <url-pattern>/oauth/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>CamelServlet</servlet-name>
-        <url-pattern>/camel/*</url-pattern>
-    </servlet-mapping>
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>context-camel.xml</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet>
+    <servlet-name>oauth</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/classes/context-web.xml</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>oauth</servlet-name>
+    <url-pattern>/oauth/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CamelServlet</servlet-name>
+    <url-pattern>/camel/*</url-pattern>
+  </servlet-mapping>
 
 </web-app>
 

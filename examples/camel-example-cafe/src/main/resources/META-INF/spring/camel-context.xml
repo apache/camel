@@ -21,10 +21,10 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
- 
+
   <import resource="classpath:META-INF/camel-routes.xml"/>
-  
+
   <!-- The customer beans which send the cafe order every 60 seconds -->
   <bean id="customer" class="org.apache.camel.example.cafe.Customer"/>
-  
+
 </beans>

@@ -21,11 +21,11 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-  
+
   <bean id="aggregatorStrategy" class="org.apache.camel.example.cafe.stuff.CafeAggregationStrategy"/>
   <bean id="orderSplitter" class="org.apache.camel.example.cafe.stuff.OrderSplitter"/>
   <bean id="drinkRouter" class="org.apache.camel.example.cafe.stuff.DrinkRouter"/>
   <bean id="waiter" class="org.apache.camel.example.cafe.stuff.Waiter"/>
   <bean id="barista" class="org.apache.camel.example.cafe.stuff.Barista"/>
-  
+
 </beans>

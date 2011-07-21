@@ -20,27 +20,26 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <!-- bean implementing logic -->
-    <bean id="helloServiceBean" class="org.apache.camel.example.osgi.HelloServiceImpl"/>
+  <!-- bean implementing logic -->
+  <bean id="helloServiceBean" class="org.apache.camel.example.osgi.HelloServiceImpl"/>
 
-    <!-- setup RMI server on port 37541 -->
-    <bean id="rmiServer" class="java.rmi.registry.LocateRegistry" factory-method="createRegistry">
-        <constructor-arg index="0" value="37541"/>
-    </bean>
+  <!-- setup RMI server on port 37541 -->
+  <bean id="rmiServer" class="java.rmi.registry.LocateRegistry" factory-method="createRegistry">
+    <constructor-arg index="0" value="37541"/>
+  </bean>
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring" depends-on="rmiServer">
+  <camelContext xmlns="http://camel.apache.org/schema/spring" depends-on="rmiServer">
 
-        <!-- expose a RMI service as a Camel route -->
-        <camel:route>
-            <from uri="rmi://localhost:37541/helloServiceBean?remoteInterfaces=org.apache.camel.example.osgi.HelloService"/>
-            <to uri="log:Incoming request on RMI"/>
-            <to uri="bean:helloServiceBean"/>
-        </camel:route>
+    <!-- expose a RMI service as a Camel route -->
+    <camel:route>
+      <from uri="rmi://localhost:37541/helloServiceBean?remoteInterfaces=org.apache.camel.example.osgi.HelloService"/>
+      <to uri="log:Incoming request on RMI"/>
+      <to uri="bean:helloServiceBean"/>
+    </camel:route>
 
-    </camelContext>
-
+  </camelContext>
 
 </beans>

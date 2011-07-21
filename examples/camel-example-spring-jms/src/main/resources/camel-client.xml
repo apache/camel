@@ -21,21 +21,21 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-<!-- END SNIPPET: e1 -->
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+  <!-- END SNIPPET: e1 -->
 
-    <!-- START SNIPPET: e2 -->
-    <camel:camelContext id="camel-client">
-    	<camel:template id="camelTemplate"/>
-    </camel:camelContext>
-    <!-- END SNIPPET: e2 -->
+  <!-- START SNIPPET: e2 -->
+  <camel:camelContext id="camel-client">
+    <camel:template id="camelTemplate"/>
+  </camel:camelContext>
+  <!-- END SNIPPET: e2 -->
 
-    <!-- START SNIPPET: e3 -->
-    <!-- Camel JMSProducer to be able to send messages to a remote Active MQ server -->
-    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="brokerURL" value="tcp://localhost:61610"/>
-    </bean>
-    <!-- END SNIPPET: e3 -->
+  <!-- START SNIPPET: e3 -->
+  <!-- Camel JMSProducer to be able to send messages to a remote Active MQ server -->
+  <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <property name="brokerURL" value="tcp://localhost:61610"/>
+  </bean>
+  <!-- END SNIPPET: e3 -->
 
 </beans>

@@ -21,46 +21,53 @@
        xmlns:camel="http://camel.apache.org/schema/spring"
        xmlns:jaxws="http://cxf.apache.org/jaxws"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
- 
- <import resource="classpath:META-INF/cxf/cxf.xml"/>
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+         http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
- <jaxws:endpoint id="creditAgent"
-    		implementor="org.apache.camel.loanbroker.webservice.version.credit.CreditAgency"
-    		address="http://localhost:9006/creditAgency"/>
-    		
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+
+  <jaxws:endpoint id="creditAgent"
+                  implementor="org.apache.camel.loanbroker.webservice.version.credit.CreditAgency"
+                  address="http://localhost:9006/creditAgency"/>
+
   <bean id="bank1" class="org.apache.camel.loanbroker.webservice.version.bank.Bank">
-     <constructor-arg index="0"><value>bank1</value></constructor-arg>     
+    <constructor-arg index="0">
+      <value>bank1</value>
+    </constructor-arg>
   </bean>
-  
-  <bean id="bank2" class="org.apache.camel.loanbroker.webservice.version.bank.Bank">
- 	 <constructor-arg index="0"><value>bank2</value></constructor-arg>
-  </bean>
-  
-  <bean id="bank3" class="org.apache.camel.loanbroker.webservice.version.bank.Bank">
-   	<constructor-arg index="0"><value>bank3</value></constructor-arg>
-  </bean>
-  
-  
-  <jaxws:endpoint id="bankService1"
-    		implementor="#bank1"
-    		address="http://localhost:9001/bank1"/>
-   
-  <jaxws:endpoint id="bankService2"
-    		implementor="#bank2"
-    		address="http://localhost:9002/bank2"/>
-    		
-  <jaxws:endpoint id="bankService3"
-    		implementor="#bank3"
-    		address="http://localhost:9003/bank3"/>
 
+  <bean id="bank2" class="org.apache.camel.loanbroker.webservice.version.bank.Bank">
+    <constructor-arg index="0">
+      <value>bank2</value>
+    </constructor-arg>
+  </bean>
+
+  <bean id="bank3" class="org.apache.camel.loanbroker.webservice.version.bank.Bank">
+    <constructor-arg index="0">
+      <value>bank3</value>
+    </constructor-arg>
+  </bean>
+
+
+  <jaxws:endpoint id="bankService1"
+                  implementor="#bank1"
+                  address="http://localhost:9001/bank1"/>
+
+  <jaxws:endpoint id="bankService2"
+                  implementor="#bank2"
+                  address="http://localhost:9002/bank2"/>
+
+  <jaxws:endpoint id="bankService3"
+                  implementor="#bank3"
+                  address="http://localhost:9003/bank3"/>
+
+  <!-- Camel -->
   <camel:camelContext id="webService">
-     <camel:routeBuilder ref="webServiceLoanBroker"/>
+    <!-- refer to the route to use -->
+    <camel:routeBuilder ref="webServiceLoanBroker"/>
   </camel:camelContext>
-  
+
   <bean id="webServiceLoanBroker" class="org.apache.camel.loanbroker.webservice.version.LoanBroker"/>
-   
 
 </beans>

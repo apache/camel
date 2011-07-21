@@ -20,24 +20,23 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camel:camelContext id="camel-client-2">
-    	<camel:template id="camelTemplate"/>
-    	<!-- START SNIPPET: e1 -->
-        <!-- Camel proxy for a given service, in this case the JMS queue 
-             In Camel 2.0 , the proxy should be defined in camelContext. -->
-          <camel:proxy
-            id="multiplierProxy"
-            serviceInterface="org.apache.camel.example.server.Multiplier"
-            serviceUrl="jms:queue:numbers"/>
-        <!-- END SNIPPET: e1 -->
-    </camel:camelContext>
-    
-    <!-- Camel JMSProducer to be able to send messages to a remote Active MQ server -->
-    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="brokerURL" value="tcp://localhost:61610"/>
-    </bean>
-    
+  <camel:camelContext id="camel-client-2">
+    <camel:template id="camelTemplate"/>
+    <!-- START SNIPPET: e1 -->
+    <!-- Camel proxy for a given service, in this case the JMS queue -->
+    <camel:proxy
+      id="multiplierProxy"
+      serviceInterface="org.apache.camel.example.server.Multiplier"
+      serviceUrl="jms:queue:numbers"/>
+    <!-- END SNIPPET: e1 -->
+  </camel:camelContext>
+
+  <!-- Camel JMSProducer to be able to send messages to a remote Active MQ server -->
+  <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <property name="brokerURL" value="tcp://localhost:61610"/>
+  </bean>
+
 </beans>

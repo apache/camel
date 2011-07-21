@@ -42,9 +42,6 @@ public class MyRouteConfig extends SingleRouteCamelConfiguration implements Init
     
     /**
      * Allow this route to be run as an application
-     *
-     * @param args
-     * @throws Exception 
      */
     public static void main(String[] args) throws Exception {
         new Main().run(args);
@@ -57,8 +54,7 @@ public class MyRouteConfig extends SingleRouteCamelConfiguration implements Init
     public void setBundleContext(BundleContext bundleContext) { 
         this.bundleContext = bundleContext;
     }
-    
-    
+
     /**
      * Returns the CamelContext which support OSGi
      */
@@ -71,28 +67,33 @@ public class MyRouteConfig extends SingleRouteCamelConfiguration implements Init
     }
     
     @Override
-    // setup the ActiveMQ component and register it into the camel context
     protected void setupCamelContext(CamelContext camelContext) throws Exception {
-        JmsComponent answer = new JmsComponent();
+        // setup the ActiveMQ component
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
         connectionFactory.setBrokerURL("vm://localhost.spring.javaconfig?marshal=false&broker.persistent=false&broker.useJmx=false");
-        answer.setConnectionFactory(connectionFactory);        
-        camelContext.addComponent("jms", answer);        
+
+        // and register it into the CamelContext
+        JmsComponent answer = new JmsComponent();
+        answer.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("jms", answer);
     }
 
     
     public static class SomeBean {
+
         public void someMethod(String body) {
             System.out.println("Received: " + body);
         }
+
     }
 
     @Bean
     @Override
-    // you can confige the route rule with Java DSL here
     public RouteBuilder route() {
         return new RouteBuilder() {
             public void configure() {
+                // you can configure the route rule with Java DSL here
+
                 // populate the message queue with some messages
                 from("file:src/data?noop=true").
                         to("jms:test.MyQueue");
@@ -110,6 +111,7 @@ public class MyRouteConfig extends SingleRouteCamelConfiguration implements Init
     public void afterPropertiesSet() throws Exception {
         // just to make SpringDM happy do nothing here
     }
+
 }
 //END SNIPPET: RouteConfig
 

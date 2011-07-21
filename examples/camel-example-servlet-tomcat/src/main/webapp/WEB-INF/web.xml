@@ -18,34 +18,34 @@
 
 <!-- START SNIPPET: e1 -->
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-	<display-name>My Web Application</display-name>
+  <display-name>My Web Application</display-name>
 
-	<!-- location of spring xml files -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-        <param-value>classpath:camel-config.xml</param-value>
-	</context-param>
+  <!-- location of spring xml files -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:camel-config.xml</param-value>
+  </context-param>
 
-	<!-- the listener that kick-starts Spring -->
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+  <!-- the listener that kick-starts Spring -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
 
-	<!-- Camel servlet -->
-	<servlet>
-		<servlet-name>CamelServlet</servlet-name>
-		<servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-	</servlet>
+  <!-- Camel servlet -->
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
 
-	<!-- Camel servlet mapping -->
-	<servlet-mapping>
-		<servlet-name>CamelServlet</servlet-name>
-		<url-pattern>/camel/*</url-pattern>
-	</servlet-mapping>
+  <!-- Camel servlet mapping -->
+  <servlet-mapping>
+    <servlet-name>CamelServlet</servlet-name>
+    <url-pattern>/camel/*</url-pattern>
+  </servlet-mapping>
 
 </web-app>
-<!-- END SNIPPET: e1 -->
+  <!-- END SNIPPET: e1 -->

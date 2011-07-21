@@ -16,123 +16,122 @@
     limitations under the License.
 -->
 
-<!-- Configures the Camel Context-->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <!-- START SNIPPET: e3 -->
-        <endpoint id="traced" uri="jpa://org.apache.camel.processor.interceptor.JpaTraceEventMessage?persistenceUnit=tracer"/>
-        <!-- END SNIPPET: e3 -->
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <!-- START SNIPPET: e3 -->
+    <endpoint id="traced" uri="jpa://org.apache.camel.processor.interceptor.JpaTraceEventMessage?persistenceUnit=tracer"/>
+    <!-- END SNIPPET: e3 -->
 
-        <!-- START SNIPPET: e4 -->
-        <route>
-            <!-- in stream to allow you to enter some text in the console -->
-            <from uri="stream:in?initialPromptDelay=4000&amp;promptDelay=2000&amp;promptMessage=Enter some words:"/>
+    <!-- START SNIPPET: e4 -->
+    <route>
+      <!-- in stream to allow you to enter some text in the console -->
+      <from uri="stream:in?initialPromptDelay=4000&amp;promptDelay=2000&amp;promptMessage=Enter some words:"/>
 
-            <!-- split the text using parallel execution -->
-            <split parallelProcessing="true">
-                <!-- use methodCall expression to split the words, using a java bean to do it -->
-                <method bean="quoteService" method="splitWords"/>
+      <!-- split the text using parallel execution -->
+      <split parallelProcessing="true">
+        <!-- use methodCall expression to split the words, using a java bean to do it -->
+        <method bean="quoteService" method="splitWords"/>
 
-                <!-- for each split message invoke the quote server to get a quote of the word -->
-                <to uri="bean:quoteService?method=quote"/>
+        <!-- for each split message invoke the quote server to get a quote of the word -->
+        <to uri="bean:quoteService?method=quote"/>
 
-                <!-- now we need to find the best quote, so we aggregate all the splitted words
-                     we use our own strategy how to aggregate -->
-                <aggregate strategyRef="myAggregateStrategy">
-                    <!-- correlate everything using constant true, as they are all from the same source -->
-                    <correlationExpression>
-                        <constant>true</constant>
-                    </correlationExpression>
-                    <!-- complete after 1 sec on inactivity -->
-                    <completionTimeout>
-                        <constant>1000</constant>
-                    </completionTimeout>
-                    <!-- send the result to stream out so we can see the response in the console -->
-                    <to uri="stream:out"/>
-                </aggregate>
-            </split>
-        </route>
-        <!-- END SNIPPET: e4 -->
+        <!-- now we need to find the best quote, so we aggregate all the splitted words
+             we use our own strategy how to aggregate -->
+        <aggregate strategyRef="myAggregateStrategy">
+          <!-- correlate everything using constant true, as they are all from the same source -->
+          <correlationExpression>
+            <constant>true</constant>
+          </correlationExpression>
+          <!-- complete after 1 sec on inactivity -->
+          <completionTimeout>
+            <constant>1000</constant>
+          </completionTimeout>
+          <!-- send the result to stream out so we can see the response in the console -->
+          <to uri="stream:out"/>
+        </aggregate>
+      </split>
+    </route>
+    <!-- END SNIPPET: e4 -->
 
-    </camelContext>
+  </camelContext>
 
-    <!-- this is our aggregation strategy where we find the best quote -->
-    <bean id="myAggregateStrategy" class="org.apache.camel.example.tracer.QuoteAggregator">
-        <property name="coolWords">
-            <list value-type="java.lang.String">
-                <value>whiskey</value>
-                <value>beer</value>
-                <value>Camel</value>
-                <value>cool</value>
-                <value>great</value>
-            </list>
-        </property>
-    </bean>
+  <!-- this is our aggregation strategy where we find the best quote -->
+  <bean id="myAggregateStrategy" class="org.apache.camel.example.tracer.QuoteAggregator">
+    <property name="coolWords">
+      <list value-type="java.lang.String">
+        <value>whiskey</value>
+        <value>beer</value>
+        <value>Camel</value>
+        <value>cool</value>
+        <value>great</value>
+      </list>
+    </property>
+  </bean>
 
-    <!-- our quote server with some quotes to start with -->
-    <bean id="quoteService" class="org.apache.camel.example.tracer.QuoteService">
-        <property name="quotes">
-            <list value-type="java.lang.String">
-                <value>Camel is cool</value>
-                <value>We like beer</value>
-                <value>Have a great day</value>
-                <value>Whiskey in the jar</value>
-                <value>The day that newer comes</value>
-                <value>What a cold day</value>
-            </list>
-        </property>
-    </bean>
+  <!-- our quote server with some quotes to start with -->
+  <bean id="quoteService" class="org.apache.camel.example.tracer.QuoteService">
+    <property name="quotes">
+      <list value-type="java.lang.String">
+        <value>Camel is cool</value>
+        <value>We like beer</value>
+        <value>Have a great day</value>
+        <value>Whiskey in the jar</value>
+        <value>The day that newer comes</value>
+        <value>What a cold day</value>
+      </list>
+    </property>
+  </bean>
 
-    <!-- START SNIPPET: e1 -->
-    <!-- use camel jpa trace so we can see all the traced exchanges in a database -->
-    <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
-        <!-- turn on jpa tracing, otherwise the TraceEventMessage is a non JPA Entity class -->
-        <property name="useJpa" value="true"/>
-        <!-- the destination to send the traced messages -->
-        <property name="destination" ref="traced"/>
-        <!-- we turn ordinary trace logging off so we only see the traced messages in the database,
-             but you can have both if you like -->
-        <property name="logLevel" value="OFF"/>
-    </bean>
-    <!-- END SNIPPET: e1 -->
+  <!-- START SNIPPET: e1 -->
+  <!-- use camel jpa trace so we can see all the traced exchanges in a database -->
+  <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
+    <!-- turn on jpa tracing, otherwise the TraceEventMessage is a non JPA Entity class -->
+    <property name="useJpa" value="true"/>
+    <!-- the destination to send the traced messages -->
+    <property name="destination" ref="traced"/>
+    <!-- we turn ordinary trace logging off so we only see the traced messages in the database,
+         but you can have both if you like -->
+    <property name="logLevel" value="OFF"/>
+  </bean>
+  <!-- END SNIPPET: e1 -->
 
-    <!-- START SNIPPET: e2 -->
-    <!-- this is ordinary JPA spring configuration -->
-    <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
-        <property name="transactionManager">
-            <bean class="org.springframework.orm.jpa.JpaTransactionManager">
-                <property name="entityManagerFactory" ref="entityManagerFactory"/>
-            </bean>
-        </property>
-    </bean>
-
-    <!-- this is ordinary JPA spring configuration -->
-    <bean id="jpaTemplate" class="org.springframework.orm.jpa.JpaTemplate">
+  <!-- START SNIPPET: e2 -->
+  <!-- this is ordinary JPA spring configuration -->
+  <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+    <property name="transactionManager">
+      <bean class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
+      </bean>
+    </property>
+  </bean>
 
-    <!-- this is ordinary JPA spring configuration -->
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-        <!-- we have named our presistence unit tracer in the META-INF/persistence.xml file -->
-        <property name="persistenceUnitName" value="tracer"/>
-    </bean>
-    <!-- END SNIPPET: e2 -->
+  <!-- this is ordinary JPA spring configuration -->
+  <bean id="jpaTemplate" class="org.springframework.orm.jpa.JpaTemplate">
+    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+  </bean>
 
-    <!-- let's show a simple UI to browse the database -->
-    <bean id="databaseExplorer" class="org.apache.camel.spring.util.MainRunner" lazy-init="false">
-        <property name="main" value="org.hsqldb.util.DatabaseManagerSwing"/>
-        <property name="args">
-            <list>
-                <value>--url</value>
-                <value>jdbc:hsqldb:mem:camel_tracer</value>
-            </list>
-        </property>
-        <property name="delay" value="2000"/>
-    </bean>
+  <!-- this is ordinary JPA spring configuration -->
+  <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+    <!-- we have named our presistence unit tracer in the META-INF/persistence.xml file -->
+    <property name="persistenceUnitName" value="tracer"/>
+  </bean>
+  <!-- END SNIPPET: e2 -->
+
+  <!-- let's show a simple UI to browse the database -->
+  <bean id="databaseExplorer" class="org.apache.camel.spring.util.MainRunner" lazy-init="false">
+    <property name="main" value="org.hsqldb.util.DatabaseManagerSwing"/>
+    <property name="args">
+      <list>
+        <value>--url</value>
+        <value>jdbc:hsqldb:mem:camel_tracer</value>
+      </list>
+    </property>
+    <property name="delay" value="2000"/>
+  </bean>
+
 </beans>

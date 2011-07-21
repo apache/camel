@@ -46,7 +46,7 @@ public final class CamelJmsToFileExample {
         // Set up the ActiveMQ JMS Components
         // START SNIPPET: e2
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        // Note we can explicity name the component
+        // Note we can explicit name the component
         context.addComponent("test-jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
         // END SNIPPET: e2
         // Add some configuration by hand ...

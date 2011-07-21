@@ -16,21 +16,20 @@
     limitations under the License.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:spring-security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-			http://www.springframework.org/schema/beans/spring-beans.xsd
-			http://www.springframework.org/schema/security
-			http://www.springframework.org/schema/security/spring-security.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring-security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+			   http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <!--  set up the user configuration here -->
-    <spring-security:authentication-manager alias="authenticationManager">
-		<spring-security:authentication-provider user-service-ref="userDetailsService"/>
-    </spring-security:authentication-manager>
-	
-	<spring-security:user-service id="userDetailsService">
-		<spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
-		<spring-security:user name="bob" password="bobspassword" authorities="ROLE_USER"/>
-	</spring-security:user-service>
+  <!--  set up the user configuration here -->
+  <spring-security:authentication-manager alias="authenticationManager">
+    <spring-security:authentication-provider user-service-ref="userDetailsService"/>
+  </spring-security:authentication-manager>
+
+  <spring-security:user-service id="userDetailsService">
+    <spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
+    <spring-security:user name="bob" password="bobspassword" authorities="ROLE_USER"/>
+  </spring-security:user-service>
 
 </beans>

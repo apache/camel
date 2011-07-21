@@ -22,28 +22,26 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
-http://www.springframework.org/schema/beans 
-http://www.springframework.org/schema/beans/spring-beans.xsd
-http://www.springframework.org/schema/context
-http://www.springframework.org/schema/context/spring-context.xsd
-http://camel.apache.org/schema/spring
-http://camel.apache.org/schema/spring/camel-spring.xsd">
-    
-    <context:property-placeholder location="classpath:context.properties"/>
-    
-    <camel:camelContext id="camelContext">
-        <camel:jmxAgent id="agent" disabled="true" />
-        <camel:routeBuilder ref="tutorialRouteBuilder"/>
-    </camel:camelContext>
-    
-    <bean id="tutorialRouteBuilder" 
-        class="org.apache.camel.example.gauth.TutorialRouteBuilder">
-        <property name="application" value="${application.name}" />
-    </bean>
-    
-    <bean id="gauth" class="org.apache.camel.component.gae.auth.GAuthComponent">
-        <property name="consumerKey" value="${consumer.key}" />
-        <property name="consumerSecret" value="${consumer.secret}" />
-    </bean>
-    
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <context:property-placeholder location="classpath:context.properties"/>
+
+  <camel:camelContext id="camelContext">
+    <!-- JMX is not supported in GAE -->
+    <camel:jmxAgent id="agent" disabled="true"/>
+    <!-- refer to the route to use -->
+    <camel:routeBuilder ref="tutorialRouteBuilder"/>
+  </camel:camelContext>
+
+  <bean id="tutorialRouteBuilder" class="org.apache.camel.example.gauth.TutorialRouteBuilder">
+    <property name="application" value="${application.name}"/>
+  </bean>
+
+  <bean id="gauth" class="org.apache.camel.component.gae.auth.GAuthComponent">
+    <property name="consumerKey" value="${consumer.key}"/>
+    <property name="consumerSecret" value="${consumer.secret}"/>
+  </bean>
+
 </beans>

@@ -25,11 +25,9 @@ import org.apache.camel.spring.Main;
  * @version 
  */
 public class MyRouteBuilder extends RouteBuilder {
+
     /**
      * Allow this route to be run as an application
-     *
-     * @param args
-     * @throws Exception 
      */
     public static void main(String[] args) throws Exception {
         new Main().run(args);
@@ -54,4 +52,5 @@ public class MyRouteBuilder extends RouteBuilder {
             System.out.println("Received: " + body);
         }
     }
+
 }

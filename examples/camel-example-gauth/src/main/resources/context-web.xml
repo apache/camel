@@ -18,23 +18,20 @@
 -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ctx="http://www.springframework.org/schema/context"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="
-http://www.springframework.org/schema/beans 
-http://www.springframework.org/schema/beans/spring-beans.xsd
-http://www.springframework.org/schema/context 
-http://www.springframework.org/schema/context/spring-context.xsd
-http://www.springframework.org/schema/util
-http://www.springframework.org/schema/util/spring-util.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <ctx:component-scan base-package="org.apache.camel.example.gauth"/>
+  <ctx:component-scan base-package="org.apache.camel.example.gauth"/>
 
-    <util:properties id="credentials" location="classpath:context.properties"/>
-        
-    <bean id="tutorialService" class="org.apache.camel.example.gauth.TutorialService">
-        <property name="credentials" ref="credentials" />
-    </bean>
-    
+  <util:properties id="credentials" location="classpath:context.properties"/>
+
+  <bean id="tutorialService" class="org.apache.camel.example.gauth.TutorialService">
+    <property name="credentials" ref="credentials"/>
+  </bean>
+
 </beans>

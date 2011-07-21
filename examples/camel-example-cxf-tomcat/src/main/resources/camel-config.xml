@@ -26,18 +26,16 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
 
-    <!-- needed cxf imports -->
-    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
-    <!-- use the CXF servlet -->
-    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
-    
-    <bean id="myRoutes" class="org.apache.camel.example.cxf.CamelRoute"/>
-    
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <!-- let Camel automatic find the route in this java package -->
-        <routeBuilder ref="myRoutes"/>
-    </camelContext>
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+  <!-- when running in Tomcat we use the CXF servlet -->
+  <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+
+  <bean id="myRoutes" class="org.apache.camel.example.cxf.CamelRoute"/>
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <routeBuilder ref="myRoutes"/>
+  </camelContext>
 
 </beans>
 <!-- END SNIPPET: e1 -->

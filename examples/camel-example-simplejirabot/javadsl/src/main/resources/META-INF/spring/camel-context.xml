@@ -21,17 +21,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <!-- this is Camel -->
-    <camelContext id="camel"  xmlns="http://camel.apache.org/schema/spring">
-       <routeBuilder ref="myRouteBuilder"/>
-    </camelContext>
+  <!-- this is Camel -->
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <routeBuilder ref="myRouteBuilder"/>
+  </camelContext>
 
-    <!-- this is our route -->
-    <bean id="myRouteBuilder" class="org.apache.camel.example.rss.MyRouteBuilder">
-
-    </bean>
+  <!-- this is our route -->
+  <bean id="myRouteBuilder" class="org.apache.camel.example.rss.MyRouteBuilder"/>
 
 </beans>

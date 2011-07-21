@@ -24,23 +24,24 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <!-- this is Camel -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <!-- this is Camel -->
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
-        <!-- configure our route -->
-        <!-- START SNIPPET: e1 -->
-        <route>
-            <from uri="rss:https://issues.apache.org/jira/sr/jira.issueviews:searchrequest-rss/temp/SearchRequest.xml?pid=12311211&amp;sorter/field=issuekey&amp;sorter/order=DESC&amp;tempMax=1000&amp;delay=10s"/>
-            <marshal><rss/></marshal>
-            <setBody>
-                <xpath>/rss/channel/item/title/text()</xpath>
-            </setBody>
-            <to uri="log:jirabot?showHeaders=false&amp;showExchangePattern=false&amp;showBodyType=false"/>
-            <to uri="irc:JiraBot@irc.freenode.net/#jirabottest"/>
-        </route>
-        <!-- END SNIPPET: e1 -->
-    </camelContext>
-
+    <!-- configure our route -->
+    <!-- START SNIPPET: e1 -->
+    <route>
+      <from uri="rss:https://issues.apache.org/jira/sr/jira.issueviews:searchrequest-rss/temp/SearchRequest.xml?pid=12311211&amp;sorter/field=issuekey&amp;sorter/order=DESC&amp;tempMax=1000&amp;delay=10s"/>
+      <marshal>
+        <rss/>
+      </marshal>
+      <setBody>
+        <xpath>/rss/channel/item/title/text()</xpath>
+      </setBody>
+      <to uri="log:jirabot?showHeaders=false&amp;showExchangePattern=false&amp;showBodyType=false"/>
+      <to uri="irc:JiraBot@irc.freenode.net/#jirabottest"/>
+    </route>
+    <!-- END SNIPPET: e1 -->
+  </camelContext>
 
 </beans>
 

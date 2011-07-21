@@ -23,42 +23,42 @@
        xmlns:camel="http://camel.apache.org/schema/spring"
        xmlns:broker="http://activemq.apache.org/schema/core"
        xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd">
-<!-- END SNIPPET: e1 -->
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+         http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd">
+  <!-- END SNIPPET: e1 -->
 
-    <!-- START SNIPPET: e2 -->
-    <!-- let Spring do its IoC stuff in this package -->
-    <context:component-scan base-package="org.apache.camel.example.server"/>
-    <!-- END SNIPPET: e2 -->
+  <!-- START SNIPPET: e2 -->
+  <!-- let Spring do its IoC stuff in this package -->
+  <context:component-scan base-package="org.apache.camel.example.server"/>
+  <!-- END SNIPPET: e2 -->
 
-    <!-- START SNIPPET: e3 -->
-    <!-- declare a camel context that scans for classes that is RouteBuilder
-         in the package org.apache.camel.example.server -->
-    <camel:camelContext id="camel-server">
-        <camel:package>org.apache.camel.example.server</camel:package>
-        <!-- enable JMX connector so we can connect to the server and browse mbeans -->
-        <!-- Camel will log at INFO level the service URI to use for connecting with jconsole -->
-        <camel:jmxAgent id="agent" createConnector="true"/>
-    </camel:camelContext>
-    <!-- END SNIPPET: e3 -->
+  <!-- START SNIPPET: e3 -->
+  <!-- declare a camel context that scans for classes that is RouteBuilder
+       in the package org.apache.camel.example.server -->
+  <camel:camelContext id="camel-server">
+    <camel:package>org.apache.camel.example.server</camel:package>
+    <!-- enable JMX connector so we can connect to the server and browse mbeans -->
+    <!-- Camel will log at INFO level the service URI to use for connecting with jconsole -->
+    <camel:jmxAgent id="agent" createConnector="true"/>
+  </camel:camelContext>
+  <!-- END SNIPPET: e3 -->
 
-    <!-- START SNIPPET: e4 -->
-    <!-- lets configure the ActiveMQ JMS broker server to listen on TCP 61610 -->
-    <broker:broker useJmx="false" persistent="false" brokerName="localhost">
-        <broker:transportConnectors>
-            <broker:transportConnector name="tcp" uri="tcp://localhost:61610"/>
-        </broker:transportConnectors>
-    </broker:broker>
-    <!-- END SNIPPET: e4 -->
+  <!-- START SNIPPET: e4 -->
+  <!-- lets configure the ActiveMQ JMS broker server to listen on TCP 61610 -->
+  <broker:broker useJmx="false" persistent="false" brokerName="localhost">
+    <broker:transportConnectors>
+      <broker:transportConnector name="tcp" uri="tcp://localhost:61610"/>
+    </broker:transportConnectors>
+  </broker:broker>
+  <!-- END SNIPPET: e4 -->
 
-    <!-- START SNIPPET: e5 -->
-    <!-- lets configure the Camel ActiveMQ to use the ActiveMQ broker declared above -->
-    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="brokerURL" value="tcp://localhost:61610"/>
-    </bean>
-    <!-- END SNIPPET: e5 -->
+  <!-- START SNIPPET: e5 -->
+  <!-- lets configure the Camel ActiveMQ to use the ActiveMQ broker declared above -->
+  <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <property name="brokerURL" value="tcp://localhost:61610"/>
+  </bean>
+  <!-- END SNIPPET: e5 -->
 
 </beans>

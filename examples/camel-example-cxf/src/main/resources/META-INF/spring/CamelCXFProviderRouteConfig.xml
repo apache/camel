@@ -24,35 +24,35 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: example -->
+  <!-- START SNIPPET: example -->
 
-    <!--
-    If you want to run this example in a Tomcat container which needs the servlet transport,
-    please replace the cxf-extension-http-jetty.xml with cxf-servlet.xml
-    -->
+  <!--
+  If you want to run this example in a Tomcat container which needs the servlet transport,
+  please replace the cxf-extension-http-jetty.xml with cxf-servlet.xml
+  -->
 
-    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
 
-    <bean id = "testBean" class="org.apache.camel.example.cxf.provider.TesterBean" />
+  <bean id="testBean" class="org.apache.camel.example.cxf.provider.TesterBean"/>
 
-   	<cxf:cxfEndpoint id="soapMessageEndpoint"
-	        serviceClass="org.apache.camel.example.cxf.provider.GreeterProvider"
-			address="http://localhost:9000/GreeterContext/SOAPMessageService"
-   			wsdlURL="wsdl/hello_world.wsdl"
-   			endpointName="s:SoapOverHttpRouter"
-   			serviceName="s:SOAPService"
-   	    	xmlns:s="http://apache.org/hello_world_soap_http"/>
+  <cxf:cxfEndpoint id="soapMessageEndpoint"
+                   serviceClass="org.apache.camel.example.cxf.provider.GreeterProvider"
+                   address="http://localhost:9000/GreeterContext/SOAPMessageService"
+                   wsdlURL="wsdl/hello_world.wsdl"
+                   endpointName="s:SoapOverHttpRouter"
+                   serviceName="s:SOAPService"
+                   xmlns:s="http://apache.org/hello_world_soap_http"/>
 
 
-   <camelContext id="test_context" xmlns="http://camel.apache.org/schema/spring">
-       <route>
-            <from uri="cxf:bean:soapMessageEndpoint"/>
-            <to uri="bean:testBean?method=processSOAP"/>
-        </route>
-   </camelContext>
+  <camelContext id="test_context" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <from uri="cxf:bean:soapMessageEndpoint"/>
+      <to uri="bean:testBean?method=processSOAP"/>
+    </route>
+  </camelContext>
 
-   <!-- END SNIPPET: example -->
+  <!-- END SNIPPET: example -->
 
 </beans>

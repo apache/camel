@@ -21,31 +21,33 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <!-- incoming requests from the servlet is routed -->
-            <from uri="servlet:///hello"/>
-            <choice>
-                <when>
-                    <!-- is there a header with the key name? -->
-                    <header>name</header>
-                    <!-- yes so return back a message to the user -->
-                    <transform>
-                        <simple>Hello ${header.name} how are you?</simple>
-                    </transform>
-                </when>
-                <otherwise>
-                    <!-- if no name parameter then output a syntax to the user -->
-                    <transform>
-                        <constant>Add a name parameter to uri, eg ?name=foo</constant>
-                    </transform>
-                </otherwise>
-            </choice>
-        </route>
-    </camelContext>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+    <route>
+      <!-- incoming requests from the servlet is routed -->
+      <from uri="servlet:///hello"/>
+      <choice>
+        <when>
+          <!-- is there a header with the key name? -->
+          <header>name</header>
+          <!-- yes so return back a message to the user -->
+          <transform>
+            <simple>Hello ${header.name} how are you?</simple>
+          </transform>
+        </when>
+        <otherwise>
+          <!-- if no name parameter then output a syntax to the user -->
+          <transform>
+            <constant>Add a name parameter to uri, eg ?name=foo</constant>
+          </transform>
+        </otherwise>
+      </choice>
+    </route>
+
+  </camelContext>
 
 </beans>
-<!-- END SNIPPET: e1 -->
+  <!-- END SNIPPET: e1 -->

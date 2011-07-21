@@ -34,18 +34,23 @@ public final class JmsToFileClient {
     public static void main(String args[]) throws Exception {
         
         CamelContext context = new DefaultCamelContext();
-       
+
+        // add the ActiveMQ component
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:51616");
-        
         context.addComponent("test-jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
-        
+
+        // create a template to use for sending messages to ActiveMQ
         ProducerTemplate template = context.createProducerTemplate();
-        
+
+        // start Camel
         context.start();
         
         for (int i = 0; i < 10; i++) {
             template.sendBody("test-jms:queue:test.queue", "Test Message: " + i);
         }
+
+        // stop Camel
+        context.stop();
     }
 
 }

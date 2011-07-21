@@ -26,48 +26,48 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
 
-    <!-- needed cxf imports -->
-    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
-    <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
+  <!-- needed cxf imports -->
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
 
-    <!-- use a bean to start and stop the real web service (is not Camel specific) -->
-    <!-- in a real use-case the real web service would be located on another server
-         but we simulate this in the same JVM -->
-    <bean id="realWebService" class="org.apache.camel.example.cxf.proxy.RealWebServiceBean"
-          init-method="start" destroy-method="stop">
-        <!-- this is the url of the real web service we have proxied -->
-        <property name="url" value="http://localhost:9081/real-webservice"/>
-    </bean>
+  <!-- use a bean to start and stop the real web service (is not Camel specific) -->
+  <!-- in a real use-case the real web service would be located on another server
+       but we simulate this in the same JVM -->
+  <bean id="realWebService" class="org.apache.camel.example.cxf.proxy.RealWebServiceBean"
+        init-method="start" destroy-method="stop">
+    <!-- this is the url of the real web service we have proxied -->
+    <property name="url" value="http://localhost:9081/real-webservice"/>
+  </bean>
 
-    <!-- a bean to enrich the input -->
-    <bean id="enrichBean" class="org.apache.camel.example.cxf.proxy.EnrichBean"/>
+  <!-- a bean to enrich the input -->
+  <bean id="enrichBean" class="org.apache.camel.example.cxf.proxy.EnrichBean"/>
 
-    <!-- this is the CXF webservice we use as front end -->
-    <cxf:cxfEndpoint id="reportIncident"
-                     address="http://localhost:9080/camel-example-cxf-proxy/webservices/incident"
-                     endpointName="s:ReportIncidentEndpoint"
-                     serviceName="s:ReportIncidentEndpointService"
-                     wsdlURL="etc/report_incident.wsdl"
-                     xmlns:s="http://reportincident.example.camel.apache.org"/>
+  <!-- this is the CXF webservice we use as front end -->
+  <cxf:cxfEndpoint id="reportIncident"
+                   address="http://localhost:9080/camel-example-cxf-proxy/webservices/incident"
+                   endpointName="s:ReportIncidentEndpoint"
+                   serviceName="s:ReportIncidentEndpointService"
+                   wsdlURL="etc/report_incident.wsdl"
+                   xmlns:s="http://reportincident.example.camel.apache.org"/>
 
-    <!-- this is the camel route which proxy the web service and forward it to the real web service -->
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+  <!-- this is the camel route which proxy the web service and forward it to the real web service -->
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-        <route>
-            <!-- cxf consumer using MESSAGE format -->
-            <from uri="cxf:bean:reportIncident?dataFormat=MESSAGE"/>
-            <!-- log input received -->
-            <to uri="log:input"/>
-            <!-- enrich the input by ensure the incidentId parameter is set -->
-            <to uri="bean:enrichBean"/>
-            <!-- send proxied request to real web service -->
-            <to uri="http://localhost:9081/real-webservice?throwExceptionOnFailure=false"/>
-            <!-- log answer from real web service -->
-            <to uri="log:output"/>
-        </route>
+    <route>
+      <!-- cxf consumer using MESSAGE format -->
+      <from uri="cxf:bean:reportIncident?dataFormat=MESSAGE"/>
+      <!-- log input received -->
+      <to uri="log:input"/>
+      <!-- enrich the input by ensure the incidentId parameter is set -->
+      <to uri="bean:enrichBean"/>
+      <!-- send proxied request to real web service -->
+      <to uri="http://localhost:9081/real-webservice?throwExceptionOnFailure=false"/>
+      <!-- log answer from real web service -->
+      <to uri="log:output"/>
+    </route>
 
-    </camelContext>
+  </camelContext>
 
 </beans>
 <!-- END SNIPPET: e1 -->

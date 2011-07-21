@@ -24,39 +24,44 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <!-- this is our aggregation strategy which can aggregate the numbers received as input -->
-    <bean id="myStrategy" class="org.apache.camel.example.NumberAggregationStrategy"/>
+  <!-- this is our aggregation strategy which can aggregate the numbers received as input -->
+  <bean id="myStrategy" class="org.apache.camel.example.NumberAggregationStrategy"/>
 
-    <!-- this is the persistent repository to store aggregated messages -->
-    <bean id="myRepo" class="org.apache.camel.component.hawtdb.HawtDBAggregationRepository">
-        <!-- use data/hawtdb.dat as the persistent store -->
-        <property name="persistentFileName" value="data/hawtdb.dat"/>
-        <!-- the repo must have an unique name,
-             as you can have multiple repositories in the same file -->
-        <property name="repositoryName" value="myCoolRepo"/>
-        <!-- the repo file segment size -->
-        <property name="bufferSize" value="602400"/>
-    </bean>
+  <!-- this is the persistent repository to store aggregated messages -->
+  <bean id="myRepo" class="org.apache.camel.component.hawtdb.HawtDBAggregationRepository">
+    <!-- use data/hawtdb.dat as the persistent store -->
+    <property name="persistentFileName" value="data/hawtdb.dat"/>
+    <!-- the repo must have an unique name, as you can have multiple repositories in the same file -->
+    <property name="repositoryName" value="myCoolRepo"/>
+    <!-- the repo file segment size -->
+    <property name="bufferSize" value="602400"/>
+  </bean>
 
-    <!-- this is the camel route which asks for input and aggregates the number -->
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <!-- ask user to enter a number -->
-            <from uri="stream:in?promptMessage=Enter a number to be added (use STOP to end, and ctrl+c to shutdown Camel): &amp;promptDelay=1000"/>
-            <!-- aggregate the input, use eagerCheckCompletion to let the completionPredicate easily detect the STOP command -->
-            <aggregate strategyRef="myStrategy" aggregationRepositoryRef="myRepo" eagerCheckCompletion="true">
-                <!-- aggregate all messages into the same group -->
-                <correlationExpression><constant>true</constant></correlationExpression>
-                <!-- if end user enters STOP then complete the aggregation -->
-                <completionPredicate><simple>${body} contains 'STOP'</simple></completionPredicate>
-                <!-- and transform the completed message to a human readble -->
-                <transform><simple>The result is: ${body}</simple></transform>
-                <!-- which is printed on the console -->
-                <to uri="stream:out"/>
-            </aggregate>
-        </route>
+  <!-- this is the camel route which asks for input and aggregates the number -->
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+      <!-- ask user to enter a number -->
+      <from uri="stream:in?promptMessage=Enter a number to be added (use STOP to end, and ctrl+c to shutdown Camel): &amp;promptDelay=1000"/>
+      <!-- aggregate the input, use eagerCheckCompletion to let the completionPredicate easily detect the STOP command -->
+      <aggregate strategyRef="myStrategy" aggregationRepositoryRef="myRepo" eagerCheckCompletion="true">
+        <!-- aggregate all messages into the same group -->
+        <correlationExpression>
+          <constant>true</constant>
+        </correlationExpression>
+        <!-- if end user enters STOP then complete the aggregation -->
+        <completionPredicate>
+          <simple>${body} contains 'STOP'</simple>
+        </completionPredicate>
+        <!-- and transform the completed message to a human readable -->
+        <transform>
+          <simple>The result is: ${body}</simple>
+        </transform>
+        <!-- which is printed on the console -->
+        <to uri="stream:out"/>
+      </aggregate>
+    </route>
 
-    </camelContext>
+  </camelContext>
 
 </beans>
-<!-- END SNIPPET: e1 -->
+  <!-- END SNIPPET: e1 -->

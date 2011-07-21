@@ -26,27 +26,27 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core-5.5.0.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
-  
-  <import resource="classpath:META-INF/cxf/cxf.xml" />
-  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
-  <import resource="classpath:META-INF/cxf/cxf-extension-jms.xml" />
+
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-jms.xml"/>
 
   <broker:broker id="broker" useJmx="false" persistent="false" dataDirectory="target/activemq">
     <broker:transportConnectors>
-       <broker:transportConnector name="openwire" uri="vm://localhost"/>
+      <broker:transportConnector name="openwire" uri="vm://localhost"/>
     </broker:transportConnectors>
   </broker:broker>
 
   <camel:camelContext id="myCamelContext">
-    <camel:routeBuilder ref="myRouteBuilder"/>    
+    <camel:routeBuilder ref="myRouteBuilder"/>
   </camel:camelContext>
 
   <bean id="myRouteBuilder" class="org.apache.camel.example.cxf.CamelCxfExample$MyRouteBuilder"/>
-  
+
   <jaxws:endpoint id="serviceEndpoint"
-    		implementor="org.apache.camel.example.cxf.GreeterImpl"
-    		address="jms://"/>
-    		
-  
+                  implementor="org.apache.camel.example.cxf.GreeterImpl"
+                  address="jms://"/>
+
+
 </beans>

@@ -19,46 +19,50 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
-       xmlns:cxf="http://camel.apache.org/schema/cxf"       
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
 
- <import resource="classpath:META-INF/cxf/cxf.xml"/>
- <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
- <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
+  <!-- Needed Apache CXF imports -->
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
 
- <cxf:cxfEndpoint id="reportIncident"
-                     address="http://localhost:9080/camel-example-reportincident/webservices/incident"
-                     wsdlURL="etc/report_incident.wsdl"
-                     serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"/>
- 
- <bean id="myBean" class="org.apache.camel.example.reportincident.MyBean"/>
- <bean id="filenameGenerator" class="org.apache.camel.example.reportincident.FilenameGenerator"/>
- 
- <camel:camelContext id="camel">
-	<camel:route>
-		<camel:from uri="cxf:bean:reportIncident" />
-		<camel:convertBodyTo
-			type="org.apache.camel.example.reportincident.InputReportIncident" />
-	    <camel:setHeader headerName="CamelFileName">
-          	<camel:method bean="filenameGenerator" method="generateFilename" />
-        </camel:setHeader>		
-        <camel:to uri="velocity:etc/MailBody.vm"/>        
-        <camel:to uri="file://target/subfolder"/>		
-		<camel:transform>
-			<camel:method bean="myBean" method="getOK" />
-		</camel:transform>
-	</camel:route>
-	
-	<camel:route>
-        <camel:from uri="file://target/subfolder"/>
-        <camel:setHeader headerName="subject">
-          	<camel:constant>new incident reported</camel:constant>
-        </camel:setHeader>
-        <camel:to uri="smtp://someone@localhost?password=secret&amp;to=incident@mycompany.com"/>        
-	</camel:route>
-	
-</camel:camelContext>
+  <cxf:cxfEndpoint id="reportIncident"
+                   address="http://localhost:9080/camel-example-reportincident/webservices/incident"
+                   wsdlURL="etc/report_incident.wsdl"
+                   serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"/>
+
+  <bean id="myBean" class="org.apache.camel.example.reportincident.MyBean"/>
+  <bean id="filenameGenerator" class="org.apache.camel.example.reportincident.FilenameGenerator"/>
+
+  <!-- this CamelContext contains the equivalent route from the Java DSL, but in XML
+       so end users can see how to implement the route in both Java and XML -->
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+    <route>
+      <from uri="cxf:bean:reportIncident"/>
+      <convertBodyTo type="org.apache.camel.example.reportincident.InputReportIncident"/>
+      <setHeader headerName="CamelFileName">
+        <method bean="filenameGenerator" method="generateFilename"/>
+      </setHeader>
+      <to uri="velocity:etc/MailBody.vm"/>
+      <to uri="file://target/subfolder"/>
+      <transform>
+        <method bean="myBean" method="getOK"/>
+      </transform>
+    </route>
+
+    <route>
+      <from uri="file://target/subfolder"/>
+      <setHeader headerName="subject">
+        <constant>new incident reported</constant>
+      </setHeader>
+      <to uri="smtp://someone@localhost?password=secret&amp;to=incident@mycompany.com"/>
+    </route>
+
+  </camelContext>
+
 </beans>

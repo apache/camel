@@ -20,19 +20,20 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
-    
-    <!-- lets configure the Camel ActiveMQ to use the ActiveMQ broker declared above -->
-    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-        <property name="brokerURL" value="tcp://localhost:61616"/>
-    </bean>
-    
-    <bean id="queueLoanBroker" class="org.apache.camel.loanbroker.queue.version.LoanBroker"/>
-    
-    <camel:camelContext id="queue">
-       <camel:routeBuilder ref="queueLoanBroker"/>
-    </camel:camelContext>
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+  <!-- lets configure the Camel ActiveMQ to use the ActiveMQ broker declared above -->
+  <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <property name="brokerURL" value="tcp://localhost:61616"/>
+  </bean>
+
+  <bean id="queueLoanBroker" class="org.apache.camel.loanbroker.queue.version.LoanBroker"/>
+
+  <!-- Camel -->
+  <camel:camelContext id="queue">
+    <!-- refer to the route to use -->
+    <camel:routeBuilder ref="queueLoanBroker"/>
+  </camel:camelContext>
 
 </beans>
