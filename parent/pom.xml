@@ -140,7 +140,7 @@
     <smack-version>3.1.0</smack-version>
     <snmp4j-version>1.8.1_3</snmp4j-version>
     <smpp-version>2.1.0_1</smpp-version>
-    <spring-integration-version>2.0.4.RELEASE</spring-integration-version>
+    <spring-integration-version>2.0.5.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-version>3.0.5.RELEASE</spring-version>
     <spring-osgi-version>1.2.0</spring-osgi-version>
