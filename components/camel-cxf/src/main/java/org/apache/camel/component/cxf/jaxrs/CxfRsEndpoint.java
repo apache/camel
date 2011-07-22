@@ -141,7 +141,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getAddress() != null) {
             sfb.setAddress(getAddress());
         }
-        if (getResourceClasses()!= null) {
+        if (getResourceClasses() != null) {
             sfb.setResourceClasses(CastUtils.cast(getResourceClasses(), Class.class));
         }
         sfb.setStart(false);
