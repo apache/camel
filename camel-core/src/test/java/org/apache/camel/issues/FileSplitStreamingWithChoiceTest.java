@@ -41,7 +41,7 @@ public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
         // should be moved to this directory after we are done
         mock.expectedFileExists("target/filesplit/.camel/splitme.txt");
 
-        String body = "line1\nline2\nline3";
+        String body = "line1" + LS + "line2" + LS + "line3";
         template.sendBodyAndHeader("file://target/filesplit", body, Exchange.FILE_NAME, "splitme.txt");
 
         assertMockEndpointsSatisfied();
@@ -53,7 +53,7 @@ public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/filesplit")
-                    .split(body().tokenize("\n")).streaming()
+                    .split(body().tokenize(LS)).streaming()
                     .to("mock:split")
                     .choice()
                         .when(body(String.class).isNotNull()).to("mock:body")

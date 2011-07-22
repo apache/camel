@@ -43,7 +43,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         // create file with many lines
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            sb.append("Line " + i + "\n");
+            sb.append("Line " + i + LS);
         }
 
         template.sendBodyAndHeader("file:target/concurrent", sb.toString(), Exchange.FILE_NAME, "input.txt");
@@ -62,7 +62,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         String txt = context.getTypeConverter().convertTo(String.class, new File("target/concurrent/outbox/result.txt"));
         assertNotNull(txt);
 
-        String[] lines = txt.split("\n");
+        String[] lines = txt.split(LS);
         assertEquals("Should be " + size + " lines", size, lines.length);
 
         // should be 10000 unique
@@ -78,8 +78,8 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file:target/concurrent").routeId("foo").noAutoStartup()
-                    .split(body().tokenize("\n")).parallelProcessing().streaming()
-                        .setBody(body().append(":Status=OK\n"))
+                    .split(body().tokenize(LS)).parallelProcessing().streaming()
+                        .setBody(body().append(":Status=OK").append(LS))
                         .to("file:target/concurrent/outbox?fileExist=Append&fileName=result.txt")
                         .to("mock:result")
                     .end();

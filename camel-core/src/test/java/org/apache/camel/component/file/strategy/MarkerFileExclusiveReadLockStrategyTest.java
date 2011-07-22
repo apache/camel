@@ -51,16 +51,15 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
         assertMockEndpointsSatisfied();
 
         String content = context.getTypeConverter().convertTo(String.class, new File("target/marker/out/file1.dat").getAbsoluteFile());
-        String[] lines = content.split("\n");
+        String[] lines = content.split(LS);
         for (int i = 0; i < 20; i++) {
             assertEquals("Line " + i, lines[i]);
         }
 
         content = context.getTypeConverter().convertTo(String.class, new File("target/marker/out/file2.dat").getAbsoluteFile());
-        lines = content.split("\n");
+        lines = content.split(LS);
         for (int i = 0; i < 20; i++) {
-            // there may be windows line terminators
-            assertTrue(lines[i].startsWith("Line " + i));
+        	assertEquals("Line " + i, lines[i]);
         }
 
         waitUntilCompleted();
@@ -80,8 +79,8 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
         FileOutputStream fos = new FileOutputStream("target/marker/in/file1.dat");
         FileOutputStream fos2 = new FileOutputStream("target/marker/in/file2.dat");
         for (int i = 0; i < 20; i++) {
-            fos.write(("Line " + i + "\n").getBytes());
-            fos2.write(("Line " + i + "\n").getBytes());
+            fos.write(("Line " + i + LS).getBytes());
+            fos2.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line " + i);
         }
 

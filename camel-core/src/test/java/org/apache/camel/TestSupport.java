@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 public abstract class TestSupport extends TestCase {    
     
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class); 
+	protected static final String LS = System.getProperty("line.separator");
     
     protected transient Logger log = LoggerFactory.getLogger(getClass());
     // Builder methods for expressions used when testing
@@ -434,7 +435,8 @@ public abstract class TestSupport extends TestCase {
                 deleteDirectory(files[i]);
             }
         }
-        file.delete();
+
+		file.delete();
     }
 
     /**

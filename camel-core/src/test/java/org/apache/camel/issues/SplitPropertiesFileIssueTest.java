@@ -31,7 +31,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class SplitPropertiesFileIssueTest extends ContextTestSupport {
 
-    private String body = "foo=1\nbar=2\nbar=3\nfoo=4";
+    private String body = "foo=1" + LS + "bar=2" + LS + "bar=3" + LS + "foo=4";
 
     @Override
     protected void setUp() throws Exception {
@@ -89,7 +89,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
             List<String> data2 = new ArrayList<String>();
 
             String body = exchange.getIn().getBody(String.class);
-            String[] lines = body.split("\n");
+            String[] lines = body.split(LS);
             for (String line : lines) {
                 if (line.startsWith("foo")) {
                     data1.add(line);

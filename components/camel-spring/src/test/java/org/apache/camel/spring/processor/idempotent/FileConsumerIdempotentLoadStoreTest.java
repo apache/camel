@@ -48,7 +48,7 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
         // insert existing name to the file repo, so we should skip this file
         String name = FileUtil.normalizePath(new File("target/fileidempotent/report.txt").getAbsolutePath());
         fos.write(name.getBytes());
-        fos.write("\n".getBytes());
+        fos.write(LS.getBytes());
 
         fos.close();
 
