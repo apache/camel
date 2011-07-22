@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.properties;
 
+import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -23,7 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -44,7 +46,7 @@ public class PropertiesComponent extends DefaultComponent {
     private static final Pattern SYS_PATTERN = Pattern.compile("\\$\\{(.*?)\\}", Pattern.DOTALL);
 
     private static final transient Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
-    private final Map<String[], Properties> cacheMap = new LRUCache<String[], Properties>(1000);
+    private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser();
     private String[] locations;
@@ -88,11 +90,12 @@ public class PropertiesComponent extends DefaultComponent {
         String[] locations = parseLocations(paths);
 
         // check cache first
-        Properties prop = cache ? cacheMap.get(locations) : null;
+        CacheKey key = new CacheKey(locations);
+        Properties prop = cache ? cacheMap.get(key) : null;
         if (prop == null) {
             prop = propertiesResolver.resolveProperties(getCamelContext(), locations);
             if (cache) {
-                cacheMap.put(locations, prop);
+                cacheMap.put(key, prop);
             }
         }
 
@@ -170,7 +173,7 @@ public class PropertiesComponent extends DefaultComponent {
                 if (ObjectHelper.isEmpty(value)) {
                     throw new IllegalArgumentException("Cannot find system environment with key: " + key);
                 }
-                // must quoute the replacement to have it work as literal replacement
+                // must quote the replacement to have it work as literal replacement
                 value = Matcher.quoteReplacement(value);
                 location = matcher.replaceFirst(value);
                 // must match again as location is changed
@@ -184,7 +187,7 @@ public class PropertiesComponent extends DefaultComponent {
                 if (ObjectHelper.isEmpty(value)) {
                     throw new IllegalArgumentException("Cannot find JVM system property with key: " + key);
                 }
-                // must quoute the replacement to have it work as literal replacement
+                // must quote the replacement to have it work as literal replacement
                 value = Matcher.quoteReplacement(value);
                 location = matcher.replaceFirst(value);
                 // must match again as location is changed
@@ -196,6 +199,50 @@ public class PropertiesComponent extends DefaultComponent {
         }
 
         return answer;
+    }
+
+    /**
+     * Key used in the locations cache
+     */
+    private final class CacheKey implements Serializable {
+
+        private final String[] locations;
+
+        private CacheKey(String[] locations) {
+            this.locations = locations;
+        }
+
+        public String[] getLocations() {
+            return locations;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            CacheKey that = (CacheKey) o;
+
+            if (!Arrays.equals(locations, that.locations)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return locations != null ? Arrays.hashCode(locations) : 0;
+        }
+
+        @Override
+        public String toString() {
+            return "LocationKey[" + Arrays.asList(locations).toString() + "]";
+        }
     }
 
 }
