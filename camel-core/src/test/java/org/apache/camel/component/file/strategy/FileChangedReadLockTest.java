@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class FileChangedReadLockTest extends ContextTestSupport {
 
@@ -48,7 +48,7 @@ public class FileChangedReadLockTest extends ContextTestSupport {
         String[] lines = content.split(LS);
         assertEquals("There should be 20 lines in the file", 20, lines.length);
         for (int i = 0; i < 20; i++) {
-        	assertEquals("Line " + i, lines[i]);
+            assertEquals("Line " + i, lines[i]);
         }
     }
 
