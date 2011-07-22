@@ -17,9 +17,8 @@
 
 package org.apache.camel.component.cxf.blueprint;
 
-import java.util.StringTokenizer;
-import java.util.concurrent.Callable;
 import javax.xml.namespace.QName;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -33,35 +32,12 @@ import org.apache.cxf.helpers.DOMUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.reflect.Metadata;
 
-public class EndpointDefinitionParser extends AbstractBPBeanDefinitionParser {
 
-    public static String getIdOrName(Element elem) {
-        String id = elem.getAttribute("id");
-
-        if (null == id || "".equals(id)) {
-            String names = elem.getAttribute("name");
-            if (null != names) {
-                StringTokenizer st = new StringTokenizer(names, ",");
-                if (st.countTokens() > 0) {
-                    id = st.nextToken();
-                }
-            }
-        }
-        return id;
-    }
-
+public class EndpointDefinitionParser extends AbstractBeanDefinitionParser {
+    
     public Metadata parse(Element element, ParserContext context) {
-        MutableBeanMetadata endpointConfig = context.createMetadata(MutableBeanMetadata.class);
-        endpointConfig.setRuntimeClass(CxfBlueprintEndpoint.class);
-        endpointConfig.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
-        endpointConfig.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
-
-        if (!StringUtils.isEmpty(getIdOrName(element))) {
-            endpointConfig.setId(getIdOrName(element));
-        } else {
-            endpointConfig.setId("camel.cxf.endpoint." + context.generateId());
-        }
-
+        MutableBeanMetadata endpointConfig = createBeanMetadata(element, context, CxfBlueprintEndpoint.class);
+ 
         NamedNodeMap atts = element.getAttributes();
 
         String bus = null;
@@ -119,17 +95,5 @@ public class EndpointDefinitionParser extends AbstractBPBeanDefinitionParser {
 
         return endpointConfig;
     }
-
-    public static class PassThroughCallable<T> implements Callable<T> {
-
-        private T value;
-
-        public PassThroughCallable(T value) {
-            this.value = value;
-        }
-
-        public T call() throws Exception {
-            return value;
-        }
-    }
+    
 }

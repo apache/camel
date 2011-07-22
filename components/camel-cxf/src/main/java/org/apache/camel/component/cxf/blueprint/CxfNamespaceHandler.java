@@ -57,6 +57,14 @@ public class CxfNamespaceHandler implements NamespaceHandler {
             LOG.debug("parsing the cxfEndpoint element");
             answer = new EndpointDefinitionParser().parse(element, context);
         }
+        if ("rsClient".equals(s)) {
+            LOG.debug("parsing the rsClient element");
+            answer = new RsClientDefinitionParser().parse(element, context);
+        }
+        if ("rsServer".equals(s)) {
+            LOG.debug("parsing the rsServer element");
+            answer = new RsServerDefinitionParser().parse(element, context);
+        }
         
         return answer;
     }

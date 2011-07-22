@@ -26,8 +26,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
-import org.apache.camel.component.cxf.spring.SpringJAXRSServerFactoryBean;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -131,35 +129,56 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
         return binding;
     }
+    
+    protected void checkBeanType(Object object, Class<?> clazz) {
+        if (!clazz.isAssignableFrom(object.getClass())) {
+            throw new IllegalArgumentException("The configure bean is not the instance of " + clazz.getName());
+        }
+    }
 
     protected void setupJAXRSServerFactoryBean(JAXRSServerFactoryBean sfb) {
         // address
-        sfb.setAddress(getAddress());
-        sfb.setResourceClasses(CastUtils.cast(getResourceClasses(), Class.class));
+        if (getAddress() != null) {
+            sfb.setAddress(getAddress());
+        }
+        if (getResourceClasses()!= null) {
+            sfb.setResourceClasses(CastUtils.cast(getResourceClasses(), Class.class));
+        }
         sfb.setStart(false);
     }
 
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
         // address
-        cfb.setAddress(address);
+        if (address != null) {
+            cfb.setAddress(address);
+        }
         if (getResourceClasses() != null) {
             cfb.setResourceClass(getResourceClasses().get(0));
         }
         cfb.setThreadSafe(true);
     }
+    
+    protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
+        return new JAXRSServerFactoryBean();
+    }
+    
+    protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
+        return new JAXRSClientFactoryBean();
+    }
 
     public JAXRSServerFactoryBean createJAXRSServerFactoryBean() {
-        JAXRSServerFactoryBean answer = new SpringJAXRSServerFactoryBean();
+        JAXRSServerFactoryBean answer = newJAXRSServerFactoryBean();
         setupJAXRSServerFactoryBean(answer);
         return answer;
     }
+    
 
     public JAXRSClientFactoryBean createJAXRSClientFactoryBean() {
         return createJAXRSClientFactoryBean(getAddress());
     }
     
     public JAXRSClientFactoryBean createJAXRSClientFactoryBean(String address) {
-        JAXRSClientFactoryBean answer = new SpringJAXRSClientFactoryBean();
+        JAXRSClientFactoryBean answer = newJAXRSClientFactoryBean();
         setupJAXRSClientFactoryBean(answer, address);
         return answer;
     }
