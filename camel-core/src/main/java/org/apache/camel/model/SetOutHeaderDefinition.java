@@ -31,9 +31,12 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;setOutHeader/&gt; element
+ *
+ * @deprecated not really needed, will be removed in the future
  */
 @XmlRootElement(name = "setOutHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class SetOutHeaderDefinition extends NoOutputExpressionNode {
     @XmlAttribute(required = true)
     private String headerName;

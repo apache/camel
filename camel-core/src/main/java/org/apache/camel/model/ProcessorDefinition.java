@@ -2528,7 +2528,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param name  the header name
      * @return a expression builder clause to set the header
+     * @deprecated use {@link #setHeader(String)}
      */
+    @Deprecated
     public ExpressionClause<ProcessorDefinition<Type>> setOutHeader(String name) {
         ExpressionClause<ProcessorDefinition<Type>> clause = new ExpressionClause<ProcessorDefinition<Type>>(this);
         SetOutHeaderDefinition answer = new SetOutHeaderDefinition(name, clause);
@@ -2542,8 +2544,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param name  the header name
      * @param expression  the expression used to set the header
      * @return the builder
+     * @deprecated use {@link #setHeader(String, org.apache.camel.Expression)}
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public Type setOutHeader(String name, Expression expression) {
         SetOutHeaderDefinition answer = new SetOutHeaderDefinition(name, expression);
         addOutput(answer);
@@ -2556,7 +2560,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param name  the header name
      * @param expression  the expression used to set the header
      * @return the builder
+     * @deprecated use {@link #setHeader(String, org.apache.camel.Expression)}
      */
+    @Deprecated
     public Type setFaultHeader(String name, Expression expression) {
         return process(ProcessorBuilder.setFaultHeader(name, expression));
     }
