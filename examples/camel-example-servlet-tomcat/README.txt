@@ -3,8 +3,6 @@ Camel Servlet and Apache Tomcat example
 
 An example which shows how to use the Camel Servlet with Apache Tomcat.
 
-It can be run using Maven.
-
 You will need to package this example first:
   mvn package
 
@@ -16,7 +14,6 @@ And then hit this url from a webbrowser which has further instructions
 
 The servlet is located at (use correct version number)
   http://localhost:8080/camel-example-tomcat-2.7/camel
-
 
 This example is documented at
   http://camel.apache.org/servlet-tomcat-example.html

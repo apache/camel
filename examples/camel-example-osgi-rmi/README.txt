@@ -2,7 +2,6 @@ Camel and RMI
 =============
 
 This example shows how to work with the Camel-RMI Component.
-It can be run using Maven.
 
 The example exposes a RMI service over port 37541 running as a Camel application.
 The Camel application must be running.
@@ -29,9 +28,9 @@ First the camel-rmi feature must be installed
 
 Then install the example
 
-  osgi:install mvn:org.apache.camel/camel-example-osgi-rmi/2.7.0
+  osgi:install mvn:org.apache.camel/camel-example-osgi-rmi/2.8.0
 
-      (substitute 2.7.0 with the Camel version number)
+      (substitute 2.8.0 with the Camel version number)
 
 Then start the bundle by starting the id it was assigned during installation
 

@@ -2,11 +2,10 @@ Welcome to the Apache Camel Examples!
 =====================================
 
 This directory contains the various examples for working with Apache
-Camel. The examples can be run using Maven or Ant. When using the Maven
+Camel. The examples can be run using Maven. When using the Maven
 command, Maven will attempt to download the required dependencies from a
-central repository to your local repository.  Using Ant to run the
-examples instead may require that you have additional products
-installed. View the individual example READMEs for details.
+central repository to your local repository.
+View the individual example READMEs for details.
 
 They are described in detail here
   http://camel.apache.org/examples.html
@@ -15,9 +14,8 @@ For details of how to run these examples see
   http://camel.apache.org/running-examples.html
 
 Before you start we recommend you install a recent distribution of
-Maven, or Ant, which we use to run our examples
+Maven, which we use to run our examples
   http://maven.apache.org/
-  http://ant.apache.org/
 
 If you hit any problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html

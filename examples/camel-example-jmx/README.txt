@@ -2,7 +2,6 @@ JMX Example
 ===========
 
 This example shows how to work with the Camel-JMX component.
-It can be run using Maven.
 
 The example creates a simple MBean, registers a route to listen for
 notification events on that bean and creates another route that calls
@@ -13,7 +12,6 @@ You will need to compile this example first:
 
 To run the example type
   mvn camel:run
-
 
 You can see the routing rules by looking at the java code in the
 src/main/java directory and the Spring XML configuration lives in

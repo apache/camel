@@ -2,7 +2,6 @@ Camel JMX Management
 ====================
 
 This example shows how to manage Camel using JMX (with jconsole)
-It can be run using Maven.
 
 The example uses a timer to every 5th second to generate a file with 100 stock quotes.
 
@@ -35,14 +34,11 @@ the JMS consumer is restarted. So do a stop and start operation.
 What you should see is that Camel should be able to process the files much faster now and the logger should
 output a higher throughput.
 
-
-
 You will need to compile this example first:
   mvn compile
 
 To run the example type
   mvn camel:run
-
 
 To use jconsole type
   jconsole
@@ -52,21 +48,6 @@ If its there then click in and you should be connected to the Camel application.
 If its missing you can click on the advanced tab and type in JMX URL:
   service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel
   (some older versions of Java does not list the local processes)
-
-
-To run the example with Ant
-  a. You need to have Apache ActiveMQ installed. It can be downloaded from
-    http://activemq.apache.org/
-
-  b. Export / Set ACTIVEMQ_HOME to the top level Apache ActiveMQ intall
-  directory
-    UNIX
-    export ACTIVEMQ_HOME=<path to ActiveMQ install directory>
-    Windows
-    set ACTIVEMQ_HOME=<path to ActiveMQ install directory>
-
-  c. To Run the example using Ant, type
-    ant
 
 You can see the routing rules by looking at the java code in the
 src/main/java directory and the Spring XML configuration lives in

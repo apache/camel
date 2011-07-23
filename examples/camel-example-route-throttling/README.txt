@@ -6,8 +6,6 @@ A route policy allows you to associate a route with a policy. Camel provides a
 throttling policy which allows Camel to dynamic throttle the route consumer
 depending on the number of concurrent messages current in flight.
 
-The example can be run using Maven.
-
 The Server is required to be running when you start the client.
 You can see on the server it should log in the console how it adjust the
 throttling dynamically.
@@ -30,7 +28,6 @@ The example should run if you type:
   mvn exec:java -PCamelFileClient
 
 To stop the example hit ctrl + c
-
 
 This example is documented at
   http://camel.apache.org/route-throttling-example.html

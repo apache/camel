@@ -2,7 +2,6 @@ Camel Spring Security Example
 =============
 
 This example shows how to leverage the Spring Security to secure the camel endpoint. 
-It can be run using Maven.
 
 The example consumes messages from a servlet endpoint which is secured by Spring Security 
 with http basic authentication, there are two service:
@@ -20,7 +19,6 @@ To stop the server hit ctrl + c
 Then you can use the script in the client directory to send the request and check the response,
 or use browser to access upper urls with the user/password 
 ("jim/jimspassword" with the admin and user role  or "rob/robspassword" with user role).
-
 
 This example is documented at
   http://camel.apache.org/spring-security-example.html

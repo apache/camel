@@ -3,28 +3,12 @@ POJO Messaging Example
 
 This example shows that you don't need to learn Camel's super cool DSLs 
 if you don't want to. Camel has a set of annotations that allow you to 
-produce, consume or route messages to endpoints. You can run it using
-Maven or Ant.
+produce, consume or route messages to endpoints. 
 
 The example should run if you type
   mvn compile camel:run
 
-To run the example with Ant
-  a. You need to have Apache ActiveMQ installed. It can be downloaded from 
-    http://activemq.apache.org/
-
-  b. Export / Set ACTIVEMQ_HOME to the top level Apache ActiveMQ install
-  directory
-    UNIX
-    export ACTIVEMQ_HOME=<path to ActiveMQ install directory>
-    Windows
-    set ACTIVEMQ_HOME=<path to ActiveMQ install directory>
-
-  c. To run the example using Ant, type
-    ant
-
 To stop the example hit ctrl + c
-
 
 This example is documented at
   http://camel.apache.org/pojo-messaging-example.html

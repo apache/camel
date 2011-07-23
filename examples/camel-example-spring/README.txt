@@ -2,7 +2,7 @@ Spring Example
 ==============
 
 This example shows how to work with files and JMS, using Spring to boot up
-Camel and configure the routes. It can be run using Maven or Ant.
+Camel and configure the routes. 
 
 The example consumes messages from a queue and writes them to the file
 system.
@@ -13,26 +13,11 @@ You will need to compile this example first:
 To run the example type
   mvn camel:run
 
-To run the example with Ant
-  a. You need to have Apache ActiveMQ installed. It can be downloaded from 
-    http://activemq.apache.org/
-
-  b. Export / Set ACTIVEMQ_HOME to the top level Apache ActiveMQ intall
-  directory
-    UNIX
-    export ACTIVEMQ_HOME=<path to ActiveMQ install directory>
-    Windows
-    set ACTIVEMQ_HOME=<path to ActiveMQ install directory>
-
-  c. To Run the example using Ant, type
-    ant
-
 You can see the routing rules by looking at the java code in the
 src/main/java directory and the Spring XML configuration lives in
 src/main/resources/META-INF/spring
 
 To stop the example hit ctrl + c
-
 
 This example is documented at
   http://camel.apache.org/spring-example.html

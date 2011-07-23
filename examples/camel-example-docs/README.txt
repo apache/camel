@@ -23,9 +23,6 @@ To run the example using Maven and generate the documentation type
 The reports should be generated in
   target/site/cameldoc/index.html
 
-To run the example using Ant and generate the documentation type
-  ant
-
 If the dot executable is in your path, .svg images will be generated for
 any .dot files under
   target/site/cameldoc
