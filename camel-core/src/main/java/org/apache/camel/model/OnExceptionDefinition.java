@@ -38,6 +38,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
@@ -159,6 +160,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         setRetryWhileFromExpressionType(routeContext);
         setOnRedeliveryFromRedeliveryRef(routeContext);
 
+        // load exception classes
+        if (exceptions != null && !exceptions.isEmpty()) {
+            exceptionClasses = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
+        }
+
         // must validate configuration before creating processor
         validateConfiguration();
 
@@ -179,10 +185,13 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     @Override
     public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
+        // load exception classes
+        if (exceptions != null && !exceptions.isEmpty()) {
+            exceptionClasses = createExceptionClasses(routeContext.getCamelContext().getClassResolver());
+        }
+
         // must validate configuration before creating processor
         validateConfiguration();
-
-        // TODO: the exceptions list should use classresolver to load
 
         Processor childProcessor = this.createChildProcessor(routeContext, false);
 
@@ -205,7 +214,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         }
 
         List<Class> exceptions = getExceptionClasses();
-        if (exceptions.isEmpty()) {
+        if (exceptions == null || exceptions.isEmpty()) {
             throw new IllegalArgumentException("At least one exception must be configured on " + this);
         }
 
@@ -716,9 +725,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     public List<Class> getExceptionClasses() {
-        if (exceptionClasses == null) {
-            exceptionClasses = createExceptionClasses();
-        }
         return exceptionClasses;
     }
 
@@ -855,12 +861,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         return redeliveryPolicy;
     }
 
-    protected List<Class> createExceptionClasses() {
+    protected List<Class> createExceptionClasses(ClassResolver resolver) throws ClassNotFoundException {
         List<String> list = getExceptions();
         List<Class> answer = new ArrayList<Class>(list.size());
         for (String name : list) {
-            Class<Throwable> type = CastUtils.cast(ObjectHelper.loadClass(name, getClass().getClassLoader()), Throwable.class);
-            answer.add(type);
+            Class<?> type = resolver.resolveMandatoryClass(name);
+            answer.add(CastUtils.cast(type, Throwable.class));
         }
         return answer;
     }
