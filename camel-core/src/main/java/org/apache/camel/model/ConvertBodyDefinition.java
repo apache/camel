@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.Required;
@@ -72,11 +71,8 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        if (getTypeClass() == null) {
-            this.typeClass = routeContext.getCamelContext().getClassResolver().resolveClass(getType());
-            if (getTypeClass() == null) {
-                throw new RuntimeCamelException("Cannot load the class with the class name: " + getType());
-            }
+        if (typeClass == null && type != null) {
+            typeClass = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(type);
         }
 
         // validate charset

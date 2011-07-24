@@ -20,10 +20,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * For XPath expressions and predicates
@@ -33,7 +35,9 @@ import org.apache.camel.Predicate;
 @XmlRootElement(name = "xpath")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XPathExpression extends NamespaceAwareExpression {
-    @XmlAttribute
+    @XmlAttribute(name = "resultType")
+    private String resultTypeName;
+    @XmlTransient
     private Class<?> resultType;
 
     public XPathExpression() {
@@ -53,6 +57,27 @@ public class XPathExpression extends NamespaceAwareExpression {
 
     public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
+    }
+
+    public String getResultTypeName() {
+        return resultTypeName;
+    }
+
+    public void setResultTypeName(String resultTypeName) {
+        this.resultTypeName = resultTypeName;
+    }
+
+    @Override
+    public Expression createExpression(CamelContext camelContext) {
+        if (resultType == null && resultTypeName != null) {
+            try {
+                resultType = camelContext.getClassResolver().resolveMandatoryClass(resultTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return super.createExpression(camelContext);
     }
 
     @Override

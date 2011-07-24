@@ -50,7 +50,9 @@ public class MethodCallExpression extends ExpressionDefinition {
     private String ref;
     @XmlAttribute
     private String method;
-    @XmlAttribute
+    @XmlAttribute(name = "beanType")
+    private String beanTypeName;
+    @XmlTransient
     private Class<?> beanType;
     @XmlTransient
     private Object instance;
@@ -123,6 +125,14 @@ public class MethodCallExpression extends ExpressionDefinition {
         this.beanType = beanType;
     }
 
+    public String getBeanTypeName() {
+        return beanTypeName;
+    }
+
+    public void setBeanTypeName(String beanTypeName) {
+        this.beanTypeName = beanTypeName;
+    }
+
     public Object getInstance() {
         return instance;
     }
@@ -134,8 +144,17 @@ public class MethodCallExpression extends ExpressionDefinition {
     @Override
     public Expression createExpression(CamelContext camelContext) {
         Expression answer;
+
+        if (beanType == null && beanTypeName != null) {
+            try {
+                beanType = camelContext.getClassResolver().resolveMandatoryClass(beanTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
         if (beanType != null) {
-            instance = ObjectHelper.newInstance(beanType);
+            instance = camelContext.getInjector().newInstance(beanType);
             answer = new BeanExpression(instance, getMethod());
         } else if (instance != null) {
             answer = new BeanExpression(instance, getMethod());

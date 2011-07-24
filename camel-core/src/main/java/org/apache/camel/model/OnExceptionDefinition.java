@@ -182,6 +182,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         // must validate configuration before creating processor
         validateConfiguration();
 
+        // TODO: the exceptions list should use classresolver to load
+
         Processor childProcessor = this.createChildProcessor(routeContext, false);
 
         Predicate when = null;

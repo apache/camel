@@ -20,11 +20,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.SimpleBuilder;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * For expressions and predicates using the
@@ -35,7 +37,9 @@ import org.apache.camel.builder.SimpleBuilder;
 @XmlRootElement(name = "simple")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SimpleExpression extends ExpressionDefinition {
-    @XmlAttribute
+    @XmlAttribute(name = "resultType")
+    private String resultTypeName;
+    @XmlTransient
     private Class<?> resultType;
 
     public SimpleExpression() {
@@ -57,8 +61,24 @@ public class SimpleExpression extends ExpressionDefinition {
         this.resultType = resultType;
     }
 
+    public String getResultTypeName() {
+        return resultTypeName;
+    }
+
+    public void setResultTypeName(String resultTypeName) {
+        this.resultTypeName = resultTypeName;
+    }
+
     @Override
     public Expression createExpression(CamelContext camelContext) {
+        if (resultType == null && resultTypeName != null) {
+            try {
+                resultType = camelContext.getClassResolver().resolveMandatoryClass(resultTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
         SimpleBuilder answer = new SimpleBuilder(getExpression());
         answer.setResultType(resultType);
         return answer;

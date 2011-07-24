@@ -25,8 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * For XQuery expressions and predicates
@@ -69,9 +68,21 @@ public class XQueryExpression extends NamespaceAwareExpression {
     }
 
     @Override
+    public Expression createExpression(CamelContext camelContext) {
+        if (resultType == null && type != null) {
+            try {
+                resultType = camelContext.getClassResolver().resolveMandatoryClass(type);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return super.createExpression(camelContext);
+    }
+
+    @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
         super.configureExpression(camelContext, expression);
-        updateResultType(camelContext.getClassResolver());
         if (resultType != null) {
             setProperty(expression, "resultType", resultType);
         }
@@ -80,19 +91,9 @@ public class XQueryExpression extends NamespaceAwareExpression {
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
         super.configurePredicate(camelContext, predicate);
-        updateResultType(camelContext.getClassResolver());
         if (resultType != null) {
             setProperty(predicate, "resultType", resultType);
         }
     }
 
-    private void updateResultType(ClassResolver resolver) {
-        if (resultType == null && type != null) {
-            try {
-                resultType = resolver.resolveMandatoryClass(type);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeCamelException(e);
-            }
-        }
-    }
 }
