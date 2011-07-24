@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.karaf.testing.Helper;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,16 +31,8 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.vmOption;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
