@@ -684,7 +684,7 @@ public class BeanInfo {
         while (it.hasNext()) {
             MethodInfo info = it.next();
             if (!matchMethod(info.getMethod(), name)) {
-                // name does not match so remove it
+                // method does not match so remove it
                 it.remove();
             }
         }
@@ -718,20 +718,39 @@ public class BeanInfo {
             for (int i = 0; i < method.getParameterTypes().length; i++) {
                 if (it.hasNext()) {
                     String qualifyType = (String) it.next();
+                    if (ObjectHelper.isEmpty(qualifyType)) {
+                        continue;
+                    }
+                    qualifyType = qualifyType.trim();
+
                     if ("*".equals(qualifyType)) {
                         // * is a wildcard so we accept and match that parameter type
                         continue;
                     }
 
-                    // match on either simple name or FQN decided by end user as how
-                    // he specified the qualify type
-                    String parameterType = method.getParameterTypes()[i].getSimpleName();
-                    if (qualifyType.indexOf(".") > -1) {
-                        parameterType = method.getParameterTypes()[i].getName();
+                    if (qualifyType.startsWith("'") || qualifyType.startsWith("\"")) {
+                        // if the type starts with a quote, then its a parameter value instead
+                        continue;
                     }
-                    if (!parameterType.equals(qualifyType)) {
-                        return false;
+
+                    // so it can either be a type or a parameter value
+                    // - type: Boolean, String etc.
+                    // - value: true, 5, 'Hello World' etc
+
+                    Class<?> qualifyClass = getCamelContext().getClassResolver().resolveClass(qualifyType);
+                    // class resolver will return null if not a class
+                    if (qualifyClass != null) {
+                        Class<?> parameterClass = method.getParameterTypes()[i];
+                        if (!parameterClass.isAssignableFrom(qualifyClass)) {
+                            return false;
+                        }
                     }
+
+                    // maybe its a FQN for simple name
+                    if (qualifyType.equals(method.getParameterTypes()[i].getSimpleName())) {
+                        continue;
+                    }
+
                 } else {
                     // there method has more parameters than was specified in the method name qualifiers
                     return false;

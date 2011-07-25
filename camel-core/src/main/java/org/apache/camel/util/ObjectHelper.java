@@ -745,8 +745,10 @@ public final class ObjectHelper {
         } else if ("double".equals(name)) {
             return double.class;
         }
+
         return null;
     }
+
     /**
      * Loads the given class with the provided classloader (may be null).
      * Will ignore any class not found and return null.
@@ -760,6 +762,7 @@ public final class ObjectHelper {
         if (loader == null) {
             return null;
         }
+
         try {
             LOG.trace("Loading class: {} using classloader: {}", name, loader);
             return loader.loadClass(name);
@@ -767,8 +770,8 @@ public final class ObjectHelper {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Cannot load class: " + name + " using classloader: " + loader, e);
             }
-
         }
+
         return null;
     }
 

@@ -58,6 +58,16 @@ public class StringHelperTest extends TestCase {
         assertEquals("foo", StringHelper.removeQuotes("'foo\""));
     }
 
+    public void testRemoveLeadingAndEndingQuotes() throws Exception {
+        assertEquals(null, StringHelper.removeLeadingAndEndingQuotes(null));
+        assertEquals("", StringHelper.removeLeadingAndEndingQuotes(""));
+        assertEquals(" ", StringHelper.removeLeadingAndEndingQuotes(" "));
+        assertEquals("Hello World", StringHelper.removeLeadingAndEndingQuotes("Hello World"));
+        assertEquals("Hello World", StringHelper.removeLeadingAndEndingQuotes("'Hello World'"));
+        assertEquals("Hello World", StringHelper.removeLeadingAndEndingQuotes("\"Hello World\""));
+        assertEquals("Hello 'Camel'", StringHelper.removeLeadingAndEndingQuotes("Hello 'Camel'"));
+    }
+
     public void testHasUpper() throws Exception {
         assertEquals(false, StringHelper.hasUpperCase(null));
         assertEquals(false, StringHelper.hasUpperCase(""));

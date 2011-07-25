@@ -18,6 +18,7 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -65,8 +66,8 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             template.sendBody("direct:start", new MyOrder());
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            AmbiguousMethodCallException cause = assertIsInstanceOf(AmbiguousMethodCallException.class, e.getCause());
-            assertEquals(2, cause.getMethods().size());
+            NoTypeConversionAvailableException cause = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+            assertEquals("Unknown", cause.getValue());
         }
     }
 
@@ -124,8 +125,8 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             template.sendBody("direct:start", new MyOrder());
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            AmbiguousMethodCallException cause = assertIsInstanceOf(AmbiguousMethodCallException.class, e.getCause());
-            assertEquals(2, cause.getMethods().size());
+            NoTypeConversionAvailableException cause = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+            assertEquals("org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$Unknown", cause.getValue());
         }
     }
 

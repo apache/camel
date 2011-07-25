@@ -174,6 +174,9 @@ public class BeanExpression implements Expression, Predicate {
             Exchange resultExchange = exchange.copy();
             // force to use InOut to retrieve the result on the OUT message
             resultExchange.setPattern(ExchangePattern.InOut);
+            // do not propagate any method name when using OGNL, as with OGNL we
+            // compute and provide the method name to explicit to invoke
+            resultExchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
 
             // current ognl path as we go along
             String ognlPath = "";

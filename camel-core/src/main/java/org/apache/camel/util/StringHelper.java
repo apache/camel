@@ -76,6 +76,20 @@ public final class StringHelper {
         return s;
     }
 
+    public static String removeLeadingAndEndingQuotes(String s) {
+        if (ObjectHelper.isEmpty(s)) {
+            return s;
+        }
+
+        if (s.startsWith("'") && s.endsWith("'")) {
+            return s.substring(1, s.length() - 1);
+        }
+        if (s.startsWith("\"") && s.endsWith("\"")) {
+            return s.substring(1, s.length() - 1);
+        }
+        return s;
+    }
+
     /**
      * Encodes the text into safe XML by replacing < > and & with XML tokens
      *
