@@ -261,21 +261,27 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public RouteContext getRouteContext() {
-        if (routeContextStack.isEmpty()) {
-            return null;
+        synchronized (routeContextStack) {
+            if (routeContextStack.isEmpty()) {
+                return null;
+            }
+            return routeContextStack.peek();
         }
-        return routeContextStack.peek();
     }
 
     public void pushRouteContext(RouteContext routeContext) {
-        routeContextStack.add(routeContext);
+        synchronized (routeContext) {
+            routeContextStack.add(routeContext);
+        }
     }
 
     public RouteContext popRouteContext() {
-        if (routeContextStack.isEmpty()) {
-            return null;
+        synchronized (routeContextStack) {
+            if (routeContextStack.isEmpty()) {
+                return null;
+            }
+            return routeContextStack.pop();
         }
-        return routeContextStack.pop();
     }
 
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
