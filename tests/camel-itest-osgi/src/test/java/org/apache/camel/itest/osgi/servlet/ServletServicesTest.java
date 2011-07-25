@@ -17,20 +17,15 @@
 package org.apache.camel.itest.osgi.servlet;
 
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
-import org.apache.karaf.testing.Helper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 public class ServletServicesTest extends OSGiIntegrationSpringTestSupport {
@@ -45,23 +40,16 @@ public class ServletServicesTest extends OSGiIntegrationSpringTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),
-            Helper.loadKarafStandardFeatures("spring", "http", "war"),  
+            getDefaultCamelKarafOptions(),
+            // install the war features first
+            scanFeatures(getKarafFeatureUrl(),  "war"),
             // set the system property for pax web
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.osgi.service.http.port").value("9080"),
   
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
-                "camel-core", "camel-blueprint", "camel-spring", "camel-test", "camel-http", "camel-servlet"),
- 
-            workingDirectory("target/paxrunner/"),
-            //PaxRunnerOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
+                "camel-blueprint", "camel-http", "camel-servlet")
 
-            felix(),
-            equinox()
         );
         
         return options;
