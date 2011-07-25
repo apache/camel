@@ -17,10 +17,8 @@
 package org.apache.camel.itest.osgi.script;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;

@@ -17,7 +17,6 @@
 package org.apache.camel.itest.osgi;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 

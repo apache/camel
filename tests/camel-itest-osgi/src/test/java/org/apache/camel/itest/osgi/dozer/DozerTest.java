@@ -19,7 +19,6 @@ package org.apache.camel.itest.osgi.dozer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.apache.camel.itest.osgi.dozer.service.Customer;
-import org.apache.karaf.testing.Helper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
