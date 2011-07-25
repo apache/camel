@@ -403,45 +403,43 @@ public class MethodInfo {
             private Object evaluateParameterValue(Exchange exchange, int index, Object parameterValue, Class<?> parameterType) {
                 Object answer = null;
 
-                // at first evaluate it as a simple expression as it may contain references to headers, etc
+                // convert the parameter value to a String
                 String exp = exchange.getContext().getTypeConverter().convertTo(String.class, parameterValue);
                 if (exp != null) {
                     // must trim first as there may be spaces between parameters
                     exp = exp.trim();
+                    // check if its a valid parameter value
+                    boolean valid = BeanHelper.isValidParameterValue(exp);
 
-                    // TODO: make rule about how a parameter value should be defined
-                    // and use this rule to pre determine if its class or not
-                    // - boolean as true|false
-                    // - numeric such as 5, 7, 123
-                    // - string literals which must be quoted, either single or double
-
-                    // so it can either be a type or a parameter value
-                    // - type: Boolean, String etc.
-                    // - value: true, 5, 'Hello World' etc
-                    boolean isClass = false;
-                    if (exp.startsWith("'") || exp.startsWith("\"")) {
-                        // if the type starts with a quote, then its a parameter value
-                        exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-                    } else {
-                        // it could be a type, so lets so if we can resolve the class
-                        Class<?> expClass = exchange.getContext().getClassResolver().resolveClass(exp);
-                        if (expClass != null) {
-                            isClass = true;
-                        } else {
-                            // lets try to match by simple name as well
-                            if (exp.equals(parameterType.getSimpleName())) {
-                                isClass = true;
-                            }
+                    if (!valid) {
+                        // it may be a parameter type instead, and if so, then we should return null,
+                        // as this method is only for evaluating parameter values
+                        Boolean isClass = BeanHelper.isAssignableToExpectedType(exchange.getContext().getClassResolver(), exp, parameterType);
+                        // the method will return a non null value if exp is a class
+                        if (isClass != null) {
+                            return null;
                         }
                     }
 
-                    // if its a parameter value (not a class) then use the simple expression language to evaluate the expression
-                    // and convert the result to the parameter type, so we can pass in the result to the method, when we invoke it
-                    if (!isClass) {
-                        parameterValue = exchange.getContext().resolveLanguage("simple").createExpression(exp).evaluate(exchange, Object.class);
-                        if (parameterValue != null) {
+                    // use simple language to evaluate the expression, as it may use the simple language to refer to message body, headers etc.
+                    parameterValue = exchange.getContext().resolveLanguage("simple").createExpression(exp).evaluate(exchange, Object.class);
+                    if (parameterValue != null) {
+                        // the parameter value was not already valid, but since the simple language have evaluated the expression
+                        // which may change the parameterValue, so we have to check it again to see if its now valid
+                        exp = exchange.getContext().getTypeConverter().convertTo(String.class, parameterValue);
+                        // String values from the simple language is always valid
+                        if (!valid) {
+                            // re validate if the parameter was not valid the first time (String values should be accepted)
+                            valid = parameterValue instanceof String || BeanHelper.isValidParameterValue(exp);
+                        }
+
+                        if (valid) {
+                            // we need to unquote String parameters, as the enclosing quotes is there to denote a parameter value
+                            if (parameterValue instanceof String) {
+                                parameterValue = StringHelper.removeLeadingAndEndingQuotes((String) parameterValue);
+                            }
                             try {
-                                // we got a value now try to convert it to the expected type
+                                // its a valid parameter value, so convert it to the expected type of the parameter
                                 answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, parameterValue);
                                 if (LOG.isTraceEnabled()) {
                                     LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});

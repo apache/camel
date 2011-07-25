@@ -149,6 +149,26 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
+                    .bean(MyBean.class, "times(byte[], header.times)")
+                    .to("mock:result");
+
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("ABC,ABC,ABC");
+
+        template.sendBodyAndHeader("direct:start", "ABC".getBytes(), "times", "3");
+
+        assertMockEndpointsSatisfied();
+    }
+
+
+    public void testTimesOverloadedBytesIntLanguageTokens() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
                     .bean(MyBean.class, "times(byte[],${header.times})")
                     .to("mock:result");
 

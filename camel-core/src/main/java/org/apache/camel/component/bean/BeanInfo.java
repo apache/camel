@@ -717,10 +717,13 @@ public class BeanInfo {
             Iterator it = ObjectHelper.createIterator(types);
             for (int i = 0; i < method.getParameterTypes().length; i++) {
                 if (it.hasNext()) {
+                    Class<?> parameterType = method.getParameterTypes()[i];
+
                     String qualifyType = (String) it.next();
                     if (ObjectHelper.isEmpty(qualifyType)) {
                         continue;
                     }
+                    // trim the time
                     qualifyType = qualifyType.trim();
 
                     if ("*".equals(qualifyType)) {
@@ -728,27 +731,16 @@ public class BeanInfo {
                         continue;
                     }
 
-                    if (qualifyType.startsWith("'") || qualifyType.startsWith("\"")) {
-                        // if the type starts with a quote, then its a parameter value instead
+                    if (BeanHelper.isValidParameterValue(qualifyType)) {
+                        // its a parameter value, so continue to next parameter
+                        // as we should only check for FQN/type parameters
                         continue;
                     }
 
-                    // so it can either be a type or a parameter value
-                    // - type: Boolean, String etc.
-                    // - value: true, 5, 'Hello World' etc
-
-                    Class<?> qualifyClass = getCamelContext().getClassResolver().resolveClass(qualifyType);
-                    // class resolver will return null if not a class
-                    if (qualifyClass != null) {
-                        Class<?> parameterClass = method.getParameterTypes()[i];
-                        if (!parameterClass.isAssignableFrom(qualifyClass)) {
-                            return false;
-                        }
-                    }
-
-                    // maybe its a FQN for simple name
-                    if (qualifyType.equals(method.getParameterTypes()[i].getSimpleName())) {
-                        continue;
+                    // if qualify type indeed is a class, then it must be assignable with the parameter type
+                    Boolean assignable = BeanHelper.isAssignableToExpectedType(getCamelContext().getClassResolver(), qualifyType, parameterType);
+                    if (assignable != null && !assignable) {
+                        return false;
                     }
 
                 } else {
