@@ -222,6 +222,11 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.headerExpression(key, type);
         }
 
+        // headers expression
+        if ("in.headers".equals(expression) || "headers".equals(expression)) {
+            return ExpressionBuilder.headersExpression();
+        }
+
         // in header expression
         remainder = ifStartsWithReturnRemainder("in.headers", expression);
         if (remainder == null) {

@@ -411,6 +411,16 @@ public class SimpleTest extends LanguageTestSupport {
         }
     }
 
+    public void testHeaders() throws Exception {
+        Map headers = exchange.getIn().getHeaders();
+        assertEquals(2, headers.size());
+
+        assertExpression("headers", headers);
+        assertExpression("${headers}", headers);
+        assertExpression("in.headers", headers);
+        assertExpression("${in.headers}", headers);
+    }
+
     public void testHeaderAs() throws Exception {
         assertExpression("${headerAs(foo,String)}", "abc");
 

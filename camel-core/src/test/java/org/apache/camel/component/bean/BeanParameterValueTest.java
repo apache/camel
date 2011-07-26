@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
@@ -73,6 +75,14 @@ public class BeanParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testBeanParameterValueMap() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        template.sendBodyAndHeader("direct:heads", "World", "hello", "Hello");
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -108,6 +118,10 @@ public class BeanParameterValueTest extends ContextTestSupport {
                 from("direct:echo2")
                     .to("bean:foo?method=echo(*, ${in.header.times})")
                     .to("mock:result");
+
+                from("direct:heads")
+                    .to("bean:foo?method=heads(${body}, ${headers})")
+                    .to("mock:result");
             }
         };
     }
@@ -133,5 +147,10 @@ public class BeanParameterValueTest extends ContextTestSupport {
 
             return body;
         }
+
+        public String heads(String body, Map headers) {
+            return headers.get("hello") + " " + body;
+        }
+
     }
 }
