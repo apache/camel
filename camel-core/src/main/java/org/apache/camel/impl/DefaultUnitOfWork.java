@@ -141,8 +141,10 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (transactedBy != null) {
             transactedBy.clear();
         }
-        if (!routeContextStack.isEmpty()) {
-            routeContextStack.clear();
+        synchronized (routeContextStack) {
+            if (!routeContextStack.isEmpty()) {
+                routeContextStack.clear();
+            }
         }
         if (subUnitOfWorks != null) {
             subUnitOfWorks.clear();
@@ -270,7 +272,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public void pushRouteContext(RouteContext routeContext) {
-        synchronized (routeContext) {
+        synchronized (routeContextStack) {
             routeContextStack.add(routeContext);
         }
     }
