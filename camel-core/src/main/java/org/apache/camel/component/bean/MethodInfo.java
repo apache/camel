@@ -37,6 +37,7 @@ import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.RecipientList;
@@ -329,7 +330,11 @@ public class MethodInfo {
     }
 
     protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws IllegalAccessException, InvocationTargetException {
-        return mth.invoke(pojo, arguments);
+        try {
+            return mth.invoke(pojo, arguments);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeExchangeException("IllegalArgumentException occurred invoking method: " + mth + " using arguments: " + Arrays.asList(arguments), exchange, e);
+        }
     }
 
     protected Expression createParametersExpression() {
