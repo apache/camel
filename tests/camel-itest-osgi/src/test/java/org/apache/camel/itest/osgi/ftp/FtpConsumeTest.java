@@ -48,7 +48,7 @@ public class FtpConsumeTest extends OSGiIntegrationSpringTestSupport {
             // using the features to install the camel components
             scanFeatures(getCamelKarafFeatureUrl(), "camel-ftp")
 
-            );
+        );
         
         return options;
     }

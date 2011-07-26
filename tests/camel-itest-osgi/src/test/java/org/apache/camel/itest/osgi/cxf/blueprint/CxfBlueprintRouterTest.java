@@ -44,7 +44,8 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 @RunWith(JUnit4TestRunner.class)
 @Ignore("This test will be failed with CXF 2.4.1, we need to use CXF 2.4.2")
 public class CxfBlueprintRouterTest extends OSGiBlueprintTestSupport {
-     private static Server server;
+    private static Server server;
+
     @BeforeClass
     public static void startServer() {
         JaxWsServerFactoryBean sf = new JaxWsServerFactoryBean();
