@@ -137,7 +137,7 @@
     <servicemix-specs-version>1.8.0</servicemix-specs-version>
     <shiro-bundle-version>1.1.0_1</shiro-bundle-version>
     <slf4j-version>1.6.1</slf4j-version>
-    <smack-version>3.1.0</smack-version>
+    <smack-version>3.2.0</smack-version>
     <snmp4j-version>1.8.1_3</snmp4j-version>
     <smpp-version>2.1.0_1</smpp-version>
     <spring-integration-version>2.0.5.RELEASE</spring-integration-version>
