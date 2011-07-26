@@ -67,7 +67,7 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
 
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").routingSlip(ROUTING_SLIP_HEADER).to("mock:y");
+                from("direct:a").routingSlip(header(ROUTING_SLIP_HEADER)).to("mock:y");
                 // END SNIPPET: example
             }
         };

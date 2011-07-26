@@ -64,6 +64,7 @@ public class TryProcessorHandledTest extends ContextTestSupport {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+            @SuppressWarnings("deprecation")
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")

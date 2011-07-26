@@ -56,7 +56,6 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.EventNotifier;
-import org.apache.camel.spi.ManagementAware;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -71,9 +70,10 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         return mc;
     }
 
+    @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForComponent(CamelContext context, Component component, String name) {
-        if (component instanceof ManagementAware) {
-            return ((ManagementAware) component).getManagedObject(component);
+        if (component instanceof org.apache.camel.spi.ManagementAware) {
+            return ((org.apache.camel.spi.ManagementAware<Component>) component).getManagedObject(component);
         } else {
             ManagedComponent mc = new ManagedComponent(name, component);
             mc.init(context.getManagementStrategy());
@@ -81,14 +81,15 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         }
     }
 
+    @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForEndpoint(CamelContext context, Endpoint endpoint) {
         // we only want to manage singleton endpoints
         if (!endpoint.isSingleton()) {
             return null;
         }
 
-        if (endpoint instanceof ManagementAware) {
-            return ((ManagementAware) endpoint).getManagedObject(endpoint);
+        if (endpoint instanceof org.apache.camel.spi.ManagementAware) {
+            return ((org.apache.camel.spi.ManagementAware<Endpoint>) endpoint).getManagedObject(endpoint);
         } else if (endpoint instanceof BrowsableEndpoint) {
             ManagedBrowsableEndpoint me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
             me.init(context.getManagementStrategy());
@@ -154,6 +155,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
         return mc;
     }
 
+    @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForProcessor(CamelContext context, Processor processor,
                                                ProcessorDefinition definition, Route route) {
         ManagedProcessor answer = null;
@@ -176,8 +178,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedSendProcessor(context, (SendProcessor) target, definition);
             } else if (target instanceof BeanProcessor) {
                 answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
-            } else if (target instanceof ManagementAware) {
-                return ((ManagementAware) target).getManagedObject(processor);
+            } else if (target instanceof org.apache.camel.spi.ManagementAware) {
+                return ((org.apache.camel.spi.ManagementAware<Processor>) target).getManagedObject(processor);
             }
 
             if (answer != null) {

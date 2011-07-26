@@ -145,6 +145,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+            @SuppressWarnings("deprecation")
             public void configure() {
                 from("direct:start").
                         doTry().

@@ -127,7 +127,7 @@ public class RoutingSlipTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:a").routingSlip("myHeader").to("mock:end");
+                from("direct:a").routingSlip(header("myHeader")).to("mock:end");
                 // END SNIPPET: e1
 
                 // START SNIPPET: e2
@@ -135,7 +135,7 @@ public class RoutingSlipTest extends ContextTestSupport {
                 // END SNIPPET: e2
 
                 // START SNIPPET: e3
-                from("direct:c").routingSlip("aRoutingSlipHeader", "#");
+                from("direct:c").routingSlip(header("aRoutingSlipHeader"), "#");
                 // END SNIPPET: e3
                 
                 // START SNIPPET: e4

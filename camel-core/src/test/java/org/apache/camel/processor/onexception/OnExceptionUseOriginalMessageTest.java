@@ -18,6 +18,7 @@ package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.InputStreamCache;
@@ -68,7 +69,7 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
                 
                 onException(IllegalArgumentException.class).useOriginalMessage().handled(true).to("seda:test");
 
-                from("direct:a").inOut()
+                from("direct:a").setExchangePattern(ExchangePattern.InOut)
                     .process(new MyProcessor());
                     
                 from("seda:test")

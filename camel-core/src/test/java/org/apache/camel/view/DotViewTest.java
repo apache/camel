@@ -92,7 +92,7 @@ public class DotViewTest extends ContextTestSupport {
 
     static class RoutingSlipRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("seda:foo").routingSlip("splipHeader");
+            from("seda:foo").routingSlip(header("splipHeader"));
         }
     }
 

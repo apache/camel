@@ -119,6 +119,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:b", 1);
     }
 
+    @SuppressWarnings("deprecation")
     public void testParseSetOutHeaderXml() throws Exception {
         RouteDefinition route = assertOneRoute("setOutHeader.xml");
         assertFrom(route, "seda:a");
@@ -128,6 +129,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertChildTo(route, "mock:b", 1);
     }
 
+    @SuppressWarnings("deprecation")
     public void testParseSetOutHeaderToConstantXml() throws Exception {
         RouteDefinition route = assertOneRoute("setOutHeaderToConstant.xml");
         assertFrom(route, "seda:a");

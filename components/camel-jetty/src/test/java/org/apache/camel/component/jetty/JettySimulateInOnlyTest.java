@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -84,7 +85,8 @@ public class JettySimulateInOnlyTest extends BaseJettyTest {
                     // turn the route to in only as we do not want jetty to wait for the response
                     // we can do this by changing the MEP and sending to a seda endpoint to spin off
                     // a new thread continue doing the routing
-                    .inOnly().to("seda:continue")
+                    .setExchangePattern(ExchangePattern.InOnly)
+                    .to("seda:continue")
                     // and then construct a canned empty response
                     .transform(constant("OK"));
 

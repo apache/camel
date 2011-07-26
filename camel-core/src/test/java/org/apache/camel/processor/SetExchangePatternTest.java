@@ -137,8 +137,12 @@ public class SetExchangePatternTest extends ContextTestSupport {
                 from("direct:testInOnly").inOnly("mock:result");
 
                 // Set the exchange pattern to InOut, then send it from direct:inOnly to mock:result endpoint
-                from("direct:testSetToInOnlyThenTo").inOnly().to("mock:result");
-                from("direct:testSetToInOutThenTo").inOut().to("mock:result");
+                from("direct:testSetToInOnlyThenTo")
+                    .setExchangePattern(ExchangePattern.InOnly)
+                    .to("mock:result");
+                from("direct:testSetToInOutThenTo")
+                    .setExchangePattern(ExchangePattern.InOut)
+                    .to("mock:result");
 
                 // Or we can pass the pattern as a parameter to the to() method
                 from("direct:testToWithInOnlyParam").to(ExchangePattern.InOnly, "mock:result");

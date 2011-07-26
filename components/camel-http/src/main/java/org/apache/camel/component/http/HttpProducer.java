@@ -319,6 +319,7 @@ public class HttpProducer extends DefaultProducer {
      * @return the created method as either GET or POST
      * @throws CamelExchangeException is thrown if error creating RequestEntity
      */
+    @SuppressWarnings("deprecation")
     protected HttpMethod createMethod(Exchange exchange) throws CamelExchangeException {
 
         String url = HttpHelper.createURL(exchange, getEndpoint());

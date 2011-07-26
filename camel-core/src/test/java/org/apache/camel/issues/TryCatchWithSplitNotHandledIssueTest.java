@@ -54,6 +54,7 @@ public class TryCatchWithSplitNotHandledIssueTest extends ContextTestSupport {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+            @SuppressWarnings("deprecation")
             public void configure() {
                 from("direct:start")
                     .split(body().tokenize("@"))

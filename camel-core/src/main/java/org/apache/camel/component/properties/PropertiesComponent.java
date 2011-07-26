@@ -212,10 +212,6 @@ public class PropertiesComponent extends DefaultComponent {
             this.locations = locations;
         }
 
-        public String[] getLocations() {
-            return locations;
-        }
-
         @Override
         public boolean equals(Object o) {
             if (this == o) {

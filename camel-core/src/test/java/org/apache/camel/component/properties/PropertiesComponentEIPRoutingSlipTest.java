@@ -40,7 +40,7 @@ public class PropertiesComponentEIPRoutingSlipTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .routingSlip("cheese", "{{slipDelimiter}}");
+                    .routingSlip(header("cheese"), "{{slipDelimiter}}");
             }
         };
     }

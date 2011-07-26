@@ -105,7 +105,7 @@ public class HttpJettyProducerTwoParametersWithSameKeyTest extends BaseJettyTest
                         // response
                         exchange.getOut().setBody("OK");
                         // use multiple values for the foo header in the reply
-                        List list = new ArrayList();
+                        List<Integer> list = new ArrayList<Integer>();
                         list.add(123);
                         list.add(456);
                         exchange.getOut().setHeader("foo", list);
