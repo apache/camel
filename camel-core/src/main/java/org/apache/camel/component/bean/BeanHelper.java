@@ -100,21 +100,17 @@ public final class BeanHelper {
         // if its a class, then it should be assignable
         Class<?> parameterClass = resolver.resolveClass(parameterType);
         if (parameterClass == null && parameterType.equals(expectedType.getSimpleName())) {
-            // it was not the FQN class name, but the simple name instead, so we can infer the type
-            parameterClass = expectedType;
-        }
-
-        // if there was a class, then it must be assignable to match
-        if (parameterClass != null) {
-            if (!parameterClass.isAssignableFrom(expectedType)) {
-                return false;
-            } else {
-                return true;
-            }
+            // it was not the FQN class name, but the simple name instead, which matched
+            return true;
         }
 
         // not a class so return null
-        return null;
+        if (parameterClass == null) {
+            return null;
+        }
+
+        // if there was a class, then it must be assignable to match
+        return parameterClass.isAssignableFrom(expectedType);
     }
 
 }
