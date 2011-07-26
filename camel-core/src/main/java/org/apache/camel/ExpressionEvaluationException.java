@@ -34,6 +34,12 @@ public class ExpressionEvaluationException extends RuntimeCamelException {
         this.exchange = exchange;
     }
 
+    public ExpressionEvaluationException(Expression expression, String message, Exchange exchange, Throwable cause) {
+        super(message, cause);
+        this.expression = expression;
+        this.exchange = exchange;
+    }
+
     public Expression getExpression() {
         return expression;
     }

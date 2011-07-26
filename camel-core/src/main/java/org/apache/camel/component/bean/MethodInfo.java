@@ -33,6 +33,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
 import org.apache.camel.Processor;
@@ -389,7 +390,9 @@ public class MethodInfo {
                     }
 
                     // remember the value to use
-                    answer[i] = value;
+                    if (value != Void.TYPE) {
+                        answer[i] = value;
+                    }
                 }
 
                 return (T) answer;
@@ -397,6 +400,13 @@ public class MethodInfo {
 
             /**
              * Evaluate using parameter values where the values can be provided in the method name syntax.
+             * <p/>
+             * This methods returns accordingly:
+             * <ul>
+             *     <li><tt>null</tt> - if not a parameter value</li>
+             *     <li><tt>Void.TYPE</tt> - if an explicit null, forcing Camel to pass in <tt>null</tt> for that given parameter</li>
+             *     <li>a non <tt>null</tt> value - if the parameter was a parameter value, and to be used</li>
+             * </ul>
              *
              * @since 2.9
              */
@@ -422,8 +432,23 @@ public class MethodInfo {
                     }
 
                     // use simple language to evaluate the expression, as it may use the simple language to refer to message body, headers etc.
-                    parameterValue = exchange.getContext().resolveLanguage("simple").createExpression(exp).evaluate(exchange, Object.class);
+                    Expression expression = null;
+                    try {
+                        expression = exchange.getContext().resolveLanguage("simple").createExpression(exp);
+                        parameterValue = expression.evaluate(exchange, Object.class);
+                    } catch (Exception e) {
+                        throw new ExpressionEvaluationException(expression, "Cannot create/evaluate simple expression: " + exp
+                                + " to be bound to parameter at index: " + index + " on method: " + getMethod(), exchange, e);
+                    }
+
                     if (parameterValue != null) {
+
+                        // special for explicit null parameter values (as end users can explicit indicate they want null as parameter)
+                        // see method javadoc for details
+                        if ("null".equals(parameterValue)) {
+                            return Void.TYPE;
+                        }
+
                         // the parameter value was not already valid, but since the simple language have evaluated the expression
                         // which may change the parameterValue, so we have to check it again to see if its now valid
                         exp = exchange.getContext().getTypeConverter().convertTo(String.class, parameterValue);

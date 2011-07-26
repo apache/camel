@@ -60,6 +60,11 @@ public final class BeanHelper {
             return true;
         }
 
+        // null is valid (to force a null value)
+        if (value.equals("null")) {
+            return true;
+        }
+
         // simple language tokens is valid
         if (StringHelper.hasStartToken(value, "simple")) {
             return true;
