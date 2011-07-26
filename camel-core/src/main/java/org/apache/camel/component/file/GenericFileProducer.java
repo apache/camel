@@ -24,13 +24,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -268,7 +268,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         if (name != null) {
             // the header name can be an expression too, that should override
             // whatever configured on the endpoint
-            if (SimpleLanguage.hasStartToken(name)) {
+            if (StringHelper.hasStartToken(name, "simple")) {
                 log.trace("{} contains a Simple expression: {}", Exchange.FILE_NAME, name);
                 Language language = getEndpoint().getCamelContext().resolveLanguage("file");
                 expression = language.createExpression(name);

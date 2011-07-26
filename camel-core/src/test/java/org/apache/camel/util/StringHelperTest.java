@@ -79,4 +79,21 @@ public class StringHelperTest extends TestCase {
         assertEquals(true, StringHelper.hasUpperCase("com.foo.My"));
     }
 
+    public void testHasStartToken() throws Exception {
+        assertEquals(false, StringHelper.hasStartToken(null, null));
+        assertEquals(false, StringHelper.hasStartToken(null, "simple"));
+        assertEquals(false, StringHelper.hasStartToken("", null));
+        assertEquals(false, StringHelper.hasStartToken("", "simple"));
+        assertEquals(false, StringHelper.hasStartToken("Hello World", null));
+        assertEquals(false, StringHelper.hasStartToken("Hello World", "simple"));
+
+        assertEquals(true, StringHelper.hasStartToken("${body}", null));
+        assertEquals(true, StringHelper.hasStartToken("${body}", "simple"));
+        assertEquals(true, StringHelper.hasStartToken("$simple{body}", "simple"));
+
+        assertEquals(true, StringHelper.hasStartToken("${body}", null));
+        assertEquals(true, StringHelper.hasStartToken("${body}", "foo"));
+        assertEquals(true, StringHelper.hasStartToken("$foo{body}", "foo"));
+    }
+
 }

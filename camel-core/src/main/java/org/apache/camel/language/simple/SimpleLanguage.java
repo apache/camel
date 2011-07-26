@@ -119,20 +119,6 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         return answer;
     }
 
-    /**
-     * Does the expression have the simple language start token?
-     *
-     * @param expression the expression
-     * @return <tt>true</tt> if the expression contains the start token, <tt>false</tt> otherwise
-     */
-    public static boolean hasStartToken(String expression) {
-        if (expression == null) {
-            return false;
-        }
-
-        return expression.indexOf("${") >= 0 || expression.indexOf("$simple{") >= 0;
-    }
-
     public static Expression simple(String expression) {
         return SIMPLE.createExpression(expression);
     }

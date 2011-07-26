@@ -32,6 +32,7 @@ import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.apache.camel.language.simple.SimpleLanguageOperator.*;
@@ -83,7 +84,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
         if (matcher.matches() || startMatcher.matches()) {
             log.debug("Expression is evaluated as simple (with operator) expression: {}", expression);
             return createOperatorExpression(matcher, startMatcher, expression);
-        } else if (SimpleLanguage.hasStartToken(expression)) {
+        } else if (StringHelper.hasStartToken(expression, "simple")) {
             log.debug("Expression is evaluated as simple (strict) expression: {}", expression);
             return createComplexConcatExpression(expression);
         } else {

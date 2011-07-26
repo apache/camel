@@ -124,4 +124,27 @@ public final class StringHelper {
         return false;
     }
 
+    /**
+     * Does the expression have the language start token?
+     *
+     * @param expression the expression
+     * @param language the name of the language, such as simple
+     * @return <tt>true</tt> if the expression contains the start token, <tt>false</tt> otherwise
+     */
+    public static boolean hasStartToken(String expression, String language) {
+        if (expression == null) {
+            return false;
+        }
+
+        if (expression.indexOf("${") >= 0) {
+            return true;
+        }
+
+        if (language != null && expression.indexOf("$" + language + "{") >= 0) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

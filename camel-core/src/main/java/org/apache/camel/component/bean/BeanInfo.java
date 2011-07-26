@@ -723,7 +723,7 @@ public class BeanInfo {
                     if (ObjectHelper.isEmpty(qualifyType)) {
                         continue;
                     }
-                    // trim the time
+                    // trim the type
                     qualifyType = qualifyType.trim();
 
                     if ("*".equals(qualifyType)) {
@@ -739,6 +739,7 @@ public class BeanInfo {
 
                     // if qualify type indeed is a class, then it must be assignable with the parameter type
                     Boolean assignable = BeanHelper.isAssignableToExpectedType(getCamelContext().getClassResolver(), qualifyType, parameterType);
+                    // the method will return null if the qualifyType is not a class
                     if (assignable != null && !assignable) {
                         return false;
                     }

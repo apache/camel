@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
- *
+ * Helper for the bean component.
  */
 public final class BeanHelper {
 
@@ -61,7 +61,7 @@ public final class BeanHelper {
         }
 
         // simple language tokens is valid
-        if (SimpleLanguage.hasStartToken(value)) {
+        if (StringHelper.hasStartToken(value, "simple")) {
             return true;
         }
 
@@ -84,12 +84,12 @@ public final class BeanHelper {
      *     <li>FQN class name - com.foo.MyOrder</li>
      *     <li>Simple class name - MyOrder</li>
      * </ul>
-     * If the given parameter type is <b>not</b> a class, then <tt>false</tt> is returned
+     * If the given parameter type is <b>not</b> a class, then <tt>null</tt> is returned
      *
      * @param resolver          the class resolver
      * @param parameterType     the parameter type as a String, can be a FQN or a simple name of the class
      * @param expectedType      the expected type
-     * @return <tt>null</tt> if parameter type is <b>not</b> a class, <tt>true</tt> if parameter type is assignable, <tt>false</tt> otherwise
+     * @return <tt>null</tt> if parameter type is <b>not</b> a class, <tt>true</tt> if parameter type is assignable, <tt>false</tt> if not assignable
      */
     public static Boolean isAssignableToExpectedType(ClassResolver resolver, String parameterType, Class<?> expectedType) {
         // if its a class, then it should be assignable

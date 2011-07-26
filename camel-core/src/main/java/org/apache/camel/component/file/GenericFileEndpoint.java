@@ -32,7 +32,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.ScheduledPollEndpoint;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
@@ -595,7 +594,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     protected String configureMoveOrPreMoveExpression(String expression) {
         // if the expression already have ${ } placeholders then pass it unmodified
-        if (SimpleLanguage.hasStartToken(expression)) {
+        if (StringHelper.hasStartToken(expression, "simple")) {
             return expression;
         }
 
@@ -685,7 +684,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         pattern = pattern.replaceFirst("\\$simple\\{file:name.noext\\}", FileUtil.stripExt(onlyName));
 
         // must be able to resolve all placeholders supported
-        if (SimpleLanguage.hasStartToken(pattern)) {
+        if (StringHelper.hasStartToken(pattern, "simple")) {
             throw new ExpressionIllegalSyntaxException(fileName + ". Cannot resolve reminder: " + pattern);
         }
 
@@ -715,7 +714,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         String pattern = getDoneFileName();
         ObjectHelper.notEmpty(pattern, "doneFileName", pattern);
 
-        if (!SimpleLanguage.hasStartToken(pattern)) {
+        if (!StringHelper.hasStartToken(pattern, "simple")) {
             // no tokens, so just match names directly
             return pattern.equals(fileName);
         }
@@ -731,7 +730,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         pattern = pattern.replaceFirst("\\$simple\\{file:name.noext\\}", "");
 
         // must be able to resolve all placeholders supported
-        if (SimpleLanguage.hasStartToken(pattern)) {
+        if (StringHelper.hasStartToken(pattern, "simple")) {
             throw new ExpressionIllegalSyntaxException(fileName + ". Cannot resolve reminder: " + pattern);
         }
 
