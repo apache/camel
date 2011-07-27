@@ -52,7 +52,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
     private Map<String, Integer> sections = new HashMap<String, Integer>();
 
-    private Map<String, List> lists = new HashMap<String, List>();
+    private Map<String, List<Object>> lists = new HashMap<String, List<Object>>();
 
     private String keyValuePairSeparator;
     private String pairSeparator;
@@ -122,7 +122,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      */
     public void bind(List<String> data, Map<String, Object> model, int line) throws Exception {
 
-        Map<Integer, List> results = new HashMap<Integer, List>();
+        Map<Integer, List<String>> results = new HashMap<Integer, List<String>>();
 
         LOG.debug("Key value pairs data : {}", data);
 
@@ -149,13 +149,13 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             // Add value to the Map using key value as key
             if (!results.containsKey(key)) {
 
-                List list = new LinkedList();
+                List<String> list = new LinkedList<String>();
                 list.add(value);
                 results.put(key, list);
 
             } else {
 
-                List list = (LinkedList)results.get(key);
+                List<String> list = results.get(key);
                 list.add(value);
             }
 
@@ -183,7 +183,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      * @param line
      * @throws Exception
      */
-    private void generateModelFromKeyValueMap(Class clazz, Object obj, Map<Integer, List> results, int line) throws Exception {
+    private void generateModelFromKeyValueMap(Class clazz, Object obj, Map<Integer, List<String>> results, int line) throws Exception {
 
         for (Field field : clazz.getDeclaredFields()) {
 
@@ -231,7 +231,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                          */
 
                         // Get List from Map
-                        List l = lists.get(clazz.getName());
+                        List<Object> l = lists.get(clazz.getName());
 
                         if (l != null) {
 
@@ -305,7 +305,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         } else {
 
                             // Get List from Map
-                            List l = lists.get(clazz.getName());
+                            List<Object> l = lists.get(clazz.getName());
 
                             if (l != null) {
 
@@ -392,7 +392,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     }
 
                     if (!lists.containsKey(cl.getName())) {
-                        lists.put(cl.getName(), new ArrayList());
+                        lists.put(cl.getName(), new ArrayList<Object>());
                     }
 
                     generateModelFromKeyValueMap(cl, null, results, line);
@@ -454,7 +454,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             int precision = keyValuePairField.precision();
 
             // Create format
-            Format format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
+            @SuppressWarnings("unchecked")
+            Format<Object> format = (Format<Object>)FormatFactory.getFormat(type, pattern, getLocale(), precision);
 
             // Get object to be formatted
             Object obj = model.get(field.getDeclaringClass().getName());

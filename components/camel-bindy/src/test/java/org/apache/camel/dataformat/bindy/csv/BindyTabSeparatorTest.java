@@ -23,6 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.tab.PurchaseOrder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.CastUtils;
+
 import org.junit.Test;
 
 /**
@@ -39,7 +41,7 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<Map> rows = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<Map> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
         PurchaseOrder order = (PurchaseOrder) rows.get(0).get(PurchaseOrder.class.getName());
 
         assertEquals(123, order.getId());

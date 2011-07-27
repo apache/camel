@@ -55,8 +55,6 @@ public class BindySimpleCsvOneToManyMarshallTest extends AbstractJUnit4SpringCon
     }
 
     public List<Map<String, Object>> generateModel() {
-        Map<String, Object> modelObjects = new HashMap<String, Object>();
-
         Author author;
         Book book;
 

@@ -39,7 +39,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringContextTests {
 
     private static final String URI_MOCK_RESULT = "mock:result";
-    private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
 
     @Produce(uri = URI_DIRECT_START)
@@ -47,9 +46,6 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
 
     @EndpointInject(uri = URI_MOCK_RESULT)
     private MockEndpoint result;
-
-    @EndpointInject(uri = URI_MOCK_ERROR)
-    private MockEndpoint error;
 
     private String expected;
 

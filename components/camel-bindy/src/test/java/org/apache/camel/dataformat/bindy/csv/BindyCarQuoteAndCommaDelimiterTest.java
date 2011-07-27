@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.car.Car;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -59,7 +59,7 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
         assertEquals("TOYOTA", rec1.getMake());
         assertEquals("KLUGER", rec1.getModel());
         assertEquals(2005, rec1.getYear());
-        assertEquals(Double.valueOf("155000.0"), rec1.getKlms());
+        assertEquals(Double.valueOf("155000.0"), rec1.getKlms(), 0.0001);
         assertEquals("EZR05I", rec1.getNvic());
         assertEquals("Used", rec1.getStatus());
     }

@@ -55,7 +55,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
     private Map<String, Integer> sections = new HashMap<String, Integer>();
 
-    private Map<Integer, List> results;
+    private Map<Integer, List<String>> results;
 
     private int numberOptionalFields;
     private int numberMandatoryFields;
@@ -226,7 +226,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
-        results = new HashMap<Integer, List>();
+        results = new HashMap<Integer, List<String>>();
 
         // Check if separator exists
         ObjectHelper.notNull(this.separator, "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
@@ -307,7 +307,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         return buffer.toString();
     }
 
-    private List<List> product(Map<Integer, List> values) {
+    private List<List> product(Map<Integer, List<String>> values) {
         TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(values);
 
         List<List> product = new ArrayList<List>();
@@ -317,10 +317,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         int idxSize = 0;
         do {
             idxSize = 0;
-            List v = new ArrayList();
+            List<String> v = new ArrayList<String>();
 
             for (int ii = 1; ii <= sortValues.lastKey(); ii++) {
-                List l = values.get(ii);
+                List<String> l = values.get(ii);
                 if (l == null) {
                     v.add("");
                     ++idxSize;
@@ -423,13 +423,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 if (!results.containsKey(key)) {
 
-                    List list = new LinkedList();
+                    List<String> list = new LinkedList<String>();
                     list.add(result);
                     results.put(key, list);
 
                 } else {
 
-                    List list = (LinkedList)results.get(key);
+                    List<String> list = results.get(key);
                     list.add(result);
                 }
 

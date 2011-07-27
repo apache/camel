@@ -52,7 +52,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
     private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();
 
-    private Map<Integer, List> results;
+    private Map<Integer, List<String>> results;
 
     private int numberOptionalFields;
     private int numberMandatoryFields;
@@ -251,7 +251,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
-        results = new HashMap<Integer, List>();
+        results = new HashMap<Integer, List<String>>();
 
         for (Class clazz : models) {
 
@@ -274,8 +274,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         }
 
         // Convert Map<Integer, List> into List<List>
-        TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
-        for (Entry<Integer, List> entry : sortValues.entrySet()) {
+        TreeMap<Integer, List<String>> sortValues = new TreeMap<Integer, List<String>>(results);
+        for (Entry<Integer, List<String>> entry : sortValues.entrySet()) {
 
             // Get list of values
             List<String> val = entry.getValue();
@@ -309,14 +309,14 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                     // Retrieve the format, pattern and precision associated to
                     // the type
-                    Class type = field.getType();
+                    Class<?> type = field.getType();
                     String pattern = datafield.pattern();
                     int precision = datafield.precision();
 
 
 
                     // Create format
-                    Format format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
+                    Format<?> format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
 
                     // Get field value
                     Object value = field.get(obj);
@@ -391,11 +391,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 key = datafield.pos();
 
                 if (!results.containsKey(key)) {
-                    List list = new LinkedList();
+                    List<String> list = new LinkedList<String>();
                     list.add(result);
                     results.put(key, list);
                 } else {
-                    List list = results.get(key);
+                    List<String> list = results.get(key);
                     list.add(result);
                 }
 

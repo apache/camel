@@ -57,9 +57,6 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
     @EndpointInject(uri = URI_MOCK_RESULT)
     private MockEndpoint result;
 
-    @EndpointInject(uri = URI_MOCK_ERROR)
-    private MockEndpoint error;
-
     @Test
     @DirtiesContext
     public void testMarshallMessage() throws Exception {

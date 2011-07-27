@@ -46,7 +46,6 @@ public class AhcProducer extends DefaultAsyncProducer {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             // AHC supports async processing
