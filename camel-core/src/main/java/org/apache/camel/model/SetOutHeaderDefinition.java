@@ -58,6 +58,11 @@ public class SetOutHeaderDefinition extends NoOutputExpressionNode {
     public String toString() {
         return "SetOutHeader[" + getHeaderName() + ", " + getExpression() + "]";
     }
+    
+    @Override
+    public String getLabel() {
+        return "setOutHeader[" + getHeaderName() + "]";
+    }
 
     @Override
     public String getShortName() {

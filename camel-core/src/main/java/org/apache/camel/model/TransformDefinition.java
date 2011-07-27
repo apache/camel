@@ -48,6 +48,11 @@ public class TransformDefinition extends NoOutputExpressionNode {
     public String getShortName() {
         return "transform";
     }
+    
+    @Override
+    public String getLabel() {
+        return "transform[" + getExpression() + "]";
+    }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {

@@ -59,6 +59,11 @@ public class SortDefinition extends NoOutputExpressionNode {
     public String toString() {
         return "sort[" + getExpression() + " by: " + (comparatorRef != null ? "ref:" + comparatorRef : comparator) + "]";
     }
+    
+    @Override
+    public String getLabel() {
+        return "sort[" + getExpression() + "]";
+    }
 
     @Override
     public String getShortName() {

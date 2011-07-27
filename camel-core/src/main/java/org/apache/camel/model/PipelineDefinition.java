@@ -40,6 +40,11 @@ public class PipelineDefinition extends OutputDefinition<PipelineDefinition> {
     public String getShortName() {
         return "pipeline";
     }
+    
+    @Override
+    public String getLabel() {
+        return "pipeline";
+    }
 
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return this.createChildProcessor(routeContext, true);

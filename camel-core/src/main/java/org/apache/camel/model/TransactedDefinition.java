@@ -71,6 +71,16 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     public String toString() {
         return "Transacted[" + description() + "]";
     }
+    
+    protected String description() {
+        if (ref != null) {
+            return "ref:" + ref;
+        } else if (policy != null) {
+            return policy.toString();
+        } else {
+            return "";
+        }
+    }
 
     @Override
     public String getShortName() {
@@ -79,13 +89,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
 
     @Override
     public String getLabel() {
-        if (ref != null) {
-            return "transacted[ref:" + ref + "]";
-        } else if (policy != null) {
-            return "transacted[" + policy.toString() + "]";
-        } else {
-            return "transacted";
-        }
+        return "transacted[" + description() + "]";
     }
 
     @Override
@@ -145,14 +149,6 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         // wrap the target so it becomes a service and we can manage its lifecycle
         WrapProcessor wrap = new WrapProcessor(target, childProcessor);
         return wrap;
-    }
-
-    protected String description() {
-        if (policy != null) {
-            return policy.toString();
-        } else {
-            return "ref:" + ref;
-        }
     }
 
     protected Policy resolvePolicy(RouteContext routeContext) {

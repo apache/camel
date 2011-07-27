@@ -45,6 +45,11 @@ public class ValidateDefinition extends NoOutputExpressionNode {
     public String getShortName() {
         return "validate";
     }
+    
+    @Override
+    public String getLabel() {
+        return "validate[" + getExpression() + "]";
+    }
 
     @Override
     public PredicateValidatingProcessor createProcessor(RouteContext routeContext) throws Exception {

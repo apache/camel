@@ -81,7 +81,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
 
     @Override
     public String getLabel() {
-        return getExceptionClasses().toString();
+        return "doCatch[ " + getExceptionClasses() + "]";
     }
 
     @Override

@@ -55,6 +55,11 @@ public class LogDefinition extends NoOutputDefinition {
     public String toString() {
         return "Log[" + message + "]";
     }
+    
+    @Override
+    public String getLabel() {
+        return "log";
+    }
 
     @Override
     public String getShortName() {

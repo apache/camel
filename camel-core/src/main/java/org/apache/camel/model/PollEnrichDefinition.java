@@ -61,12 +61,21 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
 
     @Override
     public String toString() {
-        return "PollEnrich[" + (resourceUri != null ? resourceUri : "ref:" + resourceRef) + " " + aggregationStrategy + "]";
+        return "PollEnrich[" + description() + " " + aggregationStrategy + "]";
+    }
+    
+    protected String description() {
+        return FromDefinition.description(getResourceUri(), getResourceRef(), (Endpoint) null);
     }
 
     @Override
     public String getShortName() {
         return "pollEnrich";
+    }
+    
+    @Override
+    public String getLabel() {
+        return "pollEnrich[" + description() + "]";
     }
 
     @Override

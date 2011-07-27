@@ -87,7 +87,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
 
     @Override
     public String getLabel() {
-        return "split";
+        return "split[" + getExpression() + "]";
     }
 
     @Override

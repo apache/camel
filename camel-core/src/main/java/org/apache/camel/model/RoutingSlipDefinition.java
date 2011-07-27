@@ -74,6 +74,11 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends NoO
     public String getShortName() {
         return "routingSlip";
     }
+    
+    @Override
+    public String getLabel() {
+        return "routingSlip[" + getExpression() + "]";
+    }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {

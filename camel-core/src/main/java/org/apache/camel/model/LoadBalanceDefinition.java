@@ -292,11 +292,12 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
 
     @Override
     public String getLabel() {
-        CollectionStringBuffer buffer = new CollectionStringBuffer();
+        CollectionStringBuffer buffer = new CollectionStringBuffer("loadBalance[");
         List<ProcessorDefinition> list = getOutputs();
         for (ProcessorDefinition processorType : list) {
             buffer.append(processorType.getLabel());
         }
+        buffer.append("]");
         return buffer.toString();
     }
 

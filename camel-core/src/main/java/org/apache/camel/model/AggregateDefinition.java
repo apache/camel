@@ -119,8 +119,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     @Override
     public String toString() {
-        String expressionString = (getExpression() != null) ? getExpression().getLabel() : "";     
-        return "Aggregate[" + expressionString + " -> " + getOutputs() + "]";
+        return "Aggregate[" + description() + " -> " + getOutputs() + "]";
+    }
+    
+    protected String description() {
+        return getExpression() != null ? getExpression().getLabel() : "";
     }
 
     @Override
@@ -130,7 +133,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     @Override
     public String getLabel() {
-        return "aggregate";
+        return "aggregate[" + description() + "]";
     }
 
     @Override

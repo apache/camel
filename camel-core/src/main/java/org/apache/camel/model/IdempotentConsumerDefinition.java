@@ -58,6 +58,11 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     public String toString() {
         return "IdempotentConsumer[" + getExpression() + " -> " + getOutputs() + "]";
     }
+    
+    @Override
+    public String getLabel() {
+        return "idempotentConsumer[" + getExpression() + "]";
+    }
 
     @Override
     public String getShortName() {

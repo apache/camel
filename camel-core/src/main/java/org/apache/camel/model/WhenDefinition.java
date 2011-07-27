@@ -44,6 +44,10 @@ public class WhenDefinition extends ExpressionNode {
 
     @Override
     public String toString() {
+        return "When[" + description() + " -> " + getOutputs() + "]";
+    }
+
+    protected String description() {
         StringBuilder sb = new StringBuilder();
         if (getExpression() != null) {
             String language = getExpression().getLanguage();
@@ -54,13 +58,18 @@ public class WhenDefinition extends ExpressionNode {
             if (language != null) {
                 sb.append("}");
             }
-        }       
-        return "When[" + sb.toString() + " -> " + getOutputs() + "]";
+        }
+        return sb.toString();
     }
 
     @Override
     public String getShortName() {
         return "when";
+    }
+    
+    @Override
+    public String getLabel() {
+        return "when[" + description() + "]";
     }
 
     @Override

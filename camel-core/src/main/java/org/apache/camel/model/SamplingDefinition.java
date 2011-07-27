@@ -63,11 +63,15 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
     
     @Override
     public String toString() {
+        return "Sample[" + description() + " -> " + getOutputs() + "]";
+    }
+    
+    protected String description() {
         if (messageFrequency != null) {
-            return "Sample[1 Exchange per " + getMessageFrequency() + " messages received -> " + getOutputs() + "]";
+            return "1 Exchange per " + getMessageFrequency() + " messages received";
         } else {
             TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
-            return "Sample[1 Exchange per " + getSamplePeriod() + " " + tu.toString().toLowerCase() + " -> " + getOutputs() + "]";
+            return "1 Exchange per " + getSamplePeriod() + " " + tu.toString().toLowerCase();
         }
     }
 
@@ -78,12 +82,7 @@ public class SamplingDefinition extends OutputDefinition<SamplingDefinition> {
 
     @Override
     public String getLabel() {
-        if (messageFrequency != null) {
-            return "sample[1 Exchange per " + getMessageFrequency() + " messages received]";
-        } else {
-            TimeUnit tu = getUnits() != null ? getUnits() : TimeUnit.SECONDS;
-            return "sample[1 Exchange per " + getSamplePeriod() + " " + tu.name().toLowerCase() + "]";
-        }
+        return "sample[" + description() + "]";
     }
 
     @Override

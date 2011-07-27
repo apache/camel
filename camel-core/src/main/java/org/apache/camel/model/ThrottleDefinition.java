@@ -64,8 +64,11 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     @Override
     public String toString() {
-        return "Throttle[" + getExpression() + " request per " + getTimePeriodMillis()
-               + " millis -> " + getOutputs() + "]";
+        return "Throttle[" + description() + " -> " + getOutputs() + "]";
+    }
+    
+    protected String description() {
+        return getExpression() + " request per " + getTimePeriodMillis() + " millis";
     }
 
     @Override
@@ -75,7 +78,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     @Override
     public String getLabel() {
-        return "" + getExpression() + " per " + getTimePeriodMillis() + " (ms)";
+        return "throttle[" + description() + "]";
     }
 
     @Override

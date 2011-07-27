@@ -231,14 +231,10 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     public String toString() {
         return "Resequencer[" + getExpression() + " -> " + getOutputs() + "]";
     }
-
+    
     @Override
     public String getLabel() {
-        String s = "";
-        if (getExpression() != null) {
-            s = getExpression().getLabel();
-        }
-        return "Resequencer[" + s + "]";
+        return "resequencer[" + (getExpression() != null ? getExpression().getLabel() : "") + "]";
     }
 
     public ResequencerConfig getResequencerConfig() {

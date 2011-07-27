@@ -203,11 +203,12 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
 
     @Override
     public String getLabel() {
-        CollectionStringBuffer buffer = new CollectionStringBuffer();
+        CollectionStringBuffer buffer = new CollectionStringBuffer("choice[");
         List<WhenDefinition> list = getWhenClauses();
         for (WhenDefinition whenType : list) {
             buffer.append(whenType.getLabel());
         }
+        buffer.append("]");
         return buffer.toString();
     }
 

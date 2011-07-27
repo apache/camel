@@ -51,6 +51,11 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
     public String getShortName() {
         return "removeProperty";
     }
+    
+    @Override
+    public String getLabel() {
+        return "removeProperty[" + getPropertyName() + "]";
+    }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {

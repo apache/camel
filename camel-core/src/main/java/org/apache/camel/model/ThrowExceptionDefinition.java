@@ -49,9 +49,18 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
 
     @Override
     public String toString() {
-        return "ThrowException[" + (exception != null ? exception.getClass().getCanonicalName() : "ref:" + ref) + "]";
+        return "ThrowException[" + description() + "]";
     }
 
+    protected String description() {
+        return exception != null ? exception.getClass().getCanonicalName() : "ref:" + ref;
+    }
+
+    @Override
+    public String getLabel() {
+        return "throwException[" + description() + "]";
+    }
+    
     @Override
     public Processor createProcessor(RouteContext routeContext) {
         if (ref != null && exception == null) {

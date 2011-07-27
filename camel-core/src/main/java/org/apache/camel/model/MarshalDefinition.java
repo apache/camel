@@ -104,21 +104,21 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
 
     @Override
     public String toString() {
-        if (dataFormatType != null) {
-            return "Marshal[" + dataFormatType + "]";
-        } else {
-            return "Marshal[ref:" + ref + "]";
-        }
+        return "Marshal[" + description() + "]";
     }
-
-    @Override
-    public String getShortName() {
-        return "marshal";
+    
+    protected String description() {
+        return dataFormatType != null ? dataFormatType.toString() : "ref:" + ref;
     }
 
     @Override
     public String getLabel() {
-        return toString();
+        return "marshal[" + description() + "]";
+    }
+    
+    @Override
+    public String getShortName() {
+        return "marshal";
     }
 
     public String getRef() {

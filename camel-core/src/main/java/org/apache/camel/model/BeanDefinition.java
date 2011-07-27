@@ -63,7 +63,28 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
 
     @Override
     public String toString() {
-        return "Bean[" + getLabel() + "]";
+        return "Bean[" + description() + "]";
+    }
+    
+    public String description() {
+        if (ref != null) {
+            String methodText = "";
+            if (method != null) {
+                methodText = " method: " + method;
+            }
+            return "ref:" + ref + methodText;
+        } else if (bean != null) {
+            return bean.toString();
+        } else if (beanType != null) {
+            return beanType;
+        } else {
+            return "";
+        }
+    }
+    
+    @Override
+    public String getLabel() {
+        return "bean[" + description() + "]";
     }
 
     @Override
@@ -185,22 +206,5 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             }
         }
         return answer;
-    }
-
-    @Override
-    public String getLabel() {
-        if (ref != null) {
-            String methodText = "";
-            if (method != null) {
-                methodText = " method: " + method;
-            }
-            return "ref:" + ref + methodText;
-        } else if (bean != null) {
-            return bean.toString();
-        } else if (beanType != null) {
-            return beanType;
-        } else {
-            return "";
-        }
     }
 }

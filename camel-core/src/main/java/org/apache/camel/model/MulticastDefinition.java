@@ -73,6 +73,11 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     }
 
     @Override
+    public String getLabel() {
+        return "multicast";
+    }
+    
+    @Override
     public String getShortName() {
         return "multicast";
     }

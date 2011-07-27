@@ -49,6 +49,11 @@ public class InOutDefinition extends SendDefinition<InOutDefinition> {
     }
 
     @Override
+    public String getLabel() {
+        return "inOut";
+    }
+    
+    @Override
     public String getShortName() {
         return "inOut";
     }

@@ -120,12 +120,21 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
 
     @Override
     public String toString() {
-        return "WireTap[" + getLabel() + "]";
+        return "WireTap[" + description() + "]";
+    }
+    
+    protected String description() {
+        return FromDefinition.description(getUri(), getRef(), getEndpoint());
     }
 
     @Override
     public String getShortName() {
         return "wireTap";
+    }
+    
+    @Override
+    public String getLabel() {
+        return "wireTap[" + description() + "]";
     }
 
     @Override
@@ -147,11 +156,6 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
         } else {
             return endpoint;
         }
-    }
-
-    @Override
-    public String getLabel() {
-        return FromDefinition.description(getUri(), getRef(), getEndpoint());
     }
 
     // Fluent API

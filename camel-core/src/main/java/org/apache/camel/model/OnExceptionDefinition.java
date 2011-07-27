@@ -113,9 +113,18 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     @Override
     public String toString() {
-        return "OnException[" + getExceptionClasses() + (onWhen != null ? " " + onWhen : "") + " -> " + getOutputs() + "]";
+        return "OnException[" + description() + " -> " + getOutputs() + "]";
+    }
+    
+    protected String description() {
+        return getExceptionClasses() + (onWhen != null ? " " + onWhen : "");
     }
 
+    @Override
+    public String getLabel() {
+        return "onException[" + description() + "]";
+    }
+    
     @Override
     public boolean isAbstract() {
         return true;

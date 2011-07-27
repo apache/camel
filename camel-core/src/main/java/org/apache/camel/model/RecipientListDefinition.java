@@ -88,6 +88,11 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     public String getShortName() {
         return "recipientList";
     }
+    
+    @Override
+    public String getLabel() {
+        return "recipientList[" + getExpression() + "]";
+    }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {

@@ -149,10 +149,11 @@ public class RedeliveryPolicyDefinition {
         return answer;
     }
 
+    @Override
     public String toString() {
         return "RedeliveryPolicy[maximumRedeliveries: " + maximumRedeliveries + "]";
     }
-
+    
     // Fluent API
     //-------------------------------------------------------------------------
 

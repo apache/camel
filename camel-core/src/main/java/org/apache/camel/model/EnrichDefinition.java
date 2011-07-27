@@ -62,7 +62,16 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> {
     
     @Override
     public String toString() {
-        return "Enrich[" + (resourceUri != null ? resourceUri : "ref:" + resourceRef) + " " + aggregationStrategy + "]";
+        return "Enrich[" + description() + " " + aggregationStrategy + "]";
+    }
+    
+    protected String description() {
+        return FromDefinition.description(resourceUri, resourceRef, (Endpoint) null);
+    }
+    
+    @Override
+    public String getLabel() {
+        return "enrich[" + description() + "]";
     }
 
     @Override

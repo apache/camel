@@ -54,11 +54,12 @@ public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
 
     @Override
     public String getLabel() {
-        CollectionStringBuffer buffer = new CollectionStringBuffer();
+        CollectionStringBuffer buffer = new CollectionStringBuffer("otherwise[");
         List<ProcessorDefinition> list = getOutputs();
         for (ProcessorDefinition type : list) {
             buffer.append(type.getLabel());
         }
+        buffer.append("]");
         return buffer.toString();
     }
 }

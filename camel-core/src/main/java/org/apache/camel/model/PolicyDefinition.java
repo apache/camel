@@ -58,6 +58,14 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
     public String toString() {
         return "Policy[" + description() + "]";
     }
+    
+    protected String description() {
+        if (policy != null) {
+            return policy.toString();
+        } else {
+            return "ref:" + ref;
+        }
+    }
 
     @Override
     public String getShortName() {
@@ -68,13 +76,7 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
 
     @Override
     public String getLabel() {
-        if (ref != null) {
-            return getShortName() + "[ref:" + ref + "]";
-        } else if (policy != null) {
-            return getShortName() + "[" + policy.toString() + "]";
-        } else {
-            return getShortName();
-        }
+        return getShortName() + "[" + getDescription() + "]";
     }
 
     @Override
@@ -135,14 +137,6 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
         // wrap the target so it becomes a service and we can manage its lifecycle
         WrapProcessor wrap = new WrapProcessor(target, childProcessor);
         return wrap;
-    }
-
-    protected String description() {
-        if (policy != null) {
-            return policy.toString();
-        } else {
-            return "ref:" + ref;
-        }
     }
 
     protected Policy resolvePolicy(RouteContext routeContext) {

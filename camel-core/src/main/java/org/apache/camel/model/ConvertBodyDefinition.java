@@ -61,12 +61,17 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
 
     @Override
     public String toString() {        
-        return "convertBodyTo[" + getType() + "]";
+        return "ConvertBodyTo[" + getType() + "]";
     }
 
     @Override
     public String getShortName() {
         return "convertBodyTo";
+    }
+    
+    @Override
+    public String getLabel() {
+        return "convertBodyTo[" + getType() + "]";
     }
 
     @Override

@@ -87,6 +87,11 @@ public class LoopDefinition extends ExpressionNode {
     }
     
     @Override
+    public String getLabel() {
+        return "loop[" + getExpression() + "]";
+    }
+    
+    @Override
     public String getShortName() {
         return "loop";
     }

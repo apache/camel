@@ -36,6 +36,11 @@ public class FinallyDefinition extends OutputDefinition<FinallyDefinition> imple
     public String toString() {
         return "DoFinally[" + getOutputs() + "]";
     }
+    
+    @Override
+    public String getLabel() {
+        return "doFinally";
+    }
 
     @Override
     public String getShortName() {
