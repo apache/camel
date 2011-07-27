@@ -21,8 +21,10 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.XPath;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
+
+import org.junit.Test;
 
 /**
  * @version 
@@ -30,6 +32,7 @@ import org.apache.camel.util.jndi.JndiContext;
 public class XPathAnnotationResultTypeTest extends CamelTestSupport {
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
 
         String response = (String) template.requestBody("direct:in1", "<a><b>hello</b></a>");

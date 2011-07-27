@@ -186,8 +186,6 @@ public class IrcEndpoint extends DefaultEndpoint {
 
     public void joinChannel(String channel) {
 
-        List<String> channels = configuration.getChannels();
-
         IRCConnection connection = component.getIRCConnection(configuration);
 
         // check for key for channel

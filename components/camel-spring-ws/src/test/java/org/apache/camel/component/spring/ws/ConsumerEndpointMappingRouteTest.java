@@ -36,7 +36,7 @@ import org.springframework.ws.soap.client.core.SoapActionCallback;
 
 public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
 
-    private static final SourceExtractor NOOP_SOURCE_EXTRACTOR = new SourceExtractor() {
+    private static final SourceExtractor<Object> NOOP_SOURCE_EXTRACTOR = new SourceExtractor<Object>() {
         public Object extractData(Source source) throws IOException, TransformerException {
             return null;
         }

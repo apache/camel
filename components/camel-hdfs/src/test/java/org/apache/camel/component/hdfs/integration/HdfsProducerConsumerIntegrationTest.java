@@ -22,11 +22,14 @@ import junit.framework.Assert;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+
+import org.junit.After;
 import org.junit.Ignore;
+import org.junit.Test;
 
 @Ignore("Must run manual")
 public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
@@ -36,6 +39,7 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
         return false;
     }
 
+    @Test
     public void testSimpleSplitWriteRead() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -63,7 +67,8 @@ public class HdfsProducerConsumerIntegrationTest extends CamelTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         Thread.sleep(100);
         Configuration conf = new Configuration();

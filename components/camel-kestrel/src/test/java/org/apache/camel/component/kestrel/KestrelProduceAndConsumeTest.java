@@ -23,8 +23,9 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
+import org.junit.Test;
 
 @Ignore("Manual test as you need to start a Kestrel broker")
 public class KestrelProduceAndConsumeTest extends CamelTestSupport {
@@ -32,6 +33,7 @@ public class KestrelProduceAndConsumeTest extends CamelTestSupport {
     @EndpointInject(uri = "kestrel://cameltest2")
     private ProducerTemplate producerTemplate;
 
+    @Test
     public void testProduceAndConsume() throws Exception {
         List<String> bodies = new ArrayList<String>();
         for (int k = 0; k < 10; ++k) {

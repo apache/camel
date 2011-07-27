@@ -34,6 +34,7 @@ public class MessageTypeTest extends ExchangeTestSupport {
 
     @Test
     public void testCamelToJaxbUsingExplicitJaxbConverter() throws Exception {
+        @SuppressWarnings("deprecation")
         MessageDefinition messageType = JaxbConverter.toMessageType(exchange);
 
         assertNotNull("Should have created a valid message Type");

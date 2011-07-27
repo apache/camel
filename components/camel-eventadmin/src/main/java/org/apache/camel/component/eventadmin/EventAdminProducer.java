@@ -99,7 +99,7 @@ public class EventAdminProducer extends DefaultProducer {
         Message in = exchange.getIn();
         CamelContext context = endpoint.getCamelContext();
         Map map = context.getTypeConverter().convertTo(Map.class, exchange, in.getBody());
-        Dictionary dict = new Hashtable();
+        Dictionary<String, Object> dict = new Hashtable<String, Object>();
         for (Object object : map.entrySet()) {
             Entry entry = (Entry) object;
             String keyString = CamelContextHelper.convertTo(context, String.class, entry.getKey());

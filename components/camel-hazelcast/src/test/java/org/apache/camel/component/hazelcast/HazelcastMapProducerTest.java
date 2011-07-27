@@ -24,6 +24,8 @@ import com.hazelcast.core.IMap;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.CastUtils;
+
 import org.junit.Test;
 
 public class HazelcastMapProducerTest extends CamelTestSupport implements Serializable {
@@ -86,13 +88,13 @@ public class HazelcastMapProducerTest extends CamelTestSupport implements Serial
         String q2 = "foo LIKE alp%";
 
         template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, q1);
-        Collection<Dummy> b1 = consumer.receiveBody("seda:out", 5000, Collection.class);
+        Collection<Dummy> b1 = CastUtils.cast(consumer.receiveBody("seda:out", 5000, Collection.class));
 
         assertNotNull(b1);
         assertEquals(2, b1.size());
 
         template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, q2);
-        Collection<Dummy> b2 = consumer.receiveBody("seda:out", 5000, Collection.class);
+        Collection<Dummy> b2 = CastUtils.cast(consumer.receiveBody("seda:out", 5000, Collection.class));
 
         assertNotNull(b2);
         assertEquals(1, b2.size());

@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatchStrategy;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class RouteboxDemoTestSupport extends CamelTestSupport {
     

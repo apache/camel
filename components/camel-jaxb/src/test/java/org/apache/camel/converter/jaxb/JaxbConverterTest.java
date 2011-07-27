@@ -29,6 +29,7 @@ import org.apache.camel.test.junit4.ExchangeTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("deprecation")
 public class JaxbConverterTest  extends ExchangeTestSupport {
     private JaxbConverter jaxbConverter;
     private PurchaseOrder order;

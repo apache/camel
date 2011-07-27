@@ -23,6 +23,8 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.IMap;
 
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.util.CastUtils;
+
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -92,13 +94,13 @@ public class HazelcastMapProducerForSpringTest extends CamelSpringTestSupport im
         String q2 = "foo LIKE alp%";
 
         template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, q1);
-        Collection<Dummy> b1 = consumer.receiveBody("seda:out", 5000, Collection.class);
+        Collection<Dummy> b1 = CastUtils.cast(consumer.receiveBody("seda:out", 5000, Collection.class));
 
         assertNotNull(b1);
         assertEquals(2, b1.size());
 
         template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, q2);
-        Collection<Dummy> b2 = consumer.receiveBody("seda:out", 5000, Collection.class);
+        Collection<Dummy> b2 = CastUtils.cast(consumer.receiveBody("seda:out", 5000, Collection.class));
 
         assertNotNull(b2);
         assertEquals(1, b2.size());

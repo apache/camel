@@ -18,8 +18,9 @@ package org.apache.camel.component.kestrel;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
+import org.junit.Test;
 
 @Ignore("Manual test as you need to start a Kestrel broker")
 public class KestrelProducerTest extends CamelTestSupport {
@@ -27,6 +28,7 @@ public class KestrelProducerTest extends CamelTestSupport {
     @EndpointInject(uri = "kestrel://cameltest1")
     ProducerTemplate producerTemplate;
 
+    @Test
     public void testKestrelProducer() throws Exception {
         for (int k = 0; k < 100; ++k) {
             producerTemplate.sendBody("test body " + k);

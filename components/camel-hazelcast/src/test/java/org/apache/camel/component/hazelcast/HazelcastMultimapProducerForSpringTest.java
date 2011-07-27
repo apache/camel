@@ -22,6 +22,8 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.MultiMap;
 
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.camel.util.CastUtils;
+
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -73,7 +75,7 @@ public class HazelcastMultimapProducerForSpringTest extends CamelSpringTestSuppo
         map.put("4711", "my-foo");
 
         template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, "4711");
-        Collection<Object> body = consumer.receiveBody("seda:out", 5000, Collection.class);
+        Collection<Object> body = CastUtils.cast(consumer.receiveBody("seda:out", 5000, Collection.class));
 
         assertTrue(body.contains("my-foo"));
     }

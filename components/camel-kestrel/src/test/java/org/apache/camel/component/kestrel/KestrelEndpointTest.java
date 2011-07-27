@@ -19,7 +19,9 @@ package org.apache.camel.component.kestrel;
 import java.util.Arrays;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+
+import org.junit.Test;
 
 public class KestrelEndpointTest extends CamelTestSupport {
 
@@ -94,6 +96,7 @@ public class KestrelEndpointTest extends CamelTestSupport {
     private KestrelConfiguration baseConfiguration;
     private KestrelComponent kestrelComponent;
     
+    @Test
     public void testEndpoints() throws Exception {
         for (TestCase testCase : TEST_CASES) {
             KestrelEndpoint endpoint = (KestrelEndpoint)
