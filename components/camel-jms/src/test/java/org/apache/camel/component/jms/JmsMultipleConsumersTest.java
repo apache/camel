@@ -22,7 +22,9 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+
+import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -31,6 +33,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsMultipleConsumersTest extends CamelTestSupport {
 
+    @Test
     public void testMultipleConsumersAllowed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -56,6 +59,7 @@ public class JmsMultipleConsumersTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMultipleConsumersNotAllowed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -17,7 +17,9 @@
 package org.apache.camel.test.patterns;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+
+import org.junit.Test;
 
 /**
  * @version 
@@ -28,7 +30,8 @@ public class IsMockEndpointsTest extends CamelTestSupport {
     public String isMockEndpoints() {
         return "*";
     }
-
+    
+    @Test
     public void testMockAllEndpoints() throws Exception {
         getMockEndpoint("mock:direct:start").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:direct:foo").expectedBodiesReceived("Hello World");

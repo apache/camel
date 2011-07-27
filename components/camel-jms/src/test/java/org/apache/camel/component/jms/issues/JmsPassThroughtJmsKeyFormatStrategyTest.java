@@ -25,7 +25,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+
+import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -36,6 +38,7 @@ public class JmsPassThroughtJmsKeyFormatStrategyTest extends CamelTestSupport {
 
     private String uri = "activemq:queue:hello?jmsKeyFormatStrategy=passthrough";
 
+    @Test
     public void testSendWithHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

@@ -23,7 +23,9 @@ import javax.jms.DeliveryMode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
+
+import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -32,6 +34,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
 
+    @Test
     public void testSendDefault() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedBodiesReceived("Hello World");
@@ -46,6 +49,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         assertEquals(DeliveryMode.PERSISTENT, map.get("JMSDeliveryMode"));
     }
 
+    @Test
     public void testSendNonPersistent() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedBodiesReceived("Hello World");
@@ -60,6 +64,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         assertEquals(DeliveryMode.NON_PERSISTENT, map.get("JMSDeliveryMode"));
     }
 
+    @Test
     public void testSendNonPersistentAsString() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedBodiesReceived("Hello World");
@@ -74,6 +79,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         assertEquals(DeliveryMode.NON_PERSISTENT, map.get("JMSDeliveryMode"));
     }
 
+    @Test
     public void testSendPersistent() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedBodiesReceived("Hello World");
@@ -88,6 +94,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         assertEquals(DeliveryMode.PERSISTENT, map.get("JMSDeliveryMode"));
     }
 
+    @Test
     public void testSendPersistentAsString() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:bar");
         mock.expectedBodiesReceived("Hello World");

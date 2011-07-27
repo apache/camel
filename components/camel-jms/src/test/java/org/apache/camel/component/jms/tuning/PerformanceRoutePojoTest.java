@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms.tuning;
 
-import org.apache.camel.test.CamelSpringTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -62,10 +62,4 @@ public class PerformanceRoutePojoTest extends CamelSpringTestSupport {
         System.out.println("RoutePerformancePojoTest: Sent: " + size + " Took: " + delta + " ms");
     }
 
-    @Override
-    protected boolean canRunOnThisPlatform() {
-        String os = System.getProperty("os.name");
-        // HP-UX is just to slow to run this test
-        return !os.toLowerCase().contains("hp-ux");
-    }
 }
