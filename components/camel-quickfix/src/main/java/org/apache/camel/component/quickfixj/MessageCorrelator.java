@@ -66,7 +66,7 @@ public class MessageCorrelator implements QuickfixjEventListener {
         }
     }
 
-    private class MessageCorrelationRule {
+    private static class MessageCorrelationRule {
         private final Exchange exchange;
         private final CountDownLatch latch = new CountDownLatch(1);
         private final MessagePredicate messageCriteria;

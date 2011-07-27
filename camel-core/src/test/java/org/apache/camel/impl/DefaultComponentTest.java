@@ -32,7 +32,7 @@ import org.apache.camel.NoSuchBeanException;
  */
 public class DefaultComponentTest extends ContextTestSupport {
 
-    private final class MyComponent extends DefaultComponent {
+    private static final class MyComponent extends DefaultComponent {
 
         private MyComponent(CamelContext context) {
             super(context);

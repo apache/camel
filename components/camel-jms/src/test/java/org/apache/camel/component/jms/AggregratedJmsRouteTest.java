@@ -106,7 +106,7 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
             }
         };
     }
-    private class MyProcessor implements Processor {
+    private static class MyProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
             LOG.info("get the exchange here " + exchange);

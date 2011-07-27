@@ -50,7 +50,7 @@ public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefault
         };
     }
 
-    private class MyCustomKeyFormatStrategy implements JmsKeyFormatStrategy {
+    private static class MyCustomKeyFormatStrategy implements JmsKeyFormatStrategy {
 
         public String encodeKey(String key) {
             return "FOO" + key + "BAR";

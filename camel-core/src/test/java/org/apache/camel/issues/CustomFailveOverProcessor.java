@@ -65,7 +65,7 @@ public class CustomFailveOverProcessor extends ContextTestSupport {
         };
     }
 
-    private class MyFailOverProcessor implements Processor {
+    private static class MyFailOverProcessor implements Processor {
 
         private List<String> uris;
         private ProducerTemplate template;

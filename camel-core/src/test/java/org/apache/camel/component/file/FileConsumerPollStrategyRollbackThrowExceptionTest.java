@@ -63,7 +63,7 @@ public class FileConsumerPollStrategyRollbackThrowExceptionTest extends ContextT
         };
     }
 
-    private class MyPollStrategy implements PollingConsumerPollStrategy {
+    private static class MyPollStrategy implements PollingConsumerPollStrategy {
 
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             // simulate an error on first poll

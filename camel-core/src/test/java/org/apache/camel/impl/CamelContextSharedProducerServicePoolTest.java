@@ -28,7 +28,7 @@ import org.apache.camel.spi.ServicePool;
  */
 public class CamelContextSharedProducerServicePoolTest extends ContextTestSupport {
 
-    private class MyProducer extends DefaultProducer implements ServicePoolAware {
+    private static class MyProducer extends DefaultProducer implements ServicePoolAware {
 
         private boolean start;
         private boolean stop;

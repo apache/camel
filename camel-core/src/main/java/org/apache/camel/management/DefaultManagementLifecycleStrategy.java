@@ -723,7 +723,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
      *
      * @see org.apache.camel.management.DefaultManagementLifecycleStrategy#enlistPreRegisteredServices()
      */
-    private final class PreRegisterService {
+    private static final class PreRegisterService {
 
         private String name;
         private Component component;

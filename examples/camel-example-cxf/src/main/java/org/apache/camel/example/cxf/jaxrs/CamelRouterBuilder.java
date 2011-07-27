@@ -91,7 +91,7 @@ public class CamelRouterBuilder extends RouteBuilder {
     }
     
     // Mapping the request to object's invocation
-    private class MappingProcessor implements Processor {
+    private static class MappingProcessor implements Processor {
         
         private Class<?> beanClass;
         private Object instance;

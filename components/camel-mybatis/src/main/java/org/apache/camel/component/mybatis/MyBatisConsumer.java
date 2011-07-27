@@ -42,7 +42,7 @@ public class MyBatisConsumer extends ScheduledPollConsumer implements BatchConsu
 
     private static final Logger LOG = LoggerFactory.getLogger(MyBatisConsumer.class);
 
-    private final class DataHolder {
+    private static final class DataHolder {
         private Exchange exchange;
         private Object data;
 

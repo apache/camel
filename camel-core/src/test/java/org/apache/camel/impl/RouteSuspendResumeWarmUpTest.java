@@ -55,7 +55,7 @@ public class RouteSuspendResumeWarmUpTest extends ContextTestSupport {
         };
     }
 
-    private class MyService extends ServiceSupport implements Processor {
+    private static class MyService extends ServiceSupport implements Processor {
 
         private volatile String state;
 

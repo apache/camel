@@ -44,7 +44,7 @@ public class TraceInterceptorSubclassFactory implements TraceInterceptorFactory 
         this.traceAllNodes = traceAllNodes;
     }
 
-    private class TracerInterceptorSubclass extends TraceInterceptor {
+    private static class TracerInterceptorSubclass extends TraceInterceptor {
         private List<StringBuilder> eventMessages;
         private boolean traceThisNode = true;
         private TraceInterceptorSubclassFactory factory;

@@ -91,7 +91,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         };
     }
 
-    private class MyNoopProcessor implements Processor {
+    private static class MyNoopProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             boolean locked = "Hello Locked".equals(body);

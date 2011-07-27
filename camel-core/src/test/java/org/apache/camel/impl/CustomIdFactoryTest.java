@@ -106,7 +106,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
         assertEquals("#choice5##log3##to4#", ids);
     }
 
-    private class MyDebuggerCheckingId implements InterceptStrategy {
+    private static class MyDebuggerCheckingId implements InterceptStrategy {
 
         public Processor wrapProcessorInInterceptors(final CamelContext context, 
                 final ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {

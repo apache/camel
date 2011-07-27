@@ -340,7 +340,7 @@ public class DefaultCamelContextTest extends TestSupport {
         assertEquals("Stopped", my.getStatus().name());
     }
 
-    private class MyService extends ServiceSupport implements CamelContextAware {
+    private static class MyService extends ServiceSupport implements CamelContextAware {
 
         private CamelContext camelContext;
 

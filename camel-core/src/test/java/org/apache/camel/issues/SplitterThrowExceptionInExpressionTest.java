@@ -58,7 +58,7 @@ public class SplitterThrowExceptionInExpressionTest extends ContextTestSupport {
         };
     }
 
-    private class MyExpression implements Expression {
+    private static class MyExpression implements Expression {
 
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             // force an exception early, to test that the onException error handlers

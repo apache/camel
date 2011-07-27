@@ -84,7 +84,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         };
     }
 
-    private class MyPolicy extends RoutePolicySupport {
+    private static class MyPolicy extends RoutePolicySupport {
 
         private int counter;
         private Consumer consumer;

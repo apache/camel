@@ -56,7 +56,7 @@ public class ToFileRouteTest extends ContextTestSupport {
         };
     }
 
-    private class ProcessReport implements Processor {
+    private static class ProcessReport implements Processor {
 
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);

@@ -35,7 +35,7 @@ public class StartupListenerTest extends ContextTestSupport {
         return context;
     }
 
-    private class MyStartupListener implements StartupListener {
+    private static class MyStartupListener implements StartupListener {
 
         private int invoked;
         private boolean alreadyStarted;

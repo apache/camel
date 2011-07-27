@@ -216,7 +216,7 @@ public class CachedOutputStream extends OutputStream {
     }
     
     // This class will close the CachedOutputStream when it is closed
-    private class WrappedInputStream extends InputStream {
+    private static class WrappedInputStream extends InputStream {
         private CachedOutputStream cachedOutputStream;
         private InputStream inputStream;
         

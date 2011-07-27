@@ -331,7 +331,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    private class MySynchronization extends SynchronizationAdapter {
+    private static class MySynchronization extends SynchronizationAdapter {
 
         private boolean onDone;
 

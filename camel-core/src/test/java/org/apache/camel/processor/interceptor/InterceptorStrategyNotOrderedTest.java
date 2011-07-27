@@ -52,7 +52,7 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
         };
     }
 
-    private class FooInterceptStrategy implements InterceptStrategy {
+    private static class FooInterceptStrategy implements InterceptStrategy {
 
         public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, final Processor target, Processor nextTarget) throws Exception {
             Processor answer = new Processor() {
@@ -69,7 +69,7 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
 
     }
 
-    private class BarInterceptStrategy implements InterceptStrategy {
+    private static class BarInterceptStrategy implements InterceptStrategy {
 
         public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, final Processor target, Processor nextTarget) throws Exception {
             Processor answer = new Processor() {

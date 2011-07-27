@@ -47,7 +47,7 @@ public class BeanLookupUsingJndiRegistryIssueTest extends TestCase {
     }
 
     @SuppressWarnings("unused")
-    private class MyOtherDummyBean {
+    private static class MyOtherDummyBean {
 
         public String hello(String s) {
             return "Hello " + s;

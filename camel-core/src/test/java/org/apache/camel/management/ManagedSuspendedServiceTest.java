@@ -102,7 +102,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
         };
     }
 
-    private class MyPolicy extends RoutePolicySupport {
+    private static class MyPolicy extends RoutePolicySupport {
 
         private int counter;
 

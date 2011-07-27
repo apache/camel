@@ -31,7 +31,7 @@ public class CBRCustomPredicateAsFilterTest extends ContextTestSupport {
 
     private MyFiler filter = new MyFiler();
 
-    private class MyFiler implements Predicate {
+    private static class MyFiler implements Predicate {
 
         private List<String> bodies = new ArrayList<String>();
 

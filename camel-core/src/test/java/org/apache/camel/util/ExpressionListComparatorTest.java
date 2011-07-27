@@ -29,7 +29,7 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class ExpressionListComparatorTest extends ContextTestSupport {
 
-    private class MyFooExpression implements Expression {
+    private static class MyFooExpression implements Expression {
 
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
@@ -37,7 +37,7 @@ public class ExpressionListComparatorTest extends ContextTestSupport {
         }
     }
 
-    private class MyBarExpression implements Expression {
+    private static class MyBarExpression implements Expression {
 
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {

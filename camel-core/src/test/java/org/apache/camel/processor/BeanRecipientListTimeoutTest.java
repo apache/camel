@@ -70,7 +70,7 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
         }
     }
 
-    private class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
+    private static class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
 
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
             assertEquals(1000, timeout);

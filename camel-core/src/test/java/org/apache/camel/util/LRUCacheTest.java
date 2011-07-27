@@ -136,7 +136,7 @@ public class LRUCacheTest extends TestCase {
         assertEquals(true, service2.isStopped());
     }
 
-    private final class MyService implements Service {
+    private static final class MyService implements Service {
 
         private boolean stopped;
 

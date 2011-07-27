@@ -92,7 +92,7 @@ public class MinaCustomCodecTest extends BaseMinaTest {
         };
     }
 
-    private class MyCodec implements ProtocolCodecFactory {
+    private static class MyCodec implements ProtocolCodecFactory {
 
         public ProtocolEncoder getEncoder() throws Exception {
             return new ProtocolEncoder() {

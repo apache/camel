@@ -43,7 +43,7 @@ public class LifecycleStrategyFailOnStartupTest extends TestSupport {
         }
     }
 
-    private class MyLifecycleStrategy extends DummyLifecycleStrategy {
+    private static class MyLifecycleStrategy extends DummyLifecycleStrategy {
 
         @Override
         public void onContextStart(CamelContext context) {

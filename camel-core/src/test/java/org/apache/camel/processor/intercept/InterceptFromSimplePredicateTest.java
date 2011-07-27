@@ -60,7 +60,7 @@ public class InterceptFromSimplePredicateTest extends ContextTestSupport {
         };
     }
 
-    private class MyTestServiceProcessor implements Processor {
+    private static class MyTestServiceProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().setBody("This is a test body");

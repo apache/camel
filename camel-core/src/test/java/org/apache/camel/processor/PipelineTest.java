@@ -37,7 +37,7 @@ public class PipelineTest extends ContextTestSupport {
      * Used to verify that the pipeline actually takes the output of one stage of 
      * the pipe and feeds it in as input into the next stage.
      */
-    private final class InToOut implements Processor {
+    private static final class InToOut implements Processor {
         public void process(Exchange exchange) throws Exception {            
             exchange.getOut().copyFrom(exchange.getIn());
             Integer counter = exchange.getIn().getHeader("copy-counter", Integer.class);
@@ -51,7 +51,7 @@ public class PipelineTest extends ContextTestSupport {
     /**
      * Simple processor the copies the in to the fault and increments a counter.
      */
-    private final class InToFault implements Processor {
+    private static final class InToFault implements Processor {
         public void process(Exchange exchange) throws Exception {
             exchange.getOut().setFault(true);
             exchange.getOut().setBody(exchange.getIn().getBody());

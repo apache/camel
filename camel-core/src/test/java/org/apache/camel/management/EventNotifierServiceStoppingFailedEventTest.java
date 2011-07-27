@@ -89,7 +89,7 @@ public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupp
         assertEquals("Failure to stop service: B due to Fail B", event.toString());
     }
 
-    private final class MyService implements Service {
+    private static final class MyService implements Service {
 
         private String name;
         private boolean fail;

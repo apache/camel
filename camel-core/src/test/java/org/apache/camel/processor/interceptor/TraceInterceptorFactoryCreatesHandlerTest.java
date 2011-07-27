@@ -28,7 +28,7 @@ import org.apache.camel.processor.WrapProcessor;
 
 public class TraceInterceptorFactoryCreatesHandlerTest extends TracingTestBase {
 
-    private class TraceInterceptorFactoryCreatesHandlerTestFactory implements TraceInterceptorFactory {
+    private static class TraceInterceptorFactoryCreatesHandlerTestFactory implements TraceInterceptorFactory {
         private List<StringBuilder> eventMessages;
         private boolean traceAllNodes;
 

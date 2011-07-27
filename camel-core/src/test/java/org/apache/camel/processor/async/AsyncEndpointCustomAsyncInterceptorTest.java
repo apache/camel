@@ -82,7 +82,7 @@ public class AsyncEndpointCustomAsyncInterceptorTest extends ContextTestSupport 
     }
 
     // START SNIPPET: e1
-    private class MyInterceptor implements InterceptStrategy {
+    private static class MyInterceptor implements InterceptStrategy {
         private AtomicInteger counter = new AtomicInteger();
 
         public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition<?> definition,

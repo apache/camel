@@ -42,7 +42,7 @@ public class BeanParameterInfoTest extends ContextTestSupport {
     }
 
     @SuppressWarnings("unused")
-    private class Foo {
+    private static class Foo {
 
         public String hello(@Body String body) {
             return "Hello " + body;

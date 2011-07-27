@@ -37,7 +37,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
 
     private static int counter;
 
-    private final class MyEndpoint extends DefaultEndpoint {
+    private static final class MyEndpoint extends DefaultEndpoint {
 
         private MyEndpoint(String endpointUri, CamelContext camelContext) {
             super(endpointUri, camelContext);
@@ -61,7 +61,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
         }
     }
 
-    private final class MyProducer extends DefaultProducer implements ServicePoolAware {
+    private static final class MyProducer extends DefaultProducer implements ServicePoolAware {
 
         public MyProducer(Endpoint endpoint) {
             super(endpoint);
@@ -72,7 +72,7 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
         }
     }
 
-    private class MyPool implements ServicePool<Endpoint, Producer> {
+    private static class MyPool implements ServicePool<Endpoint, Producer> {
 
         private Producer producer;
 

@@ -90,7 +90,7 @@ public class HawtDBAggregateConcurrentDifferentGroupsTest extends CamelTestSuppo
         };
     }
 
-    private class MyAggregationStrategy implements AggregationStrategy {
+    private static class MyAggregationStrategy implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {

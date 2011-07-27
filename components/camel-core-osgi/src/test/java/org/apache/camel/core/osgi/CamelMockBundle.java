@@ -33,7 +33,7 @@ public class CamelMockBundle extends MockBundle {
     public static final String META_INF_LANGUAGE_RESOLVER = "META-INF/services/org/apache/camel/language/resolver/";
     public static final String META_INF_DATAFORMAT = "META-INF/services/org/apache/camel/dataformat/";
 
-    private class ListEnumeration implements Enumeration {
+    private static class ListEnumeration implements Enumeration {
         private final List list;                    
         private int index;
         

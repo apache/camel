@@ -71,7 +71,7 @@ public class BeanBeforeAggregateIssueTest extends ContextTestSupport {
         }
     }
 
-    private final class MyAggRepo extends MemoryAggregationRepository {
+    private static final class MyAggRepo extends MemoryAggregationRepository {
 
         private volatile boolean confirm;
 

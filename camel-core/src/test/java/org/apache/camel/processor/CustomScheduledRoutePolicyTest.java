@@ -29,7 +29,7 @@ public class CustomScheduledRoutePolicyTest extends ContextTestSupport {
 
     private final MyCustomRoutePolicy policy = new MyCustomRoutePolicy();
 
-    private class MyCustomRoutePolicy extends RoutePolicySupport {
+    private static class MyCustomRoutePolicy extends RoutePolicySupport {
 
         private Route route;
 

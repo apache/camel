@@ -31,14 +31,14 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
  */
 public class HeaderFilterStrategyComponentTest extends TestCase {
 
-    private class MyComponent extends HeaderFilterStrategyComponent {
+    private static class MyComponent extends HeaderFilterStrategyComponent {
 
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             return null;
         }
     }
 
-    private class MyEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+    private static class MyEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
         private HeaderFilterStrategy strategy;
 

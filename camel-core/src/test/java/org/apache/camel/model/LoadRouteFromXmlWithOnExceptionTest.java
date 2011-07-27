@@ -59,7 +59,7 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private final class MyProcessor implements Processor {
+    private static final class MyProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);

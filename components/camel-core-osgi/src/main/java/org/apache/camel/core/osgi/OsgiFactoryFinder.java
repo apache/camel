@@ -37,7 +37,7 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
         this.bundleContext = bundleContext;
     }
 
-    private class BundleEntry {
+    private static class BundleEntry {
         URL url;
         Bundle bundle;
     }

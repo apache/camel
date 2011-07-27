@@ -64,7 +64,7 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
         };
     }
 
-    private class MyParamsProcessor implements Processor {
+    private static class MyParamsProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
             HttpMessage message = (HttpMessage)exchange.getIn();
             Assert.assertNotNull(message.getRequest());

@@ -46,7 +46,7 @@ public class NewProcessorAndServiceTest extends ContextTestSupport {
         };
     }
 
-    private class MyProcessor implements Processor, Service {
+    private static class MyProcessor implements Processor, Service {
 
         private boolean started;
 

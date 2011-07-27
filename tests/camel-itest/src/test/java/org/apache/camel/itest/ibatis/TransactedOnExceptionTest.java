@@ -34,7 +34,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class TransactedOnExceptionTest extends CamelSpringTestSupport {
 
-    private class MyException extends Exception {
+    private static class MyException extends Exception {
         private static final long serialVersionUID = -221148660533176643L;
 
         public MyException() {

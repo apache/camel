@@ -57,7 +57,7 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
         };
     }
 
-    private class MyTracer implements InterceptStrategy {
+    private static class MyTracer implements InterceptStrategy {
 
         public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
                                                      Processor target, Processor nextTarget) throws Exception {

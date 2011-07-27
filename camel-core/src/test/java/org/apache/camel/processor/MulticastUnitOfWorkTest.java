@@ -76,7 +76,7 @@ public class MulticastUnitOfWorkTest extends ContextTestSupport {
         };
     }
 
-    private final class MyUOWProcessor implements Processor {
+    private static final class MyUOWProcessor implements Processor {
 
         private String id;
 

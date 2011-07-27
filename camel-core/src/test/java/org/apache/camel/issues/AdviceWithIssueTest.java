@@ -142,7 +142,7 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         };
     }
 
-    private final class MyProcessor implements Processor {
+    private static final class MyProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {

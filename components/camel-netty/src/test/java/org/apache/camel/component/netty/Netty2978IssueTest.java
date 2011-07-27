@@ -103,7 +103,7 @@ public class Netty2978IssueTest extends BaseNettyTest {
         };
     }
 
-    private final class CamelClient {
+    private static final class CamelClient {
         private final CamelContext context;
         private final Endpoint endpoint;
         private final ProducerTemplate producerTemplate;

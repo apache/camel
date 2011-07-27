@@ -71,7 +71,7 @@ public class CustomInterceptorRouteWithChildOutputTest extends ContextTestSuppor
         };
     }
 
-    private class MyInterceptor implements InterceptStrategy {
+    private static class MyInterceptor implements InterceptStrategy {
 
         private final List<ProcessorDefinition> defs = new ArrayList<ProcessorDefinition>();
 

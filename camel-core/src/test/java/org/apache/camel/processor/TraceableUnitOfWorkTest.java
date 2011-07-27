@@ -67,7 +67,7 @@ public class TraceableUnitOfWorkTest extends ContextTestSupport {
     // END SNIPPET: e1
 
     // START SNIPPET: e2
-    private class MyErrorProcessor implements Processor {
+    private static class MyErrorProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
             TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
 

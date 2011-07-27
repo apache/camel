@@ -75,7 +75,7 @@ public class JmsCustomHeaderFilterStrategyTest extends CamelTestSupport {
         };
     }
 
-    private class MyHeaderFilterStrategy implements HeaderFilterStrategy {
+    private static class MyHeaderFilterStrategy implements HeaderFilterStrategy {
 
         public boolean applyFilterToCamelHeaders(String s, Object o, Exchange exchange) {
             return false;

@@ -58,7 +58,7 @@ public class MulticastParallelAllTimeoutAwareTest extends ContextTestSupport {
         };
     }
 
-    private class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
+    private static class MyAggregationStrategy implements TimeoutAwareAggregationStrategy {
 
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
             assertEquals(500, timeout);

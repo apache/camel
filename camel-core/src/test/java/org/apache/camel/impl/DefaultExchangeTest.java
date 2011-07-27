@@ -127,7 +127,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertNotNull(my);
     }
 
-    private class MyMessage extends DefaultMessage {
+    private static class MyMessage extends DefaultMessage {
 
     }
 

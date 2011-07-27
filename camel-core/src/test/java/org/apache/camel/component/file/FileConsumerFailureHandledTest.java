@@ -125,7 +125,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         };
     }
 
-    private class MyValidatorProcessor implements Processor {
+    private static class MyValidatorProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             if ("London".equals(body)) {

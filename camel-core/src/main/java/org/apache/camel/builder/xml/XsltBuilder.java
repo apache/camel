@@ -360,7 +360,7 @@ public class XsltBuilder implements Processor {
         }
     }
 
-    private final class XsltBuilderOnCompletion extends SynchronizationAdapter {
+    private static final class XsltBuilderOnCompletion extends SynchronizationAdapter {
         private final String fileName;
 
         private XsltBuilderOnCompletion(String fileName) {

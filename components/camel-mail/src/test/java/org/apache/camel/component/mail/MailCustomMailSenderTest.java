@@ -48,7 +48,7 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
         assertTrue("Should have used custom mail sender", sent);
     }
 
-    private class MySender implements JavaMailSender {
+    private static class MySender implements JavaMailSender {
 
         public void send(SimpleMailMessage simpleMessage) throws MailException {
             // noop

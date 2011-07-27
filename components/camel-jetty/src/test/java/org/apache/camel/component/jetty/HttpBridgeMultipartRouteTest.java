@@ -37,7 +37,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
     private int port1;
     private int port2;
 
-    private class MultipartHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+    private static class MultipartHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         public MultipartHeaderFilterStrategy() {
             initialize();
         }

@@ -204,7 +204,7 @@ public class PropertiesComponent extends DefaultComponent {
     /**
      * Key used in the locations cache
      */
-    private final class CacheKey implements Serializable {
+    private static final class CacheKey implements Serializable {
 
         private final String[] locations;
 

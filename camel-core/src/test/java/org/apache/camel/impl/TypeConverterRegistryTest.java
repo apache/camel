@@ -53,7 +53,7 @@ public class TypeConverterRegistryTest extends TestCase {
         assertEquals(123, order.getId());
     }
 
-    private class MyOrder {
+    private static class MyOrder {
         private int id;
 
         public int getId() {
@@ -66,7 +66,7 @@ public class TypeConverterRegistryTest extends TestCase {
     }
 
     // START SNIPPET: e2
-    private class MyOrderTypeConverter implements TypeConverter {
+    private static class MyOrderTypeConverter implements TypeConverter {
 
         @SuppressWarnings("unchecked")
         public <T> T convertTo(Class<T> type, Object value) {

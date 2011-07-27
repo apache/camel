@@ -70,7 +70,7 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
         context.stop();
     }
 
-    private class MyEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
+    private static class MyEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
         public boolean isSingleton() {
             return true;
@@ -94,7 +94,7 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
         }
     }
 
-    private class MyOtherEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
+    private static class MyOtherEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
         public boolean isSingleton() {
             return true;

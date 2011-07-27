@@ -82,7 +82,7 @@ public class MailEndpointTest extends CamelTestSupport {
         assertSame(myBnd, endpoint.getBinding());
     }
 
-    private class MyMailBinding extends MailBinding {
+    private static class MyMailBinding extends MailBinding {
 
     }
 

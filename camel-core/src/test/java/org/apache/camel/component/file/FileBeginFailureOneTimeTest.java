@@ -67,7 +67,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         };
     }
 
-    private class MyStrategy implements GenericFileProcessStrategy<File> {
+    private static class MyStrategy implements GenericFileProcessStrategy<File> {
 
         private int invoked;
 

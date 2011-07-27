@@ -90,7 +90,7 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
         };
     }
 
-    private class MyProcessor implements Processor {
+    private static class MyProcessor implements Processor {
 
         private String name;
 

@@ -74,7 +74,7 @@ public class AsyncTraceHandlerTest extends ContextTestSupport {
         };
     }
 
-    private class MyTraceHandler implements TraceEventHandler {
+    private static class MyTraceHandler implements TraceEventHandler {
 
         @Override
         public void traceExchange(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {

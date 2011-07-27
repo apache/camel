@@ -45,7 +45,7 @@ public class RouteBuilderAddRoutesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private class MyExtraRoute extends RouteBuilder {
+    private static class MyExtraRoute extends RouteBuilder {
 
         public void configure() throws Exception {
             interceptSendToEndpoint("mock:result").transform(constant("Foo was here"));

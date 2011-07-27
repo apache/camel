@@ -149,7 +149,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         endpoint.assertIsSatisfied();
     }
 
-    private class MyDataSet extends DataSetSupport {
+    private static class MyDataSet extends DataSetSupport {
 
         @Override
         protected Object createMessageBody(long messageIndex) {

@@ -87,7 +87,7 @@ public class AsyncEndpointUoWFailedTest extends ContextTestSupport {
         };
     }
 
-    private class MySynchronization extends SynchronizationAdapter {
+    private static class MySynchronization extends SynchronizationAdapter {
 
         private AtomicInteger onComplete = new AtomicInteger();
         private AtomicInteger onFailure = new AtomicInteger();

@@ -47,14 +47,14 @@ public class EndpointShutdownOnceTest extends TestCase {
         assertEquals("Should only shutdown once", 1, my.getInvoked());
     }
 
-    private final class MyComponent extends DefaultComponent {
+    private static final class MyComponent extends DefaultComponent {
 
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             return new MyEndpoint(uri, this);
         }
     }
 
-    private final class MyEndpoint extends DefaultEndpoint {
+    private static final class MyEndpoint extends DefaultEndpoint {
 
         private volatile int invoked;
 

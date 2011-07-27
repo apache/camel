@@ -68,7 +68,7 @@ public class BeanInvokeWithNullBodyTest extends ContextTestSupport {
     }
 
     @SuppressWarnings("unused")
-    private class MyNullFooBean {
+    private static class MyNullFooBean {
 
         public String doSomething(String s) {
             return s;

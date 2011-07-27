@@ -56,7 +56,7 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
     }
 
     // START SNIPPET: e2
-    private class MyServerProcessor implements Processor {
+    private static class MyServerProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
             // get the input from the IN body
             String request = exchange.getIn().getBody(String.class);

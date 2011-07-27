@@ -99,7 +99,7 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringCon
     }
     
     @SuppressWarnings("unused")
-    private final class StringPrintWriter extends PrintWriter {
+    private static final class StringPrintWriter extends PrintWriter {
         private StringPrintWriter() {
             super(new StringWriter());
         }

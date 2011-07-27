@@ -37,7 +37,7 @@ public class ServicePoolTest extends ContextTestSupport {
     private static boolean cleanup;
     private DefaultProducerServicePool pool;
 
-    private class MyProducer extends DefaultProducer implements ServicePoolAware {
+    private static class MyProducer extends DefaultProducer implements ServicePoolAware {
 
         private boolean start;
         private boolean stop;

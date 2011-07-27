@@ -99,21 +99,21 @@ public class JmsTypeConverterIssueTest extends CamelTestSupport {
         };
     }
 
-    private class FixateHeaderValuesProcessor implements Processor {
+    private static class FixateHeaderValuesProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
             String id = exchange.getIn().getHeader("agentId", String.class);
             exchange.getIn().setHeader("agentId", id);
         }
     }
 
-    private class ReadLocalFile implements Processor {
+    private static class ReadLocalFile implements Processor {
         public void process(Exchange exchange) throws Exception {
             String filename = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
             exchange.getIn().setBody(new File(filename));
         }
     }
 
-    private class FilterProcessor implements Processor {
+    private static class FilterProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
             Document document = exchange.getIn().getBody(Document.class);
             assertNotNull("Should be able to convert to XML Document", document);

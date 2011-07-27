@@ -67,7 +67,7 @@ public class RoutePerformanceCountTest extends ContextTestSupport {
         };
     }
 
-    private class CountProcessor implements Processor {
+    private static class CountProcessor implements Processor {
         private AtomicInteger counter = new AtomicInteger(0);
 
         public void process(Exchange exchange) throws Exception {

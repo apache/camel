@@ -110,7 +110,7 @@ public class ZipDataFormatTest extends ContextTestSupport {
         result.assertIsSatisfied();
     }    
     
-    private class ZippedMessageProcessor implements Processor {
+    private static class ZippedMessageProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
             byte[] body = (byte[]) exchange.getIn().getBody(byte[].class);

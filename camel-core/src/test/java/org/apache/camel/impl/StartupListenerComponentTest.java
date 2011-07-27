@@ -39,7 +39,7 @@ public class StartupListenerComponentTest extends ContextTestSupport {
         assertEquals(1, my.getInvoked());
     }
 
-    private class MyComponent extends DirectComponent implements StartupListener {
+    private static class MyComponent extends DirectComponent implements StartupListener {
 
         private int invoked;
 

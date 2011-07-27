@@ -77,7 +77,7 @@ public class SetBodyProcessorTest extends ContextTestSupport {
         };
     }
 
-    private class MyMessage extends DefaultMessage {
+    private static class MyMessage extends DefaultMessage {
 
         @Override
         public MyMessage newInstance() {

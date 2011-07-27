@@ -77,7 +77,7 @@ public class ScheduledPollEndpointConfigureConsumerRestartTest extends ContextTe
         };
     }
 
-    private class MyEndpoint extends ScheduledPollEndpoint {
+    private static class MyEndpoint extends ScheduledPollEndpoint {
 
         @Override
         public Producer createProducer() throws Exception {

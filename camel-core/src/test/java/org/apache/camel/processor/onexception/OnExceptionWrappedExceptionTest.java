@@ -56,7 +56,7 @@ public class OnExceptionWrappedExceptionTest extends ContextTestSupport {
     public static class LocalDateTime {
     }
 
-    private class MyLocalDateTimeConverter implements TypeConverter {
+    private static class MyLocalDateTimeConverter implements TypeConverter {
 
         public <T> T convertTo(Class<T> type, Object value) {
             // simulate @Converter where we wrap thrown exception in RuntimeCamelException

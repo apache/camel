@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
  */
 public class ExpressionAdapterTest extends ContextTestSupport {
 
-    private class MyExpression extends ExpressionAdapter {
+    private static class MyExpression extends ExpressionAdapter {
 
         protected String assertionFailureMessage(Exchange exchange) {
             return "foo";

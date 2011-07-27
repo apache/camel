@@ -62,7 +62,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
      * <p/>
      * This is used for expression with multiple expressions grouped using and/or operators
      */
-    private final class ExpressionGroup extends KeyValueHolder<SimpleLanguageOperator, Expression> {
+    private static final class ExpressionGroup extends KeyValueHolder<SimpleLanguageOperator, Expression> {
 
         public ExpressionGroup(SimpleLanguageOperator key, Expression value) {
             super(key, value);

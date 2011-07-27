@@ -38,7 +38,7 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
     private static int deleteCounter;
 
 
-    private class MyGenericFileOperations implements GenericFileOperations<Object> {
+    private static class MyGenericFileOperations implements GenericFileOperations<Object> {
 
         public void setEndpoint(GenericFileEndpoint<Object> endpoint) {
         }

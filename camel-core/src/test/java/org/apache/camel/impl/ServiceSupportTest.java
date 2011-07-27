@@ -23,7 +23,7 @@ import org.apache.camel.TestSupport;
  */
 public class ServiceSupportTest extends TestSupport {
 
-    private class MyService extends ServiceSupport {
+    private static class MyService extends ServiceSupport {
 
         protected void doStart() throws Exception {
         }
@@ -49,7 +49,7 @@ public class ServiceSupportTest extends TestSupport {
         assertEquals(false, service.isStarting());
     }
 
-    private class MyShutdownService extends ServiceSupport {
+    private static class MyShutdownService extends ServiceSupport {
 
         private boolean shutdown;
 

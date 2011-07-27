@@ -63,7 +63,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private int startDelayedSeconds;
     private boolean autoStartScheduler = true;
 
-    private final class JobToAdd {
+    private static final class JobToAdd {
         private final JobDetail job;
         private final Trigger trigger;
 

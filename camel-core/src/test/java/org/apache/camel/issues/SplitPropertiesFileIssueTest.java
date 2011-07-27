@@ -67,7 +67,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
         };
     }
 
-    private class MyCustomExpression implements Expression {
+    private static class MyCustomExpression implements Expression {
 
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {

@@ -38,7 +38,7 @@ import org.springframework.test.annotation.DirtiesContext;
  */
 public class TransactedFullExampleTest extends CamelSpringTestSupport {
 
-    private class MyException extends Exception {
+    private static class MyException extends Exception {
         private static final long serialVersionUID = -221148660533176643L;
 
         public MyException() {

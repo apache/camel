@@ -23,7 +23,7 @@ import junit.framework.TestCase;
  */
 public class SuspendableServiceTest extends TestCase {
 
-    private class MyService implements SuspendableService {
+    private static class MyService implements SuspendableService {
 
         private boolean suspended;
 

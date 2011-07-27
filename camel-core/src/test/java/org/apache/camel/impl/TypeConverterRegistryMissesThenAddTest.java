@@ -40,7 +40,7 @@ public class TypeConverterRegistryMissesThenAddTest extends TestCase {
         assertEquals(123, order.getId());
     }
 
-    private class MyOrder {
+    private static class MyOrder {
         private int id;
 
         public int getId() {
@@ -52,7 +52,7 @@ public class TypeConverterRegistryMissesThenAddTest extends TestCase {
         }
     }
 
-    private class MyOrderTypeConverter implements TypeConverter {
+    private static class MyOrderTypeConverter implements TypeConverter {
 
         @SuppressWarnings("unchecked")
         public <T> T convertTo(Class<T> type, Object value) {

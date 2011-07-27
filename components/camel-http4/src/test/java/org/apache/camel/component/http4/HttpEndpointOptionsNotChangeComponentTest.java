@@ -67,9 +67,9 @@ public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport 
         assertIsInstanceOf(MyBinding.class, end3.getBinding());
     }
 
-    private class MyBinding extends DefaultHttpBinding {
+    private static class MyBinding extends DefaultHttpBinding {
     }
 
-    private class MyOtherBinding extends DefaultHttpBinding {
+    private static class MyOtherBinding extends DefaultHttpBinding {
     }
 }

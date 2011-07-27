@@ -78,7 +78,7 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
         assertFalse("Should not wait and read the entire file", body.endsWith("Bye World"));
     }
 
-    private class MySlowFileProcessor implements Processor {
+    private static class MySlowFileProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
             LOG.info("Creating a slow file ...");

@@ -42,7 +42,7 @@ public class IBatisConsumer extends ScheduledPollConsumer implements BatchConsum
 
     private static final Logger LOG = LoggerFactory.getLogger(IBatisConsumer.class);
 
-    private final class DataHolder {
+    private static final class DataHolder {
         private Exchange exchange;
         private Object data;
         private DataHolder() {

@@ -71,7 +71,7 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
         };
     }
 
-    private class MyPollStrategy implements PollingConsumerPollStrategy {
+    private static class MyPollStrategy implements PollingConsumerPollStrategy {
 
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             event += "begin";

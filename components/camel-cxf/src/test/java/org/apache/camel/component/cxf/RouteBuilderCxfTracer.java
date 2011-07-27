@@ -39,26 +39,26 @@ public class RouteBuilderCxfTracer extends RouteBuilder {
             .process(new DoNothingProcessor());
     }
     
-    private class DoSomethingProcessor implements Processor {
+    private static class DoSomethingProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
             exchange.getOut().setBody(exchange.getIn().getBody() + " world!");        
         }
     }
     
-    private class DoNothingProcessor implements Processor {
+    private static class DoNothingProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
             exchange.getOut().setBody(exchange.getIn().getBody());        
         }
     }
      
-    private class BeforeProcessor implements Processor {
+    private static class BeforeProcessor implements Processor {
         public void process(Exchange e) throws Exception {
             MessageContentsList mclIn = e.getIn().getBody(MessageContentsList.class);
             e.getIn().setBody(((GetPerson) mclIn.get(0)).getPersonId(), String.class);
         }
     }
 
-    private class AfterProcessor implements Processor {
+    private static class AfterProcessor implements Processor {
         public void process(Exchange e) throws Exception {
             GetPersonResponse gpr = new GetPersonResponse();
             gpr.setName("Bill");

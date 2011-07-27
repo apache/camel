@@ -68,7 +68,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         };
     }
 
-    private class MyPollStrategy implements PollingConsumerPollStrategy {
+    private static class MyPollStrategy implements PollingConsumerPollStrategy {
 
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             // start consumer as we simulate the fail in begin

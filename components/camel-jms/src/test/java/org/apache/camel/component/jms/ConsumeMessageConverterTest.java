@@ -86,7 +86,7 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
         };
     }
 
-    private class MyMessageConverter implements MessageConverter {
+    private static class MyMessageConverter implements MessageConverter {
 
         public Message toMessage(Object object, Session session) throws JMSException, MessageConversionException {
             return null;

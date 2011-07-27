@@ -177,7 +177,7 @@ public class LogFormatterTest extends ContextTestSupport {
         assertEquals(0, formatter.getMaxChars());
     }
 
-    private class MyFuture extends FutureTask<String> {
+    private static class MyFuture extends FutureTask<String> {
 
         public MyFuture(Callable<String> callable) {
             super(callable);

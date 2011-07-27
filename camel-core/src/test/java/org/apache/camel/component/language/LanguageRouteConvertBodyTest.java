@@ -44,7 +44,7 @@ public class LanguageRouteConvertBodyTest extends ContextTestSupport {
         };
     }
 
-    private final class MyOrder {
+    private static final class MyOrder {
         private int id;
         private String name;
 

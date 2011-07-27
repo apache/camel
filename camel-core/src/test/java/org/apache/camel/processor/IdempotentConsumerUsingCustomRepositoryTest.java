@@ -88,7 +88,7 @@ public class IdempotentConsumerUsingCustomRepositoryTest extends ContextTestSupp
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
-    private final class MyRepo implements IdempotentRepository<String> {
+    private static final class MyRepo implements IdempotentRepository<String> {
         private final Map<String, String> cache = new HashMap<String, String>();
 
         private MyRepo() {

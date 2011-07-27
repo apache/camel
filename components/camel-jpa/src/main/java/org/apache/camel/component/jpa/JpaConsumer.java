@@ -57,7 +57,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
     private volatile ShutdownRunningTask shutdownRunningTask;
     private volatile int pendingExchanges;
 
-    private final class DataHolder {
+    private static final class DataHolder {
         private Exchange exchange;
         private Object result;
         private EntityManager manager;

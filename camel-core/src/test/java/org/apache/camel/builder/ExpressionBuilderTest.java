@@ -113,7 +113,7 @@ public class ExpressionBuilderTest extends TestSupport {
         in.setHeader("location", "Islington,London,UK");
     }
 
-    private class SortByName implements Comparator<String> {
+    private static class SortByName implements Comparator<String> {
 
         public int compare(java.lang.String o1, java.lang.String o2) {
             return o1.compareToIgnoreCase(o2);

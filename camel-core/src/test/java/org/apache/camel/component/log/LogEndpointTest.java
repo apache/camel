@@ -29,7 +29,7 @@ public class LogEndpointTest extends ContextTestSupport {
 
     private static Exchange logged;
 
-    private class MyLogger extends CamelLogger {
+    private static class MyLogger extends CamelLogger {
 
         @Override
         public void process(Exchange exchange) {

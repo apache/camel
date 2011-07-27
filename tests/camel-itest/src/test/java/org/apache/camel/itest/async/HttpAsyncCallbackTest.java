@@ -63,7 +63,7 @@ public class HttpAsyncCallbackTest extends CamelTestSupport {
      * Our own callback that will gather all the responses.
      * We extend the SynchronizationAdapter class as we then only need to override the onComplete method.
      */
-    private class MyCallback extends SynchronizationAdapter {
+    private static class MyCallback extends SynchronizationAdapter {
 
         private List<String> data = new ArrayList<String>();
 

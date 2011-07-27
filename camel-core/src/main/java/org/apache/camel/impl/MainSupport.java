@@ -61,7 +61,7 @@ public abstract class MainSupport extends ServiceSupport {
     /**
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
      */
-    private final class HangupInterceptor extends Thread {
+    private static final class HangupInterceptor extends Thread {
         Logger log = LoggerFactory.getLogger(this.getClass());
         MainSupport mainInstance;
 

@@ -85,7 +85,7 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
         };
     }
 
-    private final class MyIntercepStrategy implements InterceptStrategy {
+    private static final class MyIntercepStrategy implements InterceptStrategy {
         private volatile boolean invoked;
 
         public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {

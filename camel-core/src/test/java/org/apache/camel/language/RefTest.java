@@ -51,7 +51,7 @@ public class RefTest extends LanguageTestSupport {
         return "ref";
     }
 
-    private class MyExpression extends ExpressionAdapter {
+    private static class MyExpression extends ExpressionAdapter {
 
         @Override
         public Object evaluate(Exchange exchange) {

@@ -132,7 +132,7 @@ public class StringDataFormatTest extends TestSupport {
         mock.expectedBodiesReceived(title);
     }
 
-    private class MyBookProcessor implements Processor {
+    private static class MyBookProcessor implements Processor {
 
         private String encoding;
         private String title;
@@ -157,7 +157,7 @@ public class StringDataFormatTest extends TestSupport {
         }
     }
 
-    private class MyBook {
+    private static class MyBook {
         private String title;
 
         public void setTitle(String title) {

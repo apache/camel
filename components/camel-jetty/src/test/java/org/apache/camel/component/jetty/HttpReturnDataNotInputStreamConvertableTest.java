@@ -47,7 +47,7 @@ public class HttpReturnDataNotInputStreamConvertableTest extends BaseJettyTest {
         };
     }
 
-    private class MyResponseBean {
+    private static class MyResponseBean {
         @Override
         public String toString() {
             return "This is the response";
