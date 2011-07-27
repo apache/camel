@@ -444,6 +444,7 @@
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
           <failIfNoTests>false</failIfNoTests>
+          <runOrder>alphabetical</runOrder>
           <systemPropertyVariables>
               <java.awt.headless>${java.awt.headless}</java.awt.headless>
           </systemPropertyVariables>
