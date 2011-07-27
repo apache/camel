@@ -39,7 +39,7 @@ public class JmsReconnectTest {
         String echo(String st);
     }
 
-    private final static class EchoServiceImpl implements MyService {
+    private static final class EchoServiceImpl implements MyService {
 
         public String echo(String st) {
             return st;
