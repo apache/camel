@@ -215,6 +215,9 @@
           <reportFormat>brief</reportFormat>
           <useFile>false</useFile>
           <runOrder>alphabetical</runOrder>
+          <!--parallel>classes</parallel>
+          <perCoreThreadCount>true</perCoreThreadCount>
+          <threads>2</threads-->
           <systemPropertyVariables>
             <java.util.logging.config.file>${basedir}/target/test-classes/logging.properties</java.util.logging.config.file>
           </systemPropertyVariables>

@@ -39,6 +39,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CXFGreeterRouterTest extends AbstractCXFGreeterRouterTest {
 
+    protected static Endpoint endpoint;
+    @AfterClass
+    public static void stopService() {
+        if (endpoint != null) {
+            endpoint.stop();
+        }
+    }
+
 
     @BeforeClass
     public static void startService() {

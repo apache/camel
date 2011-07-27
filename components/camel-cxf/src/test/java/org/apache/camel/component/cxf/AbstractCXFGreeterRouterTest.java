@@ -37,7 +37,6 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
-    protected static Endpoint endpoint;
     protected AbstractXmlApplicationContext applicationContext;
     
     private final QName serviceName = new QName("http://apache.org/hello_world_soap_http",
@@ -79,13 +78,6 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     }
     
     
-    @AfterClass
-    public static void stopService() {
-        if (endpoint != null) {
-            endpoint.stop();
-        }
-    }
-
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
         Service service = Service.create(serviceName);

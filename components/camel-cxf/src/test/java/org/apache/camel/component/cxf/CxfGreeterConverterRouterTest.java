@@ -21,12 +21,20 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hello_world_soap_http.GreeterImpl;
+
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class CxfGreeterConverterRouterTest extends AbstractCXFGreeterRouterTest {
-
+    protected static Endpoint endpoint;
+    @AfterClass
+    public static void stopService() {
+        if (endpoint != null) {
+            endpoint.stop();
+        }
+    }
 
     @BeforeClass
     public static void startService() {
