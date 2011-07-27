@@ -32,13 +32,13 @@ public class CxfProducerOperationTest extends CxfProducerTest {
 
    
     protected String getSimpleEndpointUri() {
-        return "cxf://" + SIMPLE_SERVER_ADDRESS
+        return "cxf://" + getSimpleServerAddress()
             + "?serviceClass=org.apache.camel.component.cxf.HelloService" 
             + "&defaultOperationName=" + ECHO_OPERATION;
     }
 
     protected String getJaxwsEndpointUri() {
-        return "cxf://" + JAXWS_SERVER_ADDRESS
+        return "cxf://" + getJaxWsServerAddress()
             + "?serviceClass=org.apache.hello_world_soap_http.Greeter"
             + "&defaultOperationName=" + GREET_ME_OPERATION
             + "&defaultOperationNamespace=" + NAMESPACE;

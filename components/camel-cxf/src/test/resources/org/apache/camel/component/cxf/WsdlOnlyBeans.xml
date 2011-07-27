@@ -27,7 +27,7 @@
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFWsdlOnlyTest.port3}/PersonService/"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port3}/CXFWsdlOnlyTest/PersonService/"
    				   wsdlURL="person.wsdl"
                    endpointName="person:soap"
                    serviceName="person:PersonService"                   
@@ -35,14 +35,14 @@
    </cxf:cxfEndpoint>
       
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFWsdlOnlyTest.port1}/PersonService/"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port1}/CXFWsdlOnlyTest/PersonService/"
       			   wsdlURL="person.wsdl"
                    endpointName="person:soap"
                    serviceName="person:PersonService"                   
                    xmlns:person="http://camel.apache.org/wsdl-first">
    </cxf:cxfEndpoint>
    
-   <cxf:cxfEndpoint id="routerEndpoint2" address="http://localhost:${CXFWsdlOnlyTest.port4}/PersonService/"
+   <cxf:cxfEndpoint id="routerEndpoint2" address="http://localhost:${CXFTestSupport.port4}/CXFWsdlOnlyTest/PersonService/"
    				   wsdlURL="person.wsdl"
                    endpointName="person:soap"
                    serviceName="person:PersonService"                   
@@ -50,7 +50,7 @@
    </cxf:cxfEndpoint>
       
 
-   <cxf:cxfEndpoint id="serviceEndpoint2" address="http://localhost:${CXFWsdlOnlyTest.port2}/PersonService/"
+   <cxf:cxfEndpoint id="serviceEndpoint2" address="http://localhost:${CXFTestSupport.port2}/CXFWsdlOnlyTest/PersonService/"
       			   wsdlURL="person.wsdl"
                    endpointName="person:soap"
                    serviceName="person:PersonService"                   

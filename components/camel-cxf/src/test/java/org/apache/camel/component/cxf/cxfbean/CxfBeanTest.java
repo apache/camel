@@ -20,10 +20,12 @@ package org.apache.camel.component.cxf.cxfbean;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.http.HttpResponse;
@@ -48,7 +50,9 @@ import static org.junit.Assert.fail;
 public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>113</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
-
+    private static final int PORT1 = CXFTestSupport.getPort("CxfBeanTest.1");
+    private static final int PORT2 = CXFTestSupport.getPort("CxfBeanTest.2");
+    
     @Autowired
     @Qualifier("camel")
     protected CamelContext camelContext;
@@ -93,46 +97,46 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     
     @Test
     public void testGetConsumer() throws Exception {
-        invokeRsService("http://localhost:9000/customerservice/customers/123",
+        invokeRsService("http://localhost:" + PORT1 + "/customerservice/customers/123",
                         "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");
         
-        invokeRsService("http://localhost:9000/customerservice/orders/223/products/323",
+        invokeRsService("http://localhost:" + PORT1 + "/customerservice/orders/223/products/323",
                          "{\"Product\":{\"description\":\"product 323\",\"id\":323}}");
     }
     
     @Test
     public void testGetConsumerWithQueryParam() throws Exception {
-        invokeRsService("http://localhost:9000/customerservice/customers?id=123",
+        invokeRsService("http://localhost:" + PORT1 + "/customerservice/customers?id=123",
                         "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");        
     }
 
     @Test
     public void testGetConsumerAfterReStartCamelContext() throws Exception {
-        invokeRsService("http://localhost:9000/customerservice/customers/123",
+        invokeRsService("http://localhost:" + PORT1 + "/customerservice/customers/123",
                         "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");
 
         camelContext.stop();
         camelContext.start();
 
-        invokeRsService("http://localhost:9000/customerservice/orders/223/products/323",
+        invokeRsService("http://localhost:" + PORT1 + "/customerservice/orders/223/products/323",
                         "{\"Product\":{\"description\":\"product 323\",\"id\":323}}"); 
     }
     
     @Test
     public void testGetConsumerAfterResumingCamelContext() throws Exception {
-        invokeRsService("http://localhost:9000/customerservice/customers/123",
+        invokeRsService("http://localhost:" + PORT1 + "/customerservice/customers/123",
                         "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");
         
         camelContext.suspend();
         camelContext.resume();
 
-        invokeRsService("http://localhost:9000/customerservice/orders/223/products/323",
+        invokeRsService("http://localhost:" + PORT1 + "/customerservice/orders/223/products/323",
                         "{\"Product\":{\"description\":\"product 323\",\"id\":323}}"); 
     }
 
     @Test
     public void testPutConsumer() throws Exception {
-        HttpPut put = new HttpPut("http://localhost:9000/customerservice/customers");
+        HttpPut put = new HttpPut("http://localhost:" + PORT1 + "/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         put.setEntity(entity);
@@ -149,7 +153,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     
     @Test
     public void testPostConsumer() throws Exception {
-        HttpPost post = new HttpPost("http://localhost:9000/customerservice/customers");
+        HttpPost post = new HttpPost("http://localhost:" + PORT1 + "/customerservice/customers");
         post.addHeader("Accept" , "text/xml");
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
@@ -168,7 +172,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
     
     @Test
     public void testPostConsumerUniqueResponseCode() throws Exception {
-        HttpPost post = new HttpPost("http://localhost:9000/customerservice/customersUniqueResponseCode");
+        HttpPost post = new HttpPost("http://localhost:" + PORT1 + "/customerservice/customersUniqueResponseCode");
         post.addHeader("Accept" , "text/xml");
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
@@ -187,7 +191,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testJaxWsBean() throws Exception {        
-        HttpPost post = new HttpPost("http://localhost:9090/customerservice/customers");
+        HttpPost post = new HttpPost("http://localhost:" + PORT2 + "/customerservice/customers");
         post.addHeader("Accept" , "text/xml");
         String body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<soap:Body><GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\">" 
@@ -217,6 +221,10 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first", "PersonService"));
         Person client = ss.getSoap();
+        ((BindingProvider)client).getRequestContext()
+            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                 "http://localhost:" + CXFTestSupport.getPort1() + "/CxfBeanTest/PersonService/");
+        
         Holder<String> personId = new Holder<String>();
         personId.value = "hello";
         Holder<String> ssn = new Holder<String>();

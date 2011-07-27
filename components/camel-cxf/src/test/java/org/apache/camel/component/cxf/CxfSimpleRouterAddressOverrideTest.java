@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class CxfSimpleRouterAddressOverrideTest extends CxfSimpleRouterTest {    
 
-    private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
+    private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     private String serviceEndpointURI = "cxf://http://localhost:9002/badAddress" + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     
     
@@ -32,7 +32,7 @@ public class CxfSimpleRouterAddressOverrideTest extends CxfSimpleRouterTest {
             public void configure() {
                 errorHandler(noErrorHandler());
                 from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG")
-                .setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(SERVICE_ADDRESS))
+                .setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(getServiceAddress()))
                 .to(serviceEndpointURI);
             }
         };

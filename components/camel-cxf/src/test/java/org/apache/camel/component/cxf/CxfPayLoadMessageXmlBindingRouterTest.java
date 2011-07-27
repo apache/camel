@@ -40,8 +40,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
     
-    protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
-    protected static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
+    protected static final String ROUTER_ADDRESS = "http://localhost:" 
+        + CXFTestSupport.getPort1() + "/CxfPayLoadMessageXmlBindingRouterTest/router";
+    protected static final String SERVICE_ADDRESS = "http://localhost:" 
+        + CXFTestSupport.getPort2() + "/CxfPayLoadMessageXmlBindingRouterTest/helloworld";
        
     protected AbstractXmlApplicationContext applicationContext;
         

@@ -24,15 +24,14 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-   <import resource="classpath:META-INF/cxf/cxf-extension-xml.xml" />
-   <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
   
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfPayLoadMessageXmlBindingRouterTest/router"
     		serviceClass="org.apache.camel.component.cxf.HelloService"
     		bindingId="http://cxf.apache.org/bindings/xformat"/>
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfPayLoadMessageXmlBindingRouterTest/helloworld"
     		serviceClass="org.apache.camel.component.cxf.HelloService"
     		bindingId="http://cxf.apache.org/bindings/xformat" />
 

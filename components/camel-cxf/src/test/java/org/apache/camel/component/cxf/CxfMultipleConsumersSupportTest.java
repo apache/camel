@@ -26,15 +26,15 @@ import org.junit.Test;
  * @version 
  */
 public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
-    protected static int port1 = AvailablePortFinder.getNextAvailable(); 
-    protected static int port2 = AvailablePortFinder.getNextAvailable(); 
+    protected static int port1 = CXFTestSupport.getPort1(); 
+    protected static int port2 = CXFTestSupport.getPort2(); 
     
 
-    protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:" + port1 + "/test";
+    protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:" + port1 + "/CxfMultipleConsumersSupportTest/test";
     protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
         + "?serviceClass=org.apache.camel.component.cxf.HelloService";
 
-    protected static final String SIMPLE_OTHER_ADDRESS = "http://localhost:" + port2 + "/test";
+    protected static final String SIMPLE_OTHER_ADDRESS = "http://localhost:" + port2 + "/CxfMultipleConsumersSupportTest/test";
     protected static final String SIMPLE_OTHER_URI = "cxf://" + SIMPLE_OTHER_ADDRESS
         + "?serviceClass=org.apache.camel.component.cxf.HelloService";
 
@@ -55,7 +55,8 @@ public class CxfMultipleConsumersSupportTest extends CamelTestSupport {
             fail("Should have thrown an exception");
         } catch (FailedToStartRouteException e) {
             assertTrue(e.getMessage().endsWith(
-                "Multiple consumers for the same endpoint is not allowed: Endpoint[cxf://http://localhost:" + port1 + "/test?serviceClass=org.apache.camel.component.cxf.HelloService]"));
+                "Multiple consumers for the same endpoint is not allowed: Endpoint[cxf://http://localhost:" + port1 
+                + "/CxfMultipleConsumersSupportTest/test?serviceClass=org.apache.camel.component.cxf.HelloService]"));
         }
     }
 

@@ -43,7 +43,7 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
             + "</ns1:echoBooleanResponse></soap:Body></soap:Envelope>";
 
     protected final String simpleEndpointAddress = "http://localhost:"
-        + AvailablePortFinder.getNextAvailable() + "/test";
+        + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
         + "?serviceClass=org.apache.camel.component.cxf.HelloService";
     

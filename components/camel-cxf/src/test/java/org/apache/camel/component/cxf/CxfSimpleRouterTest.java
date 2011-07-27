@@ -25,34 +25,48 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CxfSimpleRouterTest extends CamelTestSupport {    
-    protected static Server server;
-    protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
-    protected static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
+    
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
 
-    private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
-    private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     
-    @BeforeClass
-    public static void startService() {       
+    protected Server server;
+    private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=POJO";
+    private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&dataFormat=POJO";
+    
+    protected String getRouterAddress() {
+        return "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/router";
+    }
+    protected String getServiceAddress() {
+        return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/helloworld";
+    }
+    
+    protected void configureFactory(ServerFactoryBean svrBean) {
+        
+    }
+    
+    @Before
+    public void startService() {       
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
     
-        svrBean.setAddress(SERVICE_ADDRESS);
+        svrBean.setAddress(getServiceAddress());
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
-    
+        configureFactory(svrBean);
         server = svrBean.create();
         server.start();
     }
     
-    @AfterClass
-    public static void shutdownService() {
+    @After
+    public void shutdownService() {
         if (server != null) {
             server.stop();
         }
@@ -74,7 +88,7 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
     protected HelloService getCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress(ROUTER_ADDRESS);
+        clientBean.setAddress(getRouterAddress());
         clientBean.setServiceClass(HelloService.class); 
         
         HelloService client = (HelloService) proxyFactory.create();

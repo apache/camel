@@ -18,7 +18,7 @@
 
 
      <cxf:cxfEndpoint xmlns:person="http://camel.apache.org/wsdl-first" 
-         address="http://localhost:${CxfWsdlFirstPayloadModeTest.port2}/PersonService/" 
+         address="http://localhost:${CXFTestSupport.port2}/CxfWsdlFirstPayloadModeTest/PersonService/" 
          endpointName="person:soap" id="routerEndpoint" serviceClass="org.apache.camel.wsdl_first.Person" 
          serviceName="person:PersonService" wsdlURL="person.wsdl">
 		<cxf:properties>
@@ -35,7 +35,7 @@
       </cxf:outInterceptors>
 	</cxf:cxfEndpoint>
 	
-	<cxf:cxfEndpoint xmlns:person="http://camel.apache.org/wsdl-first" address="http://localhost:${CxfWsdlFirstPayloadModeTest.port1}/PersonService/" 
+	<cxf:cxfEndpoint xmlns:person="http://camel.apache.org/wsdl-first" address="http://localhost:${CXFTestSupport.port1}/CxfWsdlFirstPayloadModeTest/PersonService/" 
         endpointName="person:soap" id="serviceEndpoint" serviceClass="org.apache.camel.wsdl_first.Person" serviceName="person:PersonService">
 		<cxf:handlers>
           <ref bean="toEndpointJaxwsHandler"/> 

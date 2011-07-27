@@ -38,7 +38,6 @@ public class CxfDispatchMessageTest extends CxfDispatchTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        System.setProperty("CxfDispatchMessageTest.port", Integer.toString(port));
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfDispatchMessageBeans.xml");
     }
 

@@ -42,12 +42,12 @@ import org.junit.Test;
 
 
 public class CxfMixedModeRouterTest extends CamelTestSupport {
-    protected static int port1 = AvailablePortFinder.getNextAvailable(); 
-    protected static int port2 = AvailablePortFinder.getNextAvailable(); 
+    protected static int port1 = CXFTestSupport.getPort1(); 
+    protected static int port2 = CXFTestSupport.getPort2(); 
 
     protected static Server server;
-    protected static final String ROUTER_ADDRESS = "http://localhost:" + port1 + "/router";
-    protected static final String SERVICE_ADDRESS = "http://localhost:" + port2 + "/helloworld";
+    protected static final String ROUTER_ADDRESS = "http://localhost:" + port1 + "/CxfMixedModeRouterTest/router";
+    protected static final String SERVICE_ADDRESS = "http://localhost:" + port2 + "/CxfMixedModeRouterTest/helloworld";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
 
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";

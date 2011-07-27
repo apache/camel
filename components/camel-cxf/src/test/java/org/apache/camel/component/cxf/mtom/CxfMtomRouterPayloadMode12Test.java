@@ -18,6 +18,8 @@ package org.apache.camel.component.cxf.mtom;
 
 import java.net.URL;
 
+import javax.xml.ws.BindingProvider;
+
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService12;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,7 +46,11 @@ public class CxfMtomRouterPayloadMode12Test extends CxfMtomRouterPayloadModeTest
 
         HelloService12 service = new HelloService12(wsdl, HelloService12.SERVICE);
         assertNotNull("Service is null ", service);
-        return service.getHelloPort();
+        Hello port = service.getHelloPort();
+        ((BindingProvider)port).getRequestContext()
+            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                 "http://localhost:" + port1 + "/CxfMtomRouterPayloadMode12Test/jaxws-mtom/hello");
+        return port;
     }
 
 }

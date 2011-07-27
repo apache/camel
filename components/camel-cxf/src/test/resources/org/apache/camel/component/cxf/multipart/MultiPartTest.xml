@@ -24,11 +24,10 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-   <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
   
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9003/CamelContext/RouterPort" 
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port3}/CXFMultiPartTest/CamelContext/RouterPort" 
    	wsdlURL="classpath:/MultiPartTest.wsdl" endpointName="s:MultiPartInvokePort"
     		serviceName="s:MultiPartInvokeService"
     	xmlns:s="http://camel.apache.org/cxf/multipart">
@@ -37,7 +36,7 @@
         </cxf:outInterceptors>
    </cxf:cxfEndpoint>
   
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/SoapContext/SoapPort"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port1}/CXFMultiPartTest/SoapContext/SoapPort"
     		wsdlURL="classpath:MultiPartTest.wsdl"
     		endpointName="s:MultiPartInvokePort"
     		serviceName="s:MultiPartInvokeService"

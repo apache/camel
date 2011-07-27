@@ -34,13 +34,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version 
  */
 public class CxfEndpointTest extends Assert {
-    private int port1 = AvailablePortFinder.getNextAvailable(); 
-    private int port2 = AvailablePortFinder.getNextAvailable(); 
+    private int port1 = CXFTestSupport.getPort1(); 
+    private int port2 = CXFTestSupport.getPort2(); 
 
-    private String routerEndpointURI = "cxf://http://localhost:" + port1 + "/router"
+    private String routerEndpointURI = "cxf://http://localhost:" + port1 + "/CxfEndpointTest/router"
         + "?serviceClass=org.apache.camel.component.cxf.HelloService"
         + "&dataFormat=POJO";
-    private String wsdlEndpointURI = "cxf://http://localhost:" + port2 + "/helloworld"
+    private String wsdlEndpointURI = "cxf://http://localhost:" + port2 + "/CxfEndpointTest/helloworld"
         + "?wsdlURL=classpath:person.wsdl"
         + "&serviceName={http://camel.apache.org/wsdl-first}PersonService"
         + "&portName={http://camel.apache.org/wsdl-first}soap"
@@ -48,8 +48,6 @@ public class CxfEndpointTest extends Assert {
 
     @Test
     public void testSpringCxfEndpoint() throws Exception {
-        System.setProperty("CxfEndpointTest.port1", Integer.toString(port1));
-        System.setProperty("CxfEndpointTest.port2", Integer.toString(port2));
 
         ClassPathXmlApplicationContext ctx =
             new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/CxfEndpointBeans.xml"});
@@ -58,7 +56,8 @@ public class CxfEndpointTest extends Assert {
 
         ServerFactoryBean svf = new ServerFactoryBean();
         endpoint.configure(svf);
-        assertEquals("Got the wrong endpoint address", svf.getAddress(), "http://localhost:" + port2 + "/helloworld");
+        assertEquals("Got the wrong endpoint address", svf.getAddress(), 
+                     "http://localhost:" + port2 + "/CxfEndpointTest/helloworld");
         assertEquals("Got the wrong endpont service class",
             svf.getServiceClass().getCanonicalName(),
             "org.apache.camel.component.cxf.HelloService");

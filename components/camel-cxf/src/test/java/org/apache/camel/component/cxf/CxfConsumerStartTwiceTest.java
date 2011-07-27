@@ -24,17 +24,21 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class CxfConsumerStartTwiceTest extends Assert {
-    static final int PORT = AvailablePortFinder.getNextAvailable(); 
+    static final int PORT = CXFTestSupport.getPort6(); 
     
     
     @Test
     public void startServiceTwice() throws Exception {
         CamelContext context = new DefaultCamelContext();
         
+        final String fromStr = "cxf:http://localhost:" + PORT + "/" 
+            + this.getClass().getSimpleName() 
+            + "/test?serviceClass=org.apache.camel.component.cxf.HelloService";
+        
         //add the same route twice...
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("cxf:http://localhost:" + PORT + "/test?serviceClass=org.apache.camel.component.cxf.HelloService")
+                from(fromStr)
                     .to("log:POJO");
             }
         });
@@ -42,7 +46,7 @@ public class CxfConsumerStartTwiceTest extends Assert {
        
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("cxf:http://localhost:" + PORT + "/test?serviceClass=org.apache.camel.component.cxf.HelloService")
+                from(fromStr)
                     .to("log:POJO");
             }
         });            
@@ -52,7 +56,8 @@ public class CxfConsumerStartTwiceTest extends Assert {
             fail("Expect to catch an exception here");
         } catch (Exception ex) {
             assertTrue(ex.getMessage().endsWith(
-                "Multiple consumers for the same endpoint is not allowed: Endpoint[cxf://http://localhost:" + PORT + "/test?serviceClass=org.apache.camel.component.cxf.HelloService]"));
+                "Multiple consumers for the same endpoint is not allowed: Endpoint[cxf://http://localhost:" + PORT
+                + "/" + getClass().getSimpleName() + "/test?serviceClass=org.apache.camel.component.cxf.HelloService]"));
         }
                 
         context.stop();

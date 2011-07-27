@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -31,28 +32,29 @@ import org.junit.Test;
  * 
  */
 public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
+    private static int port = AvailablePortFinder.getNextAvailable();
     private static final String RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
         + "<soap:Body><ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
         + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"
         + "</ns1:echoResponse></soap:Body></soap:Envelope>";
-    
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:9008/user").process(new Processor() {
+                from("jetty:http://localhost:" + port + "/CxfProducerProtocalHeaderTest/user")
+                    .process(new Processor() {
 
-                    public void process(Exchange exchange) throws Exception {
-                        assertNull("We should not get this header", exchange.getIn().getHeader("CamelCxfTest"));
-                        System.out.println("header " + exchange.getIn().getHeader("SOAPAction"));
-                        assertNull("We should not get this header", exchange.getIn().getHeader("Transfer-Encoding"));
-                       // check the headers
-                        exchange.getOut().setHeader("Content-Type", "text/xml");
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
-                       // send the response back 
-                        exchange.getOut().setBody(RESPONSE);
-                    }
-                    
-                });
+                        public void process(Exchange exchange) throws Exception {
+                            assertNull("We should not get this header", exchange.getIn().getHeader("CamelCxfTest"));
+                            System.out.println("header " + exchange.getIn().getHeader("SOAPAction"));
+                            assertNull("We should not get this header", exchange.getIn().getHeader("Transfer-Encoding"));
+                            //check the headers
+                            exchange.getOut().setHeader("Content-Type", "text/xml");
+                            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
+                            //send the response back 
+                            exchange.getOut().setBody(RESPONSE);
+                        }
+                    });
             }
         };
     }
@@ -76,7 +78,8 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
     
     @Test
     public void testSendMessage() {
-        Exchange exchange = sendSimpleMessage("cxf://http://localhost:9008/user"
+        Exchange exchange = sendSimpleMessage("cxf://http://localhost:" + port 
+                                              + "/CxfProducerProtocalHeaderTest/user"
                                               + "?serviceClass=org.apache.camel.component.cxf.HelloService");
         org.apache.camel.Message out = exchange.getOut();
         String result = out.getBody(String.class);        

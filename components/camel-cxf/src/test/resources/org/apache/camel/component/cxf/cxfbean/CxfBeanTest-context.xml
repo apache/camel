@@ -25,6 +25,9 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
        http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
     ">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
     <import resource="classpath:META-INF/cxf/camel/cxf-extension-camel.xml" />
 	
 	<!-- START SNIPPET: beanDefinition -->
@@ -37,7 +40,7 @@
 	<!-- END SNIPPET: beanDefinition -->	
     
 	<cxf:cxfEndpoint id="routerEndpoint"
-		address="http://localhost:8092/PersonService/" serviceClass="org.apache.camel.wsdl_first.Person"
+		address="http://localhost:${CXFTestSupport.port1}/CxfBeanTest/PersonService/" serviceClass="org.apache.camel.wsdl_first.Person"
 		endpointName="person:soap" serviceName="person:PersonService" wsdlURL="person.wsdl"
 		xmlns:person="http://camel.apache.org/wsdl-first">
 	</cxf:cxfEndpoint>
@@ -61,18 +64,21 @@
     </bean>
 
 	<camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <endpoint id="ep1" uri="jetty:http://localhost:${CxfBeanTest.1}?matchOnUriPrefix=true"/>
+        <endpoint id="ep2" uri="jetty:http://localhost:${CxfBeanTest.2}?matchOnUriPrefix=true"/>
+
 		<route>
 			<from uri="cxf:bean:routerEndpoint?dataFormat=PAYLOAD" />
 			<to uri="cxf:bean:serviceEndpoint?dataFormat=PAYLOAD" />
 		</route>
 		<!-- START SNIPPET: routeDefinition -->
 		<route>
-			<from uri="jetty:http://localhost:9000?matchOnUriPrefix=true" />
+			<from ref="ep1" />
 			<to uri="cxfbean:customerServiceBean" />
 		</route>
 		<!-- END SNIPPET: routeDefinition -->	
 		<route>
-			<from uri="jetty:http://localhost:9090?matchOnUriPrefix=true" />
+			<from uri="ep2" />
 			<to uri="cxfbean:jaxwsBean" />
 		</route>
 		<!-- Provide an RS route for the purposes of testing that providers are added -->				

@@ -26,7 +26,7 @@
     ">
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfNonWrapperTest.port1}/PersonService/"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfNonWrapperTest/PersonService/"
                    serviceClass="org.apache.camel.non_wrapper.Person"
                    endpointName="person:soap"
                    serviceName="person:PersonService"

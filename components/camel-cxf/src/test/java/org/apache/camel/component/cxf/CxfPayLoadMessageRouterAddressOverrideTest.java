@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  * @version 
  */
 public class CxfPayLoadMessageRouterAddressOverrideTest extends CxfPayLoadMessageRouterTest {
-    private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
+    private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
     private String serviceEndpointURI = "cxf://http://localhost:9002/badAddress" + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -38,7 +38,7 @@ public class CxfPayLoadMessageRouterAddressOverrideTest extends CxfPayLoadMessag
                 from(routerEndpointURI).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         
-                        exchange.getIn().setHeader(Exchange.DESTINATION_OVERRIDE_URL, SERVICE_ADDRESS);
+                        exchange.getIn().setHeader(Exchange.DESTINATION_OVERRIDE_URL, getServiceAddress());
                         
                         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
                         List<Element> elements = payload.getBody();

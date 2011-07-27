@@ -38,7 +38,6 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        System.setProperty("CxfDispatchPayloadTest.port", Integer.toString(port));
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfDispatchPayloadBeans.xml");
     }
     

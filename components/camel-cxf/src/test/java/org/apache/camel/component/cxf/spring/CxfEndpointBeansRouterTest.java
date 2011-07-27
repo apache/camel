@@ -23,20 +23,25 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.cxf.transport.http.HTTPException;
+
 import org.junit.Test;
 
 public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
 
     protected String[] getApplicationContextFiles() {
+        CXFTestSupport.getPort1();
         return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouter.xml"};
     }
 
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
         CxfEndpoint routerEndpoint = (CxfEndpoint)ctx.getBean("routerEndpoint");
-        assertEquals("Got the wrong endpoint address", routerEndpoint.getAddress(), "http://localhost:9000/router");
+        assertEquals("Got the wrong endpoint address", routerEndpoint.getAddress(),
+                     "http://localhost:" + CXFTestSupport.getPort1() + "/CxfEndpointBeansRouterTest/router");
         assertEquals("Got the wrong endpont service class", 
                      "org.apache.camel.component.cxf.HelloService", 
                      routerEndpoint.getServiceClass().getName());
@@ -58,7 +63,9 @@ public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
         });
 
         Exception ex = reply.getException();
-        assertTrue("Should get the fault here", ex instanceof org.apache.cxf.interceptor.Fault);
+        assertTrue("Should get the fault here", 
+                   ex instanceof org.apache.cxf.interceptor.Fault
+                   || ex instanceof HTTPException);
     }
    
 }

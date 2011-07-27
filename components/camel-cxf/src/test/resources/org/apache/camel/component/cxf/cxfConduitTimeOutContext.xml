@@ -25,9 +25,10 @@
        http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
    <import resource="classpath:META-INF/cxf/cxf.xml"/>
-   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-   <import resource="classpath:META-INF/cxf/cxf-extension-http.xml" />
    
    <!-- You can set the timeout and other client http transport configuration here -->
    
@@ -35,7 +36,7 @@
 		<http-conf:client ReceiveTimeout="100" />
    </http-conf:conduit>
 
-   <cxf:cxfEndpoint id="springEndpoint" address="http://localhost:9023/SoapContext/SoapPort"
+   <cxf:cxfEndpoint id="springEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfTimeoutTest/SoapContext/SoapPort"
     		serviceClass="org.apache.hello_world_soap_http.Greeter"/>
 
    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="noErrorHandler">

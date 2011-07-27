@@ -28,7 +28,7 @@
 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CxfEndpointTest.port1}/router"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfEndpointTest/router"
     serviceClass="org.apache.camel.component.cxf.HelloService">
     <cxf:schemaLocations>
     	<cxf:schemaLocation>classpath:wsdl/Message.xsd</cxf:schemaLocation>
@@ -37,7 +37,7 @@
   </cxf:cxfEndpoint>
 
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfEndpointTest.port2}/helloworld"
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointTest/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
 </beans>

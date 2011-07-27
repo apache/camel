@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -37,7 +38,8 @@ import org.junit.Test;
 
 
 public class CxfMtomConsumerTest extends CamelTestSupport {
-    protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:9091/jaxws-mtom/hello";
+    protected static final String MTOM_ENDPOINT_ADDRESS = "http://localhost:"
+        + CXFTestSupport.getPort1() + "/CxfMtomConsumerTest/jaxws-mtom/hello";
     protected static final String MTOM_ENDPOINT_URI = "cxf://" + MTOM_ENDPOINT_ADDRESS
         + "?serviceClass=org.apache.camel.cxf.mtom_feature.Hello";        
 
@@ -79,7 +81,12 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
 
         HelloService service = new HelloService(wsdl, serviceName);
         assertNotNull("Service is null ", service);
-        return service.getHelloPort();
+        Hello port = service.getHelloPort();
+        
+        ((BindingProvider)port).getRequestContext()
+            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                 MTOM_ENDPOINT_ADDRESS);
+        return port;
     }
     
     protected Image getImage(String name) throws Exception {

@@ -21,26 +21,19 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {    
    
-    private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&wrappedStyle=false";
-    private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&wrappedStyle=false";
+    private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&wrappedStyle=false";
+    private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&wrappedStyle=false";
     
-    @BeforeClass
-    public static void startService() {       
-        //start a service
-        ServerFactoryBean svrBean = new ServerFactoryBean();
     
-        svrBean.setAddress(SERVICE_ADDRESS);
-        svrBean.setServiceClass(HelloService.class);
-        svrBean.setServiceBean(new HelloServiceImpl());
+    protected void configureFactory(ServerFactoryBean svrBean) {
         svrBean.getServiceFactory().setWrapped(false);
-    
-        server = svrBean.create();
-        server.start();
     }
     
     protected RouteBuilder createRouteBuilder() {
@@ -55,7 +48,7 @@ public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
     protected HelloService getCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress(SERVICE_ADDRESS);
+        clientBean.setAddress(getServiceAddress());
         clientBean.setServiceClass(HelloService.class); 
         clientBean.getServiceFactory().setWrapped(false);
         HelloService client = (HelloService) proxyFactory.create();

@@ -20,6 +20,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
@@ -31,6 +32,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
 
+    static int port = CXFTestSupport.getPort1();
+    
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/SoapMessageProviderContext.xml");
@@ -56,6 +59,9 @@ public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
         String response2 = new String("Bonjour");
         try {
             Greeter greeter = service.getPort(portName, Greeter.class);
+            ((BindingProvider)greeter).getRequestContext()
+                .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                     "http://localhost:" + port + "/CxfSoapMessageProviderTest/SoapContext/SoapProviderPort");
             for (int idx = 0; idx < 2; idx++) {
                 String greeting = greeter.greetMe("Milestone-" + idx);
                 assertNotNull("no response received from service", greeting);

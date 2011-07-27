@@ -26,8 +26,8 @@ import org.apache.camel.util.MessageHelper;
 import org.junit.Test;
 
 public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
-    private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
-    private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
+    private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
+    private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
     
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -57,7 +57,7 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
     
     @Test
     public void testTheContentTypeOnTheWire() throws Exception {
-        Exchange exchange = template.send(ROUTER_ADDRESS,  new Processor() {
+        Exchange exchange = template.send(getRouterAddress(),  new Processor() {
 
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" 

@@ -55,12 +55,12 @@ public class CxfProducerContextTest extends CxfProducerTest {
 
     @Override   
     protected String getSimpleEndpointUri() {
-        return "cxf://http://localhost:9000/simple?serviceClass=org.apache.camel.component.cxf.HelloService";
+        return "cxf://http://localhost:" + CXFTestSupport.getPort4() + "/CxfProducerContextTest/simple?serviceClass=org.apache.camel.component.cxf.HelloService";
     }
 
     @Override   
     protected String getJaxwsEndpointUri() {
-        return "cxf://http://localhost:9000/jaxws?serviceClass=org.apache.hello_world_soap_http.Greeter";
+        return "cxf://http://localhost:" + CXFTestSupport.getPort4() + "/CxfProducerContextTest/jaxws?serviceClass=org.apache.hello_world_soap_http.Greeter";
     }
     
     @Override   
@@ -70,7 +70,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
                 final List<String> params = new ArrayList<String>();
                 params.add(TEST_MESSAGE);
                 Map<String, Object> requestContext = new HashMap<String, Object>();
-                requestContext.put(Message.ENDPOINT_ADDRESS, SIMPLE_SERVER_ADDRESS);
+                requestContext.put(Message.ENDPOINT_ADDRESS, getSimpleServerAddress());
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
@@ -89,7 +89,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
                 final List<String> params = new ArrayList<String>();
                 params.add(TEST_MESSAGE);
                 Map<String, Object> requestContext = new HashMap<String, Object>();
-                requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, JAXWS_SERVER_ADDRESS);
+                requestContext.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, getJaxWsServerAddress());
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);

@@ -26,24 +26,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class CxfGreeterConverterRouterTest extends AbstractCXFGreeterRouterTest {
-    private static int port1 = AvailablePortFinder.getNextAvailable(); 
-    private static int port2 = AvailablePortFinder.getNextAvailable();
-    static {
-        System.setProperty("CxfGreeterConverterRouterTest.port1", Integer.toString(port1));
-        System.setProperty("CxfGreeterConverterRouterTest.port2", Integer.toString(port2));
-    }
-    public String getPort1() {
-        return Integer.toString(port1);
-    }
 
-    public String getPort2() {
-        return Integer.toString(port2);
-    }
 
     @BeforeClass
     public static void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + port1 + "/SoapContext/SoapPort";
+        String address = "http://localhost:" + getPort1()
+            + "/SoapContext/SoapPort/CxfGreeterConverterRouterTest";
         endpoint = Endpoint.publish(address, implementor); 
     }
 

@@ -24,15 +24,14 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-   <import resource="classpath:META-INF/cxf/cxf.xml"/>
-   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-   <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
-   <!-- Added the import for testing the CAMEL-329 -->
+   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9013/pizza_service/services/PizzaService"
+   <import resource="classpath:META-INF/cxf/cxf.xml"/>
+
+   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfPayLoadSoapHeaderSpringTest/pizza_service/services/PizzaService"
     		wsdlURL="pizza_service.wsdl"/>
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9023/new_pizza_service/services/PizzaService"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfPayLoadSoapHeaderSpringTest/new_pizza_service/services/PizzaService"
     		wsdlURL="pizza_service.wsdl"/>
   
 

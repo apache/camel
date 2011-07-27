@@ -31,8 +31,8 @@ import org.apache.camel.builder.RouteBuilder;
  * @version 
  */
 public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
-    private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
-    private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
+    private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
+    private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

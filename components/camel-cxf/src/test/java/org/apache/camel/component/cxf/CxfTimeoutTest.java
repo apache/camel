@@ -36,7 +36,8 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
 
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final String JAXWS_SERVER_ADDRESS = "http://localhost:9023/SoapContext/SoapPort";
+    protected static final String JAXWS_SERVER_ADDRESS 
+        = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfTimeoutTest/SoapContext/SoapPort";
 
     @BeforeClass
     public static void startService() {

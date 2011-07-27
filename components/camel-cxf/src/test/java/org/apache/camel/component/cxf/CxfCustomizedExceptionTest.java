@@ -62,8 +62,8 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
         // END SNIPPET: FaultDefine
     }    
     
-    protected String routerAddress = "http://localhost:" + AvailablePortFinder.getNextAvailable() 
-        + "/router";
+    protected String routerAddress = "http://localhost:" + CXFTestSupport.getPort1() 
+        + "/" + getClass().getSimpleName() + "/router";
     protected String routerEndpointURI = "cxf://" + routerAddress + "?" + SERVICE_CLASS;
     protected String serviceURI = "cxf://" + routerAddress + "?" + SERVICE_CLASS;
 

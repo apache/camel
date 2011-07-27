@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 public class CxfRawMessageRouterAddressOverrideTest extends CxfRawMessageRouterTest {
-    private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
+    private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
     private String serviceEndpointURI = "cxf://http://localhost:9002/badAddress" + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
     
     @Override
@@ -29,7 +29,7 @@ public class CxfRawMessageRouterAddressOverrideTest extends CxfRawMessageRouterT
         return new RouteBuilder() {
             public void configure() {
                 from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG")
-                .setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(SERVICE_ADDRESS))
+                .setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(getServiceAddress()))
                 .to(serviceEndpointURI).to("mock:result");
             }
         };

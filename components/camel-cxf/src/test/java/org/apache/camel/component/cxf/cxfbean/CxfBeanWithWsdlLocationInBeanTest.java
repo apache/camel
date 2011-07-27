@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.cxfbean;
 
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -34,10 +35,10 @@ import static org.junit.Assert.assertEquals;
  */
 @ContextConfiguration
 public class CxfBeanWithWsdlLocationInBeanTest extends AbstractJUnit4SpringContextTests {
-
+    static int port = CXFTestSupport.getPort("CxfBeanWithWsdlLocationInBeanTest.1");
     @Test
     public void testDoNotUseWsdlDefinedInJaxWsBeanByDefault() throws Exception {        
-        HttpPost post = new HttpPost("http://localhost:9090/customerservice/customers");
+        HttpPost post = new HttpPost("http://localhost:" + port + "/customerservice/customers");
         post.addHeader("Accept" , "text/xml");
         String body = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
             + "<soap:Body><GetPerson xmlns=\"http://camel.apache.org/wsdl-first/types\">" 

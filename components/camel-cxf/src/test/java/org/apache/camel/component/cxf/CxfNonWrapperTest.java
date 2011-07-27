@@ -33,10 +33,9 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfNonWrapperTest extends CamelSpringTestSupport {
-    int port1 = AvailablePortFinder.getNextAvailable(); 
+    int port1 = CXFTestSupport.getPort1(); 
     
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        System.setProperty("CxfNonWrapperTest.port1", Integer.toString(port1));
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/nonWrapperProcessor.xml");
     }
 
@@ -52,7 +51,7 @@ public class CxfNonWrapperTest extends CamelSpringTestSupport {
         Person client = ss.getSoap();
         ((BindingProvider)client).getRequestContext()
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + port1 + "/PersonService/");
+                 "http://localhost:" + port1 + "/CxfNonWrapperTest/PersonService/");
         
         GetPerson request = new GetPerson();
         request.setPersonId("hello");

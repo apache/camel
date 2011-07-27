@@ -32,6 +32,10 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration
 public class ServiceClassRefTest extends AbstractJUnit4SpringContextTests {
 
+    static {
+        CXFTestSupport.getPort1();
+    }
+    
     @Autowired
     protected CamelContext context;
     

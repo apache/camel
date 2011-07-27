@@ -51,12 +51,13 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
     private static DocumentBuilderFactory documentBuilderFactory;
 
     protected Endpoint endpoint;
-    protected int port = AvailablePortFinder.getNextAvailable(); 
+    private int port = CXFTestSupport.getPort1();
 
     @Before
     public void startService() {
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:" + port + "/SoapContext/GreeterPort";
+        String address = "http://localhost:" + port + "/"
+            + getClass().getSimpleName() + "/SoapContext/GreeterPort";
         endpoint = Endpoint.publish(address, implementor); 
     }
     

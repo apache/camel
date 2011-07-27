@@ -28,7 +28,9 @@ public class CXFWsdlOnlyPayloadModeNoSpringSoap12Test extends CXFWsdlOnlyPayload
     
     @Before
     public void startService() {
-        endpoint = Endpoint.publish("http://localhost:" + port1 + "/PersonService", new PersonImpl12());
+        endpoint = Endpoint.publish("http://localhost:" + port1 + "/" 
+            + getClass().getSimpleName() 
+            + "/PersonService", new PersonImpl12());
     }
     
     @Override

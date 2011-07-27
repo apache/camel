@@ -25,16 +25,7 @@ import org.junit.BeforeClass;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstProcessorTest extends AbstractCxfWsdlFirstTest {
-    private static int port1 = AvailablePortFinder.getNextAvailable(); 
-    private static int port2 = AvailablePortFinder.getNextAvailable(); 
-    static {
-        System.setProperty("CxfWsdlFirstProcessorTest.port1", Integer.toString(port1));
-        System.setProperty("CxfWsdlFirstProcessorTest.port2", Integer.toString(port2));
-    }
 
-    public String getPort() {
-        return Integer.toString(port2);
-    }
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstProcessor.xml");
     }
@@ -42,7 +33,8 @@ public class CxfWsdlFirstProcessorTest extends AbstractCxfWsdlFirstTest {
     @BeforeClass
     public static void startService() {
         Object implementor = new PersonImpl();
-        String address = "http://localhost:" + port1 + "/PersonService/";
+        String address = "http://localhost:" + getPort1() 
+            + "/CxfWsdlFirstProcessorTest/PersonService/";
         Endpoint.publish(address, implementor);
     }
     

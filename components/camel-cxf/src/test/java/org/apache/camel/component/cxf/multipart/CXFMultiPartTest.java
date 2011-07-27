@@ -21,6 +21,7 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.cxf.multipart.MultiPartInvoke;
 import org.apache.camel.cxf.multipart.types.InE;
 import org.apache.camel.cxf.multipart.types.ObjectFactory;
@@ -61,7 +62,7 @@ public class CXFMultiPartTest extends CamelTestSupport {
     @BeforeClass
     public static void startService() {
         Object implementor = new MultiPartInvokeImpl();
-        String address = "http://localhost:9000/SoapContext/SoapPort";
+        String address = "http://localhost:" + CXFTestSupport.getPort1() + "/CXFMultiPartTest/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor);
        
     }
@@ -75,7 +76,8 @@ public class CXFMultiPartTest extends CamelTestSupport {
 
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
-        String reply = invokeMultiPartService("http://localhost:9003/CamelContext/RouterPort",
+        String reply = invokeMultiPartService("http://localhost:" + CXFTestSupport.getPort3() 
+                                              + "/CXFMultiPartTest/CamelContext/RouterPort",
                                               "in0", "in1");
         assertNotNull("No response received from service", reply);
         assertTrue(reply.equals("in0 in1"));

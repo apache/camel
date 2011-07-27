@@ -25,6 +25,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
     <!--
     If you want to run this example in Tomcat container which need to used servlet transoprt,
@@ -32,15 +33,13 @@
     -->
 
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
-	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
 
     <bean id = "targetBean" class="org.apache.camel.component.cxf.SoapTargetBean" />
     <bean id = "parameterProcessor" class="org.apache.camel.component.cxf.ParameterProcessor"/>
 
 	<cxf:cxfEndpoint id="soapMessageEndpoint"
 		serviceClass="org.apache.camel.component.cxf.SoapMessageProvider"
-		address="http://localhost:9003/SoapContext/SoapProviderPort">
+		address="http://localhost:${CXFTestSupport.port1}/CxfSoapMessageProviderTest/SoapContext/SoapProviderPort">
 		<cxf:handlers>
 			<ref bean="fromEndpointJaxwsHandler" />
 		</cxf:handlers>

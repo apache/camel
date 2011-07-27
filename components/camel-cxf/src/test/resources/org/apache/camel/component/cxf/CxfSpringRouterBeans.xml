@@ -23,15 +23,16 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
   <bean id="fromEndpointJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler"/>
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfSpringRouterTest/router"
     serviceClass="org.apache.camel.component.cxf.HelloService">
   </cxf:cxfEndpoint>
 
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfSpringRouterTest/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
 </beans>

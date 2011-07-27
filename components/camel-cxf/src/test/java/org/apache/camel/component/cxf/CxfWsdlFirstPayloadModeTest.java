@@ -33,21 +33,13 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
-    private static int port1 = AvailablePortFinder.getNextAvailable(); 
-    private static int port2 = AvailablePortFinder.getNextAvailable(); 
-    static {
-        System.setProperty("CxfWsdlFirstPayloadModeTest.port1", Integer.toString(port1));
-        System.setProperty("CxfWsdlFirstPayloadModeTest.port2", Integer.toString(port2));
-    }
 
-    public String getPort() {
-        return Integer.toString(port2);
-    }
 
     @BeforeClass
     public static void startService() {
         Object implementor = new PersonImpl();
-        String address = "http://localhost:" + port1 + "/PersonService/";
+        String address = "http://localhost:" + getPort1() 
+            + "/CxfWsdlFirstPayloadModeTest/PersonService/";
         Endpoint.publish(address, implementor);
     }
 

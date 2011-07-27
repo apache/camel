@@ -30,6 +30,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.hello_world_soap_http.GreeterImpl;
@@ -48,27 +49,44 @@ public class CxfProducerTest extends Assert {
     protected static final String ECHO_OPERATION = "echo";
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
-    protected static final String SIMPLE_SERVER_ADDRESS = "http://localhost:28080/test";
-    protected static final String JAXWS_SERVER_ADDRESS = "http://localhost:28081/test";
-    protected static final String WRONG_SERVER_ADDRESS = "http://localhost:9999/test";
 
     private static final transient Logger LOG = LoggerFactory.getLogger(CxfProducerTest.class);
 
     protected CamelContext camelContext;
     protected ProducerTemplate template;
+    protected Server server;
+    protected Endpoint endpoint;
+    
+    protected String getSimpleServerAddress() {
+        return "http://localhost:" + CXFTestSupport.getPort1() + "/" + getClass().getSimpleName() + "/test";
+    }
+    protected String getJaxWsServerAddress() {
+        return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/test";
+    }
+    protected String getWrongServerAddress() {
+        return "http://localhost:" + CXFTestSupport.getPort3() + "/" + getClass().getSimpleName() + "/test";
+    }
+    
 
-    @BeforeClass
-    public static void startService() throws Exception {
+    @Before
+    public void startService() throws Exception {
         // start a simple front service
         ServerFactoryBean svrBean = new ServerFactoryBean();
-        svrBean.setAddress(SIMPLE_SERVER_ADDRESS);
+        svrBean.setAddress(getSimpleServerAddress());
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
         svrBean.setBus(CXFBusFactory.getDefaultBus());
-        svrBean.create();
+        server = svrBean.create();
         
         GreeterImpl greeterImpl = new GreeterImpl();
-        Endpoint.publish(JAXWS_SERVER_ADDRESS, greeterImpl);
+        endpoint = Endpoint.publish(getJaxWsServerAddress(), greeterImpl);
+    }
+    
+    @After
+    public void stopServices() throws Exception {
+        endpoint.stop();
+        server.stop();
+        server.destroy();
     }
 
     @Before
@@ -125,16 +143,16 @@ public class CxfProducerTest extends Assert {
     }
 
     protected String getSimpleEndpointUri() {
-        return "cxf://" + SIMPLE_SERVER_ADDRESS
+        return "cxf://" + getSimpleServerAddress()
             + "?serviceClass=org.apache.camel.component.cxf.HelloService";
     }
 
     protected String getJaxwsEndpointUri() {
-        return "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
+        return "cxf://" + getJaxWsServerAddress() + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
     }
 
     protected String getWrongEndpointUri() {
-        return "cxf://" + WRONG_SERVER_ADDRESS + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+        return "cxf://" + getWrongServerAddress() + "?serviceClass=org.apache.camel.component.cxf.HelloService";
     }
 
     protected Exchange sendSimpleMessage() {

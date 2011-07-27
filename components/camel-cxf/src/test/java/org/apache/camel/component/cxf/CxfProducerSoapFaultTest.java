@@ -37,7 +37,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CxfProducerSoapFaultTest extends Assert {
-    private static final String JAXWS_SERVER_ADDRESS = "http://localhost:28081/test";
+    private static final String JAXWS_SERVER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() + "/CxfProducerSoapFaultTest/test";
     private static final String JAXWS_ENDPOINT_URI = "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
     
     protected CamelContext camelContext;

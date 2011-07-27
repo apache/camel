@@ -52,6 +52,7 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
     
     @Before
     public void setUp() throws Exception {
+        CXFTestSupport.getPort1();
         applicationContext = createApplicationContext();
         super.setUp();
         assertNotNull("Should have created a valid spring context", applicationContext);

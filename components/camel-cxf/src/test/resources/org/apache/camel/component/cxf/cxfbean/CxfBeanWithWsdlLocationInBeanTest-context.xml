@@ -20,12 +20,14 @@
        http://camel.apache.org/schema/spring  http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
     ">
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
   <bean class="org.apache.camel.wsdl_first.PersonImplWithWsdl" id="jaxwsBean" />
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <endpoint id="ep1" uri="jetty:http://localhost:${CxfBeanWithWsdlLocationInBeanTest.1}?matchOnUriPrefix=true" />
     <route>
-      <from uri="jetty:http://localhost:9090?matchOnUriPrefix=true" />
+      <from ref="ep1" />
       <to uri="cxfbean:jaxwsBean" />
     </route>
   </camelContext>

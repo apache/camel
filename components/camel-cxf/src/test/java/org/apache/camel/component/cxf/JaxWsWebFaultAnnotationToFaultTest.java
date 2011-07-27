@@ -32,7 +32,8 @@ import org.junit.Test;
  */
 public class JaxWsWebFaultAnnotationToFaultTest extends CamelTestSupport {
 
-    protected static final String ROUTER_ADDRESS = "http://localhost:9002/router";
+    protected static final String ROUTER_ADDRESS = "http://localhost:" + CXFTestSupport.getPort1() 
+        + "/JaxWsWebFaultAnnotationToFaultTest/router";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.cxf.greeter_control.Greeter";
     protected static final String SERVICE_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS;
 

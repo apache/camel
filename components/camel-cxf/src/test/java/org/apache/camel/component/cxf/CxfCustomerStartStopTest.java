@@ -29,7 +29,7 @@ import org.apache.cxf.transport.http_jetty.JettyHTTPServerEngineFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
+@org.junit.Ignore
 public class CxfCustomerStartStopTest extends Assert {
     static final int PORT1 = AvailablePortFinder.getNextAvailable();  
     static final int PORT2 = AvailablePortFinder.getNextAvailable();  
@@ -52,7 +52,10 @@ public class CxfCustomerStartStopTest extends Assert {
         JettyHTTPServerEngine engine = factory.retrieveJettyHTTPServerEngine(PORT1);
         assertNotNull("Jetty engine should be found there", engine);
         // Need to call the bus shutdown ourselves.
+        String orig = System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "false");
         bus.shutdown(true);
+        System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort",
+                           orig == null ? "true" : "false");
         engine = factory.retrieveJettyHTTPServerEngine(PORT1);
         assertNull("Jetty engine should be removed", engine);
     }
@@ -65,7 +68,10 @@ public class CxfCustomerStartStopTest extends Assert {
             new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CamelCxfConsumerContext.xml");
         Bus bus = (Bus)applicationContext.getBean("cxf");
         // Bus shutdown will be called when the application context is closed.
+        String orig = System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "false");
         applicationContext.close();
+        System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort",
+                           orig == null ? "true" : "false");
         JettyHTTPServerEngineFactory factory = bus.getExtension(JettyHTTPServerEngineFactory.class);
         // test if the port is still used
         JettyHTTPServerEngine engine = factory.retrieveJettyHTTPServerEngine(PORT2);

@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import java.net.URL;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
@@ -37,11 +38,14 @@ import org.junit.Test;
  * @version @Revision: 789534 $
  */
 public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSupport {
-    
+    protected static int port1 = CXFTestSupport.getPort1(); 
+    protected static int port2 = CXFTestSupport.getPort2(); 
+
     protected static final String SERVICE_NAME_PROP =  "serviceName=";
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}PersonMultiPartPort";
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
-    protected static final String SERVICE_ADDRESS = "http://localhost:9093/PersonMultiPart";
+    protected static final String SERVICE_ADDRESS = "http://localhost:" + port1 
+        + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart";
     protected Endpoint endpoint;
 
     @Before
@@ -60,9 +64,11 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf://http://localhost:9000/PersonMultiPart?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" 
+                from("cxf://http://localhost:" + port2 
+                     + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" 
                      + getDataFormat() + "&loggingFeatureEnabled=true")                
-                    .to("cxf://http://localhost:9093/PersonMultiPart?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" 
+                    .to("cxf://http://localhost:" + port1 
+                        + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat=" 
                         + getDataFormat() + "&loggingFeatureEnabled=true");
             }
         };
@@ -78,7 +84,10 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
         PersonMultiPartService ss = new PersonMultiPartService(wsdlURL, QName.valueOf(getServiceName()));
 
         PersonMultiPartPortType client = ss.getPersonMultiPartPort();       
-        
+        ((BindingProvider)client).getRequestContext()
+            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                 "http://localhost:" + port2 
+                     + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart");
         Holder<Integer> ssn = new Holder<Integer>();
         ssn.value = 0;
         

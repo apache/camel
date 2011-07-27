@@ -21,20 +21,21 @@
        http://camel.apache.org/schema/spring  http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
     ">
-    
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
 	<bean id="myServiceClass" class="org.apache.camel.component.cxf.HelloServiceImpl" />
 	
-	<cxf:cxfEndpoint id="fromEndpointWithProps" address="http://localhost:9004/helloworld"
+	<cxf:cxfEndpoint id="fromEndpointWithProps" address="http://localhost:${CXFTestSupport.port4}/helloworld"
 		serviceClass="#myServiceClass">
 		<cxf:properties>
 			<entry key="dataFormat" value="PAYLOAD" />
 		</cxf:properties>
 	</cxf:cxfEndpoint>
 	
-	<cxf:cxfEndpoint id="fromEndpoint" address="http://localhost:9003/helloworld"
+	<cxf:cxfEndpoint id="fromEndpoint" address="http://localhost:${CXFTestSupport.port3}/helloworld"
 		serviceClass="#myServiceClass" />
 
-	<cxf:cxfEndpoint id="toEndpoint" address="http://localhost:9002/helloworld"
+	<cxf:cxfEndpoint id="toEndpoint" address="http://localhost:${CXFTestSupport.port2}/helloworld"
 		serviceClass="org.apache.camel.component.cxf.HelloService" />
 		
 	<camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">

@@ -30,6 +30,7 @@ import javax.xml.ws.soap.SOAPBinding;
 import junit.framework.Assert;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService;
 import org.junit.After;
@@ -47,14 +48,17 @@ import static org.junit.Assert.assertNotNull;
  */
 @ContextConfiguration
 public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTests {
-        
+    static int port1 = CXFTestSupport.getPort1();    
+    static int port2 = CXFTestSupport.getPort2();    
+    
     @Autowired
     protected CamelContext context;
     private Endpoint endpoint;
 
     @Before
     public void setUp() throws Exception {
-        endpoint = Endpoint.publish("http://localhost:9092/jaxws-mtom/hello", getImpl());
+        endpoint = Endpoint.publish("http://localhost:" + port2 + "/" 
+            + getClass().getSimpleName() + "/jaxws-mtom/hello", getImpl());
         SOAPBinding binding = (SOAPBinding)endpoint.getBinding();
         binding.setMTOMEnabled(true);
         
@@ -100,7 +104,11 @@ public class CxfMtomRouterPayloadModeTest extends AbstractJUnit4SpringContextTes
 
         HelloService service = new HelloService(wsdl, HelloService.SERVICE);
         assertNotNull("Service is null ", service);
-        return service.getHelloPort();
+        Hello port = service.getHelloPort();
+        ((BindingProvider)port).getRequestContext()
+            .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
+                 "http://localhost:" + port1 + "/CxfMtomRouterPayloadModeTest/jaxws-mtom/hello");
+        return port;
     }
     
     private Image getImage(String name) throws Exception {

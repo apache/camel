@@ -40,10 +40,10 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
     private static Endpoint endpoint1;
     private static Endpoint endpoint2;
 
-    private static int port1 = AvailablePortFinder.getNextAvailable(); 
-    private static int port2 = AvailablePortFinder.getNextAvailable(); 
-    private static int port3 = AvailablePortFinder.getNextAvailable(); 
-    private static int port4 = AvailablePortFinder.getNextAvailable(); 
+    private static int port1 = CXFTestSupport.getPort1(); 
+    private static int port2 = CXFTestSupport.getPort2(); 
+    private static int port3 = CXFTestSupport.getPort3(); 
+    private static int port4 = CXFTestSupport.getPort4(); 
         
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -64,10 +64,10 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
     @BeforeClass
     public static void startServices() {
         Object implementor = new PersonImpl();
-        String address = "http://localhost:" + port1 + "/PersonService/";
+        String address = "http://localhost:" + port1 + "/CXFWsdlOnlyTest/PersonService/";
         endpoint1 = Endpoint.publish(address, implementor);
 
-        address = "http://localhost:" + port2 + "/PersonService/";
+        address = "http://localhost:" + port2 + "/CXFWsdlOnlyTest/PersonService/";
         endpoint2 = Endpoint.publish(address, implementor);
     }
     
@@ -91,7 +91,7 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         
         ((BindingProvider)client).getRequestContext()
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + port3 + "/PersonService/");
+                 "http://localhost:" + port3 + "/CXFWsdlOnlyTest/PersonService/");
         Holder<String> personId = new Holder<String>();
         personId.value = "hello";
         Holder<String> ssn = new Holder<String>();
@@ -114,7 +114,7 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         Person client2 = ss.getSoap2();
         ((BindingProvider)client2).getRequestContext()
             .put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-                 "http://localhost:" + port4 + "/PersonService/");
+                 "http://localhost:" + port4 + "/CXFWsdlOnlyTest/PersonService/");
         Holder<String> personId2 = new Holder<String>();
         personId2.value = "hello";
         Holder<String> ssn2 = new Holder<String>();
