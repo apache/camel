@@ -54,7 +54,7 @@ public class JmsRoutingSlipTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:hello").routingSlip("myslip", "#");
+                from("activemq:queue:hello").routingSlip(header("myslip"), "#");
             }
         };
     }

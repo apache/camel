@@ -149,7 +149,7 @@ public class JmsConfiguration implements Cloneable {
         public void send(final String destinationName,
                          final MessageCreator messageCreator,
                          final MessageSentCallback callback) throws JmsException {
-            execute(new SessionCallback() {
+            execute(new SessionCallback<Object>() {
                 public Object doInJms(Session session) throws JMSException {
                     Destination destination = resolveDestinationName(session, destinationName);
                     return doSendToDestination(destination, messageCreator, callback, session);
@@ -160,7 +160,7 @@ public class JmsConfiguration implements Cloneable {
         public void send(final Destination destination,
                          final MessageCreator messageCreator,
                          final MessageSentCallback callback) throws JmsException {
-            execute(new SessionCallback() {
+            execute(new SessionCallback<Object>() {
                 public Object doInJms(Session session) throws JMSException {
                     return doSendToDestination(destination, messageCreator, callback, session);
                 }
@@ -169,7 +169,7 @@ public class JmsConfiguration implements Cloneable {
 
         public void send(final String destinationName,
                          final MessageCreator messageCreator) throws JmsException {
-            execute(new SessionCallback() {
+            execute(new SessionCallback<Object>() {
                 public Object doInJms(Session session) throws JMSException {
                     Destination destination = resolveDestinationName(session, destinationName);
                     return doSendToDestination(destination, messageCreator, null, session);
@@ -179,7 +179,7 @@ public class JmsConfiguration implements Cloneable {
 
         public void send(final Destination destination,
                          final MessageCreator messageCreator) throws JmsException {
-            execute(new SessionCallback() {
+            execute(new SessionCallback<Object>() {
                 public Object doInJms(Session session) throws JMSException {
                     return doSendToDestination(destination, messageCreator, null, session);
                 }

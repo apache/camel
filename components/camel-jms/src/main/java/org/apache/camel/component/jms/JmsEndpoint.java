@@ -644,6 +644,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    @Deprecated
     public boolean isSubscriptionDurable() {
         return getConfiguration().isSubscriptionDurable();
     }
@@ -654,6 +655,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    @Deprecated
     public boolean isTransactedInOut() {
         return getConfiguration().isTransactedInOut();
     }
@@ -841,6 +843,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    @Deprecated
     public void setSubscriptionDurable(boolean subscriptionDurable) {
         getConfiguration().setSubscriptionDurable(subscriptionDurable);
     }
@@ -864,6 +867,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    @Deprecated
     public void setTransactedInOut(boolean transactedInOut) {
         getConfiguration().setTransactedInOut(transactedInOut);
     }

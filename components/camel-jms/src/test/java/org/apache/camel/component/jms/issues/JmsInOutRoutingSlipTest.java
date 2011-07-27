@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.issues;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -55,8 +56,8 @@ public class JmsInOutRoutingSlipTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:start")
-                    .inOut()
-                    .routingSlip("slip")
+                    .setExchangePattern(ExchangePattern.InOut)
+                    .routingSlip(header("slip"))
                     .to("log:end")
                     .to("mock:end");
 

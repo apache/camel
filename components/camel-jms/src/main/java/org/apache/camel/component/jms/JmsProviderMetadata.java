@@ -85,7 +85,7 @@ public class JmsProviderMetadata {
         if (template == null) {
             throw new IllegalArgumentException("No JmsTemplate supplied!");
         }
-        template.execute(new SessionCallback() {
+        template.execute(new SessionCallback<Object>() {
             public Object doInJms(Session session) throws JMSException {
                 TemporaryQueue queue = session.createTemporaryQueue();
                 setTemporaryQueueType(queue.getClass());

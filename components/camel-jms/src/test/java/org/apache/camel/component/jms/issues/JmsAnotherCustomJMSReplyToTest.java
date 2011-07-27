@@ -22,6 +22,7 @@ import javax.jms.TextMessage;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
@@ -71,7 +72,7 @@ public class JmsAnotherCustomJMSReplyToTest extends CamelTestSupport {
 
             public void configure() throws Exception {
                 from("activemq:queue:hello")
-                        .inOnly()
+                        .setExchangePattern(ExchangePattern.InOnly)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getIn().setBody("What's your name");

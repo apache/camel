@@ -60,7 +60,7 @@ public class JmsRoutingSlipIssueTest extends CamelTestSupport {
                 from("direct:start")
                     // need to use InOut as we do request/reply over JMS
                     .setExchangePattern(ExchangePattern.InOut)
-                    .routingSlip("mySlip")
+                    .routingSlip(header("mySlip"))
                     .to("mock:result");
 
                 from("activemq:queue:a")

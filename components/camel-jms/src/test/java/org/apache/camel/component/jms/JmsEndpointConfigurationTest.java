@@ -178,6 +178,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(true, endpoint.getConfiguration().isLazyCreateTransactionManager());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testDefaultEndpointOptions() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo");
@@ -248,6 +249,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(false, endpoint.isTransferException());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSettingEndpointOptions() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo");

@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -64,7 +65,8 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Cam
             @Override
             public void configure() throws Exception {
                 from("seda:start")
-                    .inOut().to("activemq:queue:foo")
+                    .setExchangePattern(ExchangePattern.InOut)
+                    .to("activemq:queue:foo")
                     .log("reply   - ${body}")
                     .threads(5)
                     .log("delay   - ${body}")
