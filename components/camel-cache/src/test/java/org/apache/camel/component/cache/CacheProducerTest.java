@@ -48,9 +48,6 @@ public class CacheProducerTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:CacheProducerTest.cacheException")
     protected MockEndpoint cacheExceptionEndpoint;
 
-    @EndpointInject(uri = "mock:CacheProducerTest.noTypeConversionAvailableException")
-    private MockEndpoint noTypeConversionAvailableExceptionEndpoint;
-
     @Override
     public boolean isUseRouteBuilder() {
         return false;

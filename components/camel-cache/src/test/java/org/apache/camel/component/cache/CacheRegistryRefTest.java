@@ -38,7 +38,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class CacheRegistryRefTest extends CamelTestSupport {
@@ -134,8 +134,8 @@ public class CacheRegistryRefTest extends CamelTestSupport {
 
     public class TestLoader implements CacheLoaderWrapper {
 
+        protected Ehcache cache;
         private Status status;
-        private Ehcache cache;
 
         public TestLoader() {
             status = Status.STATUS_UNINITIALISED;

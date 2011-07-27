@@ -21,6 +21,7 @@ import java.net.URI;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -62,7 +63,7 @@ public class CometdProducerConsumerInOutInteractiveMain {
                 URI keyStoreUrl = file.toURI();
                 component.setSslKeystore(keyStoreUrl.getPath());
 
-                from(URI, URIS).inOut().process(new Processor() {
+                from(URI, URIS).setExchangePattern(ExchangePattern.InOut).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message out = new DefaultMessage();
                         out.setBody("reply: " + exchange.getIn().getBody());
