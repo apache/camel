@@ -528,7 +528,7 @@ public class QuickfixjEngineTest {
         n++;
     }
 
-    private class EventRecord {
+    private static class EventRecord {
         private final QuickfixjEventCategory eventCategory;
         private final SessionID sessionID;
         private final Message message;

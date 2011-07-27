@@ -34,14 +34,17 @@ import org.junit.Test;
  * be recreated as they may become invalid
  */
 public class JmsReconnectTest {
+
     public interface MyService {
         String echo(String st);
     }
 
-    private final class EchoServiceImpl implements MyService {
+    private final static class EchoServiceImpl implements MyService {
+
         public String echo(String st) {
             return st;
         }
+
     }
 
     @Produce(uri = "direct:test")
