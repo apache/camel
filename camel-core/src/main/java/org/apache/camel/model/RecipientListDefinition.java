@@ -124,8 +124,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
             answer.setTimeout(getTimeout());
         }
         if (isParallelProcessing() && executorService == null) {
-        	executorService = routeContext.getCamelContext().getExecutorServiceManager().getDefaultExecutorService(executorServiceRef, this);
-       	}
+            executorService = routeContext.getCamelContext().getExecutorServiceManager().getDefaultExecutorService(executorServiceRef, this);
+        }
         answer.setExecutorService(executorService);
         long timeout = getTimeout() != null ? getTimeout() : 0;
         if (timeout > 0 && !isParallelProcessing()) {

@@ -238,29 +238,29 @@ public class ThreadPoolProfile {
     /**
      * Overwrites each attribute that is null with the attribute from defaultProfile 
      * 
-     * @param _defaultProfile
+     * @param defaultProfile2
      */
-    public void addDefaults(ThreadPoolProfile _defaultProfile) {
-        if (_defaultProfile == null) {
+    public void addDefaults(ThreadPoolProfile defaultProfile2) {
+        if (defaultProfile2 == null) {
             return;
         }
         if (poolSize == null) {
-            poolSize = _defaultProfile.getPoolSize();
+            poolSize = defaultProfile2.getPoolSize();
         }
         if (maxPoolSize == null) {
-            maxPoolSize = _defaultProfile.getMaxPoolSize();
+            maxPoolSize = defaultProfile2.getMaxPoolSize();
         }
         if (keepAliveTime == null) {
-            keepAliveTime = _defaultProfile.getKeepAliveTime();
+            keepAliveTime = defaultProfile2.getKeepAliveTime();
         }
         if (timeUnit == null) {
-            timeUnit = _defaultProfile.getTimeUnit();
+            timeUnit = defaultProfile2.getTimeUnit();
         }
         if (maxQueueSize == null) {
-            maxQueueSize = _defaultProfile.getMaxQueueSize();
+            maxQueueSize = defaultProfile2.getMaxQueueSize();
         }
         if (rejectedPolicy == null) {
-            rejectedPolicy = _defaultProfile.getRejectedPolicy();
+            rejectedPolicy = defaultProfile2.getRejectedPolicy();
         }
     }
 }

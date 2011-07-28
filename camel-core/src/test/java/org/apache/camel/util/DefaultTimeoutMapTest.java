@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.ThreadPoolProfile;
-
-import junit.framework.TestCase;
 
 /**
  * @version 

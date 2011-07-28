@@ -150,7 +150,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-	if (executorService == null) {
+        if (executorService == null) {
             // executor service is mandatory for the Aggregator
             ExecutorServiceManager executorServiceManager = routeContext.getCamelContext().getExecutorServiceManager();
             if (isParallelProcessing()) {
@@ -158,7 +158,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             } else {
                 executorService = executorServiceManager.newSynchronousExecutorService(executorServiceRef, this);
             }
-	}
+        }
         AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor, correlation, strategy, executorService);
 
         AggregationRepository repository = createAggregationRepository(routeContext);
