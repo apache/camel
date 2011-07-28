@@ -47,7 +47,7 @@ public class AhcComponentClientConfigTest extends BaseAhcTest {
 
         assertMockEndpointsSatisfied();
     }
-
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -56,19 +56,19 @@ public class AhcComponentClientConfigTest extends BaseAhcTest {
                 configureComponent();
 
                 from("direct:start")
-                    .to("ahc:http://localhost:{{port}}/foo")
+                    .to(getAhcEndpointUri())
                     .to("mock:result");
 
-                from("jetty:http://localhost:{{port}}/foo")
+                from(getTestServerEndpointUri())
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // redirect to test the client config worked as we told it to follow redirects
                                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "301");
-                                exchange.getOut().setHeader("Location", "http://localhost:" + getPort() + "/bar");
+                                exchange.getOut().setHeader("Location", getTestServerEndpointTwoUrl());
                             }
                         });
 
-                from("jetty:http://localhost:{{port}}/bar")
+                from(getTestServerEndpointTwoUri())
                         .transform(constant("Bye World"));
             }
         };

@@ -32,6 +32,11 @@ public class AhcProduceNoThrowExceptionOnFailureTest extends BaseAhcTest {
 
         assertMockEndpointsSatisfied();
     }
+    
+    @Override
+    protected String getAhcEndpointUri() {
+        return super.getAhcEndpointUri() + "?throwExceptionOnFailure=false";
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -39,10 +44,10 @@ public class AhcProduceNoThrowExceptionOnFailureTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("ahc:http://localhost:{{port}}/foo?throwExceptionOnFailure=false")
+                    .to(getAhcEndpointUri())
                     .to("mock:result");
 
-                from("jetty:http://localhost:{{port}}/foo")
+                from(getTestServerEndpointUri())
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);

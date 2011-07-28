@@ -38,7 +38,7 @@ public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
         assertEquals("OK", out.getOut().getBody(String.class));
         assertEquals("yes", out.getOut().getHeader("bar"));
 
-        List foo = out.getOut().getHeader("foo", List.class);
+        List<?> foo = out.getOut().getHeader("foo", List.class);
         assertNotNull(foo);
         assertEquals(2, foo.size());
         assertEquals("123", foo.get(0));
@@ -63,7 +63,7 @@ public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
         assertEquals("OK", out.getOut().getBody(String.class));
         assertEquals("yes", out.getOut().getHeader("bar"));
 
-        List foo = out.getOut().getHeader("foo", List.class);
+        List<?> foo = out.getOut().getHeader("foo", List.class);
         assertNotNull(foo);
         assertEquals(2, foo.size());
         assertEquals("123", foo.get(0));
@@ -80,7 +80,7 @@ public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
                         String from = exchange.getIn().getHeader("from", String.class);
                         assertEquals("me", from);
 
-                        List to = exchange.getIn().getHeader("to", List.class);
+                        List<?> to = exchange.getIn().getHeader("to", List.class);
                         assertNotNull(to);
                         assertEquals(2, to.size());
                         assertEquals("foo", to.get(0));

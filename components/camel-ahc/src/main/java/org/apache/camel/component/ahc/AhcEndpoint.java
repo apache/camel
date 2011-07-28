@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  *
@@ -41,6 +42,7 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean bridgeEndpoint;
     private boolean throwExceptionOnFailure = true;
     private boolean transferException;
+    private SSLContextParameters sslContextParameters;
 
     public AhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
         super(endpointUri, component);
@@ -139,15 +141,44 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
+    
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         if (client == null) {
+            
+            AsyncHttpClientConfig config = null;
+            
             if (clientConfig != null) {
-                client = new AsyncHttpClient(clientConfig);
+                AsyncHttpClientConfig.Builder builder = AhcComponent.cloneConfig(clientConfig);
+                
+                if (sslContextParameters != null) {
+                    builder.setSSLContext(sslContextParameters.createSSLContext());
+                }
+                
+                config = builder.build();
             } else {
+                if (sslContextParameters != null) {
+                    AsyncHttpClientConfig.Builder builder =
+                        new AsyncHttpClientConfig.Builder();
+                    
+                    builder.setSSLContext(sslContextParameters.createSSLContext());
+                    config = builder.build();
+                }
+            }
+            
+            if (config == null) {
                 client = new AsyncHttpClient();
+            } else {
+                client = new AsyncHttpClient(config);
             }
         }
     }

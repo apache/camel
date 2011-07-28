@@ -16,23 +16,27 @@
  */
 package org.apache.camel.component.ahc;
 
-import java.io.Serializable;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
-/**
- *
- */
-public class MyOrderException extends Exception implements Serializable {
+public class AhcComponentClientConfigSslContextParametersTest extends AhcComponentClientConfigTest {
 
-    private static final long serialVersionUID = 1L;
-    
-    private final String orderId;
-
-    public MyOrderException(String orderId) {
-        super("Unknown orderId: " + orderId);
-        this.orderId = orderId;
+    public void configureComponent() {
+        super.configureComponent();
+        
+        AhcComponent component = context.getComponent("ahc", AhcComponent.class);
+        component.setSslContextParameters(context.getRegistry().lookup("sslContextParameters", SSLContextParameters.class));
     }
 
-    public String getOrderId() {
-        return orderId;
+    protected String getTestServerEndpointUri() {
+        return super.getTestServerEndpointUri() + "?sslContextParametersRef=sslContextParameters";
+    }
+    
+    protected String getTestServerEndpointTwoUri() {
+        return super.getTestServerEndpointTwoUri() + "?sslContextParametersRef=sslContextParameters";
+    }
+
+    @Override
+    protected boolean isHttps() {
+        return true;
     }
 }

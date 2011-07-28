@@ -42,7 +42,7 @@ public class AhcProducePostTest extends BaseAhcTest {
 
     @Test
     public void testAhcProduceDirectly() throws Exception {
-        Object out = template.requestBody("ahc:http://localhost:{{port}}/foo", "World", String.class);
+        Object out = template.requestBody(getAhcEndpointUri(), "World", String.class);
         assertEquals("Bye World", out);
     }
 
@@ -61,10 +61,10 @@ public class AhcProducePostTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("ahc:http://localhost:{{port}}/foo")
+                    .to(getAhcEndpointUri())
                     .to("mock:result");
 
-                from("jetty:http://localhost:{{port}}/foo")
+                from(getTestServerEndpointUri())
                         .transform(simple("Bye ${body}"));
             }
         };

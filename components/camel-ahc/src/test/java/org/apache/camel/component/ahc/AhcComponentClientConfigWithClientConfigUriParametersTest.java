@@ -16,38 +16,25 @@
  */
 package org.apache.camel.component.ahc;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Endpoint;
 import org.junit.Test;
 
-public class AhcProduceGetNoSlashInUriTest extends BaseAhcTest {
+public class AhcComponentClientConfigWithClientConfigUriParametersTest extends AhcComponentClientConfigTest {
 
     @Test
-    public void testAhcProduce() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-
-        template.sendBody("direct:start", null);
-
-        assertMockEndpointsSatisfied();
+    public void testAhcComponentClientConfig() throws Exception {
+        super.testAhcComponentClientConfig();
+        
+        Endpoint ahcEndpoint = context.getEndpoint(getAhcEndpointUri());
+        assertTrue(ahcEndpoint instanceof AhcEndpoint);
+        
+        assertEquals(1, ((AhcEndpoint) ahcEndpoint).getClientConfig().getMaxTotalConnections());
+        assertEquals(3, ((AhcEndpoint) ahcEndpoint).getClientConfig().getMaxRequestRetry());
+        assertEquals(true, ((AhcEndpoint) ahcEndpoint).getClientConfig().isRedirectEnabled());
     }
 
     @Override
     protected String getAhcEndpointUri() {
-        return "ahc:" + getProtocol() + ":localhost:{{port}}/foo";
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                    // no // slash in uri should still work
-                    .to(getAhcEndpointUri())
-                    .to("mock:result");
-
-                from(getTestServerEndpointUri())
-                        .transform(constant("Bye World"));
-            }
-        };
+        return super.getAhcEndpointUri() + "?clientConfig.maximumConnectionsTotal=1";
     }
 }

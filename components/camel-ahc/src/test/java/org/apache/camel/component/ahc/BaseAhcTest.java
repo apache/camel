@@ -26,13 +26,19 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jsse.ClientAuthentication;
+import org.apache.camel.util.jsse.KeyManagersParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.SSLContextServerParameters;
+import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-/**
- *
- */
-public class BaseAhcTest extends CamelTestSupport {
+public abstract class BaseAhcTest extends CamelTestSupport {
+    
+    protected static final String KEY_STORE_PASSWORD = "changeit";
+    
     private static volatile int port;
 
     @BeforeClass
@@ -50,6 +56,7 @@ public class BaseAhcTest extends CamelTestSupport {
             // use next port
             port++;
         }
+
     }
 
     @AfterClass
@@ -80,8 +87,85 @@ public class BaseAhcTest extends CamelTestSupport {
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
         jndi.bind("prop", prop);
+        
+        if (isHttps()) {
+            addSslContextParametersToRegistry(jndi);
+        }
 
         return jndi;
+    }
+    
+    protected void addSslContextParametersToRegistry(JndiRegistry registry) {
+        KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
+        ksp.setPassword(KEY_STORE_PASSWORD);
+
+        KeyManagersParameters kmp = new KeyManagersParameters();
+        kmp.setKeyPassword(KEY_STORE_PASSWORD);
+        kmp.setKeyStore(ksp);
+
+        TrustManagersParameters tmp = new TrustManagersParameters();
+        tmp.setKeyStore(ksp);
+
+        // NOTE: Needed since the client uses a loose trust configuration when no ssl context
+        // is provided.  We turn on client-auth to ensure that the tests onlt pass when
+        // the client is configured explicitly.
+        SSLContextServerParameters scsp = new SSLContextServerParameters();
+        scsp.setClientAuthentication(ClientAuthentication.REQUIRE.name());
+        
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setKeyManagers(kmp);
+        sslContextParameters.setTrustManagers(tmp);
+        sslContextParameters.setServerParameters(scsp);
+
+        registry.bind("sslContextParameters", sslContextParameters);
+    }
+    
+    /**
+     * Indicates if the URIs returned from {@link #getTestServerEndpointUri()} and
+     * {@link #getAhcEndpointUri()} should use the HTTPS protocol instead of
+     * the HTTP protocol.
+     * 
+     * If true, an {@link SSLContextParameters} is also placed in the registry under the
+     * key {@code sslContextParameters}.  The parameters are not added to the endpoint URIs
+     * as that is test specific.
+     * 
+     * @return false by default
+     */
+    protected boolean isHttps() {
+        return false;
+    }
+    
+    protected String getProtocol() {
+        String protocol = "http";
+        if (isHttps()) {
+            protocol = protocol + "s";
+        }
+        
+        return protocol;
+    }
+    
+    protected String getTestServerEndpointUrl() {
+        return getProtocol() + "://localhost:{{port}}/foo";
+    }
+    
+    protected String getTestServerEndpointUri() {
+        return "jetty:" + getTestServerEndpointUrl();
+    }
+    
+    protected String getTestServerEndpointTwoUrl() {
+        // Don't use the property placeholder here since we use the value outside of a
+        // field that supports the placeholders.
+        return getProtocol() + "://localhost:" + getPort() + "/bar";
+    }
+    
+    protected String getTestServerEndpointTwoUri() {
+        
+        return "jetty:" + getTestServerEndpointTwoUrl();
+    }
+    
+    protected String getAhcEndpointUri() {
+        return "ahc:" + getProtocol() + "://localhost:{{port}}/foo";
     }
 
     protected int getNextPort() {
@@ -92,6 +176,4 @@ public class BaseAhcTest extends CamelTestSupport {
     protected int getPort() {
         return port;
     }
-
 }
-

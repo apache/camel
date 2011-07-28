@@ -111,7 +111,7 @@ public final class IntrospectionSupport {
         return name;
     }
 
-    public static boolean isSetter(Method method) {
+    public static boolean isSetter(Method method, boolean allowBuilderPattern) {
         String name = method.getName();
         Class<?> type = method.getReturnType();
         Class<?> params[] = method.getParameterTypes();
@@ -120,7 +120,11 @@ public final class IntrospectionSupport {
             return false;
         }
 
-        return params.length == 1 && type.equals(Void.TYPE);
+        return params.length == 1 && (type.equals(Void.TYPE) || (allowBuilderPattern && method.getDeclaringClass().isAssignableFrom(type)));
+    }
+    
+    public static boolean isSetter(Method method) {
+        return isSetter(method, false);
     }
 
     /**
@@ -240,8 +244,8 @@ public final class IntrospectionSupport {
         }
         return false;
     }
-
-    public static boolean setProperties(Object target, Map<String, Object> properties, String optionPrefix) throws Exception {
+    
+    public static boolean setProperties(Object target, Map<String, Object> properties, String optionPrefix, boolean allowBuilderPattern) throws Exception {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
@@ -252,14 +256,18 @@ public final class IntrospectionSupport {
             if (name.startsWith(optionPrefix)) {
                 Object value = properties.get(name);
                 name = name.substring(optionPrefix.length());
-                if (setProperty(target, name, value)) {
+                if (setProperty(target, name, value, allowBuilderPattern)) {
                     it.remove();
                     rc = true;
                 }
             }
         }
-
+        
         return rc;
+    }
+
+    public static boolean setProperties(Object target, Map<String, Object> properties, String optionPrefix) throws Exception {
+        return setProperties(target, properties, optionPrefix, false);
     }
 
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
@@ -301,11 +309,11 @@ public final class IntrospectionSupport {
         return setProperties(null, target, properties);
     }
 
-    public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
+    public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value, boolean allowBuilderPattern) throws Exception {
         try {
             Class<?> clazz = target.getClass();
             // find candidates of setter methods as there can be overloaded setters
-            Set<Method> setters = findSetterMethods(typeConverter, clazz, name, value);
+            Set<Method> setters = findSetterMethods(typeConverter, clazz, name, value, allowBuilderPattern);
             if (setters.isEmpty()) {
                 return false;
             }
@@ -356,9 +364,17 @@ public final class IntrospectionSupport {
             }
         }
     }
+    
+    public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
+        return setProperty(typeConverter, target, name, value, false);
+    }
+    
+    public static boolean setProperty(Object target, String name, Object value, boolean allowBuilderPattern) throws Exception {
+        return setProperty(null, target, name, value, allowBuilderPattern);
+    }
 
     public static boolean setProperty(Object target, String name, Object value) throws Exception {
-        return setProperty(null, target, name, value);
+        return setProperty(target, name, value, false);
     }
 
     @SuppressWarnings("unchecked")
@@ -377,8 +393,8 @@ public final class IntrospectionSupport {
         }
         return null;
     }
-
-    private static Set<Method> findSetterMethods(TypeConverter typeConverter, Class<?> clazz, String name, Object value) {
+    
+    private static Set<Method> findSetterMethods(TypeConverter typeConverter, Class<?> clazz, String name, Object value, boolean allowBuilderPattern) {
         Set<Method> candidates = new LinkedHashSet<Method>();
 
         // Build the method name.
@@ -394,7 +410,7 @@ public final class IntrospectionSupport {
                     Class<?> paramType = params[0];
                     if (paramType.equals(Object.class)) {                        
                         objectSetMethod = method;
-                    } else if (typeConverter != null || isSetter(method) || paramType.isInstance(value)) {
+                    } else if (typeConverter != null || isSetter(method, allowBuilderPattern) || paramType.isInstance(value)) {
                         candidates.add(method);
                     }
                 }
@@ -427,5 +443,8 @@ public final class IntrospectionSupport {
             return candidates;
         }
     }
-
+    
+    private static Set<Method> findSetterMethods(TypeConverter typeConverter, Class<?> clazz, String name, Object value) {
+        return findSetterMethods(typeConverter, clazz, name, value, false);
+    }
 }

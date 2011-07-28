@@ -16,36 +16,24 @@
  */
 package org.apache.camel.component.ahc;
 
-import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class AhcProduceTransferExceptionTest extends BaseAhcTest {
-
+public class AhcProduceWithClientConfigUriParametersTest extends BaseAhcTest {
     @Test
-    public void testAhcProduce() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(0);
+    public void testAhcProduceClientConfig() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        try {
-            template.sendBody("direct:start", null);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
-            MyOrderException cause = assertIsInstanceOf(MyOrderException.class, e.getCause());
-            assertNotNull(cause);
-            assertEquals("123", cause.getOrderId());
-        }
+        template.sendBody("direct:start", null);
 
         assertMockEndpointsSatisfied();
     }
-
-    @Override
-    protected String getTestServerEndpointUri() {
-        return super.getTestServerEndpointUri() + "?transferException=true";
-    }
-
+    
     @Override
     protected String getAhcEndpointUri() {
-        return super.getAhcEndpointUri()  + "?transferException=true";
+        return super.getAhcEndpointUri() + "?clientConfig.maxRequestRetry=3&clientConfig.followRedirects=true";
     }
 
     @Override
@@ -58,7 +46,16 @@ public class AhcProduceTransferExceptionTest extends BaseAhcTest {
                     .to("mock:result");
 
                 from(getTestServerEndpointUri())
-                    .throwException(new MyOrderException("123"));
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                // redirect to test the client config worked as we told it to follow redirects
+                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "301");
+                                exchange.getOut().setHeader("Location", getTestServerEndpointTwoUrl());
+                            }
+                        });
+
+                from(getTestServerEndpointTwoUri())
+                        .transform(constant("Bye World"));
             }
         };
     }

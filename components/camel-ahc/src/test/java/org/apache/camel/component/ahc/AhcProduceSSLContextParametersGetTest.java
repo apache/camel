@@ -14,29 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.ahc.javabody;
+package org.apache.camel.component.ahc;
 
-import java.io.Serializable;
 
-/**
- *
- */
-public class MyCoolBean implements Serializable {
+public class AhcProduceSSLContextParametersGetTest extends AhcProduceGetTest {
 
-    private static final long serialVersionUID = 1L;
-    private final int id;
-    private final String name;
-
-    public MyCoolBean(int id, String name) {
-        this.id = id;
-        this.name = name;
+    protected String getTestServerEndpointUri() {
+        return super.getTestServerEndpointUri() + "?sslContextParametersRef=sslContextParameters";
+    }
+    
+    protected String getAhcEndpointUri() {
+        return super.getAhcEndpointUri() + "?sslContextParameters=#sslContextParameters";
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
+    @Override
+    protected boolean isHttps() {
+        return true;
     }
 }

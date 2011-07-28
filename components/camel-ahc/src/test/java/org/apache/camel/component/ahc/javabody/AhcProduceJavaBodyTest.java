@@ -38,7 +38,7 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp/myservice")
+                from(getTestServerEndpointUri())
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 MyCoolBean cool = exchange.getIn().getBody(MyCoolBean.class);
@@ -58,7 +58,7 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
         MyCoolBean cool = new MyCoolBean(123, "Camel");
 
-        String reply = template.requestBodyAndHeader("ahc:http:localhost:{{port}}/myapp/myservice", cool,
+        String reply = template.requestBodyAndHeader(getAhcEndpointUri(), cool,
                 Exchange.CONTENT_TYPE, AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, String.class);
 
         assertEquals("OK", reply);
@@ -69,7 +69,7 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp/myservice")
+                from(getTestServerEndpointUri())
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 MyCoolBean cool = exchange.getIn().getBody(MyCoolBean.class);
@@ -89,7 +89,7 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
 
         MyCoolBean cool = new MyCoolBean(123, "Camel");
 
-        MyCoolBean reply = template.requestBodyAndHeader("ahc:http://localhost:{{port}}/myapp/myservice", cool,
+        MyCoolBean reply = template.requestBodyAndHeader(getAhcEndpointUri(), cool,
                 Exchange.CONTENT_TYPE, AhcConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT, MyCoolBean.class);
 
         assertEquals(456, reply.getId());
@@ -101,7 +101,7 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp/myservice")
+                from(getTestServerEndpointUri())
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = exchange.getIn().getBody(String.class);
@@ -117,7 +117,7 @@ public class AhcProduceJavaBodyTest extends BaseAhcTest {
         });
         context.start();
 
-        MyCoolBean reply = template.requestBody("ahc:http://localhost:{{port}}/myapp/myservice", "Hello World", MyCoolBean.class);
+        MyCoolBean reply = template.requestBody(getAhcEndpointUri(), "Hello World", MyCoolBean.class);
 
         assertEquals(456, reply.getId());
         assertEquals("Camel rocks", reply.getName());

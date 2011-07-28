@@ -48,10 +48,10 @@ public class AhcProducePostHeadersTest extends BaseAhcTest {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("ahc:http://localhost:{{port}}/foo")
+                    .to(getAhcEndpointUri())
                     .to("mock:result");
 
-                from("jetty:http://localhost:{{port}}/foo")
+                from(getTestServerEndpointUri())
                         .transform(simple("Bye ${body}"));
             }
         };

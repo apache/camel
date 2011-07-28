@@ -71,6 +71,46 @@ public class IntrospectionSupportTest extends ContextTestSupport {
             return bean.getName();
         }
     }
+    
+    public class MyBuilderBean {
+        private String name;
+        
+        public String getName() {
+            return name;
+        }
+
+        public MyBuilderBean setName(String name) {
+            this.name = name;
+            
+            return this;
+        }
+    }
+    
+    public class MyOtherBuilderBean extends MyBuilderBean {    
+    }
+    
+    public class MyOtherOtherBuilderBean extends MyOtherBuilderBean {
+        
+        public MyOtherOtherBuilderBean setName(String name) {
+            super.setName(name);
+            return this;
+        }
+    }
+    
+    public void testIsSetterBuilderPatternSupport() throws Exception {
+        Method setter = MyBuilderBean.class.getMethod("setName", String.class);
+        Method setter2 = MyOtherBuilderBean.class.getMethod("setName", String.class);
+        Method setter3 = MyOtherOtherBuilderBean.class.getMethod("setName", String.class);
+        
+        assertFalse(IntrospectionSupport.isSetter(setter, false));
+        assertTrue(IntrospectionSupport.isSetter(setter, true));
+        
+        assertFalse(IntrospectionSupport.isSetter(setter2, false));
+        assertTrue(IntrospectionSupport.isSetter(setter2, true));
+        
+        assertFalse(IntrospectionSupport.isSetter(setter3, false));
+        assertTrue(IntrospectionSupport.isSetter(setter3, true));
+    }
 
     public void testHasProperties() throws Exception {
         Map<String, Object> empty = CastUtils.cast(Collections.emptyMap());
