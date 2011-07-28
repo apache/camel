@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -26,9 +28,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -37,12 +39,10 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * @version 
