@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.jaxrs;
 import javax.ws.rs.core.Response;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -32,7 +33,8 @@ import org.junit.Test;
 
 public class CxfRsConvertBodyToTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
-    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:9000/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+    private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConvertBodyToTest";
+    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + CXT + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -55,7 +57,7 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Customer.class);
 
-        HttpPut put = new HttpPut("http://localhost:9000/rest/customerservice/customers");
+        HttpPut put = new HttpPut("http://localhost:" + CXT + "/rest/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         put.addHeader("test", "header1;header2");

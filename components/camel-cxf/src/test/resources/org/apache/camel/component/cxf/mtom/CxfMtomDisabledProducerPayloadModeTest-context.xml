@@ -24,8 +24,9 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9092/jaxws-mtom/hello"
+   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfMtomDisabledProducerPayloadModeTest/jaxws-mtom/hello"
             wsdlURL="mtom.wsdl"
             serviceName="ns:HelloService"
             endpointName="ns:HelloPort"

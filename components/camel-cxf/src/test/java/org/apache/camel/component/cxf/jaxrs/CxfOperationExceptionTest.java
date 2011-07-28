@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
@@ -26,10 +27,11 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfOperationExceptionTest extends CamelSpringTestSupport {
+    private static final int PORT1 = CXFTestSupport.getPort1();
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringRouter.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfOperationException.xml");
     }
 
     @Test(expected = CamelExecutionException.class)
@@ -38,7 +40,7 @@ public class CxfOperationExceptionTest extends CamelSpringTestSupport {
         input.setName("Donald Duck");
 
         // we cannot convert directly to Customer as we need camel-jaxb
-        String response = template.requestBodyAndHeader("cxfrs:http://localhost:9002/customerservice/customers?throwExceptionOnFailure=true", input,
+        String response = template.requestBodyAndHeader("cxfrs:http://localhost:" + PORT1 + "/CxfOperationExceptionTest/customerservice/customers?throwExceptionOnFailure=true", input,
             Exchange.HTTP_METHOD, "POST", String.class);
 
         assertNotNull(response);
@@ -51,10 +53,10 @@ public class CxfOperationExceptionTest extends CamelSpringTestSupport {
         input.setName("Donald Duck");
 
         // we cannot convert directly to Customer as we need camel-jaxb
-        String response = template.requestBodyAndHeader("cxfrs:http://localhost:9002/customerservice/customers?throwExceptionOnFailure=false", input,
+        String response = template.requestBodyAndHeader("cxfrs:http://localhost:" + PORT1 + "/CxfOperationExceptionTest/customerservice/customers?throwExceptionOnFailure=false", input,
             Exchange.HTTP_METHOD, "POST", String.class);
 
         assertNotNull(response);
-        assertTrue(response.contains("Problem accessing /customerservice/customers"));
+        assertTrue(response.contains("Problem accessing /CxfOperationExceptionTest/customerservice/customers"));
     }
 }

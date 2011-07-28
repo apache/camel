@@ -16,15 +16,17 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class CxfRsEndpointTest extends CamelTestSupport {
+    private static final String CTX = CXFTestSupport.getPort1() + "/CxfRsEndpointTest";
     
     @Test
     public void testCreateCxfRsEndpoint() throws Exception {
-        String endpointUri = "cxfrs://http://localhost:9000"
+        String endpointUri = "cxfrs://http://localhost:" + CTX + ""
             + "?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService, "
             + "java.lang.String ; org.apache.camel.component.cxf.jaxrs.testbean.Order";
         CxfRsComponent component = new CxfRsComponent(context);
@@ -39,10 +41,10 @@ public class CxfRsEndpointTest extends CamelTestSupport {
     @Test
     public void testCxfRsEndpointParameters() throws Exception {
         CxfRsComponent component = new CxfRsComponent(context);
-        CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint("cxfrs://http://localhost:9000/templatetest/TID/ranges/start=0;end=1?"
+        CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint("cxfrs://http://localhost:" + CTX + "/templatetest/TID/ranges/start=0;end=1?"
             + "httpClientAPI=true&q1=11&q2=12");
         
-        assertEquals("Get a wrong URI ", "cxfrs://http://localhost:9000/templatetest/TID/ranges/start=0;end=1?httpClientAPI=true&q1=11&q2=12", endpoint.getEndpointUri());
+        assertEquals("Get a wrong URI ", "cxfrs://http://localhost:" + CTX + "/templatetest/TID/ranges/start=0;end=1?httpClientAPI=true&q1=11&q2=12", endpoint.getEndpointUri());
         assertEquals("Get a wrong usingClientAPI option", true, endpoint.isHttpClientAPI());
         assertNotNull("The Parameter should not be null" + endpoint.getParameters());
         assertEquals("Get a wrong parameter map", "{q1=11, q2=12}", endpoint.getParameters().toString());

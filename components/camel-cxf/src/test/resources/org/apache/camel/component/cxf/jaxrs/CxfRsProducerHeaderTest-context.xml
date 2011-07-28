@@ -25,9 +25,10 @@
        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-  
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
   <jaxrs:server id="restService"
-		        address="http://localhost:9002" 
+		        address="http://localhost:${CXFTestSupport.port2}/CxfRsProducerHeaderTest/" 
 		        staticSubresourceResolution="true">
     <jaxrs:serviceBeans>
       <ref bean="customerService"/>
@@ -37,18 +38,21 @@
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
   
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <endpoint id="to1" uri="cxfrs://http://localhost:${CXFTestSupport.port2}/CxfRsProducerHeaderTest/"/>
+    <endpoint id="to2" uri="cxfrs://http://localhost:${CxfRsProducerHeaderTest.1}/CxfRsProducerHeaderTest"/>
+    <endpoint id="from1" uri="jetty://http://localhost:${CxfRsProducerHeaderTest.1}/CxfRsProducerHeaderTest?matchOnUriPrefix=true"/>
     <route>
        <from uri="direct://http"/>
-       <to uri="cxfrs://http://localhost:9002"/>
+       <to ref="to1"/>
     </route>
     
     <route>
        <from uri="direct://http2"/>
-       <to uri="cxfrs://http://localhost:9003"/>
+       <to ref="to2"/>
     </route>
     
     <route>
-       <from uri="jetty://http://localhost:9003?matchOnUriPrefix=true"/>
+       <from ref="from1"/>
        <process ref="httpProcessor" />
     </route>
   </camelContext>

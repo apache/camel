@@ -47,7 +47,7 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
     protected static final String SERVICE_NAME_PROP =  "serviceName=";
     protected static final String PORT_NAME_PROP = "portName={http://camel.apache.org/wsdl-first}soap";
     protected static final String WSDL_URL_PROP = "wsdlURL=classpath:person.wsdl";
-    protected static Endpoint endpoint;
+    protected Endpoint endpoint;
     
     protected int port1 = CXFTestSupport.getPort1(); 
     protected int port2 = CXFTestSupport.getPort2(); 

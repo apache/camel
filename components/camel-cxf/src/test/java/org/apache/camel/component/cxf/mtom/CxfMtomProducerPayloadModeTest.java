@@ -36,6 +36,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.DOMUtils;
@@ -57,14 +58,16 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 */
 @ContextConfiguration
 public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextTests {
-
+    static int port = CXFTestSupport.getPort1();
+    
     @Autowired
     protected CamelContext context;
     protected Endpoint endpoint;
 
     @Before
     public void setUp() throws Exception {
-        endpoint = Endpoint.publish("http://localhost:9092/jaxws-mtom/hello", getServiceImpl());
+        endpoint = Endpoint.publish("http://localhost:" + port + "/" + getClass().getSimpleName() 
+                                    + "/jaxws-mtom/hello", getServiceImpl());
         SOAPBinding binding = (SOAPBinding)endpoint.getBinding();
         binding.setMTOMEnabled(isMtomEnabled());
     }

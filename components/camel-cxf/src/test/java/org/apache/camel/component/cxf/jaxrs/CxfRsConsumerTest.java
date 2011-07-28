@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -44,8 +45,9 @@ import org.junit.Test;
 
 public class CxfRsConsumerTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
+    private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConsumerTest";
     // START SNIPPET: example
-    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:9000/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
+    private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + CXT + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
     
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -121,9 +123,9 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     
     @Test
     public void testGetCustomer() throws Exception {
-        invokeGetCustomer("http://localhost:9000/rest/customerservice/customers/126",
+        invokeGetCustomer("http://localhost:" + CXT + "/rest/customerservice/customers/126",
                           "{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}");
-        invokeGetCustomer("http://localhost:9000/rest/customerservice/customers/123",
+        invokeGetCustomer("http://localhost:" + CXT + "/rest/customerservice/customers/123",
                           "customer response back!");
         
     }
@@ -132,14 +134,14 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     
     @Test
     public void testGetWrongCustomer() throws Exception {
-        URL url = new URL("http://localhost:9000/rest/customerservice/customers/456");
+        URL url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/456");
         try {
             url.openStream();
             fail("Expect to get exception here");
         } catch (FileNotFoundException exception) {
             // do nothing here
         }
-        url = new URL("http://localhost:9000/rest/customerservice/customers/256");
+        url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/256");
         try {
             url.openStream();
             fail("Expect to get exception here");
@@ -151,7 +153,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     
     @Test
     public void testPutConsumer() throws Exception {
-        HttpPut put = new HttpPut("http://localhost:9000/rest/customerservice/customers");
+        HttpPut put = new HttpPut("http://localhost:" + CXT + "/rest/customerservice/customers");
         StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         put.addHeader("test", "header1;header2");

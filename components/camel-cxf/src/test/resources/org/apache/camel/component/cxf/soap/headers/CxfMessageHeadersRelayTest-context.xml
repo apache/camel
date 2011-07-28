@@ -25,9 +25,10 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
   ">
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
   <cxf:cxfEndpoint id="routerRelayEndpoint" 
-                   address="http://localhost:9000/HeaderService/"
+                   address="http://localhost:${CxfMessageHeadersRelayTest.1}/CxfMessageHeadersRelayTest/HeaderService/"
                    serviceClass="org.apache.camel.component.cxf.soap.headers.HeaderTester"
                    endpointName="tns:SoapPortRelay"
                    serviceName="tns:HeaderService"
@@ -36,7 +37,7 @@
   </cxf:cxfEndpoint> 
 
   <cxf:cxfEndpoint id="routerRelayEndpointWithInsertion" 
-                   address="http://localhost:5000/HeaderService/"
+                   address="http://localhost:${CxfMessageHeadersRelayTest.2}/CxfMessageHeadersRelayTest/HeaderService/"
                    serviceClass="org.apache.camel.component.cxf.soap.headers.HeaderTester"
                    endpointName="tns:SoapPortRelayWithInsertion"
                    serviceName="tns:HeaderService"
@@ -51,7 +52,7 @@
   </cxf:cxfEndpoint> 
   
   <cxf:cxfEndpoint id="routerNoRelayEndpoint" 
-                   address="http://localhost:7000/HeaderService"
+                   address="http://localhost:${CxfMessageHeadersRelayTest.3}/CxfMessageHeadersRelayTest/HeaderService"
                    serviceClass="org.apache.camel.component.cxf.soap.headers.HeaderTester"
                    endpointName="tns:SoapPortNoRelay"
                    serviceName="tns:HeaderService"
@@ -64,7 +65,7 @@
   </cxf:cxfEndpoint> 
   
     <cxf:cxfEndpoint id="routerNoRelayNoServiceClassEndpoint" 
-                   address="http://localhost:7002/HeaderService"
+                   address="http://localhost:${CxfMessageHeadersRelayTest.5}/CxfMessageHeadersRelayTest/HeaderService"
                    endpointName="tns:SoapPortNoRelay"
                    serviceName="tns:HeaderService"
                    wsdlURL="soap_header.wsdl"
@@ -75,7 +76,7 @@
   </cxf:cxfEndpoint> 
 
   <cxf:cxfEndpoint id="serviceRelayEndpoint" 
-                   address="http://localhost:9091/HeaderService/"
+                   address="http://localhost:${CXFTestSupport.port1}/CxfMessageHeadersRelayTest/HeaderService/"
                    serviceClass="org.apache.camel.component.cxf.soap.headers.HeaderTester"
                    endpointName="tns:SoapPortRelay"
                    serviceName="tns:HeaderService"
@@ -84,7 +85,7 @@
   </cxf:cxfEndpoint>
   
   <cxf:cxfEndpoint id="serviceRelayEndpointWithInsertion" 
-                   address="http://localhost:5091/HeaderService/"
+                   address="http://localhost:${CXFTestSupport.port3}/CxfMessageHeadersRelayTest/HeaderService/"
                    serviceClass="org.apache.camel.component.cxf.soap.headers.HeaderTester"
                    endpointName="tns:SoapPortRelayWithInsertion"
                    serviceName="tns:HeaderService"
@@ -99,7 +100,7 @@
   </cxf:cxfEndpoint>  
 
   <cxf:cxfEndpoint id="serviceNoRelayEndpoint" 
-                   address="http://localhost:7070/HeaderService/"
+                   address="http://localhost:${CXFTestSupport.port2}/CxfMessageHeadersRelayTest/HeaderService/"
                    serviceClass="org.apache.camel.component.cxf.soap.headers.HeaderTester"
                    endpointName="tns:SoapPortNoRelay"
                    serviceName="tns:HeaderService"
@@ -112,7 +113,7 @@
   </cxf:cxfEndpoint>
   
     <cxf:cxfEndpoint id="serviceNoRelayNoServiceClassEndpoint" 
-                   address="http://localhost:7070/HeaderService/"
+                   address="http://localhost:${CXFTestSupport.port2}/CxfMessageHeadersRelayTest/HeaderService/"
                    endpointName="tns:SoapPortNoRelay"
                    serviceName="tns:HeaderService"
                    wsdlURL="soap_header.wsdl"
@@ -123,7 +124,7 @@
   </cxf:cxfEndpoint>
   
   <cxf:cxfEndpoint id="serviceExtraRelays" 
-                   address="http://localhost:6060/HeaderService/"
+                   address="http://localhost:${CxfMessageHeadersRelayTest.4}/CxfMessageHeadersRelayTest/HeaderService/"
                    serviceClass="org.apache.camel.component.cxf.soap.headers.HeaderTester"
                    endpointName="tns:SoapPortCustomRelay"
                    serviceName="tns:HeaderService"

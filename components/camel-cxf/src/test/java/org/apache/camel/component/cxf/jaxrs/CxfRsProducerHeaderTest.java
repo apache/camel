@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.util.CxfUtils;
 import org.junit.Test;
@@ -44,6 +45,8 @@ import static org.junit.Assert.assertNull;
  */
 @ContextConfiguration
 public class CxfRsProducerHeaderTest extends AbstractJUnit4SpringContextTests {
+    static int port2 = CXFTestSupport.getPort2(); 
+    static int port3 = CXFTestSupport.getPort("CxfRsProducerHeaderTest.1");
     
     private static final Object RESPONSE = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"
         + "<Customer><id>123</id><name>John</name></Customer>";
@@ -84,7 +87,7 @@ public class CxfRsProducerHeaderTest extends AbstractJUnit4SpringContextTests {
                 Message inMessage = exchange.getIn();
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.TRUE);
                 inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
-                inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");    
+                inMessage.setHeader(Exchange.HTTP_PATH, "/CxfRsProducerHeaderTest/customerservice/customers/123");    
                 inMessage.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
                 inMessage.setHeader("my-user-defined-header", "my-value");
                 inMessage.setBody(null);                
