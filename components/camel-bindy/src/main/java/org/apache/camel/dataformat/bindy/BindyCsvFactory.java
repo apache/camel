@@ -52,7 +52,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     boolean isOneToMany;
 
     private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
-    private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
+    private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();
     private Map<String, Integer> sections = new HashMap<String, Integer>();
 
     private Map<Integer, List<String>> results;
@@ -98,14 +98,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             List<Field> linkFields = new ArrayList<Field>();
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Class retrieved : {}", cl.getName());
+                LOG.debug("Class retrieved: {}", cl.getName());
             }
 
             for (Field field : cl.getDeclaredFields()) {
                 DataField dataField = field.getAnnotation(DataField.class);
                 if (dataField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Position defined in the class : {}, position : {}, Field : {}",
+                        LOG.debug("Position defined in the class: {}, position: {}, Field: {}",
                                 new Object[]{cl.getName(), dataField.pos(), dataField});
                     }
 
@@ -116,14 +116,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     }
 
                     dataFields.put(dataField.pos(), dataField);
-                    annotedFields.put(dataField.pos(), field);
+                    annotatedFields.put(dataField.pos(), field);
                 }
 
                 Link linkField = field.getAnnotation(Link.class);
 
                 if (linkField != null) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Class linked  : {}, Field {}", cl.getName(), field);
+                        LOG.debug("Class linked: {}, Field: {}", cl.getName(), field);
                     }
                     linkFields.add(field);
                 }
@@ -137,9 +137,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             totalFields = numberMandatoryFields + numberOptionalFields;
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Number of optional fields : {}", numberOptionalFields);
-                LOG.debug("Number of mandatory fields : {}", numberMandatoryFields);
-                LOG.debug("Total : {}", totalFields);
+                LOG.debug("Number of optional fields: {}", numberOptionalFields);
+                LOG.debug("Number of mandatory fields: {}", numberMandatoryFields);
+                LOG.debug("Total: {}", totalFields);
             }
         }
     }
@@ -153,7 +153,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
             // Get DataField from model
             DataField dataField = dataFields.get(pos);
-            ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field : " + data + ", line : " + line);
+            ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field: " + data + ", line: " + line);
 
             if (dataField.trim()) {
                 data = data.trim();
@@ -166,16 +166,16 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 // Check if content of the field is empty
                 // This is not possible for mandatory fields
                 if (data.equals("")) {
-                    throw new IllegalArgumentException("The mandatory field defined at the position " + pos + " is empty for the line : " + line);
+                    throw new IllegalArgumentException("The mandatory field defined at the position " + pos + " is empty for the line: " + line);
                 }
             }
 
             // Get Field to be setted
-            Field field = annotedFields.get(pos);
+            Field field = annotatedFields.get(pos);
             field.setAccessible(true);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Pos : {}, Data : {}, Field type : {}", new Object[]{pos, data, field.getType()});
+                LOG.debug("Pos: {}, Data: {}, Field type: {}", new Object[]{pos, data, field.getType()});
             }
 
             Format<?> format;
@@ -196,9 +196,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 try {
                     value = format.parse(data);
                 } catch (FormatException ie) {
-                    throw new IllegalArgumentException(ie.getMessage() + ", position : " + pos + ", line : " + line, ie);
+                    throw new IllegalArgumentException(ie.getMessage() + ", position: " + pos + ", line: " + line, ie);
                 } catch (Exception e) {
-                    throw new IllegalArgumentException("Parsing error detected for field defined at the position : " + pos + ", line : " + line, e);
+                    throw new IllegalArgumentException("Parsing error detected for field defined at the position: " + pos + ", line: " + line, e);
                 }
             } else {
                 value = getDefaultValueForPrimitive(field.getType());
@@ -210,14 +210,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
         }
 
-        LOG.debug("Counter mandatory fields : {}", counterMandatoryFields);
+        LOG.debug("Counter mandatory fields: {}", counterMandatoryFields);
 
         if (pos < totalFields) {
-            throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line : " + line);
+            throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line: " + line);
         }
 
         if (counterMandatoryFields < numberMandatoryFields) {
-            throw new IllegalArgumentException("Some mandatory fields are missing, line : " + line);
+            throw new IllegalArgumentException("Some mandatory fields are missing, line: " + line);
         }
 
     }
@@ -234,7 +234,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         char separator = Converter.getCharDelimitor(this.getSeparator());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Separator converted : '0x{}', from : {}", Integer.toHexString(separator), this.getSeparator());
+            LOG.debug("Separator converted: '0x{}', from: {}", Integer.toHexString(separator), this.getSeparator());
         }
 
         for (Class clazz : models) {
@@ -242,7 +242,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 Object obj = model.get(clazz.getName());
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Model object : {}, class : {}", obj, obj.getClass().getName());
+                    LOG.debug("Model object: {}, class: {}", obj, obj.getClass().getName());
                 }
                 if (obj != null) {
 
@@ -268,7 +268,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 // For one to one relation
                 // There is only one item in the list
-                String value = (String)val.get(0);
+                String value = val.get(0);
 
                 // Add the value to the temp array
                 if (value != null) {
@@ -331,14 +331,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     v.add(l.get(idx));
                     index.put(ii, idx);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value : {}, pos : {}, at : {}", new Object[]{l.get(idx), ii, idx});
+                        LOG.debug("Value: {}, pos: {}, at: {}", new Object[]{l.get(idx), ii, idx});
                     }
                 } else {
                     v.add(l.get(0));
                     index.put(ii, 0);
                     ++idxSize;
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value : {}, pos : {}, at index : {}", new Object[]{l.get(0), ii, 0});
+                        LOG.debug("Value: {}, pos: {}, at index: {}", new Object[]{l.get(0), ii, 0});
                     }
                 }
             }
@@ -355,14 +355,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     /**
      * 
-     * Generate a table containing the data formated and sorted with their position/offset
+     * Generate a table containing the data formatted and sorted with their position/offset
      * If the model is Ordered than a key is created combining the annotation @Section and Position of the field
-     * If a relation @OneToMany is defined, than we iterate recursivelu through this function
+     * If a relation @OneToMany is defined, than we iterate recursively through this function
      * The result is placed in the Map<Integer, List> results
-     * 
-     * @param clazz
-     * @param obj
-     * @throws Exception
      */
     private void generateCsvPositionMap(Class clazz, Object obj) throws Exception {
 
@@ -393,7 +389,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     result = formatString(format, value);
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value to be formatted : {}, position : {}, and its formated value : {}", new Object[]{value, datafield.pos(), result});
+                        LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", new Object[]{value, datafield.pos(), result});
                     }
 
                 } else {
@@ -402,7 +398,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 Integer key;
 
-                if (isMessageOrdered()) {
+                if (isMessageOrdered() && obj != null) {
 
                     // Generate a key using the number of the section
                     // and the position of the field
@@ -411,24 +407,20 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     Integer keyGenerated = generateKey(key1, key2);
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key generated : {}, for section : {}", String.valueOf(keyGenerated), key1);
+                        LOG.debug("Key generated: {}, for section: {}", String.valueOf(keyGenerated), key1);
                     }
 
                     key = keyGenerated;
 
                 } else {
-
                     key = datafield.pos();
                 }
 
                 if (!results.containsKey(key)) {
-
                     List<String> list = new LinkedList<String>();
                     list.add(result);
                     results.put(key, list);
-
                 } else {
-
                     List<String> list = results.get(key);
                     list.add(result);
                 }
@@ -443,16 +435,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 isOneToMany = true;
 
                 ArrayList list = (ArrayList)field.get(obj);
-
                 if (list != null) {
 
                     Iterator it = list.iterator();
-
                     while (it.hasNext()) {
-
                         Object target = it.next();
                         generateCsvPositionMap(target.getClass(), target);
-
                     }
 
                 } else {
@@ -484,7 +472,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             DataField dataField = dataFieldsSorted.get(it.next());
 
             // Retrieve the field
-            Field field = annotedFields.get(dataField.pos());
+            Field field = annotatedFields.get(dataField.pos());
             // Change accessibility to allow to read protected/private fields
             field.setAccessible(true);
 
@@ -518,33 +506,33 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 Section section = cl.getAnnotation(Section.class);
 
                 if (record != null) {
-                    LOG.debug("Csv record : {}", record);
+                    LOG.debug("Csv record: {}", record);
 
                     // Get skipFirstLine parameter
                     skipFirstLine = record.skipFirstLine();
-                    LOG.debug("Skip First Line parameter of the CSV : {}" + skipFirstLine);
+                    LOG.debug("Skip First Line parameter of the CSV: {}" + skipFirstLine);
 
                     // Get generateHeaderColumnNames parameter
                     generateHeaderColumnNames = record.generateHeaderColumns();
-                    LOG.debug("Generate header column names parameter of the CSV : {}", generateHeaderColumnNames);
+                    LOG.debug("Generate header column names parameter of the CSV: {}", generateHeaderColumnNames);
 
                     // Get Separator parameter
-                    ObjectHelper.notNull(record.separator(), "No separator has been defined in the @Record annotation !");
+                    ObjectHelper.notNull(record.separator(), "No separator has been defined in the @Record annotation");
                     separator = record.separator();
-                    LOG.debug("Separator defined for the CSV : {}", separator);
+                    LOG.debug("Separator defined for the CSV: {}", separator);
 
                     // Get carriage return parameter
                     crlf = record.crlf();
-                    LOG.debug("Carriage return defined for the CSV : {}", crlf);
+                    LOG.debug("Carriage return defined for the CSV: {}", crlf);
 
                     // Get isOrdered parameter
                     messageOrdered = record.isOrdered();
-                    LOG.debug("Must CSV record be ordered ? {}", messageOrdered);
+                    LOG.debug("Must CSV record be ordered: {}", messageOrdered);
                 }
 
                 if (section != null) {
                     // Test if section number is not null
-                    ObjectHelper.notNull(section.number(), "No number has been defined for the section !");
+                    ObjectHelper.notNull(section.number(), "No number has been defined for the section");
 
                     // Get section number and add it to the sections
                     sections.put(cl.getName(), section.number());

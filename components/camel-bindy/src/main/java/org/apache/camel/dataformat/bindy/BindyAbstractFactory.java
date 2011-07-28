@@ -104,7 +104,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
                 String toClassName = field.getType().getName();
                 Object to = model.get(toClassName);
 
-                ObjectHelper.notNull(to, "No @link annotation has been defined for the oject to link");
+                ObjectHelper.notNull(to, "No @link annotation has been defined for the object to link");
                 field.set(model.get(field.getDeclaringClass().getName()), to);
             }
         }
@@ -139,15 +139,15 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      * @return the key generated
      */
     protected static Integer generateKey(Integer key1, Integer key2) {
-        String key2Formated;
+        String key2Formatted;
         String keyGenerated;
 
         // Test added for ticket - camel-2773
         if ((key1 != null) && (key2 != null)) {
-            key2Formated = getNumberFormat().format((long) key2);
-            keyGenerated = String.valueOf(key1) + key2Formated;
+            key2Formatted = getNumberFormat().format((long) key2);
+            keyGenerated = String.valueOf(key1) + key2Formatted;
         } else {
-            throw new IllegalArgumentException("@Section and/or @KeyValuePairDataField have not been defined!");
+            throw new IllegalArgumentException("@Section and/or @KeyValuePairDataField have not been defined");
         }
 
         return Integer.valueOf(keyGenerated);

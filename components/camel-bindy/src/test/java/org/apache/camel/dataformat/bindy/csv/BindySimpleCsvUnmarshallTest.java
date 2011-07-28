@@ -96,7 +96,7 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
         // and check that we have the caused exception stored
         Exception cause = error.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         TestSupport.assertIsInstanceOf(FormatException.class, cause.getCause());
-        assertEquals("Date provided does not fit the pattern defined, position : 11, line : 1", cause.getMessage());
+        assertEquals("Date provided does not fit the pattern defined, position: 11, line: 1", cause.getMessage());
 
     }
     

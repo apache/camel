@@ -131,7 +131,7 @@ public class BindyFixedLengthDataFormat implements DataFormat {
                 // Check if the record length corresponds to the parameter
                 // provided in the @FixedLengthRecord
                 if ((line.length() < factory.recordLength()) || (line.length() > factory.recordLength())) {
-                    throw new java.lang.IllegalArgumentException("Size of the record : " + line.length() + " is not equal to the value provided in the model : " + factory.recordLength() + " !");
+                    throw new java.lang.IllegalArgumentException("Size of the record: " + line.length() + " is not equal to the value provided in the model: " + factory.recordLength());
                 }
 
                 // Create POJO where Fixed data will be stored
@@ -146,13 +146,13 @@ public class BindyFixedLengthDataFormat implements DataFormat {
                 // Add objects graph to the list
                 models.add(model);
 
-                LOG.debug("Graph of objects created : {}", model);
+                LOG.debug("Graph of objects created: {}", model);
             }
 
             // Test if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
-                throw new java.lang.IllegalArgumentException("No records have been defined in the message !");
+                throw new java.lang.IllegalArgumentException("No records have been defined in the message");
             } else {
                 return models;
             }
