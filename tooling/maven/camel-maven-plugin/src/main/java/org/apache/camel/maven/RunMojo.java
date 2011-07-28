@@ -642,7 +642,7 @@ public class RunMojo extends AbstractExecMojo {
                 Artifact classPathElement = (Artifact)iter.next();
                 getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId()
                                    + " to classpath");
-                path.add(classPathElement.getFile().toURL());
+                path.add(classPathElement.getFile().toURI().toURL());
             }
         } catch (MalformedURLException e) {
             throw new MojoExecutionException("Error during setting up classpath", e);
@@ -662,7 +662,7 @@ public class RunMojo extends AbstractExecMojo {
             try {
                 getLog().debug("Project Dependencies will be included.");
 
-                URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURL();
+                URL mainClasses = new File(project.getBuild().getOutputDirectory()).toURI().toURL();
                 getLog().debug("Adding to classpath : " + mainClasses);
                 path.add(mainClasses);
 
@@ -679,7 +679,7 @@ public class RunMojo extends AbstractExecMojo {
                                        + " to classpath");
                     File file = classPathElement.getFile();
                     if (file != null) {
-                        path.add(file.toURL());
+                        path.add(file.toURI().toURL());
                     }
                 }
 
@@ -735,7 +735,7 @@ public class RunMojo extends AbstractExecMojo {
             }
 
             Artifact art = this.artifactFactory.createDependencyArtifact(groupId, artifactId, versionRange,
-                                                                         type, classifier, scope, optional);
+                                                                         type, classifier, scope, null, optional);
 
             if (scope.equalsIgnoreCase(Artifact.SCOPE_SYSTEM)) {
                 art.setFile(new File(dependency.getSystemPath()));

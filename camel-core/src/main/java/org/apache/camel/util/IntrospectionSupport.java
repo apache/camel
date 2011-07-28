@@ -444,7 +444,4 @@ public final class IntrospectionSupport {
         }
     }
     
-    private static Set<Method> findSetterMethods(TypeConverter typeConverter, Class<?> clazz, String name, Object value) {
-        return findSetterMethods(typeConverter, clazz, name, value, false);
-    }
 }

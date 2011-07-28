@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -43,6 +41,9 @@ import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+
 
 /**
  * @version 

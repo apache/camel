@@ -435,10 +435,10 @@ public class DotMojo extends AbstractMavenReport {
         String generatedFileName = removeFileExtension(file.getAbsolutePath()) + "." + format;
         Commandline cl = new Commandline();
         cl.setExecutable(executable);
-        cl.createArgument().setValue("-T" + format);
-        cl.createArgument().setValue("-o");
-        cl.createArgument().setValue(generatedFileName);
-        cl.createArgument().setValue(file.getAbsolutePath());
+        cl.createArg().setValue("-T" + format);
+        cl.createArg().setValue("-o");
+        cl.createArg().setValue(generatedFileName);
+        cl.createArg().setValue(file.getAbsolutePath());
 
         log.debug("executing: " + cl.toString());
 

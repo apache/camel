@@ -223,7 +223,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
         for (int i = 0; i < size; i++) {
             String name = (String) classpathElements.get(i);
             File file = new File(name);
-            urls[i] = file.toURL();
+            urls[i] = file.toURI().toURL();
             getLog().debug("URL: " + urls[i]);
         }
         URLClassLoader loader = new URLClassLoader(urls, parent);
