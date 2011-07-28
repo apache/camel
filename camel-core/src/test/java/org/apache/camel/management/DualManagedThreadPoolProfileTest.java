@@ -21,7 +21,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.ThreadPoolProfileSupport;
 import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
@@ -78,14 +77,14 @@ public class DualManagedThreadPoolProfileTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                ThreadPoolProfile profile = new ThreadPoolProfileSupport("custom");
+                ThreadPoolProfile profile = new ThreadPoolProfile("custom");
                 profile.setPoolSize(5);
                 profile.setMaxPoolSize(15);
                 profile.setKeepAliveTime(25L);
                 profile.setMaxQueueSize(250);
                 profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
 
-                context.getExecutorServiceStrategy().registerThreadPoolProfile(profile);
+                context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
                 from("direct:start").threads().executorServiceRef("custom").to("mock:result");
 

@@ -17,7 +17,6 @@
 package org.apache.camel.component.direct;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 
 /**

@@ -44,11 +44,9 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
                         .threads(0, 2).to("mock:result");
                 }
             });
-            // expect to get the IllegalArgumentException
-            fail("Except the exception here");
+            fail("Expect FailedToCreateRouteException exception here");
         } catch (FailedToCreateRouteException ex) {
             assertTrue(ex.getCause() instanceof IllegalArgumentException);
-
         }
     }
 

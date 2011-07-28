@@ -257,7 +257,7 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
         private Condition exchangeEnqueuedCondition = queueLock.newCondition();
 
         public BatchSender() {
-            super(camelContext.getExecutorServiceStrategy().getThreadName("Batch Sender"));
+            super(camelContext.getExecutorServiceManager().resolveThreadName("Batch Sender"));
             this.queue = new LinkedList<Exchange>();
         }
 

@@ -32,7 +32,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.ExecutorServiceStrategy;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InflightRepository;
@@ -914,14 +914,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @return the strategy
      */
-    ExecutorServiceStrategy getExecutorServiceStrategy();
+    ExecutorServiceManager getExecutorServiceManager();
 
     /**
      * Sets a custom {@link org.apache.camel.spi.ExecutorServiceStrategy}
      *
      * @param executorServiceStrategy the custom strategy
      */
-    void setExecutorServiceStrategy(ExecutorServiceStrategy executorServiceStrategy);
+    void setExecutorServiceManager(ExecutorServiceManager executorServiceStrategy);
 
     /**
      * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
@@ -1006,7 +1006,5 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param useBreadcrumb <tt>true</tt> to enable breadcrumb, <tt>false</tt> to disable
      */
     void setUseBreadcrumb(Boolean useBreadcrumb);
-
-
 
 }

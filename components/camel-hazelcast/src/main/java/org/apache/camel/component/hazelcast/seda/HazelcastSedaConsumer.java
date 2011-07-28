@@ -20,12 +20,15 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.sound.midi.Soundbank;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
@@ -52,7 +55,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStart() throws Exception {
         int concurrentConsumers = endpoint.getConfiguration().getConcurrentConsumers();
-        executor = endpoint.getCamelContext().getExecutorServiceStrategy().newFixedThreadPool(this, endpoint.getEndpointUri(), concurrentConsumers);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().getExecutorService(ThreadPoolBuilder.fixedThreadExecutor(endpoint.getEndpointUri(), concurrentConsumers), this);
         for (int i = 0; i < concurrentConsumers; i++) {
             executor.execute(this);
         }
@@ -63,7 +66,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStop() throws Exception {
         if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceStrategy().shutdownNow(executor);
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
         super.doStop();

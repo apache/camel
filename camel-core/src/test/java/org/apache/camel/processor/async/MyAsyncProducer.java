@@ -18,7 +18,6 @@ package org.apache.camel.processor.async;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
@@ -39,7 +38,7 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
 
     public MyAsyncProducer(MyAsyncEndpoint endpoint) {
         super(endpoint);
-        this.executor = endpoint.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "MyProducer");
+        this.executor = endpoint.getCamelContext().getExecutorServiceManager().getDefaultExecutorService("MyProducer", this);
     }
 
     public MyAsyncEndpoint getEndpoint() {

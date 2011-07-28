@@ -32,7 +32,7 @@ public class SpringCamelContextCustomThreadPoolProfileTest extends SpringTestSup
     public void testDefaultThreadPoolProfile() throws Exception {
         CamelContext context = getMandatoryBean(CamelContext.class, "camel-D");
 
-        ThreadPoolProfile profile = context.getExecutorServiceStrategy().getDefaultThreadPoolProfile();
+        ThreadPoolProfile profile = context.getExecutorServiceManager().getDefaultThreadPoolProfile();
         assertEquals(5, profile.getPoolSize().intValue());
         assertEquals(15, profile.getMaxPoolSize().intValue());
         assertEquals(25, profile.getKeepAliveTime().longValue());

@@ -26,12 +26,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ShutdownRunningTask;
+import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.component.routebox.RouteboxConsumer;
 import org.apache.camel.component.routebox.RouteboxServiceSupport;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatcher;
-import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
-import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.slf4j.Logger;
@@ -55,8 +54,8 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
         
         // Create a URI link from the primary context to routes in the new inner context
         int poolSize = getRouteboxEndpoint().getConfig().getThreads();
-        setExecutor(getRouteboxEndpoint().getCamelContext().getExecutorServiceStrategy()
-                .newFixedThreadPool(this, getRouteboxEndpoint().getEndpointUri(), poolSize));
+        setExecutor(getRouteboxEndpoint().getCamelContext().getExecutorServiceManager()
+                .getExecutorService(ThreadPoolBuilder.fixedThreadExecutor(getRouteboxEndpoint().getEndpointUri(), poolSize), this));
         for (int i = 0; i < poolSize; i++) {
             getExecutor().execute(this);
         }
@@ -66,7 +65,7 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
     protected void doStop() throws Exception {
         ((RouteboxSedaEndpoint)getRouteboxEndpoint()).onStopped(this);
         // Shutdown the executor
-        getRouteboxEndpoint().getCamelContext().getExecutorServiceStrategy().shutdown(getExecutor());
+        getRouteboxEndpoint().getCamelContext().getExecutorServiceManager().shutdown(getExecutor());
         setExecutor(null);
         
         doStopInnerContext(); 

@@ -19,7 +19,6 @@ package org.apache.camel.component.file;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.Consumer;

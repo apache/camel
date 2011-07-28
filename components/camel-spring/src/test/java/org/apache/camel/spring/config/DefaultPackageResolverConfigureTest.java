@@ -17,7 +17,6 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

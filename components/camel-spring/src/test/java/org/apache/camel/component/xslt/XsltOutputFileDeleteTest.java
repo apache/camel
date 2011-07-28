@@ -19,10 +19,8 @@ package org.apache.camel.component.xslt;
 import java.io.File;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.component.mock.MockEndpoint;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;

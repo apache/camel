@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.concurrent.CountDownLatch;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;

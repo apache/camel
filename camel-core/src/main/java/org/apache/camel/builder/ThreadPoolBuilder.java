@@ -17,13 +17,11 @@
 package org.apache.camel.builder;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
-import org.apache.camel.model.ThreadPoolProfileDefinition;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
  * A builder to create thread pools.
@@ -32,75 +30,136 @@ import org.apache.camel.util.CamelContextHelper;
  */
 public final class ThreadPoolBuilder {
 
-    private final CamelContext camelContext;
-    private ThreadPoolProfileDefinition threadPoolDefinition;
+    private ThreadPoolProfile profile;
+    
+    @Deprecated
+    private CamelContext context;
 
-    public ThreadPoolBuilder(CamelContext camelContext) {
-        this.camelContext = camelContext;
-        // use the default thread profile as the base
-        this.threadPoolDefinition = new ThreadPoolProfileDefinition(camelContext.getExecutorServiceStrategy().getDefaultThreadPoolProfile());
+    @Deprecated
+    public ThreadPoolBuilder(CamelContext context) {
+        this.context = context;
+        this.profile = new ThreadPoolProfile();
     }
-
-    public ThreadPoolBuilder poolSize(int poolSize) {
-        threadPoolDefinition.poolSize(poolSize);
+    
+    public ThreadPoolBuilder(String name) {
+        this.profile = new ThreadPoolProfile(name);
+    }
+    
+    public ThreadPoolBuilder defaultProfile(Boolean defaultProfile) {
+        profile.setDefaultProfile(defaultProfile);
         return this;
     }
 
-    public ThreadPoolBuilder maxPoolSize(int maxPoolSize) {
-        threadPoolDefinition.maxPoolSize(maxPoolSize);
+    public ThreadPoolBuilder poolSize(Integer poolSize) {
+        profile.setPoolSize(poolSize);
         return this;
     }
 
-    public ThreadPoolBuilder keepAliveTime(long keepAliveTime) {
-        threadPoolDefinition.keepAliveTime(keepAliveTime);
+    public ThreadPoolBuilder maxPoolSize(Integer maxPoolSize) {
+        profile.setMaxPoolSize(maxPoolSize);
+        return this;
+    }
+    
+    public ThreadPoolBuilder keepAliveTime(Integer keepAliveTime) {
+        profile.setKeepAliveTime(keepAliveTime.longValue());
+        return this;
+    }
+
+    public ThreadPoolBuilder keepAliveTime(Long keepAliveTime) {
+        profile.setKeepAliveTime(keepAliveTime);
+        return this;
+    }
+    
+    public ThreadPoolBuilder keepAliveTime(Integer keepAliveTime, TimeUnit timeUnit) {
+        if (keepAliveTime != null) {
+            profile.setKeepAliveTime(keepAliveTime.longValue());
+        }
+        profile.setTimeUnit(timeUnit);
+        return this;
+    }
+    
+    public ThreadPoolBuilder keepAliveTime(Long keepAliveTime, TimeUnit timeUnit) {
+        profile.setKeepAliveTime(keepAliveTime);
+        profile.setTimeUnit(timeUnit);
         return this;
     }
 
     public ThreadPoolBuilder timeUnit(TimeUnit timeUnit) {
-        threadPoolDefinition.timeUnit(timeUnit);
+        profile.setTimeUnit(timeUnit);
         return this;
     }
 
-    public ThreadPoolBuilder maxQueueSize(int maxQueueSize) {
-        threadPoolDefinition.maxQueueSize(maxQueueSize);
+    public ThreadPoolBuilder maxQueueSize(Integer maxQueueSize) {
+        profile.setMaxQueueSize(maxQueueSize);
         return this;
     }
 
     public ThreadPoolBuilder rejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
-        threadPoolDefinition.rejectedPolicy(rejectedPolicy);
+        profile.setRejectedPolicy(rejectedPolicy);
         return this;
+    }
+    
+    public ThreadPoolBuilder daemon() {
+        profile.setDaemon(true);
+        return this;
+    }
+    
+    public ThreadPoolBuilder daemon(Boolean daemon) {
+        profile.setDaemon(daemon);
+        return this;
+    }
+    
+
+    public ThreadPoolBuilder threadName(String name) {
+        profile.setThreadName(name);
+        return this;
+    }
+
+
+    public ThreadPoolProfile build() {
+        return this.profile;
     }
 
     /**
      * Builds the new thread pool
+     * @deprecated use build instead and fetch the ExecutorService from the ExecutorServiceManager 
      *
      * @param name name which is appended to the thread name
      * @return the created thread pool
      * @throws Exception is thrown if error building the thread pool
      */
+    @Deprecated
     public ExecutorService build(String name) throws Exception {
         return build(null, name);
     }
 
     /**
      * Builds the new thread pool
+     * @deprecated use build instead and fetch the ExecutorService from the ExecutorServiceManager
      *
      * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name   name which is appended to the thread name
      * @return the created thread pool
      * @throws Exception is thrown if error building the thread pool
      */
+    @Deprecated
     public ExecutorService build(Object source, String name) throws Exception {
-        int size = CamelContextHelper.parseInteger(camelContext, threadPoolDefinition.getPoolSize());
-        int max = CamelContextHelper.parseInteger(camelContext, threadPoolDefinition.getMaxPoolSize());
-        long keepAlive = CamelContextHelper.parseLong(camelContext, threadPoolDefinition.getKeepAliveTime());
-        int queueSize = CamelContextHelper.parseInteger(camelContext, threadPoolDefinition.getMaxQueueSize());
-        TimeUnit unit = threadPoolDefinition.getTimeUnit();
-        RejectedExecutionHandler handler = threadPoolDefinition.getRejectedExecutionHandler();
+        profile.setId(name);
+        return context.getExecutorServiceManager().getExecutorService(profile, source);
 
-        ExecutorService answer = camelContext.getExecutorServiceStrategy().newThreadPool(source, name,
-                size, max, keepAlive, unit, queueSize, handler, true);
-        return answer;
+    }
+
+
+    public static ThreadPoolProfile singleThreadExecutor(String id) {
+        return new ThreadPoolBuilder(id).poolSize(1).maxPoolSize(1).build();
+    }
+    
+    public static ThreadPoolProfile fixedThreadExecutor(String id, int poolSize) {
+        return new ThreadPoolBuilder(id)
+            .poolSize(poolSize)
+            .maxPoolSize(poolSize)
+            .keepAliveTime(0L, TimeUnit.MILLISECONDS)
+            .build();
     }
 
 }

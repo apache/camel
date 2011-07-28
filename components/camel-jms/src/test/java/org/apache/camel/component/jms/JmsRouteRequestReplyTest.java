@@ -451,7 +451,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         // start template
         template.start();
 
-        ExecutorService executor = context.getExecutorServiceStrategy().newFixedThreadPool(this, "Task", maxTasks);
+        ExecutorService executor = context.getExecutorServiceManager().getExecutorService(ThreadPoolBuilder.fixedThreadExecutor("Task", maxTasks), this);
         CompletionService<Task> completionService = new ExecutorCompletionService<Task>(executor);
 
         final AtomicInteger counter = new AtomicInteger(-1);
@@ -467,7 +467,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
             task.assertSuccess();
         }
 
-        context.getExecutorServiceStrategy().shutdownNow(executor);
+        context.getExecutorServiceManager().shutdownNow(executor);
     }
 
     protected CamelContext createCamelContext() throws Exception {

@@ -26,84 +26,120 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
  *
  * @version 
  */
-public interface ThreadPoolProfile {
+public class ThreadPoolProfile {
 
-    /**
-     * Gets the id of this profile
-     *
-     * @return the id of this profile
-     */
-    String getId();
+    private String id;
+    private Boolean defaultProfile;
+    private Integer poolSize;
+    private Integer maxPoolSize;
+    private Long keepAliveTime;
+    private TimeUnit timeUnit;
+    private Integer maxQueueSize;
+    private ThreadPoolRejectedPolicy rejectedPolicy;
+    private Boolean shared;
+    private Boolean daemon;
+    private String threadName;
+
+    public ThreadPoolProfile() {
+    }
+    
+    public ThreadPoolProfile(String id) {
+        this.id = id;
+        this.threadName = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      * Whether this profile is the default profile (there can only be one).
      *
      * @return <tt>true</tt> if its the default profile, <tt>false</tt> otherwise
      */
-    Boolean isDefaultProfile();
+    public Boolean isDefaultProfile() {
+        return defaultProfile != null && defaultProfile;
+    }
 
     /**
      * Sets whether this profile is the default profile (there can only be one).
      *
      * @param defaultProfile the option
      */
-    void setDefaultProfile(Boolean defaultProfile);
+    public void setDefaultProfile(Boolean defaultProfile) {
+        this.defaultProfile = defaultProfile;
+    }
 
     /**
      * Gets the core pool size (threads to keep minimum in pool)
      *
      * @return the pool size
      */
-    Integer getPoolSize();
+    public Integer getPoolSize() {
+        return poolSize;
+    }
 
-    /**
-     * Sets the core pool size (threads to keep minimum in pool)
-     *
-     * @param poolSize the pool size
-     */
-    void setPoolSize(Integer poolSize);
+    public void setPoolSize(Integer poolSize) {
+        this.poolSize = poolSize;
+    }
 
     /**
      * Gets the maximum pool size
      *
      * @return the maximum pool size
      */
-    Integer getMaxPoolSize();
+    public Integer getMaxPoolSize() {
+        return maxPoolSize;
+    }
 
     /**
-     * Sets the maximum pool size
+     * Sets the core pool size (threads to keep minimum in pool)
      *
-     * @param maxPoolSize the maximum pool size
+     * @param poolSize the pool size
      */
-    void setMaxPoolSize(Integer maxPoolSize);
+    public void setMaxPoolSize(Integer maxPoolSize) {
+        this.maxPoolSize = maxPoolSize;
+    }
 
     /**
      * Gets the keep alive time for inactive threads
      *
      * @return the keep alive time
      */
-    Long getKeepAliveTime();
+    public Long getKeepAliveTime() {
+        return keepAliveTime;
+    }
 
     /**
      * Sets the keep alive time for inactive threads
      *
      * @param keepAliveTime the keep alive time
      */
-    void setKeepAliveTime(Long keepAliveTime);
-
-    /**
-     * Gets the time unit used for keep alive time
-     *
-     * @return the time unit
-     */
-    TimeUnit getTimeUnit();
+    public void setKeepAliveTime(Long keepAliveTime) {
+        this.keepAliveTime = keepAliveTime;
+    }
 
     /**
      * Sets the time unit used for keep alive time
      *
      * @param timeUnit the time unit
      */
-    void setTimeUnit(TimeUnit timeUnit);
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
+    }
+
+    /**
+     * Gets the time unit used for keep alive time
+     *
+     * @return the time unit
+     */
+    public void setTimeUnit(TimeUnit timeUnit) {
+        this.timeUnit = timeUnit;
+    }
 
     /**
      * Gets the maximum number of tasks in the work queue.
@@ -112,7 +148,9 @@ public interface ThreadPoolProfile {
      *
      * @return the max queue size
      */
-    Integer getMaxQueueSize();
+    public Integer getMaxQueueSize() {
+        return maxQueueSize;
+    }
 
     /**
      * Sets the maximum number of tasks in the work queue.
@@ -121,27 +159,108 @@ public interface ThreadPoolProfile {
      *
      * @param maxQueueSize the max queue size
      */
-    void setMaxQueueSize(Integer maxQueueSize);
+    public void setMaxQueueSize(Integer maxQueueSize) {
+        this.maxQueueSize = maxQueueSize;
+    }
 
     /**
      * Gets the handler for tasks which cannot be executed by the thread pool.
      *
      * @return the policy for the handler
      */
-    ThreadPoolRejectedPolicy getRejectedPolicy();
+    public ThreadPoolRejectedPolicy getRejectedPolicy() {
+        return rejectedPolicy;
+    }
 
     /**
      * Gets the handler for tasks which cannot be executed by the thread pool.
      *
      * @return the handler, or <tt>null</tt> if none defined
      */
-    RejectedExecutionHandler getRejectedExecutionHandler();
+    public RejectedExecutionHandler getRejectedExecutionHandler() {
+        if (rejectedPolicy != null) {
+            return rejectedPolicy.asRejectedExecutionHandler();
+        }
+        return null;
+    }
 
     /**
      * Sets the handler for tasks which cannot be executed by the thread pool.
      *
      * @param rejectedPolicy  the policy for the handler
      */
-    void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy);
+    public void setRejectedPolicy(ThreadPoolRejectedPolicy rejectedPolicy) {
+        this.rejectedPolicy = rejectedPolicy;
+    }
 
+    public String getThreadName() {
+        return threadName;
+    }
+
+    public void setThreadName(String threadName) {
+        this.threadName = threadName;
+    }
+
+    public boolean isShared() {
+        return shared;
+    }
+
+    public void setShared(boolean shared) {
+        this.shared = shared;
+    }
+
+    @Override
+    public String toString() {
+        return "ThreadPoolProfile[" + id + ", " + defaultProfile + ", " + poolSize + ", " + maxPoolSize + ", "
+                + keepAliveTime + " " + timeUnit + ", " + maxPoolSize + ", " + rejectedPolicy + "]";
+    }
+
+    public void setDaemon(boolean daemon) {
+        this.daemon = daemon;
+    }
+    
+    public boolean isDaemon() {
+        return daemon == null ? false : daemon;
+    }
+
+    public ThreadPoolProfile getEffectiveProfile(ThreadPoolProfile profile) {
+        ThreadPoolProfile defaultProfile = this;
+        ThreadPoolProfile eProfile = new ThreadPoolProfile();
+        eProfile.setPoolSize(profile.getPoolSize() != null ? profile.getPoolSize() : defaultProfile.getPoolSize());
+        eProfile.setMaxPoolSize(profile.getMaxPoolSize() != null ? profile.getMaxPoolSize() : defaultProfile.getMaxPoolSize());
+        eProfile.setKeepAliveTime(profile.getKeepAliveTime() != null ? profile.getKeepAliveTime() : defaultProfile.getKeepAliveTime());
+        eProfile.setTimeUnit(profile.getTimeUnit() != null ? profile.getTimeUnit() : defaultProfile.getTimeUnit());
+        eProfile.setMaxQueueSize(profile.getMaxQueueSize() != null ? profile.getMaxQueueSize() : defaultProfile.getMaxQueueSize());
+        eProfile.setRejectedPolicy(profile.getRejectedPolicy() != null ? profile.getRejectedPolicy() : defaultProfile.getRejectedPolicy());
+        return eProfile;
+    }
+
+    /**
+     * Overwrites each attribute that is null with the attribute from defaultProfile 
+     * 
+     * @param _defaultProfile
+     */
+    public void addDefaults(ThreadPoolProfile _defaultProfile) {
+        if (_defaultProfile == null) {
+            return;
+        }
+        if (poolSize == null) {
+            poolSize = _defaultProfile.getPoolSize();
+        }
+        if (maxPoolSize == null) {
+            maxPoolSize = _defaultProfile.getMaxPoolSize();
+        }
+        if (keepAliveTime == null) {
+            keepAliveTime = _defaultProfile.getKeepAliveTime();
+        }
+        if (timeUnit == null) {
+            timeUnit = _defaultProfile.getTimeUnit();
+        }
+        if (maxQueueSize == null) {
+            maxQueueSize = _defaultProfile.getMaxQueueSize();
+        }
+        if (rejectedPolicy == null) {
+            rejectedPolicy = _defaultProfile.getRejectedPolicy();
+        }
+    }
 }

@@ -17,7 +17,6 @@
 package org.apache.camel.spring.processor.onexception;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.OnExceptionContinueToRouteTest;
 import org.apache.camel.processor.onexception.OnExceptionUseOriginalMessageTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;

@@ -804,7 +804,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 }
 
                 // create a background recover thread to check every interval
-                recoverService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateRecoverChecker", 1);
+                recoverService = camelContext.getExecutorServiceManager().getScheduledExecutorService("AggregateRecoverChecker", this);
                 Runnable recoverTask = new RecoverTask(recoverable);
                 LOG.info("Using RecoverableAggregationRepository by scheduling recover checker to run every " + interval + " millis.");
                 // use fixed delay so there is X interval between each run
@@ -834,7 +834,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
         if (getCompletionInterval() > 0) {
             LOG.info("Using CompletionInterval to run every " + getCompletionInterval() + " millis.");
-            ScheduledExecutorService scheduler = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateTimeoutChecker", 1);
+            ScheduledExecutorService scheduler = camelContext.getExecutorServiceManager().getScheduledExecutorService("AggregateTimeoutChecker", this);
             // trigger completion based on interval
             scheduler.scheduleAtFixedRate(new AggregationIntervalTask(), 1000L, getCompletionInterval(), TimeUnit.MILLISECONDS);
         }
@@ -842,7 +842,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // start timeout service if its in use
         if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
             LOG.info("Using CompletionTimeout to trigger after " + getCompletionTimeout() + " millis of inactivity.");
-            ScheduledExecutorService scheduler = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateTimeoutChecker", 1);
+            ScheduledExecutorService scheduler = camelContext.getExecutorServiceManager().getScheduledExecutorService("AggregateTimeoutChecker", this);
             // check for timed out aggregated messages once every second
             timeoutMap = new AggregationTimeoutMap(scheduler, 1000L);
             // fill in existing timeout values from the aggregation repository, for example if a restart occurred, then we
@@ -855,7 +855,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     @Override
     protected void doStop() throws Exception {
         if (recoverService != null) {
-            camelContext.getExecutorServiceStrategy().shutdownNow(recoverService);
+            camelContext.getExecutorServiceManager().shutdownNow(recoverService);
         }
         ServiceHelper.stopServices(timeoutMap, processor, deadLetterProcessor);
 

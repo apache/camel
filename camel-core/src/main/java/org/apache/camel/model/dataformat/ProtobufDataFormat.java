@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a protobuf DataFormat {@link org.apache.camel.spi.DataFormat}

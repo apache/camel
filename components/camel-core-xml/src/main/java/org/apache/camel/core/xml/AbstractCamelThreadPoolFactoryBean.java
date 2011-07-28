@@ -17,8 +17,8 @@
 package org.apache.camel.core.xml;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +26,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
+import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
@@ -64,11 +66,6 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
             max = CamelContextHelper.parseInteger(getCamelContext(), maxPoolSize);
         }
 
-        RejectedExecutionHandler rejected = null;
-        if (rejectedPolicy != null) {
-            rejected = rejectedPolicy.asRejectedExecutionHandler();
-        }
-
         long keepAlive = 60;
         if (keepAliveTime != null) {
             keepAlive = CamelContextHelper.parseLong(getCamelContext(), keepAliveTime);
@@ -79,8 +76,15 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
             queueSize = CamelContextHelper.parseInteger(getCamelContext(), maxQueueSize);
         }
 
-        ExecutorService answer = getCamelContext().getExecutorServiceStrategy().newThreadPool(getId(), getThreadName(),
-                size, max, keepAlive, getTimeUnit(), queueSize, rejected, true);
+        ThreadPoolProfile profile = new ThreadPoolBuilder(getId())
+            .threadName(getThreadName())
+            .poolSize(size)
+            .maxPoolSize(max)
+            .keepAliveTime(keepAlive, getTimeUnit())
+            .maxQueueSize(queueSize)
+            .rejectedPolicy(rejectedPolicy)
+            .build();
+        ExecutorService answer = getCamelContext().getExecutorServiceManager().createExecutorService(profile , getId());
         return answer;
     }
 

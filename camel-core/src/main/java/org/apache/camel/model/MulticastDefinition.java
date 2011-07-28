@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,9 +30,9 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.SubUnitOfWorkProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;multicast/&gt; element
@@ -48,7 +49,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
-    private String executorServiceRef;
+    private String executorServiceRef = "Multicast";
     @XmlAttribute
     private Boolean streaming;
     @XmlAttribute
@@ -216,10 +217,9 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
 
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "Multicast", this);
+        ExecutorServiceManager executorServiceManager = routeContext.getCamelContext().getExecutorServiceManager();
         if (isParallelProcessing() && executorService == null) {
-            // we are running in parallel so create a cached thread pool which grows/shrinks automatic
-            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "Multicast");
+            executorService = executorServiceManager.getDefaultExecutorService(executorServiceRef, this);
         }
         long timeout = getTimeout() != null ? getTimeout() : 0;
         if (timeout > 0 && !isParallelProcessing()) {

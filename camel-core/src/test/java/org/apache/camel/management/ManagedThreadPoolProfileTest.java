@@ -16,12 +16,14 @@
  */
 package org.apache.camel.management;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.ThreadPoolProfileSupport;
+import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
@@ -72,14 +74,15 @@ public class ManagedThreadPoolProfileTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                ThreadPoolProfile profile = new ThreadPoolProfileSupport("custom");
-                profile.setPoolSize(5);
-                profile.setMaxPoolSize(15);
-                profile.setKeepAliveTime(25L);
-                profile.setMaxQueueSize(250);
-                profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
+                ThreadPoolProfile profile = new ThreadPoolBuilder("custom")
+                    .poolSize(5)
+                    .maxPoolSize(15)
+                    .keepAliveTime(25, TimeUnit.SECONDS)
+                    .maxQueueSize(250)
+                    .rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
+                    .build();
 
-                context.getExecutorServiceStrategy().registerThreadPoolProfile(profile);
+                context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
                 from("direct:start").threads().executorServiceRef("custom").to("mock:result");
             }

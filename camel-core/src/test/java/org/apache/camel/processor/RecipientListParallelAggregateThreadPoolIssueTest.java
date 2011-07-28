@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class RecipientListParallelAggregateThreadPoolIssueTest extends ContextTestSupport {
 
     public void testRecipientListParallelALot() throws Exception {
-        String before = context.getExecutorServiceStrategy().getThreadName("foo");
+        String before = context.getExecutorServiceManager().resolveThreadName("foo");
 
         for (int i = 0; i < 10; i++) {
             MockEndpoint mock = getMockEndpoint("mock:result");
@@ -38,7 +38,7 @@ public class RecipientListParallelAggregateThreadPoolIssueTest extends ContextTe
             assertMockEndpointsSatisfied();
         }
 
-        String after = context.getExecutorServiceStrategy().getThreadName("foo");
+        String after = context.getExecutorServiceManager().resolveThreadName("foo");
         int num1 = context.getTypeConverter().convertTo(int.class, before);
         int num2 = context.getTypeConverter().convertTo(int.class, after);
         int diff = num2 - num1;
@@ -52,7 +52,7 @@ public class RecipientListParallelAggregateThreadPoolIssueTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.getExecutorServiceStrategy().setThreadNamePattern("${counter}");
+                context.getExecutorServiceManager().setThreadNamePattern("${counter}");
 
                 from("direct:start")
                         .recipientList(header("foo")).parallelProcessing();

@@ -18,9 +18,6 @@ package org.apache.camel.util;
 
 import java.util.BitSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Encoder for unsafe URI characters.
  */

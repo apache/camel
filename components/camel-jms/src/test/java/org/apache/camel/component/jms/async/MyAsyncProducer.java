@@ -38,7 +38,7 @@ public class MyAsyncProducer extends DefaultAsyncProducer {
 
     public MyAsyncProducer(MyAsyncEndpoint endpoint) {
         super(endpoint);
-        this.executor = endpoint.getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(this, "MyProducer");
+        this.executor = endpoint.getCamelContext().getExecutorServiceManager().getDefaultExecutorService("MyProducer", this);
     }
 
     public MyAsyncEndpoint getEndpoint() {

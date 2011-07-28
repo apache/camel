@@ -22,8 +22,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.SynchronizationAdapter;
 
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
-
 /**
  * @version 
  */

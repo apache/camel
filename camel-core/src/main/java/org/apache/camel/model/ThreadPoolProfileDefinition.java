@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,8 +27,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
+import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
-import org.apache.camel.impl.ThreadPoolProfileSupport;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -190,15 +191,13 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition {
      */
     public ThreadPoolProfile asThreadPoolProfile(CamelContext context) throws Exception {
         ObjectHelper.notNull(context, "CamelContext", this);
-
-        ThreadPoolProfileSupport answer = new ThreadPoolProfileSupport(getId());
-        answer.setDefaultProfile(getDefaultProfile());
-        answer.setPoolSize(CamelContextHelper.parseInteger(context, getPoolSize()));
-        answer.setMaxPoolSize(CamelContextHelper.parseInteger(context, getMaxPoolSize()));
-        answer.setKeepAliveTime(CamelContextHelper.parseLong(context, getKeepAliveTime()));
-        answer.setMaxQueueSize(CamelContextHelper.parseInteger(context, getMaxQueueSize()));
-        answer.setRejectedPolicy(getRejectedPolicy());
-        answer.setTimeUnit(getTimeUnit());
-        return answer;
+        return new ThreadPoolBuilder(getId())
+            .defaultProfile(getDefaultProfile())
+            .poolSize(CamelContextHelper.parseInteger(context, getPoolSize()))
+            .maxPoolSize(CamelContextHelper.parseInteger(context, getMaxPoolSize()))
+            .keepAliveTime(CamelContextHelper.parseLong(context, getKeepAliveTime()), getTimeUnit())
+            .maxQueueSize(CamelContextHelper.parseInteger(context, getMaxQueueSize()))
+            .rejectedPolicy(getRejectedPolicy())
+            .build();
     }
 }

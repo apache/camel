@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.ExpressionAdapter;
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
  * @version 

@@ -176,7 +176,7 @@ public class ThroughputLogger extends CamelLogger {
         if (groupInterval != null) {
             ObjectHelper.notNull(camelContext, "CamelContext", this);
 
-            logSchedulerService = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "ThroughputLogger", 1);
+            logSchedulerService = camelContext.getExecutorServiceManager().getScheduledExecutorService("ThroughputLogger", this);
             Runnable scheduledLogTask = new ScheduledLogTask();
             LOG.info("Scheduling throughput log to run every " + groupInterval + " millis.");
             // must use fixed rate to have it trigger at every X interval
@@ -187,7 +187,7 @@ public class ThroughputLogger extends CamelLogger {
     @Override
     public void stop() throws Exception {
         if (logSchedulerService != null) {
-            camelContext.getExecutorServiceStrategy().shutdownNow(logSchedulerService);
+            camelContext.getExecutorServiceManager().shutdownNow(logSchedulerService);
             logSchedulerService = null;
         }
     }

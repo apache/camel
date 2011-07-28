@@ -25,7 +25,6 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.MethodNotFoundException;
-import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 
 /**
  * @version 

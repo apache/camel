@@ -66,7 +66,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
-import org.apache.camel.spi.ExecutorServiceStrategy;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.InterceptStrategy;
@@ -157,10 +157,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             LOG.info("Using custom FactoryFinderResolver: " + factoryFinderResolver);
             getContext().setFactoryFinderResolver(factoryFinderResolver);
         }
-        ExecutorServiceStrategy executorServiceStrategy = getBeanForType(ExecutorServiceStrategy.class);
+        ExecutorServiceManager executorServiceStrategy = getBeanForType(ExecutorServiceManager.class);
         if (executorServiceStrategy != null) {
             LOG.info("Using custom ExecutorServiceStrategy: " + executorServiceStrategy);
-            getContext().setExecutorServiceStrategy(executorServiceStrategy);
+            getContext().setExecutorServiceManager(executorServiceStrategy);
         }
         ProcessorFactory processorFactory = getBeanForType(ProcessorFactory.class);
         if (processorFactory != null) {
@@ -560,10 +560,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
                 // do not add if already added, for instance a tracer that is also an InterceptStrategy class
                 if (profile.isDefaultProfile()) {
                     LOG.info("Using custom default ThreadPoolProfile with id: " + entry.getKey() + " and implementation: " + profile);
-                    context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile);
+                    context.getExecutorServiceManager().setDefaultThreadPoolProfile(profile);
                     defaultIds.add(entry.getKey());
                 } else {
-                    context.getExecutorServiceStrategy().registerThreadPoolProfile(profile);
+                    context.getExecutorServiceManager().registerThreadPoolProfile(profile);
                 }
             }
         }
@@ -573,10 +573,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
             for (ThreadPoolProfileDefinition profile : getThreadPoolProfiles()) {
                 if (profile.isDefaultProfile()) {
                     LOG.info("Using custom default ThreadPoolProfile with id: " + profile.getId() + " and implementation: " + profile);
-                    context.getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile.asThreadPoolProfile(context));
+                    context.getExecutorServiceManager().setDefaultThreadPoolProfile(profile.asThreadPoolProfile(context));
                     defaultIds.add(profile.getId());
                 } else {
-                    context.getExecutorServiceStrategy().registerThreadPoolProfile(profile.asThreadPoolProfile(context));
+                    context.getExecutorServiceManager().registerThreadPoolProfile(profile.asThreadPoolProfile(context));
                 }
             }
         }

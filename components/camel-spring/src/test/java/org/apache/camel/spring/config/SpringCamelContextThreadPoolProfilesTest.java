@@ -36,7 +36,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
     public void testLowProfile() throws Exception {
         CamelContext context = getMandatoryBean(CamelContext.class, "camel-C");
 
-        ThreadPoolProfile profile = context.getExecutorServiceStrategy().getThreadPoolProfile("low");
+        ThreadPoolProfile profile = context.getExecutorServiceManager().getThreadPoolProfile("low");
         assertEquals(1, profile.getPoolSize().intValue());
         assertEquals(5, profile.getMaxPoolSize().intValue());
         assertEquals(null, profile.getKeepAliveTime());
@@ -44,7 +44,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         assertEquals(null, profile.getRejectedPolicy());
 
         // create a thread pool from low
-        ExecutorService executor = context.getExecutorServiceStrategy().newThreadPool(this, "MyLow", "low");
+        ExecutorService executor = context.getExecutorServiceManager().getDefaultExecutorService("low", this); // TODO check newThreadPool(this, "MyLow", "low");
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, executor);
         assertEquals(1, tp.getCorePoolSize());
         assertEquals(5, tp.getMaximumPoolSize());
@@ -56,7 +56,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
     public void testBigProfile() throws Exception {
         CamelContext context = getMandatoryBean(CamelContext.class, "camel-C");
 
-        ThreadPoolProfile profile = context.getExecutorServiceStrategy().getThreadPoolProfile("big");
+        ThreadPoolProfile profile = context.getExecutorServiceManager().getThreadPoolProfile("big");
         assertEquals(50, profile.getPoolSize().intValue());
         assertEquals(100, profile.getMaxPoolSize().intValue());
         assertEquals(ThreadPoolRejectedPolicy.DiscardOldest, profile.getRejectedPolicy());
@@ -64,7 +64,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         assertEquals(null, profile.getMaxQueueSize());
 
         // create a thread pool from big
-        ExecutorService executor = context.getExecutorServiceStrategy().newThreadPool(this, "MyBig", "big");
+        ExecutorService executor = context.getExecutorServiceManager().getDefaultExecutorService("big", this); // TODO check newThreadPool(this, "MyBig", "big");
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, executor);
         assertEquals(50, tp.getCorePoolSize());
         assertEquals(100, tp.getMaximumPoolSize());

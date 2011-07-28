@@ -27,8 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.jndi.JndiContext;
 
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
-
 /**
  * @version 
  */

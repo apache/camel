@@ -32,7 +32,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;throttle/&gt; element
@@ -47,7 +46,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
-    private String executorServiceRef;
+    private String executorServiceRef = "Throttle";
     @XmlAttribute
     private Long timePeriodMillis;
     @XmlAttribute
@@ -87,10 +86,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
         ScheduledExecutorService scheduled = null;
         if (getAsyncDelayed() != null && getAsyncDelayed()) {
-            scheduled = ExecutorServiceHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this);
-            if (scheduled == null) {
-                scheduled = routeContext.getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, "Throttle");
-            }
+            scheduled = routeContext.getCamelContext().getExecutorServiceManager().getScheduledExecutorService(executorServiceRef, this);
         }
 
         // should be default 1000 millis

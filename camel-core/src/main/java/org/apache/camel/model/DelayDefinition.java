@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,9 +30,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Delayer;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;delay/&gt; element
@@ -47,7 +48,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
-    private String executorServiceRef;
+    private String executorServiceRef = "Delay";
     @XmlAttribute
     private Boolean asyncDelayed;
     @XmlAttribute
@@ -82,10 +83,8 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
 
         ScheduledExecutorService scheduled = null;
         if (getAsyncDelayed() != null && getAsyncDelayed()) {
-            scheduled = ExecutorServiceHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", this);
-            if (scheduled == null) {
-                scheduled = routeContext.getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(this, "Delay");
-            }
+            ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
+            scheduled = manager.getScheduledExecutorService(executorServiceRef, this);
         }
 
         Delayer answer = new Delayer(childProcessor, delay, scheduled);

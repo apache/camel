@@ -19,7 +19,6 @@ package org.apache.camel.processor.intercept;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.builder.PredicateBuilder.toPredicate;
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
  * @version 

@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.util.EndpointHelper;
 
 /**
  * Represents a collection of routes

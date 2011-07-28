@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
-import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;

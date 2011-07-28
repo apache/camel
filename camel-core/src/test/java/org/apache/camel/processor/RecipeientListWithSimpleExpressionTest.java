@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
  * @version 

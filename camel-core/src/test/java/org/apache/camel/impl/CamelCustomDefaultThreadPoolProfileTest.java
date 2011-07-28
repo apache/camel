@@ -31,19 +31,20 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camel = super.createCamelContext();
 
-        ThreadPoolProfile profile = new ThreadPoolProfileSupport("custom");
+        ThreadPoolProfile profile = new ThreadPoolProfile("custom");
         profile.setPoolSize(5);
         profile.setMaxPoolSize(15);
         profile.setKeepAliveTime(25L);
         profile.setMaxQueueSize(250);
         profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
 
-        camel.getExecutorServiceStrategy().setDefaultThreadPoolProfile(profile);
+        camel.getExecutorServiceManager().setDefaultThreadPoolProfile(profile);
         return camel;
     }
 
     public void testCamelCustomDefaultThreadPoolProfile() throws Exception {
-        ThreadPoolProfile profile = context.getExecutorServiceStrategy().getDefaultThreadPoolProfile();
+        DefaultExecutorServiceManager manager = (DefaultExecutorServiceManager)context.getExecutorServiceManager();
+        ThreadPoolProfile profile = manager.getDefaultThreadPoolProfile();
         assertEquals(5, profile.getPoolSize().intValue());
         assertEquals(15, profile.getMaxPoolSize().intValue());
         assertEquals(25, profile.getKeepAliveTime().longValue());

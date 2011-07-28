@@ -17,14 +17,15 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultExecutorServiceStrategy;
+import org.apache.camel.impl.DefaultExecutorServiceManager;
+import org.apache.camel.impl.DefaultThreadPoolFactory;
 
 /**
  * @version 
  */
-public class CustomExecutorServiceStrategy extends DefaultExecutorServiceStrategy {
+public class CustomExecutorServiceStrategy extends DefaultExecutorServiceManager {
 
     public CustomExecutorServiceStrategy(CamelContext camelContext) {
-        super(camelContext);
+        super(camelContext, new DefaultThreadPoolFactory());
     }
 }

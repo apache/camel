@@ -32,7 +32,7 @@ import org.apache.camel.util.StopWatch;
  * something is wrong. Inspired by end user on forum doing this as proof of concept.
  */
 public class RoutePerformanceTest extends ContextTestSupport {
-
+    
     private int size = 250;
     private SimpleDataSet dataSet = new SimpleDataSet(size);
     private String uri = "mock:results";
@@ -47,7 +47,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
         // wait 30 sec for slow servers
         MockEndpoint.assertIsSatisfied(context, 30, TimeUnit.SECONDS);
 
-        System.out.println("RoutePerformanceTest: Sent: " + size + " Took: " + watch.taken() + " ms");
+        log.info("RoutePerformanceTest: Sent: " + size + " Took: " + watch.taken() + " ms");
     }
 
     @Override

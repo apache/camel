@@ -23,11 +23,8 @@ import java.util.Set;
 
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.MulticastDefinition;
-import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.ToDefinition;
-
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * A <a href="http://www.graphviz.org/">DOT</a> file creator plugin which

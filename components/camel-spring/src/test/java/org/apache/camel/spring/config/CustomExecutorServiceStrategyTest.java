@@ -32,7 +32,7 @@ public class CustomExecutorServiceStrategyTest extends AbstractJUnit38SpringCont
     protected CamelContext context;
 
     public void testCustomExecutorService() throws Exception {
-        Assert.assertTrue(context.getExecutorServiceStrategy() instanceof CustomExecutorServiceStrategy);
+        Assert.assertTrue(context.getExecutorServiceManager() instanceof CustomExecutorServiceStrategy);
     }
 
 }

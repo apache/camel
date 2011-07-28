@@ -33,7 +33,7 @@ public class SpringCamelContextCustomDefaultThreadPoolProfileTest extends Spring
         // must type cast to work with Spring 2.5.x
         SpringCamelContext context = (SpringCamelContext) applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
 
-        ThreadPoolProfile profile = context.getExecutorServiceStrategy().getDefaultThreadPoolProfile();
+        ThreadPoolProfile profile = context.getExecutorServiceManager().getDefaultThreadPoolProfile();
         assertEquals(5, profile.getPoolSize().intValue());
         assertEquals(15, profile.getMaxPoolSize().intValue());
         assertEquals(25, profile.getKeepAliveTime().longValue());

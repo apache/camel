@@ -39,6 +39,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.component.jms.reply.PersistentQueueReplyManager;
 import org.apache.camel.component.jms.reply.ReplyManager;
 import org.apache.camel.component.jms.reply.TemporaryQueueReplyManager;
@@ -186,7 +187,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             // include destination name as part of thread name
             String name = "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
             // use a cached pool as DefaultMessageListenerContainer will throttle pool sizing
-            ExecutorService executor = getCamelContext().getExecutorServiceStrategy().newCachedThreadPool(consumer, name);
+            ExecutorService executor = getCamelContext().getExecutorServiceManager().getDefaultExecutorService(name, consumer);
             listenerContainer.setTaskExecutor(executor);
         }
     }
@@ -407,7 +408,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     protected synchronized ScheduledExecutorService getReplyManagerExecutorService() {
         if (replyManagerExecutorService == null) {
             String name = "JmsReplyManagerTimeoutChecker[" + getEndpointConfiguredDestinationName() + "]";
-            replyManagerExecutorService = getCamelContext().getExecutorServiceStrategy().newScheduledThreadPool(name, name, 1);
+            replyManagerExecutorService = getCamelContext().getExecutorServiceManager().getScheduledExecutorService(ThreadPoolBuilder.singleThreadExecutor(name), this);
         }
         return replyManagerExecutorService;
     }

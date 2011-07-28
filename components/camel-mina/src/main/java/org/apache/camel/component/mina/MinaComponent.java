@@ -165,9 +165,9 @@ public class MinaComponent extends DefaultComponent {
         final int processorCount = Runtime.getRuntime().availableProcessors() + 1;
 
         IoAcceptor acceptor = new SocketAcceptor(processorCount,
-                getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "MinaSocketAcceptor"));
+                getCamelContext().getExecutorServiceManager().getDefaultExecutorService("MinaSocketAcceptor", this));
         IoConnector connector = new SocketConnector(processorCount,
-                getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "MinaSocketConnector"));
+                                                    getCamelContext().getExecutorServiceManager().getDefaultExecutorService("MinaSocketConnector", this));
         SocketAddress address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
 
         // connector config
@@ -176,7 +176,7 @@ public class MinaComponent extends DefaultComponent {
         connectorConfig.setThreadModel(ThreadModel.MANUAL);
         configureCodecFactory("MinaProducer", connectorConfig, configuration);
         connectorConfig.getFilterChain().addLast("threadPool",
-                new ExecutorFilter(getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "MinaThreadPool")));
+                new ExecutorFilter(getCamelContext().getExecutorServiceManager().getDefaultExecutorService("MinaThreadPool", this)));
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -193,7 +193,7 @@ public class MinaComponent extends DefaultComponent {
         acceptorConfig.setReuseAddress(true);
         acceptorConfig.setDisconnectOnUnbind(true);
         acceptorConfig.getFilterChain().addLast("threadPool",
-                new ExecutorFilter(getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "MinaThreadPool")));
+                new ExecutorFilter(getCamelContext().getExecutorServiceManager().getDefaultExecutorService("MinaThreadPool", this)));
         if (minaLogger) {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -258,8 +258,8 @@ public class MinaComponent extends DefaultComponent {
         boolean sync = configuration.isSync();
         List<IoFilter> filters = configuration.getFilters();
 
-        IoAcceptor acceptor = new DatagramAcceptor(getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "MinaDatagramAcceptor"));
-        IoConnector connector = new DatagramConnector(getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "MinaDatagramConnector"));
+        IoAcceptor acceptor = new DatagramAcceptor(getCamelContext().getExecutorServiceManager().getDefaultExecutorService("MinaDatagramAcceptor", this));
+        IoConnector connector = new DatagramConnector(getCamelContext().getExecutorServiceManager().getDefaultExecutorService("MinaDatagramConnector", this));
         SocketAddress address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
 
         if (transferExchange) {
@@ -271,7 +271,7 @@ public class MinaComponent extends DefaultComponent {
         connectorConfig.setThreadModel(ThreadModel.MANUAL);
         configureDataGramCodecFactory("MinaProducer", connectorConfig, configuration);
         connectorConfig.getFilterChain().addLast("threadPool",
-                new ExecutorFilter(getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "MinaThreadPool")));
+                new ExecutorFilter(getCamelContext().getExecutorServiceManager().getDefaultExecutorService("MinaThreadPool", this)));
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -286,7 +286,7 @@ public class MinaComponent extends DefaultComponent {
         acceptorConfig.setDisconnectOnUnbind(true);
         // reuse address is default true for datagram
         acceptorConfig.getFilterChain().addLast("threadPool",
-                new ExecutorFilter(getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "MinaThreadPool")));
+                new ExecutorFilter(getCamelContext().getExecutorServiceManager().getDefaultExecutorService("MinaThreadPool", this)));
         if (minaLogger) {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }

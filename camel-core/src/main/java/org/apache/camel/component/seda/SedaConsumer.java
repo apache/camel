@@ -30,12 +30,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.SuspendableService;
+import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -248,7 +250,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     protected void doShutdown() throws Exception {
         // only shutdown thread pool when we shutdown
         if (executor != null) {
-            endpoint.getCamelContext().getExecutorServiceStrategy().shutdownNow(executor);
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
     }
@@ -261,8 +263,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
         // create thread pool if needed
         if (executor == null) {
-            executor = endpoint.getCamelContext().getExecutorServiceStrategy()
-                    .newFixedThreadPool(this, endpoint.getEndpointUri(), poolSize);
+            ThreadPoolProfile profile = ThreadPoolBuilder.fixedThreadExecutor(endpoint.getEndpointUri(), poolSize);
+            executor = endpoint.getCamelContext().getExecutorServiceManager().getExecutorService(profile, this);
         }
 
         // submit needed number of tasks

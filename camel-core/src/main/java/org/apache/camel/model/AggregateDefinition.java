@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -37,8 +38,8 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.spi.AggregationRepository;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;aggregate/&gt; element
@@ -69,7 +70,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute
     private Boolean parallelProcessing;
     @XmlAttribute
-    private String executorServiceRef;
+    private String executorServiceRef = "Aggregator";
     @XmlAttribute
     private String aggregationRepositoryRef;
     @XmlAttribute
@@ -149,17 +150,15 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-        // executor service is mandatory for the Aggregator
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "Aggregator", this);
-        if (executorService == null) {
+	if (executorService == null) {
+            // executor service is mandatory for the Aggregator
+            ExecutorServiceManager executorServiceManager = routeContext.getCamelContext().getExecutorServiceManager();
             if (isParallelProcessing()) {
-                // we are running in parallel so create a cached thread pool which grows/shrinks automatic
-                executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "Aggregator");
+                executorService = executorServiceManager.getDefaultExecutorService(executorServiceRef, this);
             } else {
-                // use a synchronous thread pool if we are not running in parallel (will always use caller thread)
-                executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newSynchronousThreadPool(this, "Aggregator");
+                executorService = executorServiceManager.newSynchronousExecutorService(executorServiceRef, this);
             }
-        }
+	}
         AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor, correlation, strategy, executorService);
 
         AggregationRepository repository = createAggregationRepository(routeContext);

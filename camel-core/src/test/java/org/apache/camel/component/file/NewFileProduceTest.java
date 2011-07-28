@@ -18,8 +18,6 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;

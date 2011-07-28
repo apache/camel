@@ -20,8 +20,6 @@ import net.spy.memcached.MemcachedClient;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Camel producer for communication with a kestrel based queue.

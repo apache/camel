@@ -125,9 +125,8 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
 
     public ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder builder) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
-        buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(routeContext.getCamelContext())).append(",");
-        buffer.append(KEY_TYPE + "=").append(TYPE_ERRORHANDLER).append(",");
+        buffer.append(domainName + ":" + KEY_CONTEXT + "=" + getContextId(routeContext.getCamelContext()) + ","
+                      + KEY_TYPE + "=" +  TYPE_ERRORHANDLER + ",");
 
         // we want to only register one instance of the various error handler types and thus do some lookup
         // if its a ErrorHandlerBuildRef. We need a bit of work to do that as there are potential indirection.

@@ -22,8 +22,6 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
-
 public class RecipientListIgnoreInvalidEndpointsTest extends ContextTestSupport {
 
     public void testRecipientListWithIgnoreInvalidEndpointsOption() throws Exception {

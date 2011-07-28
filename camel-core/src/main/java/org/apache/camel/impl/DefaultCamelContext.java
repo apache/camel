@@ -34,6 +34,7 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -91,7 +92,7 @@ import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventNotifier;
-import org.apache.camel.spi.ExecutorServiceStrategy;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InflightRepository;
@@ -193,7 +194,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private ShutdownStrategy shutdownStrategy = new DefaultShutdownStrategy(this);
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
     private ShutdownRunningTask shutdownRunningTask = ShutdownRunningTask.CompleteCurrentTaskOnly;
-    private ExecutorServiceStrategy executorServiceStrategy = new DefaultExecutorServiceStrategy(this);
+    private ExecutorServiceManager executorServiceManager;
     private Debugger debugger;
     private UuidGenerator uuidGenerator = createDefaultUuidGenerator();
     private final StopWatch stopWatch = new StopWatch(false);
@@ -201,6 +202,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public DefaultCamelContext() {
         super();
+        this.executorServiceManager = new DefaultExecutorServiceManager(this, new DefaultThreadPoolFactory());
 
         // create endpoint registry at first since end users may access endpoints before CamelContext is started
         this.endpoints = new EndpointRegistry(this);
@@ -1436,7 +1438,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         // and we needed to create endpoints up-front as it may be accessed before this context is started
         endpoints = new EndpointRegistry(this, endpoints);
         addService(endpoints);
-        addService(executorServiceStrategy);
+        addService(executorServiceManager);
         addService(producerServicePool);
         addService(inflightRepository);
         addService(shutdownStrategy);
@@ -2254,12 +2256,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.shutdownRunningTask = shutdownRunningTask;
     }
 
-    public ExecutorServiceStrategy getExecutorServiceStrategy() {
-        return executorServiceStrategy;
+    public ExecutorServiceManager getExecutorServiceManager() {
+        return this.executorServiceManager;
     }
 
-    public void setExecutorServiceStrategy(ExecutorServiceStrategy executorServiceStrategy) {
-        this.executorServiceStrategy = executorServiceStrategy;
+    public void setExecutorServiceManager(ExecutorServiceManager executorServiceManager) {
+        this.executorServiceManager = executorServiceManager;
     }
 
     public ProcessorFactory getProcessorFactory() {

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util.jsse;
 
-import java.security.Security;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

@@ -690,7 +690,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             if (executor != null) {
                 return executor;
             }
-            executor = context.getExecutorServiceStrategy().newDefaultThreadPool(this, "ProducerTemplate");
+            executor = context.getExecutorServiceManager().getDefaultExecutorService("ProducerTemplate", this);
         }
 
         ObjectHelper.notNull(executor, "ExecutorService");
@@ -713,7 +713,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         producerCache = null;
 
         if (executor != null) {
-            context.getExecutorServiceStrategy().shutdownNow(executor);
+            context.getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
     }

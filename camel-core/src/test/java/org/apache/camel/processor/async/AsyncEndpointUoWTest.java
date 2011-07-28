@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.async;
 
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;

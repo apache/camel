@@ -20,7 +20,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.processor.DeadLetterChannel;

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import static org.apache.camel.util.ObjectHelper.asString;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
@@ -49,8 +51,6 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.asString;
 
 /**
  * Information about a method to be used for invocation.
@@ -158,13 +158,13 @@ public class MethodInfo {
             recipientList.setShareUnitOfWork(annotation.shareUnitOfWork());
 
             if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
-                ExecutorService executor = CamelContextHelper.mandatoryLookup(camelContext, annotation.executorServiceRef(), ExecutorService.class);
+                ExecutorService executor = camelContext.getExecutorServiceManager().getDefaultExecutorService(annotation.executorServiceRef(), this);
                 recipientList.setExecutorService(executor);
             }
 
             if (annotation.parallelProcessing() && recipientList.getExecutorService() == null) {
                 // we are running in parallel so we need a thread pool
-                ExecutorService executor = camelContext.getExecutorServiceStrategy().newDefaultThreadPool(this, "@RecipientList");
+                ExecutorService executor = camelContext.getExecutorServiceManager().getDefaultExecutorService("@RecipientList", this);
                 recipientList.setExecutorService(executor);
             }
 

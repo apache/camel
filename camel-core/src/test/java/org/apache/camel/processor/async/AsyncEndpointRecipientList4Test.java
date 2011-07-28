@@ -26,8 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
 
-    private static String beforeThreadName;
-    private static String afterThreadName;
+    private static long beforeThreadId;
+    private static long afterThreadId;
 
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
@@ -39,7 +39,7 @@ public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertTrue("Should use different threads " + beforeThreadId + ":" + afterThreadId, beforeThreadId != afterThreadId);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
                         .to("log:before")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
+                                beforeThreadId = Thread.currentThread().getId();
                             }
                         })
                         .recipientList(constant("async:Hi Camel,async:Hi World,direct:foo"));
@@ -62,7 +62,7 @@ public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
                 from("direct:foo")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
+                                afterThreadId = Thread.currentThread().getId();
                                 exchange.getOut().setBody("Bye Camel");
                             }
                         })

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import static org.apache.camel.util.ObjectHelper.notNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -62,12 +64,9 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.AtomicException;
 import org.apache.camel.util.concurrent.AtomicExchange;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.camel.util.concurrent.SubmitOrderedCompletionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements the Multicast pattern to send a message exchange to a number of
@@ -455,7 +454,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
                     // mark that index as timed out, which allows us to try to retrieve
                     // any already completed tasks in the next loop
-                    ExecutorServiceHelper.timeoutTask(completion);
+                    if (completion instanceof SubmitOrderedCompletionService) {
+                        ((SubmitOrderedCompletionService) completion).timeoutTask();
+                    }
                 } else {
                     // there is a result to aggregate
                     Exchange subExchange = future.get();
@@ -929,7 +930,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      */
     protected synchronized ExecutorService createAggregateExecutorService(String name) {
         // use a cached thread pool so we each on-the-fly task has a dedicated thread to process completions as they come in
-        return camelContext.getExecutorServiceStrategy().newCachedThreadPool(this, name);
+        return camelContext.getExecutorServiceManager().newCachedThreadPool(this, name);
     }
 
     protected void doStop() throws Exception {

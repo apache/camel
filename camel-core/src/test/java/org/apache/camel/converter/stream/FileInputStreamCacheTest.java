@@ -20,8 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * @version 

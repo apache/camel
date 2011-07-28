@@ -17,7 +17,6 @@
 package org.apache.camel.impl.converter;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 /**
  * Will load all type converters from camel-core without classpath scanning, which makes

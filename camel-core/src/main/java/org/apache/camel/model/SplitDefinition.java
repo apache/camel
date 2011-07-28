@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,7 +32,6 @@ import org.apache.camel.processor.SubUnitOfWorkProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Represents an XML &lt;split/&gt; element
@@ -50,7 +50,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     @XmlAttribute
     private String strategyRef;
     @XmlAttribute
-    private String executorServiceRef;
+    private String executorServiceRef = "Split";
     @XmlAttribute
     private Boolean streaming;
     @XmlAttribute
@@ -93,14 +93,11 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
-
         aggregationStrategy = createAggregationStrategy(routeContext);
-
-        executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "Split", this);
         if (isParallelProcessing() && executorService == null) {
-            // we are running in parallel so create a cached thread pool which grows/shrinks automatic
-            executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "Split");
+            executorService = routeContext.getCamelContext().getExecutorServiceManager().getDefaultExecutorService(executorServiceRef, this);
         }
+
         long timeout = getTimeout() != null ? getTimeout() : 0;
         if (timeout > 0 && !isParallelProcessing()) {
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util.concurrent;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.DelayQueue;

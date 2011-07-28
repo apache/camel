@@ -19,8 +19,6 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
-
 /**
  * @version 
  */
