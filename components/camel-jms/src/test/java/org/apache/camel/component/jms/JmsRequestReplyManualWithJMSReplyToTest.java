@@ -19,7 +19,6 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;

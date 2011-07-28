@@ -27,7 +27,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComponent;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**

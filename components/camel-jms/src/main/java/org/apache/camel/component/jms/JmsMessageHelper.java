@@ -26,7 +26,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 

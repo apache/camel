@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

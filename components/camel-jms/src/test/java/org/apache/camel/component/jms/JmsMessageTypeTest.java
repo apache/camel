@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
