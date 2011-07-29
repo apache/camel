@@ -66,7 +66,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
             // tell camel-spring it should not trigger starting CamelContext, since we do that later
             // after we are finished setting up the unit test
             synchronized (lock) {
-                System.setProperty("maybeStartCamelContext", "false");
+                SpringCamelContext.setNoStart(true);
                 if (isCreateCamelContextPerClass()) {
                     applicationContext = threadAppContext.get();
                     if (applicationContext == null) {
@@ -77,7 +77,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
                     applicationContext = createApplicationContext();
                 }
                 assertNotNull("Should have created a valid spring context", applicationContext);
-                System.clearProperty("maybeStartCamelContext");
+                SpringCamelContext.setNoStart(false);
             }
         } else {
             log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");

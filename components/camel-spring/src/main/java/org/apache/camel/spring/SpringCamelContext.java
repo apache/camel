@@ -55,6 +55,9 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         ApplicationContextAware {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
+    
+    private static final ThreadLocal<Boolean> NO_START = new ThreadLocal<Boolean>();
+    
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
 
@@ -64,7 +67,13 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     public SpringCamelContext(ApplicationContext applicationContext) {
         setApplicationContext(applicationContext);
     }
-
+    public static void setNoStart(boolean b) {
+        if (b) {
+            NO_START.set(b);
+        } else {
+            NO_START.remove();
+        }
+    }
     public static SpringCamelContext springCamelContext(ApplicationContext applicationContext) throws Exception {
         // lets try and look up a configured camel context in the context
         String[] names = applicationContext.getBeanNamesForType(SpringCamelContext.class);
@@ -197,9 +206,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     private void maybeStart() throws Exception {
         // for example from unit testing we want to start Camel later and not when Spring framework
         // publish a ContextRefreshedEvent
-        String maybeStart = System.getProperty("maybeStartCamelContext", "true");
 
-        if ("true".equals(maybeStart)) {
+        if (NO_START.get() == null) {
             if (!isStarted() && !isStarting()) {
                 start();
             } else {
@@ -207,7 +215,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
                 LOG.trace("Ignoring maybeStart() as Apache Camel is already started");
             }
         } else {
-            LOG.trace("Ignoring maybeStart() as System property maybeStartCamelContext is false");
+            LOG.trace("Ignoring maybeStart() as NO_START is false");
         }
     }
 
