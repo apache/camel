@@ -67,7 +67,8 @@ public class BlueprintContainerRegistry implements Registry {
 
     public static <T> Map<String, T> lookupByType(BlueprintContainer blueprintContainer, Class<T> type) {
         Map<String, T> objects = new LinkedHashMap<String, T>();
-        for (ExtendedBeanMetadata metadata : blueprintContainer.getMetadata(ExtendedBeanMetadata.class)) {
+        for (Object metadataObject : blueprintContainer.getMetadata(ExtendedBeanMetadata.class)) {
+            ExtendedBeanMetadata metadata = (ExtendedBeanMetadata) metadataObject;
             try {
                 Class cl = metadata.getRuntimeClass();
                 if (cl == null && metadata.getClassName() != null) {
@@ -82,7 +83,8 @@ public class BlueprintContainerRegistry implements Registry {
                 // ignore
             }
         }
-        for (MutableReferenceMetadata metadata : blueprintContainer.getMetadata(MutableReferenceMetadata.class)) {
+        for (Object metadataObject : blueprintContainer.getMetadata(MutableReferenceMetadata.class)) {
+            MutableReferenceMetadata metadata = (MutableReferenceMetadata) metadataObject;
             try {
                 Class cl = metadata.getRuntimeInterface();
                 if (cl == null && metadata.getInterface() != null) {
