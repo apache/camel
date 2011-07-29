@@ -18,7 +18,10 @@ package org.apache.camel.dataformat.soap.name;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.jws.WebMethod;
@@ -64,7 +67,8 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
     private TypeInfo getOutInfo(Method method) {
         ResponseWrapper respWrap = method.getAnnotation(ResponseWrapper.class);
         if (respWrap != null && respWrap.className() != null) {
-            return new TypeInfo(respWrap.className(), new QName(respWrap.targetNamespace(), respWrap.localName()));
+            return new TypeInfo(respWrap.className(), 
+                    new QName(respWrap.targetNamespace(), respWrap.localName()));
         }
         Class<?> returnType = method.getReturnType();
         if (Void.TYPE.equals(returnType)) {
@@ -79,33 +83,57 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
                     + " is not annotated with WebParam. This is not yet supported");
             }
         }
-        
     }
 
-    private TypeInfo getInInfo(Method method) {
+    @SuppressWarnings("rawtypes")
+    private List<TypeInfo> getInInfo(Method method) {
+        List<TypeInfo> typeInfos = new ArrayList<TypeInfo>();
         RequestWrapper requestWrapper = method.getAnnotation(RequestWrapper.class);
+
+        // parameter types are returned in declaration order
         Class<?>[] types = method.getParameterTypes();
         if (types.length == 0) {
-            return new TypeInfo(null, null);
+            typeInfos.add(new TypeInfo(null, null));
+            return typeInfos;
         }
         if (requestWrapper != null && requestWrapper.className() != null) {
-            return new TypeInfo(requestWrapper.className(), new QName(requestWrapper.targetNamespace(),
-                    requestWrapper.localName()));
+            typeInfos.add(new TypeInfo(requestWrapper.className(), 
+                    new QName(requestWrapper.targetNamespace(), requestWrapper.localName())));
+            return typeInfos;
         }
-        if (types.length == 1) {
-            Annotation[] firstParamAnnotations = method.getParameterAnnotations()[0];
-            for (Annotation annotation : firstParamAnnotations) {
-                if (annotation instanceof WebParam) {
-                    WebParam webParam = (WebParam) annotation;
-                    return new TypeInfo(types[0].getName(), new QName(webParam.targetNamespace(), webParam.name()));
+                      
+        // annotations are returned in declaration order
+        Annotation[][] annotations = method.getParameterAnnotations();
+
+        List<WebParam> webParams = new ArrayList<WebParam>();
+
+        for (int i = 0; i < annotations.length; i++) {
+            Annotation[] singleParameterAnnotations = annotations[i];
+            for (int j = 0; j < singleParameterAnnotations.length; j++) {
+                Annotation annotation = singleParameterAnnotations[j];
+                if (annotation instanceof WebParam) {                   
+                    webParams.add((WebParam) annotation);
                 }
             }
-            throw new IllegalArgumentException("Parameter of method " + method.getName()
-                    + " is not annotated with WebParam. This is not yet supported");
         }
-        throw new IllegalArgumentException("Method " + method.getName()
-                + " has more than one parameter and no request wrapper. This is not yet supported");
+        
+        if (webParams.size() != types.length) {
+            throw new IllegalArgumentException(
+                    "The number of @WebParam annotations for Method " + method.getName()
+                     + " does not match the number of parameters. This is not supported.");
+        }
+
+        Iterator<WebParam> webParamIter = webParams.iterator();
+        int paramCounter = -1;
+        while (webParamIter.hasNext()) {   
+            WebParam webParam = webParamIter.next();        
+            typeInfos.add(new TypeInfo(types[++paramCounter].getName(),
+                    new QName(webParam.targetNamespace(), webParam.name())));
+        }
+
+        return typeInfos;
     }
+    
 
     /**
      * Determines how the parameter object of the service method will be named
@@ -115,24 +143,35 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
      * @param method
      */
     private MethodInfo analyzeMethod(Method method) {
-        TypeInfo inInfo = getInInfo(method);
+        List<TypeInfo> inInfos = getInInfo(method);
         TypeInfo outInfo = getOutInfo(method);
         WebMethod webMethod = method.getAnnotation(WebMethod.class);
         String soapAction = (webMethod != null) ? webMethod.action() : null;
-        return new MethodInfo(method.getName(), soapAction, inInfo, outInfo);
+        return new MethodInfo(method.getName(), soapAction, 
+                inInfos.toArray(new TypeInfo[inInfos.size()]), outInfo);
     }
 
     private void analyzeServiceInterface(Class<?> serviceInterface) {
         Method[] methods = serviceInterface.getMethods();
         for (Method method : methods) {
             MethodInfo info = analyzeMethod(method);
-            if (info.getIn() != null) {
-                inTypeNameToQName.put(info.getIn().getTypeName(), info.getIn().getElName());
+            for (int i = 0; i < info.getIn().length; i++) {
+                TypeInfo ti = info.getIn()[i];
+                if (inTypeNameToQName.containsKey(ti.getTypeName())
+                    && (!(ti.getTypeName().equals("javax.xml.ws.Holder")))
+                    && (!(inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())))) {
+                    throw new RuntimeCamelException("Ambiguous parameter mapping. The type [ "
+                                                    + ti.getTypeName()
+                                                    + " ] is already mapped to a QName in this context.");
+                }
+                inTypeNameToQName.put(ti.getTypeName(), ti.getElName());
             }
             if (info.getSoapAction() != null && !"".equals(info.getSoapAction())) {
                 soapActionToMethodInfo.put(info.getSoapAction(), info);
             }
+
             outTypeNameToQName.put(info.getOut().getTypeName(), info.getOut().getElName());
+
             addExceptions(method);
         }
     }
@@ -162,7 +201,11 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         MethodInfo info = soapActionToMethodInfo.get(soapAction);
         if (info != null) {
             if (isClient) {
-                return info.getIn().getElName();
+                if (type != null) {
+                    return info.getIn(type.getName()).getElName();
+                } else {
+                    return null;
+                }
             } else {
                 return info.getOut().getElName();
             }
@@ -179,8 +222,9 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
             try {
                 qName = fallBackStrategy.findQNameForSoapActionOrType(soapAction, type);
             } catch (Exception e) {
-                String msg = "No method found that matches the given SoapAction " + soapAction + " or that has an "
-                        + (isClient ? "input" : "output") + " of type " + type.getName();
+                String msg = "No method found that matches the given SoapAction " + soapAction
+                             + " or that has an " + (isClient ? "input" : "output") + " of type "
+                             + type.getName();
                 throw new RuntimeCamelException(msg, e);
             }
         }

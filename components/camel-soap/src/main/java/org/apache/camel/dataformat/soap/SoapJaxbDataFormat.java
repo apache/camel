@@ -19,11 +19,14 @@ package org.apache.camel.dataformat.soap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -39,10 +42,14 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.xmlsoap.schemas.soap.envelope.Body;
 import org.xmlsoap.schemas.soap.envelope.Detail;
 import org.xmlsoap.schemas.soap.envelope.Envelope;
 import org.xmlsoap.schemas.soap.envelope.Fault;
+import org.xmlsoap.schemas.soap.envelope.Header;
 import org.xmlsoap.schemas.soap.envelope.ObjectFactory;
 
 /**
@@ -52,13 +59,20 @@ import org.xmlsoap.schemas.soap.envelope.ObjectFactory;
  * not be extracted from JAXB.
  */
 public class SoapJaxbDataFormat extends JaxbDataFormat {
+
+    public static final String SOAP_UNMARSHALLED_HEADER_LIST = "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";
+    
     private static final String SOAP_PACKAGE_NAME = Envelope.class.getPackage().getName();
 
     private static final QName FAULT_CODE_SERVER = new QName("http://www.w3.org/2003/05/soap-envelope", "Receiver");
-
+    
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    
     private ElementNameStrategy elementNameStrategy;
 
     private String elementNameStrategyRef;
+    
+    private boolean ignoreUnmarshalledHeaders;
 
     /**
      * Remember to set the context path when using this constructor
@@ -99,6 +113,18 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
                     + ElementNameStrategy.class.getName());
         }
     }
+    
+    public void setIgnoreUnmarshalledHeaders(boolean ignoreHeaders) {
+        this.ignoreUnmarshalledHeaders = ignoreHeaders;
+    }
+    
+    /**
+     * Indicates whether header content that has been unmarshalled should be placed into a message
+     * header on the exchange
+     */
+    private boolean isIgnoreUnmarshalledHeaders() {
+        return ignoreUnmarshalledHeaders;
+    }
 
     protected void checkElementNameStrategy(Exchange exchange) {
         if (elementNameStrategy == null) {
@@ -118,11 +144,11 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
     }
 
     /**
-     * Marshal inputObject to SOAP xml. If the exchange or message has an
+     * Marshal inputObjects to SOAP xml. If the exchange or message has an
      * EXCEPTION_CAUGTH property or header then instead of the object the
      * exception is marshaled.
      * 
-     * To determine the name of the top level xml elment the elementNameStrategy
+     * To determine the name of the top level xml elements the elementNameStrategy
      * is used.
      */
     public void marshal(Exchange exchange, final Object inputObject, OutputStream stream) throws IOException {
@@ -136,20 +162,34 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
                 soapAction = webMethod.action();
             }
         }
+                
         Body body = new Body();
+        Header header = new Header();
 
         Throwable exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
         if (exception == null) {
             exception = exchange.getIn().getHeader(Exchange.EXCEPTION_CAUGHT, Throwable.class);
         }
-        final JAXBElement<?> content;
+        
+        final List<JAXBElement<?>> bodyContent;
+        List<JAXBElement<?>> headerContent = new ArrayList<JAXBElement<?>>();
         if (exception != null) {
-            content = createFaultFromException(exception);
+            bodyContent = new ArrayList<JAXBElement<?>>();
+            bodyContent.add(createFaultFromException(exception));
         } else {
-            content = createBodyContentFromObject(inputObject, soapAction);
+            bodyContent = createContentFromObject(inputObject, soapAction, headerContent);
         }
-        body.getAny().add(content);
+       
+        for (JAXBElement<?> elem : bodyContent) {
+            body.getAny().add(elem);
+        }
+        for (JAXBElement<?> elem : headerContent) {
+            header.getAny().add(elem);
+        }
         Envelope envelope = new Envelope();
+        if (headerContent.size() > 0) {
+            envelope.setHeader(header);
+        }
         envelope.setBody(body);
         JAXBElement<Envelope> envelopeEl = new ObjectFactory().createEnvelope(envelope);
         super.marshal(exchange, envelopeEl, stream);
@@ -168,35 +208,106 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      *            for name resolution
      * @param classResolver
      *            for name resolution
+     * @param headerElements
+     *            in/out parameter used to capture header content if present
+     *            
      * @return JAXBElement for the body content
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private JAXBElement<?> createBodyContentFromObject(final Object inputObject, String soapAction) {
-        Object paramObject;
+    private List<JAXBElement<?>> createContentFromObject(final Object inputObject, String soapAction,
+                                                         List<JAXBElement<?>> headerElements) {
+        List<Object> bodyParts = new ArrayList<Object>();
+        List<Object> headerParts = new ArrayList<Object>();
         if (inputObject instanceof BeanInvocation) {
-            BeanInvocation bi = (BeanInvocation) inputObject;
-            if (bi.getArgs() == null || bi.getArgs().length == 0) {
-                paramObject = null;
-            } else if (bi.getArgs().length == 1) {
-                paramObject = bi.getArgs()[0];
+            BeanInvocation bi = (BeanInvocation)inputObject;
+            Annotation[][] annotations = bi.getMethod().getParameterAnnotations();
+
+            List<WebParam> webParams = new ArrayList<WebParam>();
+            for (int i = 0; i < annotations.length; i++) {
+                Annotation[] singleParameterAnnotations = annotations[i];
+                for (int j = 0; j < singleParameterAnnotations.length; j++) {
+                    Annotation annotation = singleParameterAnnotations[j];
+                    if (annotation instanceof WebParam) {
+                        webParams.add((WebParam)annotation);
+                    }
+                }
+            }
+
+            if (webParams.size() > 0) {
+                if (webParams.size() == bi.getArgs().length) {
+                    int index = -1;
+                    for (Object o : bi.getArgs()) {
+                        if (webParams.get(++index).header()) {
+                            headerParts.add(o);
+                        } else {
+                            bodyParts.add(o);
+                        }
+                    }
+                } else {
+                    throw new RuntimeCamelException(
+                                                    "The number of bean invocation parameters does not "
+                                                        + "match the number of parameters annotated with @WebParam for the method [ "
+                                                        + bi.getMethod().getName() + "].");
+                }
             } else {
-                throw new RuntimeCamelException("SoapDataFormat does not work with " 
-                        + "Beaninvocations that contain more than 1 parameter");                
+                // try to map all objects for the body
+                for (Object o : bi.getArgs()) {
+                    bodyParts.add(o);
+                }
+            }
+
+        } else {
+            bodyParts.add(inputObject);
+        }
+
+        List<JAXBElement<?>> bodyElements = new ArrayList<JAXBElement<?>>();
+        for (Object bodyObj : bodyParts) {
+            QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, bodyObj.getClass());
+            if (name == null) {
+                log.warn("Could not find QName for class " + bodyObj.getClass().getName());
+                continue;
+            } else {
+                bodyElements.add(getElement(bodyObj, name));
+            }
+        }
+
+        for (Object headerObj : headerParts) {
+            QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, headerObj.getClass());
+            if (name == null) {
+                log.warn("Could not find QName for class " + headerObj.getClass().getName());
+                continue;
+            } else {
+                JAXBElement<?> headerElem = getElement(headerObj, name);
+                if (null != headerElem) {
+                    headerElements.add(headerElem);
+                }
+            }
+        }
+
+        return bodyElements;
+    }
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private JAXBElement<?> getElement(Object fromObj, QName name) {
+       
+        Object value = null;
+        
+        // In the case of a parameter, the class of the value of the holder class
+        // is used for the mapping rather than the holder class itself.
+        
+        if (fromObj instanceof javax.xml.ws.Holder) {
+            javax.xml.ws.Holder holder = (javax.xml.ws.Holder) fromObj;
+            value = holder.value;
+            if (null == value) {
+                return null;
             }
         } else {
-            paramObject = inputObject;
+            value = fromObj;
         }
-        if (paramObject == null) {
-            return null;
-        }
-        QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, paramObject.getClass());
-        if (name == null) {
-            // This can happen if a method has no parameter or return type
-            return null;
-        }
-        return new JAXBElement(name, paramObject.getClass(), paramObject);
+        
+        return new JAXBElement(name, value.getClass(), value);
     }
-
+    
+    
     /**
      * Creates a SOAP fault from the exception and populates the message as well
      * as the detail. The detail object is read from the method getFaultInfo of
@@ -257,6 +368,24 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
             throw new RuntimeCamelException("Expected Soap Envelope but got " + rootObject.getClass());
         }
         Envelope envelope = (Envelope) rootObject;
+        
+        Header header = envelope.getHeader();
+        if (header != null) {
+            List<Object> returnHeaders;
+            List<Object> anyHeaderElements = envelope.getHeader().getAny();
+            if (null != anyHeaderElements && !(isIgnoreUnmarshalledHeaders())) {
+                if (isIgnoreJAXBElement()) {
+                    returnHeaders = new ArrayList<Object>();
+                    for (Object headerEl : anyHeaderElements) {
+                        returnHeaders.add(JAXBIntrospector.getValue(headerEl));
+                    }  
+                } else {
+                    returnHeaders = anyHeaderElements;
+                }
+                exchange.getOut().setHeader(SoapJaxbDataFormat.SOAP_UNMARSHALLED_HEADER_LIST, returnHeaders);
+            }
+        }
+        
         List<Object> anyElement = envelope.getBody().getAny();
         if (anyElement.size() == 0) {
             // No parameter so return null

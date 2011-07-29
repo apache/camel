@@ -97,6 +97,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-saxon</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <scope>test</scope>
@@ -182,12 +187,22 @@
                                         <bindingFile>
                                             ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/binding.xml
                                         </bindingFile>
-                                    </bindingFiles>
+                                    </bindingFiles>                                    
                                 </wsdlOption>
                                 <wsdlOption>
                                     <wsdl>
                                         ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/CustomerService2.wsdl
                                     </wsdl>
+                                </wsdlOption>
+                                <wsdlOption>
+                                    <wsdl>
+                                        ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/MultiPartCustomerService.wsdl
+                                    </wsdl>
+                                    <bindingFiles>
+                                        <bindingFile>
+                                            ${basedir}/src/test/resources/org/apache/camel/dataformat/soap/binding.xml
+                                        </bindingFile>
+                                    </bindingFiles>
                                 </wsdlOption>
                             </wsdlOptions>
                         </configuration>

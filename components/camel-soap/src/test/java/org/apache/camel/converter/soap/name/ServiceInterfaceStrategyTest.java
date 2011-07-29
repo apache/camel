@@ -18,40 +18,42 @@ package org.apache.camel.converter.soap.name;
 
 import javax.xml.namespace.QName;
 
-import junit.framework.Assert;
 
 import com.example.customerservice.CustomerService;
 import com.example.customerservice.GetCustomersByName;
 import com.example.customerservice.GetCustomersByNameResponse;
+import com.example.customerservice.multipart.MultiPartCustomerService;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
+import org.junit.Assert;
 import org.junit.Test;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceInterfaceStrategyTest {
+public class ServiceInterfaceStrategyTest extends Assert {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceInterfaceStrategyTest.class);
 
     @Test
     public void testServiceInterfaceStrategyWithClient() {
         ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(CustomerService.class, true);
         QName elName = strategy.findQNameForSoapActionOrType("", GetCustomersByName.class);
-        Assert.assertEquals("http://customerservice.example.com/", elName.getNamespaceURI());
-        Assert.assertEquals("getCustomersByName", elName.getLocalPart());
+        assertEquals("http://customerservice.example.com/", elName.getNamespaceURI());
+        assertEquals("getCustomersByName", elName.getLocalPart());
 
         QName elName2 = strategy.findQNameForSoapActionOrType("getCustomersByName", GetCustomersByName.class);
-        Assert.assertEquals("http://customerservice.example.com/", elName2.getNamespaceURI());
-        Assert.assertEquals("getCustomersByName", elName2.getLocalPart());
+        assertEquals("http://customerservice.example.com/", elName2.getNamespaceURI());
+        assertEquals("getCustomersByName", elName2.getLocalPart());
 
         // Tests the case where the soap action is found but the in type is null
         QName elName3 = strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getAllCustomers",
                 null);
-        Assert.assertNull(elName3);
+        assertNull(elName3);
 
         try {
             elName = strategy.findQNameForSoapActionOrType("test", Class.class);
-            Assert.fail();
+            fail();
         } catch (RuntimeCamelException e) {
             LOG.debug("Caught expected message: " + e.getMessage());
         }
@@ -63,20 +65,20 @@ public class ServiceInterfaceStrategyTest {
 
         // Tests the case where the action is not found but the type is
         QName elName = strategy.findQNameForSoapActionOrType("", GetCustomersByNameResponse.class);
-        Assert.assertEquals("http://customerservice.example.com/", elName.getNamespaceURI());
-        Assert.assertEquals("getCustomersByNameResponse", elName.getLocalPart());
+        assertEquals("http://customerservice.example.com/", elName.getNamespaceURI());
+        assertEquals("getCustomersByNameResponse", elName.getLocalPart());
 
         // Tests the case where the soap action is found
         QName elName2 = strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getCustomersByName",
                 GetCustomersByName.class);
-        Assert.assertEquals("http://customerservice.example.com/", elName2.getNamespaceURI());
-        Assert.assertEquals("getCustomersByNameResponse", elName2.getLocalPart());
+        assertEquals("http://customerservice.example.com/", elName2.getNamespaceURI());
+        assertEquals("getCustomersByNameResponse", elName2.getLocalPart());
 
         // this tests the case that the soap action as well as the type are not
         // found
         try {
             elName = strategy.findQNameForSoapActionOrType("test", Class.class);
-            Assert.fail();
+            fail();
         } catch (RuntimeCamelException e) {
             LOG.debug("Caught expected message: " + e.getMessage());
         }
@@ -92,7 +94,7 @@ public class ServiceInterfaceStrategyTest {
 
         try {
             elName = strategy.findQNameForSoapActionOrType("test", Class.class);
-            Assert.fail();
+            fail();
         } catch (RuntimeCamelException e) {
             LOG.debug("Caught expected message: " + e.getMessage());
         }
@@ -102,9 +104,24 @@ public class ServiceInterfaceStrategyTest {
     public void testWithNonWebservice() {
         try {
             new ServiceInterfaceStrategy(Object.class, true);
-            Assert.fail("Should throw an exception for a class that is no webservice");
+            fail("Should throw an exception for a class that is no webservice");
         } catch (IllegalArgumentException e) {
             LOG.debug("Caught expected message: " + e.getMessage());
         }
+    }
+    
+    @Test
+    public void testMultiPart() {
+        ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(MultiPartCustomerService.class, true);
+        QName custNameQName = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
+                                                                    com.example.customerservice.multipart.GetCustomersByName.class);
+        QName custTypeQName = strategy.findQNameForSoapActionOrType("http://multipart.customerservice.example.com/getCustomersByName",
+                                                                    com.example.customerservice.multipart.Product.class);
+        
+        assertEquals("http://multipart.customerservice.example.com/", custNameQName.getNamespaceURI());
+        assertEquals("getCustomersByName", custNameQName.getLocalPart());
+
+        assertEquals("http://multipart.customerservice.example.com/", custTypeQName.getNamespaceURI());
+        assertEquals("product", custTypeQName.getLocalPart());
     }
 }
