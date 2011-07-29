@@ -20,9 +20,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
@@ -97,6 +100,38 @@ public class MessageHelperTest extends TestCase {
 
         assertEquals(123, target.getHeader("foo"));
         assertEquals(456, target.getHeader("bar"));
+    }
+
+    public void testDumpAsXmlPlainBody() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+
+        // xml message body
+        message.setBody("Hello World");
+        message.setHeader("foo", 123);
+
+        String out = MessageHelper.dumpAsXml(message);
+        assertTrue("Should contain body", out.contains("<body type=\"java.lang.String\">Hello World</body>"));
+
+        context.stop();
+    }
+
+    public void testDumpAsXmlXmlBody() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+
+        // xml message body
+        message.setBody("<?xml version=\"1.0\"?><hi>Hello World</hi>");
+        message.setHeader("foo", 123);
+
+        String out = MessageHelper.dumpAsXml(message);
+        assertTrue("Should contain body", out.contains("<body type=\"java.lang.String\">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;hi&gt;Hello World&lt;/hi&gt;</body>"));
+
+        context.stop();
     }
 
 }

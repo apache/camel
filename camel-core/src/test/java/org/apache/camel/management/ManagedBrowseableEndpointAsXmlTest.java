@@ -52,7 +52,8 @@ public class ManagedBrowseableEndpointAsXmlTest extends ManagementTestSupport {
         String out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{0}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
         log.info(out);
-        assertEquals("<message>\n<body type=\"java.lang.String\"><foo>Camel &gt; Donkey</foo></body>\n</message>", out);
+
+        assertEquals("<message>\n<body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>", out);
 
         out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{1}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
@@ -63,13 +64,13 @@ public class ManagedBrowseableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
         assertEquals("<message>\n<headers>\n<header key=\"name\" type=\"java.lang.String\">Me &amp; You</header>\n</headers>\n"
-                + "<body type=\"java.lang.String\"><foo>Camel &gt; Donkey</foo></body>\n</message>", out);
+                + "<body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>", out);
 
         out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{3}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
         log.info(out);
-        assertEquals("<message>\n<headers>\n<header key=\"title\" type=\"java.lang.String\"><title>Me &amp; You</title></header>\n</headers>\n"
-                + "<body type=\"java.lang.String\"><foo>Camel &gt; Donkey</foo></body>\n</message>", out);
+        assertEquals("<message>\n<headers>\n<header key=\"title\" type=\"java.lang.String\">&lt;title&gt;Me &amp;amp; You&lt;/title&gt;</header>\n</headers>\n"
+                + "<body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>", out);
 
         out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{4}, new String[]{"java.lang.Integer"});
         assertNotNull(out);
@@ -89,7 +90,7 @@ public class ManagedBrowseableEndpointAsXmlTest extends ManagementTestSupport {
         assertEquals("<message>\n<headers>\n<header key=\"title\" type=\"java.lang.String\">Camel rocks</header>\n"
                 + "<header key=\"uid\" type=\"java.lang.Integer\">123</header>\n"
                 + "<header key=\"user\" type=\"java.lang.Boolean\">false</header>\n</headers>\n"
-                + "<body type=\"java.lang.String\"><animal><name>Donkey</name><age>17</age></animal></body>\n</message>", out);
+                + "<body type=\"java.lang.String\">&lt;animal&gt;&lt;name&gt;Donkey&lt;/name&gt;&lt;age&gt;17&lt;/age&gt;&lt;/animal&gt;</body>\n</message>", out);
     }
 
     @Override

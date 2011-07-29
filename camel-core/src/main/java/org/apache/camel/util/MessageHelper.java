@@ -269,13 +269,8 @@ public final class MessageHelper {
                 if (value != null) {
                     String xml = message.getExchange().getContext().getTypeConverter().convertTo(String.class, value);
                     if (xml != null) {
-                        // is the header value already XML
-                        if (xml.startsWith("<") && xml.endsWith(">")) {
-                            sb.append(xml);
-                        } else {
-                            // no its not xml so xml encode it
-                            sb.append(StringHelper.xmlEncode(xml));
-                        }
+                        // must always xml encode
+                        sb.append(StringHelper.xmlEncode(xml));
                     }
                 }
 
@@ -294,13 +289,8 @@ public final class MessageHelper {
         // dump body value as XML, use Camel type converter to convert to String
         String xml = message.getBody(String.class);
         if (xml != null) {
-            // is the body already XML
-            if (xml.startsWith("<") && xml.endsWith(">")) {
-                sb.append(xml);
-            } else {
-                // no its not xml so xml encode it
-                sb.append(StringHelper.xmlEncode(xml));
-            }
+            // must always xml encode
+            sb.append(StringHelper.xmlEncode(xml));
         }
 
         sb.append("</body>\n");
