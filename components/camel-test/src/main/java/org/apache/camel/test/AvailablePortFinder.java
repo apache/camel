@@ -30,16 +30,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class AvailablePortFinder {
     /**
-     * The minimum server currentMinPort number. Set at 1024 to avoid returning privileged
+     * The minimum server currentMinPort number. Set at 1100 to avoid returning privileged
      * currentMinPort numbers.
      */
-    public static final int MIN_PORT_NUMBER = 1024;
+    public static final int MIN_PORT_NUMBER = 1100;
 
     /**
      * The maximum server currentMinPort number.
      */
     public static final int MAX_PORT_NUMBER = 49151;
 
+    /**
+     * We'll hold open the lowest port in this process
+     * so parallel processes won't use the same block
+     * of ports.   They'll go up to the next block.
+     */
+    private static final ServerSocket LOCK;
 
     /**
      * Incremented to the next lowest available port when getNextAvailable() is called.
@@ -52,6 +58,32 @@ public final class AvailablePortFinder {
     private AvailablePortFinder() {
         // Do nothing
     }
+    
+    static {
+        int port = MIN_PORT_NUMBER;
+        ServerSocket ss = null;
+
+        while (ss == null) {
+            try {
+                ss = new ServerSocket(port);
+            } catch (Exception e) {
+                ss = null;
+                port += 200;
+            }
+        } 
+        LOCK = ss;
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                try {
+                    LOCK.close();
+                } catch (Exception ex) {
+                    //ignore
+                }
+            }
+        });
+        currentMinPort.set(port + 1);
+    }
+    
 
     /**
      * Gets the next available currentMinPort starting at the lowest currentMinPort number. This is the preferred
