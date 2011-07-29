@@ -36,7 +36,11 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
             }
         };
     }
-    
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+
     @Test
     public void testTheContentType() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");

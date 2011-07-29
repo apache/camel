@@ -48,6 +48,11 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
         + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart";
     protected Endpoint endpoint;
 
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+
     @Before
     public void startService() {
         endpoint = Endpoint.publish(SERVICE_ADDRESS, new PersonMultiPartImpl());

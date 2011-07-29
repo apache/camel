@@ -38,6 +38,10 @@ public class CxfSoapMessageProviderTest extends CamelSpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/SoapMessageProviderContext.xml");
     }
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     @Test
     public void testSOAPMessageModeDocLit() throws Exception {

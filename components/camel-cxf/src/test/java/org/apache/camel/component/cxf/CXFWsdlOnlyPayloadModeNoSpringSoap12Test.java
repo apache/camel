@@ -25,7 +25,11 @@ import org.junit.BeforeClass;
 
 public class CXFWsdlOnlyPayloadModeNoSpringSoap12Test extends CXFWsdlOnlyPayloadModeNoSpringTest {
     
-    
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+
     @Before
     public void startService() {
         endpoint = Endpoint.publish("http://localhost:" + port1 + "/" 

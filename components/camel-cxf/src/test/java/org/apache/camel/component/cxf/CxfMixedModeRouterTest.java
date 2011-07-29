@@ -52,7 +52,11 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
 
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
     private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
-    
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+
     @BeforeClass
     public static void startService() {       
         //start a service

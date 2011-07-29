@@ -52,6 +52,10 @@ public abstract class CxfDispatchTestSupport extends CamelSpringTestSupport {
 
     protected Endpoint endpoint;
     private int port = CXFTestSupport.getPort1();
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     @Before
     public void startService() {

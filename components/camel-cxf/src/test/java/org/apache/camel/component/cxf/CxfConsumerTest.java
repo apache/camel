@@ -51,7 +51,12 @@ public class CxfConsumerTest extends CamelTestSupport {
     private static final String ECHO_OPERATION = "echo";
     private static final String ECHO_BOOLEAN_OPERATION = "echoBoolean";
     private static final String TEST_MESSAGE = "Hello World!";
-
+    
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+    
     // START SNIPPET: example
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

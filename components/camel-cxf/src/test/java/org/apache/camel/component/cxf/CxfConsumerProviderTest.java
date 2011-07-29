@@ -49,6 +49,10 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
         + "?serviceClass=org.apache.camel.component.cxf.ServiceProvider";
     
     
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

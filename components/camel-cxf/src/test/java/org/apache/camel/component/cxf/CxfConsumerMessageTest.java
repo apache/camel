@@ -47,6 +47,10 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
     protected final String simpleEndpointURI = "cxf://" + simpleEndpointAddress
         + "?serviceClass=org.apache.camel.component.cxf.HelloService";
     
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

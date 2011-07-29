@@ -51,6 +51,10 @@ public class CxfProducerRouterTest extends CamelTestSupport {
     private static final String ECHO_OPERATION = "echo";
     private static final String TEST_MESSAGE = "Hello World!";
     
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     @BeforeClass
     public static void startServer() throws Exception {        

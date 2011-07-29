@@ -120,7 +120,9 @@ public class CustomerService {
         } else {
             r = Response.notModified().build();
         }
-
+        if (idNumber == currentId) {
+            --currentId;
+        }
         return r;
     }
 

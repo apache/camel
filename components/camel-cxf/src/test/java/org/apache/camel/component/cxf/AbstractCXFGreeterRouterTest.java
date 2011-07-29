@@ -58,7 +58,6 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
         return CXFTestSupport.getPort2();
     }
 
-
     protected abstract ClassPathXmlApplicationContext createApplicationContext();
     
     @Before

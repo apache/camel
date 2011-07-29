@@ -51,7 +51,11 @@ public class CxfSimpleRouterTest extends CamelTestSupport {
     protected void configureFactory(ServerFactoryBean svrBean) {
         
     }
-    
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+
     @Before
     public void startService() {       
         //start a service

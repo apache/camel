@@ -49,7 +49,11 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
         // END SNIPPET: FaultDefine
     }    
    
-    
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+
     @Before
     public void setUp() throws Exception {
         CXFTestSupport.getPort1();

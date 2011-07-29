@@ -56,7 +56,11 @@ public class CxfPayLoadSoapHeaderTest extends CamelTestSupport {
         return "cxf:http://localhost:" + port2 + "/" + getClass().getSimpleName()
             + "/new_pizza_service/services/PizzaService?wsdlURL=classpath:pizza_service.wsdl&dataFormat=PAYLOAD";
     }     
-    
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

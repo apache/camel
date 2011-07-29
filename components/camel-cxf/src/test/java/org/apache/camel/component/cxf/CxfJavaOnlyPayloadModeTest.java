@@ -39,6 +39,10 @@ public class CxfJavaOnlyPayloadModeTest extends CamelTestSupport {
         + "&portName={http://camel.apache.org/wsdl-first}soap"
         + "&dataFormat=PAYLOAD"
         + "&properties.exceptionMessageCauseEnabled=true&properties.faultStackTraceEnabled=true";
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     @Test
     public void testCxfJavaOnly() throws Exception {

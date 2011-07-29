@@ -49,6 +49,10 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
             exchange.getOut().setBody(inMessage.getHeader(Exchange.HTTP_QUERY, String.class));
         }
     }
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     public int getPort1() {
         return port1;

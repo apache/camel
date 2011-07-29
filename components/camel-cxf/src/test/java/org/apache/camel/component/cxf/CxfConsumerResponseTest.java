@@ -53,6 +53,10 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
         + "&publishedEndpointUrl=http://www.simple.com/services/test";
     
     
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
     // START SNIPPET: example
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

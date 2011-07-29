@@ -69,6 +69,10 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
 
     private Bus bus;
     
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     @Override
     @Before

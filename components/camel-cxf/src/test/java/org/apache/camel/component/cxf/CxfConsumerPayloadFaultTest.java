@@ -66,6 +66,10 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
         + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + "&" + WSDL_URL_PROP + "&dataFormat=" + DataFormat.PAYLOAD;
     
     @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

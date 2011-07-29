@@ -52,6 +52,11 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
     protected int port1 = CXFTestSupport.getPort1(); 
     protected int port2 = CXFTestSupport.getPort2(); 
 
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+
     @Before
     public void startService() {
         endpoint = Endpoint.publish("http://localhost:" + port1 + "/" + getClass().getSimpleName()

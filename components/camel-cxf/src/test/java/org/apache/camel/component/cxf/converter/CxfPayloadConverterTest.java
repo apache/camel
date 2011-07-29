@@ -41,6 +41,10 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
     private CxfPayload<String[]> payload;
     private CxfPayload<String[]> emptyPayload;
     private FileInputStream inputStream;
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     @Override
     @Before

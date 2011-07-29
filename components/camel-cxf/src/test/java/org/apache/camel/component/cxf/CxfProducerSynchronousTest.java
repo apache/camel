@@ -39,6 +39,10 @@ public class CxfProducerSynchronousTest extends CamelTestSupport {
 
     private String url = "cxf://" + SIMPLE_SERVER_ADDRESS
                 + "?serviceClass=org.apache.camel.component.cxf.HelloService&dataFormat=MESSAGE&synchronous=true";
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     @BeforeClass
     public static void startServer() throws Exception {        

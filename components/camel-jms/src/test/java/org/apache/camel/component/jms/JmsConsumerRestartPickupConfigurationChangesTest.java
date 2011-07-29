@@ -33,7 +33,7 @@ public class JmsConsumerRestartPickupConfigurationChangesTest extends CamelTestS
 
     @Test
     public void testRestartJmsConsumerPickupChanges() throws Exception {
-        JmsEndpoint endpoint = context.getEndpoint("activemq:queue:foo", JmsEndpoint.class);
+        JmsEndpoint endpoint = context.getEndpoint("activemq:queue:JmsConsumerRestartPickupConfigurationChangesTest.foo", JmsEndpoint.class);
         JmsConsumer consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 template.send("mock:result", exchange);
@@ -44,7 +44,7 @@ public class JmsConsumerRestartPickupConfigurationChangesTest extends CamelTestS
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
-        template.sendBody("activemq:queue:foo", "Hello World");
+        template.sendBody("activemq:queue:JmsConsumerRestartPickupConfigurationChangesTest.foo", "Hello World");
         assertMockEndpointsSatisfied();
 
         consumer.stop();
@@ -58,7 +58,7 @@ public class JmsConsumerRestartPickupConfigurationChangesTest extends CamelTestS
 
         result.reset();
         result.expectedBodiesReceived("Bye World");
-        template.sendBody("activemq:queue:bar", "Bye World");
+        template.sendBody("activemq:queue:JmsConsumerRestartPickupConfigurationChangesTest.bar", "Bye World");
         assertMockEndpointsSatisfied();
 
         consumer.stop();
@@ -67,7 +67,7 @@ public class JmsConsumerRestartPickupConfigurationChangesTest extends CamelTestS
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.getSharedConnectionFactory();
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;

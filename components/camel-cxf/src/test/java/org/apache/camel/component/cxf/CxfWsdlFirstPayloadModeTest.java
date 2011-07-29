@@ -34,6 +34,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
 
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     @BeforeClass
     public static void startService() {

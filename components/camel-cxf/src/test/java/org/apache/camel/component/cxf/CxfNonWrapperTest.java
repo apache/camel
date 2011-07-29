@@ -34,7 +34,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfNonWrapperTest extends CamelSpringTestSupport {
     int port1 = CXFTestSupport.getPort1(); 
-    
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/nonWrapperProcessor.xml");
     }

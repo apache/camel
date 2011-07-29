@@ -45,6 +45,9 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
     private static int port3 = CXFTestSupport.getPort3(); 
     private static int port4 = CXFTestSupport.getPort4(); 
         
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         System.setProperty("CXFWsdlOnlyTest.port1", Integer.toString(port1));

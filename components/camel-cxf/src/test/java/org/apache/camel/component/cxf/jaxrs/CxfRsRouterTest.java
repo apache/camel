@@ -21,6 +21,7 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -154,6 +155,9 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
                          EntityUtils.toString(response.getEntity()));
+            
+            HttpDelete del = new HttpDelete("http://localhost:" + PORT0 + "/CxfRsRouterTest/route/customerservice/customers/124/");
+            httpclient.execute(del);
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
@@ -174,6 +178,9 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
             assertEquals(201, response.getStatusLine().getStatusCode());
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
                          EntityUtils.toString(response.getEntity()));
+
+            HttpDelete del = new HttpDelete("http://localhost:" + PORT0 + "/CxfRsRouterTest/route/customerservice/customers/124/");
+            httpclient.execute(del);
         } finally {
             httpclient.getConnectionManager().shutdown();
         }

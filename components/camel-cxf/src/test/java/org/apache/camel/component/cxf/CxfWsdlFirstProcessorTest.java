@@ -25,6 +25,10 @@ import org.junit.BeforeClass;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstProcessorTest extends AbstractCxfWsdlFirstTest {
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstProcessor.xml");

@@ -50,6 +50,10 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
         return CXFTestSupport.getPort2();
     }
     
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {
 

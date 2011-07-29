@@ -67,7 +67,6 @@ public class CxfProducerTest extends Assert {
         return "http://localhost:" + CXFTestSupport.getPort3() + "/" + getClass().getSimpleName() + "/test";
     }
     
-
     @Before
     public void startService() throws Exception {
         // start a simple front service

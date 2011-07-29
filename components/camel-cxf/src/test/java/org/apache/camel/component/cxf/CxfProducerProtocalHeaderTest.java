@@ -38,6 +38,11 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
         + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"
         + "</ns1:echoResponse></soap:Body></soap:Envelope>";
 
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
