@@ -82,7 +82,7 @@
 
   </camelContext>
 
-  <broker:broker useJmx="false" persistent="true" brokerName="localhost" dataDirectory="target/data"
+  <broker:broker useJmx="true" persistent="true" brokerName="localhost" dataDirectory="target/data"
                  useShutdownHook="true">
     <broker:transportConnectors>
       <broker:transportConnector name="tcp" uri="tcp://localhost:51616"/>

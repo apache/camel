@@ -27,7 +27,7 @@
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
   <!-- This creates an embedded ActiveMQ Broker -->
-  <broker xmlns="http://activemq.apache.org/schema/core" useJmx="false" persistent="false">
+  <broker xmlns="http://activemq.apache.org/schema/core" useJmx="true" persistent="false">
     <transportConnectors>
       <transportConnector uri="tcp://localhost:61616" />
     </transportConnectors>
@@ -47,7 +47,6 @@
          routing on the messages using XPath. 
   -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <package>${package}</package>
     <route>
       <from uri="file:src/data?noop=true"/>
       <to uri="activemq:personnel.records"/>

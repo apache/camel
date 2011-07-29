@@ -47,7 +47,7 @@
 
   <!-- START SNIPPET: e4 -->
   <!-- lets configure the ActiveMQ JMS broker server to listen on TCP 61610 -->
-  <broker:broker useJmx="false" persistent="false" brokerName="localhost">
+  <broker:broker useJmx="true" persistent="false" brokerName="myBroker">
     <broker:transportConnectors>
       <broker:transportConnector name="tcp" uri="tcp://localhost:61610"/>
     </broker:transportConnectors>

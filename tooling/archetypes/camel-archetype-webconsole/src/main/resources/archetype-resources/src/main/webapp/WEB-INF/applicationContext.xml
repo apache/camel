@@ -28,7 +28,7 @@
     ">
 
   <!-- This creates an embedded ActiveMQ Broker -->
-  <broker xmlns="http://activemq.apache.org/schema/core" useJmx="false" persistent="false">
+  <broker xmlns="http://activemq.apache.org/schema/core" useJmx="true" persistent="false">
     <transportConnectors>
       <transportConnector uri="tcp://localhost:61616" />
     </transportConnectors>
