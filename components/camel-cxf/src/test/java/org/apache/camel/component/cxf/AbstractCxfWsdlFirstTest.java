@@ -41,8 +41,10 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
+    static int port1 = CXFTestSupport.getPort1();
+    
     public static int getPort1() {
-        return CXFTestSupport.getPort1();
+        return port1;
     }
     public static int getPort2() {
         return CXFTestSupport.getPort2();

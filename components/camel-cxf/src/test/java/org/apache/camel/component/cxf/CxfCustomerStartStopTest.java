@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 @org.junit.Ignore
 public class CxfCustomerStartStopTest extends Assert {
-    static final int PORT1 = AvailablePortFinder.getNextAvailable();  
-    static final int PORT2 = AvailablePortFinder.getNextAvailable();  
+    static final int PORT1 = CXFTestSupport.getPort1();  
+    static final int PORT2 = CXFTestSupport.getPort1();  
     @Test
     public void startAndStopService() throws Exception {
         CamelContext context = new DefaultCamelContext();

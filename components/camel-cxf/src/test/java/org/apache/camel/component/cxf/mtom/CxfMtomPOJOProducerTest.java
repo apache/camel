@@ -30,6 +30,8 @@ import junit.framework.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.CXFTestSupport;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,14 +47,15 @@ import static org.junit.Assert.assertEquals;
  */
 @ContextConfiguration
 public class CxfMtomPOJOProducerTest extends AbstractJUnit4SpringContextTests {
-        
+    static int port = CXFTestSupport.getPort1();
+    
     @Autowired
     protected CamelContext context;
     private Endpoint endpoint;
 
     @Before
     public void setUp() throws Exception {
-        endpoint = Endpoint.publish("http://localhost:9092/jaxws-mtom/hello", getImpl());
+        endpoint = Endpoint.publish("http://localhost:" + port + "/CxfMtomPOJOProducerTest/jaxws-mtom/hello", getImpl());
         SOAPBinding binding = (SOAPBinding)endpoint.getBinding();
         binding.setMTOMEnabled(true);
         

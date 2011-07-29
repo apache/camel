@@ -40,7 +40,7 @@ public class CxfGreeterConverterRouterTest extends AbstractCXFGreeterRouterTest 
     public static void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1()
-            + "/SoapContext/SoapPort/CxfGreeterConverterRouterTest";
+            + "/CxfGreeterConverterRouterTest/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor); 
     }
 

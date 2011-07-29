@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
@@ -46,14 +47,9 @@ import static org.junit.Assert.assertEquals;
  */
 @ContextConfiguration
 public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
-    protected static int port0 = AvailablePortFinder.getNextAvailable(); 
-    protected static int port1 = AvailablePortFinder.getNextAvailable(); 
-    protected static int port2 = AvailablePortFinder.getNextAvailable(); 
-    static {
-        System.setProperty("WSAddressingTest.port0", Integer.toString(port0));
-        System.setProperty("WSAddressingTest.port1", Integer.toString(port1));
-        System.setProperty("WSAddressingTest.port2", Integer.toString(port2));        
-    }
+    protected static int port0 = CXFTestSupport.getPort1(); 
+    protected static int port1 = CXFTestSupport.getPort2(); 
+    protected static int port2 = CXFTestSupport.getPort3(); 
     
     
     @Autowired
@@ -67,7 +63,7 @@ public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
         
         template = context.createProducerTemplate();
         JaxWsServerFactoryBean svrBean = new JaxWsServerFactoryBean();
-        svrBean.setAddress("http://localhost:" + port1 + "/SoapContext/SoapPort");
+        svrBean.setAddress("http://localhost:" + port1 + "/WSAddressingTest/SoapContext/SoapPort");
         svrBean.setServiceClass(Greeter.class);
         svrBean.setServiceBean(new GreeterImpl());
         SpringBusFactory bf = new SpringBusFactory();
@@ -92,7 +88,7 @@ public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
     public void testWSAddressing() throws Exception {
         JaxWsProxyFactoryBean proxyFactory = new  JaxWsProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress("http://localhost:" + port0 + "/SoapContext/SoapPort");
+        clientBean.setAddress("http://localhost:" + port0 + "/WSAddressingTest/SoapContext/SoapPort");
         clientBean.setServiceClass(Greeter.class);
         SpringBusFactory bf = new SpringBusFactory();
         URL cxfConfig = null;

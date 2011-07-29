@@ -21,11 +21,14 @@ import java.io.StringWriter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
+
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,8 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringCon
     protected static final String ROUTER_ADDRESS = "http://localhost:" + port1 + "/LoggingInterceptorInMessageModeTest/router";
     protected static final String SERVICE_ADDRESS = "http://localhost:" + port2 + "/LoggingInterceptorInMessageModeTest/helloworld";
 
+    static Server server;
+    
     @Autowired
     protected CamelContext context;
     
@@ -61,8 +66,12 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit4SpringCon
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
     
-        svrBean.create();
-        
+        server = svrBean.create();
+    }
+    @AfterClass
+    public static void stopService() {
+        server.stop();
+        server.destroy();
     }
     
     @Test

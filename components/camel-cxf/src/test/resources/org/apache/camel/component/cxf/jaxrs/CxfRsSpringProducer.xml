@@ -28,7 +28,7 @@
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
   <jaxrs:server id="restService"
-		        address="http://localhost:${CxfRsProducerTest.port1}" 
+		        address="http://localhost:${CXFTestSupport.port1}/CxfRsProducerTest/" 
 		        staticSubresourceResolution="true">
     <jaxrs:serviceBeans>
       <ref bean="customerService"/>
@@ -37,13 +37,13 @@
   
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
 
-  <cxf:rsClient id="rsClientProxy" address="http://localhost:${CxfRsProducerTest.port1}"
+  <cxf:rsClient id="rsClientProxy" address="http://localhost:${CXFTestSupport.port1}/CxfRsProducerTest/"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
    
-  <cxf:rsClient id="rsClientHttp" address="http://localhost:${CxfRsProducerTest.port1}"/>
+  <cxf:rsClient id="rsClientHttp" address="http://localhost:${CXFTestSupport.port1}/CxfRsProducerTest/"/>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <endpoint id="fromEndpoint" uri="jetty://http://localhost:${CxfRsProducerTest.port2}/testQuery"/>
+    <endpoint id="fromEndpoint" uri="jetty://http://localhost:${CxfRsProducerTest.jetty}/CxfRsProducerTest/testQuery"/>
     <route>
        <from uri="direct://proxy"/>
        <to uri="cxfrs://bean://rsClientProxy"/>

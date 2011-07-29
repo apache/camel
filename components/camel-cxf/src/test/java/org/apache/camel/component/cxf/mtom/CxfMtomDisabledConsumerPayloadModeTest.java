@@ -29,6 +29,7 @@ import junit.framework.Assert;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.DOMUtils;
@@ -44,6 +45,7 @@ import org.springframework.test.context.ContextConfiguration;
 */
 @ContextConfiguration
 public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPayloadModeTest {
+    static int port = CXFTestSupport.getPort1();
 
     @Override
     protected String getRequestMessage() {

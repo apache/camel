@@ -29,9 +29,6 @@
     ">
     
   <import resource="classpath:META-INF/cxf/cxf.xml" />  
-  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-  <import resource="classpath:META-INF/cxf/cxf-extension-http.xml" />
-  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml" />
   
   <!-- configure the bus -->
   <cxfcore:bus>
@@ -39,12 +36,13 @@
       <cxfcore:logging/>
     </cxfcore:features>
   </cxfcore:bus> 
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfEndpointBeanWithBusTest/router/"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointBeanWithBusTest/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
   <!-- Setting the http conduit policy -->

@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.cxf.spring;
 
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.junit.Test;
 
 public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
+    static int port = CXFTestSupport.getPort1();
     
     @Override
     protected String[] getApplicationContextFiles() {        
@@ -29,7 +31,7 @@ public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
     @Test
     public void testCxfRsClientFactoryBean() {
         SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean) ctx.getBean("rsClient1");
-        assertEquals("Get a wrong address", cfb.getAddress(), "http://localhost:9000/router");
+        assertEquals("Get a wrong address", cfb.getAddress(), "http://localhost:" + port + "/CxfRsClientFactoryBeanTest/router");
         assertEquals("Get a wrong beanId", cfb.getBeanId(), "rsClient1");
         assertEquals("Get a wrong password", cfb.getPassword(), "passwd");
         assertEquals("Get a wrong user name", cfb.getUsername(), "username");

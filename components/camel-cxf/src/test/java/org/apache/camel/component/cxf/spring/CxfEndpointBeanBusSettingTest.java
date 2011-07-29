@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.spring;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.cxf.Bus;
 import org.apache.cxf.interceptor.Interceptor;
@@ -29,6 +30,8 @@ import org.junit.Test;
 
 public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport {
 
+    static int port1 = CXFTestSupport.getPort1();
+    
     @Override
     protected String[] getApplicationContextFiles() {
         return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansBusSetting.xml"};    

@@ -26,7 +26,7 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
     <cxf:cxfEndpoint id="routerEndpoint"
-                     address="http://localhost:${FileToCxfMessageDataFormatTest.port1}/router"
+                     address="http://localhost:${CXFTestSupport.port1}/FileToCxfMessageDataFormatTest/router"
                      serviceClass="org.apache.camel.component.cxf.HelloService">
         <!-- use MESSAGE data format -->
         <cxf:properties>

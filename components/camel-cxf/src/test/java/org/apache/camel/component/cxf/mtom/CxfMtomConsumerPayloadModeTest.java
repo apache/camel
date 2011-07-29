@@ -34,6 +34,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.DOMUtils;
@@ -54,7 +55,8 @@ import static org.junit.Assert.assertEquals;
 */
 @ContextConfiguration
 public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextTests {
-
+    static int port = CXFTestSupport.getPort1();
+    
     @Autowired
     protected CamelContext context;
     

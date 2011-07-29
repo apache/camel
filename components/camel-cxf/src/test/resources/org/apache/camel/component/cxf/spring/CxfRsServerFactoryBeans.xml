@@ -23,14 +23,15 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
     ">
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <cxf:rsServer id="rsServer1" address="http://localhost:9000/server1">
+  <cxf:rsServer id="rsServer1" address="http://localhost:${CXFTestSupport.port1}/CxfRsServerFactoryBeanTest/server1">
      <cxf:serviceBeans>
        <ref bean="customerService"/>
      </cxf:serviceBeans>
   </cxf:rsServer>
     
-  <cxf:rsServer id="rsServer2" address="http://localhost:9000/server2"
+  <cxf:rsServer id="rsServer2" address="http://localhost:${CXFTestSupport.port1}/CxfRsServerFactoryBeanTest/server2"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService">
     <cxf:schemaLocations>
     	 <cxf:schemaLocation>classpath:wsdl/Message.xsd</cxf:schemaLocation>

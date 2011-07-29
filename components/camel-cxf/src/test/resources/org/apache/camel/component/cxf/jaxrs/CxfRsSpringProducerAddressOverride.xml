@@ -28,7 +28,7 @@
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
   <jaxrs:server id="restService"
-		        address="http://localhost:${CxfRsProducerAddressOverrideTest.port1}" 
+		        address="http://localhost:${CXFTestSupport.port1}/CxfRsProducerAddressOverrideTest/" 
 		        staticSubresourceResolution="true">
     <jaxrs:serviceBeans>
       <ref bean="customerService"/>
@@ -43,7 +43,7 @@
   <cxf:rsClient id="rsClientHttp" address="http://badAddress"/>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <endpoint id="fromEndpoint" uri="jetty://http://localhost:${CxfRsProducerAddressOverrideTest.port2}/testQuery"/>
+    <endpoint id="fromEndpoint" uri="jetty://http://localhost:${CxfRsProducerAddressOverrideTest.jetty}/CxfRsProducerAddressOverrideTest/testQuery"/>
     <route>
        <from uri="direct://proxy"/>
        <to uri="cxfrs://bean://rsClientProxy"/>

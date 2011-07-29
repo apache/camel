@@ -82,8 +82,8 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     public void testInvokingServiceFromCXFClient() throws Exception {
         Service service = Service.create(serviceName);
         service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
-                        "http://localhost:" + getPort2() + "/CamelContext/RouterPort/"
-                        + getClass().getSimpleName());
+                        "http://localhost:" + getPort2() + "/"
+                        + getClass().getSimpleName() + "/CamelContext/RouterPort");
         Greeter greeter = service.getPort(routerPortName, Greeter.class);
 
         String reply = greeter.greetMe("test");
@@ -110,8 +110,9 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     @Test
     public void testRoutingSOAPFault() throws Exception {
         try {
-            template.sendBody("http://localhost:" + getPort2() 
-                              + "/CamelContext/RouterPort/" + getClass().getSimpleName(),
+            template.sendBody("http://localhost:" + getPort2() + "/"
+                              + getClass().getSimpleName()
+                              + "/CamelContext/RouterPort/",
                               testDocLitFaultBody);
             fail("Should get an exception here.");
         } catch (RuntimeCamelException exception) {
@@ -122,7 +123,8 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     
     @Test
     public void testPublishEndpointUrl() throws Exception {
-        String response = template.requestBody("http://localhost:" + getPort2() + "/CamelContext/RouterPort/"
+        String response = template.requestBody("http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
+                                               + "/CamelContext/RouterPort/"
             + getClass().getSimpleName() + "?wsdl", null, String.class);
         assertTrue("Can't find the right service location.", response.indexOf("http://www.simple.com/services/test") > 0);
     }

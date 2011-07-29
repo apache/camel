@@ -27,6 +27,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
     ">
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
     <bean id="cxf1" class="org.apache.cxf.bus.extension.ExtensionManagerBus"/>
     <bean id="cxf2" class="org.apache.cxf.bus.extension.ExtensionManagerBus"/>
@@ -45,11 +46,11 @@
     </cxfcore:bus>
    
   
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfEndpointBeanBusSettingTest/router"
     serviceClass="org.apache.camel.component.cxf.HelloService" bus="cxf1"/>
 
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfEndpointBeanBusSettingTest/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService" bus="cxf2"/>
     
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">

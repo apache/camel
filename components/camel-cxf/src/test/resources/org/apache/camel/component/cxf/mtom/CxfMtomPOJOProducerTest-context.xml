@@ -14,11 +14,12 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 --><beans xmlns="http://www.springframework.org/schema/beans" xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     ">
+       <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
    <cxf:cxfEndpoint xmlns:ns="http://apache.org/camel/cxf/mtom_feature"
      id="serviceEndpoint"
      serviceClass="org.apache.camel.cxf.mtom_feature.Hello"  
-     address="http://localhost:9092/jaxws-mtom/hello" 
+     address="http://localhost:${CXFTestSupport.port1}/CxfMtomPOJOProducerTest/jaxws-mtom/hello" 
      endpointName="ns:HelloPort" 
      serviceName="ns:HelloService"
      wsdlURL="mtom.wsdl">

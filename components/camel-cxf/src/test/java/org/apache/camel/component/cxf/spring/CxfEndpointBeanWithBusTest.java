@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.junit.Before;
@@ -28,11 +29,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *
  * @version 
  */
-public class CxfEndpointBeanWithBusTest extends CxfEndpointBeanTest {
-    
-    @Before
-    public void setUp() throws Exception {
-        ctx = new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml"});
+public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
+    static int port1 = CXFTestSupport.getPort1();
+    static int port2 = CXFTestSupport.getPort2();
+
+        
+    protected String[] getApplicationContextFiles() {
+        return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml"};
     }
     
     @Test
@@ -50,7 +53,8 @@ public class CxfEndpointBeanWithBusTest extends CxfEndpointBeanTest {
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
         CxfEndpoint routerEndpoint = (CxfEndpoint)ctx.getBean("routerEndpoint");
-        assertEquals("Got the wrong endpoint address", "http://localhost:9000/router", routerEndpoint.getAddress());
+        assertEquals("Got the wrong endpoint address", "http://localhost:" + port1 
+                     + "/CxfEndpointBeanWithBusTest/router/", routerEndpoint.getAddress());
         assertEquals("Got the wrong endpont service class", 
                      "org.apache.camel.component.cxf.HelloService",
                      routerEndpoint.getServiceClass().getName());
