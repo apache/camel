@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponent;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * Unit test that we can do file over JMS to file.
@@ -39,7 +39,7 @@ public class FileRouteToJmsToFileTest extends CamelTestSupport {
     @Test
     public void testRouteFileToFile() throws Exception {
         deleteDirectory("target/file2file");
-        NotifyBuilder notify = new NotifyBuilder(context).from("activemq:queue:FileRouteToJmsToFileTest.hello").whenDone(1).create();
+        NotifyBuilder notify = new NotifyBuilder(context).from("activemq:queue:hello").whenDone(1).create();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -58,7 +58,8 @@ public class FileRouteToJmsToFileTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        camelContext.addComponent(componentName, jmsComponent(CamelJmsTestHelper.getSharedConfig()));
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
     }
@@ -66,9 +67,9 @@ public class FileRouteToJmsToFileTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/file2file/in").to("activemq:queue:FileRouteToJmsToFileTest.hello");
+                from("file://target/file2file/in").to("activemq:queue:hello");
 
-                from("activemq:queue:FileRouteToJmsToFileTest.hello").to("file://target/file2file/out", "mock:result");
+                from("activemq:queue:hello").to("file://target/file2file/out", "mock:result");
             }
         };
     }

@@ -40,14 +40,14 @@ public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
         mock.expectedBodiesReceived("G", "A", "B", "E", "H", "C", "D", "F");
 
         // must use preserveMessageQos=true to be able to specify the JMSPriority to be used
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest.foo?preserveMessageQos=true", "A", "JMSPriority", 6);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest.foo?preserveMessageQos=true", "B", "JMSPriority", 6);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest.foo?preserveMessageQos=true", "C", "JMSPriority", 4);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest.foo?preserveMessageQos=true", "D", "JMSPriority", 4);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest.foo?preserveMessageQos=true", "E", "JMSPriority", 6);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest.foo?preserveMessageQos=true", "F", "JMSPriority", 4);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest.foo?preserveMessageQos=true", "G", "JMSPriority", 8);
-        template.sendBodyAndHeader("jms:queue:JmsBatchResequencerJMSPriorityTest.foo?preserveMessageQos=true", "H", "JMSPriority", 6);
+        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "A", "JMSPriority", 6);
+        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "B", "JMSPriority", 6);
+        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "C", "JMSPriority", 4);
+        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "D", "JMSPriority", 4);
+        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "E", "JMSPriority", 6);
+        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "F", "JMSPriority", 4);
+        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "G", "JMSPriority", 8);
+        template.sendBodyAndHeader("jms:queue:foo?preserveMessageQos=true", "H", "JMSPriority", 6);
 
         assertMockEndpointsSatisfied();
     }
@@ -55,7 +55,7 @@ public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.getSharedConnectionFactory();
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -67,7 +67,7 @@ public class JmsBatchResequencerJMSPriorityTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("jms:queue:JmsBatchResequencerJMSPriorityTest.foo")
+                from("jms:queue:foo")
                     // sort by JMSPriority by allowing duplicates (message can have same JMSPriority)
                     // and use reverse ordering so 9 is first output (most important), and 0 is last
                     // use batch mode and fire every 3th second

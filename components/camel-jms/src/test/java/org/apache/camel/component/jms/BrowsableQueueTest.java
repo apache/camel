@@ -24,14 +24,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponent;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * @version 
@@ -44,29 +41,16 @@ public class BrowsableQueueTest extends CamelTestSupport {
     protected int counter;
     protected Object[] expectedBodies = {"body1", "body2"};
 
-    @Before
-    public void setUp() throws Exception {
-        long start = System.currentTimeMillis();
-        super.setUp();
-        System.out.println("Start: " + (System.currentTimeMillis() - start));
-    }
-    @After
-    public void tearDown() throws Exception {
-        long start = System.currentTimeMillis();
-        super.tearDown();
-        System.out.println("Stop: " + (System.currentTimeMillis() - start));
-    }
-    
     @Test
     public void testSendMessagesThenBrowseQueue() throws Exception {
         // send some messages
         for (int i = 0; i < expectedBodies.length; i++) {
             Object expectedBody = expectedBodies[i];
-            template.sendBodyAndHeader("activemq:BrowsableQueueTest.b", expectedBody, "counter", i);
+            template.sendBodyAndHeader("activemq:test.b", expectedBody, "counter", i);
         }
 
         // now lets browse the queue
-        JmsQueueEndpoint endpoint = getMandatoryEndpoint("activemq:BrowsableQueueTest.b?maximumBrowseSize=6", JmsQueueEndpoint.class);
+        JmsQueueEndpoint endpoint = getMandatoryEndpoint("activemq:test.b?maximumBrowseSize=6", JmsQueueEndpoint.class);
         assertEquals(6, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
@@ -96,8 +80,8 @@ public class BrowsableQueueTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        JmsComponent comp = jmsComponent(CamelJmsTestHelper.getSharedConfig());
-        camelContext.addComponent(componentName, comp);
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
     }
@@ -105,7 +89,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:BrowsableQueueTest.a").to("activemq:BrowsableQueueTest.b");
+                from("activemq:test.a").to("activemq:test.b");
             }
         };
     }

@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.springframework.jms.support.converter.MessageConversionException;
 import org.springframework.jms.support.converter.MessageConverter;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponent;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * @version 
@@ -49,7 +49,8 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        camelContext.addComponent("activemq", jmsComponent(CamelJmsTestHelper.getSharedConfig()));
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
     }
@@ -60,7 +61,7 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(TextMessage.class);
 
-        template.sendBody("activemq:queue:ConsumeMessageConverterTest.hello", "Hello World");
+        template.sendBody("activemq:queue:hello", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -71,7 +72,7 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(BytesMessage.class);
 
-        template.sendBody("activemq:queue:ConsumeMessageConverterTest.hello", "Hello World".getBytes());
+        template.sendBody("activemq:queue:hello", "Hello World".getBytes());
 
         assertMockEndpointsSatisfied();
     }
@@ -79,7 +80,7 @@ public class ConsumeMessageConverterTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:ConsumeMessageConverterTest.hello?messageConverter=#myMessageConverter").to("mock:result");
+                from("activemq:queue:hello?messageConverter=#myMessageConverter").to("mock:result");
             }
         };
     }

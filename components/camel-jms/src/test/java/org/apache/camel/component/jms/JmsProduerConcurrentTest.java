@@ -64,7 +64,7 @@ public class JmsProduerConcurrentTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.getSharedConnectionFactory();
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -75,9 +75,9 @@ public class JmsProduerConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("jms:queue:foo-JmsProducerConcurrentTest");
+                from("direct:start").to("jms:queue:foo");
 
-                from("jms:queue:foo-JmsProducerConcurrentTest").to("mock:result");
+                from("jms:queue:foo").to("mock:result");
             }
         };
     }

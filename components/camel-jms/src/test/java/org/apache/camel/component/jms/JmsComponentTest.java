@@ -34,7 +34,7 @@ public class JmsComponentTest extends CamelTestSupport {
 
     @Test
     public void testComponentOptions() throws Exception {
-        String reply = template.requestBody("activemq123:queue:JmsComponentTest.hello?requestTimeout=5000", "Hello World", String.class);
+        String reply = template.requestBody("activemq123:queue:hello?requestTimeout=5000", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
         assertEquals(true, endpoint.isAcceptMessagesWhileStopping());
@@ -60,7 +60,7 @@ public class JmsComponentTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.getSharedConnectionFactory();
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         JmsComponent comp = jmsComponentAutoAcknowledge(connectionFactory);
 
         comp.setAcceptMessagesWhileStopping(true);
@@ -84,7 +84,7 @@ public class JmsComponentTest extends CamelTestSupport {
 
         camelContext.addComponent(componentName, comp);
 
-        endpoint = (JmsEndpoint) comp.createEndpoint("queue:JmsComponentTest.hello");
+        endpoint = (JmsEndpoint) comp.createEndpoint("queue:hello");
 
         return camelContext;
     }
