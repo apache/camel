@@ -427,7 +427,10 @@ public abstract class TestSupport extends TestCase {
                 deleteDirectory(files[i]);
             }
         }
-        file.delete();
+
+        if (file.isFile() && file.exists()) {
+            assertTrue("Deletion of file: " + file.getAbsolutePath() + " failed", file.delete());
+        }
     }
 
     /**
