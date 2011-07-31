@@ -407,7 +407,7 @@ public abstract class TestSupport extends Assert {
             }
         }
 
-        if (file.isFile() && file.exists()) {
+        if (file.exists()) {
             assertTrue(file.delete(), "Deletion of file: " + file.getAbsolutePath() + " failed");
         }
     }
