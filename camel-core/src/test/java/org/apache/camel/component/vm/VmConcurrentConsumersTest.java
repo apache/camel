@@ -16,20 +16,19 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
  */
-public class VmConcurrentConsumersTest extends ContextTestSupport {
-
+public class VmConcurrentConsumersTest extends AbstractVmTestSupport {
+    
     public void testSendToSeda() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("vm:foo?concurrentConsumers=5", "Hello World");
+        template2.sendBody("vm:foo?concurrentConsumers=5", "Hello World");
 
         assertMockEndpointsSatisfied();
     }

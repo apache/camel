@@ -16,18 +16,17 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version 
  */
-public class VmInOnlyTest extends ContextTestSupport {
+public class VmInOnlyTest extends AbstractVmTestSupport {
 
     public void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("direct:start", "Hello World");
+        template2.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -37,9 +36,17 @@ public class VmInOnlyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("vm:foo");
-
                 from("vm:foo").to("mock:result");
+            }
+        };
+    }
+    
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("vm:foo");
             }
         };
     }

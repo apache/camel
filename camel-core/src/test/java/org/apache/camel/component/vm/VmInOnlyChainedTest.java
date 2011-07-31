@@ -16,22 +16,23 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
  */
-public class VmInOnlyChainedTest extends ContextTestSupport {
+public class VmInOnlyChainedTest extends AbstractVmTestSupport {
 
     public void testInOnlyVmChained() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("start");
-        getMockEndpoint("mock:b").expectedBodiesReceived("start-a");
+        resolveMandatoryEndpoint(context2, "mock:b", MockEndpoint.class).expectedBodiesReceived("start-a");
         getMockEndpoint("mock:c").expectedBodiesReceived("start-a-b");
 
         template.sendBody("vm:a", "start");
 
         assertMockEndpointsSatisfied();
+        MockEndpoint.assertIsSatisfied(context2);
     }
 
     @Override
@@ -41,9 +42,17 @@ public class VmInOnlyChainedTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("vm:a").to("mock:a").setBody(simple("${body}-a")).to("vm:b");
 
-                from("vm:b").to("mock:b").setBody(simple("${body}-b")).to("vm:c");
-
                 from("vm:c").to("mock:c").setBody(simple("${body}-c"));
+            }
+        };
+    }
+    
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("vm:b").to("mock:b").setBody(simple("${body}-b")).to("vm:c");
             }
         };
     }

@@ -17,7 +17,6 @@
 package org.apache.camel.component.vm;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
@@ -26,11 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class VmTimeoutIssueTest extends ContextTestSupport {
+public class VmTimeoutIssueTest extends AbstractVmTestSupport {
 
     public void testVmTimeoutWithAnotherVm() throws Exception {
         try {
-            template.requestBody("vm:start1?timeout=4000", "Hello");
+            template2.requestBody("vm:start1?timeout=4000", "Hello");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
@@ -40,7 +39,7 @@ public class VmTimeoutIssueTest extends ContextTestSupport {
 
     public void testVmTimeoutWithProcessor() throws Exception {
         try {
-            template.requestBody("vm:start2?timeout=4000", "Hello");
+            template2.requestBody("vm:start2?timeout=4000", "Hello");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
@@ -53,27 +52,34 @@ public class VmTimeoutIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(noErrorHandler());
-
-                from("vm:start1?timeout=4000")
-                        .to("log:AFTER_START1")
-                        .to("vm:end?timeout=2000")
-                        .to("log:AFTER_END");
-
-                from("vm:start2?timeout=4000")
-                        .to("log:AFTER_START2")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // this exception will trigger to stop asap
-                                throw new ExchangeTimedOutException(exchange, 2000);
-                            }
-                        })
-                        .to("log:AFTER_PROCESSOR");
-
                 from("vm:end")
                     .delay(3000).transform().constant("Bye World");
             }
         };
     }
 
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                errorHandler(noErrorHandler());
+
+                from("vm:start1?timeout=4000")
+                    .to("log:AFTER_START1")
+                    .to("vm:end?timeout=2000")
+                    .to("log:AFTER_END");
+
+                from("vm:start2?timeout=4000")
+                    .to("log:AFTER_START2")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            // this exception will trigger to stop asap
+                            throw new ExchangeTimedOutException(exchange, 2000);
+                        }
+                    })
+                    .to("log:AFTER_PROCESSOR");
+            }
+        };
+    }
 }

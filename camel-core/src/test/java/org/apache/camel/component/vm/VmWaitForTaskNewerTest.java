@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -25,12 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class VmWaitForTaskNewerTest extends ContextTestSupport {
+public class VmWaitForTaskNewerTest extends AbstractVmTestSupport {
 
     public void testInOut() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        String out = template.requestBody("direct:start", "Hello World", String.class);
+        String out = template2.requestBody("direct:start", "Hello World", String.class);
         // we do not wait for the response so we just get our own input back
         assertEquals("Hello World", out);
 
@@ -40,7 +39,7 @@ public class VmWaitForTaskNewerTest extends ContextTestSupport {
     public void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        Exchange out = template.send("direct:start", new Processor() {
+        Exchange out = template2.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
@@ -48,7 +47,7 @@ public class VmWaitForTaskNewerTest extends ContextTestSupport {
         });
         // we do not wait for the response so we just get our own input back
         assertEquals("Hello World", out.getIn().getBody());
-        assertEquals(null, out.getOut().getBody());
+        assertNull(out.getOut().getBody());
 
         assertMockEndpointsSatisfied();
     }
@@ -58,9 +57,17 @@ public class VmWaitForTaskNewerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("vm:foo?waitForTaskToComplete=Never");
-
                 from("vm:foo?waitForTaskToComplete=Never").transform(constant("Bye World")).to("mock:result");
+            }
+        };
+    }
+    
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("vm:foo?waitForTaskToComplete=Never");
             }
         };
     }

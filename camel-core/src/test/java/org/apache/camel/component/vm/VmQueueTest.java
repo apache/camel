@@ -16,22 +16,21 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
  */
-public class VmQueueTest extends ContextTestSupport {
+public class VmQueueTest extends AbstractVmTestSupport {
 
     public void testQueue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World", "Goodday World", "Bar");
 
-        template.sendBody("vm:foo", "Hello World");
-        template.sendBody("vm:foo?size=20", "Bye World");
-        template.sendBody("vm:foo?concurrentConsumers=5", "Goodday World");
+        template2.sendBody("vm:foo", "Hello World");
+        template2.sendBody("vm:foo?size=20", "Bye World");
+        template2.sendBody("vm:foo?concurrentConsumers=5", "Goodday World");
         template.sendBody("vm:bar", "Bar");
     }
 
@@ -40,11 +39,18 @@ public class VmQueueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:foo?concurrentConsumers=2").to("mock:result");
-
                 from("vm:bar").to("mock:result");
             }
         };
     }
 
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("vm:foo?concurrentConsumers=2").to("mock:result");
+            }
+        };
+    }
 }

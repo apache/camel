@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -25,12 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class VmWaitForTaskCompleteTest extends ContextTestSupport {
+public class VmWaitForTaskCompleteTest extends AbstractVmTestSupport {
 
     public void testInOut() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        String out = template.requestBody("direct:start", "Hello World", String.class);
+        String out = template2.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -41,7 +40,7 @@ public class VmWaitForTaskCompleteTest extends ContextTestSupport {
 
         // we send an in only but we use Always to wait for it to complete
         // and since the route changes the payload we can get the response anyway
-        Exchange out = template.send("direct:start", new Processor() {
+        Exchange out = template2.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
                 exchange.setPattern(ExchangePattern.InOnly);
@@ -57,9 +56,17 @@ public class VmWaitForTaskCompleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("vm:foo?waitForTaskToComplete=Always");
-
                 from("vm:foo?waitForTaskToComplete=Always").transform(constant("Bye World")).to("mock:result");
+            }
+        };
+    }
+    
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("vm:foo?waitForTaskToComplete=Always");
             }
         };
     }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -25,15 +24,16 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test to verify continuing using NOT same thread on the consumer side.
  */
-public class VmShouldNotUseSameThreadTest extends ContextTestSupport {
+public class VmShouldNotUseSameThreadTest extends AbstractVmTestSupport {
 
     private static long id;
+    private final ThreadLocal<String> local = new ThreadLocal<String>();
 
     public void testNotUseSameThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("direct:start", "Hello World");
+        template2.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -41,18 +41,9 @@ public class VmShouldNotUseSameThreadTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                final ThreadLocal<String> local = new ThreadLocal<String>();
-
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        local.set("Hello");
-                        id = Thread.currentThread().getId();
-                    }
-                }).to("vm:foo");
-
                 from("vm:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertEquals(null, local.get());
+                        assertNull(local.get());
                         assertNotSame("Thread is should not be same", id, Thread.currentThread().getId());
                     }
                 }).to("mock:result");
@@ -60,4 +51,18 @@ public class VmShouldNotUseSameThreadTest extends ContextTestSupport {
         };
     }
 
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        local.set("Hello");
+                        id = Thread.currentThread().getId();
+                    }
+                }).to("vm:foo");
+            }
+        };
+    }
 }

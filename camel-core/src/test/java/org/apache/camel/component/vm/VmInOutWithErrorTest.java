@@ -17,19 +17,18 @@
 package org.apache.camel.component.vm;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version 
  */
-public class VmInOutWithErrorTest extends ContextTestSupport {
+public class VmInOutWithErrorTest extends AbstractVmTestSupport {
 
     public void testInOutWithError() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
-            template.requestBody("direct:start", "Hello World", String.class);
+            template2.requestBody("direct:start", "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
@@ -44,11 +43,19 @@ public class VmInOutWithErrorTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("vm:foo");
-
                 from("vm:foo").transform(constant("Bye World"))
                     .throwException(new IllegalArgumentException("Damn I cannot do this"))
                     .to("mock:result");
+            }
+        };
+    }
+    
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("vm:foo");
             }
         };
     }

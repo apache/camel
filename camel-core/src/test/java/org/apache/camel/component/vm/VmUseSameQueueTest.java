@@ -16,19 +16,18 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version 
  */
-public class VmUseSameQueueTest extends ContextTestSupport {
+public class VmUseSameQueueTest extends AbstractVmTestSupport {
 
     public void testVmUseSameQueue() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:start", "Bye World");
+        template2.sendBody("direct:start", "Hello World");
+        template2.sendBody("direct:start", "Bye World");
 
         assertMockEndpointsSatisfied();
     }
@@ -38,10 +37,17 @@ public class VmUseSameQueueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("vm:foo?size=500");
-
                 from("vm:foo").to("mock:result");
+            }
+        };
+    }
+    
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("vm:foo?size=500");
             }
         };
     }

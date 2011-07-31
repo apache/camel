@@ -16,50 +16,13 @@
  */
 package org.apache.camel.component.vm;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ServiceHelper;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class VmDifferentOptionsOnConsumerAndProducerTest extends ContextTestSupport {
-    
-    private CamelContext context2;
-    private ProducerTemplate template2;
-    
-    @Override
-    @Before
-    protected void setUp() throws Exception {
-        super.setUp();
-        
-        context2 = new DefaultCamelContext();
-        context2.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                    .to("vm:foo");
-            }
-        });
-        
-        template2 = context2.createProducerTemplate();
-        
-        ServiceHelper.startServices(template2, context2);
-    }
-    
-    @Override
-    @After
-    protected void tearDown() throws Exception {
-        ServiceHelper.stopServices(context2, template2);
-        
-        super.tearDown();
-    }
+public class VmDifferentOptionsOnConsumerAndProducerTest extends AbstractVmTestSupport {
 
     @Test
     public void testSendToVm() throws Exception {
@@ -77,6 +40,17 @@ public class VmDifferentOptionsOnConsumerAndProducerTest extends ContextTestSupp
             public void configure() throws Exception {
                 from("vm:foo?concurrentConsumers=5")
                     .to("mock:result");
+            }
+        };
+    }
+    
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .to("vm:foo");
             }
         };
     }

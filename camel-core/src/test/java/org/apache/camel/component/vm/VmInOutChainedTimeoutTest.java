@@ -17,7 +17,6 @@
 package org.apache.camel.component.vm;
 
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
@@ -25,18 +24,20 @@ import org.apache.camel.util.StopWatch;
 /**
  * @version 
  */
-public class VmInOutChainedTimeoutTest extends ContextTestSupport {
+public class VmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 
     public void testVmInOutChainedTimeout() throws Exception {
         StopWatch watch = new StopWatch();
+        
         try {
-            template.requestBody("vm:a?timeout=1000", "Hello World");
+            template2.requestBody("vm:a?timeout=1000", "Hello World");
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             // the chained vm caused the timeout
             ExchangeTimedOutException cause = assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause());
             assertEquals(200, cause.getTimeout());
         }
+        
         long delta = watch.stop();
 
         assertTrue("Should be faster than 1 sec, was: " + delta, delta < 1100);
@@ -47,18 +48,26 @@ public class VmInOutChainedTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(noErrorHandler());
-
-                from("vm:a")
-                        .to("mock:a")
-                        // this timeout will trigger an exception to occur
-                        .to("vm:b?timeout=200")
-                        .to("mock:a2");
-
                 from("vm:b")
                         .to("mock:b")
                         .delay(500)
                         .transform().constant("Bye World");
+            }
+        };
+    }
+    
+    @Override
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                errorHandler(noErrorHandler());
+                
+                from("vm:a")
+                    .to("mock:a")
+                    // this timeout will trigger an exception to occur
+                    .to("vm:b?timeout=200")
+                    .to("mock:a2");
             }
         };
     }

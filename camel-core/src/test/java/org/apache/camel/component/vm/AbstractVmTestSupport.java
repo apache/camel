@@ -17,55 +17,47 @@
 package org.apache.camel.component.vm;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * @version 
  */
-public class VmRouteTest extends TestSupport {
-    private CamelContext context1 = new DefaultCamelContext();
-    private CamelContext context2 = new DefaultCamelContext();
-    private ProducerTemplate template;
-    private Object expectedBody = "<hello>world!</hello>";
-
-    public void testSedaQueue() throws Exception {
-        MockEndpoint result = context2.getEndpoint("mock:result", MockEndpoint.class);
-        result.expectedBodiesReceived(expectedBody);
-
-        template.sendBody("vm:test.a", expectedBody);
-
-        result.assertIsSatisfied();
-    }
-
+public abstract class AbstractVmTestSupport extends ContextTestSupport {
+    
+    protected CamelContext context2;
+    protected ProducerTemplate template2;
+    
     @Override
+    @Before
     protected void setUp() throws Exception {
         super.setUp();
-
-        context1.addRoutes(new RouteBuilder() {
-            public void configure() {
-                from("vm:test.a").to("vm:test.b");
-            }
-        });
-
-        context2.addRoutes(new RouteBuilder() {
-            public void configure() {
-                from("vm:test.b").to("mock:result");
-            }
-        });
-
-        ServiceHelper.startServices(context1, context2);
-
-        template = context1.createProducerTemplate();
+        
+        context2 = new DefaultCamelContext();
+        RouteBuilder routeBuilder = createRouteBuilderForSecondContext();
+        if (routeBuilder != null) {
+            context2.addRoutes(routeBuilder);            
+        }
+        
+        template2 = context2.createProducerTemplate();
+        
+        ServiceHelper.startServices(template2, context2);
     }
-
+    
     @Override
+    @After
     protected void tearDown() throws Exception {
-        ServiceHelper.stopServices(context2, context1, template);
+        ServiceHelper.stopServices(context2, template2);
+        
         super.tearDown();
+    }
+    
+    protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
+        return null;
     }
 }
