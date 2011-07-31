@@ -40,6 +40,7 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -573,6 +574,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Injector getInjector();
 
     /**
+     * Returns the management mbean assembler
+     *
+     * @return the mbean assembler
+     */
+    ManagementMBeanAssembler getManagementMBeanAssembler();
+
+    /**
      * Returns the lifecycle strategies used to handle lifecycle notifications
      *
      * @return the lifecycle strategies
@@ -910,18 +918,18 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setShutdownStrategy(ShutdownStrategy shutdownStrategy);
 
     /**
-     * Gets the current {@link org.apache.camel.spi.ExecutorServiceStrategy}
+     * Gets the current {@link org.apache.camel.spi.ExecutorServiceManager}
      *
-     * @return the strategy
+     * @return the manager
      */
     ExecutorServiceManager getExecutorServiceManager();
 
     /**
-     * Sets a custom {@link org.apache.camel.spi.ExecutorServiceStrategy}
+     * Sets a custom {@link org.apache.camel.spi.ExecutorServiceManager}
      *
-     * @param executorServiceStrategy the custom strategy
+     * @param executorServiceManager the custom manager
      */
-    void setExecutorServiceManager(ExecutorServiceManager executorServiceStrategy);
+    void setExecutorServiceManager(ExecutorServiceManager executorServiceManager);
 
     /**
      * Gets the current {@link org.apache.camel.spi.ProcessorFactory}

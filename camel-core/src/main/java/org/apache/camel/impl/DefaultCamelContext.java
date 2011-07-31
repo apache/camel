@@ -34,7 +34,6 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -72,6 +71,7 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.LazyLoadingTypeConverter;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.management.DefaultManagementLifecycleStrategy;
+import org.apache.camel.management.DefaultManagementMBeanAssembler;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.management.ManagedManagementStrategy;
@@ -101,6 +101,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -153,6 +154,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Registry registry;
     private List<LifecycleStrategy> lifecycleStrategies = new ArrayList<LifecycleStrategy>();
     private ManagementStrategy managementStrategy;
+    private ManagementMBeanAssembler managementMBeanAssembler;
     private AtomicBoolean managementStrategyInitialized = new AtomicBoolean(false);
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
@@ -1032,6 +1034,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public void setInjector(Injector injector) {
         this.injector = injector;
+    }
+
+    public ManagementMBeanAssembler getManagementMBeanAssembler() {
+        if (managementMBeanAssembler == null) {
+            managementMBeanAssembler = createManagementMBeanAssembler();
+        }
+        return managementMBeanAssembler;
+    }
+
+    public void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
+        this.managementMBeanAssembler = managementMBeanAssembler;
     }
 
     public ComponentResolver getComponentResolver() {
@@ -1995,6 +2008,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             // lets use the default
             return new ReflectionInjector();
         }
+    }
+
+    /**
+     * Lazily create a default implementation
+     */
+    protected ManagementMBeanAssembler createManagementMBeanAssembler() {
+        return new DefaultManagementMBeanAssembler();
     }
 
     /**

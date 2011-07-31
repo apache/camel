@@ -23,9 +23,11 @@ import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.camel.spring.spi.SpringInjector;
+import org.apache.camel.spring.spi.SpringManagementMBeanAssembler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -55,18 +57,19 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         ApplicationContextAware {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
-    
     private static final ThreadLocal<Boolean> NO_START = new ThreadLocal<Boolean>();
-    
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
 
     public SpringCamelContext() {
+        super();
     }
 
     public SpringCamelContext(ApplicationContext applicationContext) {
+        this();
         setApplicationContext(applicationContext);
     }
+
     public static void setNoStart(boolean b) {
         if (b) {
             NO_START.set(b);
@@ -181,6 +184,12 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
                       + applicationContext);
             return super.createInjector();
         }
+    }
+
+    @Override
+    protected ManagementMBeanAssembler createManagementMBeanAssembler() {
+        // use a spring mbean assembler
+        return new SpringManagementMBeanAssembler();
     }
 
     protected EventEndpoint createEventEndpoint() {
