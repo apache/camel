@@ -16,10 +16,12 @@
  */
 package org.apache.camel.spi;
 
+import java.util.EventObject;
 import java.util.List;
 
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Service;
+import org.apache.camel.management.Statistic;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
@@ -33,7 +35,86 @@ import org.apache.camel.model.ProcessorDefinition;
  * @see org.apache.camel.spi.ManagementAgent
  * @version 
  */
-public interface ManagementStrategy extends org.fusesource.commons.management.ManagementStrategy, Service {
+public interface ManagementStrategy extends Service {
+
+    /**
+     * Adds a managed object allowing the ManagementStrategy implementation to record or expose
+     * the object as it sees fit.
+     *
+     * @param managedObject the managed object
+     * @throws Exception can be thrown if the object could not be added
+     */
+    void manageObject(Object managedObject) throws Exception;
+
+    /**
+     * Adds a managed object allowing the ManagementStrategy implementation
+     * to record or expose the object as it sees fit.
+     *
+     * @param managedObject the managed object
+     * @param preferredName representing the preferred name, maybe a String, or a JMX ObjectName
+     * @throws Exception can be thrown if the object could not be added
+     */
+    void manageNamedObject(Object managedObject, Object preferredName) throws Exception;
+
+    /**
+     * Construct an object name, where either the object to be managed and/or
+     * a custom name component are provided
+     *
+     * @param managedObject the object to be managed
+     * @param customName a custom name component
+     * @param nameType the name type required
+     * @return an object name of the required type if supported, otherwise <tt>null</tt>
+     * @throws Exception can be thrown if the object name could not be created
+     */
+    <T> T getManagedObjectName(Object managedObject, String customName, Class<T> nameType) throws Exception;
+
+    /**
+     * Removes the managed object.
+     *
+     * @param managedObject the managed object
+     * @throws Exception can be thrown if the object could not be removed
+     */
+    void unmanageObject(Object managedObject) throws Exception;
+
+    /**
+     * Removes a managed object by name.
+     *
+     * @param name an object name previously created by this strategy.
+     * @throws Exception can be thrown if the object could not be removed
+     */
+    void unmanageNamedObject(Object name) throws Exception;
+
+    /**
+     * Determines if an object or name is managed.
+     *
+     * @param managedObject the object to consider
+     * @param name the name to consider
+     * @return <tt>true</tt> if the given object or name is managed
+     */
+    boolean isManaged(Object managedObject, Object name);
+
+    /**
+     * Management events provide a single model for capturing information about execution points in the
+     * application code. Management strategy implementations decide if and where to record these events.
+     * Applications communicate events to management strategy implementations via the notify(EventObject)
+     * method.
+     *
+     * @param event the event
+     * @throws Exception can be thrown if the notification failed
+     */
+    void notify(EventObject event) throws Exception;
+
+    /**
+     * Creates a statistic; a representation of raw statistical data.
+     *
+     * @param name The unique name assigned to the statistic usage.
+     * @param owner The object whose identity is to be associated with the metric.
+     * @param updateMode The update mode to be assigned to the returned statistic.
+     * @return the statistic
+     *
+     * @see Statistic.UpdateMode
+     */
+    Statistic createStatistic(String name, Object owner, Statistic.UpdateMode updateMode);
 
     /**
      * Gets the event notifiers.
@@ -164,4 +245,5 @@ public interface ManagementStrategy extends org.fusesource.commons.management.Ma
      * @return the level
      */
     ManagementStatisticsLevel getStatisticsLevel();
+
 }

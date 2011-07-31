@@ -64,12 +64,6 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
-    <!-- required dependencies by camel-core -->
-    <dependency>
-      <groupId>org.fusesource.commonman</groupId>
-      <artifactId>commons-management</artifactId>
-    </dependency>
-
     <!-- to allow Spring annotations to be used for management -->
     <dependency>
       <groupId>org.springframework</groupId>

@@ -136,9 +136,8 @@
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xstream</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
-        <!-- these two jars are mandatory -->
+        <!-- this jar is mandatory -->
         <include>org.slf4j:slf4j-api</include>
-        <include>org.fusesource.commonman:commons-management</include>
       </includes>
     </dependencySet>
     <dependencySet>

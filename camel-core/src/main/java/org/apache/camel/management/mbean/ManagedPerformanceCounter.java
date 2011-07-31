@@ -20,9 +20,9 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.management.PerformanceCounter;
+import org.apache.camel.management.Statistic;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ExchangeHelper;
-import org.fusesource.commons.management.Statistic;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;

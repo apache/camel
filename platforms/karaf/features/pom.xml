@@ -54,7 +54,6 @@
       <commons-io-bundle-version>1.3.2_3</commons-io-bundle-version>
       <commons-jxpath-version>1.3</commons-jxpath-version>
       <commons-net-version>2.2</commons-net-version>
-      <commons-management-version>1.0</commons-management-version>
       <commons-math-version>2.2</commons-math-version>
       <commons-pool-bundle-version>1.5.4_1</commons-pool-bundle-version>
       <dom4j-bundle-version>1.6.1_2</dom4j-bundle-version>

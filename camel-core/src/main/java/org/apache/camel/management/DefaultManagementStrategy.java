@@ -31,7 +31,6 @@ import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ServiceHelper;
-import org.fusesource.commons.management.Statistic;
 
 /**
  * A default management strategy that does <b>not</b> manage.
@@ -127,7 +126,7 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
         // noop
     }
 
-    public void manageNamedObject(Object managedObject, Object preferedName) throws Exception {
+    public void manageNamedObject(Object managedObject, Object preferredName) throws Exception {
         // noop
     }
 

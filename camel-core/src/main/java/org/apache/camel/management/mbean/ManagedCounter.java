@@ -16,8 +16,8 @@
  */
 package org.apache.camel.management.mbean;
 
+import org.apache.camel.management.Statistic;
 import org.apache.camel.spi.ManagementStrategy;
-import org.fusesource.commons.management.Statistic;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
