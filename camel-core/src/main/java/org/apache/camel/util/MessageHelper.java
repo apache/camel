@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.AbstractList;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.xml.transform.stream.StreamSource;
@@ -169,7 +170,8 @@ public final class MessageHelper {
                 maxChars = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
             }
         }
-        return extractBodyForLogging(message, prepend, streams, maxChars);
+
+        return extractBodyForLogging(message, prepend, streams, false, maxChars);
     }
 
     /**
@@ -181,10 +183,11 @@ public final class MessageHelper {
      * @param message the message
      * @param prepend a message to prepend
      * @param allowStreams whether or not streams is allowed
+     * @param allowFiles whether or not files is allowed
      * @param maxChars limit to maximum number of chars. Use 0 or negative value to not limit at all.
      * @return the logging message
      */
-    public static String extractBodyForLogging(Message message, String prepend, boolean allowStreams, int maxChars) {
+    public static String extractBodyForLogging(Message message, String prepend, boolean allowStreams, boolean allowFiles, int maxChars) {
         Object obj = message.getBody();
         if (obj == null) {
             return prepend + "[Body is null]";
@@ -204,7 +207,7 @@ public final class MessageHelper {
             return prepend + "[Body is instance of java.io.Reader]";
         } else if (!allowStreams && obj instanceof Writer) {
             return prepend + "[Body is instance of java.io.Writer]";
-        } else if (obj instanceof GenericFile || obj instanceof File) {
+        } else if (!allowFiles && (obj instanceof GenericFile || obj instanceof File)) {
             return prepend + "[Body is file based: " + obj + "]";
         }
 
@@ -287,7 +290,8 @@ public final class MessageHelper {
         sb.append(">");
 
         // dump body value as XML, use Camel type converter to convert to String
-        String xml = message.getBody(String.class);
+        // do not allow streams, but allow files, and clip very big message bodies (128kb)
+        String xml = extractBodyForLogging(message, "", false, true, 128 * 1024);
         if (xml != null) {
             // must always xml encode
             sb.append(StringHelper.xmlEncode(xml));

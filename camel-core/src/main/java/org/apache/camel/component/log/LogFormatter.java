@@ -47,6 +47,7 @@ public class LogFormatter implements ExchangeFormatter {
     private boolean multiline;
     private boolean showFuture;
     private boolean showStreams;
+    private boolean showFiles;
     private int maxChars;
 
     public String format(Exchange exchange) {
@@ -307,9 +308,22 @@ public class LogFormatter implements ExchangeFormatter {
         this.showStreams = showStreams;
     }
 
+    public boolean isShowFiles() {
+        return showFiles;
+    }
+
+    /**
+     * If enabled Camel will output files
+     * <p/>
+     * Is default disabled.
+     */
+    public void setShowFiles(boolean showFiles) {
+        this.showFiles = showFiles;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected Object getBodyAsString(Message message) {
+    protected String getBodyAsString(Message message) {
         if (message.getBody() instanceof Future) {
             if (!isShowFuture()) {
                 // just use a to string of the future object
@@ -317,11 +331,10 @@ public class LogFormatter implements ExchangeFormatter {
             }
         }
 
-        // is the body a stream cache then we can log it
-        return MessageHelper.extractBodyForLogging(message, "", isShowStreams(), -1);
+        return MessageHelper.extractBodyForLogging(message, "", isShowStreams(), isShowFiles(), -1);
     }
 
-    protected Object getBodyTypeAsString(Message message) {
+    protected String getBodyTypeAsString(Message message) {
         String answer = ObjectHelper.classCanonicalName(message.getBody());
         if (answer != null && answer.startsWith("java.lang.")) {
             return answer.substring(10);
