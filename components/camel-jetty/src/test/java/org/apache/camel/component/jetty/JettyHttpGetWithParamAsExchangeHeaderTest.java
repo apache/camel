@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -36,6 +37,29 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
         template.requestBody(serverUri + "?one=einz&two=twei", null, Object.class);
+
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testHttpGetWithUTF8EncodedParamsViaURI() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedHeaderReceived("message", "Keine gültige GPS-Daten!");
+        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+
+        template.requestBody(serverUri + "?message=Keine%20g%C3%BCltige%20GPS-Daten!", null, Object.class);
+
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    @Ignore
+    public void testHttpGetWithISO8859EncodedParamsViaURI() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedHeaderReceived("message", "Keine gültige GPS-Daten!");
+        mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+
+        template.requestBody(serverUri + "?message=Keine+g%FCltige+GPS-Daten%21", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
