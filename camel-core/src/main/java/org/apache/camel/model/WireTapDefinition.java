@@ -33,6 +33,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.WireTapProcessor;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -59,7 +60,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
-    private String executorServiceRef = "WireTap";
+    private String executorServiceRef;
     @XmlAttribute
     private Boolean copy;
     @XmlAttribute
@@ -71,10 +72,12 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
     }
 
     public WireTapDefinition(String uri) {
+        this();
         setUri(uri);
     }
 
     public WireTapDefinition(Endpoint endpoint) {
+        this();
         setEndpoint(endpoint);
     }
 
@@ -82,7 +85,9 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Endpoint endpoint = resolveEndpoint(routeContext);
 
-        executorService = routeContext.getCamelContext().getExecutorServiceManager().getDefaultExecutorService(executorServiceRef, this);
+        String ref = this.executorServiceRef != null ? this.executorServiceRef : "WireTap";
+        ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
+        executorService = manager.getDefaultExecutorService(ref, this);
         WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern(), executorService);
 
         answer.setCopy(isCopy());

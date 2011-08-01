@@ -30,6 +30,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -52,7 +53,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     @XmlAttribute
     private String strategyRef;
     @XmlAttribute
-    private String executorServiceRef = "RecipientList";
+    private String executorServiceRef;
     @XmlAttribute
     private Boolean stopOnException;
     @XmlAttribute
@@ -124,7 +125,9 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
             answer.setTimeout(getTimeout());
         }
         if (isParallelProcessing() && executorService == null) {
-            executorService = routeContext.getCamelContext().getExecutorServiceManager().getDefaultExecutorService(executorServiceRef, this);
+            String ref = this.executorServiceRef != null ? this.executorServiceRef : "RecipientList";
+            ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
+            executorService = manager.getDefaultExecutorService(ref, this);
         }
         answer.setExecutorService(executorService);
         long timeout = getTimeout() != null ? getTimeout() : 0;

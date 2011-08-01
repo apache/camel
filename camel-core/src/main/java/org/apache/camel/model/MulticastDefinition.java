@@ -49,7 +49,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
-    private String executorServiceRef = "Multicast";
+    private String executorServiceRef;
     @XmlAttribute
     private Boolean streaming;
     @XmlAttribute
@@ -219,7 +219,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
         ExecutorServiceManager executorServiceManager = routeContext.getCamelContext().getExecutorServiceManager();
         if (isParallelProcessing() && executorService == null) {
-            executorService = executorServiceManager.getDefaultExecutorService(executorServiceRef, this);
+            String ref = this.executorServiceRef != null ? this.executorServiceRef : "Delay";
+            executorService = executorServiceManager.getDefaultExecutorService(ref, this);
         }
         long timeout = getTimeout() != null ? getTimeout() : 0;
         if (timeout > 0 && !isParallelProcessing()) {

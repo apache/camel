@@ -48,7 +48,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
-    private String executorServiceRef = "Delay";
+    private String executorServiceRef;
     @XmlAttribute
     private Boolean asyncDelayed;
     @XmlAttribute
@@ -83,8 +83,9 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
 
         ScheduledExecutorService scheduled = null;
         if (getAsyncDelayed() != null && getAsyncDelayed()) {
+            String ref = executorServiceRef != null ? executorServiceRef : "Delay";
             ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
-            scheduled = manager.getScheduledExecutorService(executorServiceRef, this);
+            scheduled = manager.getScheduledExecutorService(ref, this);
         }
 
         Delayer answer = new Delayer(childProcessor, delay, scheduled);

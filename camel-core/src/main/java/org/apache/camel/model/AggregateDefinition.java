@@ -70,7 +70,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute
     private Boolean parallelProcessing;
     @XmlAttribute
-    private String executorServiceRef = "Aggregator";
+    private String executorServiceRef;
     @XmlAttribute
     private String aggregationRepositoryRef;
     @XmlAttribute
@@ -98,18 +98,21 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     public AggregateDefinition(Predicate predicate) {
+        this();
         if (predicate != null) {
             setExpression(new ExpressionDefinition(predicate));
         }
     }    
     
     public AggregateDefinition(Expression correlationExpression) {
+        this();
         if (correlationExpression != null) {
             setExpression(new ExpressionDefinition(correlationExpression));
         }
     }
 
     public AggregateDefinition(ExpressionDefinition correlationExpression) {
+        this();
         this.expression = correlationExpression;
     }
 
@@ -151,12 +154,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
         if (executorService == null) {
+            String ref = executorServiceRef != null ? executorServiceRef : "Aggregator";
             // executor service is mandatory for the Aggregator
             ExecutorServiceManager executorServiceManager = routeContext.getCamelContext().getExecutorServiceManager();
             if (isParallelProcessing()) {
-                executorService = executorServiceManager.getDefaultExecutorService(executorServiceRef, this);
+                executorService = executorServiceManager.getDefaultExecutorService(ref, this);
             } else {
-                executorService = executorServiceManager.newSynchronousExecutorService(executorServiceRef, this);
+                executorService = executorServiceManager.newSynchronousExecutorService(ref, this);
             }
         }
         AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor, correlation, strategy, executorService);

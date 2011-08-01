@@ -33,6 +33,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -50,7 +51,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     @XmlElement(name = "onWhen")
     private WhenDefinition onWhen;
     @XmlAttribute
-    private String executorServiceRef = "OnCompletion";
+    private String executorServiceRef;
     @XmlAttribute(name = "useOriginalMessage")
     private Boolean useOriginalMessagePolicy;
     @XmlElementRef
@@ -97,7 +98,9 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
             when = onWhen.getExpression().createPredicate(routeContext);
         }
 
-        executorService = routeContext.getCamelContext().getExecutorServiceManager().getDefaultExecutorService(executorServiceRef, this);
+        String ref = this.executorServiceRef != null ? this.executorServiceRef : "OnCompletion";
+        ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
+        executorService = manager.getDefaultExecutorService(ref, this);
 
         // should be false by default
         boolean original = getUseOriginalMessagePolicy() != null ? getUseOriginalMessagePolicy() : false;

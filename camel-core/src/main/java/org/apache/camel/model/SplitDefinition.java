@@ -30,6 +30,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.SubUnitOfWorkProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -50,7 +51,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     @XmlAttribute
     private String strategyRef;
     @XmlAttribute
-    private String executorServiceRef = "Split";
+    private String executorServiceRef;
     @XmlAttribute
     private Boolean streaming;
     @XmlAttribute
@@ -95,7 +96,9 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         Processor childProcessor = this.createChildProcessor(routeContext, true);
         aggregationStrategy = createAggregationStrategy(routeContext);
         if (isParallelProcessing() && executorService == null) {
-            executorService = routeContext.getCamelContext().getExecutorServiceManager().getDefaultExecutorService(executorServiceRef, this);
+            String ref = this.executorServiceRef != null ? this.executorServiceRef : "Split";
+            ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
+            executorService = manager.getDefaultExecutorService(ref, this);
         }
 
         long timeout = getTimeout() != null ? getTimeout() : 0;
