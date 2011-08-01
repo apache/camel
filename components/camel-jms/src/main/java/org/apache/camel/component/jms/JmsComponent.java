@@ -217,6 +217,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     public void setIdleTaskExecutionLimit(int idleTaskExecutionLimit) {
         getConfiguration().setIdleTaskExecutionLimit(idleTaskExecutionLimit);
     }
+    
+    public void setIdleConsumerLimit(int idleConsumerLimit) {
+        getConfiguration().setIdleConsumerLimit(idleConsumerLimit);
+    }
 
     public void setMaxConcurrentConsumers(int maxConcurrentConsumers) {
         getConfiguration().setMaxConcurrentConsumers(maxConcurrentConsumers);

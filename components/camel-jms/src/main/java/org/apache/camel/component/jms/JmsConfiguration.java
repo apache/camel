@@ -80,6 +80,7 @@ public class JmsConfiguration implements Cloneable {
     private long receiveTimeout = -1;
     private long requestTimeout = 20000L;
     private int idleTaskExecutionLimit = 1;
+    private int idleConsumerLimit = 1;
     private int maxConcurrentConsumers;
     // JmsTemplate only
     private Boolean explicitQosEnabled;
@@ -585,6 +586,14 @@ public class JmsConfiguration implements Cloneable {
         this.idleTaskExecutionLimit = idleTaskExecutionLimit;
     }
 
+    public int getIdleConsumerLimit() {
+        return idleConsumerLimit;
+    }
+
+    public void setIdleConsumerLimit(int idleConsumerLimit) {
+        this.idleConsumerLimit = idleConsumerLimit;
+    }
+    
     public int getMaxConcurrentConsumers() {
         return maxConcurrentConsumers;
     }
@@ -862,6 +871,9 @@ public class JmsConfiguration implements Cloneable {
         if (idleTaskExecutionLimit >= 0) {
             container.setIdleTaskExecutionLimit(idleTaskExecutionLimit);
         }
+        if (idleConsumerLimit >= 0) {
+            container.setIdleConsumerLimit(idleConsumerLimit);
+        }        
         if (maxConcurrentConsumers > 0) {
             if (maxConcurrentConsumers < concurrentConsumers) {
                 throw new IllegalArgumentException("Property maxConcurrentConsumers: " + maxConcurrentConsumers

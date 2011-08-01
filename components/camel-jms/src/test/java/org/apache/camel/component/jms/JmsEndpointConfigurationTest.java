@@ -173,6 +173,13 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     }
 
     @Test
+    public void testIdleConsumerLimit() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?idleConsumerLimit=51");
+        assertEquals(51, endpoint.getIdleConsumerLimit());
+        assertEquals(true, endpoint.isAutoStartup());
+    }
+    
+    @Test
     public void testLazyCreateTransactionManager() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?lazyCreateTransactionManager=true");
         assertEquals(true, endpoint.getConfiguration().isLazyCreateTransactionManager());
@@ -204,6 +211,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("jms://queue:Foo", endpoint.getEndpointUri());
         assertNull(endpoint.getExceptionListener());
         assertEquals(1, endpoint.getIdleTaskExecutionLimit());
+        assertEquals(1, endpoint.getIdleConsumerLimit());
         assertEquals(null, endpoint.getJmsMessageType());
         assertNull(endpoint.getJmsOperations());
         assertNotNull(endpoint.getListenerConnectionFactory());
@@ -305,6 +313,9 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         endpoint.setIdleTaskExecutionLimit(5);
         assertEquals(5, endpoint.getIdleTaskExecutionLimit());
 
+        endpoint.setIdleConsumerLimit(5);
+        assertEquals(5, endpoint.getIdleConsumerLimit());
+        
         endpoint.setMaxConcurrentConsumers(4);
         assertEquals(4, endpoint.getMaxConcurrentConsumers());
 

@@ -47,6 +47,7 @@ public class JmsComponentTest extends CamelTestSupport {
         assertEquals(true, endpoint.isDeliveryPersistent());
         assertEquals(true, endpoint.isExplicitQosEnabled());
         assertEquals(20, endpoint.getIdleTaskExecutionLimit());
+        assertEquals(21, endpoint.getIdleConsumerLimit());        
         assertEquals(5, endpoint.getMaxConcurrentConsumers());
         assertEquals(90, endpoint.getMaxMessagesPerTask());
         assertEquals(3, endpoint.getPriority());
@@ -73,6 +74,7 @@ public class JmsComponentTest extends CamelTestSupport {
         comp.setDeliveryPersistent(true);
         comp.setExplicitQosEnabled(true);
         comp.setIdleTaskExecutionLimit(20);
+        comp.setIdleConsumerLimit(21);
         comp.setMaxConcurrentConsumers(5);
         comp.setMaxMessagesPerTask(90);
         comp.setPriority(3);
