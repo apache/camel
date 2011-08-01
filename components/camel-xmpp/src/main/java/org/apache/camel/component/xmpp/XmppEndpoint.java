@@ -121,7 +121,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return true;
     }
 
-    @SuppressWarnings("deprecation")
     public XMPPConnection createConnection() throws XMPPException {
 
         if (connection != null) {
