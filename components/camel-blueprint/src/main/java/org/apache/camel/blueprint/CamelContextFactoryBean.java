@@ -261,6 +261,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @Override
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
+        // setup the application context classloader with the bundle delegating classloader
+        ClassLoader cl = new BundleDelegatingClassLoader(((ExtendedBlueprintContainer) blueprintContainer).getBundleContext().getBundle());
+        LOG.debug("Set the application context classloader to: {}", cl);
+        getContext().setApplicationContextClassLoader(cl);
         getContext().getManagementStrategy().addEventNotifier(new OsgiCamelContextPublisher(bundleContext));
         try {
             getClass().getClassLoader().loadClass("org.osgi.service.event.EventAdmin");

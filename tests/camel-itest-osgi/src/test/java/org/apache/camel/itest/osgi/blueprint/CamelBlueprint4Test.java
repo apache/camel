@@ -31,6 +31,7 @@ import org.osgi.service.blueprint.container.BlueprintContainer;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
 /**
  * @version 
@@ -89,6 +90,20 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
         template.stop();
     }
 
+    @Test
+    public void testGetApplicationContextClassloader() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle22").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle22)", 10000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle22)", 10000);
+
+        // test the application context classloader
+        assertNotNull("The application context classloader should not be null", ctx.getApplicationContextClassLoader());
+        ClassLoader cl = ctx.getApplicationContextClassLoader();
+        assertNotNull("It should load the TestRouteBuilder class", cl.getResource("OSGI-INF/blueprint/test.xml"));
+        assertNotNull("It should load the TestRouteBuilder class", cl.loadClass("org.apache.camel.itest.osgi.blueprint.TestRouteBuilder"));
+
+    }
+
     @Configuration
     public static Option[] configure() throws Exception {
 
@@ -111,6 +126,12 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-21.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle21")
                         .build()).noStart(),
+
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-13.xml"))
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle22")
+                        .add(TestRouteBuilder.class)
+                        .build(withBnd())).noStart(),
 
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
