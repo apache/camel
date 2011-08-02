@@ -37,6 +37,7 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.util.ErrorHandler;
 
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
@@ -206,6 +207,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setExceptionListener(exceptionListener);
     }
 
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        getConfiguration().setErrorHandler(errorHandler);
+    }    
+    
     public void setExplicitQosEnabled(boolean explicitQosEnabled) {
         getConfiguration().setExplicitQosEnabled(explicitQosEnabled);
     }

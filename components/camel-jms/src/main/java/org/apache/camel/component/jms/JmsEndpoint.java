@@ -60,6 +60,7 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.util.ErrorHandler;
 
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
@@ -513,6 +514,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getExceptionListener();
     }
 
+    public ErrorHandler getErrorHandler() {
+        return getConfiguration().getErrorHandler();
+    }
+    
     @ManagedAttribute
     public int getIdleTaskExecutionLimit() {
         return getConfiguration().getIdleTaskExecutionLimit();
@@ -770,6 +775,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setExceptionListener(exceptionListener);
     }
 
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        getConfiguration().setErrorHandler(errorHandler);
+    }
+    
     @ManagedAttribute
     public void setExplicitQosEnabled(boolean explicitQosEnabled) {
         getConfiguration().setExplicitQosEnabled(explicitQosEnabled);
