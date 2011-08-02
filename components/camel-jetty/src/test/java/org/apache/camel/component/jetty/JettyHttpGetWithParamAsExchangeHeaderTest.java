@@ -44,10 +44,10 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
     @Test
     public void testHttpGetWithUTF8EncodedParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedHeaderReceived("message", "Keine gültige GPS-Daten!");
+        mock.expectedHeaderReceived("message", "Keine gltige GPS-Daten!");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
-        template.requestBody(serverUri + "?message=Keine%20g%C3%BCltige%20GPS-Daten!", null, Object.class);
+        template.requestBody(serverUri + "?message=Keine%20gltige%20GPS-Daten!", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -56,10 +56,10 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
     @Ignore
     public void testHttpGetWithISO8859EncodedParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedHeaderReceived("message", "Keine gültige GPS-Daten!");
+        mock.expectedHeaderReceived("message", "Keine gltige GPS-Daten!");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
-        template.requestBody(serverUri + "?message=Keine+g%FCltige+GPS-Daten%21", null, Object.class);
+        template.requestBody(serverUri + "?message=Keine+gltige+GPS-Daten%21", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
