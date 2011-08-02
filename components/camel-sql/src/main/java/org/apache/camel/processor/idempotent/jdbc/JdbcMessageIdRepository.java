@@ -17,16 +17,15 @@
 package org.apache.camel.processor.idempotent.jdbc;
 
 import java.sql.Timestamp;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedOperation;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -35,7 +34,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * @version 
  */
-@ManagedResource("JdbcMessageIdRepository")
+@ManagedResource(description = "JDBC based message id repository")
 public class JdbcMessageIdRepository extends ServiceSupport implements IdempotentRepository<String> {
     
     protected static final String QUERY_STRING = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";

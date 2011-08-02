@@ -23,12 +23,12 @@ import javax.jms.Queue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedOperation;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.MessageHelper;
 import org.springframework.jms.core.JmsOperations;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * An endpoint for a JMS Queue which is also browsable
