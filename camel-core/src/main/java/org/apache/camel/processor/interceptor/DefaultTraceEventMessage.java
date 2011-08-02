@@ -171,10 +171,6 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
         return outHeaders;
     }
 
-    public void setOutHeaders(String outHeaders) {
-        this.outHeaders = outHeaders;
-    }
-
     public String getCausedByException() {
         return causedByException;
     }
@@ -233,6 +229,10 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
 
     public void setOutBodyType(String outBodyType) {
         this.outBodyType = outBodyType;
+    }
+
+    public void setOutHeaders(String outHeaders) {
+        this.outHeaders = outHeaders;
     }
 
     public void setCausedByException(String causedByException) {

@@ -58,6 +58,8 @@ public interface TraceEventMessage {
 
     String getExchangeId();
 
+    String getRouteId();
+
     /**
      * Gets the exchange id without the leading hostname
      */
@@ -76,6 +78,8 @@ public interface TraceEventMessage {
     String getOutBody();
 
     String getOutBodyType();
+
+    String getOutHeaders();
 
     /**
      * Gets the caused by exception (ie {@link org.apache.camel.Exchange#getException() Exchange#getException()}.
