@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
+import org.apache.camel.management.ManagedOperation;
+import org.apache.camel.management.ManagedResource;
 
 @ManagedResource(description = "Managed Suspendable Route")
 public class ManagedSuspendableRoute extends ManagedRoute {

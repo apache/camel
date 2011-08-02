@@ -17,10 +17,10 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Throttler;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 import static org.apache.camel.builder.Builder.constant;
 

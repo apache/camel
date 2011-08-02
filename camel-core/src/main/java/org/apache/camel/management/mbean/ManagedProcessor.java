@@ -22,11 +22,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedOperation;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.util.ServiceHelper;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * @version 

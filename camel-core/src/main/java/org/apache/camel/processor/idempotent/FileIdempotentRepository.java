@@ -24,16 +24,15 @@ import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedOperation;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * A file based implementation of {@link org.apache.camel.spi.IdempotentRepository}.
@@ -43,7 +42,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  *
  * @version 
  */
-@ManagedResource("FileIdempotentRepository")
+@ManagedResource(description = "File based idempotent repository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
     private static final transient Logger LOG = LoggerFactory.getLogger(FileIdempotentRepository.class);
     private static final String STORE_DELIMITER = "\n";

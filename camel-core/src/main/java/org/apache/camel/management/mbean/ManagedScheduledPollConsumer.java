@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedResource;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedResource;
 
 /**
  * @version 

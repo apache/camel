@@ -19,12 +19,12 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * @version 

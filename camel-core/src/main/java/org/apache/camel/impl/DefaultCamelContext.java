@@ -2326,15 +2326,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 startServices(answer);
                 // prefer to have it at first strategy
                 lifecycleStrategies.add(0, new DefaultManagementLifecycleStrategy(this));
-            } catch (NoClassDefFoundError e) {
-                answer = null;
-
-                // if we can't instantiate the JMX enabled strategy then fallback to default
-                // could be because of missing .jars on the classpath
-                log.warn("Cannot find needed classes for JMX lifecycle strategy."
-                        + " Needed class is in spring-context.jar using Spring 2.5 or newer"
-                        + " (spring-jmx.jar using Spring 2.0.x)."
-                        + " NoClassDefFoundError: " + e.getMessage());
             } catch (Exception e) {
                 answer = null;
                 log.warn("Cannot create JMX lifecycle strategy. Fallback to using DefaultManagementStrategy (non JMX).", e);

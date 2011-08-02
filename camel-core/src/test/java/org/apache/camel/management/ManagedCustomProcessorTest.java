@@ -23,8 +23,6 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * @version 
@@ -67,7 +65,7 @@ public class ManagedCustomProcessorTest extends ManagementTestSupport {
     }
 
     // START SNIPPET: e1
-    @ManagedResource("My Managed Component")
+    @ManagedResource(description = "My Managed Component")
     public static class MyCustomProcessor implements Processor {
         private String foo = "hey";
 

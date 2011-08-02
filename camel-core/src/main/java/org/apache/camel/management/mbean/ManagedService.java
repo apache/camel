@@ -22,10 +22,10 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedOperation;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.spi.ManagementStrategy;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "Managed Service")
 public class ManagedService implements ManagedInstance {

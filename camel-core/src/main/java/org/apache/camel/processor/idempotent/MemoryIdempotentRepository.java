@@ -19,11 +19,11 @@ package org.apache.camel.processor.idempotent;
 import java.util.Map;
 
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedOperation;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.LRUCache;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * A memory based implementation of {@link org.apache.camel.spi.IdempotentRepository}. 
@@ -33,7 +33,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
  *
  * @version 
  */
-@ManagedResource("MemoryIdempotentRepository")
+@ManagedResource(description = "Memory based idempotent repository")
 public class MemoryIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
     private Map<String, Object> cache;
     private int cacheSize;

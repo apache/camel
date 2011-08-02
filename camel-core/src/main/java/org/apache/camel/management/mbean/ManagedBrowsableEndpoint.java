@@ -18,10 +18,10 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.management.ManagedOperation;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.MessageHelper;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 /**
  * @version 

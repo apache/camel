@@ -18,8 +18,8 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedResource;
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedResource;
 
 /**
  * @version 

@@ -17,13 +17,14 @@
 package org.apache.camel.processor;
 
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * Unit test the pipeline in concurrent conditions.
@@ -38,9 +39,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(total);
 
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(20);
-        executor.afterPropertiesSet();
+        ExecutorService executor = Executors.newFixedThreadPool(20);
         for (int i = 0; i < 20; i++) {
             final int threadCount = i;
             executor.execute(new Runnable() {

@@ -1019,6 +1019,17 @@ public final class ObjectHelper {
     }
 
     /**
+     * Gets the annotation from the given instance.
+     *
+     * @param instance the instance
+     * @param type  the annotation
+     * @return the annotation, or <tt>null</tt> if the instance does not have the given annotation
+     */
+    public static <A extends java.lang.annotation.Annotation> A getAnnotation(Object instance, Class<A> type) {
+        return instance.getClass().getAnnotation(type);
+    }
+
+    /**
      * Closes the given resource if it is available, logging any closing
      * exceptions to the given log
      *

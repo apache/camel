@@ -16,11 +16,11 @@
  */
 package org.apache.camel.management.mbean;
 
+import org.apache.camel.management.ManagedAttribute;
+import org.apache.camel.management.ManagedOperation;
+import org.apache.camel.management.ManagedResource;
 import org.apache.camel.management.Statistic;
 import org.apache.camel.spi.ManagementStrategy;
-import org.springframework.jmx.export.annotation.ManagedAttribute;
-import org.springframework.jmx.export.annotation.ManagedOperation;
-import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "Managed Counter")
 public abstract class ManagedCounter {

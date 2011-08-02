@@ -29,9 +29,6 @@ import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
-import org.springframework.jmx.export.annotation.ManagedResource;
-import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
 
 /**
  * An assembler to assemble a {@link javax.management.modelmbean.ModelMBean} which can be used
@@ -42,14 +39,10 @@ import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
  */
 public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final MetadataMBeanInfoAssembler assembler;
-
-    // TODO: Introduce Camel JMX annotations and implement logic to assemble from those JMX annotations
-    // TODO: Remove spring logic when no longer needed
+    private final MBeanInfoAssembler assembler;
 
     public DefaultManagementMBeanAssembler() {
-        this.assembler = new MetadataMBeanInfoAssembler();
-        this.assembler.setAttributeSource(new AnnotationJmxAttributeSource());
+        this.assembler = new MBeanInfoAssembler();
     }
 
     public ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException {
