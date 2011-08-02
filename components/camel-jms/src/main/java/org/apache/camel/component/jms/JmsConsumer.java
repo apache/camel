@@ -127,7 +127,7 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
     protected void doStop() throws Exception {
         if (listenerContainer != null) {
             listenerContainer.stop();
-            listenerContainer.destroy();
+            ((JmsEndpoint)getEndpoint()).destroyMessageListenerContainer(listenerContainer);
         }
 
         // null container and listener so they are fully re created if this consumer is restarted
