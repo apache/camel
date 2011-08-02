@@ -16,10 +16,12 @@
  */
 package org.apache.camel.itest.karaf;
 
+import java.net.URL;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.osgi.CamelContextFactory;
+import org.apache.karaf.testing.Helper;
 import org.junit.After;
 import org.junit.Before;
 import org.ops4j.pax.exam.Inject;
@@ -30,11 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertNotNull;
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
+import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
@@ -130,6 +130,20 @@ public abstract class AbstractFeatureTest {
         }
         return sb.toString();
     }
+
+     private static URL getResource(String location) {
+        URL url = null;
+        if (Thread.currentThread().getContextClassLoader() != null) {
+            url = Thread.currentThread().getContextClassLoader().getResource(location);
+        }
+        if (url == null) {
+            url = Helper.class.getResource(location);
+        }
+        if (url == null) {
+            throw new RuntimeException("Unable to find resource " + location);
+        }
+        return url;
+    }
     
     public static UrlReference getCamelKarafFeatureUrl() {
         String type = "xml/features";
@@ -147,27 +161,23 @@ public abstract class AbstractFeatureTest {
     }
 
     public static Option[] configure(String feature) {
-        return configure(feature, true, true);
-    }
+        Option[] options = combine(
+            // Set the karaf environment with some customer configuration
+            combine(
+                Helper.getDefaultConfigOptions(
+                    Helper.getDefaultSystemOptions(),
+                    getResource("/org/apache/camel/itest/karaf/config.properties"),
+                    // this is how you set the default log level when using pax logging (logProfile)
+                    Helper.setLogLevel("WARN")),
+                Helper.getDefaultProvisioningOptions()),
+            // install the spring, http features first
+            scanFeatures(getKarafFeatureUrl(), "spring", "http"),
 
-    public static Option[] configure(String feature, boolean useFelix, boolean useEquinox) {
-        Option[] options = options(
-            profile("log").version("1.6.1"),
-            // this is how you set the default log level when using pax logging (logProfile)
-            org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG"),
-
-            //need to install some karaf features
-            mavenBundle("org.apache.felix", "org.apache.felix.configadmin").versionAsInProject(),
-            mavenBundle("org.apache.servicemix.bundles", "org.apache.servicemix.bundles.jaxp-ri").version("1.4.4_2"),
-            scanFeatures(getKarafFeatureUrl(), "http"),
-
-            // and the camel feature to be tested
+            // using the features to install the camel components
             scanFeatures(getCamelKarafFeatureUrl(),
-                          "camel-spring", "camel-" + feature),
-            workingDirectory("target/paxrunner/"),            
+                "camel-core", "camel-spring", "camel-" + feature),
 
-            useFelix ? felix() : null,
-            useEquinox ? equinox() : null);
+            workingDirectory("target/paxrunner/"));
 
         return options;
     }

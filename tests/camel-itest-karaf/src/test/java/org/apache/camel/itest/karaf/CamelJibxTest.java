@@ -26,7 +26,6 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("Disabled unit jibx bundles is in central maven repo")
 public class CamelJibxTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelJibxTest.class);

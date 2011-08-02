@@ -42,7 +42,7 @@ public class CamelMailTest extends AbstractFeatureTest {
 
     @Configuration
     public static Option[] configure() {
-        return configure(COMPONENT, false, true);
+        return configure(COMPONENT);
     }
 
 }
