@@ -28,6 +28,7 @@ public class TraceInterceptorCustomJpaMessage implements TraceEventMessage {
     protected String previousNode;
     protected String toNode;
     protected String exchangeId;
+    protected String routeId;
     protected String shortExchangeId;
     protected String exchangePattern;
     protected String properties;
@@ -88,6 +89,14 @@ public class TraceInterceptorCustomJpaMessage implements TraceEventMessage {
 
     public void setExchangeId(String exchangeId) {
         this.exchangeId = exchangeId;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public String getShortExchangeId() {
