@@ -48,12 +48,6 @@ public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssemb
     }
 
     public ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException {
-        // try the default first, and if it could assemble the object, then use that as is
-        ModelMBean mbean = super.assemble(mBeanServer, obj, name);
-        if (mbean != null) {
-            return mbean;
-        }
-
         ModelMBeanInfo mbi = null;
 
         // prefer to use the managed instance if it has been annotated with Spring JMX annotations
@@ -69,12 +63,19 @@ public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssemb
         }
 
         if (mbi == null) {
-            // use the default provided mbean which has been annotated with Spring JMX annotations
-            log.trace("Assembling MBeanInfo for: {} from @ManagedResource object: {}", name, obj);
-            mbi = assembler.getMBeanInfo(obj, name.toString());
+            if (ObjectHelper.hasAnnotation(obj.getClass().getAnnotations(), ManagedResource.class)) {
+                // the object has a Spring ManagedResource annotations so assemble the MBeanInfo
+                log.trace("Assembling MBeanInfo for: {} from @ManagedResource object: {}", name, obj);
+                mbi = assembler.getMBeanInfo(obj, name.toString());
+            } else {
+                // fallback and let the default mbean assembler handle this instead
+                return super.assemble(mBeanServer, obj, name);
+            }
         }
 
-        mbean = (RequiredModelMBean) mBeanServer.instantiate(RequiredModelMBean.class.getName());
+        log.trace("Assembled MBeanInfo {}", mbi);
+
+        ModelMBean mbean = (RequiredModelMBean) mBeanServer.instantiate(RequiredModelMBean.class.getName());
         mbean.setModelMBeanInfo(mbi);
 
         try {
