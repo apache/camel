@@ -69,19 +69,6 @@
             <version>1.3</version>
             <scope>test</scope>
         </dependency>
-        <!-- to allow Spring annotations (jmx) to be tested -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <optional>true</optional>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <optional>true</optional>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
