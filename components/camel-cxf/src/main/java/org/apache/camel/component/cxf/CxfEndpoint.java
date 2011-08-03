@@ -120,7 +120,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         = new ModCountCopyOnWriteArrayList<AbstractFeature>();
 
     private List<Handler> handlers;
-    private List<String> schemaLocations = new ArrayList<String>();
+    private List<String> schemaLocations;
     private String transportId;
     private String bindingId;
 
@@ -182,13 +182,19 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         sfb.setOutFaultInterceptors(outFault);
         sfb.setInFaultInterceptors(inFault); 
         sfb.setFeatures(features);
-        sfb.setSchemaLocations(schemaLocations);
+        if (schemaLocations != null) {
+            sfb.setSchemaLocations(schemaLocations);
+        }
         
         if (sfb instanceof JaxWsServerFactoryBean && handlers != null) {
             ((JaxWsServerFactoryBean)sfb).setHandlers(handlers);
         }
-        sfb.setTransportId(transportId);
-        sfb.setBindingId(bindingId);
+        if (transportId != null) {
+            sfb.setTransportId(transportId);
+        }
+        if (bindingId != null) {
+            sfb.setBindingId(bindingId);
+        }
         
         // wsdl url
         if (getWsdlURL() != null) {
@@ -312,9 +318,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         
         if (factoryBean instanceof JaxWsProxyFactoryBean && handlers != null) {
             ((JaxWsProxyFactoryBean)factoryBean).setHandlers(handlers);
-        }        
-        factoryBean.setTransportId(transportId);
-        factoryBean.setBindingId(bindingId);
+        }
+        if (transportId != null) {
+            factoryBean.setTransportId(transportId);
+        }
+        if (bindingId != null) {
+            factoryBean.setBindingId(bindingId);
+        }
 
         // address
         factoryBean.setAddress(getAddress());
