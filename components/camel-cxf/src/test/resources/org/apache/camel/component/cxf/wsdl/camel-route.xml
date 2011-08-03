@@ -29,19 +29,6 @@
 			<to uri="mock:end" />
 		</route>
 
-		<!-- test route -->
-		<route>
-			<from uri="seda:camelWsdl" />
-			<to uri="http://localhost:9000/camel-order/services?wsdl" />
-			<log message="end route camelWsdl"/>
-		</route>
-		
-		<route>
-			<from uri="seda:cxfWsdl" />
-			<to uri="http://localhost:9000/cxf-order/services?wsdl" />
-			<log message="endroute cxf wsdl"/>
-		</route>
-
 	</camelContext>
 
 

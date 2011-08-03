@@ -24,12 +24,13 @@
          http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
 	<!-- The camel CXF endpoint -->
-	<cxf:cxfEndpoint id="orderEndpoint" address="http://localhost:9000/camel-order/" serviceClass="org.apache.camel.component.cxf.wsdl.OrderEndpoint" />
+	<cxf:cxfEndpoint id="orderEndpoint" address="http://localhost:${CXFTestSupport.port1}/camel-order/" serviceClass="org.apache.camel.component.cxf.wsdl.OrderEndpoint" />
 
 	<!-- JAX-WS endpoint of the same class -->
-	<jaxws:endpoint id="orderEndpointCXF" address="http://localhost:9000/cxf-order/" implementor="org.apache.camel.component.cxf.wsdl.OrderEndpoint" />
+	<jaxws:endpoint id="orderEndpointCXF" address="http://localhost:${CXFTestSupport.port1}/cxf-order/" implementor="org.apache.camel.component.cxf.wsdl.OrderEndpoint" />
 	
 
 </beans>
