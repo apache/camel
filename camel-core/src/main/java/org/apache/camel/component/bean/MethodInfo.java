@@ -369,6 +369,13 @@ public class MethodInfo {
                     it = ObjectHelper.createIterator(methodParameters);
                 }
 
+                // remove headers as they should not be propagated
+                // we need to do this before the expressions gets evaluated as it may contain
+                // a @Bean expression which would by mistake read these headers. So the headers
+                // must be removed at this point of time
+                exchange.getIn().removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
+                exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
+
                 for (int i = 0; i < size; i++) {
                     // grab the parameter value for the given index
                     Object parameterValue = it != null && it.hasNext() ? it.next() : null;
