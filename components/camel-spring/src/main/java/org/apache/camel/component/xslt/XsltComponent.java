@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Map;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
@@ -31,6 +33,7 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 
 /**
  * An <a href="http://camel.apache.org/xslt.html">XSLT Component</a>
@@ -149,7 +152,23 @@ public class XsltComponent extends ResourceBasedComponent {
     private void loadResource(XsltBuilder xslt, Resource resource) throws TransformerConfigurationException {
         log.trace("{} loading schema resource: {}", this, resource);
         try {
-            xslt.setTransformerInputStream(resource.getInputStream());
+            if (resource instanceof UrlResource) {
+                // prefer to use file when a file based url
+                File file = resource.getFile();
+                if (file != null) {
+                    // check if the file exists and report a better error as the XSLT
+                    // will just say it cannot compile the stylesheet file
+                    if (!file.exists()) {
+                        throw new FileNotFoundException("File: " + file + " not found.");
+                    }
+                    xslt.setTransformerFile(file);
+                } else {
+                    xslt.setTransformerURL(resource.getURL());
+                }
+            } else {
+                // fallback and use input stream
+                xslt.setTransformerInputStream(resource.getInputStream());
+            }
         } catch (Exception e) {
             // include information about the resource in the caused exception, so its easier for
             // end users to know which resource failed
