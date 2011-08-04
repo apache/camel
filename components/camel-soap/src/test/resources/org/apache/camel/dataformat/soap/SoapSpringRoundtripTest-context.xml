@@ -21,6 +21,12 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+    
+    <!-- Defining a ServiceInterfaceStrategy for retrieving the element name when marshalling -->
+    <bean id="myNameStrategy" class="org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy">
+    	<constructor-arg value="com.example.customerservice.CustomerService"/>
+		<constructor-arg value="true"/>
+    </bean>
 
     <!-- START SNIPPET: e1 -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
@@ -41,3 +47,4 @@
     <!-- END SNIPPET: e1 -->
 
 </beans>
+
