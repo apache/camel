@@ -48,10 +48,12 @@ public class TestEndpoint extends MockEndpoint {
     @Override
     protected void doStart() throws Exception {
         LOG.debug("Consuming expected messages from: {}", expectedMessageEndpoint);
+
         final List<Object> expectedBodies = new ArrayList<Object>();
         EndpointHelper.pollEndpoint(expectedMessageEndpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Object body = getInBody(exchange);
+                LOG.trace("Received message body {}", body);
                 expectedBodies.add(body);
             }
         }, timeout);

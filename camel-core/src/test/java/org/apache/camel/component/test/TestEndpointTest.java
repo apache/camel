@@ -16,23 +16,35 @@
  */
 package org.apache.camel.component.test;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
+ *
  */
-@ContextConfiguration
-public class TestEndpointTest extends AbstractJUnit38SpringContextTests {
-
-    @Autowired
-    protected CamelContext camelContext;
+public class TestEndpointTest extends ContextTestSupport {
 
     public void testMocksAreValid() throws Exception {
-        assertNotNull(camelContext);
-        MockEndpoint.assertIsSatisfied(camelContext);
+        // perform the test, and send in 2 messages we expect
+        Thread.sleep(500);
+        template.sendBody("seda:foo", "Hello World");
+        template.sendBody("seda:foo", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // send 2 bodies to the seda:foo which is the messages we expect
+                template.sendBody("seda:foo", "Hello World");
+                template.sendBody("seda:foo", "Bye World");
+
+                from("seda:foo")
+                    .to("test:seda:foo");
+            }
+        };
     }
 }
