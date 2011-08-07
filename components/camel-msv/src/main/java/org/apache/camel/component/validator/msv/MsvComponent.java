@@ -17,12 +17,10 @@
 package org.apache.camel.component.validator.msv;
 
 import java.util.Map;
-
 import javax.xml.XMLConstants;
 
-import org.apache.camel.component.validator.SpringValidator;
 import org.apache.camel.component.validator.ValidatorComponent;
-
+import org.apache.camel.processor.validation.ValidatingProcessor;
 import org.iso_relax.verifier.VerifierConfigurationException;
 import org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl;
 
@@ -46,7 +44,8 @@ public class MsvComponent extends ValidatorComponent {
         this.schemaFactory = schemaFactory;
     }
 
-    protected void configureValidator(SpringValidator validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    @Override
+    protected void configureValidator(ValidatingProcessor validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {
         validator.setSchemaLanguage(XMLConstants.RELAXNG_NS_URI);
         validator.setSchemaFactory(getSchemaFactory());
         // must use Dom for Msv to work

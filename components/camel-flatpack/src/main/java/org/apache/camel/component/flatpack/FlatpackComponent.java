@@ -19,9 +19,7 @@ package org.apache.camel.component.flatpack;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.ResourceBasedComponent;
-import org.apache.camel.util.ObjectHelper;
-import org.springframework.core.io.Resource;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * A <a href="http://flatpack.sourceforge.net/">Flatpack Component</a>
@@ -29,7 +27,7 @@ import org.springframework.core.io.Resource;
  *
  * @version 
  */
-public class FlatpackComponent extends ResourceBasedComponent {
+public class FlatpackComponent extends DefaultComponent {
 
     public static final String HEADER_ID = "header";
     public static final String TRAILER_ID = "trailer";
@@ -46,20 +44,13 @@ public class FlatpackComponent extends ResourceBasedComponent {
             // to differentiate different named delimited endpoints
             remaining = "";
         }
-        Resource resource = null;
-        if (fixed) {
-            resource = resolveMandatoryResource(remaining);
-        } else {
-            if (ObjectHelper.isNotEmpty(remaining)) {
-                resource = getResourceLoader().getResource(remaining);
-            }
-        }
-        log.debug("{} using flatpack map resource: {}", this, resource);
+
+        String resourceUri = remaining;
         FixedLengthEndpoint answer;
         if (fixed) {
-            answer = new FixedLengthEndpoint(uri, resource);
+            answer = new FixedLengthEndpoint(uri, this, resourceUri);
         } else {
-            answer = new DelimitedEndpoint(uri, resource);
+            answer = new DelimitedEndpoint(uri, this, resourceUri);
         }
         answer.setCamelContext(getCamelContext());
         setProperties(answer, parameters);

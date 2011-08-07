@@ -273,14 +273,14 @@
     <bundle>mvn:org.apache.camel/camel-exec/${pom.version}</bundle>
   </feature>
   <feature name='camel-flatpack' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <feature version='${pom.version}'>camel-spring</feature>
+    <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jexcelapi/${jexcelapi-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.flatpack/${flatpack-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-flatpack/${pom.version}</bundle>
   </feature>
   <feature name='camel-freemarker' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <feature version='${pom.version}'>camel-spring</feature>
+    <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.freemarker/${freemarker-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-freemarker/${pom.version}</bundle>
   </feature>
@@ -355,7 +355,7 @@
     <bundle>mvn:org.apache.camel/camel-hl7/${pom.version}</bundle>
   </feature>
   <feature name='camel-ibatis' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <feature version='${pom.version}'>camel-spring</feature>
+    <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool/${commons-pool-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/${commons-dbcp-bundle-version}</bundle>
@@ -391,7 +391,7 @@
     <bundle>mvn:org.apache.camel/camel-jcr/${pom.version}</bundle>
   </feature>
   <feature name='camel-jing' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <feature version='${pom.version}'>camel-spring</feature>
+    <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.isorelax/${isorelax-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jing/${jing-bundle-version}</bundle>
@@ -479,7 +479,7 @@
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.isorelax/${isorelax-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-msv/${pom.version}</bundle>
-    <feature version='${pom.version}'>camel-spring</feature>
+    <feature version='${pom.version}'>camel-core</feature>
   </feature>
   <feature name='camel-mvel' version='${pom.version}' resolver='(obr)' start-level='50'>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mvel/${mvel-bundle-version}</bundle>
@@ -563,7 +563,7 @@
     <bundle>mvn:org.apache.camel/camel-rss/${pom.version}</bundle>
   </feature>
   <feature name='camel-saxon' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <feature version='${pom.version}'>camel-spring</feature>
+    <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saxon/${saxon-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-saxon/${pom.version}</bundle>
   </feature>
@@ -649,7 +649,7 @@
     <bundle>mvn:org.apache.camel/camel-stream/${pom.version}</bundle>
   </feature>
   <feature name='camel-string-template' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <feature version='${pom.version}'>camel-spring</feature>
+    <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/${antlr-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.stringtemplate/${stringtemplate-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-stringtemplate/${pom.version}</bundle>
@@ -673,7 +673,7 @@
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.werken-xpath/${werken-xpath-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/${oro-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/${velocity-bundle-version}</bundle>
-    <feature version='${pom.version}'>camel-spring</feature>
+    <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-velocity/${pom.version}</bundle>
   </feature>
   <feature name='camel-xmlbeans' version='${pom.version}' resolver='(obr)' start-level='50'>

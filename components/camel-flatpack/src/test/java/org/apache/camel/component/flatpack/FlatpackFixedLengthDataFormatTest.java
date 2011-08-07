@@ -28,7 +28,6 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.CastUtils;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 
 /**
  * Unit test for fixed length DataFormat.
@@ -81,7 +80,7 @@ public class FlatpackFixedLengthDataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 FlatpackDataFormat df = new FlatpackDataFormat();
-                df.setDefinition(new ClassPathResource("PEOPLE-FixedLength.pzmap.xml"));
+                df.setDefinition("PEOPLE-FixedLength.pzmap.xml");
                 df.setFixed(true);
                 df.setIgnoreFirstRecord(false);
 

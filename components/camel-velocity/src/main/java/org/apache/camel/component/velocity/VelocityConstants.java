@@ -21,8 +21,6 @@ package org.apache.camel.component.velocity;
  */
 public final class VelocityConstants {
 
-    public static final String VELOCITY_RESOURCE = "CamelVelocityResource";
-
     public static final String VELOCITY_RESOURCE_URI = "CamelVelocityResourceUri";
 
     public static final String VELOCITY_TEMPLATE = "CamelVelocityTemplate";

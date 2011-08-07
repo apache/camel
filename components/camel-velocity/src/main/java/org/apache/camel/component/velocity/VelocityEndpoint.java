@@ -30,13 +30,14 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceBasedEndpoint;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.runtime.log.CommonsLogLogChute;
-import org.springframework.core.io.Resource;
 
 /**
  * @version 
@@ -51,7 +52,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
     }
 
     public VelocityEndpoint(String uri, VelocityComponent component, String resourceUri) {
-        super(uri, component, resourceUri, null);
+        super(uri, component, resourceUri);
     }
 
     @Override
@@ -73,12 +74,16 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         if (velocityEngine == null) {
             velocityEngine = new VelocityEngine();
             Properties properties = new Properties();
+
             // load the velocity properties from property file
             if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
-                Resource resource = getResourceLoader().getResource(getPropertiesFile());
-                InputStream reader = resource.getInputStream();
-                properties.load(reader);
-                log.info("Loaded the velocity configuration file " + getPropertiesFile());
+                InputStream reader = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), getPropertiesFile());
+                try {
+                    properties.load(reader);
+                    log.info("Loaded the velocity configuration file " + getPropertiesFile());
+                } finally {
+                    IOHelper.close(reader, getPropertiesFile(), log);
+                }
             }
 
             // set the class resolver as a property so we can access it from CamelVelocityClasspathResourceLoader
@@ -153,7 +158,6 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             return;
         }
 
-        Resource resource;
         Reader reader;
         String content = exchange.getIn().getHeader(VelocityConstants.VELOCITY_TEMPLATE, String.class);
         if (content != null) {
@@ -165,11 +169,8 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
             // remove the header to avoid it being propagated in the routing
             exchange.getIn().removeHeader(VelocityConstants.VELOCITY_TEMPLATE);
         } else {
-            // use resource from endpoint configuration
-            resource = getResource();
-            ObjectHelper.notNull(resource, "resource");
             if (log.isDebugEnabled()) {
-                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{resource, path, getEndpointUri()});
+                log.debug("Velocity content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{getResourceUri(), path, getEndpointUri()});
             }
             reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());
         }

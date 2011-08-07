@@ -22,10 +22,10 @@ import java.util.Map.Entry;
 
 import org.antlr.stringtemplate.AutoIndentWriter;
 import org.antlr.stringtemplate.StringTemplate;
+import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.component.ResourceBasedEndpoint;
 import org.apache.camel.util.ExchangeHelper;
 
@@ -34,12 +34,11 @@ import org.apache.camel.util.ExchangeHelper;
  */
 public class StringTemplateEndpoint extends ResourceBasedEndpoint {
 
-    public StringTemplateEndpoint(String uri, StringTemplateComponent component, String resourceUri, Map parameters) {
-        super(uri, component, resourceUri, null);
+    public StringTemplateEndpoint() {
     }
 
-    public StringTemplateEndpoint(String endpointUri, Processor processor, String resourceUri) {
-        super(endpointUri, processor, resourceUri);
+    public StringTemplateEndpoint(String endpointUri, Component component, String resourceUri) {
+        super(endpointUri, component, resourceUri);
     }
 
     @Override
@@ -68,7 +67,7 @@ public class StringTemplateEndpoint extends ResourceBasedEndpoint {
         // now lets output the results to the exchange
         Message out = exchange.getOut();
         out.setBody(buffer.toString());
-        out.setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE, getResource());
+        out.setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI, getResourceUri());
         Map<String, Object> headers = (Map<String, Object>) variableMap.get("headers");
         for (Entry<String, Object> entry : headers.entrySet()) {
             out.setHeader(entry.getKey(), entry.getValue());

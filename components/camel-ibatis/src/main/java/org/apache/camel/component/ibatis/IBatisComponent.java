@@ -18,13 +18,12 @@ package org.apache.camel.component.ibatis;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Map;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
-import org.apache.camel.component.ResourceBasedComponent;
-import org.springframework.core.io.Resource;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * An <a href="http://camel.apache.org/ibatis.html>iBatis Component</a>
@@ -58,7 +57,7 @@ import org.springframework.core.io.Resource;
  * @see IBatisProducer
  * @see IBatisConsumer
  */
-public class IBatisComponent extends ResourceBasedComponent {
+public class IBatisComponent extends DefaultComponent {
     private static final String DEFAULT_CONFIG_URI = "classpath:SqlMapConfig.xml";
     private SqlMapClient sqlMapClient;
     private String sqlMapConfig = DEFAULT_CONFIG_URI;
@@ -82,9 +81,8 @@ public class IBatisComponent extends ResourceBasedComponent {
     }
 
     private SqlMapClient createSqlMapClient() throws IOException {
-        Resource resource = resolveMandatoryResource(sqlMapConfig);
-        InputStream is = resource.getInputStream();
-        return SqlMapClientBuilder.buildSqlMapClient(new InputStreamReader(is));
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), sqlMapConfig);
+        return SqlMapClientBuilder.buildSqlMapClient(is);
     }
 
     // Properties

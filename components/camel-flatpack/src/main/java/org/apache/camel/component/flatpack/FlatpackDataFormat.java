@@ -37,10 +37,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.jdom.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
 
 /**
  * Flatpack DataFormat.
@@ -60,8 +60,8 @@ public class FlatpackDataFormat implements DataFormat {
     private char delimiter = ',';
     private char textQualifier = '"';
     private boolean ignoreFirstRecord = true;
-    private Resource definition;
     private boolean fixed;
+    private String definition;
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -110,6 +110,14 @@ public class FlatpackDataFormat implements DataFormat {
     // Properties
     //-------------------------------------------------------------------------
 
+    public String getDefinition() {
+        return definition;
+    }
+
+    public void setDefinition(String definition) {
+        this.definition = definition;
+    }
+
     public boolean isFixed() {
         return fixed;
     }
@@ -142,14 +150,6 @@ public class FlatpackDataFormat implements DataFormat {
         this.textQualifier = textQualifier;
     }
 
-    public Resource getDefinition() {
-        return definition;
-    }
-
-    public void setDefinition(Resource definition) {
-        this.definition = definition;
-    }
-
     public ParserFactory getParserFactory() {
         return parserFactory;
     }
@@ -163,39 +163,41 @@ public class FlatpackDataFormat implements DataFormat {
 
     protected Parser createParser(Exchange exchange, Reader bodyReader) throws IOException {
         if (isFixed()) {
-            Resource resource = getDefinition();
-            ObjectHelper.notNull(resource, "resource");
-            return getParserFactory().newFixedLengthParser(new InputStreamReader(resource.getInputStream(), IOConverter.getCharsetName(exchange)), bodyReader);
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), getDefinition());
+            InputStreamReader reader = new InputStreamReader(is, IOConverter.getCharsetName(exchange));
+            return getParserFactory().newFixedLengthParser(reader, bodyReader);
         } else {
-            Resource resource = getDefinition();
-            if (resource == null) {
+            if (ObjectHelper.isEmpty(getDefinition())) {
                 return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
             } else {
-                return getParserFactory().newDelimitedParser(new InputStreamReader(resource.getInputStream(), IOConverter.getCharsetName(exchange)), 
-                                                             bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), getDefinition());
+                InputStreamReader reader = new InputStreamReader(is, IOConverter.getCharsetName(exchange));
+                return getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
             }
         }
     }
 
     private Writer createWriter(Exchange exchange, Map<String, Object> firstRow, OutputStream stream) throws JDOMException, IOException {
         if (isFixed()) {
-            Resource resource = getDefinition();
-            ObjectHelper.notNull(resource, "resource");
-            FixedWriterFactory factory = new FixedWriterFactory(new InputStreamReader(resource.getInputStream(), IOConverter.getCharsetName(exchange)));
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), getDefinition());
+            InputStreamReader reader = new InputStreamReader(is, IOConverter.getCharsetName(exchange));
+            FixedWriterFactory factory = new FixedWriterFactory(reader);
             return factory.createWriter(new OutputStreamWriter(stream, IOConverter.getCharsetName(exchange)));
         } else {
-            Resource resource = getDefinition();
-            if (resource == null) {
+            if (getDefinition() == null) {
                 DelimiterWriterFactory factory = new DelimiterWriterFactory(delimiter, textQualifier);
-                // add coulmns from the keys in the data map as the columns must be known
+                // add columns from the keys in the data map as the columns must be known
                 for (String key : firstRow.keySet()) {
                     factory.addColumnTitle(key);
                 }
                 return factory.createWriter(new OutputStreamWriter(stream, IOConverter.getCharsetName(exchange)));
             } else {
-                DelimiterWriterFactory factory = new DelimiterWriterFactory(new InputStreamReader(resource.getInputStream(), IOConverter.getCharsetName(exchange)), delimiter, textQualifier);
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), getDefinition());
+                InputStreamReader reader = new InputStreamReader(is, IOConverter.getCharsetName(exchange));
+                DelimiterWriterFactory factory = new DelimiterWriterFactory(reader, delimiter, textQualifier);
                 return factory.createWriter(new OutputStreamWriter(stream, IOConverter.getCharsetName(exchange)));
             }
         }
     }
+
 }

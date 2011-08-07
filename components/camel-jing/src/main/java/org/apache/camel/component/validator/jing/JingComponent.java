@@ -19,9 +19,8 @@ package org.apache.camel.component.validator.jing;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.ResourceBasedComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.springframework.core.io.Resource;
 
 /**
  * A component for validating XML payloads using the
@@ -29,12 +28,11 @@ import org.springframework.core.io.Resource;
  *
  * @version 
  */
-public class JingComponent extends ResourceBasedComponent {
+public class JingComponent extends DefaultComponent {
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        JingValidator validator = new JingValidator();
-        Resource resource = resolveMandatoryResource(remaining);
-        validator.setSchemaResource(resource);
-        log.debug("{} using schema resource: {}", this, resource);
+        JingValidator validator = new JingValidator(getCamelContext());
+        validator.setResourceUri(remaining);
         configureValidator(validator, uri, remaining, parameters);
         return new ProcessorEndpoint(uri, this, validator);
     }

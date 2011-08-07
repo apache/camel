@@ -17,6 +17,7 @@
 package org.apache.camel.component.flatpack;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
@@ -24,6 +25,7 @@ import net.sf.flatpack.DataSet;
 import net.sf.flatpack.DefaultParserFactory;
 import net.sf.flatpack.Parser;
 import net.sf.flatpack.ParserFactory;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
@@ -35,8 +37,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.springframework.core.io.Resource;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * A <a href="http://flatpack.sourceforge.net/">Flatpack Endpoint</a>
@@ -45,14 +46,17 @@ import org.springframework.core.io.Resource;
  * @version 
  */
 public class FixedLengthEndpoint extends DefaultPollingEndpoint {
-    private final Resource resource;
+    protected String definition;
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();
     private boolean splitRows = true;
 
-    public FixedLengthEndpoint(String uri, Resource resource) {
-        super(uri);
-        this.resource = resource;
+    public FixedLengthEndpoint() {
+    }
+
+    public FixedLengthEndpoint(String endpointUri, Component component, String definition) {
+        super(endpointUri, component);
+        this.definition = definition;
     }
 
     public boolean isSingleton() {
@@ -81,21 +85,21 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
     }
 
     public Parser createParser(Exchange exchange) throws InvalidPayloadException, IOException {
-        Resource resource = getResource();
-        ObjectHelper.notNull(resource, "resource");
         Reader bodyReader = ExchangeHelper.getMandatoryInBody(exchange, Reader.class);
-        return createParser(resource, bodyReader);
+        return createParser(getDefinition(), bodyReader);
     }
 
-    protected Parser createParser(Resource resource, Reader bodyReader) throws IOException {
-        return getParserFactory().newFixedLengthParser(new InputStreamReader(resource.getInputStream()), bodyReader);
+    protected Parser createParser(String resourceUri, Reader bodyReader) throws IOException {
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
+        InputStreamReader reader = new InputStreamReader(is);
+        return getParserFactory().newFixedLengthParser(reader, bodyReader);
     }
 
     // Properties
     //-------------------------------------------------------------------------
 
-    public Resource getResource() {
-        return resource;
+    public String getDefinition() {
+        return definition;
     }
 
     public ParserFactory getParserFactory() {

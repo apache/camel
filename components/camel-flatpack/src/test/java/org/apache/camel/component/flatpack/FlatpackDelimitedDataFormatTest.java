@@ -28,7 +28,6 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.CastUtils;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 
 /**
  * Unit test for delimited DataFormat.
@@ -108,7 +107,7 @@ public class FlatpackDelimitedDataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 FlatpackDataFormat df = new FlatpackDataFormat();
-                df.setDefinition(new ClassPathResource("INVENTORY-Delimited.pzmap.xml"));
+                df.setDefinition("INVENTORY-Delimited.pzmap.xml");
 
                 from("direct:unmarshal").unmarshal(df).to("mock:unmarshal");
 

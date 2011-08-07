@@ -17,14 +17,18 @@
 package org.apache.camel.component.flatpack;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
 import net.sf.flatpack.Parser;
+import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.ExchangeHelper;
-import org.springframework.core.io.Resource;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * @version 
@@ -34,17 +38,22 @@ public class DelimitedEndpoint extends FixedLengthEndpoint {
     private char textQualifier = '"';
     private boolean ignoreFirstRecord = true;
 
-    public DelimitedEndpoint(String uri, Resource resource) {
-        super(uri, resource);
+    public DelimitedEndpoint() {
+        super();
+    }
+
+    public DelimitedEndpoint(String endpointUri, Component component, String resourceUri) {
+        super(endpointUri, component, resourceUri);
     }
 
     public Parser createParser(Exchange exchange) throws InvalidPayloadException, IOException {
         Reader bodyReader = ExchangeHelper.getMandatoryInBody(exchange, Reader.class);
-        Resource resource = getResource();
-        if (resource == null) {
+        if (ObjectHelper.isEmpty(getDefinition())) {
             return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
         } else {
-            return getParserFactory().newDelimitedParser(new InputStreamReader(resource.getInputStream()), bodyReader, delimiter, textQualifier, ignoreFirstRecord);
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), definition);
+            InputStreamReader reader = new InputStreamReader(is, IOConverter.getCharsetName(exchange));
+            return getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
         }
     }
 

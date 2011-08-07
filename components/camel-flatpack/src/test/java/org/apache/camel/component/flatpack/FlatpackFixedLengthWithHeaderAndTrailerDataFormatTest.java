@@ -25,7 +25,6 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.CastUtils;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 
 /**
  * Unit test for fixed length DataFormat.
@@ -71,7 +70,7 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Camel
         return new RouteBuilder() {
             public void configure() throws Exception {
                 FlatpackDataFormat df = new FlatpackDataFormat();
-                df.setDefinition(new ClassPathResource("PEOPLE-HeaderAndTrailer.pzmap.xml"));
+                df.setDefinition("PEOPLE-HeaderAndTrailer.pzmap.xml");
                 df.setFixed(true);
 
                 from("direct:unmarshal").unmarshal(df).to("mock:unmarshal");

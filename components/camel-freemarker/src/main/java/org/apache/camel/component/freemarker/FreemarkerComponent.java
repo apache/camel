@@ -23,13 +23,14 @@ import freemarker.cache.NullCacheStorage;
 import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.ResourceBasedComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * Freemarker component.
  */
-public class FreemarkerComponent extends ResourceBasedComponent {
+public class FreemarkerComponent extends DefaultComponent {
 
     private Configuration configuration;
     private Configuration noCacheConfiguration;
@@ -60,7 +61,13 @@ public class FreemarkerComponent extends ResourceBasedComponent {
             configuration.setTemplateLoader(new URLTemplateLoader() {
                 @Override
                 protected URL getURL(String name) {
-                    return getResourceLoader().getClassLoader().getResource(name);
+                    try {
+                        return ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), name);
+                    } catch (Exception e) {
+                        // freemarker prefers to ask for locale first (eg xxx_en_GB, xxX_en), and then fallback without locale
+                        // so we should return null to signal the resource could not be found
+                        return null;
+                    }
                 }
             });
         }

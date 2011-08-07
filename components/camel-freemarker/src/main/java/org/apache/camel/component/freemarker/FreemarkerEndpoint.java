@@ -44,7 +44,7 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
     }
 
     public FreemarkerEndpoint(String uri, Component component, String resourceUri) {
-        super(uri, component, resourceUri, null);
+        super(uri, component, resourceUri);
     }
 
     @Override

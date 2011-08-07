@@ -18,7 +18,6 @@ package org.apache.camel.component.validator.jing;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
@@ -36,15 +35,14 @@ import com.thaiopensource.validate.ValidateProperty;
 import com.thaiopensource.validate.Validator;
 import com.thaiopensource.xml.sax.Jaxp11XMLReaderCreator;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.validation.DefaultValidationErrorHandler;
 import org.apache.camel.util.ExchangeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.core.io.Resource;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * A validator which uses the <a
@@ -54,13 +52,17 @@ import org.springframework.core.io.Resource;
  * @version 
  */
 public class JingValidator implements Processor {
-    //private static final transient Logger LOG = LoggerFactory.getLogger(JingValidator.class);
+    private final CamelContext camelContext;
     private Schema schema;
     private SchemaFactory schemaFactory;
     private String schemaNamespace = XMLConstants.RELAXNG_NS_URI;
-    private Resource schemaResource;
+    private String resourceUri;
     private InputSource inputSource;
     private boolean compactSyntax;
+
+    public JingValidator(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public void process(Exchange exchange) throws Exception {
         Jaxp11XMLReaderCreator xmlCreator = new Jaxp11XMLReaderCreator();
@@ -94,6 +96,15 @@ public class JingValidator implements Processor {
     // Properties
     // -------------------------------------------------------------------------
 
+
+    public String getResourceUri() {
+        return resourceUri;
+    }
+
+    public void setResourceUri(String resourceUri) {
+        this.resourceUri = resourceUri;
+    }
+
     public Schema getSchema() throws IOException, IncorrectSchemaException, SAXException {
         if (schema == null) {
             SchemaFactory factory = getSchemaFactory();
@@ -108,16 +119,9 @@ public class JingValidator implements Processor {
 
     public InputSource getInputSource() throws IOException {
         if (inputSource == null) {
-            Resource resource = getSchemaResource();
-            if (resource == null) {
-                throw new IllegalArgumentException("No schemaResource or inputSource specified");
-            } else {
-                InputStream inputStream = resource.getInputStream();
-                if (inputStream == null) {
-                    throw new IllegalArgumentException("No inputStream available for: " + resource);
-                }
-                inputSource = new InputSource(inputStream);
-            }
+            ObjectHelper.notEmpty(resourceUri, "resourceUri", this);
+            InputStream inputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext.getClassResolver(), resourceUri);
+            inputSource = new InputSource(inputStream);
         }
         return inputSource;
     }
@@ -137,14 +141,6 @@ public class JingValidator implements Processor {
 
     public void setSchemaFactory(SchemaFactory schemaFactory) {
         this.schemaFactory = schemaFactory;
-    }
-
-    public Resource getSchemaResource() {
-        return schemaResource;
-    }
-
-    public void setSchemaResource(Resource schemaResource) {
-        this.schemaResource = schemaResource;
     }
 
     public String getSchemaNamespace() {

@@ -26,7 +26,7 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 /**
  * Camel specific {@link ClasspathResourceLoader} that loads resources using the
- * Camel {@link ClassResolver}
+ * Camel {@link ClassResolver} used by the Velocity.
  */
 public class CamelVelocityClasspathResourceLoader extends ClasspathResourceLoader {
 

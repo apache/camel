@@ -26,6 +26,7 @@ import java.util.Map;
  * @version 
  */
 public class RelaxNGCompactSyntaxComponent extends JingComponent {
+
     protected void configureValidator(JingValidator validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {
         validator.setCompactSyntax(true);
         super.configureValidator(validator, uri, remaining, parameters);

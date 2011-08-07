@@ -41,10 +41,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
     <!-- Using the servicemix wrapped one as the centrl mvn repo doesn't have one -->
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
