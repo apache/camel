@@ -508,7 +508,7 @@ public final class ObjectHelper {
 
             // this code is optimized to only use a Scanner if needed, eg there is a delimiter
 
-            if (s.contains(delimiter)) {
+            if (delimiter != null && s.contains(delimiter)) {
                 // use a scanner if it contains the delimiter
                 Scanner scanner = new Scanner((String)value);
                 scanner.useDelimiter(delimiter);
