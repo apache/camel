@@ -80,7 +80,7 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
         Exchange answer = createExchange();
         Message in = answer.getIn();
         in.setBody(dataSet);
-        in.setHeader("camelFlatpackCounter", counter);
+        in.setHeader("CamelFlatpackCounter", counter);
         return answer;
     }
 

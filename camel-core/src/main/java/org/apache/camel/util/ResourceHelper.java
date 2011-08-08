@@ -18,9 +18,12 @@ package org.apache.camel.util;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.camel.spi.ClassResolver;
 
@@ -35,16 +38,33 @@ public final class ResourceHelper {
 
     /**
      * Resolves the mandatory resource.
+     * <p/>
+     * If possible prefer to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
+     * if possible.
      *
      * @param classResolver the class resolver to load the resource from the classpath
      * @param uri uri of the resource
      * @return the resource as an {@link InputStream}, remember to close the stream after usage.
-     * @throws java.io.FileNotFoundException is thrown if the resource file could not be found
+     * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
      */
-    public static InputStream resolveMandatoryResourceAsInputStream(ClassResolver classResolver, String uri) throws FileNotFoundException {
+    public static InputStream resolveMandatoryResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
         if (uri.startsWith("file:")) {
             uri = ObjectHelper.after(uri, "file:");
             return new FileInputStream(uri);
+        } else if (uri.startsWith("http:")) {
+            URL url = new URL(uri);
+            URLConnection con = url.openConnection();
+            con.setUseCaches(false);
+            try {
+                return con.getInputStream();
+            } catch (IOException e) {
+                // close the http connection to avoid
+                // leaking gaps in case of an exception
+                if (con instanceof HttpURLConnection) {
+                    ((HttpURLConnection) con).disconnect();
+                }
+                throw e;
+            }
         } else if (uri.startsWith("classpath:")) {
             uri = ObjectHelper.after(uri, "classpath:");
         }
@@ -69,6 +89,8 @@ public final class ResourceHelper {
      */
     public static URL resolveMandatoryResourceAsUrl(ClassResolver classResolver,  String uri) throws FileNotFoundException, MalformedURLException {
         if (uri.startsWith("file:")) {
+            return new URL(uri);
+        } else if (uri.startsWith("http:")) {
             return new URL(uri);
         } else if (uri.startsWith("classpath:")) {
             uri = ObjectHelper.after(uri, "classpath:");

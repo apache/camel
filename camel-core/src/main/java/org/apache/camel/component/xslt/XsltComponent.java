@@ -18,6 +18,7 @@ package org.apache.camel.component.xslt;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Map;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
@@ -151,8 +152,9 @@ public class XsltComponent extends DefaultComponent {
 
     private void loadResource(XsltBuilder xslt, String resourceUri) throws TransformerConfigurationException, IOException {
         LOG.trace("{} loading schema resource: {}", this, resourceUri);
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
-        xslt.setTransformerInputStream(is);
+        // prefer to use URL over InputStream as it loads better with http
+        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), resourceUri);
+        xslt.setTransformerURL(url);
     }
 
     protected void configureXslt(XsltBuilder xslt, String uri, String remaining, Map<String, Object> parameters) throws Exception {
