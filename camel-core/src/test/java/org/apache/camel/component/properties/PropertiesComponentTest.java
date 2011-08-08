@@ -48,6 +48,40 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testPropertiesComponentTwo() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("properties:{{cool.end}}");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testPropertiesComponentTemplate() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:cool").to("mock:result");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+
+        template.sendBody("{{cool.start}}", "Hello World");
+        template.sendBody("{{cool.start}}", "Bye World");
+
+        assertMockEndpointsSatisfied();
+    }
+
     public void testPropertiesComponentResult() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
