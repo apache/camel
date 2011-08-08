@@ -25,6 +25,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
@@ -104,7 +105,7 @@ public class Tracer implements InterceptStrategy, Service {
                                                  Processor target, Processor nextTarget) throws Exception {
         // Force the creation of an id, otherwise the id is not available when the trace formatter is
         // outputting trace information
-        definition.idOrCreate(context.getNodeIdFactory());
+        RouteDefinitionHelper.forceAssignIds(context, definition);
         return getTraceInterceptorFactory().createTraceInterceptor(definition, target, formatter, this);
     }
 

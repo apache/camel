@@ -30,8 +30,6 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * Utility methods to help preparing {@link RouteDefinition} before they are added to
  * {@link org.apache.camel.CamelContext}.
- *
- * @version 
  */
 public final class RouteDefinitionHelper {
 
@@ -354,6 +352,28 @@ public final class RouteDefinitionHelper {
             // and add it as the single output
             lower.clear();
             lower.add(transacted);
+        }
+    }
+
+    /**
+     * Force assigning ids to the give node and all its children (recursively).
+     * <p/>
+     * This is needed when doing tracing or the likes, where each node should have its id assigned
+     * so the tracing can pin point exactly.
+     *
+     * @param context the camel context
+     * @param processor the node
+     */
+    @SuppressWarnings("unchecked")
+    public static void forceAssignIds(CamelContext context, ProcessorDefinition processor) {
+        // force id on the child
+        processor.idOrCreate(context.getNodeIdFactory());
+
+        List<ProcessorDefinition> children = processor.getOutputs();
+        if (children != null && !children.isEmpty()) {
+            for (ProcessorDefinition child : children) {
+                forceAssignIds(context, child);
+            }
         }
     }
 
