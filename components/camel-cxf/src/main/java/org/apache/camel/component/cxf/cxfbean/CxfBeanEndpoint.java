@@ -37,12 +37,12 @@ import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.DestinationFactoryManager;
 
+
 /**
  * CXF Bean Endpoint is a {@link ProcessorEndpoint} which associated with 
  * a {@link CxfBeanDestination}.  It delegates the processing of Camel 
  * Exchanges to the associated CxfBeanDestination.
  *  
- * @version 
  */
 public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterStrategyAware {
     private static final String URI_PREFIX = "cxfbean";
@@ -82,7 +82,14 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
         }
         
         if (bus == null) {
-            bus = BusFactory.newInstance().createBus();
+            ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+            try {
+                // Using the class loader of BusFactory to load the Bus
+                Thread.currentThread().setContextClassLoader(BusFactory.class.getClassLoader());
+                bus = BusFactory.newInstance().createBus();
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldCL);
+            }
         }
         
         if (isSetDefaultBus) {
