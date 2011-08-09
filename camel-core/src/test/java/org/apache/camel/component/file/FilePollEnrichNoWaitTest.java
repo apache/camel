@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version 
  */
-public class FilePollEnrichTest extends ContextTestSupport {
+public class FilePollEnrichNoWaitTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -36,7 +36,7 @@ public class FilePollEnrichTest extends ContextTestSupport {
         super.setUp();
     }
 
-    public void testFilePollEnrich() throws Exception {
+    public void testFilePollEnrichNoWait() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedFileExists("target/pollenrich/done/hello.txt");
@@ -58,8 +58,11 @@ public class FilePollEnrichTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("timer:foo?period=1000").routeId("foo")
                     .log("Trigger timer foo")
-                    .pollEnrich("file:target/pollenrich?move=done", 5000)
+                    .pollEnrich("file:target/pollenrich?move=done")
                     .convertBodyTo(String.class)
+                    .filter(body().isNull())
+                        .stop()
+                    .end()
                     .log("Polled filed ${file:name}")
                     .to("mock:result")
                     .process(new Processor() {

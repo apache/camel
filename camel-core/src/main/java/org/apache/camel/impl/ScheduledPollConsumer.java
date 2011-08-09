@@ -276,20 +276,28 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     public void onInit() throws Exception {
-        // start our self
-        ServiceHelper.startService(this);
+        // noop
     }
 
     @Override
-    public void beforePoll() throws Exception {
-        // resume our self
-        ServiceHelper.resumeService(this);
+    public long beforePoll(long timeout) throws Exception {
+        LOG.trace("Before poll {}", getEndpoint());
+        // resume or start our self
+        if (!ServiceHelper.resumeService(this)) {
+            ServiceHelper.startService(this);
+        };
+
+        // ensure at least timeout is as long as one poll delay
+        return Math.max(timeout, getDelay());
     }
 
     @Override
     public void afterPoll() throws Exception {
-        // suspend our self
-        ServiceHelper.suspendService(this);
+        LOG.trace("After poll {}", getEndpoint());
+        // suspend or stop our self
+        if (!ServiceHelper.suspendService(this)) {
+            ServiceHelper.stopService(this);
+        }
     }
 
 }

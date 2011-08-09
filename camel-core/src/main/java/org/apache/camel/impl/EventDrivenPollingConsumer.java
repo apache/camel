@@ -65,7 +65,8 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
         while (isRunAllowed()) {
             try {
-                beforePoll();
+                beforePoll(0);
+                // take will block waiting for message
                 return queue.take();
             } catch (InterruptedException e) {
                 handleInterruptedException(e);
@@ -83,13 +84,9 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
             throw new RejectedExecutionException(this + " is not started, but in state: " + getStatus().name());
         }
 
-        // if the queue is empty and there is no wait then return null
-        if (timeout == 0 && queue.isEmpty()) {
-            return null;
-        }
-
         try {
-            beforePoll();
+            // use the timeout value returned from beforePoll
+            timeout = beforePoll(timeout);
             return queue.poll(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             handleInterruptedException(e);
@@ -115,15 +112,16 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         getInterruptedExceptionHandler().handleException(e);
     }
 
-    protected void beforePoll() {
+    protected long beforePoll(long timeout) {
         if (consumer instanceof PollingConsumerPollingStrategy) {
             PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
             try {
-                strategy.beforePoll();
+                timeout = strategy.beforePoll(timeout);
             } catch (Exception e) {
                 LOG.debug("Error occurred before polling " + consumer + ". This exception will be ignored.", e);
             }
         }
+        return timeout;
     }
 
     protected void afterPoll() {

@@ -36,9 +36,12 @@ public interface PollingConsumerPollingStrategy {
     /**
      * Callback invoked before the poll.
      *
+     * @param timeout the timeout
      * @throws Exception can be thrown if error occurred
+     * @return timeout to be used, this allows returning a higher timeout value
+     * to ensure at least one poll is being performed
      */
-    void beforePoll() throws Exception;
+    long beforePoll(long timeout) throws Exception;
 
     /**
      * Callback invoked after the poll.
