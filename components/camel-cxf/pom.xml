@@ -33,8 +33,15 @@
 
   <properties>
     <camel.osgi.import>
-      !org.apache.camel.component.cxf.*,
-      !META-INF.cxf.camel,
+      !org.apache.camel.component.cxf,
+      !org.apache.camel.component.cxf.blueprint,
+      !org.apache.camel.component.cxf.converter,
+      !org.apache.camel.component.cxf.cxfbean,
+      !org.apache.camel.component.cxf.feature,
+      !org.apache.camel.component.cxf.interceptors,
+      !org.apache.camel.component.cxf.jaxrs,
+      !org.apache.camel.component.cxf.spring,
+      !org.apache.camel.component.cxf.util,
       javax.activation*;version="[0.0,2)",
       javax.annotation*;version="[0.0,2)",
       javax.jws*;version="[0.0,3)",
@@ -56,7 +63,15 @@
     </camel.osgi.import>
 
     <camel.osgi.export>
-      org.apache.camel.component.cxf.*;${camel.osgi.version};-split-package:=merge-first
+      org.apache.camel.component.cxf;${camel.osgi.version},
+      org.apache.camel.component.cxf.blueprint;${camel.osgi.version},
+      org.apache.camel.component.cxf.converter;${camel.osgi.version},
+      org.apache.camel.component.cxf.cxfbean;${camel.osgi.version},
+      org.apache.camel.component.cxf.feature;${camel.osgi.version},
+      org.apache.camel.component.cxf.interceptors;${camel.osgi.version},
+      org.apache.camel.component.cxf.jaxrs;${camel.osgi.version},
+      org.apache.camel.component.cxf.spring;${camel.osgi.version},
+      org.apache.camel.component.cxf.util;${camel.osgi.version}
     </camel.osgi.export>
     <camel.osgi.failok>true</camel.osgi.failok>
 
