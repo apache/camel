@@ -34,8 +34,11 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
+import org.apache.cxf.phase.PhaseManager;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.DestinationFactoryManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CXF Bean Endpoint is a {@link ProcessorEndpoint} which associated with 
@@ -45,6 +48,7 @@ import org.apache.cxf.transport.DestinationFactoryManager;
  * @version 
  */
 public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterStrategyAware {
+     private static final Logger LOG = LoggerFactory.getLogger(CxfBeanEndpoint.class);
     private static final String URI_PREFIX = "cxfbean";
     private Server server;
     private Bus bus;
@@ -82,7 +86,14 @@ public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterSt
         }
         
         if (bus == null) {
-            bus = BusFactory.newInstance().createBus();
+            ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+            try {
+                // Using the class loader of BusFactory to load the Bus
+                Thread.currentThread().setContextClassLoader(BusFactory.class.getClassLoader());
+                bus = BusFactory.newInstance().createBus();
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldCL);
+            }
         }
         
         if (isSetDefaultBus) {
