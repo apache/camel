@@ -27,9 +27,6 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
 
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
-  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
-  <!-- when running in Tomcat we use the CXF servlet -->
-  <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
   <bean id="myRoutes" class="org.apache.camel.example.cxf.CamelRoute"/>
 

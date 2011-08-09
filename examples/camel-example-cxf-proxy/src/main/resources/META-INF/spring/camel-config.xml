@@ -26,11 +26,8 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
 
-  <!-- needed cxf imports -->
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
-  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
-  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
-
+  
   <!-- use a bean to start and stop the real web service (is not Camel specific) -->
   <!-- in a real use-case the real web service would be located on another server
        but we simulate this in the same JVM -->
