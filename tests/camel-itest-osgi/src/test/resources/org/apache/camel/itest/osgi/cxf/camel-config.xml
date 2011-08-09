@@ -43,6 +43,10 @@
     <!-- this is the CXF webservice we use as front end -->
     <cxf:cxfEndpoint id="reportIncident"
                      address="http://localhost:9080/camel-itest-osgi/webservices/incident"
+                     wsdlURL="report_incident.wsdl"
+                     endpointName="s:ReportIncidentPort"
+                     serviceName="s:ReportIncidentEndpointService"
+                     xmlns:s="http://reportincident.example.camel.apache.org"
                      serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"/>
 
     <!-- this is the camel route which proxy the web service and forward it to the real web service -->

@@ -32,6 +32,10 @@
                         serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"/>
   <camelcxf:cxfEndpoint id="serviceEndpoint"
                         address="http://localhost:9002/cxf"
+                        wsdlURL="WSDL/report_incident.wsdl"
+                        endpointName="s:ReportIncidentPort"
+                        serviceName="s:ReportIncidentEndpointService"
+                        xmlns:s="http://reportincident.example.camel.apache.org"
                         serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"/>
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint">

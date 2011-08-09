@@ -42,7 +42,7 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("This test will be failed with CXF 2.4.1, we need to use CXF 2.4.2")
+//@Ignore("This test will be failed with CXF 2.4.1, we need to use CXF 2.4.2")
 public class CxfBlueprintRouterTest extends OSGiBlueprintTestSupport {
     private static Server server;
 
@@ -108,6 +108,7 @@ public class CxfBlueprintRouterTest extends OSGiBlueprintTestSupport {
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", CxfBlueprintRouterTest.class.getResource("CxfBlueprintRouter.xml"))
+                        .add("WSDL/report_incident.wsdl", CxfBlueprintRouterTest.class.getResource("/report_incident.wsdl"))
                         .add(org.apache.camel.example.reportincident.InputReportIncident.class)
                         .add(org.apache.camel.example.reportincident.OutputReportIncident.class)
                         .add(org.apache.camel.example.reportincident.ReportIncidentEndpoint.class)
