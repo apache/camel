@@ -14,35 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi.cxf.blueprint.jaxrs.testbean;
+package org.apache.camel.itest.osgi.cxf.jaxrs.testbean;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @version
+ * @version 
  */
-// START SNIPPET: example
-@Path("/customerservice/")
-public class CustomerServiceResource {
+@XmlRootElement(name = "Customer")
+public class Customer {
+    private long id;
+    private String name;
 
-    public CustomerServiceResource() {
+    public long getId() {
+        return id;
     }
 
-    @GET
-    @Path("/customers/{id}/")
-    public Customer getCustomer(@PathParam("id") String id) {
-        return null;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    @PUT
-    @Path("/customers/")
-    public Response updateCustomer(Customer customer) {
-        return null;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
-// END SNIPPET: example

@@ -115,8 +115,7 @@ public class CxfBlueprintRouterTest extends OSGiBlueprintTestSupport {
                         .add(org.apache.camel.example.reportincident.ObjectFactory.class)
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CxfBlueprintRouterTest")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                        .build(withBnd())).noStart(),
-                vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006")
+                        .build(withBnd())).noStart()
 
         );
 

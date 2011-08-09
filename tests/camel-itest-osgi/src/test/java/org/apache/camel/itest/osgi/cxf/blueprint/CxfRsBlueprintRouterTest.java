@@ -19,7 +19,7 @@ package org.apache.camel.itest.osgi.cxf.blueprint;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
-import org.apache.camel.itest.osgi.cxf.blueprint.jaxrs.testbean.CustomerService;
+import org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.http.HttpResponse;
@@ -192,11 +192,11 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
                                         
             bundle(newBundle()
                 .add("OSGI-INF/blueprint/test.xml", CxfRsBlueprintRouterTest.class.getResource("CxfRsBlueprintRouter.xml"))
-                .add(org.apache.camel.itest.osgi.cxf.blueprint.jaxrs.testbean.Customer.class)
-                .add(org.apache.camel.itest.osgi.cxf.blueprint.jaxrs.testbean.CustomerService.class)
-                .add(org.apache.camel.itest.osgi.cxf.blueprint.jaxrs.testbean.CustomerServiceResource.class)
-                .add(org.apache.camel.itest.osgi.cxf.blueprint.jaxrs.testbean.Order.class)
-                .add(org.apache.camel.itest.osgi.cxf.blueprint.jaxrs.testbean.Product.class)
+                .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Customer.class)
+                .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService.class)
+                .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerServiceResource.class)
+                .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Order.class)
+                .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Product.class)
                 .set(Constants.BUNDLE_SYMBOLICNAME, "CxfRsBlueprintRouterTest")
                 .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                 .build()).noStart(),
