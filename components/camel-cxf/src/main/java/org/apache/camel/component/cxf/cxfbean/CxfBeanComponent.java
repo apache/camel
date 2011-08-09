@@ -64,23 +64,7 @@ public class CxfBeanComponent extends HeaderFilterStrategyComponent {
         // we invoke setProperties ourselves so the bus is set for CxfBeanEndpoint.init()
         return false;
     }
-    
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        for (CxfBeanEndpoint endpoint : endpoints.values()) {
-            endpoint.start();
-        }
-    }
 
-    @Override
-    protected void doStop() throws Exception {
-        for (CxfBeanEndpoint endpoint : endpoints.values()) {
-            endpoint.stop();
-        }
-        super.doStop();
-    }
-    
     public CxfBeanEndpoint getEndpoint(String endpointUri) {
         return endpoints.get(endpointUri);
     }
