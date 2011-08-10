@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -33,7 +34,6 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
@@ -86,8 +86,13 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
 
     @Override
     public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
+        // create and load exceptions if not done
+        if (exceptionClasses == null) {
+            exceptionClasses = createExceptionClasses(routeContext.getCamelContext());
+        }
+
         // must have at least one exception
-        if (getExceptionClasses().isEmpty()) {
+        if (exceptionClasses.isEmpty()) {
             throw new IllegalArgumentException("At least one Exception must be configured to catch");
         }
 
@@ -104,7 +109,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
             handle = handled.createPredicate(routeContext);
         }
 
-        return new CatchProcessor(getExceptionClasses(), childProcessor, when, handle);
+        return new CatchProcessor(exceptionClasses, childProcessor, when, handle);
     }
 
     public List<ProcessorDefinition> getOutputs() {
@@ -120,9 +125,6 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     }
 
     public List<Class> getExceptionClasses() {
-        if (exceptionClasses == null) {
-            exceptionClasses = createExceptionClasses();
-        }
         return exceptionClasses;
     }
 
@@ -243,11 +245,13 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         this.handled = handled;
     }
 
-    protected List<Class> createExceptionClasses() {
+    protected List<Class> createExceptionClasses(CamelContext context) throws ClassNotFoundException {
+        // must use the class resolver from CamelContext to load classes to ensure it can
+        // be loaded in all kind of environments such as JEE servers and OSGi etc.
         List<String> list = getExceptions();
         List<Class> answer = new ArrayList<Class>(list.size());
         for (String name : list) {
-            Class<Exception> type = CastUtils.cast(ObjectHelper.loadClass(name, getClass().getClassLoader()));
+            Class<Exception> type = CastUtils.cast(context.getClassResolver().resolveMandatoryClass(name));
             answer.add(type);
         }
         return answer;
