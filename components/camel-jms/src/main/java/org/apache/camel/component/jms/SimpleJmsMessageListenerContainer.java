@@ -16,22 +16,21 @@
  */
 package org.apache.camel.component.jms;
 
-import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import org.springframework.jms.listener.SimpleMessageListenerContainer;
 
 /**
- * The {@link DefaultMessageListenerContainer container} which listen for messages
+ * The simple {@link org.springframework.jms.listener.SimpleMessageListenerContainer container} which listen for messages
  * on the JMS destination.
  * <p/>
- * This implementation extends Springs {@link DefaultMessageListenerContainer} supporting
- * automatic recovery and throttling.
+ * This implementation extends Springs {@link org.springframework.jms.listener.SimpleMessageListenerContainer}.
  *
- * @version 
+ * @version
  */
-public class JmsMessageListenerContainer extends DefaultMessageListenerContainer {
+public class SimpleJmsMessageListenerContainer extends SimpleMessageListenerContainer {
 
     private final JmsEndpoint endpoint;
 
-    public JmsMessageListenerContainer(JmsEndpoint endpoint) {
+    public SimpleJmsMessageListenerContainer(JmsEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 

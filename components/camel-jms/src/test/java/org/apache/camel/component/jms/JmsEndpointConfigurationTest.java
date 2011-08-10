@@ -34,6 +34,7 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
 import org.springframework.util.ErrorHandler;
 
@@ -116,6 +117,15 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     }
 
     @Test
+    public void testCreateSimpleMessageListener() throws Exception{
+    	 JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar?consumerType=Simple");
+         JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
+
+         AbstractMessageListenerContainer container = consumer.getListenerContainer();
+         assertTrue("Should have been a SimpleMessageListenerContainer",container instanceof SimpleMessageListenerContainer);
+    }
+
+    @Test
     public void testCacheConsumerEnabledForQueue() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar");
         assertCacheLevel(endpoint, DefaultMessageListenerContainer.CACHE_AUTO);
@@ -148,11 +158,29 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?maxConcurrentConsumers=5");
         assertEquals(5, endpoint.getMaxConcurrentConsumers());
     }
+    
+    @Test
+    public void testMaxConcurrentConsumersForSimpleConsumer() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?maxConcurrentConsumers=5&consumerType=Simple");
+        assertEquals(5, endpoint.getMaxConcurrentConsumers());
+    }
 
     @Test
     public void testInvalidMaxConcurrentConsumers() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=5&maxConcurrentConsumers=2");
         try {
+            endpoint.createConsumer(new CamelLogger());
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Property maxConcurrentConsumers: 2 must be higher than concurrentConsumers: 5", e.getMessage());
+        }
+    }
+    
+    @Test
+    public void testInvalidMaxConcurrentConsumersForSimpleConsumer() throws Exception {
+    	JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=5&maxConcurrentConsumers=2&consumerType=Simple");
+        
+    	try {
             endpoint.createConsumer(new CamelLogger());
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
@@ -165,7 +193,21 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=4");
         assertEquals(4, endpoint.getConcurrentConsumers());
     }
+    
+    @Test
+    public void testConcurrentConsumersForSimpleConsumer() throws Exception {
+    	JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=4&consumerType=Simple");
+        
+        assertEquals(4, endpoint.getConcurrentConsumers());
+    }
 
+    @Test
+    public void testPubSubNoLocalForSimpleConsumer() throws Exception{
+    	JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?pubSubNoLocal=true&consumerType=Simple");
+      
+        assertTrue("PubSubNoLocal should be true", endpoint.isPubSubNoLocal());
+    }
+    
     @Test
     public void testIdleTaskExecutionLimit() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?idleTaskExecutionLimit=50");
