@@ -161,17 +161,21 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         for (String name : packageNames) {
             // must be a FQN class name by having an upper case letter
             if (StringHelper.hasUpperCase(name)) {
+                Class<?> clazz = null;
                 for (ClassLoader loader : resolver.getClassLoaders()) {
                     try {
-                        Class<?> clazz = loader.loadClass(name);
+                        clazz = loader.loadClass(name);
                         LOG.trace("Loaded {} as class {}", name, clazz);
                         classes.add(clazz);
                         // class founder, so no need to load it with another class loader
                         break;
                     } catch (Throwable e) {
-                        // ignore as its not a class (will be package scan afterwards)
-                        packages.add(name);
+                        // do nothing here
                     }
+                }
+                if (clazz == null) {
+                    // ignore as its not a class (will be package scan afterwards)
+                    packages.add(name);
                 }
             } else {
                 // ignore as its not a class (will be package scan afterwards)
