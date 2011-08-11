@@ -84,6 +84,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
 
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "WireTap", this);
         if (executorService == null) {
+            // thread pool is mandatory for wire tap
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "WireTap");
         }
         WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern(), executorService);

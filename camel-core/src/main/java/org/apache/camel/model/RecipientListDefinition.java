@@ -120,7 +120,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         }
         executorService = ExecutorServiceHelper.getConfiguredExecutorService(routeContext, "RecipientList", this);
         if (isParallelProcessing() && executorService == null) {
-            // we are running in parallel so create a cached thread pool which grows/shrinks automatic
+            // we are running in parallel so create a thread pool
             executorService = routeContext.getCamelContext().getExecutorServiceStrategy().newDefaultThreadPool(this, "RecipientList");
         }
         answer.setExecutorService(executorService);
