@@ -25,7 +25,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringValidatorRouteTest extends ValidatorRouteTest {
 
-   protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/component/validator/camelContext.xml");
     }
 

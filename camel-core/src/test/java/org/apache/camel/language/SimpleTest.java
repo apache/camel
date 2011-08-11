@@ -16,14 +16,26 @@
  */
 package org.apache.camel.language;
 
-import org.apache.camel.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.camel.CamelAuthorizationException;
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Language;
-
-import java.util.*;
 
 /**
  * @version 

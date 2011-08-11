@@ -82,5 +82,5 @@ public class CxfBeanSpringRouteTest extends OSGiIntegrationSpringTestSupport {
         );
 
         return options;
-     }
+    }
 }

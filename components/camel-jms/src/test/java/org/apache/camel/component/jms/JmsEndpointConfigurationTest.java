@@ -117,12 +117,12 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     }
 
     @Test
-    public void testCreateSimpleMessageListener() throws Exception{
-    	 JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar?consumerType=Simple");
-         JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
+    public void testCreateSimpleMessageListener() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:Foo.Bar?consumerType=Simple");
+        JmsConsumer consumer = endpoint.createConsumer(dummyProcessor);
 
-         AbstractMessageListenerContainer container = consumer.getListenerContainer();
-         assertTrue("Should have been a SimpleMessageListenerContainer",container instanceof SimpleMessageListenerContainer);
+        AbstractMessageListenerContainer container = consumer.getListenerContainer();
+        assertTrue("Should have been a SimpleMessageListenerContainer", container instanceof SimpleMessageListenerContainer);
     }
 
     @Test
@@ -178,9 +178,9 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     
     @Test
     public void testInvalidMaxConcurrentConsumersForSimpleConsumer() throws Exception {
-    	JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=5&maxConcurrentConsumers=2&consumerType=Simple");
-        
-    	try {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=5&maxConcurrentConsumers=2&consumerType=Simple");
+
+        try {
             endpoint.createConsumer(new CamelLogger());
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
@@ -193,21 +193,21 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=4");
         assertEquals(4, endpoint.getConcurrentConsumers());
     }
-    
+
     @Test
     public void testConcurrentConsumersForSimpleConsumer() throws Exception {
-    	JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=4&consumerType=Simple");
-        
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=4&consumerType=Simple");
+
         assertEquals(4, endpoint.getConcurrentConsumers());
     }
 
     @Test
-    public void testPubSubNoLocalForSimpleConsumer() throws Exception{
-    	JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?pubSubNoLocal=true&consumerType=Simple");
-      
+    public void testPubSubNoLocalForSimpleConsumer() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?pubSubNoLocal=true&consumerType=Simple");
+
         assertTrue("PubSubNoLocal should be true", endpoint.isPubSubNoLocal());
     }
-    
+
     @Test
     public void testIdleTaskExecutionLimit() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?idleTaskExecutionLimit=50");
@@ -221,7 +221,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(51, endpoint.getIdleConsumerLimit());
         assertEquals(true, endpoint.isAutoStartup());
     }
-    
+
     @Test
     public void testLazyCreateTransactionManager() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?lazyCreateTransactionManager=true");

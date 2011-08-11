@@ -21,11 +21,11 @@ import org.apache.camel.CamelContext;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version 
+ * @version
  */
 public class SpringTestEndpointTest extends TestEndpointTest {
 
-   protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/component/test/SpringTestEndpointTest.xml");
     }
 

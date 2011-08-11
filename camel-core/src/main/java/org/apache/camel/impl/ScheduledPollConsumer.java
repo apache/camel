@@ -285,7 +285,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         // resume or start our self
         if (!ServiceHelper.resumeService(this)) {
             ServiceHelper.startService(this);
-        };
+        }
 
         // ensure at least timeout is as long as one poll delay
         return Math.max(timeout, getDelay());

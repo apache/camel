@@ -37,7 +37,7 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 @RunWith(JUnit4TestRunner.class)
 public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
 
-     protected void doPostSetup() throws Exception {
+    protected void doPostSetup() throws Exception {
         getInstalledBundle("CxfBeanBlueprintRouterTest").start();
         getOsgiService(CamelContext.class, "(camel.context.symbolicname=CxfBeanBlueprintRouterTest)", 10000);
     }
