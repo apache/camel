@@ -95,18 +95,6 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>resources</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<executions>
@@ -177,6 +165,7 @@
 					</resource>
 					<resource>
 						<directory>${basedir}/src/main/resources</directory>
+                        <filtering>true</filtering>
 					</resource>
 				</resources>
 			</build>
@@ -203,6 +192,7 @@
 					</resource>
 					<resource>
 						<directory>${basedir}/src/main/resources</directory>
+                        <filtering>true</filtering>
 					</resource>
 				</resources>
 				<!--  Will enhance classes as we run in a non J2EE 5 env -->
@@ -261,6 +251,7 @@
 					</resource>
 					<resource>
 						<directory>${basedir}/src/main/resources</directory>
+                        <filtering>true</filtering>
 					</resource>
 				</resources>
 			</build>

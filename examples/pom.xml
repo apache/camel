@@ -70,24 +70,43 @@
     <skip.starting.camel.context>false</skip.starting.camel.context>
   </properties>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>pertest</forkMode>
-          <includes>
-            <include>**/*Test.*</include>
-          </includes>
-          <systemPropertyVariables>
-             <skipStartingCamelContext>${skip.starting.camel.context}</skipStartingCamelContext>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-  <profiles>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkMode>pertest</forkMode>
+                    <includes>
+                        <include>**/*Test.*</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <skipStartingCamelContext>${skip.starting.camel.context}</skipStartingCamelContext>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
     <profile>
        <id>container-test</id>
        <properties>
