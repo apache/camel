@@ -20,6 +20,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.util.ObjectHelper;
 
+/**
+ * Various helper method for thread naming.
+ */
 public final class ThreadHelper {
     public static final String DEFAULT_PATTERN = "Camel Thread ${counter} - ${name}";
     
@@ -33,7 +36,7 @@ public final class ThreadHelper {
     }
 
     /**
-     * Creates a new thread name with the given prefix
+     * Creates a new thread name with the given pattern
      *
      * @param pattern the pattern
      * @param name    the name
@@ -67,5 +70,4 @@ public final class ThreadHelper {
         return answer;
     }
 
-    
 }

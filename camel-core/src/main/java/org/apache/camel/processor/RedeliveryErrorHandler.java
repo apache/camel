@@ -190,7 +190,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.deadLetterUri = deadLetterUri;
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
         this.retryWhilePolicy = retryWhile;
-        this.executorServiceRef = (executorServiceRef != null) ? executorServiceRef : "ErrorHandlerRedeliveryTask";
+        this.executorServiceRef = executorServiceRef;
     }
 
     public boolean supportTransacted() {
@@ -980,7 +980,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     @Override
     protected void doStart() throws Exception {
         ServiceHelper.startServices(output, outputAsync, deadLetter);
-        executorService = camelContext.getExecutorServiceManager().getScheduledExecutorService(executorServiceRef, this);
+        // use a shared scheduler
+        if (executorService == null || executorService.isShutdown()) {
+            // camel context will shutdown the executor when it shutdown so no need to shut it down when stopping
+            if (executorServiceRef != null) {
+                executorService = camelContext.getRegistry().lookup(executorServiceRef, ScheduledExecutorService.class);
+                if (executorService == null) {
+                    throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
+                }
+            } else {
+                // create a default scheduled thread pool
+                executorService = camelContext.getExecutorServiceManager().newDefaultScheduledThreadPool(this, "ErrorHandlerRedeliveryTask");
+            }
+        }
 
         // determine if redeliver is enabled or not
         redeliveryEnabled = determineIfRedeliveryIsEnabled();

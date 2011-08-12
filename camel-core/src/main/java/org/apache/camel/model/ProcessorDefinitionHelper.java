@@ -19,6 +19,13 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+
+import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Helper class for ProcessorDefinition and the other model classes.
@@ -196,6 +203,89 @@ public final class ProcessorDefinitionHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Will lookup and get the configured {@link java.util.concurrent.ExecutorService} from the given definition.
+     * <p/>
+     * This method will lookup for configured thread pool in the following order
+     * <ul>
+     *   <li>from the definition if any explicit configured executor service.</li>
+     *   <li>from the {@link org.apache.camel.spi.Registry} if found</li>
+     *   <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
+     *   <li>if none found, then <tt>null</tt> is returned.</li>
+     * </ul>
+     * The various {@link ExecutorServiceAwareDefinition} should use this helper method to ensure they support
+     * configured executor services in the same coherent way.
+     *
+     * @param routeContext   the rout context
+     * @param name           name which is appended to the thread name, when the {@link java.util.concurrent.ExecutorService}
+     *                       is created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param definition     the node definition which may leverage executor service.
+     * @return the configured executor service, or <tt>null</tt> if none was configured.
+     * @throws NoSuchBeanException is thrown if lookup of executor service in {@link org.apache.camel.spi.Registry} was not found
+     */
+    public static ExecutorService getConfiguredExecutorService(RouteContext routeContext, String name,
+                                                               ExecutorServiceAwareDefinition definition) throws NoSuchBeanException {
+        ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
+        ObjectHelper.notNull(manager, "ExecutorServiceManager", routeContext.getCamelContext());
+
+        // prefer to use explicit configured executor on the definition
+        if (definition.getExecutorService() != null) {
+            return definition.getExecutorService();
+        } else if (definition.getExecutorServiceRef() != null) {
+            ExecutorService answer = manager.lookup(definition, name, definition.getExecutorServiceRef());
+            if (answer == null) {
+                throw new NoSuchBeanException(definition.getExecutorServiceRef(), "ExecutorService");
+            }
+            return answer;
+        }
+
+        return null;
+    }
+
+    /**
+     * Will lookup and get the configured {@link java.util.concurrent.ScheduledExecutorService} from the given definition.
+     * <p/>
+     * This method will lookup for configured thread pool in the following order
+     * <ul>
+     *   <li>from the definition if any explicit configured executor service.</li>
+     *   <li>from the {@link org.apache.camel.spi.Registry} if found</li>
+     *   <li>from the known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.</li>
+     *   <li>if none found, then <tt>null</tt> is returned.</li>
+     * </ul>
+     * The various {@link ExecutorServiceAwareDefinition} should use this helper method to ensure they support
+     * configured executor services in the same coherent way.
+     *
+     * @param routeContext   the rout context
+     * @param name           name which is appended to the thread name, when the {@link java.util.concurrent.ExecutorService}
+     *                       is created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
+     * @param definition     the node definition which may leverage executor service.
+     * @return the configured executor service, or <tt>null</tt> if none was configured.
+     * @throws IllegalArgumentException is thrown if the found instance is not a ScheduledExecutorService type.
+     * @throws NoSuchBeanException is thrown if lookup of executor service in {@link org.apache.camel.spi.Registry} was not found
+     */
+    public static ScheduledExecutorService getConfiguredScheduledExecutorService(RouteContext routeContext, String name,
+                                                               ExecutorServiceAwareDefinition definition) throws IllegalArgumentException, NoSuchBeanException {
+        ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
+        ObjectHelper.notNull(manager, "ExecutorServiceManager", routeContext.getCamelContext());
+
+        // prefer to use explicit configured executor on the definition
+        if (definition.getExecutorService() != null) {
+            ExecutorService executorService = definition.getExecutorService();
+            if (executorService instanceof ScheduledExecutorService) {
+                return (ScheduledExecutorService) executorService;
+            }
+            throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " is not an ScheduledExecutorService instance");
+        } else if (definition.getExecutorServiceRef() != null) {
+            ScheduledExecutorService answer = manager.lookupScheduled(definition, name, definition.getExecutorServiceRef());
+            if (answer == null) {
+                throw new NoSuchBeanException(definition.getExecutorServiceRef(), "ScheduledExecutorService");
+            }
+            return answer;
+        }
+
+        return null;
     }
 
 }

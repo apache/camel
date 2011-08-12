@@ -30,66 +30,37 @@ import org.apache.camel.spi.ThreadPoolProfile;
  */
 public final class ThreadPoolBuilder {
 
-    private ThreadPoolProfile profile;
-    
-    @Deprecated
-    private CamelContext context;
+    // reuse a profile to store the settings
+    private final ThreadPoolProfile profile;
+    private final CamelContext context;
 
-    @Deprecated
     public ThreadPoolBuilder(CamelContext context) {
         this.context = context;
         this.profile = new ThreadPoolProfile();
     }
     
-    public ThreadPoolBuilder(String name) {
-        this.profile = new ThreadPoolProfile(name);
-    }
-    
-    public ThreadPoolBuilder defaultProfile(Boolean defaultProfile) {
-        profile.setDefaultProfile(defaultProfile);
-        return this;
-    }
-
-    public ThreadPoolBuilder poolSize(Integer poolSize) {
+    public ThreadPoolBuilder poolSize(int poolSize) {
         profile.setPoolSize(poolSize);
         return this;
     }
 
-    public ThreadPoolBuilder maxPoolSize(Integer maxPoolSize) {
+    public ThreadPoolBuilder maxPoolSize(int maxPoolSize) {
         profile.setMaxPoolSize(maxPoolSize);
         return this;
     }
     
-    public ThreadPoolBuilder keepAliveTime(Integer keepAliveTime) {
-        profile.setKeepAliveTime(keepAliveTime.longValue());
-        return this;
-    }
-
-    public ThreadPoolBuilder keepAliveTime(Long keepAliveTime) {
-        profile.setKeepAliveTime(keepAliveTime);
-        return this;
-    }
-    
-    public ThreadPoolBuilder keepAliveTime(Integer keepAliveTime, TimeUnit timeUnit) {
-        if (keepAliveTime != null) {
-            profile.setKeepAliveTime(keepAliveTime.longValue());
-        }
-        profile.setTimeUnit(timeUnit);
-        return this;
-    }
-    
-    public ThreadPoolBuilder keepAliveTime(Long keepAliveTime, TimeUnit timeUnit) {
+    public ThreadPoolBuilder keepAliveTime(long keepAliveTime, TimeUnit timeUnit) {
         profile.setKeepAliveTime(keepAliveTime);
         profile.setTimeUnit(timeUnit);
         return this;
     }
 
-    public ThreadPoolBuilder timeUnit(TimeUnit timeUnit) {
-        profile.setTimeUnit(timeUnit);
+    public ThreadPoolBuilder keepAliveTime(long keepAliveTime) {
+        profile.setKeepAliveTime(keepAliveTime);
         return this;
     }
 
-    public ThreadPoolBuilder maxQueueSize(Integer maxQueueSize) {
+    public ThreadPoolBuilder maxQueueSize(int maxQueueSize) {
         profile.setMaxQueueSize(maxQueueSize);
         return this;
     }
@@ -99,67 +70,37 @@ public final class ThreadPoolBuilder {
         return this;
     }
     
-    public ThreadPoolBuilder daemon() {
-        profile.setDaemon(true);
-        return this;
-    }
-    
-    public ThreadPoolBuilder daemon(Boolean daemon) {
-        profile.setDaemon(daemon);
-        return this;
-    }
-    
-
-    public ThreadPoolBuilder threadName(String name) {
-        profile.setThreadName(name);
-        return this;
-    }
-
-
-    public ThreadPoolProfile build() {
-        return this.profile;
+    /**
+     * Builds the new thread pool
+     *
+     * @return the created thread pool
+     * @throws Exception is thrown if error building the thread pool
+     */
+    public ExecutorService build() throws Exception {
+        return build(null, null);
     }
 
     /**
      * Builds the new thread pool
-     * @deprecated use build instead and fetch the ExecutorService from the ExecutorServiceManager 
      *
      * @param name name which is appended to the thread name
      * @return the created thread pool
      * @throws Exception is thrown if error building the thread pool
      */
-    @Deprecated
     public ExecutorService build(String name) throws Exception {
         return build(null, name);
     }
 
     /**
      * Builds the new thread pool
-     * @deprecated use build instead and fetch the ExecutorService from the ExecutorServiceManager
      *
      * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name   name which is appended to the thread name
      * @return the created thread pool
      * @throws Exception is thrown if error building the thread pool
      */
-    @Deprecated
     public ExecutorService build(Object source, String name) throws Exception {
-        profile.setId(name);
-        return context.getExecutorServiceManager().getExecutorService(profile, source);
-
-    }
-
-
-    public static ThreadPoolProfile singleThreadExecutor(String id) {
-        return new ThreadPoolBuilder(id).poolSize(1).maxPoolSize(1).build();
-    }
-    
-    public static ThreadPoolProfile fixedThreadExecutor(String id, int poolSize) {
-        return new ThreadPoolBuilder(id)
-            .poolSize(poolSize)
-            .maxPoolSize(poolSize)
-            .keepAliveTime(0L, TimeUnit.MILLISECONDS)
-            .build();
+        return context.getExecutorServiceManager().newThreadPool(source, name, profile);
     }
 
 }

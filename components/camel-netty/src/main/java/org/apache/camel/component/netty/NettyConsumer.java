@@ -21,9 +21,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.spi.ThreadPoolProfile;
 import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -145,10 +143,10 @@ public class NettyConsumer extends DefaultConsumer {
     }
 
     private void initializeTCPServerSocketCommunicationLayer() throws Exception {
-        ThreadPoolProfile bossProfile = new ThreadPoolBuilder("NettyTCPBoss").poolSize(configuration.getCorePoolSize()).maxPoolSize(configuration.getMaxPoolSize()).build();
-        ThreadPoolProfile workerProfile = new ThreadPoolBuilder("NettyTCPWorker").poolSize(configuration.getCorePoolSize()).maxPoolSize(configuration.getMaxPoolSize()).build();
-        ExecutorService bossExecutor = context.getExecutorServiceManager().getExecutorService(bossProfile, this);
-        ExecutorService workerExecutor = context.getExecutorServiceManager().getExecutorService(workerProfile, this);
+        ExecutorService bossExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyTCPBoss",
+                configuration.getCorePoolSize(), configuration.getMaxPoolSize());
+        ExecutorService workerExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyTCPWorker",
+                configuration.getCorePoolSize(), configuration.getMaxPoolSize());
 
         channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
         serverBootstrap = new ServerBootstrap(channelFactory);
@@ -169,8 +167,8 @@ public class NettyConsumer extends DefaultConsumer {
     }
 
     private void initializeUDPServerSocketCommunicationLayer() throws Exception {
-        ThreadPoolProfile profile = new ThreadPoolBuilder("NettyUDPWorker").poolSize(configuration.getCorePoolSize()).maxPoolSize(configuration.getMaxPoolSize()).build();
-        ExecutorService workerExecutor = context.getExecutorServiceManager().getExecutorService(profile, this);
+        ExecutorService workerExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyUDPWorker",
+                configuration.getCorePoolSize(), configuration.getMaxPoolSize());
 
         datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
         connectionlessServerBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);

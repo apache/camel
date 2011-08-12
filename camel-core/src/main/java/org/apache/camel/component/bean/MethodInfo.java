@@ -159,13 +159,13 @@ public class MethodInfo {
             recipientList.setShareUnitOfWork(annotation.shareUnitOfWork());
 
             if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
-                ExecutorService executor = camelContext.getExecutorServiceManager().getDefaultExecutorService(annotation.executorServiceRef(), this);
+                ExecutorService executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, annotation.executorServiceRef());
                 recipientList.setExecutorService(executor);
             }
 
             if (annotation.parallelProcessing() && recipientList.getExecutorService() == null) {
                 // we are running in parallel so we need a thread pool
-                ExecutorService executor = camelContext.getExecutorServiceManager().getDefaultExecutorService("@RecipientList", this);
+                ExecutorService executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, "@RecipientList");
                 recipientList.setExecutorService(executor);
             }
 

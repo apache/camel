@@ -25,7 +25,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -56,7 +55,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
         // we only need one thread in the pool to schedule this task
         this.executor = endpoint.getCamelContext().getExecutorServiceManager()
-            .getScheduledExecutorService(ThreadPoolBuilder.singleThreadExecutor(endpoint.getEndpointUri()), this);
+                            .newScheduledThreadPool(this, endpoint.getEndpointUri(), 1);
         ObjectHelper.notNull(executor, "executor");
     }
 

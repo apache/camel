@@ -18,20 +18,14 @@ package org.apache.camel.model;
 
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
-import org.apache.camel.spi.ThreadPoolProfile;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;threadPoolProfile/&gt; element
@@ -57,16 +51,6 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition {
     private ThreadPoolRejectedPolicy rejectedPolicy;
 
     public ThreadPoolProfileDefinition() {
-    }
-
-    public ThreadPoolProfileDefinition(ThreadPoolProfile threadPoolProfile) {
-        setDefaultProfile(threadPoolProfile.isDefaultProfile());
-        setPoolSize("" + threadPoolProfile.getPoolSize());
-        setMaxPoolSize("" + threadPoolProfile.getMaxPoolSize());
-        setKeepAliveTime("" + threadPoolProfile.getKeepAliveTime());
-        setTimeUnit(threadPoolProfile.getTimeUnit());
-        setMaxQueueSize("" + threadPoolProfile.getMaxQueueSize());
-        setRejectedPolicy(threadPoolProfile.getRejectedPolicy());
     }
 
     public ThreadPoolProfileDefinition poolSize(int poolSize) {
@@ -182,22 +166,4 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition {
         this.rejectedPolicy = rejectedPolicy;
     }
 
-    /**
-     * Creates a {@link ThreadPoolProfile} instance based on this definition.
-     *
-     * @param context    the camel context
-     * @return           the profile
-     * @throws Exception is thrown if error creating the profile
-     */
-    public ThreadPoolProfile asThreadPoolProfile(CamelContext context) throws Exception {
-        ObjectHelper.notNull(context, "CamelContext", this);
-        return new ThreadPoolBuilder(getId())
-            .defaultProfile(getDefaultProfile())
-            .poolSize(CamelContextHelper.parseInteger(context, getPoolSize()))
-            .maxPoolSize(CamelContextHelper.parseInteger(context, getMaxPoolSize()))
-            .keepAliveTime(CamelContextHelper.parseLong(context, getKeepAliveTime()), getTimeUnit())
-            .maxQueueSize(CamelContextHelper.parseInteger(context, getMaxQueueSize()))
-            .rejectedPolicy(getRejectedPolicy())
-            .build();
-    }
 }

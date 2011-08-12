@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.component.routebox.RouteboxConsumer;
 import org.apache.camel.component.routebox.RouteboxServiceSupport;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatcher;
@@ -54,8 +53,7 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
         
         // Create a URI link from the primary context to routes in the new inner context
         int poolSize = getRouteboxEndpoint().getConfig().getThreads();
-        setExecutor(getRouteboxEndpoint().getCamelContext().getExecutorServiceManager()
-                .getExecutorService(ThreadPoolBuilder.fixedThreadExecutor(getRouteboxEndpoint().getEndpointUri(), poolSize), this));
+        setExecutor(getRouteboxEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, getRouteboxEndpoint().getEndpointUri(), poolSize));
         for (int i = 0; i < poolSize; i++) {
             getExecutor().execute(this);
         }

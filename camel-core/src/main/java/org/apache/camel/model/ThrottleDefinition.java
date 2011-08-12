@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,7 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.Throttler;
-import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -87,9 +85,10 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
         ScheduledExecutorService scheduled = null;
         if (getAsyncDelayed() != null && getAsyncDelayed()) {
-            String ref = this.executorServiceRef != null ? this.executorServiceRef : "Throttle";
-            ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
-            scheduled = manager.getScheduledExecutorService(ref, this);
+            scheduled = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this);
+            if (scheduled == null) {
+                scheduled = routeContext.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "Throttle");
+            }
         }
 
         // should be default 1000 millis

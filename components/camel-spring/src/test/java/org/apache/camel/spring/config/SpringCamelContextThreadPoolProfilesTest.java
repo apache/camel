@@ -44,7 +44,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         assertEquals(null, profile.getRejectedPolicy());
 
         // create a thread pool from low
-        ExecutorService executor = context.getExecutorServiceManager().getDefaultExecutorService("low", this); // TODO check newThreadPool(this, "MyLow", "low");
+        ExecutorService executor = context.getExecutorServiceManager().newThreadPool(this, "MyLow", "low");
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, executor);
         assertEquals(1, tp.getCorePoolSize());
         assertEquals(5, tp.getMaximumPoolSize());
@@ -64,7 +64,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         assertEquals(null, profile.getMaxQueueSize());
 
         // create a thread pool from big
-        ExecutorService executor = context.getExecutorServiceManager().getDefaultExecutorService("big", this); // TODO check newThreadPool(this, "MyBig", "big");
+        ExecutorService executor = context.getExecutorServiceManager().newThreadPool(this, "MyBig", "big");
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, executor);
         assertEquals(50, tp.getCorePoolSize());
         assertEquals(100, tp.getMaximumPoolSize());

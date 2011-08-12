@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.impl.DefaultProducer;
 
 public class HdfsProducer extends DefaultProducer {
@@ -101,7 +100,7 @@ public class HdfsProducer extends DefaultProducer {
             }
         }
         if (idleStrategy != null) {
-            scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().getScheduledExecutorService(ThreadPoolBuilder.singleThreadExecutor("IdleCheck"), this);
+            scheduler = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "HdfsIdleCheck");
             log.debug("Creating IdleCheck task scheduled to run every {} millis", config.getCheckIdleInterval());
             scheduler.scheduleAtFixedRate(new IdleCheck(idleStrategy), 1000, config.getCheckIdleInterval(), TimeUnit.MILLISECONDS);
         }
@@ -110,11 +109,11 @@ public class HdfsProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ostream.close();
         if (scheduler != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(scheduler);
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduler);
             scheduler = null;
         }
+        ostream.close();
     }
 
     @Override

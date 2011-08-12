@@ -18,15 +18,11 @@ package org.apache.camel.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import junit.framework.TestCase;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.ThreadPoolBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
  * @version 
@@ -106,9 +102,7 @@ public class DefaultTimeoutMapTest extends TestCase {
     }
 
     public void testExecutor() throws Exception {
-        CamelContext camelContext = new DefaultCamelContext();
-        ThreadPoolProfile profile = new ThreadPoolBuilder("foo").poolSize(2).daemon().build();
-        ScheduledExecutorService e = camelContext.getExecutorServiceManager().getScheduledExecutorService(profile, this);
+        ScheduledExecutorService e = Executors.newScheduledThreadPool(2);
 
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(e, 50);
         assertEquals(50, map.getPurgePollTime());

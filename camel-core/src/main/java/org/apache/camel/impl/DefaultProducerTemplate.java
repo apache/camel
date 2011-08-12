@@ -690,7 +690,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             if (executor != null) {
                 return executor;
             }
-            executor = context.getExecutorServiceManager().getDefaultExecutorService("ProducerTemplate", this);
+            executor = context.getExecutorServiceManager().newDefaultThreadPool(this, "ProducerTemplate");
         }
 
         ObjectHelper.notNull(executor, "ExecutorService");

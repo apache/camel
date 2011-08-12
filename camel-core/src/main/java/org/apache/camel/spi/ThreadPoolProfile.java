@@ -36,22 +36,36 @@ public class ThreadPoolProfile {
     private TimeUnit timeUnit;
     private Integer maxQueueSize;
     private ThreadPoolRejectedPolicy rejectedPolicy;
-    private Boolean shared;
-    private Boolean daemon;
-    private String threadName;
 
+    /**
+     * Creates a new thread pool profile, with no id set.
+     */
     public ThreadPoolProfile() {
     }
-    
+
+    /**
+     * Creates a new thread pool profile
+     *
+     * @param id id of the profile
+     */
     public ThreadPoolProfile(String id) {
         this.id = id;
-        this.threadName = id;
     }
 
+    /**
+     * Gets the id of this profile
+     *
+     * @return the id of this profile
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets the id of this profile
+     *
+     * @param id profile id
+     */
     public void setId(String id) {
         this.id = id;
     }
@@ -83,6 +97,11 @@ public class ThreadPoolProfile {
         return poolSize;
     }
 
+    /**
+     * Sets the core pool size (threads to keep minimum in pool)
+     *
+     * @param poolSize the pool size
+     */
     public void setPoolSize(Integer poolSize) {
         this.poolSize = poolSize;
     }
@@ -97,9 +116,9 @@ public class ThreadPoolProfile {
     }
 
     /**
-     * Sets the core pool size (threads to keep minimum in pool)
+     * Sets the maximum pool size
      *
-     * @param poolSize the pool size
+     * @param maxPoolSize the max pool size
      */
     public void setMaxPoolSize(Integer maxPoolSize) {
         this.maxPoolSize = maxPoolSize;
@@ -124,18 +143,18 @@ public class ThreadPoolProfile {
     }
 
     /**
-     * Sets the time unit used for keep alive time
+     * Gets the time unit used for keep alive time
      *
-     * @param timeUnit the time unit
+     * @return the time unit
      */
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }
 
     /**
-     * Gets the time unit used for keep alive time
+     * Sets the time unit used for keep alive time
      *
-     * @return the time unit
+     * @param timeUnit the time unit
      */
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
@@ -164,7 +183,7 @@ public class ThreadPoolProfile {
     }
 
     /**
-     * Gets the handler for tasks which cannot be executed by the thread pool.
+     * Gets the policy for tasks which cannot be executed by the thread pool.
      *
      * @return the policy for the handler
      */
@@ -193,74 +212,10 @@ public class ThreadPoolProfile {
         this.rejectedPolicy = rejectedPolicy;
     }
 
-    public String getThreadName() {
-        return threadName;
-    }
-
-    public void setThreadName(String threadName) {
-        this.threadName = threadName;
-    }
-
-    public boolean isShared() {
-        return shared;
-    }
-
-    public void setShared(boolean shared) {
-        this.shared = shared;
-    }
-
     @Override
     public String toString() {
         return "ThreadPoolProfile[" + id + ", " + defaultProfile + ", " + poolSize + ", " + maxPoolSize + ", "
                 + keepAliveTime + " " + timeUnit + ", " + maxPoolSize + ", " + rejectedPolicy + "]";
     }
 
-    public void setDaemon(boolean daemon) {
-        this.daemon = daemon;
-    }
-    
-    public boolean isDaemon() {
-        return daemon == null ? false : daemon;
-    }
-
-    public ThreadPoolProfile getEffectiveProfile(ThreadPoolProfile profile) {
-        ThreadPoolProfile defaultProfile = this;
-        ThreadPoolProfile eProfile = new ThreadPoolProfile();
-        eProfile.setPoolSize(profile.getPoolSize() != null ? profile.getPoolSize() : defaultProfile.getPoolSize());
-        eProfile.setMaxPoolSize(profile.getMaxPoolSize() != null ? profile.getMaxPoolSize() : defaultProfile.getMaxPoolSize());
-        eProfile.setKeepAliveTime(profile.getKeepAliveTime() != null ? profile.getKeepAliveTime() : defaultProfile.getKeepAliveTime());
-        eProfile.setTimeUnit(profile.getTimeUnit() != null ? profile.getTimeUnit() : defaultProfile.getTimeUnit());
-        eProfile.setMaxQueueSize(profile.getMaxQueueSize() != null ? profile.getMaxQueueSize() : defaultProfile.getMaxQueueSize());
-        eProfile.setRejectedPolicy(profile.getRejectedPolicy() != null ? profile.getRejectedPolicy() : defaultProfile.getRejectedPolicy());
-        return eProfile;
-    }
-
-    /**
-     * Overwrites each attribute that is null with the attribute from defaultProfile 
-     * 
-     * @param defaultProfile2
-     */
-    public void addDefaults(ThreadPoolProfile defaultProfile2) {
-        if (defaultProfile2 == null) {
-            return;
-        }
-        if (poolSize == null) {
-            poolSize = defaultProfile2.getPoolSize();
-        }
-        if (maxPoolSize == null) {
-            maxPoolSize = defaultProfile2.getMaxPoolSize();
-        }
-        if (keepAliveTime == null) {
-            keepAliveTime = defaultProfile2.getKeepAliveTime();
-        }
-        if (timeUnit == null) {
-            timeUnit = defaultProfile2.getTimeUnit();
-        }
-        if (maxQueueSize == null) {
-            maxQueueSize = defaultProfile2.getMaxQueueSize();
-        }
-        if (rejectedPolicy == null) {
-            rejectedPolicy = defaultProfile2.getRejectedPolicy();
-        }
-    }
 }

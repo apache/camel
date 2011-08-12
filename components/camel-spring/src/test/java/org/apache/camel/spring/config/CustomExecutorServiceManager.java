@@ -16,23 +16,15 @@
  */
 package org.apache.camel.spring.config;
 
-import junit.framework.Assert;
 import org.apache.camel.CamelContext;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.apache.camel.impl.DefaultExecutorServiceManager;
 
 /**
  * @version 
  */
-@ContextConfiguration
-public class CustomExecutorServiceStrategyTest extends AbstractJUnit38SpringContextTests {
+public class CustomExecutorServiceManager extends DefaultExecutorServiceManager {
 
-    @Autowired
-    protected CamelContext context;
-
-    public void testCustomExecutorService() throws Exception {
-        Assert.assertTrue(context.getExecutorServiceManager() instanceof CustomExecutorServiceStrategy);
+    public CustomExecutorServiceManager(CamelContext camelContext) {
+        super(camelContext);
     }
-
 }

@@ -34,7 +34,6 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
@@ -70,7 +69,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
         initializeStream();
 
-        executor = endpoint.getCamelContext().getExecutorServiceManager().getExecutorService(ThreadPoolBuilder.singleThreadExecutor(endpoint.getEndpointUri()), this);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, endpoint.getEndpointUri());
         executor.execute(this);
 
         if (endpoint.getGroupLines() < 0) {
@@ -83,7 +82,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         // important: do not close the stream as it will close the standard
         // system.in etc.
         if (executor != null) {
-            executor.shutdownNow();
+            endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             executor = null;
         }
         lines.clear();

@@ -204,7 +204,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public DefaultCamelContext() {
         super();
-        this.executorServiceManager = new DefaultExecutorServiceManager(this, new DefaultThreadPoolFactory());
+        this.executorServiceManager = new DefaultExecutorServiceManager(this);
 
         // create endpoint registry at first since end users may access endpoints before CamelContext is started
         this.endpoints = new EndpointRegistry(this);

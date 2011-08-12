@@ -23,7 +23,6 @@ import com.googlecode.jsendnsca.core.Level;
 import com.googlecode.jsendnsca.core.MessagePayload;
 import com.googlecode.jsendnsca.core.NonBlockingNagiosPassiveCheckSender;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.impl.DefaultProducer;
 
 import static org.apache.camel.component.nagios.NagiosConstants.HOST_NAME;
@@ -68,7 +67,7 @@ public class NagiosProducer extends DefaultProducer {
         if (sender instanceof NonBlockingNagiosPassiveCheckSender) {
             NonBlockingNagiosPassiveCheckSender nonBlocking = (NonBlockingNagiosPassiveCheckSender) sender;
             ExecutorService executor = getEndpoint().getCamelContext().getExecutorServiceManager()
-                                            .getExecutorService(ThreadPoolBuilder.singleThreadExecutor(getEndpoint().getEndpointUri()), this);
+                    .newSingleThreadExecutor(this, getEndpoint().getEndpointUri());
             nonBlocking.setExecutor(executor);
         }
         super.doStart();

@@ -25,23 +25,56 @@ import org.apache.camel.ShutdownableService;
 /**
  * Strategy to create thread pools.
  * <p/>
- * This strategy is pluggable so you can plugin a custom provider, for example if you want to leverage
- * the WorkManager for a J2EE server.
+ * This manager is pluggable so you can plugin a custom provider, for example if you want to leverage
+ * the WorkManager for a JEE server.
  * <p/>
- * This strategy has fine grained methods for creating various thread pools, however custom strategies
+ * You may want to just implement a custom {@link ThreadPoolFactory} and rely on the
+ * {@link org.apache.camel.impl.DefaultExecutorServiceManager}, if that is sufficient. The {@link ThreadPoolFactory}
+ * is always used for creating the actual thread pools. You can implement a custom {@link ThreadPoolFactory}
+ * to leverage the WorkManager for a JEE server.
+ * <p/>
+ * The {@link ThreadPoolFactory} has pure JDK API, where as this {@link ExecutorServiceManager} has Camel API
+ * concepts such as {@link ThreadPoolProfile}. Therefore it may be easier to only implement a custom
+ * {@link ThreadPoolFactory}.
+ * <p/>
+ * This manager has fine grained methods for creating various thread pools, however custom strategies
  * do not have to exactly create those kind of pools. Feel free to return a shared or different kind of pool.
- * <p/>
- * However there are two types of pools: regular and scheduled.
  * <p/>
  * If you use the <tt>newXXX</tt> methods to create thread pools, then Camel will by default take care of
  * shutting down those created pools when {@link org.apache.camel.CamelContext} is shutting down.
- *
- * @version 
+ * <p/>
+ * @see ThreadPoolFactory
  */
 public interface ExecutorServiceManager extends ShutdownableService {
-    
+
+    /**
+     * Gets the {@link ThreadPoolFactory} to use for creating the thread pools.
+     *
+     * @return the thread pool factory
+     */
+    ThreadPoolFactory getThreadPoolFactory();
+
+    /**
+     * Sets a custom {@link ThreadPoolFactory} to use
+     *
+     * @param threadPoolFactory the thread pool factory
+     */
+    void setThreadPoolFactory(ThreadPoolFactory threadPoolFactory);
+
+    /**
+     * Creates a full thread name
+     *
+     * @param name name which is appended to the full thread name
+     * @return the full thread name
+     */
     String resolveThreadName(String name);
 
+    /**
+     * Gets the thread pool profile by the given id
+     *
+     * @param id id of the thread pool profile to get
+     * @return the found profile, or <tt>null</tt> if not found
+     */
     ThreadPoolProfile getThreadPoolProfile(String id);
 
     /**
@@ -50,13 +83,19 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * @param profile the profile
      */
     void registerThreadPoolProfile(ThreadPoolProfile profile);
+
     /**
      * Sets the default thread pool profile
      *
      * @param defaultThreadPoolProfile the new default thread pool profile
      */
     void setDefaultThreadPoolProfile(ThreadPoolProfile defaultThreadPoolProfile);
-    
+
+    /**
+     * Gets the default thread pool profile
+     *
+     * @return the default profile which are newer <tt>null</tt>
+     */
     ThreadPoolProfile getDefaultThreadPoolProfile();
 
     /**
@@ -69,27 +108,140 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * <br/>and <tt>${name}</tt> is the regular thread name.
      * <br/>You can also use <tt>${longName}</tt> is the long thread name which can includes endpoint parameters etc.
      *
-     * @param pattern  the pattern
+     * @param pattern the pattern
      * @throws IllegalArgumentException if the pattern is invalid.
      */
     void setThreadNamePattern(String pattern) throws IllegalArgumentException;
-    
+
     /**
-     * Creates an executorservice with a default thread pool
-     * 
-     * @param ref
-     * @param source
-     * @return
+     * Gets the thread name patter to use
+     *
+     * @return the pattern
      */
-    ExecutorService getDefaultExecutorService(String ref, Object source);
-    
-    ExecutorService getExecutorService(ThreadPoolProfile profile, Object source);
-    
-    ExecutorService createExecutorService(ThreadPoolProfile profile, Object source);
-    
-    ScheduledExecutorService getScheduledExecutorService(String ref, Object source);
-    
-    ScheduledExecutorService getScheduledExecutorService(ThreadPoolProfile profile, Object source);
+    String getThreadNamePattern();
+
+    /**
+     * Lookup a {@link java.util.concurrent.ExecutorService} from the {@link org.apache.camel.spi.Registry}
+     * and from known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.
+     *
+     * @param source               the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name                 name which is appended to the thread name
+     * @param executorServiceRef   reference to lookup
+     * @return the {@link java.util.concurrent.ExecutorService} or <tt>null</tt> if not found
+     */
+    ExecutorService lookup(Object source, String name, String executorServiceRef);
+
+    /**
+     * Lookup a {@link java.util.concurrent.ScheduledExecutorService} from the {@link org.apache.camel.spi.Registry}
+     * and from known list of {@link org.apache.camel.spi.ThreadPoolProfile ThreadPoolProfile(s)}.
+     *
+     * @param source               the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name                 name which is appended to the thread name
+     * @param executorServiceRef   reference to lookup
+     * @return the {@link java.util.concurrent.ScheduledExecutorService} or <tt>null</tt> if not found
+     */
+    ScheduledExecutorService lookupScheduled(Object source, String name, String executorServiceRef);
+
+    /**
+     * Creates a new thread pool using the default thread pool profile.
+     *
+     * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name   name which is appended to the thread name
+     * @return the created thread pool
+     */
+    ExecutorService newDefaultThreadPool(Object source, String name);
+
+    /**
+     * Creates a new scheduled thread pool using the default thread pool profile.
+     *
+     * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name   name which is appended to the thread name
+     * @return the created thread pool
+     */
+    ScheduledExecutorService newDefaultScheduledThreadPool(Object source, String name);
+
+    /**
+     * Creates a new thread pool using the given profile
+     *
+     * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name   name which is appended to the thread name
+     * @param profile the profile with the thread pool settings to use
+     * @return the created thread pool
+     */
+    ExecutorService newThreadPool(Object source, String name, ThreadPoolProfile profile);
+
+    /**
+     * Creates a new thread pool using using the given profile id
+     *
+     * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name   name which is appended to the thread name
+     * @param profileId the id of the profile with the thread pool settings to use
+     * @return the created thread pool, or <tt>null</tt> if the thread pool profile could not be found
+     */
+    ExecutorService newThreadPool(Object source, String name, String profileId);
+
+    /**
+     * Creates a new thread pool.
+     * <p/>
+     * Will fallback and use values from the default thread pool profile for keep alive time, rejection policy
+     * and other parameters which cannot be specified.
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @param poolSize    the core pool size
+     * @param maxPoolSize the maximum pool size
+     * @return the created thread pool
+     */
+    ExecutorService newThreadPool(Object source, String name, int poolSize, int maxPoolSize);
+
+    /**
+     * Creates a new single-threaded thread pool. This is often used for background threads.
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @return the created thread pool
+     */
+    ExecutorService newSingleThreadExecutor(Object source, String name);
+
+    /**
+     * Creates a new cached thread pool.
+     * <p/>
+     * <b>Important:</b> Using cached thread pool is discouraged as they have no upper bound and can overload the JVM.
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @return the created thread pool
+     */
+    ExecutorService newCachedThreadPool(Object source, String name);
+
+    /**
+     * Creates a new fixed thread pool.
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @param poolSize    the core pool size
+     * @return the created thread pool
+     */
+    ExecutorService newFixedThreadPool(Object source, String name, int poolSize);
+
+    /**
+     * Creates a new scheduled thread pool.
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @param poolSize    the core pool size
+     * @return the created thread pool
+     */
+    ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize);
+
+    /**
+     * Creates a new single-threaded thread pool. This is often used for background threads.
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @return the created thread pool
+     */
+    ScheduledExecutorService newSingleThreadScheduledExecutor(Object source, String name);
 
     /**
      * Shutdown the given executor service.
@@ -107,9 +259,4 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * @see java.util.concurrent.ExecutorService#shutdownNow()
      */
     List<Runnable> shutdownNow(ExecutorService executorService);
-
-    
-    ExecutorService newCachedThreadPool(Object source, String name);
-
-    ExecutorService newSynchronousExecutorService(String string, Object source);
 }

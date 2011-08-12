@@ -222,7 +222,7 @@ public class CamelInvocationHandler implements InvocationHandler {
         // CamelContext will shutdown thread pool when it shutdown so we can lazy create it on demand
         // but in case of hot-deploy or the likes we need to be able to re-create it (its a shared static instance)
         if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
-            executorService = context.getExecutorServiceManager().getDefaultExecutorService("CamelInvocationHandler", CamelInvocationHandler.class);
+            executorService = context.getExecutorServiceManager().newDefaultThreadPool(CamelInvocationHandler.class, "CamelInvocationHandler");
         }
         return executorService;
     }

@@ -127,7 +127,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         if (isParallelProcessing() && executorService == null) {
             String ref = this.executorServiceRef != null ? this.executorServiceRef : "RecipientList";
             ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
-            executorService = manager.getDefaultExecutorService(ref, this);
+            executorService = manager.newDefaultThreadPool(this, ref);
         }
         answer.setExecutorService(executorService);
         long timeout = getTimeout() != null ? getTimeout() : 0;

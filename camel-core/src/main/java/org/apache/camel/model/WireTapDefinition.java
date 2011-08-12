@@ -87,7 +87,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
 
         String ref = this.executorServiceRef != null ? this.executorServiceRef : "WireTap";
         ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
-        executorService = manager.getDefaultExecutorService(ref, this);
+        executorService = manager.newDefaultThreadPool(this, ref);
         WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern(), executorService);
 
         answer.setCopy(isCopy());

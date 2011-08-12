@@ -26,7 +26,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
@@ -37,7 +36,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -452,7 +450,7 @@ public class JmsRouteRequestReplyTest extends CamelTestSupport {
         // start template
         template.start();
 
-        ExecutorService executor = context.getExecutorServiceManager().getExecutorService(ThreadPoolBuilder.fixedThreadExecutor("Task", maxTasks), this);
+        ExecutorService executor = context.getExecutorServiceManager().newFixedThreadPool(this, "Task", maxTasks);
         CompletionService<Task> completionService = new ExecutorCompletionService<Task>(executor);
 
         final AtomicInteger counter = new AtomicInteger(-1);

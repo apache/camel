@@ -33,7 +33,6 @@ import org.apache.camel.Route;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.SuspendableService;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -276,8 +275,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     private ExecutorService getExecutorService() {
         if (executor == null) {
-            executor = camelContext.getExecutorServiceManager()
-                .getExecutorService(ThreadPoolBuilder.singleThreadExecutor("ShutdownTask") , this);
+            executor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "ShutdownTask");
         }
         return executor;
     }

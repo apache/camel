@@ -26,7 +26,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
@@ -53,7 +52,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     @Override
     protected void doStart() throws Exception {
         int concurrentConsumers = endpoint.getConfiguration().getConcurrentConsumers();
-        executor = endpoint.getCamelContext().getExecutorServiceManager().getExecutorService(ThreadPoolBuilder.fixedThreadExecutor(endpoint.getEndpointUri(), concurrentConsumers), this);
+        executor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, endpoint.getEndpointUri(), concurrentConsumers);
         for (int i = 0; i < concurrentConsumers; i++) {
             executor.execute(this);
         }

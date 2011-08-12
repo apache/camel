@@ -26,12 +26,10 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.ServicePoolAware;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.CamelLogger;
-import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.ExchangeHelper;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
@@ -210,18 +208,18 @@ public class NettyProducer extends DefaultAsyncProducer implements ServicePoolAw
 
     protected void setupTCPCommunication() throws Exception {
         if (channelFactory == null) {
-            ThreadPoolProfile bossProfile = new ThreadPoolBuilder("NettyTCPBoss").poolSize(configuration.getCorePoolSize()).maxPoolSize(configuration.getMaxPoolSize()).build();
-            ThreadPoolProfile workerProfile = new ThreadPoolBuilder("NettyTCPWorker").poolSize(configuration.getCorePoolSize()).maxPoolSize(configuration.getMaxPoolSize()).build();
-            ExecutorService bossExecutor = context.getExecutorServiceManager().getExecutorService(bossProfile, this);
-            ExecutorService workerExecutor = context.getExecutorServiceManager().getExecutorService(workerProfile, this);
+            ExecutorService bossExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyTCPBoss",
+                    configuration.getCorePoolSize(), configuration.getMaxPoolSize());
+            ExecutorService workerExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyTCPWorker",
+                    configuration.getCorePoolSize(), configuration.getMaxPoolSize());
             channelFactory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor);
         }
     }
 
     protected void setupUDPCommunication() throws Exception {
         if (datagramChannelFactory == null) {
-            ThreadPoolProfile profile = new ThreadPoolBuilder("NettyUDPWorker").poolSize(configuration.getCorePoolSize()).maxPoolSize(configuration.getMaxPoolSize()).build();
-            ExecutorService workerExecutor = context.getExecutorServiceManager().getExecutorService(profile, this);
+            ExecutorService workerExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyUDPWorker",
+                    configuration.getCorePoolSize(), configuration.getMaxPoolSize());
             datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
         }
     }

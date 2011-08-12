@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
  * @version 
@@ -37,9 +36,10 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         jndi.bind("someonesPool", someone);
         return jndi;
     }
-    
-    private void getAndShutdown(ThreadPoolProfile profile) throws Exception {
-        ExecutorService executor = context.getExecutorServiceManager().getExecutorService(profile, this);
+
+    public void testThreadPoolBuilderDefault() throws Exception {
+        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
+        ExecutorService executor = builder.build(this, "myPool");
         assertNotNull(executor);
 
         assertEquals(false, executor.isShutdown());
@@ -47,48 +47,73 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor.isShutdown());
     }
 
-    public void testThreadPoolBuilderDefault() throws Exception {
-        ThreadPoolProfile profile = new ThreadPoolBuilder("myPool").build();
-        getAndShutdown(profile);
-    }
-
     public void testThreadPoolBuilderMaxQueueSize() throws Exception {
-        ThreadPoolProfile profile = new ThreadPoolBuilder("myPool").maxQueueSize(2000).build();
-        getAndShutdown(profile);
+        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
+        ExecutorService executor = builder.maxQueueSize(2000).build(this, "myPool");
+        assertNotNull(executor);
+
+        assertEquals(false, executor.isShutdown());
+        context.stop();
+        assertEquals(true, executor.isShutdown());
     }
 
     public void testThreadPoolBuilderMax() throws Exception {
-        ThreadPoolProfile profile = new ThreadPoolBuilder("myPool").maxPoolSize(100).build();
-        getAndShutdown(profile);
+        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
+        ExecutorService executor = builder.maxPoolSize(100).build(this, "myPool");
+        assertNotNull(executor);
+
+        assertEquals(false, executor.isShutdown());
+        context.stop();
+        assertEquals(true, executor.isShutdown());
     }
 
     public void testThreadPoolBuilderCoreAndMax() throws Exception {
-        ThreadPoolProfile profile = new ThreadPoolBuilder("myPool").poolSize(50).maxPoolSize(100).build();
-        getAndShutdown(profile);
+        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
+        ExecutorService executor = builder.poolSize(50).maxPoolSize(100).build(this, "myPool");
+        assertNotNull(executor);
+
+        assertEquals(false, executor.isShutdown());
+        context.stop();
+        assertEquals(true, executor.isShutdown());
     }
 
     public void testThreadPoolBuilderKeepAlive() throws Exception {
-        ThreadPoolProfile profile = new ThreadPoolBuilder("myPool").keepAliveTime(30).build();
-        getAndShutdown(profile);
+        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
+        ExecutorService executor = builder.keepAliveTime(30).build(this, "myPool");
+        assertNotNull(executor);
+
+        assertEquals(false, executor.isShutdown());
+        context.stop();
+        assertEquals(true, executor.isShutdown());
     }
 
     public void testThreadPoolBuilderKeepAliveTimeUnit() throws Exception {
-        ThreadPoolProfile profile = new ThreadPoolBuilder("myPool").keepAliveTime(20000).timeUnit(TimeUnit.MILLISECONDS).build();
-        getAndShutdown(profile);
+        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
+        ExecutorService executor = builder.keepAliveTime(20000, TimeUnit.MILLISECONDS).build(this, "myPool");
+        assertNotNull(executor);
+
+        assertEquals(false, executor.isShutdown());
+        context.stop();
+        assertEquals(true, executor.isShutdown());
     }
 
     public void testThreadPoolBuilderAll() throws Exception {
-        ThreadPoolProfile profile = new ThreadPoolBuilder("myPool").poolSize(50).maxPoolSize(100).maxQueueSize(2000)
-            .keepAliveTime(20000)
-            .timeUnit(TimeUnit.MILLISECONDS)
-            .rejectedPolicy(ThreadPoolRejectedPolicy.DiscardOldest)
-            .build();
-        getAndShutdown(profile);
+        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
+        ExecutorService executor = builder.poolSize(50).maxPoolSize(100).maxQueueSize(2000)
+                .keepAliveTime(20000, TimeUnit.MILLISECONDS)
+                .rejectedPolicy(ThreadPoolRejectedPolicy.DiscardOldest)
+                .build(this, "myPool");
+        assertNotNull(executor);
+
+        assertEquals(false, executor.isShutdown());
+        context.stop();
+        assertEquals(true, executor.isShutdown());
     }
 
     public void testThreadPoolBuilderTwoPoolsDefault() throws Exception {
-        ExecutorService executor = context.getExecutorServiceManager().getExecutorService(new ThreadPoolBuilder("myPool").build(), this);
-        ExecutorService executor2 = context.getExecutorServiceManager().getExecutorService(new ThreadPoolBuilder("myOtherPool").build(), this);
+        ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
+        ExecutorService executor = builder.build(this, "myPool");
+        ExecutorService executor2 = builder.build(this, "myOtherPool");
 
         assertNotNull(executor);
         assertNotNull(executor2);
@@ -99,6 +124,5 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         assertEquals(true, executor.isShutdown());
         assertEquals(true, executor2.isShutdown());
     }
-
 
 }

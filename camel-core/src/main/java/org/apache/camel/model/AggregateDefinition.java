@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -40,6 +39,7 @@ import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
  * Represents an XML &lt;aggregate/&gt; element
@@ -153,14 +153,15 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
+        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Aggregator", this);
         if (executorService == null) {
-            String ref = executorServiceRef != null ? executorServiceRef : "Aggregator";
             // executor service is mandatory for the Aggregator
             ExecutorServiceManager executorServiceManager = routeContext.getCamelContext().getExecutorServiceManager();
             if (isParallelProcessing()) {
-                executorService = executorServiceManager.getDefaultExecutorService(ref, this);
+                executorService = executorServiceManager.newDefaultThreadPool(this, "Aggregator");
             } else {
-                executorService = executorServiceManager.newSynchronousExecutorService(ref, this);
+                // we do not run in parallel mode, but use a synchronous executor, so we run in current thread
+                executorService = new SynchronousExecutorService();
             }
         }
         AggregateProcessor answer = new AggregateProcessor(routeContext.getCamelContext(), processor, correlation, strategy, executorService);

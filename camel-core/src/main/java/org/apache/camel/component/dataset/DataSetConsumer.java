@@ -21,10 +21,8 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.ThroughputLogger;
-import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
  * DataSet consumer.
@@ -54,8 +52,7 @@ public class DataSetConsumer extends DefaultConsumer {
         final long preloadSize = endpoint.getPreloadSize();
 
         sendMessages(0, preloadSize);
-        ThreadPoolProfile profile = ThreadPoolBuilder.singleThreadExecutor(endpoint.getEndpointUri());
-        executorService = camelContext.getExecutorServiceManager().getExecutorService(profile, this);
+        executorService = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, endpoint.getEndpointUri());
 
         executorService.execute(new Runnable() {
             public void run() {

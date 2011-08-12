@@ -27,7 +27,6 @@ import net.spy.memcached.MemcachedClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.ShutdownAware;
 
@@ -64,7 +63,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
             shutdownLatch = new CountDownLatch(poolSize + 1);
 
             // Fire up the handler thread pool
-            handlerExecutor = endpoint.getCamelContext().getExecutorServiceManager().getExecutorService(ThreadPoolBuilder.fixedThreadExecutor("Handlers-" + endpoint.getEndpointUri(), poolSize), this);
+            handlerExecutor = endpoint.getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "Handlers-" + endpoint.getEndpointUri(), poolSize);
             for (int k = 0; k < poolSize; ++k) {
                 handlerExecutor.execute(new Handler());
             }
@@ -76,7 +75,7 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
         }
 
         // Fire up the single poller thread
-        pollerExecutor = endpoint.getCamelContext().getExecutorServiceManager().getExecutorService(ThreadPoolBuilder.singleThreadExecutor("Poller-" + endpoint.getEndpointUri()), this);
+        pollerExecutor = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "Poller-" + endpoint.getEndpointUri());
         pollerExecutor.submit(new Poller(poolSize > 1));
 
         super.doStart();

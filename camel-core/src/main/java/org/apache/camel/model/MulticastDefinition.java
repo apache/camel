@@ -220,7 +220,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         ExecutorServiceManager executorServiceManager = routeContext.getCamelContext().getExecutorServiceManager();
         if (isParallelProcessing() && executorService == null) {
             String ref = this.executorServiceRef != null ? this.executorServiceRef : "Delay";
-            executorService = executorServiceManager.getDefaultExecutorService(ref, this);
+            executorService = executorServiceManager.newDefaultThreadPool(this, ref);
         }
         long timeout = getTimeout() != null ? getTimeout() : 0;
         if (timeout > 0 && !isParallelProcessing()) {

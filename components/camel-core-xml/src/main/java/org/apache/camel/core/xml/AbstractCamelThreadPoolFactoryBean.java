@@ -18,7 +18,6 @@ package org.apache.camel.core.xml;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
-import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
@@ -76,15 +74,10 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
             queueSize = CamelContextHelper.parseInteger(getCamelContext(), maxQueueSize);
         }
 
-        ThreadPoolProfile profile = new ThreadPoolBuilder(getId())
-            .threadName(getThreadName())
-            .poolSize(size)
-            .maxPoolSize(max)
-            .keepAliveTime(keepAlive, getTimeUnit())
-            .maxQueueSize(queueSize)
-            .rejectedPolicy(rejectedPolicy)
-            .build();
-        ExecutorService answer = getCamelContext().getExecutorServiceManager().createExecutorService(profile , getId());
+        ExecutorService answer = new ThreadPoolBuilder(getCamelContext())
+                .poolSize(size).maxPoolSize(max).keepAliveTime(keepAlive, getTimeUnit())
+                .maxQueueSize(queueSize).rejectedPolicy(getRejectedPolicy())
+                .build(getId(), getThreadName());
         return answer;
     }
 
@@ -149,6 +142,5 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     public void setThreadName(String threadName) {
         this.threadName = threadName;
     }
-
 
 }

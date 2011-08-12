@@ -100,7 +100,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
 
         String ref = this.executorServiceRef != null ? this.executorServiceRef : "OnCompletion";
         ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
-        executorService = manager.getDefaultExecutorService(ref, this);
+        executorService = manager.newDefaultThreadPool(this, ref);
 
         // should be false by default
         boolean original = getUseOriginalMessagePolicy() != null ? getUseOriginalMessagePolicy() : false;

@@ -124,7 +124,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         if (size > 1) {
             if (multicastExecutor == null) {
                 // create multicast executor as we need it when we have more than 1 processor
-                multicastExecutor = getCamelContext().getExecutorServiceManager().getDefaultExecutorService(getEndpointUri() + "(multicast)", this);
+                multicastExecutor = getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, getEndpointUri() + "(multicast)");
             }
             // create list of consumers to multicast to
             List<Processor> processors = new ArrayList<Processor>(size);

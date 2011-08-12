@@ -38,7 +38,6 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.builder.ThreadPoolBuilder;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementMBeanAssembler;
@@ -414,8 +413,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         if (executorService == null) {
             // we only need a single thread for the JMX connector
-            executorService = camelContext.getExecutorServiceManager()
-                .getExecutorService(ThreadPoolBuilder.singleThreadExecutor("JMXConnector: " + url), this);
+            executorService = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "JMXConnector: " + url);
         }
 
         // execute the JMX connector
