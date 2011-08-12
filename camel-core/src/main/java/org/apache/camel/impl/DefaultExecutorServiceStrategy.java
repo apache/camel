@@ -190,7 +190,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         return newThreadPool(source, name,
             profile.getPoolSize(), profile.getMaxPoolSize(),
             profile.getKeepAliveTime(), profile.getTimeUnit(),
-            profile.getMaxQueueSize(), profile.getRejectedExecutionHandler(), false);
+            profile.getMaxQueueSize(), profile.getRejectedExecutionHandler(), true);
     }
 
     public ExecutorService newThreadPool(Object source, String name, String threadPoolProfileId) {
@@ -205,7 +205,7 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
             Integer maxQueueSize = profile.getMaxQueueSize() != null ? profile.getMaxQueueSize() : defaultProfile.getMaxQueueSize();
             RejectedExecutionHandler handler = profile.getRejectedExecutionHandler() != null ? profile.getRejectedExecutionHandler() : defaultProfile.getRejectedExecutionHandler();
             // create the pool
-            return newThreadPool(threadPoolProfileId, source, name, poolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, handler, false);
+            return newThreadPool(threadPoolProfileId, source, name, poolSize, maxPoolSize, keepAliveTime, timeUnit, maxQueueSize, handler, true);
         } else {
             // no profile with that id
             return null;
