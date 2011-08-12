@@ -21,7 +21,7 @@ import org.apache.camel.spi.ThreadPoolProfile;
 /**
  * Use {@link ThreadPoolProfile} instead
  *
- * @deprecated use {@link ThreadPoolProfile} instead.
+ * @deprecated use {@link ThreadPoolProfile} instead, will be removed in a future Camel release
  */
 @Deprecated
 public class ThreadPoolProfileSupport extends ThreadPoolProfile {
