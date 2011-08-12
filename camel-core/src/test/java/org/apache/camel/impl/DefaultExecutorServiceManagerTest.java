@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -296,6 +297,29 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         foo.setPoolSize(5);
         foo.setMaxQueueSize(2000);
 
+        ExecutorService pool = context.getExecutorServiceManager().newThreadPool(this, "Cool", foo);
+        assertNotNull(pool);
+
+        ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
+        assertEquals(20, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(40, tp.getMaximumPoolSize());
+        assertEquals(5, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
+    public void testNewThreadPoolProfileById() throws Exception {
+        assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
+
+        ThreadPoolProfile foo = new ThreadPoolProfile("foo");
+        foo.setKeepAliveTime(20L);
+        foo.setMaxPoolSize(40);
+        foo.setPoolSize(5);
+        foo.setMaxQueueSize(2000);
+
         context.getExecutorServiceManager().registerThreadPoolProfile(foo);
 
         ExecutorService pool = context.getExecutorServiceManager().newThreadPool(this, "Cool", "foo");
@@ -312,27 +336,13 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertTrue(tp.isShutdown());
     }
 
-    public void testLookupThreadPoolProfile() throws Exception {
-        ExecutorService pool = context.getExecutorServiceManager().lookup(this, "Cool", "fooProfile");
-        // does not exists yet
-        assertNull(pool);
-
-        assertNull(context.getExecutorServiceManager().getThreadPoolProfile("fooProfile"));
-
-        ThreadPoolProfile foo = new ThreadPoolProfile("fooProfile");
-        foo.setKeepAliveTime(20L);
-        foo.setMaxPoolSize(40);
-        foo.setPoolSize(5);
-        foo.setMaxQueueSize(2000);
-
-        context.getExecutorServiceManager().registerThreadPoolProfile(foo);
-
-        pool = context.getExecutorServiceManager().lookup(this, "Cool", "fooProfile");
+    public void testNewThreadPoolMinMax() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newThreadPool(this, "Cool", 5, 10);
         assertNotNull(pool);
 
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
-        assertEquals(20, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertEquals(40, tp.getMaximumPoolSize());
+        assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(10, tp.getMaximumPoolSize());
         assertEquals(5, tp.getCorePoolSize());
         assertFalse(tp.isShutdown());
 
@@ -341,6 +351,83 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertTrue(tp.isShutdown());
     }
 
-    // TODO: Add unit test for the newXXX methods
+    public void testNewFixedThreadPool() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newFixedThreadPool(this, "Cool", 5);
+        assertNotNull(pool);
+
+        ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
+        // a fixed dont use keep alive
+        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(5, tp.getMaximumPoolSize());
+        assertEquals(5, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
+    public void testNewSingleThreadExecutor() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newSingleThreadExecutor(this, "Cool");
+        assertNotNull(pool);
+
+        ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
+        // a single dont use keep alive
+        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(1, tp.getMaximumPoolSize());
+        assertEquals(1, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
+    public void testNewScheduledThreadPool() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(this, "Cool", 5);
+        assertNotNull(pool);
+
+        ScheduledThreadPoolExecutor tp = assertIsInstanceOf(ScheduledThreadPoolExecutor.class, pool);
+        // a scheduled dont use keep alive
+        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(Integer.MAX_VALUE, tp.getMaximumPoolSize());
+        assertEquals(5, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
+    public void testNewSingleThreadScheduledExecutor() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "Cool");
+        assertNotNull(pool);
+
+        ScheduledThreadPoolExecutor tp = assertIsInstanceOf(ScheduledThreadPoolExecutor.class, pool);
+        // a scheduled dont use keep alive
+        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(Integer.MAX_VALUE, tp.getMaximumPoolSize());
+        assertEquals(1, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
+    public void testNewCachedThreadPool() throws Exception {
+        ExecutorService pool = context.getExecutorServiceManager().newCachedThreadPool(this, "Cool");
+        assertNotNull(pool);
+
+        ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
+        assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(Integer.MAX_VALUE, tp.getMaximumPoolSize());
+        assertEquals(0, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
 
 }

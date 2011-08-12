@@ -154,7 +154,6 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     @Override
     public void setThreadNamePattern(String threadNamePattern) {
         // must set camel id here in the pattern and let the other placeholders be resolved on demand
-        // TODO: Let ThreadHelper do this on demand
         String name = threadNamePattern.replaceFirst("\\$\\{camelId\\}", this.camelContext.getName());
         this.threadNamePattern = name;
     }
@@ -162,52 +161,6 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     @Override
     public String resolveThreadName(String name) {
         return ThreadHelper.resolveThreadName(threadNamePattern, name);
-    }
-
-    // TODO: The lookup methods could possible be removed and replace using other methods/logic
-
-    @Override
-    public ExecutorService lookup(Object source, String name, String executorServiceRef) {
-        ExecutorService answer = camelContext.getRegistry().lookup(executorServiceRef, ExecutorService.class);
-        if (answer != null) {
-            LOG.debug("Looking up ExecutorService with ref: {} and found it from Registry: {}", executorServiceRef, answer);
-        }
-
-        if (answer == null) {
-            // try to see if we got a thread pool profile with that id
-            answer = newThreadPool(source, name, executorServiceRef);
-            if (answer != null) {
-                LOG.debug("Looking up ExecutorService with ref: {} and found a matching ThreadPoolProfile to create the ExecutorService: {}",
-                        executorServiceRef, answer);
-            }
-        }
-
-        return answer;
-    }
-
-    @Override
-    public ScheduledExecutorService lookupScheduled(Object source, String name, String executorServiceRef) {
-        ScheduledExecutorService answer = camelContext.getRegistry().lookup(executorServiceRef, ScheduledExecutorService.class);
-        if (answer != null) {
-            LOG.debug("Looking up ScheduledExecutorService with ref: {} and found it from Registry: {}", executorServiceRef, answer);
-        }
-
-        if (answer == null) {
-            ThreadPoolProfile profile = getThreadPoolProfile(executorServiceRef);
-            if (profile != null) {
-                Integer poolSize = profile.getPoolSize();
-                if (poolSize == null) {
-                    poolSize = getDefaultThreadPoolProfile().getPoolSize();
-                }
-                answer = newScheduledThreadPool(source, name, poolSize);
-                if (answer != null) {
-                    LOG.debug("Looking up ScheduledExecutorService with ref: {} and found a matching ThreadPoolProfile to create the ScheduledExecutorService: {}",
-                            executorServiceRef, answer);
-                }
-            }
-        }
-
-        return answer;
     }
 
     @Override

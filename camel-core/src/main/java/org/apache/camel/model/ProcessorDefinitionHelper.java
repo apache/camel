@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -234,7 +235,12 @@ public final class ProcessorDefinitionHelper {
         if (definition.getExecutorService() != null) {
             return definition.getExecutorService();
         } else if (definition.getExecutorServiceRef() != null) {
-            ExecutorService answer = manager.lookup(definition, name, definition.getExecutorServiceRef());
+            // lookup in registry first and use existing thread pool if exists
+            ExecutorService answer = routeContext.getCamelContext().getRegistry().lookup(definition.getExecutorServiceRef(), ExecutorService.class);
+            if (answer == null) {
+                // then create a thread pool assuming the ref is a thread pool profile id
+                answer = manager.newThreadPool(definition, name, definition.getExecutorServiceRef());
+            }
             if (answer == null) {
                 throw new NoSuchBeanException(definition.getExecutorServiceRef(), "ExecutorService");
             }
@@ -278,7 +284,20 @@ public final class ProcessorDefinitionHelper {
             }
             throw new IllegalArgumentException("ExecutorServiceRef " + definition.getExecutorServiceRef() + " is not an ScheduledExecutorService instance");
         } else if (definition.getExecutorServiceRef() != null) {
-            ScheduledExecutorService answer = manager.lookupScheduled(definition, name, definition.getExecutorServiceRef());
+            ScheduledExecutorService answer = routeContext.getCamelContext().getRegistry().lookup(definition.getExecutorServiceRef(), ScheduledExecutorService.class);
+            if (answer == null) {
+                // then create a thread pool assuming the ref is a thread pool profile id
+                ThreadPoolProfile profile = manager.getThreadPoolProfile(definition.getExecutorServiceRef());
+                if (profile != null) {
+                    // okay we need to grab the pool size from the ref
+                    Integer poolSize = profile.getPoolSize();
+                    if (poolSize == null) {
+                        // fallback and use the default pool size, if none was set on the profile
+                        poolSize = manager.getDefaultThreadPoolProfile().getPoolSize();
+                    }
+                    answer = manager.newScheduledThreadPool(definition, name, poolSize);
+                }
+            }
             if (answer == null) {
                 throw new NoSuchBeanException(definition.getExecutorServiceRef(), "ScheduledExecutorService");
             }

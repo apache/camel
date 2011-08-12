@@ -77,6 +77,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.CamelContextHelper;
@@ -161,6 +162,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         if (executorServiceStrategy != null) {
             LOG.info("Using custom ExecutorServiceStrategy: " + executorServiceStrategy);
             getContext().setExecutorServiceManager(executorServiceStrategy);
+        }
+        ThreadPoolFactory threadPoolFactory = getBeanForType(ThreadPoolFactory.class);
+        if (threadPoolFactory != null) {
+            LOG.info("Using custom ThreadPoolFactory: " + threadPoolFactory);
+            getContext().getExecutorServiceManager().setThreadPoolFactory(threadPoolFactory);
         }
         ProcessorFactory processorFactory = getBeanForType(ProcessorFactory.class);
         if (processorFactory != null) {
