@@ -155,8 +155,6 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
 
     /**
      * Creates a new scheduled thread pool.
-     * <p/>
-     * Will use the pool size from the default thread pool profile
      *
      * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name        name which is appended to the thread name
@@ -167,6 +165,8 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
 
     /**
      * Creates a new scheduled thread pool.
+     * <p/>
+     * Will use the pool size from the default thread pool profile
      *
      * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
      * @param name        name which is appended to the thread name
