@@ -412,10 +412,6 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
             endpoint.getConfiguration().setConnectionFactory(cf);
         }
 
-        String selector = getAndRemoveParameter(parameters, "selector", String.class);
-        if (selector != null) {
-            endpoint.setSelector(selector);
-        }
         String username = getAndRemoveParameter(parameters, "username", String.class);
         String password = getAndRemoveParameter(parameters, "password", String.class);
         if (username != null && password != null) {
