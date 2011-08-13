@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spi;
 
+import java.io.Serializable;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
@@ -23,10 +24,16 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
 
 /**
  * A profile which defines thread pool settings.
+ * <p/>
+ * See more details at <a href="http://camel.apache.org/threading-model.html">threading model</a>
  *
  * @version 
  */
-public class ThreadPoolProfile {
+public class ThreadPoolProfile implements Serializable {
+
+    // TODO: Camel 2.9/3.0 consider moving to org.apache.camel
+
+    private static final long serialVersionUID = 1L;
 
     private String id;
     private Boolean defaultProfile;
@@ -214,8 +221,9 @@ public class ThreadPoolProfile {
 
     @Override
     public String toString() {
-        return "ThreadPoolProfile[" + id + ", " + defaultProfile + ", " + poolSize + ", " + maxPoolSize + ", "
-                + keepAliveTime + " " + timeUnit + ", " + maxPoolSize + ", " + rejectedPolicy + "]";
+        return "ThreadPoolProfile[" + id + " (" + defaultProfile + ") size:" + poolSize + "-" + maxPoolSize
+                + ", keepAlive: " + keepAliveTime + " " + timeUnit + ", maxQueue: " + maxQueueSize
+                + ", rejectedPolicy:" + rejectedPolicy + "]";
     }
 
 }

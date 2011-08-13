@@ -38,6 +38,8 @@ import org.apache.camel.util.ServiceHelper;
  */
 public abstract class ServiceSupport implements Service, ShutdownableService {
 
+    // TODO: Camel 3.0 consider moving this to org.apache.camel.util
+
     private final AtomicBoolean started = new AtomicBoolean(false);
     private final AtomicBoolean starting = new AtomicBoolean(false);
     private final AtomicBoolean stopping = new AtomicBoolean(false);
