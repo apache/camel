@@ -399,6 +399,12 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
             }
         }
 
+        // resolve any custom connection factory first
+        ConnectionFactory cf = resolveAndRemoveReferenceParameter(parameters, "connectionFactory", ConnectionFactory.class);
+        if (cf != null) {
+            endpoint.getConfiguration().setConnectionFactory(cf);
+        }
+
         String selector = getAndRemoveParameter(parameters, "selector", String.class);
         if (selector != null) {
             endpoint.setSelector(selector);
@@ -406,7 +412,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         String username = getAndRemoveParameter(parameters, "username", String.class);
         String password = getAndRemoveParameter(parameters, "password", String.class);
         if (username != null && password != null) {
-            ConnectionFactory cf = endpoint.getConfiguration().getConnectionFactory();
+            cf = endpoint.getConfiguration().getConnectionFactory();
             UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();
             ucfa.setTargetConnectionFactory(cf);
             ucfa.setPassword(password);

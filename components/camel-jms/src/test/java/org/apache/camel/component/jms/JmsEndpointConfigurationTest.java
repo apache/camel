@@ -21,11 +21,13 @@ import javax.jms.DeliveryMode;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -42,6 +44,8 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * @version 
  */
 public class JmsEndpointConfigurationTest extends CamelTestSupport {
+
+    private ConnectionFactory cf = new ActiveMQConnectionFactory("vm:myBroker");
 
     private Processor dummyProcessor = new Processor() {
         public void process(Exchange exchange) throws Exception {
@@ -70,6 +74,15 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
                    cf instanceof UserCredentialsConnectionFactoryAdapter);        
     }
  
+    @Test
+    public void testSetConnectionFactoryAndUsernameAndPassword() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?connectionFactory=#myConnectionFactory&username=James&password=ABC");
+        ConnectionFactory cf = endpoint.getConfiguration().getConnectionFactory();
+        assertNotNull("The connectionFactory should not be null", cf);
+        assertTrue("The connectionFactory should be the instance of UserCredentialsConnectionFactoryAdapter",
+                   cf instanceof UserCredentialsConnectionFactoryAdapter);
+    }
+
     @Test
     public void testNotSetUsernameOrPassword() {
         try {
@@ -406,4 +419,13 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
         return camelContext;
     }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myConnectionFactory", cf);
+        return jndi;
+    }
+
+
 }
