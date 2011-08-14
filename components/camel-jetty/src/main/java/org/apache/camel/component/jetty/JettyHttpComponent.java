@@ -592,8 +592,8 @@ public class JettyHttpComponent extends HttpComponent {
             if (httpClientMaxThreads != null) {
                 qtp.setMaxThreads(httpClientMaxThreads.intValue());
             }
-            // let the thread names indicate they are from this component
-            qtp.setName("CamelJetty(" + ObjectHelper.getIdentityHashCode(this) + ")");
+            // let the thread names indicate they are from the client
+            qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
             try {
                 qtp.start();
             } catch (Exception e) {
@@ -830,6 +830,8 @@ public class JettyHttpComponent extends HttpComponent {
             if (maxThreads != null) {
                 qtp.setMaxThreads(maxThreads.intValue());
             }
+            // let the thread names indicate they are from the server
+            qtp.setName("CamelJettyServer(" + ObjectHelper.getIdentityHashCode(server) + ")");
             try {
                 qtp.start();
             } catch (Exception e) {
