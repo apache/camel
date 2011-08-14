@@ -37,6 +37,7 @@ import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
+import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -157,8 +158,8 @@ public class NotifyBuilder {
             @Override
             public boolean onExchange(Exchange exchange) {
                 // always accept direct endpoints as they are a special case as it will create the UoW beforehand
-                // and just continue to route that on the consumer side, which causes the EventNotifer not to
-                // emit events when the consumer received the exchange, as its alreay done. For example by
+                // and just continue to route that on the consumer side, which causes the EventNotifier not to
+                // emit events when the consumer received the exchange, as its already done. For example by
                 // ProducerTemplate which creates the UoW before producing messages.
                 if (exchange.getFromEndpoint() != null && exchange.getFromEndpoint() instanceof DirectEndpoint) {
                     return true;
@@ -232,6 +233,47 @@ public class NotifyBuilder {
             }
         });
         return clause;
+    }
+
+    /**
+     * Optionally a <tt>sent to</tt> endpoint which means that this expression should only be based
+     * on {@link Exchange} which has been sent to the given endpoint uri.
+     * <p/>
+     * Notice the {@link Exchange} may have been sent to other endpoints as well. This condition will match
+     * if the {@link Exchange} has been sent at least once to the given endpoint.
+     *
+     * @param endpointUri uri of endpoint or pattern (see the EndpointHelper javadoc)
+     * @return the builder
+     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
+     */
+    public NotifyBuilder wereSentTo(final String endpointUri) {
+        stack.push(new EventPredicateSupport() {
+            private boolean matches;
+
+            @Override
+            public boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken) {
+                if (EndpointHelper.matchEndpoint(endpoint.getEndpointUri(), endpointUri)) {
+                    // we should match if matching once
+                    matches = true;
+                }
+                return true;
+            }
+
+            public boolean matches() {
+                return matches;
+            }
+
+            @Override
+            public void reset() {
+                matches = false;
+            }
+
+            @Override
+            public String toString() {
+                return "wereSentTo(" + endpointUri + ")";
+            }
+        });
+        return this;
     }
 
     /**
@@ -1195,6 +1237,8 @@ public class NotifyBuilder {
                 onExchangeCompleted((ExchangeCompletedEvent) event);
             } else if (event instanceof ExchangeFailedEvent) {
                 onExchangeFailed((ExchangeFailedEvent) event);
+            } else if (event instanceof ExchangeSentEvent) {
+                onExchangeSent((ExchangeSentEvent) event);
             }
 
             // now compute whether we matched
@@ -1220,6 +1264,12 @@ public class NotifyBuilder {
         private void onExchangeFailed(ExchangeFailedEvent event) {
             for (EventPredicateHolder predicate : predicates) {
                 predicate.getPredicate().onExchangeFailed(event.getExchange());
+            }
+        }
+
+        private void onExchangeSent(ExchangeSentEvent event) {
+            for (EventPredicateHolder predicate : predicates) {
+                predicate.getPredicate().onExchangeSent(event.getExchange(), event.getEndpoint(), event.getTimeTaken());
             }
         }
 
@@ -1316,6 +1366,16 @@ public class NotifyBuilder {
          * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to stop immediately
          */
         boolean onExchangeFailed(Exchange exchange);
+
+        /**
+         * Callback for {@link Exchange} lifecycle
+         *
+         * @param exchange the exchange
+         * @param endpoint the endpoint sent to
+         * @param timeTaken time taken in millis to send the to endpoint
+         * @return <tt>true</tt> to allow continue evaluating, <tt>false</tt> to stop immediately
+         */
+        boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken);
     }
 
     private abstract class EventPredicateSupport implements EventPredicate {
@@ -1334,6 +1394,12 @@ public class NotifyBuilder {
 
         public boolean onExchangeFailed(Exchange exchange) {
             return onExchange(exchange);
+        }
+
+        public boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken) {
+            // no need to invoke onExchange as this is a special case when the Exchange
+            // was sent to a specific endpoint
+            return true;
         }
 
         public boolean onExchange(Exchange exchange) {
@@ -1418,6 +1484,16 @@ public class NotifyBuilder {
         public boolean onExchangeFailed(Exchange exchange) {
             for (EventPredicate predicate : predicates) {
                 if (!predicate.onExchangeFailed(exchange)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken) {
+            for (EventPredicate predicate : predicates) {
+                if (!predicate.onExchangeSent(exchange, endpoint, timeTaken)) {
                     return false;
                 }
             }

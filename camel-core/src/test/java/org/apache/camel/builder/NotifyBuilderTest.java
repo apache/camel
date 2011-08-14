@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -860,6 +861,71 @@ public class NotifyBuilderTest extends ContextTestSupport {
         assertEquals(true, notify.matches());
     }
 
+    public void testWereSentTo() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .wereSentTo("mock:foo")
+                .create();
+
+        template.sendBody("direct:bar", "Hello World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Bye World");
+        assertEquals(true, notify.matches());
+    }
+
+    public void testTwoWereSentTo() throws Exception {
+        // sent to both endpoints
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .wereSentTo("log:beer").wereSentTo("mock:beer")
+                .create();
+
+        template.sendBody("direct:bar", "Hello World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:beer", "Bye World");
+        assertEquals(true, notify.matches());
+    }
+
+    public void testTwoWereSentToRegExp() throws Exception {
+        // send to any endpoint with beer in the uri
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .wereSentTo(".*beer.*")
+                .create();
+
+        template.sendBody("direct:bar", "Hello World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:beer", "Bye World");
+        assertEquals(true, notify.matches());
+    }
+
+    public void testTwoWereSentToDoneAndFailed() throws Exception {
+        // we expect 2+ done messages which were sent to mock:bar
+        // and 1+ failed message which were sent to mock:fail
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .whenDone(2).wereSentTo("mock:bar")
+                .and()
+                .whenFailed(1).wereSentTo("mock:fail")
+                .create();
+
+        template.sendBody("direct:bar", "Hello World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "Hello World");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:foo", "Hello World");
+        assertEquals(false, notify.matches());
+
+        try {
+            template.sendBody("direct:fail", "Bye World");
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            // expected
+        }
+        assertEquals(true, notify.matches());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -869,7 +935,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
                 from("direct:bar").routeId("bar").to("mock:bar");
 
-                from("direct:fail").routeId("fail").throwException(new IllegalArgumentException("Damn"));
+                from("direct:fail").routeId("fail").to("mock:fail").throwException(new IllegalArgumentException("Damn"));
 
                 from("direct:cake").routeId("cake").transform(body().prepend("Bye ")).to("log:cake");
 
