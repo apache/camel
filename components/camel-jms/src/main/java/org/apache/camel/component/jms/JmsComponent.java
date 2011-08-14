@@ -332,6 +332,14 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         getConfiguration().setDestinationResolver(destinationResolver);
     }
 
+    public ReplyToType getReplyToType() {
+        return configuration.getReplyToType();
+    }
+
+    public void setReplyToType(ReplyToType replyToType) {
+        configuration.setReplyToType(replyToType);
+    }
+
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

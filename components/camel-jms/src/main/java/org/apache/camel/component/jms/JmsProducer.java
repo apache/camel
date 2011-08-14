@@ -18,7 +18,6 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -67,6 +66,15 @@ public class JmsProducer extends DefaultAsyncProducer {
                     return;
                 }
                 try {
+                    // validate that replyToType and replyTo is configured accordingly
+                    if (endpoint.getReplyToType() != null) {
+                        // setting temporary with a fixed replyTo is not supported
+                        if (endpoint.getReplyTo() != null && endpoint.getReplyToType() == ReplyToType.Temporary) {
+                            throw new IllegalArgumentException("ReplyToType " + ReplyToType.Temporary
+                                    + " is not supported when replyTo " + endpoint.getReplyTo() + " is also configured.");
+                        }
+                    }
+
                     if (endpoint.getReplyTo() != null) {
                         replyManager = endpoint.getReplyManager(endpoint.getReplyTo());
                         LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from: " + endpoint.getReplyTo());
