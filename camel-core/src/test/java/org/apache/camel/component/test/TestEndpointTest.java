@@ -25,10 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 public class TestEndpointTest extends ContextTestSupport {
 
     public void testMocksAreValid() throws Exception {
-        // perform the test, and send in 2 messages we expect
-        Thread.sleep(500);
+        // now run the test and send in the message which we would expect
         template.sendBody("seda:foo", "Hello World");
-        template.sendBody("seda:foo", "Bye World");
 
         assertMockEndpointsSatisfied();
     }
@@ -38,9 +36,8 @@ public class TestEndpointTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // send 2 bodies to the seda:foo which is the messages we expect
+                // send 1 body to the seda:foo which is the messages we expect
                 template.sendBody("seda:foo", "Hello World");
-                template.sendBody("seda:foo", "Bye World");
 
                 from("seda:foo")
                     .to("test:seda:foo");
