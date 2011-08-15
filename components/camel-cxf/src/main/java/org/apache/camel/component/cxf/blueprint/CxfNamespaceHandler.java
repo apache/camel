@@ -50,9 +50,6 @@ public class CxfNamespaceHandler implements NamespaceHandler {
     public Metadata parse(Element element, ParserContext context) {
         Metadata answer = null;
         String s = element.getLocalName();
-        // Setting the thread context classloader to workaround the issue BlueprintBus ClassLoader
-        // This line can be removed when CXF 2.4.2 is released.
-        Thread.currentThread().setContextClassLoader(BlueprintBus.class.getClassLoader());
         if ("cxfEndpoint".equals(s)) {
             LOG.debug("parsing the cxfEndpoint element");
             answer = new EndpointDefinitionParser().parse(element, context);
