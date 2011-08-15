@@ -39,6 +39,16 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
             + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo>";
     private static final String ECHO_BOOLEAN_REQUEST = "<ns1:echoBoolean xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
             + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">true</arg0></ns1:echoBoolean>";
+    
+    private static final String ELEMENT_NAMESPACE = "http://cxf.component.camel.apache.org/";
+    
+    protected void checkRequest(String expect, String request) {
+        if (expect.equals("ECHO_REQUEST")) {
+            assertEquals("Get a wrong request", ECHO_REQUEST, request);
+        } else {
+            assertEquals("Get a wrong request", ECHO_BOOLEAN_REQUEST, request);
+        }
+    }
 
     // START SNIPPET: payload
     protected RouteBuilder createRouteBuilder() {
@@ -54,11 +64,17 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                         String request = exchange.getIn().getBody(String.class);
                         XmlConverter converter = new XmlConverter();
                         String documentString = ECHO_RESPONSE;
+                        
+                        // Just check the element namespace
+                        if (!inElements.get(0).getNamespaceURI().equals(ELEMENT_NAMESPACE)) {
+                            throw new IllegalArgumentException("Wrong element namespace");
+                        }
                         if (inElements.get(0).getLocalName().equals("echoBoolean")) {
                             documentString = ECHO_BOOLEAN_RESPONSE;
-                            assertEquals("Get a wrong request", ECHO_BOOLEAN_REQUEST, request);
+                            checkRequest("ECHO_BOOLEAN_REQUEST", request);
                         } else {
-                            assertEquals("Get a wrong request", ECHO_REQUEST, request);
+                            documentString = ECHO_RESPONSE;
+                            checkRequest("ECHO_REQUEST", request);
                         }
                         Document outDocument = converter.toDOMDocument(documentString);
                         outElements.add(outDocument.getDocumentElement());
