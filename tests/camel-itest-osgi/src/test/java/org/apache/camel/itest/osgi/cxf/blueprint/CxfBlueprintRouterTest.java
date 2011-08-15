@@ -27,7 +27,6 @@ import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -42,7 +41,6 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
 @RunWith(JUnit4TestRunner.class)
-//@Ignore("This test will be failed with CXF 2.4.1, we need to use CXF 2.4.2")
 public class CxfBlueprintRouterTest extends OSGiBlueprintTestSupport {
     private static Server server;
 
