@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http.HttpOperationFailedException;
+import org.apache.camel.test.AvailablePortFinder;
 
 /**
  * Route that listen on a JMS queue and send a request/reply over http
@@ -35,6 +36,8 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
     private String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     public void configure() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(8000);
+
         // if its a 404 then regard it as handled
         onException(HttpOperationFailedException.class).onWhen(new Predicate() {
             public boolean matches(Exchange exchange) {
@@ -47,7 +50,7 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
             // must setup policy to indicate transacted route
             .policy(required)
             // send a request to http and get the response
-            .to("http://localhost:8080/sender")
+            .to("http://localhost:" + port + "/sender")
             // convert the response to String so we can work with it and avoid streams only be readable once
             // as the http component will return data as a stream
             .convertBodyTo(String.class)
@@ -65,7 +68,7 @@ public class JmsToHttpWithOnExceptionAndNoTransactionErrorHandlerConfiguredRoute
             .end();
 
         // this is our http router
-        from("jetty:http://localhost:8080/sender").process(new Processor() {
+        from("jetty:http://localhost:" + port + "/sender").process(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // first hit is always a error code 500 to force the caller to retry
                 if (counter++ < 1) {

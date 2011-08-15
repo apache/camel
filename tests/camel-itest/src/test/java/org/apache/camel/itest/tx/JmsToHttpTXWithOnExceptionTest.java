@@ -69,7 +69,7 @@ public class JmsToHttpTXWithOnExceptionTest extends AbstractJUnit4SpringContextT
 
     @Test
     public void testRollback() throws Exception {
-        // will rollback forver so we run 3 times or more
+        // will rollback forever so we run 3 times or more
         rollback.expectedMinimumMessageCount(3);
 
         // use requestBody to force a InOut message exchange pattern ( = request/reply)
