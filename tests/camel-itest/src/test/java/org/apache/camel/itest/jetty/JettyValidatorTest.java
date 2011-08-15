@@ -20,35 +20,40 @@ import java.io.InputStream;
 
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class JettyValidatorTest extends CamelTestSupport {
 
+    private int port;
+
     @Test
-    public void testValideRequest() throws Exception {
+    public void testValidRequest() throws Exception {
         InputStream inputStream = this.getClass().getResourceAsStream("ValidRequest.xml");
         assertNotNull("the inputStream should not be null", inputStream);
 
-        String response = template.requestBody("http://localhost:8192/test", inputStream, String.class);
+        String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
 
         assertEquals("The response should be ok", response, "<ok/>");
     }
 
     @Test
-    public void testInvalideRequest() throws Exception {
+    public void testInvalidRequest() throws Exception {
         InputStream inputStream = this.getClass().getResourceAsStream("InvalidRequest.xml");
         assertNotNull("the inputStream should not be null", inputStream);
 
-        String response = template.requestBody("http://localhost:8192/test", inputStream, String.class);
+        String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
         assertEquals("The response should be error", response, "<error/>");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(8000);
+
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:8192/test")
+                from("jetty:http://localhost:" + port + "/test")
                     .convertBodyTo(String.class)
                     .to("log:in")
                     .doTry()

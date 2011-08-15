@@ -19,6 +19,7 @@ package org.apache.camel.itest.jetty;
 import java.io.InputStream;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -27,23 +28,27 @@ import org.junit.Test;
  */
 public class JettyValidatorStreamWithStreamCachingEnabledTest extends CamelTestSupport {
 
+    private int port;
+
     @Test
     public void testValideRequestAsStream() throws Exception {
         InputStream inputStream = this.getClass().getResourceAsStream("ValidRequest.xml");
         assertNotNull("the inputStream should not be null", inputStream);
 
-        String response = template.requestBody("http://localhost:8192/test", inputStream, String.class);
+        String response = template.requestBody("http://localhost:" + port + "/test", inputStream, String.class);
         assertEquals("The response should be ok", response, "<ok/>");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(8000);
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 context.setStreamCaching(true);
 
-                from("jetty:http://localhost:8192/test")
+                from("jetty:http://localhost:" + port + "/test")
                     .to("validator:OptimizationRequest.xsd")
                     .transform(constant("<ok/>"));
             }

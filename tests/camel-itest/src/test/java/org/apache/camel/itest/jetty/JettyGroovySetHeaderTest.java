@@ -18,6 +18,7 @@ package org.apache.camel.itest.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -28,6 +29,8 @@ import static org.apache.camel.language.groovy.GroovyLanguage.groovy;
  */
 public class JettyGroovySetHeaderTest extends CamelTestSupport {
 
+    private int port;
+
     @Test
     public void testJettyGroovySetHeader() throws Exception {
         getMockEndpoint("mock:before").message(0).header("beer").isNull();
@@ -36,7 +39,7 @@ public class JettyGroovySetHeaderTest extends CamelTestSupport {
         result.expectedBodiesReceived("Hello World");
         result.message(0).header("beer").isEqualTo("Carlsberg");
 
-        String reply = template.requestBody("http://localhost:8222/beer", "Hello World", String.class);
+        String reply = template.requestBody("http://localhost:" + port + "/beer", "Hello World", String.class);
         assertEquals("Bye World", reply);
 
         assertMockEndpointsSatisfied();
@@ -44,10 +47,12 @@ public class JettyGroovySetHeaderTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(8000);
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:8222/beer")
+                from("jetty:http://localhost:" + port + "/beer")
                         .convertBodyTo(String.class)
                         .to("mock:before")
                         .setHeader("beer", groovy("'Carlsberg'"))

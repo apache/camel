@@ -22,6 +22,7 @@ import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
@@ -36,6 +37,8 @@ import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
  * @version 
  */
 public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
+
+    private int port;
 
     @Test
     public void testJmsInOnlyHttpPostIssue() throws Exception {
@@ -58,16 +61,18 @@ public class JmsHttpPostIssueWithMockTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(8000);
+
         return new RouteBuilder() {
             public void configure() {
                 from("jms:queue:in")
                     .setBody().simple("name=${body}")
                     .setHeader(CONTENT_TYPE).constant("application/x-www-form-urlencoded")
                     .setHeader(HTTP_METHOD).constant("POST")
-                    .to("http://localhost:9080/myservice")
+                    .to("http://localhost:" + port + "/myservice")
                     .to("mock:result");
 
-                from("jetty:http://0.0.0.0:9080/myservice")
+                from("jetty:http://0.0.0.0:" + port + "/myservice")
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {

@@ -17,6 +17,7 @@
 package org.apache.camel.itest.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -25,12 +26,14 @@ import org.junit.Test;
  */
 public class JettyXsltHttpTemplateTest extends CamelTestSupport {
 
+    private int port;
+
     @Test
     public void testXsltHttpTemplate() throws Exception {
         // give Jetty a bit time to startup and be ready
         Thread.sleep(1000);
 
-        String xml = template.requestBody("xslt:http://0.0.0.0:8227/myxslt",
+        String xml = template.requestBody("xslt:http://0.0.0.0:" + port + "/myxslt",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>", String.class);
 
         assertNotNull("The transformed XML should not be null", xml);
@@ -43,11 +46,15 @@ public class JettyXsltHttpTemplateTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(8000);
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://0.0.0.0:8227/myxslt")
-                    .pollEnrich("file://src/test/resources/org/apache/camel/itest/jetty/?fileName=transform.xsl&noop=true&readLock=none");
+                from("jetty:http://0.0.0.0:" + port + "/myxslt")
+                    .pollEnrich("file://src/test/resources/org/apache/camel/itest/jetty/?fileName=transform.xsl&noop=true&readLock=none", 2000)
+                    .convertBodyTo(String.class)
+                    .to("log:transform");
             }
         };
     }

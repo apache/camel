@@ -21,6 +21,7 @@ import javax.naming.Context;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
@@ -32,6 +33,7 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
 
     // TODO: When async jms consumer is implemented we can bump this value to 1000
     private int size = 10;
+    private int port;
 
     @Test
     public void testJmsJettyAsyncTest() throws Exception {
@@ -47,14 +49,16 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(8000);
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:inbox?synchronous=false")
-                    .to("jetty:http://0.0.0.0:9432/myapp")
+                    .to("jetty:http://0.0.0.0:" + port + "/myapp")
                     .to("log:result?groupSize=10", "mock:result");
 
-                from("jetty:http://0.0.0.0:9432/myapp")
+                from("jetty:http://0.0.0.0:" + port + "/myapp")
                     .delay(100)
                     .transform(body().prepend("Bye "));
             }

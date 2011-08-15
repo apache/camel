@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
@@ -34,6 +35,8 @@ import org.junit.Test;
  * @version 
  */
 public class JmsHttpJmsTest extends CamelTestSupport {
+
+    private int port;
 
     @Test
     public void testJmsHttpJms() throws Exception {
@@ -54,11 +57,13 @@ public class JmsHttpJmsTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(8000);
+
         return new RouteBuilder() {
             public void configure() {
-                from("jms:in").to("http://localhost:9080/myservice").convertBodyTo(String.class).to("jms:out", "mock:result");
+                from("jms:in").to("http://localhost:" + port + "/myservice").convertBodyTo(String.class).to("jms:out", "mock:result");
 
-                from("jetty:http://0.0.0.0:9080/myservice").transform().constant("Bye World");
+                from("jetty:http://0.0.0.0:" + port + "/myservice").transform().constant("Bye World");
             }
         };
     }
