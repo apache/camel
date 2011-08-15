@@ -305,9 +305,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> ex
         // and add the routes
         getContext().addRouteDefinitions(getRoutes());
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found JAXB created routes: {}", getRoutes());
-        }
+        LOG.debug("Found JAXB created routes: {}", getRoutes());
+        
         findRouteBuilders();
         installRoutes();
     }
