@@ -39,7 +39,7 @@
 			org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
     </camel.osgi.import.additional>
 		<!-- to avoid us import bunch of cxf package -->
-                <camel.osgi.dynamic>*</camel.osgi.dynamic>
+    <camel.osgi.dynamic>*</camel.osgi.dynamic>
 	</properties>
 
 	<dependencies>
