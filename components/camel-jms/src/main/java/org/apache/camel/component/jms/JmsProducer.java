@@ -69,7 +69,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                     // validate that replyToType and replyTo is configured accordingly
                     if (endpoint.getReplyToType() != null) {
                         // setting temporary with a fixed replyTo is not supported
-                        if (endpoint.getReplyTo() != null && endpoint.getReplyToType() == ReplyToType.Temporary) {
+                        if (endpoint.getReplyTo() != null && endpoint.getReplyToType().equals(ReplyToType.Temporary.name())) {
                             throw new IllegalArgumentException("ReplyToType " + ReplyToType.Temporary
                                     + " is not supported when replyTo " + endpoint.getReplyTo() + " is also configured.");
                         }
