@@ -1010,13 +1010,18 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
-    public ReplyToType getReplyToType() {
-        return configuration.getReplyToType();
+    public String getReplyToType() {
+        if (configuration.getReplyToType() != null) {
+            return configuration.getReplyToType().name();
+        } else {
+            return null;
+        }
     }
 
     @ManagedAttribute
-    public void setReplyToType(ReplyToType replyToType) {
-        configuration.setReplyToType(replyToType);
+    public void setReplyToType(String replyToType) {
+        ReplyToType type = ReplyToType.valueOf(replyToType);
+        configuration.setReplyToType(type);
     }
 
     @ManagedAttribute(description = "Camel id")
