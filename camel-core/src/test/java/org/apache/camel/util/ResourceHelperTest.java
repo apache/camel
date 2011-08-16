@@ -82,7 +82,7 @@ public class ResourceHelperTest extends TestSupport {
             ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), "file:src/test/resources/notfound.txt");
             fail("Should not find file");
         } catch (FileNotFoundException e) {
-            assertEquals("src/test/resources/notfound.txt (No such file or directory)", e.getMessage());
+            assertTrue(e.getMessage().contains("notfound.txt"));
         }
 
         context.stop();
