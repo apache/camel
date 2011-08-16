@@ -42,7 +42,7 @@
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-core</artifactId>
-      <version>1.6.4</version>
+      <version>${jackrabbit-version}</version>
     </dependency>
     <dependency>
       <groupId>javax.jcr</groupId>
