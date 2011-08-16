@@ -118,7 +118,7 @@ public class MessageHelperTest extends TestCase {
         context.stop();
     }
 
-    public void testDumpAsXmlXmlBody() throws Exception {
+    public void testDumpAsXmlBody() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
@@ -130,6 +130,22 @@ public class MessageHelperTest extends TestCase {
 
         String out = MessageHelper.dumpAsXml(message);
         assertTrue("Should contain body", out.contains("<body type=\"java.lang.String\">&lt;?xml version=&quot;1.0&quot;?&gt;&lt;hi&gt;Hello World&lt;/hi&gt;</body>"));
+
+        context.stop();
+    }
+
+    public void testDumpAsXmlNoBody() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+
+        // xml message body
+        message.setBody("Hello World");
+        message.setHeader("foo", 123);
+
+        String out = MessageHelper.dumpAsXml(message, false);
+        assertEquals("<message>\n<headers>\n<header key=\"foo\" type=\"java.lang.Integer\">123</header>\n</headers>\n</message>", out);
 
         context.stop();
     }

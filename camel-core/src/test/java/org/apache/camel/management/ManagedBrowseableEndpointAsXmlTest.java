@@ -28,7 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedBrowseableEndpointAsXmlTest extends ManagementTestSupport {
 
-    public void testBrowseableEndpointAsXml() throws Exception {
+    public void testBrowseableEndpointAsXmlIncludeBody() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(7);
 
         template.sendBody("direct:start", "<foo>Camel &gt; Donkey</foo>");
@@ -49,48 +49,170 @@ public class ManagedBrowseableEndpointAsXmlTest extends ManagementTestSupport {
 
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
 
-        String out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{0}, new String[]{"java.lang.Integer"});
+        String out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{0, true}, new String[]{"java.lang.Integer", "java.lang.Boolean"});
         assertNotNull(out);
         log.info(out);
 
         assertEquals("<message>\n<body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>", out);
 
-        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{1}, new String[]{"java.lang.Integer"});
+        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{1, true}, new String[]{"java.lang.Integer", "java.lang.Boolean"});
         assertNotNull(out);
         log.info(out);
         assertEquals("<message>\n<body type=\"java.lang.String\">Camel &gt; Donkey</body>\n</message>", out);
 
-        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{2}, new String[]{"java.lang.Integer"});
+        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{2, true}, new String[]{"java.lang.Integer", "java.lang.Boolean"});
         assertNotNull(out);
         log.info(out);
         assertEquals("<message>\n<headers>\n<header key=\"name\" type=\"java.lang.String\">Me &amp; You</header>\n</headers>\n"
                 + "<body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>", out);
 
-        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{3}, new String[]{"java.lang.Integer"});
+        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{3, true}, new String[]{"java.lang.Integer", "java.lang.Boolean"});
         assertNotNull(out);
         log.info(out);
         assertEquals("<message>\n<headers>\n<header key=\"title\" type=\"java.lang.String\">&lt;title&gt;Me &amp;amp; You&lt;/title&gt;</header>\n</headers>\n"
                 + "<body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>", out);
 
-        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{4}, new String[]{"java.lang.Integer"});
+        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{4, true}, new String[]{"java.lang.Integer", "java.lang.Boolean"});
         assertNotNull(out);
         log.info(out);
         assertEquals("<message>\n<headers>\n<header key=\"name\" type=\"java.lang.String\">Me &amp; You</header>\n</headers>\n"
                 + "<body type=\"java.lang.String\">Camel &gt; Donkey</body>\n</message>", out);
 
-        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{5}, new String[]{"java.lang.Integer"});
+        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{5, true}, new String[]{"java.lang.Integer", "java.lang.Boolean"});
         assertNotNull(out);
         log.info(out);
         assertEquals("<message>\n<headers>\n<header key=\"user\" type=\"java.lang.Boolean\">true</header>\n</headers>\n"
                 + "<body type=\"java.lang.Integer\">123</body>\n</message>", out);
 
-        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{6}, new String[]{"java.lang.Integer"});
+        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{6, true}, new String[]{"java.lang.Integer", "java.lang.Boolean"});
         assertNotNull(out);
         log.info(out);
         assertEquals("<message>\n<headers>\n<header key=\"title\" type=\"java.lang.String\">Camel rocks</header>\n"
                 + "<header key=\"uid\" type=\"java.lang.Integer\">123</header>\n"
                 + "<header key=\"user\" type=\"java.lang.Boolean\">false</header>\n</headers>\n"
                 + "<body type=\"java.lang.String\">&lt;animal&gt;&lt;name&gt;Donkey&lt;/name&gt;&lt;age&gt;17&lt;/age&gt;&lt;/animal&gt;</body>\n</message>", out);
+    }
+
+    public void testBrowseableEndpointAsXml() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", 123);
+        template.sendBodyAndHeader("direct:start", "Bye World", "foo", 456);
+
+        assertMockEndpointsSatisfied();
+
+        MBeanServer mbeanServer = getMBeanServer();
+
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+
+        String out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{0, false}, new String[]{"java.lang.Integer", "java.lang.Boolean"});
+        assertNotNull(out);
+        log.info(out);
+
+        assertEquals("<message>\n<headers>\n<header key=\"foo\" type=\"java.lang.Integer\">123</header>\n</headers>\n</message>", out);
+
+        out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[]{1, false}, new String[]{"java.lang.Integer", "java.lang.Boolean"});
+        assertNotNull(out);
+        log.info(out);
+        assertEquals("<message>\n<headers>\n<header key=\"foo\" type=\"java.lang.Integer\">456</header>\n</headers>\n</message>", out);
+    }
+
+    public void testBrowseableEndpointAsXmlAllIncludeBody() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBodyAndHeader("direct:start", "Bye World", "foo", 456);
+
+        assertMockEndpointsSatisfied();
+
+        MBeanServer mbeanServer = getMBeanServer();
+
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+
+        String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[]{true}, new String[]{"java.lang.Boolean"});
+        assertNotNull(out);
+        log.info(out);
+
+        assertEquals("<messages>\n<message>\n<body type=\"java.lang.String\">Hello World</body>\n</message>\n"
+                + "<message>\n<headers>\n<header key=\"foo\" type=\"java.lang.Integer\">456</header>\n</headers>\n"
+                + "<body type=\"java.lang.String\">Bye World</body>\n</message>\n</messages>", out);
+    }
+
+    public void testBrowseableEndpointAsXmlAll() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(2);
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", 123);
+        template.sendBodyAndHeader("direct:start", "Bye World", "foo", 456);
+
+        assertMockEndpointsSatisfied();
+
+        MBeanServer mbeanServer = getMBeanServer();
+
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+
+        String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[]{false}, new String[]{"java.lang.Boolean"});
+        assertNotNull(out);
+        log.info(out);
+
+        assertEquals("<messages>\n<message>\n<headers>\n<header key=\"foo\" type=\"java.lang.Integer\">123</header>\n</headers>\n</message>\n"
+                + "<message>\n<headers>\n<header key=\"foo\" type=\"java.lang.Integer\">456</header>\n</headers>\n</message>\n</messages>", out);
+    }
+
+    public void testBrowseableEndpointAsXmlRangeIncludeBody() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(3);
+
+        template.sendBody("direct:start", "Hello World");
+        template.sendBodyAndHeader("direct:start", "Bye World", "foo", 456);
+        template.sendBody("direct:start", "Hi Camel");
+
+        assertMockEndpointsSatisfied();
+
+        MBeanServer mbeanServer = getMBeanServer();
+
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+
+        String out = (String) mbeanServer.invoke(name, "browseRangeMessagesAsXml", new Object[]{0, 1, true}, new String[]{"java.lang.Integer", "java.lang.Integer", "java.lang.Boolean"});
+        assertNotNull(out);
+        log.info(out);
+
+        assertEquals("<messages>\n<message>\n<body type=\"java.lang.String\">Hello World</body>\n</message>\n"
+                + "<message>\n<headers>\n<header key=\"foo\" type=\"java.lang.Integer\">456</header>\n</headers>\n"
+                + "<body type=\"java.lang.String\">Bye World</body>\n</message>\n</messages>", out);
+    }
+
+    public void testBrowseableEndpointAsXmlRange() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(3);
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", 123);
+        template.sendBodyAndHeader("direct:start", "Bye World", "foo", 456);
+        template.sendBody("direct:start", "Hi Camel");
+
+        assertMockEndpointsSatisfied();
+
+        MBeanServer mbeanServer = getMBeanServer();
+
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+
+        String out = (String) mbeanServer.invoke(name, "browseRangeMessagesAsXml", new Object[]{0, 1, false}, new String[]{"java.lang.Integer", "java.lang.Integer", "java.lang.Boolean"});
+        assertNotNull(out);
+        log.info(out);
+
+        assertEquals("<messages>\n<message>\n<headers>\n<header key=\"foo\" type=\"java.lang.Integer\">123</header>\n</headers>\n</message>\n"
+                + "<message>\n<headers>\n<header key=\"foo\" type=\"java.lang.Integer\">456</header>\n</headers>\n</message>\n</messages>", out);
+    }
+
+    public void testBrowseableEndpointAsXmlRangeInvalidIndex() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+
+        try {
+            mbeanServer.invoke(name, "browseRangeMessagesAsXml", new Object[]{3, 1, false}, new String[]{"java.lang.Integer", "java.lang.Integer", "java.lang.Boolean"});
+            fail("Should have thrown exception");
+        } catch (Exception e) {
+            assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("From index cannot be larger than to index, was: 3 > 1", e.getCause().getMessage());
+        }
     }
 
     @Override

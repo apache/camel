@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.management.ManagedOperation;
@@ -47,10 +49,12 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint {
 
     @ManagedOperation(description = "Get Exchange from queue by index")
     public String browseExchange(Integer index) {
-        if (index >= endpoint.getExchanges().size()) {
+        List<Exchange> exchanges = endpoint.getExchanges();
+
+        if (index >= exchanges.size()) {
             return null;
         }
-        Exchange exchange = endpoint.getExchanges().get(index);
+        Exchange exchange = exchanges.get(index);
         if (exchange == null) {
             return null;
         }
@@ -60,39 +64,77 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint {
 
     @ManagedOperation(description = "Get message body from queue by index")
     public String browseMessageBody(Integer index) {
-        if (index >= endpoint.getExchanges().size()) {
+        List<Exchange> exchanges = endpoint.getExchanges();
+
+        if (index >= exchanges.size()) {
             return null;
         }
-        Exchange exchange = endpoint.getExchanges().get(index);
+        Exchange exchange = exchanges.get(index);
         if (exchange == null) {
             return null;
         }
 
-        Object body;
+        // must use java type with JMX such as java.lang.String
+        String body;
         if (exchange.hasOut()) {
-            body = exchange.getOut().getBody();
+            body = exchange.getOut().getBody(String.class);
         } else {
-            body = exchange.getIn().getBody();
+            body = exchange.getIn().getBody(String.class);
         }
 
-        // must use java type with JMX such as java.lang.String
-        return body != null ? body.toString() : null;
+        return body;
     }
 
     @ManagedOperation(description = "Get message as XML from queue by index")
-    public String browseMessageAsXml(Integer index) {
-        if (index >= endpoint.getExchanges().size()) {
+    public String browseMessageAsXml(Integer index, Boolean includeBody) {
+        List<Exchange> exchanges = endpoint.getExchanges();
+
+        if (index >= exchanges.size()) {
             return null;
         }
-        Exchange exchange = endpoint.getExchanges().get(index);
+        Exchange exchange = exchanges.get(index);
         if (exchange == null) {
             return null;
         }
 
         Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-        String xml = MessageHelper.dumpAsXml(msg);
+        String xml = MessageHelper.dumpAsXml(msg, includeBody);
 
         return xml;
+    }
+
+    @ManagedOperation(description = "Gets all the messages as XML from the queue")
+    public String browseAllMessagesAsXml(Boolean includeBody) {
+        return browseRangeMessagesAsXml(0, Integer.MAX_VALUE, includeBody);
+    }
+
+    @ManagedOperation(description = "Gets the range of messages as XML from the queue")
+    public String browseRangeMessagesAsXml(Integer fromIndex, Integer toIndex, Boolean includeBody) {
+        if (fromIndex == null) {
+            fromIndex = 0;
+        }
+        if (toIndex == null) {
+            toIndex = Integer.MAX_VALUE;
+        }
+        if (fromIndex > toIndex) {
+            throw new IllegalArgumentException("From index cannot be larger than to index, was: " + fromIndex + " > " + toIndex);
+        }
+
+        List<Exchange> exchanges = endpoint.getExchanges();
+        if (exchanges.size() == 0) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<messages>");
+        for (int i = fromIndex; i < exchanges.size() && i <= toIndex; i++) {
+            Exchange exchange = exchanges.get(i);
+            Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+            String xml = MessageHelper.dumpAsXml(msg, includeBody);
+            sb.append("\n").append(xml);
+        }
+        sb.append("\n</messages>");
+        return sb.toString();
     }
 
 }
