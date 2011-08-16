@@ -388,6 +388,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     result = formatString(format, value);
 
+                    if (datafield.trim()) {
+                        result = result.trim();
+                    }
+
+                    if (datafield.clip() && result.length() > datafield.length()) {
+                        result = result.substring(0, datafield.length());
+                    }
+
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", new Object[]{value, datafield.pos(), result});
                     }
