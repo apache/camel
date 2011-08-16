@@ -25,6 +25,11 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
 public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
+    private static final String ECHO_RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        + "<soap:Body><ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+        + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"
+        + "</ns1:echoResponse></soap:Body></soap:Envelope>";
+    
     private static final String ECHO_REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" "
         + "xmlns:ns1=\"http://cxf.component.camel.apache.org/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
         + "xmlns:ns2=\"http://cxf.component.camel.apache.org/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>"
@@ -49,11 +54,10 @@ public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
 
         try {
             HttpResponse response = httpclient.execute(post);
-            //assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals(200, response.getStatusLine().getStatusCode());
             String responseBody = EntityUtils.toString(response.getEntity());
-            System.out.println(responseBody);
             
-            //assertEquals("Get a wrong response", correct, responseBody);
+            assertEquals("Get a wrong response", ECHO_RESPONSE, responseBody);
         } finally {
             httpclient.getConnectionManager().shutdown();
         }
