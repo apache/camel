@@ -26,7 +26,7 @@ import org.junit.Test;
  * Unit test to verify that we can have URI options for external system (endpoint is lenient)
  */
 public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
-
+    
     private String serverUri = "http://localhost:" + getPort() + "/myservice";
 
     @Test
@@ -44,10 +44,10 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
     @Test
     public void testHttpGetWithUTF8EncodedParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedHeaderReceived("message", "Keine gltige GPS-Daten!");
+        mock.expectedHeaderReceived("message", "Keine g\u00FCltige GPS-Daten!");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
-        template.requestBody(serverUri + "?message=Keine%20gltige%20GPS-Daten!", null, Object.class);
+        template.requestBody(serverUri + "?message=Keine%20g%C3%BCltige%20GPS-Daten!", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -56,10 +56,10 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends BaseJettyTest {
     @Ignore
     public void testHttpGetWithISO8859EncodedParamsViaURI() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedHeaderReceived("message", "Keine gltige GPS-Daten!");
+        mock.expectedHeaderReceived("message", "Keine g\u00C6ltige GPS-Daten!");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
-
-        template.requestBody(serverUri + "?message=Keine+gltige+GPS-Daten%21", null, Object.class);
+        
+        template.requestBody(serverUri + "?message=Keine+g%C6ltige+GPS-Daten%21", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
