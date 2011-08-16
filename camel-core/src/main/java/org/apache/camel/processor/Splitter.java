@@ -188,12 +188,15 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         exchange.setProperty(Exchange.SPLIT_INDEX, index);
         if (allPairs instanceof Collection) {
+            // non streaming mode, so we know the total size already
             exchange.setProperty(Exchange.SPLIT_SIZE, ((Collection<?>) allPairs).size());
         }
         if (it.hasNext()) {
             exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE);
         } else {
             exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.TRUE);
+            // streaming mode, so set total size when we are complete based on the index
+            exchange.setProperty(Exchange.SPLIT_SIZE, index + 1);
         }
     }
 

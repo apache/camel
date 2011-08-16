@@ -176,10 +176,21 @@ public class SplitterTest extends ContextTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        for (Exchange exchange : resultEndpoint.getReceivedExchanges()) {
-            assertNotNull(exchange.getProperty(Exchange.SPLIT_INDEX));
-            //this header cannot be set when streaming is used
-            assertNull(exchange.getProperty(Exchange.SPLIT_SIZE));
+
+        // check properties with split details is correct
+        int size = resultEndpoint.getReceivedExchanges().size();
+        for (int i = 0; i < size; i++) {
+            Exchange exchange = resultEndpoint.getReceivedExchanges().get(i);
+            assertEquals(i, exchange.getProperty(Exchange.SPLIT_INDEX));
+            if (i < (size - 1)) {
+                assertEquals(Boolean.FALSE, exchange.getProperty(Exchange.SPLIT_COMPLETE));
+                //this header cannot be set when streaming is used, except for the last exchange
+                assertNull(exchange.getProperty(Exchange.SPLIT_SIZE));
+            } else {
+                assertEquals(Boolean.TRUE, exchange.getProperty(Exchange.SPLIT_COMPLETE));
+                // when we are complete the size is set
+                assertEquals(size, exchange.getProperty(Exchange.SPLIT_SIZE));
+            }
         }
     }
 
