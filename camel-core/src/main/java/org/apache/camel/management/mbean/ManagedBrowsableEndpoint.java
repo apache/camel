@@ -85,6 +85,15 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint {
         return body;
     }
 
+    /**
+     * @deprecated use {@link #browseAllMessagesAsXml(Boolean)} instead
+     */
+    @ManagedOperation(description = "Get message as XML from queue by index")
+    @Deprecated
+    public String browseMessageAsXml(Integer index) {
+        return browseMessageAsXml(index, true);
+    }
+
     @ManagedOperation(description = "Get message as XML from queue by index")
     public String browseMessageAsXml(Integer index, Boolean includeBody) {
         List<Exchange> exchanges = endpoint.getExchanges();

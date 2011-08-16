@@ -263,7 +263,8 @@ public final class MessageHelper {
      */
     public static String dumpAsXml(Message message, boolean includeBody) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<message>\n");
+        // include exchangeId as attribute on the <message> tag
+        sb.append("<message exchangeId=\"").append(message.getExchange().getExchangeId()).append("\">\n");
 
         // headers
         if (message.hasHeaders()) {
