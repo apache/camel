@@ -18,6 +18,7 @@ package org.apache.camel.converter.jaxp;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -347,6 +348,16 @@ public class XmlConverter {
     /**
      * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
+     */
+    @Converter
+    public SAXSource toSAXSource(File file, Exchange exchange) throws IOException, SAXException, TransformerException {
+        FileInputStream fis = new FileInputStream(file);
+        return toSAXSource(fis, exchange);
+    }
+
+    /**
+     * Converts the source instance to a {@link SAXSource} or returns null if the conversion is not
+     * supported (making it easy to derive from this class to add new kinds of conversion).
      *
      * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
@@ -510,6 +521,12 @@ public class XmlConverter {
         DocumentBuilder builder = createDocumentBuilder();
         Document document = builder.parse(source);
         return new DOMSource(document, systemId);
+    }
+
+    @Converter
+    public DOMSource toDOMSource(File file) throws ParserConfigurationException, IOException, SAXException {
+        FileInputStream fis = new FileInputStream(file);
+        return toDOMSource(fis);
     }
 
     @Converter
