@@ -16,17 +16,27 @@
  */
 package org.apache.camel.component.test;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  *
  */
 public class TestEndpointTest extends ContextTestSupport {
 
+    private String expectedBody = "Hello World";
+
     public void testMocksAreValid() throws Exception {
-        // now run the test and send in the message which we would expect
-        template.sendBody("seda:foo", "Hello World");
+        // now run the test and send in a message with the expected body
+        template.sendBody("seda:foo", expectedBody);
 
         assertMockEndpointsSatisfied();
     }
@@ -36,12 +46,54 @@ public class TestEndpointTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // send 1 body to the seda:foo which is the messages we expect
-                template.sendBody("seda:foo", "Hello World");
+                MyEndpoint my = new MyEndpoint("my:foo", context);
+                context.addEndpoint("my:foo", my);
 
                 from("seda:foo")
-                    .to("test:seda:foo");
+                    .to("test:my:foo");
             }
         };
+    }
+
+    private final class MyEndpoint extends DefaultEndpoint {
+
+        private MyEndpoint(String endpointUri, CamelContext camelContext) {
+            super(endpointUri, camelContext);
+        }
+
+        @Override
+        public Producer createProducer() throws Exception {
+            // not needed for this test
+            return null;
+        }
+
+        @Override
+        public Consumer createConsumer(final Processor processor) throws Exception {
+            return new Consumer() {
+                @Override
+                public Endpoint getEndpoint() {
+                    return MyEndpoint.this;
+                }
+
+                @Override
+                public void start() throws Exception {
+                    // when starting then send a message to the processor
+                    Exchange exchange = new DefaultExchange(getEndpoint());
+                    exchange.getIn().setBody(expectedBody);
+                    processor.process(exchange);
+                }
+
+                @Override
+                public void stop() throws Exception {
+                    // noop
+                }
+            };
+        }
+
+        @Override
+        public boolean isSingleton() {
+            return true;
+        }
+
     }
 }
