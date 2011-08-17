@@ -93,7 +93,6 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InflightRepository;
@@ -2281,7 +2280,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return this.executorServiceManager;
     }
 
-    public ExecutorServiceStrategy getExecutorServiceStrategy() {
+    @Deprecated
+    public org.apache.camel.spi.ExecutorServiceStrategy getExecutorServiceStrategy() {
         // its okay to create a new instance as its stateless, and just delegate
         // ExecutorServiceManager which is the new API
         return new DefaultExecutorServiceStrategy(this);

@@ -33,7 +33,6 @@ import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InflightRepository;
@@ -932,7 +931,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @deprecated use {@link #getExecutorServiceManager()}
      */
     @Deprecated
-    ExecutorServiceStrategy getExecutorServiceStrategy();
+    org.apache.camel.spi.ExecutorServiceStrategy getExecutorServiceStrategy();
 
     /**
      * Sets a custom {@link org.apache.camel.spi.ExecutorServiceManager}

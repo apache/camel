@@ -29,6 +29,7 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
  *
  * @version 
  */
+@SuppressWarnings("deprecation")
 public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {
 
     public void testGetThreadNameDefaultPattern() throws Exception {
