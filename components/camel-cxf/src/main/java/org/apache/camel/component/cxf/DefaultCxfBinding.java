@@ -28,6 +28,7 @@ import java.util.TreeMap;
 
 import javax.activation.DataHandler;
 import javax.security.auth.Subject;
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
@@ -35,6 +36,7 @@ import javax.xml.ws.Holder;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
@@ -44,6 +46,8 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.attachment.AttachmentImpl;
+import org.apache.cxf.binding.soap.Soap11;
+import org.apache.cxf.binding.soap.Soap12;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Client;
@@ -618,9 +622,28 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
         return answer;
     }
-    
+
+    protected static void addNamespace(Element element, Map<String, String> nsMap) {
+        for (String ns : nsMap.keySet()) {
+            element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, nsMap.get(ns));
+        }
+                     
+    }
 
     protected static List<Element> getPayloadBodyElements(Message message) {
+        // take the namespace attribute from soap envelop
+        Document soapEnv = (Document) message.getContent(Node.class);
+        Map<String, String> nsMap = new HashMap<String, String>();
+        if (soapEnv != null) {
+            NamedNodeMap attrs = soapEnv.getFirstChild().getAttributes();
+            for (int i = 0; i < attrs.getLength(); i++) {
+                Node node = attrs.item(i);
+                if (!node.getNodeValue().equals(Soap11.SOAP_NAMESPACE)
+                      && !node.getNodeValue().equals(Soap12.SOAP_NAMESPACE)) {
+                    nsMap.put(node.getLocalName(), node.getNodeValue());
+                }
+            }
+        }
         MessageContentsList inObjects = MessageContentsList.getContentsList(message);
         if (inObjects == null) {
             return null;
@@ -667,6 +690,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
 
                 if (element != null) {
+                    addNamespace(element, nsMap);
                     answer.add(element);
                 }
                 
@@ -675,6 +699,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                               element == null ? "null" : XMLUtils.toString(element));
                 }
             } else if (part instanceof Element) {
+                addNamespace((Element)part, nsMap);
                 answer.add((Element)part);
             } else {
                 if (LOG.isDebugEnabled()) {

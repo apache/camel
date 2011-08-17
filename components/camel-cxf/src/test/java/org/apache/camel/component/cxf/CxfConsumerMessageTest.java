@@ -72,7 +72,7 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
     }
     
     @Test
-    public void testInvokingServiceFromCXFClient() throws Exception {
+    public void testInvokingServiceFromClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(simpleEndpointAddress);
