@@ -21,6 +21,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.apache.cxf.BusFactory;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +31,11 @@ public class CxfOperationExceptionTest extends CamelSpringTestSupport {
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsSpringRouter.xml");
+    }
+    
+    protected void doPostSetup() throws Exception {
+        //clean up the default bus for template to use
+        BusFactory.setDefaultBus(null);
     }
 
     @Test(expected = CamelExecutionException.class)
@@ -43,6 +49,7 @@ public class CxfOperationExceptionTest extends CamelSpringTestSupport {
 
         assertNotNull(response);
         assertTrue(response.endsWith("<name>Donald Duck</name></Customer>"));
+        
     }
 
     @Test

@@ -33,6 +33,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CxfRsRouterTest extends CamelSpringTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
+    
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {        
@@ -169,7 +173,7 @@ public class CxfRsRouterTest extends CamelSpringTestSupport {
         try {
             HttpResponse response = httpclient.execute(post);
             assertEquals(201, response.getStatusLine().getStatusCode());
-            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>124</id><name>Jack</name></Customer>",
+            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>125</id><name>Jack</name></Customer>",
                          EntityUtils.toString(response.getEntity()));
         } finally {
             httpclient.getConnectionManager().shutdown();

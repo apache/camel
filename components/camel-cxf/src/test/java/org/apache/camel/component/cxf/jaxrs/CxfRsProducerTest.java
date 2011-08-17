@@ -39,7 +39,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfRsProducerTest extends CamelSpringTestSupport {
     private static int port1 = AvailablePortFinder.getNextAvailable(); 
-    private static int port2 = AvailablePortFinder.getNextAvailable(); 
+    private static int port2 = AvailablePortFinder.getNextAvailable();
+    
+    public boolean isCreateCamelContextPerClass() {
+        return true;
+    }
     
     public static class JettyProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
