@@ -1,29 +1,38 @@
 Welcome to Apache Camel
 =============================================================================== 
 
-Apache Camel is a powerful Spring based Integration Framework.
+Apache Camel is a powerful open source integration framework based on known
+Enterprise Integration Patterns with powerful Bean Integration.
 
-Camel implements the Enterprise Integration Patterns allowing you to configure
-routing and mediation rules in either a Java based Domain Specific Language
-(or Fluent API) or via Spring based XML Configuration files. Either approaches
-mean you get smart completion of routing rules in your IDE whether in your
-Java or XML editor.
+Camel lets you create the Enterprise Integration Patterns to implement routing
+and mediation rules in either a Java based Domain Specific Language (or Fluent API),
+via Spring based Xml Configuration files or via the Scala DSL. This means you
+get smart completion of routing rules in your IDE whether in your Java,
+Scala or XML editor.
 
 Apache Camel uses URIs so that it can easily work directly with any kind of
-transport or messaging model such as HTTP, ActiveMQ, JMS, JBI, SCA, MINA
-or CXF Bus API together with and working with pluggable Data Format options.
-Apache Camel is a small library which has minimal dependencies for easy
-embedding in any Java application.
+Transport or messaging model such as HTTP, ActiveMQ, JMS, JBI, SCA, MINA
+or CXF Bus API together with working with pluggable Data Format options.
+Apache Camel is a small library which has minimal dependencies for easy embedding
+in any Java application. Apache Camel lets you work with the same API regardless
+which kind of Transport used, so learn the API once and you will be able to
+interact with all the Components that is provided out-of-the-box.
+
+Apache Camel has powerful Bean Binding and integrated seamless with
+popular frameworks such as Spring and Guice.
+
+Apache Camel has extensive Testing support allowing you to easily
+unit test your routes.
 
 Apache Camel can be used as a routing and mediation engine for the
 following projects:
 
-    * Apache ActiveMQ which is the most popular and powerful open
-      source message broker
-    * Apache CXF which is a smart web services suite (JAX-WS and JAX-RS)
-    * Apache MINA a networking framework
-    * Apache ServiceMix which is the most popular and powerful distributed
-      open source ESB, JBI and OSGi container
+  * Apache ServiceMix which is the most popular and powerful distributed
+    open source ESB, JBI and OSGi container
+  * Apache ActiveMQ which is the most popular and powerful open
+    source message broker
+  * Apache CXF which is a smart web services suite (JAX-WS and JAX-RS)
+  * Apache MINA a networking framework
 
 
 Getting Started
@@ -43,6 +52,9 @@ We welcome contributions of all kinds, for details of how you can help
 Please refer to the website for details of finding the issue tracker, 
 email lists, wiki or IRC channel
   http://camel.apache.org/
+
+If you need support or help then read this page first
+  http://camel.apache.org/support.html
 
 If you hit any problems please talk to us on the Camel Forums
   http://camel.apache.org/discussion-forums.html
@@ -82,14 +94,16 @@ code and source code.
 
 The following provides more details on the included cryptographic
 software:
-   * camel-ftp can be configured for secure file transfers
-   * camel-mail can be configured for secure email communications
-   * camel-cxf can be configured for secure web service communications
+   * camel-ahc can be configured to use https
    * camel-crypto can be used for secure communications
-   * camel-jasypt can be used for secure communications
-   * camel-jetty can be configured to use https
+   * camel-cxf can be configured for secure communications
+   * camel-ftp can be configured for secure communications
+   * camel-gae can be configured for secure communications
    * camel-http can be configured to use https
    * camel-http4 can be configured to use https
-   * camel-gae can be configured for secure communications
+   * camel-jasypt can be used for secure communications
+   * camel-jetty can be configured to use https
+   * camel-mail can be configured for secure communications
+   * camel-nagios can be configured for secure communications
    * camel-xmlsecurity can be configured for secure communications
 
