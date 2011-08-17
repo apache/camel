@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -303,6 +305,30 @@ public final class AdviceWithTasks {
                 if (!match) {
                     throw new IllegalArgumentException("There are no outputs which matches: " + matchBy.getId() + " in the route: " + route);
                 }
+            }
+        };
+    }
+
+    public static AdviceWithTask replaceFrom(final RouteDefinition route, final String uri) {
+        return new AdviceWithTask() {
+            public void task() throws Exception {
+                FromDefinition from = route.getInputs().get(0);
+                LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getUriOrRef(), uri);
+                from.setEndpoint(null);
+                from.setRef(null);
+                from.setUri(uri);
+            }
+        };
+    }
+
+    public static AdviceWithTask replaceFrom(final RouteDefinition route, final Endpoint endpoint) {
+        return new AdviceWithTask() {
+            public void task() throws Exception {
+                FromDefinition from = route.getInputs().get(0);
+                LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getUriOrRef(), endpoint.getEndpointUri());
+                from.setRef(null);
+                from.setUri(null);
+                from.setEndpoint(endpoint);
             }
         };
     }

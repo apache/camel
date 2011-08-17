@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -85,6 +86,26 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      */
     public void mockEndpoints(String pattern) throws Exception {
         getContext().addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
+    }
+
+    /**
+     * Replaces the route from endpoint with a new uri
+     *
+     * @param uri uri of the new endpoint
+     */
+    public void replaceFrom(String uri) {
+        ObjectHelper.notNull(originalRoute, "originalRoute", this);
+        getAdviceWithTasks().add(AdviceWithTasks.replaceFrom(originalRoute, uri));
+    }
+
+    /**
+     * Replaces the route from endpoint with a new endpoint
+     *
+     * @param endpoint the new endpoint
+     */
+    public void replaceFrom(Endpoint endpoint) {
+        ObjectHelper.notNull(originalRoute, "originalRoute", this);
+        getAdviceWithTasks().add(AdviceWithTasks.replaceFrom(originalRoute, endpoint));
     }
 
     /**
