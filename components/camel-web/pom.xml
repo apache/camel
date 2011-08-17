@@ -47,12 +47,6 @@
             </snapshots>
         </repository>
         <repository>
-            <id>java.net.m2</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/2/</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
             <id>guiceyfruit.release</id>
             <name>GuiceyFruit Release Repository</name>
             <url>http://guiceyfruit.googlecode.com/svn/repo/releases/</url>
@@ -65,15 +59,6 @@
         </repository>
 
     </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>java.net.m2</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/2/</url>
-            <layout>default</layout>
-        </pluginRepository>
-    </pluginRepositories>
 
     <dependencies>
         <dependency>
