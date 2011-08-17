@@ -442,6 +442,28 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
+     * Sets the auto startup property on this route.
+     *
+     * @param autoStartup - String indicator ("true" or "false")
+     * @return the builder
+     */
+    public RouteDefinition autoStartup(String autoStartup) {
+        setAutoStartup(autoStartup);
+        return this;
+    }
+
+    /**
+     * Sets the auto startup property on this route.
+     *
+     * @param autoStartup - boolean indicator
+     * @return the builder
+     */
+    public RouteDefinition autoStartup(boolean autoStartup) {
+        setAutoStartup(Boolean.toString(autoStartup));
+        return this;
+    }
+
+    /**
      * Configures the startup order for this route
      * <p/>
      * Camel will reorder routes and star them ordered by 0..N where 0 is the lowest number and N the highest number.
@@ -802,5 +824,4 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         routeContext.commit();
         return routeContext;
     }
-
 }
