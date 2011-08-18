@@ -87,4 +87,9 @@ public class BundleDelegatingClassLoader extends ClassLoader {
     public Bundle getBundle() {
         return bundle;
     }
+
+    @Override
+    public String toString() {
+        return String.format("BundleDelegatingClassLoader(%s)", bundle);
+    }
 }
