@@ -219,6 +219,49 @@ public class ThreadPoolProfile implements Serializable {
         this.rejectedPolicy = rejectedPolicy;
     }
 
+    /**
+     * Overwrites each attribute that is null with the attribute from defaultProfile 
+     * 
+     * @param defaultProfile2
+     */
+    public void addDefaults(ThreadPoolProfile defaultProfile2) {
+        if (defaultProfile2 == null) {
+            return;
+        }
+        if (poolSize == null) {
+            poolSize = defaultProfile2.getPoolSize();
+        }
+        if (maxPoolSize == null) {
+            maxPoolSize = defaultProfile2.getMaxPoolSize();
+        }
+        if (keepAliveTime == null) {
+            keepAliveTime = defaultProfile2.getKeepAliveTime();
+        }
+        if (timeUnit == null) {
+            timeUnit = defaultProfile2.getTimeUnit();
+        }
+        if (maxQueueSize == null) {
+            maxQueueSize = defaultProfile2.getMaxQueueSize();
+        }
+        if (rejectedPolicy == null) {
+            rejectedPolicy = defaultProfile2.getRejectedPolicy();
+        }
+    }
+
+    @Override
+    public ThreadPoolProfile clone() {
+        ThreadPoolProfile cloned = new ThreadPoolProfile();
+        cloned.setDefaultProfile(defaultProfile);
+        cloned.setId(id);
+        cloned.setKeepAliveTime(keepAliveTime);
+        cloned.setMaxPoolSize(maxPoolSize);
+        cloned.setMaxQueueSize(maxQueueSize);
+        cloned.setPoolSize(maxPoolSize);
+        cloned.setRejectedPolicy(rejectedPolicy);
+        cloned.setTimeUnit(timeUnit);
+        return cloned;
+    }
+
     @Override
     public String toString() {
         return "ThreadPoolProfile[" + id + " (" + defaultProfile + ") size:" + poolSize + "-" + maxPoolSize

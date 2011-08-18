@@ -25,8 +25,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
-import org.apache.camel.builder.ThreadPoolBuilder;
+import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
@@ -74,10 +75,14 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
             queueSize = CamelContextHelper.parseInteger(getCamelContext(), maxQueueSize);
         }
 
-        ExecutorService answer = new ThreadPoolBuilder(getCamelContext())
-                .poolSize(size).maxPoolSize(max).keepAliveTime(keepAlive, getTimeUnit())
-                .maxQueueSize(queueSize).rejectedPolicy(getRejectedPolicy())
-                .build(getId(), getThreadName());
+        ThreadPoolProfile profile = new ThreadPoolProfileBuilder(getId())
+                .poolSize(size)
+                .maxPoolSize(max)
+                .keepAliveTime(keepAlive, timeUnit)
+                .maxQueueSize(queueSize)
+                .rejectedPolicy(rejectedPolicy)
+                .build();
+        ExecutorService answer = getCamelContext().getExecutorServiceManager().newThreadPool(getId(), getThreadName(), profile);
         return answer;
     }
 

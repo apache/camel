@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -30,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ThreadPoolRejectedPolicy;
+import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -56,21 +56,20 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     private String threadNamePattern;
     private String defaultThreadPoolProfileId = "defaultThreadPoolProfile";
     private final Map<String, ThreadPoolProfile> threadPoolProfiles = new HashMap<String, ThreadPoolProfile>();
+    private ThreadPoolProfile builtIndefaultProfile;
 
     public DefaultExecutorServiceManager(CamelContext camelContext) {
         this.camelContext = camelContext;
 
-        // create and register the default profile
-        ThreadPoolProfile defaultProfile = new ThreadPoolProfile(defaultThreadPoolProfileId);
-        // the default profile has the following values
-        defaultProfile.setDefaultProfile(true);
-        defaultProfile.setPoolSize(10);
-        defaultProfile.setMaxPoolSize(20);
-        defaultProfile.setKeepAliveTime(60L);
-        defaultProfile.setTimeUnit(TimeUnit.SECONDS);
-        defaultProfile.setMaxQueueSize(1000);
-        defaultProfile.setRejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns);
-        registerThreadPoolProfile(defaultProfile);
+        builtIndefaultProfile = new ThreadPoolProfileBuilder(defaultThreadPoolProfileId)
+            .defaultProfile(true)
+            .poolSize(10)
+            .maxPoolSize(20)
+            .keepAliveTime(60L, TimeUnit.SECONDS)
+            .maxQueueSize(1000)
+            .rejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns)
+            .build();
+        registerThreadPoolProfile(builtIndefaultProfile);
     }
 
     @Override
@@ -102,46 +101,12 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     public void setDefaultThreadPoolProfile(ThreadPoolProfile defaultThreadPoolProfile) {
-        ThreadPoolProfile oldProfile = threadPoolProfiles.remove(defaultThreadPoolProfileId);
-        if (oldProfile != null) {
-            // the old is no longer default
-            oldProfile.setDefaultProfile(false);
-
-            // fallback and use old default values for new default profile if absent (convention over configuration)
-            if (defaultThreadPoolProfile.getKeepAliveTime() == null) {
-                defaultThreadPoolProfile.setKeepAliveTime(oldProfile.getKeepAliveTime());
-            }
-            if (defaultThreadPoolProfile.getMaxPoolSize() == null) {
-                defaultThreadPoolProfile.setMaxPoolSize(oldProfile.getMaxPoolSize());
-            }
-            if (defaultThreadPoolProfile.getRejectedPolicy() == null) {
-                defaultThreadPoolProfile.setRejectedPolicy(oldProfile.getRejectedPolicy());
-            }
-            if (defaultThreadPoolProfile.getMaxQueueSize() == null) {
-                defaultThreadPoolProfile.setMaxQueueSize(oldProfile.getMaxQueueSize());
-            }
-            if (defaultThreadPoolProfile.getPoolSize() == null) {
-                defaultThreadPoolProfile.setPoolSize(oldProfile.getPoolSize());
-            }
-            if (defaultThreadPoolProfile.getTimeUnit() == null) {
-                defaultThreadPoolProfile.setTimeUnit(oldProfile.getTimeUnit());
-            }
-        }
-
-        // validate that all options has been given as its mandatory for a default thread pool profile
-        // as it is used as fallback for other profiles if they do not have that particular value
-        ObjectHelper.notEmpty(defaultThreadPoolProfile.getId(), "id", defaultThreadPoolProfile);
-        ObjectHelper.notNull(defaultThreadPoolProfile.getKeepAliveTime(), "keepAliveTime", defaultThreadPoolProfile);
-        ObjectHelper.notNull(defaultThreadPoolProfile.getMaxPoolSize(), "maxPoolSize", defaultThreadPoolProfile);
-        ObjectHelper.notNull(defaultThreadPoolProfile.getMaxQueueSize(), "maxQueueSize", defaultThreadPoolProfile);
-        ObjectHelper.notNull(defaultThreadPoolProfile.getPoolSize(), "poolSize", defaultThreadPoolProfile);
-        ObjectHelper.notNull(defaultThreadPoolProfile.getTimeUnit(), "timeUnit", defaultThreadPoolProfile);
+        threadPoolProfiles.remove(defaultThreadPoolProfileId);
+        defaultThreadPoolProfile.addDefaults(builtIndefaultProfile);
 
         LOG.info("Using custom DefaultThreadPoolProfile: " + defaultThreadPoolProfile);
 
-        // and replace with the new default profile
         this.defaultThreadPoolProfileId = defaultThreadPoolProfile.getId();
-        // and mark the new profile as default
         defaultThreadPoolProfile.setDefaultProfile(true);
         registerThreadPoolProfile(defaultThreadPoolProfile);
     }
@@ -170,12 +135,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     public ScheduledExecutorService newDefaultScheduledThreadPool(Object source, String name) {
-        ThreadPoolProfile defaultProfile = getDefaultThreadPoolProfile();
-
-        ThreadFactory threadFactory = createThreadFactory(name, true);
-        ScheduledExecutorService executorService = threadPoolFactory.newScheduledThreadPool(defaultProfile.getPoolSize(), threadFactory);
-        onThreadPoolCreated(executorService, source, null);
-        return executorService;
+        return newScheduledThreadPool(source, name, getDefaultThreadPoolProfile());
     }
 
     @Override
@@ -194,35 +154,22 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         ObjectHelper.notNull(profile, "ThreadPoolProfile");
 
         ThreadPoolProfile defaultProfile = getDefaultThreadPoolProfile();
-        // fallback to use values from default profile if not specified
-        Integer poolSize = profile.getPoolSize() != null ? profile.getPoolSize() : defaultProfile.getPoolSize();
-        Integer maxPoolSize = profile.getMaxPoolSize() != null ? profile.getMaxPoolSize() : defaultProfile.getMaxPoolSize();
-        Long keepAliveTime = profile.getKeepAliveTime() != null ? profile.getKeepAliveTime() : defaultProfile.getKeepAliveTime();
-        TimeUnit timeUnit = profile.getTimeUnit() != null ? profile.getTimeUnit() : defaultProfile.getTimeUnit();
-        Integer maxQueueSize = profile.getMaxQueueSize() != null ? profile.getMaxQueueSize() : defaultProfile.getMaxQueueSize();
-        RejectedExecutionHandler handler = profile.getRejectedExecutionHandler() != null ? profile.getRejectedExecutionHandler() : defaultProfile.getRejectedExecutionHandler();
+        profile.addDefaults(defaultProfile);
 
         ThreadFactory threadFactory = createThreadFactory(name, true);
-        ExecutorService executorService = threadPoolFactory.newThreadPool(poolSize, maxPoolSize,
-                keepAliveTime, timeUnit, maxQueueSize, handler, threadFactory);
+        ExecutorService executorService = threadPoolFactory.newThreadPool(profile, threadFactory);
         onThreadPoolCreated(executorService, source, profile.getId());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created new ThreadPool for source: {} with name: {}. -> {}", new Object[]{source, name, executorService});
+        }
+
         return executorService;
     }
 
     @Override
     public ExecutorService newThreadPool(Object source, String name, int poolSize, int maxPoolSize) {
-        ThreadPoolProfile defaultProfile = getDefaultThreadPoolProfile();
-
-        // fallback to use values from default profile
-        ExecutorService answer = threadPoolFactory.newThreadPool(poolSize, maxPoolSize,
-                defaultProfile.getKeepAliveTime(), defaultProfile.getTimeUnit(), defaultProfile.getMaxQueueSize(),
-                defaultProfile.getRejectedExecutionHandler(), new CamelThreadFactory(threadNamePattern, name, true));
-        onThreadPoolCreated(answer, source, null);
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new ThreadPool for source: {} with name: {}. -> {}", new Object[]{source, name, answer});
-        }
-        return answer;
+        ThreadPoolProfile profile = new ThreadPoolProfileBuilder(name).poolSize(poolSize).maxPoolSize(maxPoolSize).build();
+        return  newThreadPool(source, name, profile);
     }
 
     @Override
@@ -232,7 +179,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     public ExecutorService newCachedThreadPool(Object source, String name) {
-        ExecutorService answer = threadPoolFactory.newCachedThreadPool(new CamelThreadFactory(threadNamePattern, name, true));
+        ExecutorService answer = threadPoolFactory.newCachedThreadPool(createThreadFactory(name, true));
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
@@ -243,29 +190,32 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     public ExecutorService newFixedThreadPool(Object source, String name, int poolSize) {
-        ExecutorService answer = threadPoolFactory.newFixedThreadPool(poolSize, new CamelThreadFactory(threadNamePattern, name, true));
-        onThreadPoolCreated(answer, source, null);
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new FixedThreadPool for source: {} with name: {}. -> {}", new Object[]{source, name, answer});
-        }
-        return answer;
+        ThreadPoolProfile profile = new ThreadPoolProfileBuilder(name).poolSize(poolSize).maxPoolSize(poolSize).keepAliveTime(0L).build();
+        return newThreadPool(source, name, profile);
     }
 
     @Override
     public ScheduledExecutorService newSingleThreadScheduledExecutor(Object source, String name) {
         return newScheduledThreadPool(source, name, 1);
     }
-
+    
     @Override
-    public ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize) {
-        ScheduledExecutorService answer = threadPoolFactory.newScheduledThreadPool(poolSize, new CamelThreadFactory(threadNamePattern, name, true));
+    public ScheduledExecutorService newScheduledThreadPool(Object source, String name, ThreadPoolProfile profile) {
+        profile.addDefaults(getDefaultThreadPoolProfile());
+        ScheduledExecutorService answer = threadPoolFactory.newScheduledThreadPool(profile, createThreadFactory(name, true));
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Created new ScheduledThreadPool for source: {} with name: {}. -> {}", new Object[]{source, name, answer});
         }
         return answer;
+
+    }
+
+    @Override
+    public ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize) {
+        ThreadPoolProfile profile = new ThreadPoolProfileBuilder(name).poolSize(poolSize).build();
+        return newScheduledThreadPool(source, name, profile);
     }
 
     @Override

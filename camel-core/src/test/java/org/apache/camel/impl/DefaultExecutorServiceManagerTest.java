@@ -357,8 +357,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
         // a fixed dont use keep alive
-        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertEquals(5, tp.getMaximumPoolSize());
+        assertEquals("keepAliveTime", 0, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals("maximumPoolSize", 5, tp.getMaximumPoolSize());
         assertEquals(5, tp.getCorePoolSize());
         assertFalse(tp.isShutdown());
 
@@ -373,8 +373,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
 
         ThreadPoolExecutor tp = assertIsInstanceOf(ThreadPoolExecutor.class, pool);
         // a single dont use keep alive
-        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertEquals(1, tp.getMaximumPoolSize());
+        assertEquals("keepAliveTime", 0, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals("maximumPoolSize", 1, tp.getMaximumPoolSize());
         assertEquals(1, tp.getCorePoolSize());
         assertFalse(tp.isShutdown());
 

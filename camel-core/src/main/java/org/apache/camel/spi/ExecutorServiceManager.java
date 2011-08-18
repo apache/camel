@@ -220,6 +220,8 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * @return the created thread pool
      */
     ScheduledExecutorService newSingleThreadScheduledExecutor(Object source, String name);
+    
+    ScheduledExecutorService newScheduledThreadPool(Object source, String name, ThreadPoolProfile profile);
 
     /**
      * Shutdown the given executor service.
@@ -237,4 +239,5 @@ public interface ExecutorServiceManager extends ShutdownableService {
      * @see java.util.concurrent.ExecutorService#shutdownNow()
      */
     List<Runnable> shutdownNow(ExecutorService executorService);
+
 }

@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -52,18 +51,6 @@ public class CustomThreadPoolFactoryTest extends ContextTestSupport {
         public ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
             invoked = true;
             return super.newCachedThreadPool(threadFactory);
-        }
-
-        @Override
-        public ExecutorService newFixedThreadPool(int poolSize, ThreadFactory threadFactory) {
-            invoked = true;
-            return super.newFixedThreadPool(poolSize, threadFactory);
-        }
-
-        @Override
-        public ScheduledExecutorService newScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory) throws IllegalArgumentException {
-            invoked = true;
-            return super.newScheduledThreadPool(corePoolSize, threadFactory);
         }
 
         @Override

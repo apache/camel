@@ -28,6 +28,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.spi.ThreadPoolFactory;
+import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
  * Factory for thread pools that uses the JDK {@link Executors} for creating the thread pools.
@@ -37,13 +38,16 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
     public ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
         return Executors.newCachedThreadPool(threadFactory);
     }
-
-    public ExecutorService newFixedThreadPool(int poolSize, ThreadFactory threadFactory) {
-        return Executors.newFixedThreadPool(poolSize, threadFactory);
-    }
-
-    public ScheduledExecutorService newScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory) throws IllegalArgumentException {
-        return Executors.newScheduledThreadPool(corePoolSize, threadFactory);
+    
+    @Override
+    public ExecutorService newThreadPool(ThreadPoolProfile profile, ThreadFactory factory) {
+        return newThreadPool(profile.getPoolSize(), 
+                             profile.getMaxPoolSize(), 
+                             profile.getKeepAliveTime(),
+                             profile.getTimeUnit(),
+                             profile.getMaxQueueSize(), 
+                             profile.getRejectedExecutionHandler(),
+                             factory);
     }
 
     public ExecutorService newThreadPool(int corePoolSize, int maxPoolSize, long keepAliveTime, TimeUnit timeUnit,
@@ -83,6 +87,14 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
         }
         answer.setRejectedExecutionHandler(rejectedExecutionHandler);
         return answer;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.apache.camel.impl.ThreadPoolFactory#newScheduledThreadPool(java.lang.Integer, java.util.concurrent.ThreadFactory)
+     */
+    @Override
+    public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
+        return Executors.newScheduledThreadPool(profile.getPoolSize(), threadFactory);
     }
 
 }
