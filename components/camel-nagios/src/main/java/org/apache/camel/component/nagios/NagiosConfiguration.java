@@ -18,6 +18,7 @@ package org.apache.camel.component.nagios;
 
 import java.net.URI;
 
+import com.googlecode.jsendnsca.core.Encryption;
 import com.googlecode.jsendnsca.core.NagiosSettings;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
@@ -33,7 +34,7 @@ public class NagiosConfiguration implements Cloneable {
     private int connectionTimeout = 5000;
     private int timeout = 5000;
     private String password;
-
+    private NagiosEncryptionMethod encryptionMethod;
 
     /**
      * Returns a copy of this configuration
@@ -74,6 +75,18 @@ public class NagiosConfiguration implements Cloneable {
             nagiosSettings.setNagiosHost(getHost());
             nagiosSettings.setPort(getPort());
             nagiosSettings.setPassword(getPassword());
+
+            if (encryptionMethod != null) {
+                if (NagiosEncryptionMethod.No == encryptionMethod) {
+                    nagiosSettings.setEncryptionMethod(Encryption.NO_ENCRYPTION);
+                } else if (NagiosEncryptionMethod.Xor == encryptionMethod) {
+                    nagiosSettings.setEncryptionMethod(Encryption.XOR_ENCRYPTION);
+                } else if (NagiosEncryptionMethod.TripeDes == encryptionMethod) {
+                    nagiosSettings.setEncryptionMethod(Encryption.TRIPLE_DES_ENCRYPTION);
+                } else {
+                    throw new IllegalArgumentException("Unknown encryption method: " + encryptionMethod);
+                }
+            }
         }
 
         return nagiosSettings;
@@ -123,9 +136,18 @@ public class NagiosConfiguration implements Cloneable {
         this.password = password;
     }
 
+    public NagiosEncryptionMethod getEncryptionMethod() {
+        return encryptionMethod;
+    }
+
+    public void setEncryptionMethod(NagiosEncryptionMethod encryptionMethod) {
+        this.encryptionMethod = encryptionMethod;
+    }
+
     @Override
     public String toString() {
-        return "NagiosConfiguration[host=" + host + ":" + port + ", connectionTimeout=" + connectionTimeout + ", timeout=" + timeout;
+        return "NagiosConfiguration[host=" + host + ":" + port + ", connectionTimeout=" + connectionTimeout
+                + ", timeout=" + timeout + ", encryptionMethod=" + encryptionMethod + "]";
     }
 
 }
