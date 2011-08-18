@@ -418,7 +418,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      *
      * @param file        the file
      * @param isDirectory whether the file is a directory or a file
-     * @return <tt>true</tt> if the remote file is matched, <tt>false</tt> if not
+     * @return <tt>true</tt> if the file is matched, <tt>false</tt> if not
      */
     protected boolean isMatched(GenericFile<T> file, boolean isDirectory) {
         String name = file.getFileNameOnly();
@@ -478,13 +478,29 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
                 return false;
             }
 
-            // the file is only valid if the done file exist
-            if (!operations.existsFile(doneFileName)) {
-                log.trace("Done file: {} does not exist", doneFileName);
+            if (!isMatched(file, doneFileName)) {
                 return false;
             }
         }
 
+        return true;
+    }
+
+    /**
+     * Strategy to perform file matching based on endpoint configuration in terms of done file name.
+     *
+     * @param file         the file
+     * @param doneFileName the done file name
+     * @return <tt>true</tt> if the file is matched, <tt>false</tt> if not
+     */
+    protected boolean isMatched(GenericFile<T> file, String doneFileName) {
+        // the file is only valid if the done file exist
+        if (!operations.existsFile(doneFileName)) {
+            log.trace("Done file: {} does not exist", doneFileName);
+            return false;
+        }
+
+        // assume matched
         return true;
     }
 

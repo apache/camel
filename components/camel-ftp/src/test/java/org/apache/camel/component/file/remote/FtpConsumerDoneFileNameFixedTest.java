@@ -25,7 +25,7 @@ import org.junit.Test;
 /**
  * @version 
  */
-public class FtpConsumerDoneFileNameTest extends FtpServerTestSupport {
+public class FtpConsumerDoneFileNameFixedTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/done?password=admin&initialDelay=0&delay=100&stepwise=false";
@@ -47,7 +47,7 @@ public class FtpConsumerDoneFileNameTest extends FtpServerTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         // write the done file
-        template.sendBodyAndHeader(getFtpUrl(), "", Exchange.FILE_NAME, "hello.dat");
+        template.sendBodyAndHeader(getFtpUrl(), "", Exchange.FILE_NAME, "fin.dat");
 
         assertMockEndpointsSatisfied();
 
@@ -55,7 +55,7 @@ public class FtpConsumerDoneFileNameTest extends FtpServerTestSupport {
         Thread.sleep(1000);
 
         // done file should be deleted now
-        File file = new File(FTP_ROOT_DIR + "done/hello.dat").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "done/fin.dat").getAbsoluteFile();
         assertFalse("Done file should be deleted: " + file, file.exists());
     }
 
@@ -64,7 +64,7 @@ public class FtpConsumerDoneFileNameTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl() + "&doneFileName=${file:name.noext}.dat")
+                from(getFtpUrl() + "&doneFileName=fin.dat")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }
