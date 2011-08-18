@@ -30,6 +30,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String strictHostKeyChecking = "no";
     private int serverAliveInterval;
     private int serverAliveCountMax = 1;
+    private String chmod;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -92,4 +93,12 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return serverAliveCountMax;
     }
 
+	public void setChmod(String chmod) {
+		this.chmod = chmod;
+	}
+	
+	public String getChmod() {
+		return chmod;
+	}
+	
 }

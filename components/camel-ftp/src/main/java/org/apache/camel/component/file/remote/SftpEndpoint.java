@@ -34,6 +34,11 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
     }
 
     @Override
+    public SftpConfiguration getConfiguration() {
+        return (SftpConfiguration) this.configuration;
+    }
+
+    @Override
     protected RemoteFileConsumer<ChannelSftp.LsEntry> buildConsumer(Processor processor) {
         return new SftpConsumer(this, processor, createRemoteFileOperations());
     }
