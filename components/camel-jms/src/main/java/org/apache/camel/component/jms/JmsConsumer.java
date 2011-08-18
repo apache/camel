@@ -131,7 +131,7 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         if (listenerContainer != null) {
             listenerContainer.stop();
             listenerContainer.destroy();
-            // TODO: The async destroy code does not work well, there is a JIRA ticket
+            // TODO: The async destroy code does not work well see https://issues.apache.org/jira/browse/CAMEL-4309
             // getEndpoint().destroyMessageListenerContainer(listenerContainer);
         }
 
