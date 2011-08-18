@@ -651,9 +651,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                 // parse to int using 8bit mode
                 int permissions = Integer.parseInt(mode, 8);
                 LOG.trace("Setting chmod: {} on file: ", mode, targetName);
-            	channel.chmod(permissions, targetName);
+                channel.chmod(permissions, targetName);
             }
-            
+
             return true;
         
         } catch (SftpException e) {
