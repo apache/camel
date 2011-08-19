@@ -29,7 +29,7 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
  *
  * @version 
  */
-public class ThreadPoolProfile implements Serializable {
+public class ThreadPoolProfile implements Serializable, Cloneable {
 
     // TODO: Camel 2.9/3.0 consider moving to org.apache.camel
 
@@ -222,29 +222,29 @@ public class ThreadPoolProfile implements Serializable {
     /**
      * Overwrites each attribute that is null with the attribute from defaultProfile 
      * 
-     * @param defaultProfile2
+     * @param defaultProfile profile with default values
      */
-    public void addDefaults(ThreadPoolProfile defaultProfile2) {
-        if (defaultProfile2 == null) {
+    public void addDefaults(ThreadPoolProfile defaultProfile) {
+        if (defaultProfile == null) {
             return;
         }
         if (poolSize == null) {
-            poolSize = defaultProfile2.getPoolSize();
+            poolSize = defaultProfile.getPoolSize();
         }
         if (maxPoolSize == null) {
-            maxPoolSize = defaultProfile2.getMaxPoolSize();
+            maxPoolSize = defaultProfile.getMaxPoolSize();
         }
         if (keepAliveTime == null) {
-            keepAliveTime = defaultProfile2.getKeepAliveTime();
+            keepAliveTime = defaultProfile.getKeepAliveTime();
         }
         if (timeUnit == null) {
-            timeUnit = defaultProfile2.getTimeUnit();
+            timeUnit = defaultProfile.getTimeUnit();
         }
         if (maxQueueSize == null) {
-            maxQueueSize = defaultProfile2.getMaxQueueSize();
+            maxQueueSize = defaultProfile.getMaxQueueSize();
         }
         if (rejectedPolicy == null) {
-            rejectedPolicy = defaultProfile2.getRejectedPolicy();
+            rejectedPolicy = defaultProfile.getRejectedPolicy();
         }
     }
 

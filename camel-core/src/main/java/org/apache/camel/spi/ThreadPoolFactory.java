@@ -41,17 +41,17 @@ public interface ThreadPoolFactory {
     /**
      * Create a thread pool using the given thread pool profile
      * 
-     * @param profile
-     * @param threadFactory
-     * @return
+     * @param profile parameters of the thread pool
+     * @param threadFactory factory for creating threads
+     * @return the created thread pool
      */
     ExecutorService newThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory);
     
     /**
      * Create a scheduled thread pool using the given thread pool profile
-     * @param profile
-     * @param threadFactory
-     * @return
+     * @param profile parameters of the thread pool
+     * @param threadFactory factory for creating threads
+     * @return the created thread pool
      */
     ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory);
 }
