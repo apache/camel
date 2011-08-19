@@ -36,7 +36,7 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
     private final CountDownLatch latch = new CountDownLatch(1);
     private final AtomicLong time = new AtomicLong();
 
-    public void testAsyncEndpointEventNotifer() throws Exception {
+    public void testAsyncEndpointEventNotifier() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
@@ -48,7 +48,8 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
         assertTrue("Should count down", latch.await(10, TimeUnit.SECONDS));
 
         long delta = time.get();
-        assertTrue("Should take about 1000 millis sec, was: " + delta, delta > 800);
+        log.info("ExchangeEventSent took ms: " + delta);
+        assertTrue("Should take about 250 millis sec, was: " + delta, delta > 200);
     }
 
     @Override
@@ -93,7 +94,7 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
 
                 from("direct:start")
                         .to("mock:before")
-                        .to("async:Bye Camel?delay=1000")
+                        .to("async:Bye Camel?delay=250")
                         .to("mock:result");
             }
         };
