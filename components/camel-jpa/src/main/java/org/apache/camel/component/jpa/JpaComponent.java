@@ -21,6 +21,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -62,7 +63,7 @@ public class JpaComponent extends DefaultComponent {
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
 
         // lets interpret the next string as a class
-        if (path != null) {
+        if (ObjectHelper.isNotEmpty(path)) {
             // provide the class loader of this component to work in OSGi environments as camel-jpa must be able
             // to resolve the entity classes
             Class<?> type = getCamelContext().getClassResolver().resolveClass(path, JpaComponent.class.getClassLoader());
