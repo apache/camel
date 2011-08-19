@@ -29,7 +29,7 @@ public class IsUseAdviceWithTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // replace the from with seda:foo
-                replaceFrom("seda:foo");
+                replaceFromWith("seda:foo");
             }
         });
         // we must manually start when we are done with all the advice with

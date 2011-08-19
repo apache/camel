@@ -33,7 +33,7 @@ public class AdviceWithReplaceFromTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // replace the input in the route with a new endpoint uri
-                replaceFrom("seda:foo");
+                replaceFromWith("seda:foo");
             }
         });
 
@@ -52,7 +52,7 @@ public class AdviceWithReplaceFromTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // replace the input in the route with a new endpoint
-                replaceFrom(endpoint);
+                replaceFromWith(endpoint);
             }
         });
 
@@ -69,7 +69,7 @@ public class AdviceWithReplaceFromTest extends ContextTestSupport {
             context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    replaceFrom("xxx:foo");
+                    replaceFromWith("xxx:foo");
                 }
             });
             fail("Should have thrown exception");

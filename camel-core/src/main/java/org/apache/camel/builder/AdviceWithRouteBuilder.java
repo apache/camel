@@ -93,9 +93,9 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      *
      * @param uri uri of the new endpoint
      */
-    public void replaceFrom(String uri) {
+    public void replaceFromWith(String uri) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
-        getAdviceWithTasks().add(AdviceWithTasks.replaceFrom(originalRoute, uri));
+        getAdviceWithTasks().add(AdviceWithTasks.replaceFromWith(originalRoute, uri));
     }
 
     /**
@@ -103,7 +103,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      *
      * @param endpoint the new endpoint
      */
-    public void replaceFrom(Endpoint endpoint) {
+    public void replaceFromWith(Endpoint endpoint) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
         getAdviceWithTasks().add(AdviceWithTasks.replaceFrom(originalRoute, endpoint));
     }

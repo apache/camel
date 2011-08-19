@@ -309,7 +309,7 @@ public final class AdviceWithTasks {
         };
     }
 
-    public static AdviceWithTask replaceFrom(final RouteDefinition route, final String uri) {
+    public static AdviceWithTask replaceFromWith(final RouteDefinition route, final String uri) {
         return new AdviceWithTask() {
             public void task() throws Exception {
                 FromDefinition from = route.getInputs().get(0);
