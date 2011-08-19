@@ -37,6 +37,7 @@
     </camel.osgi.export.pkg>
     <camel.osgi.import>
         !org.apache.camel.*,
+        !com.googlecode.concurrentlinkedhashmap,
         org.apache.xalan.xsltc.trax;resolution:=optional,
         javax.activation;resolution:=optional,
         javax.xml.bind;resolution:=optional,
@@ -59,6 +60,11 @@
   <dependencies>
 
     <!-- required dependencies by camel-core -->
+    <dependency>
+      <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
+      <artifactId>concurrentlinkedhashmap-lru</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -134,6 +140,26 @@
 
   <build>
     <plugins>
+    <!-- Shade the googlecode stuff for OSGi -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru</include>
+                </includes>
+              </artifactSet>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <!-- generate the attached tests jar -->
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>

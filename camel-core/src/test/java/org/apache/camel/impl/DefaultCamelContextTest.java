@@ -116,6 +116,7 @@ public class DefaultCamelContextTest extends TestSupport {
 
         list = ctx.removeEndpoints("log:*");
         assertEquals(2, list.size());
+
         Iterator<Endpoint> it = list.iterator();
         assertEquals("log://bar", it.next().getEndpointUri());
         assertEquals("log://baz", it.next().getEndpointUri());
