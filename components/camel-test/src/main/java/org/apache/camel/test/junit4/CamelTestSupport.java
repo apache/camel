@@ -21,7 +21,6 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -95,6 +94,21 @@ public abstract class CamelTestSupport extends TestSupport {
 
     public void setUseRouteBuilder(boolean useRouteBuilder) {
         this.useRouteBuilder = useRouteBuilder;
+    }
+
+    /**
+     * Override when using <a href="http://camel.apache.org/advicewith.html">advice with</a> and return <tt>true</tt>.
+     * This helps knowing advice with is to be used, and {@link CamelContext} will not be started before
+     * the advice with takes place. This helps by ensuring the advice with has been property setup before the
+     * {@link CamelContext} is started
+     * <p/>
+     * <b>Important:</b> Its important to start {@link CamelContext} manually from the unit test
+     * after you are done doing all the advice with.
+     *
+     * @return <tt>true</tt> if you use advice with in your unit tests.
+     */
+    public boolean isUseAdviceWith() {
+        return false;
     }
 
     /**
@@ -242,10 +256,13 @@ public abstract class CamelTestSupport extends TestSupport {
                 log.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
-            if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
-                startCamelContext();
-            } else {
+            boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
+            if (skip) {
                 log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+            } else if (isUseAdviceWith()) {
+                log.info("Skipping starting CamelContext as isUseAdviceWith is set to true.");
+            } else {
+                startCamelContext();
             }
         } else {
             log.debug("Using route builder from the created context: " + context);
