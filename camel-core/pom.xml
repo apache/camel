@@ -37,6 +37,7 @@
     </camel.osgi.export.pkg>
     <camel.osgi.import>
         !org.apache.camel.*,
+        !com.googlecode.concurrentlinkedhashmap,
         org.apache.xalan.xsltc.trax;resolution:=optional,
         javax.activation;resolution:=optional,
         javax.xml.bind;resolution:=optional,
