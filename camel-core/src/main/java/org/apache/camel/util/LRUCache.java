@@ -16,10 +16,10 @@
  */
 package org.apache.camel.util;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import org.apache.camel.Service;
 
 /**
@@ -27,14 +27,15 @@ import org.apache.camel.Service;
  *
  * @version 
  */
-public class LRUCache<K, V> extends LinkedHashMap<K, V> implements Service {
+public class LRUCache<K, V> implements Service, Map<K,V> {
     private static final long serialVersionUID = -342098639681884414L;
     private int maxCacheSize = 10000;
     private final AtomicLong hits = new AtomicLong();
     private final AtomicLong misses = new AtomicLong();
+    private ConcurrentLinkedHashMap<K, V> map;
 
     public LRUCache(int maximumCacheSize) {
-        this(maximumCacheSize, maximumCacheSize, 0.75f, true);
+        this(maximumCacheSize, maximumCacheSize);
     }
 
     /**
@@ -43,26 +44,82 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> implements Service {
      *
      * @param initialCapacity  the initial capacity.
      * @param maximumCacheSize the max capacity.
-     * @param loadFactor       the load factor.
-     * @param accessOrder      the ordering mode - <tt>true</tt> for
-     *                         access-order, <tt>false</tt> for insertion-order.
      * @throws IllegalArgumentException if the initial capacity is negative
      *                                  or the load factor is non positive.
      */
-    public LRUCache(int initialCapacity, int maximumCacheSize, float loadFactor, boolean accessOrder) {
-        super(initialCapacity, loadFactor, accessOrder);
+    public LRUCache(int initialCapacity, int maximumCacheSize) {
+        map = new ConcurrentLinkedHashMap
+                .Builder<K, V>()
+                .initialCapacity(initialCapacity)
+                .maximumWeightedCapacity(maximumCacheSize).build();
+//        super(initialCapacity, loadFactor, accessOrder);
         this.maxCacheSize = maximumCacheSize;
     }
 
     @Override
     public V get(Object o) {
-        V answer = super.get(o);
+        V answer = map.get(o);
         if (answer != null) {
             hits.incrementAndGet();
         } else {
             misses.incrementAndGet();
         }
         return answer;
+    }
+
+    @Override
+    public int size() {
+        return map.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    @Override
+    public boolean containsKey(Object o) {
+        return map.containsKey(o);
+    }
+
+    @Override
+    public boolean containsValue(Object o) {
+        return map.containsValue(0);
+    }
+
+    @Override
+    public V put(K k, V v) {
+        return map.put(k, v);
+    }
+
+    @Override
+    public V remove(Object o) {
+        return map.remove(o);
+    }
+
+    @Override
+    public void putAll(Map<? extends K, ? extends V> map) {
+        ((AbstractMap)map).putAll(map);
+    }
+
+    @Override
+    public void clear() {
+        map.clear();
+    }
+
+    @Override
+    public Set<K> keySet() {
+        return map.ascendingKeySet();
+    }
+
+    @Override
+    public Collection<V> values() {
+        return map.ascendingMap().values();
+    }
+
+    @Override
+    public Set<Entry<K, V>> entrySet() {
+        return map.ascendingMap().entrySet();
     }
 
     /**
@@ -95,7 +152,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> implements Service {
     }
 
     protected boolean removeEldestEntry(Map.Entry<K, V> entry) {
-        return size() > maxCacheSize;
+        return map.size() > maxCacheSize;
     }
 
     public void start() throws Exception {
@@ -106,7 +163,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> implements Service {
         // stop the value and clear the cache
         if (!isEmpty()) {
             ServiceHelper.stopServices(values());
-            clear();
+            map.clear();
             hits.set(0);
             misses.set(0);
         }

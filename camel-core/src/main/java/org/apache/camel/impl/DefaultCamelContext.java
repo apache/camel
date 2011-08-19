@@ -335,40 +335,34 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     // -----------------------------------------------------------------------
 
     public Collection<Endpoint> getEndpoints() {
-        synchronized (endpoints) {
-            return new ArrayList<Endpoint>(endpoints.values());
-        }
+        return new ArrayList<Endpoint>(endpoints.values());
     }
 
     public Map<String, Endpoint> getEndpointMap() {
-        synchronized (endpoints) {
-            TreeMap<String, Endpoint> answer = new TreeMap<String, Endpoint>();
-            for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
-                answer.put(entry.getKey().get(), entry.getValue());
-            }
-            return answer;
+        TreeMap<String, Endpoint> answer = new TreeMap<String, Endpoint>();
+        for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
+            answer.put(entry.getKey().get(), entry.getValue());
         }
+        return answer;
     }
 
     public Endpoint hasEndpoint(String uri) {
-        synchronized (endpoints) {
-            return endpoints.get(getEndpointKey(uri));
-        }
+        return endpoints.get(getEndpointKey(uri));
     }
 
     public Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception {
         Endpoint oldEndpoint;
-        synchronized (endpoints) {
-            startServices(endpoint);
-            oldEndpoint = endpoints.remove(getEndpointKey(uri));
-            for (LifecycleStrategy strategy : lifecycleStrategies) {
-                strategy.onEndpointAdd(endpoint);
-            }
-            addEndpointToRegistry(uri, endpoint);
-            if (oldEndpoint != null) {
-                stopServices(oldEndpoint);
-            }
+
+        startServices(endpoint);
+        oldEndpoint = endpoints.remove(getEndpointKey(uri));
+        for (LifecycleStrategy strategy : lifecycleStrategies) {
+            strategy.onEndpointAdd(endpoint);
         }
+        addEndpointToRegistry(uri, endpoint);
+        if (oldEndpoint != null) {
+            stopServices(oldEndpoint);
+        }
+
         return oldEndpoint;
     }
 
@@ -420,39 +414,37 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
         Endpoint answer;
         String scheme = null;
-        synchronized (endpoints) {
-            answer = endpoints.get(getEndpointKey(uri));
-            if (answer == null) {
-                try {
-                    // Use the URI prefix to find the component.
-                    String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
-                    if (splitURI[1] != null) {
-                        scheme = splitURI[0];
-                        Component component = getComponent(scheme);
+        answer = endpoints.get(getEndpointKey(uri));
+        if (answer == null) {
+            try {
+                // Use the URI prefix to find the component.
+                String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
+                if (splitURI[1] != null) {
+                    scheme = splitURI[0];
+                    Component component = getComponent(scheme);
 
-                        // Ask the component to resolve the endpoint.
-                        if (component != null) {
-                            // Have the component create the endpoint if it can.
-                            answer = component.createEndpoint(uri);
+                    // Ask the component to resolve the endpoint.
+                    if (component != null) {
+                        // Have the component create the endpoint if it can.
+                        answer = component.createEndpoint(uri);
 
-                            if (answer != null && log.isDebugEnabled()) {
-                                log.debug("{} converted to endpoint: {} by component: {}", new Object[]{uri, answer, component});
-                            }
+                        if (answer != null && log.isDebugEnabled()) {
+                            log.debug("{} converted to endpoint: {} by component: {}", new Object[]{uri, answer, component});
                         }
                     }
-
-                    if (answer == null) {
-                        // no component then try in registry and elsewhere
-                        answer = createEndpoint(uri);
-                    }
-
-                    if (answer != null) {
-                        addService(answer);
-                        answer = addEndpointToRegistry(uri, answer);
-                    }
-                } catch (Exception e) {
-                    throw new ResolveEndpointFailedException(uri, e);
                 }
+
+                if (answer == null) {
+                    // no component then try in registry and elsewhere
+                    answer = createEndpoint(uri);
+                }
+
+                if (answer != null) {
+                    addService(answer);
+                    answer = addEndpointToRegistry(uri, answer);
+                }
+            } catch (Exception e) {
+                throw new ResolveEndpointFailedException(uri, e);
             }
         }
 
