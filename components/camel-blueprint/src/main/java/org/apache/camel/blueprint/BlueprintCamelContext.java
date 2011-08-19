@@ -24,6 +24,7 @@ import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
 import org.apache.camel.core.osgi.OsgiPackageScanClassResolver;
 import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
+import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
@@ -52,6 +53,7 @@ public class BlueprintCamelContext extends DefaultCamelContext {
         setComponentResolver(new BlueprintComponentResolver(bundleContext));
         setLanguageResolver(new BlueprintLanguageResolver(bundleContext));
         setDataFormatResolver(new BlueprintDataFormatResolver(bundleContext));
+        setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
     }
 
     public BundleContext getBundleContext() {
@@ -71,7 +73,14 @@ public class BlueprintCamelContext extends DefaultCamelContext {
     }
 
     public void init() throws Exception {
-        maybeStart();
+        final ClassLoader original = Thread.currentThread().getContextClassLoader();
+        try {
+            // let's set a more suitable TCCL while starting the context
+            Thread.currentThread().setContextClassLoader(getApplicationContextClassLoader());
+            maybeStart();
+        } finally {
+            Thread.currentThread().setContextClassLoader(original);
+        }
     }
 
     private void maybeStart() throws Exception {
