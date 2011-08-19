@@ -16,7 +16,10 @@
  */
 package org.apache.camel.util;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
@@ -27,7 +30,7 @@ import org.apache.camel.Service;
  *
  * @version 
  */
-public class LRUCache<K, V> implements Service, Map<K,V> {
+public class LRUCache<K, V> implements Service, Map<K, V> {
     private static final long serialVersionUID = -342098639681884414L;
     private int maxCacheSize = 10000;
     private final AtomicLong hits = new AtomicLong();
