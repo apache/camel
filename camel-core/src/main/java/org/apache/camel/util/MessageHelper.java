@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.AbstractList;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.xml.transform.stream.StreamSource;
@@ -220,10 +219,15 @@ public final class MessageHelper {
         }
 
         // grab the message body as a string
-        String body;
+        String body = null;
         if (message.getExchange() != null) {
-            body = message.getExchange().getContext().getTypeConverter().convertTo(String.class, obj);
-        } else {
+            try {
+                body = message.getExchange().getContext().getTypeConverter().convertTo(String.class, obj);
+            } catch (Exception e) {
+                // ignore as the body is for logging purpose
+            }
+        }
+        if (body == null) {
             body = obj.toString();
         }
 
@@ -282,10 +286,14 @@ public final class MessageHelper {
 
                 // dump header value as XML, use Camel type converter to convert to String
                 if (value != null) {
-                    String xml = message.getExchange().getContext().getTypeConverter().convertTo(String.class, value);
-                    if (xml != null) {
-                        // must always xml encode
-                        sb.append(StringHelper.xmlEncode(xml));
+                    try {
+                        String xml = message.getExchange().getContext().getTypeConverter().convertTo(String.class, value);
+                        if (xml != null) {
+                            // must always xml encode
+                            sb.append(StringHelper.xmlEncode(xml));
+                        }
+                    } catch (Exception e) {
+                        // ignore as the body is for logging purpose
                     }
                 }
 

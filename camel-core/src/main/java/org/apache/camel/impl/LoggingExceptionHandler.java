@@ -52,12 +52,16 @@ public class LoggingExceptionHandler implements ExceptionHandler {
     }
 
     public void handleException(String message, Exchange exchange, Throwable exception) {
-        String msg = ExchangeHelper.createExceptionMessage(message, exchange, exception);
-        if (isCausedByRollbackExchangeException(exception)) {
-            // do not log stacktrace for intended rollbacks
-            logger.log(msg);
-        } else {
-            logger.log(msg, exception);
+        try {
+            String msg = ExchangeHelper.createExceptionMessage(message, exchange, exception);
+            if (isCausedByRollbackExchangeException(exception)) {
+                // do not log stacktrace for intended rollbacks
+                logger.log(msg);
+            } else {
+                logger.log(msg, exception);
+            }
+        } catch (Throwable e) {
+            // the logging exception handler must not cause new exceptions to occur
         }
     }
 
