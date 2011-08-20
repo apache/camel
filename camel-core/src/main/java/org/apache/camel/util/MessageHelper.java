@@ -217,10 +217,15 @@ public final class MessageHelper {
         }
 
         // grab the message body as a string
-        String body;
+        String body = null;
         if (message.getExchange() != null) {
-            body = message.getExchange().getContext().getTypeConverter().convertTo(String.class, obj);
-        } else {
+            try {
+                body = message.getExchange().getContext().getTypeConverter().convertTo(String.class, obj);
+            } catch (Exception e) {
+                // ignore as the body is for logging purpose
+            }
+        }
+        if (body == null) {
             body = obj.toString();
         }
 
@@ -267,15 +272,14 @@ public final class MessageHelper {
 
                 // dump header value as XML, use Camel type converter to convert to String
                 if (value != null) {
-                    String xml = message.getExchange().getContext().getTypeConverter().convertTo(String.class, value);
-                    if (xml != null) {
-                        // is the header value already XML
-                        if (xml.startsWith("<") && xml.endsWith(">")) {
-                            sb.append(xml);
-                        } else {
-                            // no its not xml so xml encode it
+                    try {
+                        String xml = message.getExchange().getContext().getTypeConverter().convertTo(String.class, value);
+                        if (xml != null) {
+                            // must always xml encode
                             sb.append(StringHelper.xmlEncode(xml));
                         }
+                    } catch (Exception e) {
+                        // ignore as the body is for logging purpose
                     }
                 }
 
@@ -292,15 +296,13 @@ public final class MessageHelper {
         sb.append(">");
 
         // dump body value as XML, use Camel type converter to convert to String
-        String xml = message.getBody(String.class);
-        if (xml != null) {
-            // is the body already XML
-            if (xml.startsWith("<") && xml.endsWith(">")) {
-                sb.append(xml);
-            } else {
-                // no its not xml so xml encode it
+        try {
+            String xml = message.getBody(String.class);
+            if (xml != null) {
                 sb.append(StringHelper.xmlEncode(xml));
             }
+        } catch (Exception e) {
+            // ignore as the body is for logging purpose
         }
 
         sb.append("</body>\n");
