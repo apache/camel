@@ -34,6 +34,12 @@ public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
     }
 
     @Override
+    public boolean isUseDebugger() {
+        // must enable debugger
+        return true;
+    }
+
+    @Override
     protected void debugBefore(Exchange exchange, Processor processor,
                                ProcessorDefinition definition, String id, String shortName) {
         // this method is invoked before we are about to enter the given processor

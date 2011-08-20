@@ -140,6 +140,15 @@ public abstract class CamelTestSupport extends TestSupport {
         return null;
     }
 
+    /**
+     * Override to enable debugger
+     * <p/>
+     * Is default <tt>false</tt>
+     */
+    public boolean isUseDebugger() {
+        return false;
+    }
+
     public Service getCamelContextService() {
         return camelContextService;
     }
@@ -229,10 +238,12 @@ public abstract class CamelTestSupport extends TestSupport {
         // reduce default shutdown timeout to avoid waiting for 300 seconds
         context.getShutdownStrategy().setTimeout(getShutdownTimeout());
 
-        // set debugger
-        context.setDebugger(new DefaultDebugger());
-        context.getDebugger().addBreakpoint(breakpoint);
-        // note: when stopping CamelContext it will automatic remove the breakpoint
+        // set debugger if enabled
+        if (isUseDebugger()) {
+            context.setDebugger(new DefaultDebugger());
+            context.getDebugger().addBreakpoint(breakpoint);
+            // note: when stopping CamelContext it will automatic remove the breakpoint
+        }
 
         template = context.createProducerTemplate();
         template.start();

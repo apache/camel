@@ -90,6 +90,15 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
+     * Override to enable debugger
+     * <p/>
+     * Is default <tt>false</tt>
+     */
+    public boolean isUseDebugger() {
+        return false;
+    }
+
+    /**
      * Override when using <a href="http://camel.apache.org/advicewith.html">advice with</a> and return <tt>true</tt>.
      * This helps knowing advice with is to be used, and {@link CamelContext} will not be started before
      * the advice with takes place. This helps by ensuring the advice with has been property setup before the
@@ -136,10 +145,12 @@ public abstract class CamelTestSupport extends TestSupport {
         // reduce default shutdown timeout to avoid waiting for 300 seconds
         context.getShutdownStrategy().setTimeout(getShutdownTimeout());
 
-        // set debugger
-        context.setDebugger(new DefaultDebugger());
-        context.getDebugger().addBreakpoint(breakpoint);
-        // note: when stopping CamelContext it will automatic remove the breakpoint
+        // set debugger if enabled
+        if (isUseDebugger()) {
+            context.setDebugger(new DefaultDebugger());
+            context.getDebugger().addBreakpoint(breakpoint);
+            // note: when stopping CamelContext it will automatic remove the breakpoint
+        }
 
         template = context.createProducerTemplate();
         template.start();
