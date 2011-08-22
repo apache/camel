@@ -32,6 +32,7 @@ import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Evaluates an expression using a bean method invocation
@@ -237,8 +238,13 @@ public class BeanExpression implements Expression, Predicate {
         }
 
         private Object lookupResult(Exchange exchange, String key, Object result, boolean nullSafe, String ognlPath, Object bean) {
+            ObjectHelper.notEmpty(key, "key", "in Simple language ognl path: " + ognlPath);
+
             // trim key
             key = key.trim();
+
+            // remove any enclosing quotes
+            key = StringHelper.removeLeadingAndEndingQuotes(key);
 
             // try map first
             Map map = exchange.getContext().getTypeConverter().convertTo(Map.class, result);
