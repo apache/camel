@@ -39,6 +39,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.LRUSoftCache;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -65,6 +66,16 @@ public class CxfRsProducer extends DefaultProducer {
         super(endpoint);
         this.throwException = endpoint.isThrowExceptionOnFailure();
         clientFactoryBeanCache = new ClientFactoryBeanCache(endpoint.getMaxClientCacheSize());
+    }
+    
+    protected void doStart() throws Exception {
+        clientFactoryBeanCache.start();
+        super.doStart();
+    }
+    
+    protected void doStop() throws Exception {
+        super.doStop();
+        clientFactoryBeanCache.stop();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -322,25 +333,29 @@ public class CxfRsProducer extends DefaultProducer {
      * Cache contains {@link org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean}
      */
     private class ClientFactoryBeanCache {
-        private LRUCache<String, SoftReference<JAXRSClientFactoryBean>> cache;    
+        private LRUSoftCache<String, JAXRSClientFactoryBean> cache;    
         
         public ClientFactoryBeanCache(final int maxCacheSize) {
-            this.cache = new LRUCache<String, SoftReference<JAXRSClientFactoryBean>>(maxCacheSize);
+            this.cache = new LRUSoftCache<String, JAXRSClientFactoryBean>(maxCacheSize);
+        }
+        
+        public void start() throws Exception {
+            this.cache.start();
+        }
+        
+        public void stop() throws Exception {
+            this.cache.stop();
         }
 
         public JAXRSClientFactoryBean get(String address) throws Exception {
-            JAXRSClientFactoryBean retval = null;
+            JAXRSClientFactoryBean retVal = null;
             synchronized (cache) {
-                SoftReference<JAXRSClientFactoryBean> ref = cache.get(address);
+                retVal = cache.get(address);
                 
-                if (ref != null) {
-                    retval = ref.get();
-                }
-
-                if (retval == null) {
-                    retval = ((CxfRsEndpoint)getEndpoint()).createJAXRSClientFactoryBean(address);
+                if (retVal == null) {
+                    retVal = ((CxfRsEndpoint)getEndpoint()).createJAXRSClientFactoryBean(address);
                     
-                    cache.put(address, new SoftReference<JAXRSClientFactoryBean>(retval));
+                    cache.put(address, retVal);
                     
                     LOG.trace("Created client factory bean and add to cache for address '{}'", address);
                     
@@ -348,7 +363,7 @@ public class CxfRsProducer extends DefaultProducer {
                     LOG.trace("Retrieved client factory bean from cache for address '{}'", address);
                 }
             }
-            return retval;
+            return retVal;
         }
     }
 }
