@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -87,8 +88,14 @@ public final class ResourceHelper {
      * @throws java.io.FileNotFoundException is thrown if the resource file could not be found
      * @throws java.net.MalformedURLException if the uri is malformed
      */
-    public static URL resolveMandatoryResourceAsUrl(ClassResolver classResolver,  String uri) throws FileNotFoundException, MalformedURLException {
+    public static URL resolveMandatoryResourceAsUrl(ClassResolver classResolver, String uri) throws FileNotFoundException, MalformedURLException {
         if (uri.startsWith("file:")) {
+            // check if file exists first
+            String name = ObjectHelper.after(uri, "file:");
+            File file = new File(name);
+            if (!file.exists()) {
+                throw new FileNotFoundException("File " + file + " not found");
+            }
             return new URL(uri);
         } else if (uri.startsWith("http:")) {
             return new URL(uri);
