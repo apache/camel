@@ -34,8 +34,8 @@ package org.apache.camel;
  * <ul>
  * <li>throws {@link RuntimeCamelException} as stated above</li>
  * <li>The <tt>fault.body</tt> if there is a fault message set and its not <tt>null</tt></li>
- * <li>The <tt>out.body<tt> if there is a out message set and its not <tt>null<tt></li>
- * <li>The <tt>in.body<tt></li>
+ * <li>The <tt>out.body</tt> if there is a out message set and its not <tt>null</tt></li>
+ * <li>The <tt>in.body</tt></li>
  * </ul>
  * <p/>
  * <b>Important note on usage:</b> See this
