@@ -35,6 +35,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
 import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
+import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -95,8 +96,6 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyFixedLengthDataFormat camelDataFormat = new BindyFixedLengthDataFormat("org.apache.camel.dataformat.bindy.fixed.marshall.simple");
-
         public void configure() {
 
             Tracer tracer = new Tracer();
@@ -110,7 +109,9 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
 
             onException(Exception.class).maximumRedeliveries(0).handled(true);
 
-            from(URI_DIRECT_START).marshal(camelDataFormat).to(URI_MOCK_RESULT);
+            from(URI_DIRECT_START)
+                    .marshal().bindy(BindyType.Fixed, "org.apache.camel.dataformat.bindy.fixed.marshall.simple")
+                    .to(URI_MOCK_RESULT);
         }
 
     }
