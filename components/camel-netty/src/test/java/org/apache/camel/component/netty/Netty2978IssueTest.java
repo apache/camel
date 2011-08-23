@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -39,12 +40,11 @@ import org.junit.Test;
 /**
  * @version 
  */
-@Ignore
 public class Netty2978IssueTest extends BaseNettyTest {
 
     @Test
     public void testNetty2978() throws Exception {
-        CamelClient client = new CamelClient();
+        CamelClient client = new CamelClient(context);
         try {
             for (int i = 0; i < 1000; i++) {
                 Object reply = client.lookup(i);
@@ -57,7 +57,7 @@ public class Netty2978IssueTest extends BaseNettyTest {
 
     @Test
     public void testNetty2978Concurrent() throws Exception {
-        final CamelClient client = new CamelClient();
+        final CamelClient client = new CamelClient(context);
         try {
             final List<Callable<String>> callables = new ArrayList<Callable<String>>();
             for (int count = 0; count < 1000; count++) {
@@ -104,19 +104,18 @@ public class Netty2978IssueTest extends BaseNettyTest {
     }
 
     private static final class CamelClient {
-        private final CamelContext context;
+        private final CamelContext camelContext;
         private final Endpoint endpoint;
         private final ProducerTemplate producerTemplate;
 
-        public CamelClient() {
-            this.context = new DefaultCamelContext();
-            this.endpoint = context.getEndpoint("netty:tcp://localhost:{{port}}?sync=true");
-            this.producerTemplate = context.createProducerTemplate();
+        public CamelClient(CamelContext camelContext) {
+            this.camelContext = camelContext;
+            this.endpoint = camelContext.getEndpoint("netty:tcp://localhost:{{port}}?sync=true");
+            this.producerTemplate = camelContext.createProducerTemplate();
         }
 
         public void close() throws Exception {
             producerTemplate.stop();
-            context.stop();
         }
 
         public String lookup(int num) {
