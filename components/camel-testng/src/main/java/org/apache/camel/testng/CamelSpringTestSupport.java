@@ -167,6 +167,6 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, false);
     }
 }
