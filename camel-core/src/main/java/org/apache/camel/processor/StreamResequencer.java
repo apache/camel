@@ -28,11 +28,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.resequencer.ResequencerEngine;
 import org.apache.camel.processor.resequencer.SequenceElementComparator;
 import org.apache.camel.processor.resequencer.SequenceSender;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 

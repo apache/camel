@@ -24,8 +24,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * Test that data format receives callback if its a service / CamelContextAware

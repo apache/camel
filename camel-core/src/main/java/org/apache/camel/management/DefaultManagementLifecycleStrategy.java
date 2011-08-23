@@ -72,6 +72,7 @@ import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.management.PerformanceCounter;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;

@@ -18,8 +18,8 @@ package org.apache.camel.processor.idempotent.hazelcast;
 
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.IMap;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.support.ServiceSupport;
 
 public class HazelcastIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
 

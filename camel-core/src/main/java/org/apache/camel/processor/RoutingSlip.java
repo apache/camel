@@ -32,7 +32,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ProducerCache;
-import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;

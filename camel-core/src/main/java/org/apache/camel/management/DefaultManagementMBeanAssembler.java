@@ -24,8 +24,9 @@ import javax.management.modelmbean.ModelMBean;
 import javax.management.modelmbean.ModelMBeanInfo;
 import javax.management.modelmbean.RequiredModelMBean;
 
-import org.apache.camel.management.mbean.ManagedInstance;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.spi.management.ManagedInstance;
+import org.apache.camel.spi.management.ManagedResource;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -23,7 +23,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;

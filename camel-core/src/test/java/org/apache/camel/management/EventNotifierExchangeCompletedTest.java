@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
+import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * @version 

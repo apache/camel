@@ -22,6 +22,8 @@ import javax.management.Notification;
 import javax.management.NotificationBroadcasterSupport;
 
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.management.JmxNotificationBroadcasterAware;
+import org.apache.camel.support.EventNotifierSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -21,9 +21,9 @@ import java.util.EventObject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
+import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * Event notifier which is executed just after Camel has been started,

@@ -22,8 +22,8 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.LoggingExceptionHandler;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

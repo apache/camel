@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
 
-import org.apache.camel.management.EventNotifierSupport;
+import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * @version 

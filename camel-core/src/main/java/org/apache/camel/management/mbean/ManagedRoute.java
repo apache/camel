@@ -24,11 +24,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.management.ManagedAttribute;
-import org.apache.camel.management.ManagedOperation;
-import org.apache.camel.management.ManagedResource;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.spi.management.ManagedAttribute;
+import org.apache.camel.spi.management.ManagedOperation;
+import org.apache.camel.spi.management.ManagedResource;
 import org.apache.camel.util.ModelHelper;
 import org.apache.camel.util.ObjectHelper;
 

@@ -32,6 +32,7 @@ import org.apache.camel.management.event.ExchangeFailureHandledEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.management.event.RouteStartedEvent;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * @version 

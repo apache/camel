@@ -43,6 +43,7 @@ import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.CompositePackageScanFilter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;

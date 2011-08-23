@@ -20,7 +20,7 @@ import java.util.Dictionary;
 import java.util.EventObject;
 import java.util.Hashtable;
 
-import org.apache.camel.management.EventNotifierSupport;
+import org.apache.camel.support.EventNotifierSupport;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;

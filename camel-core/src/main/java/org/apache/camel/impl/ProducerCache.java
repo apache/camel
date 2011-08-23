@@ -33,6 +33,7 @@ import org.apache.camel.ServicePoolAware;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.spi.ServicePool;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.LRUCache;

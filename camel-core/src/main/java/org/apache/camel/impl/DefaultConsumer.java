@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

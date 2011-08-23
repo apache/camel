@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.management.event;
 
 import java.util.EventObject;
 
@@ -23,27 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.management.event.CamelContextResumeFailureEvent;
-import org.apache.camel.management.event.CamelContextResumedEvent;
-import org.apache.camel.management.event.CamelContextResumingEvent;
-import org.apache.camel.management.event.CamelContextStartedEvent;
-import org.apache.camel.management.event.CamelContextStartingEvent;
-import org.apache.camel.management.event.CamelContextStartupFailureEvent;
-import org.apache.camel.management.event.CamelContextStopFailureEvent;
-import org.apache.camel.management.event.CamelContextStoppedEvent;
-import org.apache.camel.management.event.CamelContextStoppingEvent;
-import org.apache.camel.management.event.CamelContextSuspendedEvent;
-import org.apache.camel.management.event.CamelContextSuspendingEvent;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeFailedEvent;
-import org.apache.camel.management.event.ExchangeFailureHandledEvent;
-import org.apache.camel.management.event.ExchangeRedeliveryEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
-import org.apache.camel.management.event.RouteStartedEvent;
-import org.apache.camel.management.event.RouteStoppedEvent;
-import org.apache.camel.management.event.ServiceStartupFailureEvent;
-import org.apache.camel.management.event.ServiceStopFailureEvent;
 import org.apache.camel.spi.EventFactory;
 
 /**

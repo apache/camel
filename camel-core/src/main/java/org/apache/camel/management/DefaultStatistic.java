@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management;
 
+import org.apache.camel.spi.management.Statistic;
+
 /**
  * Default implementation of {@link Statistic}
  */

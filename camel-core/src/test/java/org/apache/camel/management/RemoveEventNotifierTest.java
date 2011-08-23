@@ -25,6 +25,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * @version 

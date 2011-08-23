@@ -23,8 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.AggregationRepository;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * A memory based {@link org.apache.camel.spi.AggregationRepository} which stores in memory only.

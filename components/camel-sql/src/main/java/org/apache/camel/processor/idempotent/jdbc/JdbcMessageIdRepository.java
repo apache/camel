@@ -17,13 +17,14 @@
 package org.apache.camel.processor.idempotent.jdbc;
 
 import java.sql.Timestamp;
+
 import javax.sql.DataSource;
 
-import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.management.ManagedAttribute;
-import org.apache.camel.management.ManagedOperation;
-import org.apache.camel.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.management.ManagedAttribute;
+import org.apache.camel.spi.management.ManagedOperation;
+import org.apache.camel.spi.management.ManagedResource;
+import org.apache.camel.support.ServiceSupport;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;

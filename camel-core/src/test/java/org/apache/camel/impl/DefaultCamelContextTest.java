@@ -35,6 +35,7 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.log.LogComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 
 /**

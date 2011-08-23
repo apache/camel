@@ -34,6 +34,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
 import org.apache.camel.view.RouteDotGenerator;

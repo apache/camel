@@ -22,7 +22,6 @@ import com.googlecode.jsendnsca.core.Level;
 import com.googlecode.jsendnsca.core.MessagePayload;
 import com.googlecode.jsendnsca.core.NagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.core.NagiosSettings;
-import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.CamelContextStartupFailureEvent;
 import org.apache.camel.management.event.CamelContextStopFailureEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
@@ -30,6 +29,7 @@ import org.apache.camel.management.event.ExchangeFailureHandledEvent;
 import org.apache.camel.management.event.ExchangeRedeliveryEvent;
 import org.apache.camel.management.event.ServiceStartupFailureEvent;
 import org.apache.camel.management.event.ServiceStopFailureEvent;
+import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * An {@link org.apache.camel.spi.EventNotifier} which sends alters to Nagios.

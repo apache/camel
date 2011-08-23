@@ -25,8 +25,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.management.ManagedAttribute;
-import org.apache.camel.management.ManagedResource;
+import org.apache.camel.spi.management.ManagedAttribute;
+import org.apache.camel.spi.management.ManagedResource;
 
 /**
  * Represents a timer endpoint that can generate periodic inbound exchanges triggered by a timer.

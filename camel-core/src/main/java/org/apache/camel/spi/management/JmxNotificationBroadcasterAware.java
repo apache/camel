@@ -14,20 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.spi.management;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.management.NotificationBroadcasterSupport;
 
-/**
- * A class level annotation to mark the class as being managed in the JMX server.
- */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface ManagedResource {
-
-    String description() default "";
+public interface JmxNotificationBroadcasterAware {
+    
+    void setNotificationBroadcaster(NotificationBroadcasterSupport broadcaster);
 
 }

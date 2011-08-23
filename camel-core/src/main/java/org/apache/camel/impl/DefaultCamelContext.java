@@ -113,6 +113,7 @@ import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EndpointHelper;

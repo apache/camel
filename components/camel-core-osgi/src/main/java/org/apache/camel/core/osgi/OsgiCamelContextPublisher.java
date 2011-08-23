@@ -23,9 +23,9 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.CamelContextStartedEvent;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
+import org.apache.camel.support.EventNotifierSupport;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

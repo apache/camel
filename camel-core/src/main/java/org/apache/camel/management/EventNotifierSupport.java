@@ -16,97 +16,11 @@
  */
 package org.apache.camel.management;
 
-import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.spi.EventNotifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
- * Base class to extend for custom {@link EventNotifier} implementations.
+ * @deprecated use org.apache.camel.support.EventNotifierSupport instead
  *
- * @version 
  */
-public abstract class EventNotifierSupport extends ServiceSupport implements EventNotifier {
-    protected Logger log = LoggerFactory.getLogger(getClass());
-    private boolean ignoreCamelContextEvents;
-    private boolean ignoreRouteEvents;
-    private boolean ignoreServiceEvents;
-    private boolean ignoreExchangeEvents;
-    private boolean ignoreExchangeCreatedEvent;
-    private boolean ignoreExchangeCompletedEvent;
-    private boolean ignoreExchangeFailedEvents;
-    private boolean ignoreExchangeRedeliveryEvents;
-    private boolean ignoreExchangeSentEvents;
+@Deprecated
+public abstract class EventNotifierSupport extends org.apache.camel.support.EventNotifierSupport {
 
-    public boolean isIgnoreCamelContextEvents() {
-        return ignoreCamelContextEvents;
-    }
-
-    public void setIgnoreCamelContextEvents(boolean ignoreCamelContextEvents) {
-        this.ignoreCamelContextEvents = ignoreCamelContextEvents;
-    }
-
-    public boolean isIgnoreRouteEvents() {
-        return ignoreRouteEvents;
-    }
-
-    public void setIgnoreRouteEvents(boolean ignoreRouteEvents) {
-        this.ignoreRouteEvents = ignoreRouteEvents;
-    }
-
-    public boolean isIgnoreServiceEvents() {
-        return ignoreServiceEvents;
-    }
-
-    public void setIgnoreServiceEvents(boolean ignoreServiceEvents) {
-        this.ignoreServiceEvents = ignoreServiceEvents;
-    }
-
-    public boolean isIgnoreExchangeEvents() {
-        return ignoreExchangeEvents;
-    }
-
-    public void setIgnoreExchangeEvents(boolean ignoreExchangeEvents) {
-        this.ignoreExchangeEvents = ignoreExchangeEvents;
-    }
-
-    public boolean isIgnoreExchangeCreatedEvent() {
-        return ignoreExchangeCreatedEvent;
-    }
-
-    public void setIgnoreExchangeCreatedEvent(boolean ignoreExchangeCreatedEvent) {
-        this.ignoreExchangeCreatedEvent = ignoreExchangeCreatedEvent;
-    }
-
-    public boolean isIgnoreExchangeCompletedEvent() {
-        return ignoreExchangeCompletedEvent;
-    }
-
-    public void setIgnoreExchangeCompletedEvent(boolean ignoreExchangeCompletedEvent) {
-        this.ignoreExchangeCompletedEvent = ignoreExchangeCompletedEvent;
-    }
-
-    public boolean isIgnoreExchangeFailedEvents() {
-        return ignoreExchangeFailedEvents;
-    }
-
-    public void setIgnoreExchangeFailedEvents(boolean ignoreExchangeFailedEvents) {
-        this.ignoreExchangeFailedEvents = ignoreExchangeFailedEvents;
-    }
-
-    public boolean isIgnoreExchangeRedeliveryEvents() {
-        return ignoreExchangeRedeliveryEvents;
-    }
-
-    public void setIgnoreExchangeRedeliveryEvents(boolean ignoreExchangeRedeliveryEvents) {
-        this.ignoreExchangeRedeliveryEvents = ignoreExchangeRedeliveryEvents;
-    }
-
-    public boolean isIgnoreExchangeSentEvents() {
-        return ignoreExchangeSentEvents;
-    }
-
-    public void setIgnoreExchangeSentEvents(boolean ignoreExchangeSentEvents) {
-        this.ignoreExchangeSentEvents = ignoreExchangeSentEvents;
-    }
 }

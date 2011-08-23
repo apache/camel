@@ -34,7 +34,7 @@ import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementAgent;
-
+import org.apache.camel.spi.management.Statistic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

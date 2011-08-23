@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management.mbean;
+package org.apache.camel.spi.management;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * @version 
+ * A class level annotation to mark the class as being managed in the JMX server.
  */
-public interface ManagedInstance {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ManagedResource {
 
-    /**
-     * Gets the resource which is being managed.
-     *
-     * @return the resource, such as a {@link org.apache.camel.Processor}, {@link org.apache.camel.Consumer} etc.
-     */
-    Object getInstance();
+    String description() default "";
 
 }

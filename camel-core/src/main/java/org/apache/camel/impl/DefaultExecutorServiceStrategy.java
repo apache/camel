@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ExecutorServiceStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**

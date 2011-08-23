@@ -38,9 +38,9 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

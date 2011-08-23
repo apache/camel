@@ -21,11 +21,12 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.management.ManagedAttribute;
-import org.apache.camel.management.ManagedOperation;
-import org.apache.camel.management.ManagedResource;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.management.ManagedAttribute;
+import org.apache.camel.spi.management.ManagedInstance;
+import org.apache.camel.spi.management.ManagedOperation;
+import org.apache.camel.spi.management.ManagedResource;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 
 /**

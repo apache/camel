@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.LRUSoftCache;

@@ -14,12 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.spi.management;
 
-import javax.management.NotificationBroadcasterSupport;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface JmxNotificationBroadcasterAware {
-    
-    void setNotificationBroadcaster(NotificationBroadcasterSupport broadcaseter);
+/**
+ * A method level annotation to mark the method as being a JMX operation.
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ManagedOperation {
+
+    String description() default "";
 
 }

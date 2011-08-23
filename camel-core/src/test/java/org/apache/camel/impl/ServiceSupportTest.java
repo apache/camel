@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.TestSupport;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * @version 

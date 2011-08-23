@@ -21,8 +21,8 @@ import java.util.List;
 
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Service;
-import org.apache.camel.management.Statistic;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.management.Statistic;
 
 /**
  * Strategy for management.

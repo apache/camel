@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * Default implementation of {@link Route}.

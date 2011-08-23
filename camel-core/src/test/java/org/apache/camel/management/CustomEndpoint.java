@@ -19,6 +19,8 @@ package org.apache.camel.management;
 import org.apache.camel.Component;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ManagementAware;
+import org.apache.camel.spi.management.ManagedAttribute;
+import org.apache.camel.spi.management.ManagedResource;
 
 /**
  * CustomEndpoint is used to test {@link org.apache.camel.management.JmxInstrumentationCustomMBeanTest}

@@ -18,10 +18,11 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.management.ManagedAttribute;
-import org.apache.camel.management.ManagedResource;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.management.ManagedAttribute;
+import org.apache.camel.spi.management.ManagedInstance;
+import org.apache.camel.spi.management.ManagedResource;
+import org.apache.camel.support.ServiceSupport;
 
 @ManagedResource(description = "Managed Endpoint")
 public class ManagedEndpoint implements ManagedInstance {

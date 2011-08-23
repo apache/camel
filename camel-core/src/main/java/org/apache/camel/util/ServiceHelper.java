@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.SuspendableService;
-import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -233,7 +233,7 @@ public final class ServiceHelper {
      * If the service is a {@link org.apache.camel.SuspendableService} then the <tt>resume</tt>
      * operation is <b>only</b> invoked if the service is suspended.
      * <p/>
-     * If the service is a {@link org.apache.camel.impl.ServiceSupport} then the <tt>start</tt>
+     * If the service is a {@link org.apache.camel.support.ServiceSupport} then the <tt>start</tt>
      * operation is <b>only</b> invoked if the service is startable.
      * <p/>
      * Otherwise the service is started.
@@ -290,7 +290,7 @@ public final class ServiceHelper {
      * If the service is a {@link org.apache.camel.SuspendableService} then the <tt>suspend</tt>
      * operation is <b>only</b> invoked if the service is <b>not</b> suspended.
      * <p/>
-     * If the service is a {@link org.apache.camel.impl.ServiceSupport} then the <tt>stop</tt>
+     * If the service is a {@link org.apache.camel.support.ServiceSupport} then the <tt>stop</tt>
      * operation is <b>only</b> invoked if the service is stoppable.
      * <p/>
      * Otherwise the service is stopped.

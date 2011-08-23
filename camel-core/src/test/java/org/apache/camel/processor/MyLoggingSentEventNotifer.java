@@ -18,8 +18,8 @@ package org.apache.camel.processor;
 
 import java.util.EventObject;
 
-import org.apache.camel.management.EventNotifierSupport;
 import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * @version 

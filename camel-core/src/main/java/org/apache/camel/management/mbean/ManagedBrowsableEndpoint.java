@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.management.ManagedOperation;
-import org.apache.camel.management.ManagedResource;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.management.ManagedOperation;
+import org.apache.camel.spi.management.ManagedResource;
 import org.apache.camel.util.MessageHelper;
 
 /**

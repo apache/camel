@@ -18,10 +18,10 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.management.ManagedAttribute;
-import org.apache.camel.management.ManagedResource;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.management.ManagedAttribute;
+import org.apache.camel.spi.management.ManagedResource;
 import org.apache.camel.util.ObjectHelper;
 
 /**

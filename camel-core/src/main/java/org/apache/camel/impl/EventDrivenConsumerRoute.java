@@ -24,7 +24,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.SuspendableService;
-import org.apache.camel.management.InstrumentationProcessor;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -72,8 +72,8 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
     public Navigate<Processor> navigate() {
         Processor answer = getProcessor();
         // skip the instrumentation processor if this route was wrapped by one
-        if (answer instanceof InstrumentationProcessor) {
-            answer = ((InstrumentationProcessor) answer).getProcessor();
+        if (answer instanceof DelegateAsyncProcessor) {
+            answer = ((DelegateAsyncProcessor) answer).getProcessor();
         }
 
         if (answer instanceof Navigate) {

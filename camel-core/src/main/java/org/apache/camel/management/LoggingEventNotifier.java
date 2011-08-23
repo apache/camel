@@ -18,6 +18,7 @@ package org.apache.camel.management;
 
 import java.util.EventObject;
 
+import org.apache.camel.support.EventNotifierSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

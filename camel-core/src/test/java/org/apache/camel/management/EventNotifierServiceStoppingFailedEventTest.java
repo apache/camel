@@ -28,6 +28,7 @@ import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.management.event.CamelContextStoppedEvent;
 import org.apache.camel.management.event.CamelContextStoppingEvent;
 import org.apache.camel.management.event.ServiceStopFailureEvent;
+import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * @version 

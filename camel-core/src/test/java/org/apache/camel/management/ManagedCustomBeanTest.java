@@ -23,6 +23,8 @@ import javax.management.ObjectName;
 
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.management.ManagedAttribute;
+import org.apache.camel.spi.management.ManagedResource;
 
 /**
  * @version 

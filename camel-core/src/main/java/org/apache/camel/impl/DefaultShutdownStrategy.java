@@ -36,6 +36,7 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;

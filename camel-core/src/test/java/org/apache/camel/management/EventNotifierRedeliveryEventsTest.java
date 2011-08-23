@@ -29,6 +29,7 @@ import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailureHandledEvent;
 import org.apache.camel.management.event.ExchangeRedeliveryEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.support.EventNotifierSupport;
 
 /**
  * @version 

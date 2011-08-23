@@ -17,7 +17,7 @@
 package org.apache.camel.processor;
 
 /**
- * Traceable processors allowing easeir tracing using constructed labels to help identify the processor
+ * Traceable processors allowing easier tracing using constructed labels to help identify the processor
  * and where its defined in the route model.
  *
  * @version 

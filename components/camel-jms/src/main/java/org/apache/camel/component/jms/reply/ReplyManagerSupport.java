@@ -29,7 +29,7 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
-import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
