@@ -274,6 +274,10 @@
                   <packages>org.apache.camel.impl:org.apache.camel.impl.*</packages>
                 </group>
                 <group>
+                  <title>Camel Starters</title>
+                  <packages>org.apache.camel.main</packages>
+                </group>
+                <group>
                   <title>Type conversion helper classes</title>
                   <packages>org.apache.camel.converter:org.apache.camel.converter.*</packages>
                 </group>
