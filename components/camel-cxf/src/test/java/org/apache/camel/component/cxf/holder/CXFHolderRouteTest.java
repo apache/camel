@@ -24,24 +24,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.CXFTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.cxf.frontend.ClientFactoryBean;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.apache.cxf.version.Version;
-import org.junit.Test;
 
-public class CxfHolderConsumerTest extends CamelTestSupport {
-    protected static final String ADDRESS = "http://localhost:"
-        + CXFTestSupport.getPort1() + "/CxfHolderConsumerTest/test";
-    protected static final String CXF_ENDPOINT_URI = "cxf://" + ADDRESS
-        + "?serviceClass=org.apache.camel.component.cxf.holder.MyOrderEndpoint";
-       
+public class CXFHolderRouteTest extends CxfHolderConsumerTest {
     
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(CXF_ENDPOINT_URI).process(new Processor() {
+                from(CXF_ENDPOINT_URI).wireTap("seda:tap").process(new Processor() {
                     @SuppressWarnings("unchecked")
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
@@ -52,33 +41,12 @@ public class CxfHolderConsumerTest extends CamelTestSupport {
                             customer.value = "newCustomer";
                         }
                         parameters.add(0, "Ordered ammount " + amount);
-                        //reuse the MessageContentList at this time to test CAMEL-4113
                         exchange.getOut().setBody(parameters);
                     }
-                }); 
+                });
+                from("seda:tap").to("log:myEndpoint");
             }
         };
-    }
-    
-
-    @Test
-    public void testInvokingServiceFromCXFClient() throws Exception {
-        JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
-        ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress(ADDRESS);
-        clientBean.setServiceClass(MyOrderEndpoint.class);
-        
-        MyOrderEndpoint client = (MyOrderEndpoint) proxyFactory.create();
-        
-        Holder<String> strPart = new Holder<String>();
-        strPart.value = "parts";
-        Holder<String> strCustomer = new Holder<String>();
-        strCustomer.value = "";
-
-        String result = client.myOrder(strPart, 2, strCustomer);
-        assertEquals("Get a wrong order result", "Ordered ammount 2", result);
-        assertEquals("Get a wrong parts", "parts", strPart.value);
-        assertEquals("Get a wrong customer", "newCustomer", strCustomer.value);
     }
 
 }
