@@ -32,9 +32,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -104,12 +101,10 @@ public class Netty2978IssueTest extends BaseNettyTest {
     }
 
     private static final class CamelClient {
-        private final CamelContext camelContext;
         private final Endpoint endpoint;
         private final ProducerTemplate producerTemplate;
 
         public CamelClient(CamelContext camelContext) {
-            this.camelContext = camelContext;
             this.endpoint = camelContext.getEndpoint("netty:tcp://localhost:{{port}}?sync=true");
             this.producerTemplate = camelContext.createProducerTemplate();
         }
