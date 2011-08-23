@@ -77,7 +77,12 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             NO_START.remove();
         }
     }
+    
     public static SpringCamelContext springCamelContext(ApplicationContext applicationContext) throws Exception {
+        return springCamelContext(applicationContext, true);
+    }
+    
+    public static SpringCamelContext springCamelContext(ApplicationContext applicationContext, boolean maybeStart) throws Exception {
         // lets try and look up a configured camel context in the context
         String[] names = applicationContext.getBeanNamesForType(SpringCamelContext.class);
         if (names.length == 1) {
@@ -85,7 +90,9 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         }
         SpringCamelContext answer = new SpringCamelContext();
         answer.setApplicationContext(applicationContext);
-        answer.afterPropertiesSet();
+        if (maybeStart) {
+            answer.afterPropertiesSet();
+        }
         return answer;
     }
 
