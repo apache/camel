@@ -44,6 +44,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private boolean enableJmx;
     private boolean enableMultipartFilter;
     private Filter multipartFilter;
+    private List<Filter> filters;
     private Long continuationTimeout;
     private Boolean useContinuation;
     private SSLContextParameters sslContextParameters;
@@ -136,6 +137,14 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     
     public Filter getMultipartFilter() {
         return multipartFilter;
+    }
+    
+    public void setFilters(List<Filter> filterList) {
+        this.filters = filterList;
+    }
+    
+    public List<Filter> getFilters() {
+        return filters;
     }
 
     public Long getContinuationTimeout() {

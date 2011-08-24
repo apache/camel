@@ -24,31 +24,14 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-
 /**
- * A multipart filter that processes only initially dispatched requests.
- * Re-dispatched requests are ignored.
+ * Please use the CamelFilterWrapper instead of using this classs
  */
-class CamelMultipartFilter implements Filter {
-    private Filter wrapped;
-
-    public CamelMultipartFilter(Filter wrapped) {
-        this.wrapped = wrapped;
-    }
+@Deprecated 
+class CamelMultipartFilter extends CamelFilterWrapper {
     
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (request.getAttribute(CamelContinuationServlet.EXCHANGE_ATTRIBUTE_NAME) == null) {
-            wrapped.doFilter(request, response, chain);
-        } else {
-            chain.doFilter(request, response);
-        }
+    public CamelMultipartFilter(Filter wrapped) {
+        super(wrapped);
     }
-
-    public void destroy() {
-        wrapped.destroy();
-    }
-
-    public void init(FilterConfig config) throws ServletException {
-        wrapped.init(config);
-    }
+   
 }
