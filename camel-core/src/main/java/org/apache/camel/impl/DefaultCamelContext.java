@@ -69,12 +69,9 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.LazyLoadingTypeConverter;
-import org.apache.camel.management.DefaultManagementAgent;
-import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementMBeanAssembler;
-import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
-import org.apache.camel.management.ManagedManagementStrategy;
+import org.apache.camel.management.ManagementStrategyFactory;
 import org.apache.camel.model.Constants;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -2313,37 +2310,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     protected ManagementStrategy createManagementStrategy() {
-        ManagementStrategy answer;
-
-        if (disableJMX || Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-            log.info("JMX is disabled. Using DefaultManagementStrategy.");
-            answer = new DefaultManagementStrategy();
-        } else {
-            try {
-                log.info("JMX enabled. Using ManagedManagementStrategy.");
-                answer = new ManagedManagementStrategy(new DefaultManagementAgent(this));
-                // must start it to ensure JMX works and can load needed Spring JARs
-                startServices(answer);
-                // prefer to have it at first strategy
-                lifecycleStrategies.add(0, new DefaultManagementLifecycleStrategy(this));
-            } catch (Exception e) {
-                answer = null;
-                log.warn("Cannot create JMX lifecycle strategy. Fallback to using DefaultManagementStrategy (non JMX).", e);
-            }
-        }
-
-        if (answer == null) {
-            log.warn("Cannot use JMX. Fallback to using DefaultManagementStrategy (non JMX).");
-            answer = new DefaultManagementStrategy();
-        }
-
-        // inject CamelContext
-        if (answer instanceof CamelContextAware) {
-            CamelContextAware aware = (CamelContextAware) answer;
-            aware.setCamelContext(this);
-        }
-
-        return answer;
+        return new ManagementStrategyFactory().create(this, disableJMX || Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED));
     }
 
     @Override
