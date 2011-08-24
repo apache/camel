@@ -34,9 +34,9 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.routebox.RouteboxEndpoint;
-import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

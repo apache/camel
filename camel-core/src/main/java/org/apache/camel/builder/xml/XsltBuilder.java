@@ -39,7 +39,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.SynchronizationAdapter;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 

@@ -27,7 +27,7 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.component.routebox.RouteboxProducer;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.impl.SynchronizationAdapter;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 
 /**

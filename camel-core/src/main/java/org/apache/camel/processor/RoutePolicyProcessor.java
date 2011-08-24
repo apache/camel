@@ -23,9 +23,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.SynchronizationAdapter;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

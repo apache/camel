@@ -30,6 +30,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
