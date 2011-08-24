@@ -42,7 +42,7 @@ public class FilterCreateCamelContextPerClassTest extends CamelTestSupport {
         // we override this method and return true, to tell Camel test-kit that
         // it should only create CamelContext once (per class), so we will
         // re-use the CamelContext between each test method in this class
-        return false;
+        return true;
     }
 
     @Test
