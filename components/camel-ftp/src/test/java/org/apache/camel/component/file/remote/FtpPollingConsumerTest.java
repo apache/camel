@@ -58,10 +58,6 @@ public class FtpPollingConsumerTest extends FtpServerTestSupport {
         File file = new File(FTP_ROOT_DIR + "polling/bye.txt").getAbsoluteFile();
         assertTrue("File should exist " + file, file.exists());
 
-        // and no exchange on consumer as
-        exchange = consumer.receiveNoWait();
-        assertNull(exchange);
-
         consumer.stop();
     }
 
