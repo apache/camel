@@ -160,6 +160,7 @@
     <xerces-version>2.9.1</xerces-version>
     <xalan-version>2.7.1</xalan-version>
     <xmlbeans-version>2.5.0</xmlbeans-version>
+    <zookeeper-version>3.3.3</zookeeper-version>
     <!-- used by camel archetypes -->
     <maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
 
@@ -1421,6 +1422,13 @@
         <version>${ftpserver-version}</version>
       </dependency>
 
+      <!-- optional zookeeper dependency -->
+      <dependency>
+        <groupId>org.apache.zookeeper</groupId>
+        <artifactId>zookeeper</artifactId>
+        <version>${zookeeper-version}</version>
+      </dependency>
+      
       <!-- blueprint -->
       <dependency>
         <groupId>org.apache.aries.blueprint</groupId>

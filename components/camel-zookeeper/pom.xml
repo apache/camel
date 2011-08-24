@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+<parent>
+    <artifactId>components</artifactId>
+    <groupId>org.apache.camel</groupId>
+    <version>2.9-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>camel-zookeeper</artifactId>
+ 
+  <name>Camel :: Zookeeper</name>
+  <description>Camel Zookeeper Support</description>
+  
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.component.zookeeper.*</camel.osgi.export.pkg>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.zookeeper</groupId>
+      <artifactId>zookeeper</artifactId>
+    </dependency>  
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>${pom.version}</version>
+      <scope>test</scope>      
+      <classifier>tests</classifier>
+    </dependency> 
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+    </dependency>    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>   
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>      
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>      
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>pertest</forkMode>
+          <excludes>
+            <!-- TODO FIXME ASAP -->
+            <exclude>**/ZooKeeperEndpointTest.*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>  
+</project>
