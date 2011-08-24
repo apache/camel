@@ -27,7 +27,7 @@ import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * A concrete {@link Processor} for working on <a
+ * A concrete {@link org.apache.camel.Processor} for working on <a
  * href="http://camel.apache.org/bam.html">BAM</a> which uses JPA as
  * the persistence and uses the {@link ProcessInstance} entity to store the
  * process information.

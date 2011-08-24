@@ -24,7 +24,7 @@ import org.apache.camel.bam.ProcessBuilder;
 import org.apache.camel.bam.model.ActivityDefinition;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
-import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 
 /**

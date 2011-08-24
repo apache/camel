@@ -29,7 +29,7 @@ import com.sun.jersey.api.view.ImplicitProduces;
 import com.sun.jersey.spi.resource.Singleton;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.web.model.Camel;
 
 /**

@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessDefinition;
 import org.apache.camel.bam.model.ProcessInstance;
-import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 
 /**

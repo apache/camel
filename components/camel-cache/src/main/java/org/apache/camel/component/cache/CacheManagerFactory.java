@@ -17,7 +17,7 @@
 package org.apache.camel.component.cache;
 
 import net.sf.ehcache.CacheManager;
-import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.support.ServiceSupport;
 
 public abstract class CacheManagerFactory extends ServiceSupport {
     private CacheManager cacheManager;
