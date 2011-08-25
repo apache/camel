@@ -28,6 +28,7 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * @version 
  */
+@Deprecated
 public class CollectionProducerTest extends ContextTestSupport {
 
     private static class MyProducer extends CollectionProducer {
