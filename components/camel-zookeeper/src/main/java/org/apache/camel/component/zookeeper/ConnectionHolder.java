@@ -18,16 +18,14 @@ package org.apache.camel.component.zookeeper;
 
 import java.util.concurrent.CountDownLatch;
 
-import static java.lang.String.format;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
 import org.apache.zookeeper.ZooKeeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <code>ConnectionHolder</code> watches for Connection based events from
@@ -35,8 +33,7 @@ import org.apache.zookeeper.ZooKeeper;
  * established.
  */
 public class ConnectionHolder implements Watcher {
-
-    private static final transient Log LOG = LogFactory.getLog(ConnectionHolder.class);
+    private static final transient Logger LOG = LoggerFactory.getLogger(ConnectionHolder.class);
 
     private CountDownLatch connectionLatch = new CountDownLatch(1);
 
@@ -74,7 +71,7 @@ public class ConnectionHolder implements Watcher {
 
     public void awaitConnection() {
         if (LOG.isDebugEnabled()) {
-            LOG.debug(format("Awaiting Connection event from Zookeeper cluster %s", configuration.getConnectString()));
+            LOG.debug("Awaiting Connection event from Zookeeper cluster {}", configuration.getConnectString());
         }
         try {
             connectionLatch.await();
@@ -94,10 +91,10 @@ public class ConnectionHolder implements Watcher {
         try {
             zookeeper.close();
             if (LOG.isDebugEnabled()) {
-                LOG.debug(format("Shutting down connection to Zookeeper cluster %s", configuration.getConnectString()));
+                LOG.debug("Shutting down connection to Zookeeper cluster {}", configuration.getConnectString());
             }
         } catch (InterruptedException e) {
-            LOG.error("Error closing zookeeper connection.", e);
+            LOG.warn("Error closing zookeeper connection " + configuration.getConnectString() + ". This exception will be ignored.", e);
         }
     }
 }

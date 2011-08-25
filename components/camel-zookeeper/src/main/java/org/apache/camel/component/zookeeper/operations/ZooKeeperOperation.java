@@ -22,9 +22,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.zookeeper.ZooKeeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <code>ZooKeeperOperation</code> is the base class for wrapping various
@@ -34,7 +34,7 @@ import org.apache.zookeeper.ZooKeeper;
 @SuppressWarnings("rawtypes")
 public abstract class ZooKeeperOperation<ResultType> {
 
-    protected static final transient Log LOG = LogFactory.getLog(ZooKeeperOperation.class);
+    protected static final transient Logger LOG = LoggerFactory.getLogger(ZooKeeperOperation.class);
 
     protected static final Class[] CONSTRUCTOR_ARGS = {ZooKeeper.class, String.class};
 
@@ -63,8 +63,6 @@ public abstract class ZooKeeperOperation<ResultType> {
     /**
      * Gets the result of this zookeeper operation, i.e. some data and the
      * associated node stats
-     *
-     * @return
      */
     public abstract OperationResult<ResultType> getResult();
 
@@ -75,7 +73,8 @@ public abstract class ZooKeeperOperation<ResultType> {
     }
 
     public OperationResult<ResultType> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        return get(); // TODO ; perhaps set a timer here ....
+        // TODO perhaps set a timer here
+        return get();
     }
 
     public boolean cancel(boolean mayInterruptIfRunning) {
@@ -104,8 +103,7 @@ public abstract class ZooKeeperOperation<ResultType> {
         return producesExchange;
     }
 
-
-    // TODO: slightly different to a clone as it uses the constructor
+    // TODO slightly different to a clone as it uses the constructor
     public ZooKeeperOperation createCopy() throws Exception {
         return getClass().getConstructor(CONSTRUCTOR_ARGS).newInstance(new Object[] {connection, node});
     }

@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.zookeeper;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.zookeeper.ZooKeeper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <code>ZookeeperConnectionManager</code> is a simple class to manage
@@ -26,7 +26,7 @@ import org.apache.zookeeper.ZooKeeper;
  */
 public class ZooKeeperConnectionManager {
 
-    private static final Log LOG = LogFactory.getLog(ZooKeeperConnectionManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperConnectionManager.class);
 
     private ZookeeperConnectionStrategy strategy;
 
@@ -50,9 +50,7 @@ public class ZooKeeperConnectionManager {
 
         public DefaultZookeeperConnectionStrategy(ZooKeeperEndpoint endpoint) {
             this.configuration = endpoint.getConfiguration();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(String.format("Creating connection with static configuration of %s", configuration));
-            }
+            LOG.debug("Creating connection with static configuration of {}", configuration);
             holder = new ConnectionHolder(configuration);
         }
 
