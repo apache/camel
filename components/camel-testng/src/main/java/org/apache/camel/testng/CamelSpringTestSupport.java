@@ -30,25 +30,56 @@ import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.AfterClass;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
+
 
 /**
  * @version $Revision$
  */
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
+    protected static ThreadLocal<AbstractApplicationContext> threadAppContext
+        = new ThreadLocal<AbstractApplicationContext>();
+    protected static Object lock = new Object();
     protected static AbstractApplicationContext applicationContext;
     protected abstract AbstractApplicationContext createApplicationContext();
 
     @Override
-    public void doSetUp() throws Exception {
-        applicationContext = createApplicationContext();
-        super.doSetUp();
+    public void postProcessTest() throws Exception {
+        super.postProcessTest();
+        if (isCreateCamelContextPerClass()) {
+            applicationContext = threadAppContext.get();
+        }
     }
+
+    @Override
+    public void doPreSetup() throws Exception {
+        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
+            // tell camel-spring it should not trigger starting CamelContext, since we do that later
+            // after we are finished setting up the unit test
+            synchronized (lock) {
+                SpringCamelContext.setNoStart(true);
+                if (isCreateCamelContextPerClass()) {
+                    applicationContext = threadAppContext.get();
+                    if (applicationContext == null) {
+                        applicationContext = createApplicationContext();
+                        threadAppContext.set(applicationContext);
+                    }
+                } else {
+                    applicationContext = createApplicationContext();
+                }
+                assertNotNull(applicationContext, "Should have created a valid spring context");
+                SpringCamelContext.setNoStart(false);
+            }
+        } else {
+            log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+        }
+    }
+
 
     @Override
     @AfterTest
@@ -65,9 +96,9 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
     @AfterClass
     public static void tearSpringDownAfterClass() throws Exception {
-        if (applicationContext != null) {
-            applicationContext.destroy();
-            applicationContext = null;
+        if (threadAppContext.get() != null) {
+            threadAppContext.get().destroy();
+            threadAppContext.remove();
         }
     }
 

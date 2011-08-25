@@ -48,9 +48,9 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
-import org.junit.AfterClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -61,18 +61,30 @@ import org.testng.annotations.BeforeMethod;
  * @version $Revision$
  */
 public abstract class CamelTestSupport extends TestSupport {
-
-    protected static volatile CamelContext context;
-    protected static volatile ProducerTemplate template;
-    protected static volatile ConsumerTemplate consumer;
-    protected static volatile Service camelContextService;
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
-    private static final AtomicBoolean INIT = new AtomicBoolean();
+    private static final ThreadLocal<Boolean> INIT = new ThreadLocal<Boolean>();
+
+
+    private static ThreadLocal<CamelContext> threadCamelContext
+        = new ThreadLocal<CamelContext>();
+    private static ThreadLocal<ProducerTemplate> threadTemplate
+        = new ThreadLocal<ProducerTemplate>();
+    private static ThreadLocal<ConsumerTemplate> threadConsumer
+        = new ThreadLocal<ConsumerTemplate>();
+    private static ThreadLocal<Service> threadService
+        = new ThreadLocal<Service>();
+
+    protected volatile CamelContext context;
+    protected volatile ProducerTemplate template;
+    protected volatile ConsumerTemplate consumer;
+    protected volatile Service camelContextService;
+
+
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
 
-    /**
+     /**
      * Use the RouteBuilder or not
      * @return <tt>true</tt> then {@link CamelContext} will be auto started,
      *        <tt>false</tt> then {@link CamelContext} will <b>not</b> be auto started (you will have to start it manually)
@@ -108,6 +120,9 @@ public abstract class CamelTestSupport extends TestSupport {
      * <p/>
      * <b>Important:</b> Use this with care as the {@link CamelContext} will carry over state
      * from previous tests, such as endpoints, components etc. So you cannot use this in all your tests.
+     * <p/>
+     * Setting up {@link CamelContext} uses the {@link #doPreSetup()}, {@link #doSetUp()}, and {@link #doPostSetup()}
+     * methods in that given order.
      *
      * @return <tt>true</tt> per class, <tt>false</tt> per test.
      */
@@ -139,6 +154,22 @@ public abstract class CamelTestSupport extends TestSupport {
         return camelContextService;
     }
 
+    public Service camelContextService() {
+        return camelContextService;
+    }
+
+    public CamelContext context() {
+        return context;
+    }
+
+    public ProducerTemplate template() {
+        return template;
+    }
+
+    public ConsumerTemplate consumer() {
+        return consumer;
+    }
+
     /**
      * Allows a service to be registered a separate lifecycle service to start
      * and stop the context; such as for Spring when the ApplicationContext is
@@ -146,6 +177,7 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     public void setCamelContextService(Service service) {
         camelContextService = service;
+        threadService.set(camelContextService);
     }
 
     @BeforeMethod
@@ -154,11 +186,13 @@ public abstract class CamelTestSupport extends TestSupport {
         log.info("Testing: " + getTestMethodName() + "(" + getClass().getName() + ")");
         log.info("********************************************************************************");
 
-        boolean first = INIT.compareAndSet(false, true);
         if (isCreateCamelContextPerClass()) {
             // test is per class, so only setup once (the first time)
+            boolean first = INIT.get() == null;
             if (first) {
+                doPreSetup();
                 doSetUp();
+                doPostSetup();
             } else {
                 // and in between tests we must do IoC and reset mocks
                 postProcessTest();
@@ -166,14 +200,30 @@ public abstract class CamelTestSupport extends TestSupport {
             }
         } else {
             // test is per test so always setup
+            doPreSetup();
             doSetUp();
+            doPostSetup();
         }
 
         // only start timing after all the setup
         watch.restart();
     }
 
-    protected void doSetUp() throws Exception {
+    /**
+     * Strategy to perform any pre setup, before {@link CamelContext} is created
+     */
+    protected void doPreSetup() throws Exception {
+        // noop
+    }
+
+    /**
+     * Strategy to perform any post setup after {@link CamelContext} is createt.
+     */
+    protected void doPostSetup() throws Exception {
+        // noop
+    }
+
+    private void doSetUp() throws Exception {
         log.debug("setUp test");
         if (!useJmx()) {
             disableJMX();
@@ -182,6 +232,8 @@ public abstract class CamelTestSupport extends TestSupport {
         }
 
         context = createCamelContext();
+        threadCamelContext.set(context);
+
         assertNotNull(context, "No context found!");
 
         // reduce default shutdown timeout to avoid waiting for 300 seconds
@@ -198,6 +250,9 @@ public abstract class CamelTestSupport extends TestSupport {
         template.start();
         consumer = context.createConsumerTemplate();
         consumer.start();
+
+        threadTemplate.set(template);
+        threadConsumer.set(consumer);
 
         // enable auto mocking if enabled
         String pattern = isMockEndpoints();
@@ -245,17 +300,17 @@ public abstract class CamelTestSupport extends TestSupport {
             return;
         }
 
-        log.debug("tearDown test");
-        doStopTemplates();
-        stopCamelContext();
+        LOG.debug("tearDown test");
+        doStopTemplates(consumer, template);
+        doStopCamelContext(context, camelContextService);
     }
 
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
-        INIT.set(false);
+        INIT.remove();
         LOG.debug("tearDownAfterClass test");
-        doStopTemplates();
-        doStopCamelContext();
+        doStopTemplates(threadConsumer.get(), threadTemplate.get());
+        doStopCamelContext(threadCamelContext.get(), threadService.get());
     }
 
     /**
@@ -294,52 +349,55 @@ public abstract class CamelTestSupport extends TestSupport {
      * Note that using Spring Test or Guice is a more powerful approach.
      */
     protected void postProcessTest() throws Exception {
+        context = threadCamelContext.get();
+        template = threadTemplate.get();
+        consumer = threadConsumer.get();
+        camelContextService = threadService.get();
+
         CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
         processor.setCamelContext(context);
         processor.postProcessBeforeInitialization(this, "this");
     }
 
     protected void stopCamelContext() throws Exception {
-        doStopCamelContext();
+        doStopCamelContext(context, camelContextService);
     }
 
-    private static void doStopCamelContext() throws Exception {
+    private static void doStopCamelContext(CamelContext context,
+                                           Service camelContextService) throws Exception {
         if (camelContextService != null) {
+            if (camelContextService == threadService.get()) {
+                threadService.remove();
+            }
             camelContextService.stop();
             camelContextService = null;
         } else {
             if (context != null) {
+                if (context == threadCamelContext.get()) {
+                    threadCamelContext.remove();
+                }
                 context.stop();
                 context = null;
             }
         }
     }
 
-    private static void doStopTemplates() throws Exception {
+    private static void doStopTemplates(ConsumerTemplate consumer,
+                                        ProducerTemplate template) throws Exception {
         if (consumer != null) {
+            if (consumer == threadConsumer.get()) {
+                threadConsumer.remove();
+            }
             consumer.stop();
             consumer = null;
         }
         if (template != null) {
+            if (template == threadTemplate.get()) {
+                threadTemplate.remove();
+            }
             template.stop();
             template = null;
         }
-    }
-    
-    public Service camelContextService() {
-        return camelContextService;
-    }
-    
-    public CamelContext context() {
-        return context;
-    }
-    
-    public ProducerTemplate template() {
-        return template;
-    }
-    
-    public ConsumerTemplate consumer() {
-        return consumer;
     }
 
     protected void startCamelContext() throws Exception {

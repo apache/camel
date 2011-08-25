@@ -21,9 +21,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.testng.CamelSpringTestSupport;
-import org.junit.Test;
+
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+
+import org.testng.annotations.Test;
 
 public class DebugSpringTest extends CamelSpringTestSupport {
     private boolean debugged;
