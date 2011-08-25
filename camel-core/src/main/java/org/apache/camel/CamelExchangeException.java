@@ -16,7 +16,6 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.util.ExchangeHelper;
 
 /**
  * An exception caused by a specific message {@link Exchange}
@@ -29,12 +28,12 @@ public class CamelExchangeException extends CamelException {
     private final transient Exchange exchange;
 
     public CamelExchangeException(String message, Exchange exchange) {
-        super(ExchangeHelper.createExceptionMessage(message, exchange, null));
+        super(CamelExchangeException.createExceptionMessage(message, exchange, null));
         this.exchange = exchange;
     }
 
     public CamelExchangeException(String message, Exchange exchange, Throwable cause) {
-        super(ExchangeHelper.createExceptionMessage(message, exchange, cause), cause);
+        super(CamelExchangeException.createExceptionMessage(message, exchange, cause), cause);
         this.exchange = exchange;
     }
 
@@ -43,6 +42,36 @@ public class CamelExchangeException extends CamelException {
      */
     public Exchange getExchange() {
         return exchange;
+    }
+
+    /**
+     * Creates an exception message with the provided details.
+     * <p/>
+     * All fields is optional so you can pass in only an exception, or just a message etc. or any combination.
+     *
+     * @param message  the message
+     * @param exchange the exchange
+     * @param cause    the caused exception
+     * @return an error message (without stacktrace from exception)
+     */
+    public static String createExceptionMessage(String message, Exchange exchange, Throwable cause) {
+        StringBuilder sb = new StringBuilder();
+        if (message != null) {
+            sb.append(message);
+        }
+        if (exchange != null) {
+            if (sb.length() > 0) {
+                sb.append(". ");
+            }
+            sb.append(exchange);
+        }
+        if (cause != null) {
+            if (sb.length() > 0) {
+                sb.append(". ");
+            }
+            sb.append("Caused by: [" + cause.getClass().getName() + " - " + cause.getMessage() + "]");
+        }
+        return sb.toString().trim();
     }
 
 }

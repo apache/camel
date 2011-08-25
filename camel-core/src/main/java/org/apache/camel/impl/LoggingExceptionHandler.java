@@ -16,12 +16,12 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.spi.ExceptionHandler;
-import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -53,7 +53,7 @@ public class LoggingExceptionHandler implements ExceptionHandler {
 
     public void handleException(String message, Exchange exchange, Throwable exception) {
         try {
-            String msg = ExchangeHelper.createExceptionMessage(message, exchange, exception);
+            String msg = CamelExchangeException.createExceptionMessage(message, exchange, exception);
             if (isCausedByRollbackExchangeException(exception)) {
                 // do not log stacktrace for intended rollbacks
                 logger.log(msg);
