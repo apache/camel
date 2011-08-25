@@ -586,6 +586,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-restlet</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-rmi</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -736,7 +741,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-restlet</artifactId>
+        <artifactId>camel-zookeeper</artifactId>
         <version>${project.version}</version>
       </dependency>
 

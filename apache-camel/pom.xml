@@ -461,6 +461,10 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-xstream</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-zookeeper</artifactId>
+    </dependency>
 
     <!-- camel karaf -->
     <dependency>
