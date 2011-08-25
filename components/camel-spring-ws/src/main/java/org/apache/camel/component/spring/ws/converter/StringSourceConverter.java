@@ -17,6 +17,7 @@
 package org.apache.camel.component.spring.ws.converter;
 
 import org.apache.camel.Converter;
+import org.apache.camel.StringSource;
 
 /**
  * A helper class to transform to and from {@link org.springframework.xml.transform.StringSource} implementations
@@ -42,8 +43,8 @@ public final class StringSourceConverter {
      * to a Camel {@link org.apache.camel.converter.jaxp.StringSource}
      */
     @Converter
-    public static org.apache.camel.converter.jaxp.StringSource toStringSourceFromSpring(org.springframework.xml.transform.StringSource springStringSource) {
-        return new org.apache.camel.converter.jaxp.StringSource(springStringSource.toString());
+    public static StringSource toStringSourceFromSpring(org.springframework.xml.transform.StringSource springStringSource) {
+        return new StringSource(springStringSource.toString());
     }
 
     /**
@@ -51,7 +52,7 @@ public final class StringSourceConverter {
      * to a Spring-WS {@link org.springframework.xml.transform.StringSource}
      */
     @Converter
-    public static org.springframework.xml.transform.StringSource toStringSourceFromCamel(org.apache.camel.converter.jaxp.StringSource camelStringSource) {
+    public static org.springframework.xml.transform.StringSource toStringSourceFromCamel(StringSource camelStringSource) {
         return new org.springframework.xml.transform.StringSource(camelStringSource.getText());
     }
 }

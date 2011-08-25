@@ -36,8 +36,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.stream.StreamResult;
 
-import org.w3c.dom.Node;
-
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.Item;
@@ -49,6 +47,7 @@ import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Whitespace;
 
+import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -56,17 +55,17 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.StringSource;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.converter.jaxp.BytesSource;
-import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 
 /**
  * Creates an XQuery builder.
