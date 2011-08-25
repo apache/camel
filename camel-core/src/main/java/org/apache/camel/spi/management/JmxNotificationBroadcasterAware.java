@@ -18,8 +18,17 @@ package org.apache.camel.spi.management;
 
 import javax.management.NotificationBroadcasterSupport;
 
+/**
+ * Strategy to use a custom {@link NotificationBroadcasterSupport} when broadcasting
+ * JMX notifications using for example the {@link org.apache.camel.management.JmxNotificationEventNotifier}.
+ */
 public interface JmxNotificationBroadcasterAware {
-    
+
+    /**
+     * Sets to use a custom broadcaster
+     *
+     * @param broadcaster the custom broadcaster
+     */
     void setNotificationBroadcaster(NotificationBroadcasterSupport broadcaster);
 
 }
