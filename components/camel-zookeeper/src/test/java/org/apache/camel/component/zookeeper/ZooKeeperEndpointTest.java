@@ -54,8 +54,8 @@ public class ZooKeeperEndpointTest extends JmxInstrumentationUsingDefaultsTest {
     }
 
     public synchronized void testEnpointConfigurationCanBeSetViaJMX() throws Exception {
-        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
-        assertEquals("Could not find  endpoints: " + s, 2, s.size());
+        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,name=\"zoo:*\",*"), null);
+        assertEquals("Could not find zookeper endpoint: " + s, 1, s.size());
         ObjectName zepName = new ArrayList<ObjectName>(s).get(0);
 
         verifyManagedAttribute(zepName, "Path", "/someotherpath");
@@ -68,7 +68,7 @@ public class ZooKeeperEndpointTest extends JmxInstrumentationUsingDefaultsTest {
 
         mbsc.invoke(zepName, "clearServers", null, JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("clearServers", null)));
         mbsc.invoke(zepName, "addServer", new Object[] {"someserver:12345"},
-                    JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("addServer", new Class[] {String.class})));
+            JmxUtils.getMethodSignature(ZooKeeperEndpoint.class.getMethod("addServer", new Class[] {String.class})));
 
     }
 

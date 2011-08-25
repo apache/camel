@@ -65,10 +65,6 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
-          <excludes>
-            <!-- TODO FIXME ASAP -->
-            <exclude>**/ZooKeeperEndpointTest.*</exclude>
-          </excludes>
         </configuration>
       </plugin>
     </plugins>
