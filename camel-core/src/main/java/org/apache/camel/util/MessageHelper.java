@@ -25,12 +25,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
+import org.apache.camel.StringSource;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.converter.jaxp.BytesSource;
-import org.apache.camel.converter.jaxp.StringSource;
 
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
@@ -192,22 +192,24 @@ public final class MessageHelper {
             return prepend + "[Body is null]";
         }
 
-        if (obj instanceof StringSource || obj instanceof BytesSource) {
-            // these two are okay
-        } else if (!allowStreams && obj instanceof StreamCache) {
-            return prepend + "[Body is instance of org.apache.camel.StreamCache]";
-        } else if (!allowStreams && obj instanceof StreamSource) {
-            return prepend + "[Body is instance of java.xml.transform.StreamSource]";
-        } else if (!allowStreams && obj instanceof InputStream) {
-            return prepend + "[Body is instance of java.io.InputStream]";
-        } else if (!allowStreams && obj instanceof OutputStream) {
-            return prepend + "[Body is instance of java.io.OutputStream]";
-        } else if (!allowStreams && obj instanceof Reader) {
-            return prepend + "[Body is instance of java.io.Reader]";
-        } else if (!allowStreams && obj instanceof Writer) {
-            return prepend + "[Body is instance of java.io.Writer]";
-        } else if (!allowFiles && (obj instanceof GenericFile || obj instanceof File)) {
-            return prepend + "[Body is file based: " + obj + "]";
+        if (!allowStreams) {
+        	if (obj instanceof StreamSource  && !(obj instanceof StringSource || obj instanceof BytesSource)) {
+        		/* Generally do not log StreamSources but as StringSource and ByteSoure
+        		 * are memory based	they are ok */
+        		return prepend + "[Body is instance of java.xml.transform.StreamSource]";
+        	} else if (obj instanceof StreamCache) {
+      			return prepend + "[Body is instance of org.apache.camel.StreamCache]";
+        	} else if (obj instanceof InputStream) {
+        		return prepend + "[Body is instance of java.io.InputStream]";
+        	} else if (obj instanceof OutputStream) {
+        		return prepend + "[Body is instance of java.io.OutputStream]";
+        	} else if (obj instanceof Reader) {
+        		return prepend + "[Body is instance of java.io.Reader]";
+        	} else if (obj instanceof Writer) {
+        		return prepend + "[Body is instance of java.io.Writer]";
+        	} else if (obj instanceof GenericFile || obj instanceof File) {
+        		return prepend + "[Body is file based: " + obj + "]";
+        	}
         }
 
         // is the body a stream cache

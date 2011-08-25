@@ -53,8 +53,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import org.apache.camel.BytesSource;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.StringSource;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 

@@ -18,7 +18,7 @@ package org.apache.camel.processor;
 
 import java.io.File;
 
-import org.apache.camel.converter.jaxp.StringSource;
+import org.apache.camel.StringSource;
 import org.apache.camel.processor.validation.ValidatingProcessor;
 
 /**

@@ -21,9 +21,9 @@ import java.io.StringReader;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.StringSource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.jaxp.StringSource;
 
 /**
  * Test for handling a StreamSource in a content-based router with XPath predicates

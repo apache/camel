@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.camel.StreamCache;
-import org.apache.camel.converter.jaxp.StringSource;
+import org.apache.camel.StringSource;
 import org.apache.camel.util.IOHelper;
 
 /**
- * {@link org.apache.camel.StreamCache} implementation for {@link org.apache.camel.converter.jaxp.StringSource}s
+ * {@link org.apache.camel.StreamCache} implementation for {@link org.apache.camel.StringSource}s
  */
 public class SourceCache extends StringSource implements StreamCache {
 

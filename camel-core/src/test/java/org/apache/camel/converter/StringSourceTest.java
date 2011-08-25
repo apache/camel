@@ -22,8 +22,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import junit.framework.TestCase;
+
+import org.apache.camel.StringSource;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.impl.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
