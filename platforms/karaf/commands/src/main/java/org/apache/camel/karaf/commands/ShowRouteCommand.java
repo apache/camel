@@ -17,8 +17,8 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.Route;
+import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.util.ModelHelper;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;

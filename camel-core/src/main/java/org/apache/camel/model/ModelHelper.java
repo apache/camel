@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.model;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -24,8 +24,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.Constants;
-import org.apache.camel.model.OptionalIdentifiedDefinition;
 
 /**
  * Helper for the Camel {@link org.apache.camel.model model} classes.

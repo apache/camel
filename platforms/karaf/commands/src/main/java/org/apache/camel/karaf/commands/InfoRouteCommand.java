@@ -20,14 +20,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.management.DefaultManagementAgent;
+import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.util.ModelHelper;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
