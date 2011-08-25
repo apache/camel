@@ -31,6 +31,9 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private int serverAliveInterval;
     private int serverAliveCountMax = 1;
     private String chmod;
+    // comma separated list of ciphers. 
+    // null means default jsch list will be used
+    private String ciphers; 
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -99,6 +102,14 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public String getChmod() {
         return chmod;
+    }
+
+    public void setCiphers(String ciphers) {
+        this.ciphers = ciphers;
+    }
+
+    public String getCiphers() {
+        return ciphers;
     }
 
 }
