@@ -60,13 +60,11 @@ import org.apache.zookeeper.CreateMode;
  * <p>
  * All instances of the policy must also be configured with the same path on the
  * ZooKeeper cluster where the election will be carried out. It is good practice
- * for this to indicate the application e.g. /someapplication/someroute/ note
+ * for this to indicate the application e.g. <tt>/someapplication/someroute/</tt> note
  * that these nodes should exist before using the policy.
  * <p>
- * See @link{ http://hadoop.apache
- * .org/zookeeper/docs/current/recipes.html#sc_leaderElection} for more on how
- * Leader election is achieved with ZooKeeper.
- * 
+ * See <a href="http://hadoop.apache.org/zookeeper/docs/current/recipes.html#sc_leaderElection">
+ *     for more on how Leader election</a> is archived with ZooKeeper.
  */
 public class ZooKeeperRoutePolicy extends RoutePolicySupport {
 

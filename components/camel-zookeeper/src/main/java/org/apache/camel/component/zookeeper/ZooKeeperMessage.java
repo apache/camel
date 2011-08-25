@@ -28,8 +28,6 @@ import org.apache.zookeeper.data.Stat;
  * representing interactions with a ZooKeeper service. It contains a number of
  * optional Header Constants that are used by the Producer and consumer
  * mechanisms to finely control these interactions.
- * 
- * @version $
  */
 public class ZooKeeperMessage extends DefaultMessage {
 

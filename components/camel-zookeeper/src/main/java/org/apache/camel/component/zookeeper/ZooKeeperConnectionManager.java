@@ -23,8 +23,6 @@ import org.apache.zookeeper.ZooKeeper;
 /**
  * <code>ZookeeperConnectionManager</code> is a simple class to manage
  * {@link ZooKeeper} connections.
- * 
- * @author sgargan
  */
 public class ZooKeeperConnectionManager {
 

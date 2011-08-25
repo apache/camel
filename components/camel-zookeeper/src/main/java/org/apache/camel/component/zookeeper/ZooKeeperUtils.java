@@ -35,8 +35,8 @@ public final class ZooKeeperUtils {
     
     /**
      * Pulls a createMode flag from the header keyed by
-     * {@link ZooKeeperMessage.ZOOKEEPER_CREATE_MODE} in the given message and
-     * attemps to parse a {@link CreateMode} from it.
+     * {@link ZooKeeperMessage#ZOOKEEPER_CREATE_MODE} in the given message and
+     * attempts to parse a {@link CreateMode} from it.
      *
      * @param message the message that may contain a ZOOKEEPER_CREATE_MODE
      *            header.
@@ -72,7 +72,7 @@ public final class ZooKeeperUtils {
 
     /**
      * Pulls the target node from the header keyed by
-     * {@link ZooKeeperMessage.ZOOKEEPER_NODE}. This node is then typically used
+     * {@link ZooKeeperMessage#ZOOKEEPER_NODE}. This node is then typically used
      * in place of the configured node extracted from the endpoint uri.
      *
      * @param message the message that may contain a ZOOKEEPER_NODE header.

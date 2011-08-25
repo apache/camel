@@ -40,13 +40,10 @@ import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getNodeFromMes
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getPayloadFromExchange;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getVersionFromMessage;
 
-
 /**
  * <code>ZookeeperProducer</code> attempts to set the content of nodes in the
  * {@link ZooKeeper} cluster with the payloads of the of the exchanges it
  * receives.
- *
- * @version $
  */
 @SuppressWarnings("rawtypes")
 public class ZookeeperProducer extends DefaultProducer {

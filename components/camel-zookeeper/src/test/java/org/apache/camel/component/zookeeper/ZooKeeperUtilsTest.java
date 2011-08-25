@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.zookeeper;
 
-
-
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.zookeeper.CreateMode;
