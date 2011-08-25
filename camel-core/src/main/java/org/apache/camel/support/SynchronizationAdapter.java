@@ -17,9 +17,9 @@
 package org.apache.camel.support;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Ordered;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
-import org.apache.camel.util.Ordered;
 
 /**
  * Simple {@link Synchronization} adapter with empty methods for easier overriding

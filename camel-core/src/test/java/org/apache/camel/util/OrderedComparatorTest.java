@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.camel.Ordered;
+
 import junit.framework.TestCase;
 
 /**

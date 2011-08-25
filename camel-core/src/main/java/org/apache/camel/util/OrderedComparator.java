@@ -18,6 +18,8 @@ package org.apache.camel.util;
 
 import java.util.Comparator;
 
+import org.apache.camel.Ordered;
+
 /**
  * A comparator to sort {@link Ordered}
  *
