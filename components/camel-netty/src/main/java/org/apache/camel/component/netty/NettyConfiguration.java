@@ -122,6 +122,7 @@ public class NettyConfiguration implements Cloneable {
         addToHandlersList(decoders, referencedDecoders, ChannelUpstreamHandler.class);
 
         // then set parameters with the help of the camel context type converters
+        EndpointHelper.setReferenceProperties(component.getCamelContext(), this, parameters);
         EndpointHelper.setProperties(component.getCamelContext(), this, parameters);
 
         // add default encoders and decoders
