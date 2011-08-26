@@ -17,7 +17,6 @@
 package org.apache.camel.language.juel;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.el.ArrayELResolver;
 import javax.el.CompositeELResolver;
@@ -78,7 +77,7 @@ public class JuelExpression extends ExpressionSupport {
         if (expressionFactory == null && context != null) {
             try {
                 FactoryFinder finder = context.getFactoryFinder("META-INF/services/org/apache/camel/language/");
-                Class<?> clazz = finder.findClass("el", "impl.");
+                Class<?> clazz = finder.findClass("el", "impl.", ExpressionFactory.class);
                 if (clazz != null) {
                     expressionFactory = (ExpressionFactory)clazz.newInstance();
                 }

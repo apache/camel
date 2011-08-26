@@ -82,6 +82,11 @@ public class DefaultFactoryFinder implements FactoryFinder {
         return clazz;
     }
 
+    public Class<?> findClass(String key, String propertyPrefix, Class<?> clazz) throws ClassNotFoundException, IOException {
+        // Just ignore clazz which is only useful for OSGiFactoryFinder
+        return findClass(key, propertyPrefix);
+    }
+
     private Object newInstance(String key, String propertyPrefix) throws IllegalAccessException,
         InstantiationException, IOException, ClassNotFoundException {
         Class<?> clazz = findClass(key, propertyPrefix);

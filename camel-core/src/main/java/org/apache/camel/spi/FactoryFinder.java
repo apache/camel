@@ -76,4 +76,16 @@ public interface FactoryFinder {
      * @throws java.io.IOException is thrown if loading the class or META-INF file not found
      */
     Class<?> findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException;
+
+    /**
+     * Finds the given factory class using the the key to lookup.
+     *
+     * @param key is the key to add to the path to find a text file containing the factory name
+     * @param propertyPrefix prefix on key
+     * @param clazz the class which is used for checking compatible
+     * @return the factory class
+     * @throws ClassNotFoundException is thrown if not found
+     * @throws java.io.IOException is thrown if loading the class or META-INF file not found
+     */
+    Class<?> findClass(String key, String propertyPrefix, Class<?> clazz) throws ClassNotFoundException, IOException;
 }
