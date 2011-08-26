@@ -23,6 +23,7 @@ import org.apache.karaf.testing.Helper;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -69,10 +70,18 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     }
     
     public static UrlReference getCamelKarafFeatureUrl() {
-        
+        return getCamelKarafFeatureUrl(null);
+    }
+
+    public static UrlReference getCamelKarafFeatureUrl(String version) {
+
         String type = "xml/features";
-        return mavenBundle().groupId("org.apache.camel.karaf").
-            artifactId("apache-camel").versionAsInProject().type(type);
+        MavenArtifactProvisionOption mavenOption = mavenBundle().groupId("org.apache.camel.karaf").artifactId("apache-camel");
+        if (version == null) {
+            return mavenOption.versionAsInProject().type(type);
+        } else {
+            return mavenOption.version(version).type(type);
+        }
     }
     
     public static UrlReference getKarafFeatureUrl() {
