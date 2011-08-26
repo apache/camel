@@ -58,7 +58,9 @@ public class TestEndpointTest extends ContextTestSupport {
     private final class MyEndpoint extends DefaultEndpoint {
 
         private MyEndpoint(String endpointUri, CamelContext camelContext) {
-            super(endpointUri, camelContext);
+            super();
+            // TODO: revisit; uri and context are not really needed
+            //  this is probably covered by the ProcessorEndpoint, test may not be needed at all
         }
 
         @Override

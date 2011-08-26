@@ -35,9 +35,8 @@ public class SedaEndpointTest extends ContextTestSupport {
 
     public void testSedaEndpointUnboundedQueue() throws Exception {
         BlockingQueue<Exchange> unbounded = new LinkedBlockingQueue<Exchange>();
-        SedaEndpoint seda = new SedaEndpoint("seda://foo", unbounded);        
+        SedaEndpoint seda = new SedaEndpoint("seda://foo", context.getComponent("seda"), unbounded);        
         assertNotNull(seda);
-        seda.setCamelContext(context);
 
         assertEquals(Integer.MAX_VALUE, seda.getSize());
         assertSame(unbounded, seda.getQueue());
@@ -59,9 +58,8 @@ public class SedaEndpointTest extends ContextTestSupport {
     }
 
     public void testSedaEndpoint() throws Exception {
-        SedaEndpoint seda = new SedaEndpoint("seda://foo", queue);
+        SedaEndpoint seda = new SedaEndpoint("seda://foo", context.getComponent("seda"), queue);
         assertNotNull(seda);
-        seda.setCamelContext(context);
 
         assertEquals(1000, seda.getSize());
         assertSame(queue, seda.getQueue());
@@ -83,9 +81,8 @@ public class SedaEndpointTest extends ContextTestSupport {
     }
 
     public void testSedaEndpointTwo() throws Exception {
-        SedaEndpoint seda = new SedaEndpoint("seda://foo", queue, 2);
+        SedaEndpoint seda = new SedaEndpoint("seda://foo", context.getComponent("seda"), queue, 2);
         assertNotNull(seda);
-        seda.setCamelContext(context);
 
         assertEquals(1000, seda.getSize());
         assertSame(queue, seda.getQueue());

@@ -105,6 +105,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         init();
     }
 
+    @Deprecated
     public MockEndpoint(String endpointUri) {
         super(endpointUri);
         init();

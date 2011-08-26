@@ -29,24 +29,7 @@ public class BrowseEndpointTest extends ContextTestSupport {
         return false;
     }
 
-    public void testBrowseEndpoint() throws Exception {
-        final BrowseEndpoint be = new BrowseEndpoint("browse://foo");
-        be.setCamelContext(context);
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to(be);
-            }
-        });
-        context.start();
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertEquals(1, be.getExchanges().size());
-    }
-
-    public void testBrowseEndpointAnother() throws Exception {
+    public void testBrowseEndpointDefaultConstructor() throws Exception {
         final BrowseEndpoint be = new BrowseEndpoint();
         be.setCamelContext(context);
         be.setEndpointUriIfNotSpecified("browse://foo");
@@ -64,8 +47,8 @@ public class BrowseEndpointTest extends ContextTestSupport {
         assertEquals(1, be.getExchanges().size());
     }
 
-    public void testBrowseEndpointYetAnother() throws Exception {
-        final BrowseEndpoint be = new BrowseEndpoint("browse://foo", context);
+    public void testBrowseEndpointUriConstructor() throws Exception {
+        final BrowseEndpoint be = new BrowseEndpoint("browse://foo", context.getComponent("browse"));
 
         context.addRoutes(new RouteBuilder() {
             @Override

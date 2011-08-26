@@ -19,6 +19,7 @@ package org.apache.camel.component.timer;
 import java.util.Date;
 import java.util.Timer;
 
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -47,18 +48,9 @@ public class TimerEndpoint extends DefaultEndpoint implements Service {
     public TimerEndpoint() {
     }
 
-    public TimerEndpoint(String fullURI, TimerComponent component, String timerName) {
-        super(fullURI, component);
+    public TimerEndpoint(String uri, Component component, String timerName) {
+        super(uri, component);
         this.timerName = timerName;
-    }
-
-    public TimerEndpoint(String endpointUri, Timer timer) {
-        this(endpointUri);
-        this.timer = timer;
-    }
-
-    public TimerEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     public Producer createProducer() throws Exception {

@@ -62,8 +62,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * @param component the component that created this endpoint
      */
     protected DefaultEndpoint(String endpointUri, Component component) {
-        this(endpointUri, component.getCamelContext());
+        this.camelContext = component == null ? null : component.getCamelContext();
         this.component = component;
+        this.setEndpointUri(endpointUri);
     }
 
     /**
@@ -74,6 +75,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * @param endpointUri the full URI used to create this endpoint
      * @param camelContext the Camel Context in which this endpoint is operating
      */
+    @Deprecated
     protected DefaultEndpoint(String endpointUri, CamelContext camelContext) {
         this(endpointUri);
         this.camelContext = camelContext;
@@ -86,6 +88,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      *
      * @param endpointUri the full URI used to create this endpoint
      */
+    @Deprecated
     protected DefaultEndpoint(String endpointUri) {
         this.setEndpointUri(endpointUri);
     }
@@ -266,7 +269,13 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * where it has not been explicitly configured using the name/context in which an Endpoint is created.
      */
     public void setEndpointUriIfNotSpecified(String value) {
-        if (endpointUri == null) {
+        if (endpointUri == null && value != null) {
+        	// FIXME: set the component first
+        	// ObjectHelper.notNull(camelContext, "camelContext");
+        	int s = value.indexOf(":");
+        	if (camelContext != null && s > 0) {
+        		component = camelContext.getComponent(value.substring(0, s));
+        	}
             setEndpointUri(value);
         }
     }

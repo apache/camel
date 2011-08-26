@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Component;
-import org.apache.camel.Processor;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.util.IOHelper;
@@ -40,10 +39,6 @@ public class ResourceBasedEndpoint extends ProcessorEndpoint {
     private byte[] buffer;
 
     public ResourceBasedEndpoint() {
-    }
-
-    public ResourceBasedEndpoint(String endpointUri, Processor processor) {
-        super(endpointUri, processor);
     }
 
     public ResourceBasedEndpoint(String endpointUri, Component component, String resourceUri) {

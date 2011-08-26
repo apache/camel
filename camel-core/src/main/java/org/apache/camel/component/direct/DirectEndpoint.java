@@ -39,11 +39,6 @@ public class DirectEndpoint extends DefaultEndpoint {
         this.consumers = new HashMap<String, DirectConsumer>();
     }
 
-    public DirectEndpoint(String endpointUri) {
-        super(endpointUri);
-        this.consumers = new HashMap<String, DirectConsumer>();
-    }
-
     public DirectEndpoint(String endpointUri, Component component) {
         this(endpointUri, component, new HashMap<String, DirectConsumer>());
     }

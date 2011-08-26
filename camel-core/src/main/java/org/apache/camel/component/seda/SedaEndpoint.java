@@ -70,17 +70,6 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.concurrentConsumers = concurrentConsumers;
     }
 
-    public SedaEndpoint(String endpointUri, BlockingQueue<Exchange> queue) {
-        this(endpointUri, queue, 1);
-    }
-
-    public SedaEndpoint(String endpointUri, BlockingQueue<Exchange> queue, int concurrentConsumers) {
-        super(endpointUri);
-        this.queue = queue;
-        this.size = queue.remainingCapacity();
-        this.concurrentConsumers = concurrentConsumers;
-    }
-
     public Producer createProducer() throws Exception {
         return new SedaProducer(this, getQueue(), getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull());
     }

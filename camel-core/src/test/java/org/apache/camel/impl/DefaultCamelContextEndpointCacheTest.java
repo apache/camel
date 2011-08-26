@@ -35,7 +35,8 @@ public class DefaultCamelContextEndpointCacheTest extends ContextTestSupport {
         // test that we cache at most 1000 endpoints in camel context to avoid it eating to much memory
         for (int i = 0; i < 1003; i++) {
             String uri = "myendpoint?id=" + i;
-            Endpoint e = new DefaultEndpoint(uri, context) {
+            DefaultEndpoint e = new DefaultEndpoint() {
+            	// FIXME: another endpoint that works without a Component
                 public Producer createProducer() throws Exception {
                     return null;
                 }
@@ -46,6 +47,8 @@ public class DefaultCamelContextEndpointCacheTest extends ContextTestSupport {
                     return true;
                 }
             };
+            e.setCamelContext(context);
+            e.setEndpointUri(uri);
 
             context.addEndpoint(uri, e);
         }

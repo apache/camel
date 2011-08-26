@@ -19,6 +19,7 @@ package org.apache.camel.component.timer;
 import java.util.Timer;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -53,28 +54,9 @@ public class TimerEndpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testTimerEndpointAgain() throws Exception {
-        final TimerEndpoint te = new TimerEndpoint("timer://foo");
-        te.setTimer(new Timer(true));
-        te.setCamelContext(context);
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from(te).to("mock:result");
-            }
-        });
-        context.start();
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-
-        assertMockEndpointsSatisfied();
-    }
-
     public void testTimerEndpointYetAgain() throws Exception {
-        final TimerEndpoint te = new TimerEndpoint("timer://foo", new Timer(true));
-        te.setCamelContext(context);
+        final TimerEndpoint te = new TimerEndpoint("timer://foo", context.getComponent("timer"), "foo");
+        te.setTimer(new Timer(true));
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -91,7 +73,7 @@ public class TimerEndpointTest extends ContextTestSupport {
     }
 
     public void testTimerEndpointNoProducer() throws Exception {
-        TimerEndpoint te = new TimerEndpoint("timer://foo");
+        Endpoint te = context.getEndpoint("timer://foo");
         try {
             te.createProducer();
             fail("Should have thrown an exception");

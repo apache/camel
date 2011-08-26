@@ -60,9 +60,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
     }
 
     public void testDataSetEndpointCtr() throws Exception {
-        final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", new SimpleDataSet(2));
-        endpoint.setCamelContext(context);
-        endpoint.setEndpointUriIfNotSpecified("dataset://foo");
+        final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(2));
 
         endpoint.setConsumeDelay(2);
         assertEquals(2, endpoint.getConsumeDelay());
@@ -85,9 +83,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
     }
 
     public void testDataSetReporter() throws Exception {
-        final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", new SimpleDataSet(10));
-        endpoint.setCamelContext(context);
-        endpoint.setEndpointUriIfNotSpecified("dataset://foo");
+        final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(10));
 
         final AtomicBoolean reported = new AtomicBoolean(false);
         endpoint.setReporter(new Processor() {
@@ -129,11 +125,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
         });
         assertNotNull(ds.getOutputTransformer());
 
-        final DataSetEndpoint endpoint = new DataSetEndpoint();
-        endpoint.setCamelContext(context);
-        endpoint.setEndpointUriIfNotSpecified("dataset://foo");
-        endpoint.setDataSet(ds);
-        // out transformer should have messaged with it
+        final DataSetEndpoint endpoint = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), ds);
         endpoint.allMessages().body().startsWith("Hi ");
 
         context.addRoutes(new RouteBuilder() {

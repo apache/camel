@@ -40,30 +40,7 @@ public class BeanEndpointTest extends ContextTestSupport {
     public void testBeanEndpointCtr() throws Exception {
         final BeanEndpoint endpoint = new BeanEndpoint();
         endpoint.setCamelContext(context);
-
-        endpoint.setBeanName("foo");
-        assertEquals("foo", endpoint.getBeanName());
-
-        assertEquals(false, endpoint.isCache());
-        assertNull(endpoint.getBeanHolder());
-        assertNull(endpoint.getMethod());
-        assertEquals("bean:foo", endpoint.getEndpointUri());
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to(endpoint);
-            }
-        });
-        context.start();
-
-        String out = template.requestBody("direct:start", "World", String.class);
-        assertEquals("Hello World", out);
-    }
-
-    public void testBeanEndpointCtrUri() throws Exception {
-        final BeanEndpoint endpoint = new BeanEndpoint("bean:foo");
-        endpoint.setCamelContext(context);
+        endpoint.setEndpointUriIfNotSpecified("bean:foo");
 
         endpoint.setBeanName("foo");
         assertEquals("foo", endpoint.getBeanName());
@@ -116,33 +93,6 @@ public class BeanEndpointTest extends ContextTestSupport {
         BeanHolder holder = new RegistryBean(context, "foo");
         final BeanProcessor bp = new BeanProcessor(holder);
         final BeanEndpoint endpoint = new BeanEndpoint("bean:foo", comp, bp);
-        endpoint.setCamelContext(context);
-
-        endpoint.setBeanName("foo");
-        assertEquals("foo", endpoint.getBeanName());
-
-        assertEquals(false, endpoint.isCache());
-        assertNull(endpoint.getBeanHolder());
-        assertNull(endpoint.getMethod());
-        assertEquals("bean:foo", endpoint.getEndpointUri());
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to(endpoint);
-            }
-        });
-        context.start();
-
-        String out = template.requestBody("direct:start", "World", String.class);
-        assertEquals("Hello World", out);
-    }
-
-    public void testBeanEndpointCtrBeanProcessor() throws Exception {
-        BeanHolder holder = new RegistryBean(context, "foo");
-        final BeanProcessor bp = new BeanProcessor(holder);
-        final BeanEndpoint endpoint = new BeanEndpoint("bean:foo", bp);
-        endpoint.setCamelContext(context);
 
         endpoint.setBeanName("foo");
         assertEquals("foo", endpoint.getBeanName());

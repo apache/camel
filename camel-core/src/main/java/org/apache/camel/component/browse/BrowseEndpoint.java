@@ -19,7 +19,6 @@ package org.apache.camel.component.browse;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -46,16 +45,8 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     public BrowseEndpoint() {
     }
 
-    public BrowseEndpoint(String uri, CamelContext camelContext) {
-        super(uri, camelContext);
-    }
-
     public BrowseEndpoint(String uri, Component component) {
         super(uri, component);
-    }
-
-    public BrowseEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     public boolean isSingleton() {

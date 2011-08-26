@@ -31,14 +31,16 @@ public abstract class DefaultPollingEndpoint extends ScheduledPollEndpoint  {
     protected DefaultPollingEndpoint() {
     }
 
-    protected DefaultPollingEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     protected DefaultPollingEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 
+    @Deprecated
+    protected DefaultPollingEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
+    @Deprecated
     protected DefaultPollingEndpoint(String endpointUri, CamelContext context) {
         super(endpointUri, context);
     }

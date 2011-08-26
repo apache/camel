@@ -58,8 +58,8 @@ public class EnricherRefTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                cool.setEndpointUriIfNotSpecified("cool");
                 cool.setCamelContext(context);
+                cool.setEndpointUriIfNotSpecified("cool");
 
                 from("direct:start").enrichRef("cool", "agg");
             }

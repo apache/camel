@@ -28,7 +28,7 @@ import org.apache.camel.Producer;
  * given {@link Processor}. This component does not support the use of
  * consumers.
  * <p/>
- * <br/>Implementators beware that this endpoint creates producers and consumers which
+ * <br/>Implementors beware that this endpoint creates producers and consumers which
  * doesn't allow you full control of its lifecycle as a {@link org.apache.camel.Service}
  * or {@link org.apache.camel.SuspendableService} would do.
  * If your producers/consumers need more control of its lifecycle its adviced instead to extend
@@ -43,22 +43,14 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint {
     protected ProcessorEndpoint() {
     }
 
-    protected ProcessorEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public ProcessorEndpoint(String endpointUri, CamelContext context, Processor processor) {
-        super(endpointUri, context);
+        super(endpointUri);
+        this.setCamelContext(context);
         this.processor = processor;
     }
 
     public ProcessorEndpoint(String endpointUri, Component component, Processor processor) {
         super(endpointUri, component);
-        this.processor = processor;
-    }
-
-    public ProcessorEndpoint(String endpointUri, Processor processor) {
-        super(endpointUri);
         this.processor = processor;
     }
 

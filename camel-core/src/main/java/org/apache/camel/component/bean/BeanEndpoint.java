@@ -37,16 +37,6 @@ public class BeanEndpoint extends ProcessorEndpoint {
         init();
     }
 
-    public BeanEndpoint(String endpointUri) {
-        super(endpointUri);
-        init();
-    }
-
-    public BeanEndpoint(String endpointUri, BeanProcessor processor) {
-        super(endpointUri, processor);
-        init();
-    }
-
     public BeanEndpoint(String endpointUri, Component component, BeanProcessor processor) {
         super(endpointUri, component, processor);
         init();
