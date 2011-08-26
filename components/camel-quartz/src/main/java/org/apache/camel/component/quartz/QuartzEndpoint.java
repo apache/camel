@@ -18,6 +18,7 @@ package org.apache.camel.component.quartz;
 
 import java.util.Date;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -26,7 +27,6 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.quartz.JobDetail;
@@ -117,7 +117,7 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
             }
         } catch (Exception e) {
             // log the error
-            LOG.error(ExchangeHelper.createExceptionMessage("Error processing exchange", exchange, e));
+            LOG.error(CamelExchangeException.createExceptionMessage("Error processing exchange", exchange, e));
 
             // and rethrow to let quartz handle it
             if (e instanceof JobExecutionException) {
