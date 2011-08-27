@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * A default implementation of {@link ExceptionHandler} which uses a {@link org.apache.camel.processor.CamelLogger} to
  * log the exception.
  * <p/>
- * This implementation will by default log the exception with stack trace at DEBUG level.
+ * This implementation will by default log the exception with stack trace at ERROR level.
  *
  * @version 
  */
@@ -36,7 +36,11 @@ public class LoggingExceptionHandler implements ExceptionHandler {
     private final CamelLogger logger;
 
     public LoggingExceptionHandler(Class<?> ownerType) {
-        this(new CamelLogger(LoggerFactory.getLogger(ownerType), LoggingLevel.DEBUG));
+        this(new CamelLogger(LoggerFactory.getLogger(ownerType), LoggingLevel.ERROR));
+    }
+
+    public LoggingExceptionHandler(Class<?> ownerType, LoggingLevel level) {
+        this(new CamelLogger(LoggerFactory.getLogger(ownerType), level));
     }
 
     public LoggingExceptionHandler(CamelLogger logger) {

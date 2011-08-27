@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.Synchronization;
@@ -81,12 +82,8 @@ public class GenericFileOnCompletion<T> implements Synchronization {
                 // commit the file strategy if there was no failure or already handled by the DeadLetterChannel
                 processStrategyCommit(processStrategy, exchange, file);
                 committed = true;
-            } else {
-                if (exchange.getException() != null) {
-                    // if the failure was an exception then handle it
-                    handleException(exchange.getException());
-                }
             }
+            // if we failed, then it will be handled by the rollback in the finally block below
         } finally {
             if (!committed) {
                 processStrategyRollback(processStrategy, exchange, file);
