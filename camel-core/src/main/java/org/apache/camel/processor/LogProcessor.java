@@ -43,8 +43,15 @@ public class LogProcessor implements AsyncProcessor, Traceable {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        String msg = expression.evaluate(exchange, String.class);
-        logger.log(msg);
+        try {
+            String msg = expression.evaluate(exchange, String.class);
+            logger.log(msg);
+        } catch (Exception e) {
+            exchange.setException(e);
+        } finally {
+            // callback must be invoked
+            callback.done(true);
+        }
         return true;
     }
 
