@@ -31,7 +31,7 @@ public class ZookeeperConnectionManagerTest extends ZooKeeperTestSupport {
         component.setConfiguration(config);
         component.setCamelContext(context);
 
-        ZooKeeperEndpoint zep = new ZooKeeperEndpoint("zoo:someserver/this/is/a/path", component, config);
+        ZooKeeperEndpoint zep = new ZooKeeperEndpoint("zookeeper:someserver/this/is/a/path", component, config);
 
         ZooKeeperConnectionManager zkcm = new ZooKeeperConnectionManager(zep);
         ZooKeeper zk = zkcm.getConnection();

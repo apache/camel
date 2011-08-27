@@ -64,7 +64,7 @@ public class ZooKeeperManagedEndpointTest extends CamelTestSupport {
 
     @Test
     public void testEnpointConfigurationCanBeSetViaJMX() throws Exception {
-        Set s = getMBeanServer().queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"zoo:*\",*"), null);
+        Set s = getMBeanServer().queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"zookeeper:*\",*"), null);
         assertEquals("Could not find zookeper endpoint: " + s, 1, s.size());
         ObjectName zepName = new ArrayList<ObjectName>(s).get(0);
 
@@ -104,7 +104,7 @@ public class ZooKeeperManagedEndpointTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("zoo://localhost:39913/node").to("mock:test");
+                from("zookeeper://localhost:39913/node").to("mock:test");
             }
         };
     }

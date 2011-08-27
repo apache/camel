@@ -44,22 +44,22 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {
-                zookeeperUri = "zoo://localhost:39913/node?create=true";
+                zookeeperUri = "zookeeper://localhost:39913/node?create=true";
                 from("direct:roundtrip").to(zookeeperUri).to("mock:producer-out");
                 from(zookeeperUri).to("mock:consumed-from-node");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:no-create-fails-set").to("zoo://localhost:39913/doesnotexist");
+                from("direct:no-create-fails-set").to("zookeeper://localhost:39913/doesnotexist");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:node-from-header").to("zoo://localhost:39913/notset?create=true");
-                from("zoo://localhost:39913/set?create=true").to("mock:consumed-from-set-node");
+                from("direct:node-from-header").to("zookeeper://localhost:39913/notset?create=true");
+                from("zookeeper://localhost:39913/set?create=true").to("mock:consumed-from-set-node");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:create-mode").to("zoo://localhost:39913/persistent?create=true&createMode=PERSISTENT").to("mock:create-mode");
+                from("direct:create-mode").to("zookeeper://localhost:39913/persistent?create=true&createMode=PERSISTENT").to("mock:create-mode");
             }
         }};
     }
@@ -144,7 +144,7 @@ public class ZookeeperProducerTest extends ZooKeeperTestSupport {
         Exchange exchange = createExchangeWithBody(testPayload);
         exchange.getIn().setHeader(ZOOKEEPER_NODE, "/set-listing/firstborn");
         exchange.setPattern(ExchangePattern.InOut);
-        template.send("zoo://localhost:39913/set-listing?create=true&listChildren=true", exchange);
+        template.send("zookeeper://localhost:39913/set-listing?create=true&listChildren=true", exchange);
         List<String> children = ExchangeHelper.getMandatoryOutBody(exchange, List.class);
         assertEquals(1, children.size());
         assertEquals("firstborn", children.get(0));
