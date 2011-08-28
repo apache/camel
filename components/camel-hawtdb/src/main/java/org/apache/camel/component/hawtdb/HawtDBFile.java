@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.hawtdb;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.camel.Service;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.codec.BufferCodec;
@@ -98,11 +101,14 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
     }
 
     public void stop() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Stopping HawtDB using file: {}", getFile());
-        }
+        File file = getFile();
 
-        close();
+        LOG.debug("Stopping HawtDB using file: {}", file);
+        try {
+            close();
+        } catch (IOException e) {
+            LOG.warn("Error closing HawtDB file " + file + ". This exception will be ignored.", e);
+        }
         pageFile = null;
     }
 
