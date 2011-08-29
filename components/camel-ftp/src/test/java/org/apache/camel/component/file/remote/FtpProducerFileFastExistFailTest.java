@@ -16,20 +16,12 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
-
 /**
  * @version 
  */
 public class FtpProducerFileFastExistFailTest extends FtpProducerFileExistFailTest {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/exist?fastExistsCheck=true&password=admin&delay=2000&noop=true&fileExist=Fail";
     }
 

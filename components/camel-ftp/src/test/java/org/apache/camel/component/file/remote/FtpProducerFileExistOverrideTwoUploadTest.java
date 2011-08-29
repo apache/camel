@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote;
 import java.io.File;
 
 import org.apache.camel.Exchange;
-import org.junit.Before;
 import org.junit.Test;
 
 /**

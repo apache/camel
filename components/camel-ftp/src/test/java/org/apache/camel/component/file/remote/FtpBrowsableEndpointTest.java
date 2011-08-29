@@ -61,6 +61,7 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
+        @SuppressWarnings("unchecked")
         List<Exchange> list = endpoint.getExchanges();
         assertNotNull(list);
         assertEquals(1, list.size());
@@ -86,6 +87,7 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
+        @SuppressWarnings("unchecked")
         List<Exchange> list = endpoint.getExchanges();
         assertNotNull(list);
         assertEquals(2, list.size());
@@ -115,6 +117,7 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
+        @SuppressWarnings("unchecked")
         List<Exchange> list = endpoint.getExchanges();
         assertNotNull(list);
         assertEquals(3, list.size());
