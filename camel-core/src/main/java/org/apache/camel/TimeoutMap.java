@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel;
 
 /**
  * Represents a map of values which timeout after a period of inactivity.

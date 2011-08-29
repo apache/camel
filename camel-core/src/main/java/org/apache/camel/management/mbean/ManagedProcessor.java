@@ -21,12 +21,12 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.StatefulService;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.management.ManagedAttribute;
 import org.apache.camel.spi.management.ManagedInstance;
 import org.apache.camel.spi.management.ManagedOperation;
 import org.apache.camel.spi.management.ManagedResource;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -74,8 +74,8 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     @ManagedAttribute(description = "Processor State")
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
-        if (processor instanceof ServiceSupport) {
-            ServiceStatus status = ((ServiceSupport) processor).getStatus();
+        if (processor instanceof StatefulService) {
+            ServiceStatus status = ((StatefulService) processor).getStatus();
             // if no status exists then its stopped
             if (status == null) {
                 status = ServiceStatus.Stopped;

@@ -33,7 +33,7 @@ import org.apache.camel.Service;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.ChildServiceSupport;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class RouteService extends ServiceSupport {
+public class RouteService extends ChildServiceSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(RouteService.class);
 

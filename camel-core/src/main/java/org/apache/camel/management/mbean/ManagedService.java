@@ -20,13 +20,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.management.ManagedAttribute;
 import org.apache.camel.spi.management.ManagedInstance;
 import org.apache.camel.spi.management.ManagedOperation;
 import org.apache.camel.spi.management.ManagedResource;
-import org.apache.camel.support.ServiceSupport;
 
 @ManagedResource(description = "Managed Service")
 public class ManagedService implements ManagedInstance {
@@ -62,8 +62,8 @@ public class ManagedService implements ManagedInstance {
     @ManagedAttribute(description = "Service State")
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
-        if (service instanceof ServiceSupport) {
-            ServiceStatus status = ((ServiceSupport) service).getStatus();
+        if (service instanceof StatefulService) {
+            ServiceStatus status = ((StatefulService) service).getStatus();
             // if no status exists then its stopped
             if (status == null) {
                 status = ServiceStatus.Stopped;

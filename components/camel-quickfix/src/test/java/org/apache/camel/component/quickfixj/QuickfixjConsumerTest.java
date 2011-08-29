@@ -20,7 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.StatefulService;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -67,7 +67,7 @@ public class QuickfixjConsumerTest {
         QuickfixjConsumer consumer = new QuickfixjConsumer(mockEndpoint, mockProcessor);
         
         Assert.assertThat("Consumer should not be automatically started", 
-            ((ServiceSupport)consumer).isStarted(), CoreMatchers.is(false));
+            ((StatefulService)consumer).isStarted(), CoreMatchers.is(false));
         
         consumer.onExchange(mockExchange);
         
@@ -75,7 +75,7 @@ public class QuickfixjConsumerTest {
         Mockito.verifyZeroInteractions(mockProcessor);
         
         consumer.start();
-        Assert.assertThat(((ServiceSupport)consumer).isStarted(), CoreMatchers.is(true));
+        Assert.assertThat(((StatefulService)consumer).isStarted(), CoreMatchers.is(true));
         
         consumer.onExchange(mockExchange);
         

@@ -18,7 +18,7 @@ package org.apache.camel.component.jms.reply;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.util.DefaultTimeoutMap;
+import org.apache.camel.support.DefaultTimeoutMap;
 
 /**
  * @version 

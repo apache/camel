@@ -28,7 +28,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.ChildServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public abstract class ErrorHandlerSupport extends ServiceSupport implements ErrorHandler {
+public abstract class ErrorHandlerSupport extends ChildServiceSupport implements ErrorHandler {
 
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
 

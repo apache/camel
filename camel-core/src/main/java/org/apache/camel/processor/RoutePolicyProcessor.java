@@ -23,8 +23,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.StatefulService;
 import org.apache.camel.spi.RoutePolicy;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,16 +114,16 @@ public class RoutePolicyProcessor extends DelegateAsyncProcessor {
      * @return <tt>true</tt> to run
      */
     protected boolean isRoutePolicyRunAllowed(RoutePolicy policy) {
-        if (policy instanceof ServiceSupport) {
-            ServiceSupport ss = (ServiceSupport) policy;
+        if (policy instanceof StatefulService) {
+            StatefulService ss = (StatefulService) policy;
             return ss.isRunAllowed();
         }
         return true;
     }
 
     private static boolean isCamelStopping(CamelContext context) {
-        if (context instanceof ServiceSupport) {
-            ServiceSupport ss = (ServiceSupport) context;
+        if (context instanceof StatefulService) {
+            StatefulService ss = (StatefulService) context;
             return ss.isStopping() || ss.isStopped();
         }
         return false;

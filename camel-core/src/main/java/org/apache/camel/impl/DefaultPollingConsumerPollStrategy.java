@@ -18,8 +18,8 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.StatefulService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +44,8 @@ public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollSt
 
     public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception e) throws Exception {
         boolean runAllowed = true;
-        if (consumer instanceof ServiceSupport) {
-            runAllowed = ((ServiceSupport) consumer).isRunAllowed();
+        if (consumer instanceof StatefulService) {
+            runAllowed = ((StatefulService) consumer).isRunAllowed();
         }
 
         // only log warn if we are running, otherwise we are just stopping which we should not log the issue in the logs

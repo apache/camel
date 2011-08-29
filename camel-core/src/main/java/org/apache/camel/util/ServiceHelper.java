@@ -22,8 +22,8 @@ import java.util.List;
 
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownableService;
+import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
-import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,18 +45,18 @@ public final class ServiceHelper {
      * Starts all of the given services
      */
     public static void startService(Object value) throws Exception {
-        if (isStarted(value)) {
-            // only start service if not already started
-            LOG.trace("Service already started: {}", value);
-            return;
-        }
         if (value instanceof Service) {
-            Service service = (Service)value;
-            LOG.trace("Starting service: {}", service);
-            service.start();
+            startService((Service)value);
         } else if (value instanceof Collection) {
             startServices((Collection<?>)value);
         }
+    }
+    
+    /**
+     * Starts all of the given services
+     */
+    public static void startService(Service service) throws Exception {
+        service.start();
     }
 
     /**
@@ -151,19 +151,14 @@ public final class ServiceHelper {
     /**
      * Stops and shutdowns all of the given services, throwing the first exception caught
      */
-    public static void stopAndShutdownService(Object value) throws Exception {
-        if (value instanceof Service) {
-            // must stop it first
-            stopService(value);
-        }
+    public static void stopAndShutdownService(Service value) throws Exception {
+        stopService(value);
 
         // then try to shutdown
         if (value instanceof ShutdownableService) {
             ShutdownableService service = (ShutdownableService)value;
             LOG.trace("Shutting down service {}", value);
             service.shutdown();
-        } else if (value instanceof Collection) {
-            stopAndShutdownServices((Collection<?>)value);
         }
     }
 
@@ -243,7 +238,7 @@ public final class ServiceHelper {
      * <tt>false</tt> if the service is already in the desired state.
      * @throws Exception is thrown if error occurred
      */
-    public static boolean resumeService(Object service) throws Exception {
+    public static boolean resumeService(Service service) throws Exception {
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (ss.isSuspended()) {
@@ -322,8 +317,8 @@ public final class ServiceHelper {
      * @return <tt>true</tt> if already stopped, otherwise <tt>false</tt>
      */
     public static boolean isStopped(Object value) {
-        if (value instanceof ServiceSupport) {
-            ServiceSupport service = (ServiceSupport) value;
+        if (value instanceof StatefulService) {
+            StatefulService service = (StatefulService) value;
             if (service.isStopping() || service.isStopped()) {
                 return true;
             }
@@ -337,8 +332,8 @@ public final class ServiceHelper {
      * @return <tt>true</tt> if already started, otherwise <tt>false</tt>
      */
     public static boolean isStarted(Object value) {
-        if (value instanceof ServiceSupport) {
-            ServiceSupport service = (ServiceSupport) value;
+        if (value instanceof StatefulService) {
+            StatefulService service = (StatefulService) value;
             if (service.isStarting() || service.isStarted()) {
                 return true;
             }

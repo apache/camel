@@ -24,9 +24,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.StatefulService;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
-import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -559,8 +559,8 @@ public final class EventHelper {
     private static void doNotifyEvent(EventNotifier notifier, EventObject event) {
         // only notify if notifier is started
         boolean started = true;
-        if (notifier instanceof ServiceSupport) {
-            started = ((ServiceSupport) notifier).isStarted();
+        if (notifier instanceof StatefulService) {
+            started = ((StatefulService) notifier).isStarted();
         }
         if (!started) {
             LOG.debug("Ignoring notifying event {}. The EventNotifier has not been started yet: {}", event, notifier);

@@ -17,15 +17,14 @@
 package org.apache.camel.support;
 
 import java.io.InputStream;
-import java.util.LinkedHashSet;
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownableService;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.StatefulService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A useful base class which ensures that a service is only initialized once and
@@ -36,94 +35,68 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version 
  */
-public abstract class ServiceSupport implements Service, ShutdownableService {
+public abstract class ServiceSupport implements ShutdownableService, StatefulService {
+    private static final transient Logger LOG = LoggerFactory.getLogger(ServiceSupport.class);
 
-    private final AtomicBoolean started = new AtomicBoolean(false);
-    private final AtomicBoolean starting = new AtomicBoolean(false);
-    private final AtomicBoolean stopping = new AtomicBoolean(false);
-    private final AtomicBoolean stopped = new AtomicBoolean(false);
-    private final AtomicBoolean suspending = new AtomicBoolean(false);
-    private final AtomicBoolean suspended = new AtomicBoolean(false);
-    private final AtomicBoolean shuttingdown = new AtomicBoolean(false);
-    private final AtomicBoolean shutdown = new AtomicBoolean(false);
-    private Set<Object> childServices;
+    protected final AtomicBoolean started = new AtomicBoolean(false);
+    protected final AtomicBoolean starting = new AtomicBoolean(false);
+    protected final AtomicBoolean stopping = new AtomicBoolean(false);
+    protected final AtomicBoolean stopped = new AtomicBoolean(false);
+    protected final AtomicBoolean suspending = new AtomicBoolean(false);
+    protected final AtomicBoolean suspended = new AtomicBoolean(false);
+    protected final AtomicBoolean shuttingdown = new AtomicBoolean(false);
+    protected final AtomicBoolean shutdown = new AtomicBoolean(false);
+
     private String version;
 
     public void start() throws Exception {
-        start(true);
-    }
-
-    public void start(boolean startChildren) throws Exception {
-        if (!started.get()) {
-            if (starting.compareAndSet(false, true)) {
-                boolean childrenStarted = false;
-                Exception ex = null;
-                try {
-                    if (childServices != null && startChildren) {
-                        ServiceHelper.startServices(childServices);
-                    }
-                    childrenStarted = true;
-                    doStart();
-                } catch (Exception e) {
-                    ex = e;
-                } finally {
-                    if (ex != null) {
-                        try {
-                            stop(childrenStarted);
-                        } catch (Exception e) {
-                            // Ignore exceptions as we want to show the original exception
-                        }
-                        throw ex;
-                    } else {
-                        started.set(true);
-                        starting.set(false);
-                        stopping.set(false);
-                        stopped.set(false);
-                        suspending.set(false);
-                        suspended.set(false);
-                        shutdown.set(false);
-                        shuttingdown.set(false);
-                    }
-                }
-            }
+        if (isStarting() || isStarted()) {
+            // only start service if not already started
+            LOG.trace("Service already started");
+            return;
+        }
+        if (starting.compareAndSet(false, true)) {
+            LOG.trace("Starting service");
+            doStart();
+            started.set(true);
+            starting.set(false);
+            stopping.set(false);
+            stopped.set(false);
+            suspending.set(false);
+            suspended.set(false);
+            shutdown.set(false);
+            shuttingdown.set(false);
         }
     }
     
-    private void stop(boolean childrenStarted) throws Exception {
-        if (stopping.compareAndSet(false, true)) {
-            try {
-                try {
-                    starting.set(false);
-                    suspending.set(false);
-                    if (childrenStarted) {
-                        doStop();
-                    }
-                } finally {
-                    started.set(false);
-                    suspended.set(false);
-                    if (childServices != null) {
-                        ServiceHelper.stopServices(childServices);
-                    }
-                }
-            } finally {
-                stopped.set(true);
-                stopping.set(false);
-                starting.set(false);
-                started.set(false);
-                suspending.set(false);
-                suspended.set(false);
-                shutdown.set(false);
-                shuttingdown.set(false);
-            }
-        }
-    }
-
     public void stop() throws Exception {
-        if (!stopped.get()) {
-            stop(true);
+        if (isStopped()) {
+            LOG.trace("Service already stopped");
+            return;
+        }
+        if (isStopping()) {
+            LOG.trace("Service already stopping");
+            return;
+        }
+        stopping.set(true);
+        try {
+            doStop();
+        } finally {
+            stopping.set(false);
+            stopped.set(true);
+            starting.set(false);
+            started.set(false);
+            suspending.set(false);
+            suspended.set(false);
+            shutdown.set(false);
+            shuttingdown.set(false);            
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#suspend()
+     */
+    @Override
     public void suspend() throws Exception {
         if (!suspended.get()) {
             if (suspending.compareAndSet(false, true)) {
@@ -145,6 +118,10 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#resume()
+     */
+    @Override
     public void resume() throws Exception {
         if (suspended.get()) {
             if (starting.compareAndSet(false, true)) {
@@ -164,19 +141,17 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#shutdown()
+     */
+    @Override
     public void shutdown() throws Exception {
         // ensure we are stopped first
         stop();
 
         if (shuttingdown.compareAndSet(false, true)) {
             try {
-                try {
-                    doShutdown();
-                } finally {
-                    if (childServices != null) {
-                        ServiceHelper.stopAndShutdownService(childServices);
-                    }
-                }
+                doShutdown();
             } finally {
                 // shutdown is also stopped so only set shutdown flags
                 shutdown.set(true);
@@ -185,9 +160,10 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
         }
     }
 
-    /**
-     * Returns the current status
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#getStatus()
      */
+    @Override
     public ServiceStatus getStatus() {
         // lets check these in oldest first as these flags can be changing in a concurrent world
         if (isStarting()) {
@@ -213,54 +189,58 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
         return ServiceStatus.Stopped;
     }
     
-    /**
-     * @return true if this service has been started
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#isStarted()
      */
+    @Override
     public boolean isStarted() {
         return started.get();
     }
 
-    /**
-     * @return true if this service is being started
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#isStarting()
      */
+    @Override
     public boolean isStarting() {
         return starting.get();
     }
 
-    /**
-     * @return true if this service is in the process of stopping
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#isStopping()
      */
+    @Override
     public boolean isStopping() {
         return stopping.get();
     }
 
-    /**
-     * @return true if this service is stopped
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#isStopped()
      */
+    @Override
     public boolean isStopped() {
         return stopped.get();
     }
 
-    /**
-     * @return true if this service is in the process of suspending
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#isSuspending()
      */
+    @Override
     public boolean isSuspending() {
         return suspending.get();
     }
 
-    /**
-     * @return true if this service is suspended
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#isSuspended()
      */
+    @Override
     public boolean isSuspended() {
         return suspended.get();
     }
 
-    /**
-     * Helper methods so the service knows if it should keep running.
-     * Returns <tt>false</tt> if the service is being stopped or is stopped.
-     *
-     * @return <tt>true</tt> if the service should continue to run.
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#isRunAllowed()
      */
+    @Override
     public boolean isRunAllowed() {
         return !(stopping.get() || stopped.get());
     }
@@ -288,23 +268,10 @@ public abstract class ServiceSupport implements Service, ShutdownableService {
         // noop
     }
 
-    @SuppressWarnings("unchecked")
-    protected void addChildService(Object childService) {
-        synchronized (this) {
-            if (childServices == null) {
-                childServices = new LinkedHashSet();
-            }
-        }
-        childServices.add(childService);
-    }
-
-    protected boolean removeChildService(Object childService) {
-        return childServices != null && childServices.remove(childService);
-    }
-
-    /**
-     * Returns the version of this service
+    /* (non-Javadoc)
+     * @see org.apache.camel.support.StatefulService#getVersion()
      */
+    @Override
     public synchronized String getVersion() {
         if (version != null) {
             return version;
