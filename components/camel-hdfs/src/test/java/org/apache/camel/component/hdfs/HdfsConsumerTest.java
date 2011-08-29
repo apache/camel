@@ -62,6 +62,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
         if (SKIP) {
             return;
         }
+        deleteDirectory("target/test");
         super.setUp();
     }
     
@@ -116,13 +117,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
             }
         });
         context.start();
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
 
+        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        List<Exchange> exchanges = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : exchanges) {
-            Assert.assertTrue(exchange.getIn(Boolean.class));
-        }
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -184,13 +181,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
             }
         });
         context.start();
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
 
+        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        List<Exchange> exchanges = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : exchanges) {
-            Assert.assertTrue(exchange.getIn(Float.class) == value);
-        }
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -217,13 +210,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
             }
         });
         context.start();
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
 
+        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        List<Exchange> exchanges = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : exchanges) {
-            Assert.assertTrue(exchange.getIn(Double.class) == value);
-        }
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -251,13 +240,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
             }
         });
         context.start();
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
 
+        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        List<Exchange> exchanges = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : exchanges) {
-            Assert.assertTrue(exchange.getIn(Integer.class) == value);
-        }
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -285,13 +270,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
             }
         });
         context.start();
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
 
+        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        List<Exchange> exchanges = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : exchanges) {
-            Assert.assertTrue(exchange.getIn(Long.class) == value);
-        }
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -319,13 +300,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
             }
         });
         context.start();
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
 
+        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        List<Exchange> exchanges = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : exchanges) {
-            Assert.assertTrue(exchange.getIn(String.class) == value);
-        }
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -353,13 +330,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
             }
         });
         context.start();
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
 
+        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        List<Exchange> exchanges = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : exchanges) {
-            Assert.assertTrue(exchange.getIn(String.class) == value);
-        }
         resultEndpoint.assertIsSatisfied();
     }
 
@@ -389,13 +362,9 @@ public class HdfsConsumerTest extends CamelTestSupport {
             }
         });
         context.start();
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
 
+        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
-        List<Exchange> exchanges = resultEndpoint.getReceivedExchanges();
-        for (Exchange exchange : exchanges) {
-            Assert.assertTrue(exchange.getIn(String.class) == value);
-        }
         resultEndpoint.assertIsSatisfied();
     }
 

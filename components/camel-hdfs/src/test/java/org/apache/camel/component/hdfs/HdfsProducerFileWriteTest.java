@@ -241,13 +241,13 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
 
         context.start();
 
-        NotifyBuilder nb = new NotifyBuilder(context).whenDone(2).create();
+        NotifyBuilder nb = new NotifyBuilder(context).whenDone(1).create();
 
         ByteBuffer bb = ByteBuffer.allocate(8 * 1024 * 1024);
         for (int i = 0; i < 8 * 1024 * 512; ++i) {
             bb.putChar('A');
         }
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < 1; ++i) {
             template.sendBodyAndHeader("file://target/file-batch5", bb, "CamelFileName", "CIAO" + i);
         }
 
@@ -265,7 +265,7 @@ public class HdfsProducerFileWriteTest extends CamelTestSupport {
             Assert.assertEquals(value.getLength(), 8 * 1024 * 1024);
             i++;
         }
-        Assert.assertEquals(2, i);
+        Assert.assertEquals(1, i);
     }
 
     @Override
