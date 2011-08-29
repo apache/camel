@@ -37,7 +37,6 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
@@ -194,15 +193,10 @@ public final class ExchangeHelper {
      * @return the copy
      */
     public static Exchange createCopy(Exchange exchange, boolean preserveExchangeId) {
-        Exchange copy = new DefaultExchange(exchange);
+        Exchange copy = exchange.copy();
         if (preserveExchangeId) {
             // must preserve exchange id
             copy.setExchangeId(exchange.getExchangeId());
-        }
-        copy.getProperties().putAll(exchange.getProperties());
-        copy.setIn(exchange.getIn().copy());
-        if (exchange.hasOut()) {
-            copy.setOut(exchange.getOut().copy());
         }
         return copy;
     }
@@ -636,7 +630,9 @@ public final class ExchangeHelper {
     }
 
     /**
-     * @deprecated use org.apache.camel.CamelExchangeException.createExceptionMessage instead
+     * @deprecated use
+     *             org.apache.camel.CamelExchangeException.createExceptionMessage
+     *             instead
      * @param message
      * @param exchange
      * @param cause
@@ -644,7 +640,7 @@ public final class ExchangeHelper {
      */
     @Deprecated
     public static String createExceptionMessage(String message, Exchange exchange, Throwable cause) {
-    	return CamelExchangeException.createExceptionMessage(message, exchange, cause);
+        return CamelExchangeException.createExceptionMessage(message, exchange, cause);
     }
 
     /**

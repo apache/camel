@@ -130,18 +130,21 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     public void testCopy() {
-    	DefaultExchange sourceExchange =  new DefaultExchange(context);
-    	MyMessage sourceIn = new MyMessage();
-    	sourceExchange.setIn(sourceIn);
-    	Exchange destExchange = sourceExchange.copy();
-    	Message destIn = destExchange.getIn();
+        DefaultExchange sourceExchange = new DefaultExchange(context);
+        MyMessage sourceIn = new MyMessage();
+        sourceExchange.setIn(sourceIn);
+        Exchange destExchange = sourceExchange.copy();
+        Message destIn = destExchange.getIn();
 
-        // TODO: fix me
-    	// assertEquals("dest message should be of the same type as source message", sourceIn.getClass(), destIn.getClass());
+        assertEquals("Dest message should be of the same type as source message",
+                     sourceIn.getClass(), destIn.getClass());
     }
-    
-    public static class MyMessage extends DefaultMessage {
 
+    public static class MyMessage extends DefaultMessage {
+        @Override
+        public MyMessage newInstance() {
+            return new MyMessage();
+        }
     }
 
 }
