@@ -45,7 +45,8 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
     protected void mapAttribute(BeanDefinitionBuilder bean, Element e, String name, String val) {
         if ("endpointName".equals(name) || "serviceName".equals(name)) {
             if (isSpringPlaceHolder(val)) {
-                mapToProperty(bean, name, val);
+                // set the property with the String value directly
+                mapToProperty(bean, name + "String", val);
             } else {
                 QName q = parseQName(e, val);
                 bean.addPropertyValue(name, q);

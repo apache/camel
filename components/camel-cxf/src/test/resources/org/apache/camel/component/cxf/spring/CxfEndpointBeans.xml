@@ -28,15 +28,6 @@
 
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-  <bean id="conversionService"
-      class="org.springframework.context.support.ConversionServiceFactoryBean">
-    <property name="converters">
-        <list>
-            <bean class="org.apache.camel.component.cxf.spring.QNameConverter"/>
-        </list>
-    </property>
-  </bean>
-
   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfEndpointBeanTest/router"
     serviceClass="org.apache.camel.component.cxf.HelloService">
     <cxf:schemaLocations>
