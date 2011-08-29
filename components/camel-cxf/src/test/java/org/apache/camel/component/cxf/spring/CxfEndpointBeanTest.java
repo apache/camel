@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.cxf.spring;
 
+import javax.xml.namespace.QName;
+
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.junit.Test;
-
-import javax.xml.namespace.QName;
 
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
     static int port1 = CXFTestSupport.getPort1();
