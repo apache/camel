@@ -507,7 +507,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         log.trace("existsFile({})", name);
-        if (endpoint.isFastExist()) {
+        if (endpoint.isFastExistsCheck()) {
             return fastExistsFile(name);
         }
         // check whether a file already exists

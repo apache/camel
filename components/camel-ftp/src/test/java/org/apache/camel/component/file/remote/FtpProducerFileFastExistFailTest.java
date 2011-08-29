@@ -30,7 +30,7 @@ import org.junit.Test;
 public class FtpProducerFileFastExistFailTest extends FtpProducerFileExistFailTest {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/exist?fastExist=true&password=admin&delay=2000&noop=true&fileExist=Fail";
+        return "ftp://admin@localhost:" + getPort() + "/exist?fastExistsCheck=true&password=admin&delay=2000&noop=true&fileExist=Fail";
     }
 
 }
