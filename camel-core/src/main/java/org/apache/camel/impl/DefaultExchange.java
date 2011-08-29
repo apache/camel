@@ -86,18 +86,13 @@ public final class DefaultExchange implements Exchange {
         if (hasProperties()) {
             exchange.setProperties(safeCopy(getProperties()));
         }
-        safeCopy(exchange.getIn(), getIn());
+        
+        exchange.setIn(getIn().copy());
         if (hasOut()) {
-            safeCopy(exchange.getOut(), getOut());
+            exchange.setOut(getOut().copy());
         }
         exchange.setException(getException());
         return exchange;
-    }
-
-    private static void safeCopy(Message message, Message that) {
-        if (message != null) {
-            message.copyFrom(that);
-        }
     }
 
     private static Map<String, Object> safeCopy(Map<String, Object> properties) {

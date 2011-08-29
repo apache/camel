@@ -28,13 +28,12 @@ import java.io.UnsupportedEncodingException;
 
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.camel.util.ObjectHelper;
-
 /**
- * A helper class which provides a JAXP {@link javax.xml.transform.Source Source} from a String which can
- * be read as many times as required. Encoding is default UTF-8.
- *
- * @version 
+ * A helper class which provides a JAXP {@link javax.xml.transform.Source
+ * Source} from a String which can be read as many times as required. Encoding
+ * is default UTF-8.
+ * 
+ * @version
  */
 public class StringSource extends StreamSource implements Externalizable {
     private String text;
@@ -45,24 +44,24 @@ public class StringSource extends StreamSource implements Externalizable {
 
     public StringSource(String text) {
         if (text == null) {
-		    throw new IllegalArgumentException("text must be specified");
-		}
+            throw new IllegalArgumentException("text must be specified");
+        }
         this.text = text;
     }
 
     public StringSource(String text, String systemId) {
         this(text);
         if (systemId == null) {
-		    throw new IllegalArgumentException("systemId must be specified");
-		}
+            throw new IllegalArgumentException("systemId must be specified");
+        }
         setSystemId(systemId);
     }
 
     public StringSource(String text, String systemId, String encoding) {
         this(text, systemId);
         if (encoding == null) {
-		    throw new IllegalArgumentException("encoding must be specified");
-		}
+            throw new IllegalArgumentException("encoding must be specified");
+        }
         this.encoding = encoding;
     }
 
@@ -91,8 +90,7 @@ public class StringSource extends StreamSource implements Externalizable {
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        int b = (text != null ? 0x01 : 0x00) + (encoding != null ? 0x02 : 0x00)
-                + (getPublicId() != null ? 0x04 : 0x00) + (getSystemId() != null ? 0x08 : 0x00);
+        int b = (text != null ? 0x01 : 0x00) + (encoding != null ? 0x02 : 0x00) + (getPublicId() != null ? 0x04 : 0x00) + (getSystemId() != null ? 0x08 : 0x00);
         out.writeByte(b);
         if ((b & 0x01) != 0) {
             out.writeUTF(text);

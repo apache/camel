@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.juel.issues;
 
-import static org.apache.camel.language.juel.JuelExpression.el;
-
 import javax.xml.transform.TransformerConfigurationException;
 
 import org.apache.camel.Exchange;
@@ -29,6 +27,8 @@ import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
+import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
  * @version 

@@ -36,12 +36,15 @@ import org.apache.camel.util.URISupport;
 /**
  * A default endpoint useful for implementation inheritance.
  * <p/>
- * Components which leverages <a href="http://camel.apache.org/asynchronous-routing-engine.html">asynchronous processing model</a>
- * should check the {@link #isSynchronous()} to determine if asynchronous processing is allowed.
- * The <tt>synchronous</tt> option on the endpoint allows Camel end users to dictate whether they want the asynchronous model or not.
- * The option is default <tt>false</tt> which means asynchronous processing is allowed.
- *
- * @version 
+ * Components which leverages <a
+ * href="http://camel.apache.org/asynchronous-routing-engine.html">asynchronous
+ * processing model</a> should check the {@link #isSynchronous()} to determine
+ * if asynchronous processing is allowed. The <tt>synchronous</tt> option on the
+ * endpoint allows Camel end users to dictate whether they want the asynchronous
+ * model or not. The option is default <tt>false</tt> which means asynchronous
+ * processing is allowed.
+ * 
+ * @version
  */
 public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint, HasId, CamelContextAware {
 
@@ -49,7 +52,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private CamelContext camelContext;
     private Component component;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
-    // option to allow end user to dictate whether async processing should be used or not (if possible)
+    // option to allow end user to dictate whether async processing should be
+    // used or not (if possible)
     private boolean synchronous;
     private final String id = EndpointHelper.createEndpointId();
 
@@ -57,7 +61,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * Constructs a fully-initialized DefaultEndpoint instance. This is the
      * preferred method of constructing an object from Java code (as opposed to
      * Spring beans, etc.).
-     *
+     * 
      * @param endpointUri the full URI used to create this endpoint
      * @param component the component that created this endpoint
      */
@@ -68,10 +72,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
-     * Constructs a DefaultEndpoint instance which has <b>not</b> been created using a {@link Component}.
+     * Constructs a DefaultEndpoint instance which has <b>not</b> been created
+     * using a {@link Component}.
      * <p/>
-     * <b>Note:</b> It is preferred to create endpoints using the associated component.
-     *
+     * <b>Note:</b> It is preferred to create endpoints using the associated
+     * component.
+     * 
      * @param endpointUri the full URI used to create this endpoint
      * @param camelContext the Camel Context in which this endpoint is operating
      */
@@ -84,8 +90,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * Constructs a partially-initialized DefaultEndpoint instance.
      * <p/>
-     * <b>Note:</b> It is preferred to create endpoints using the associated component.
-     *
+     * <b>Note:</b> It is preferred to create endpoints using the associated
+     * component.
+     * 
      * @param endpointUri the full URI used to create this endpoint
      */
     @Deprecated
@@ -94,13 +101,14 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
-     * Constructs a partially-initialized DefaultEndpoint instance.
-     * Useful when creating endpoints manually (e.g., as beans in Spring).
+     * Constructs a partially-initialized DefaultEndpoint instance. Useful when
+     * creating endpoints manually (e.g., as beans in Spring).
      * <p/>
      * Please note that the endpoint URI must be set through properties (or
      * overriding {@link #createEndpointUri()} if one uses this constructor.
      * <p/>
-     * <b>Note:</b> It is preferred to create endpoints using the associated component.
+     * <b>Note:</b> It is preferred to create endpoints using the associated
+     * component.
      */
     protected DefaultEndpoint() {
         super();
@@ -113,7 +121,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     @Override
     public boolean equals(Object object) {
         if (object instanceof DefaultEndpoint) {
-            DefaultEndpoint that = (DefaultEndpoint) object;
+            DefaultEndpoint that = (DefaultEndpoint)object;
             return ObjectHelper.equal(this.getEndpointUri(), that.getEndpointUri());
         }
         return false;
@@ -125,8 +133,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
-     * Returns a unique String ID which can be used for aliasing without having to use the whole URI which
-     * is not unique
+     * Returns a unique String ID which can be used for aliasing without having
+     * to use the whole URI which is not unique
      */
     public String getId() {
         return id;
@@ -136,8 +144,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         if (endpointUri == null) {
             endpointUri = createEndpointUri();
             if (endpointUri == null) {
-                throw new IllegalArgumentException("endpointUri is not specified and " + getClass().getName()
-                        + " does not implement createEndpointUri() to create a default value");
+                throw new IllegalArgumentException("endpointUri is not specified and " + getClass().getName() + " does not implement createEndpointUri() to create a default value");
             }
         }
         return endpointUri;
@@ -145,7 +152,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     public String getEndpointKey() {
         if (isLenientProperties()) {
-            // only use the endpoint uri without parameters as the properties is lenient
+            // only use the endpoint uri without parameters as the properties is
+            // lenient
             String uri = getEndpointUri();
             if (uri.indexOf('?') != -1) {
                 return ObjectHelper.before(uri, "?");
@@ -164,8 +172,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     /**
      * Returns the component that created this endpoint.
-     *
-     * @return the component that created this endpoint, or <tt>null</tt> if none set
+     * 
+     * @return the component that created this endpoint, or <tt>null</tt> if
+     *         none set
      */
     public Component getComponent() {
         return component;
@@ -196,12 +205,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     public Class<Exchange> getExchangeType() {
         Type type = getClass().getGenericSuperclass();
         if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
+            ParameterizedType parameterizedType = (ParameterizedType)type;
             Type[] arguments = parameterizedType.getActualTypeArguments();
             if (arguments.length > 0) {
                 Type argumentType = arguments[0];
                 if (argumentType instanceof Class) {
-                    return (Class<Exchange>) argumentType;
+                    return (Class<Exchange>)argumentType;
                 }
             }
         }
@@ -218,7 +227,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     /**
      * Returns the default exchange pattern to use for createExchange().
-     *
+     * 
      * @see #setExchangePattern(ExchangePattern exchangePattern)
      */
     public ExchangePattern getExchangePattern() {
@@ -235,7 +244,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     /**
      * Returns whether synchronous processing should be strictly used.
-     *
+     * 
      * @see #setSynchronous(boolean synchronous)
      */
     public boolean isSynchronous() {
@@ -243,9 +252,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
-     * Sets whether synchronous processing should be strictly used, or Camel is allowed to use
-     * asynchronous processing (if supported).
-     *
+     * Sets whether synchronous processing should be strictly used, or Camel is
+     * allowed to use asynchronous processing (if supported).
+     * 
      * @param synchronous <tt>true</tt> to enforce synchronous processing
      */
     public void setSynchronous(boolean synchronous) {
@@ -264,18 +273,20 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
-     * Sets the endpointUri if it has not been specified yet via some kind of dependency injection mechanism.
-     * This allows dependency injection frameworks such as Spring or Guice to set the default endpoint URI in cases
-     * where it has not been explicitly configured using the name/context in which an Endpoint is created.
+     * Sets the endpointUri if it has not been specified yet via some kind of
+     * dependency injection mechanism. This allows dependency injection
+     * frameworks such as Spring or Guice to set the default endpoint URI in
+     * cases where it has not been explicitly configured using the name/context
+     * in which an Endpoint is created.
      */
     public void setEndpointUriIfNotSpecified(String value) {
         if (endpointUri == null && value != null) {
-        	// FIXME: set the component first
-        	// ObjectHelper.notNull(camelContext, "camelContext");
-        	int s = value.indexOf(":");
-        	if (camelContext != null && s > 0) {
-        		component = camelContext.getComponent(value.substring(0, s));
-        	}
+            // FIXME: set the component first
+            // ObjectHelper.notNull(camelContext, "camelContext");
+            int s = value.indexOf(":");
+            if (camelContext != null && s > 0) {
+                component = camelContext.getComponent(value.substring(0, s));
+            }
             setEndpointUri(value);
         }
     }

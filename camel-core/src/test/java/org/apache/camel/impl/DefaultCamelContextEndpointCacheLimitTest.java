@@ -38,7 +38,7 @@ public class DefaultCamelContextEndpointCacheLimitTest extends ContextTestSuppor
         for (int i = 0; i < 78; i++) {
             String uri = "myendpoint?id=" + i;
             DefaultEndpoint e = new DefaultEndpoint() {
-            	// FIXME: another endpoint that works without a Component
+                // FIXME: another endpoint that works without a Component
                 public Producer createProducer() throws Exception {
                     return null;
                 }
