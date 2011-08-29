@@ -99,7 +99,7 @@ public final class FileProcessStrategyFactory {
 
     @SuppressWarnings("unchecked")
     private static GenericFileExclusiveReadLockStrategy<File> getExclusiveReadLockStrategy(Map<String, Object> params) {
-        GenericFileExclusiveReadLockStrategy strategy = (GenericFileExclusiveReadLockStrategy) params.get("exclusiveReadLockStrategy");
+        GenericFileExclusiveReadLockStrategy<File> strategy = (GenericFileExclusiveReadLockStrategy<File>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
         }
@@ -132,7 +132,7 @@ public final class FileProcessStrategyFactory {
                 }
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy readLockStrategy = new FileChangedExclusiveReadLockStrategy();
+                GenericFileExclusiveReadLockStrategy<File> readLockStrategy = new FileChangedExclusiveReadLockStrategy();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);

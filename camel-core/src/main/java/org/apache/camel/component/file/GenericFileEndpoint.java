@@ -142,7 +142,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     public List<Exchange> getExchanges() {
         final List<Exchange> answer = new ArrayList<Exchange>();
 
-        GenericFileConsumer consumer = null;
+        GenericFileConsumer<?> consumer = null;
         try {
             // create a new consumer which can poll the exchanges we want to browse
             // do not provide a processor as we do some custom processing

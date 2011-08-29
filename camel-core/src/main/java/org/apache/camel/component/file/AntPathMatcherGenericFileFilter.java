@@ -65,12 +65,11 @@ public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T>,
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void init() throws NoSuchMethodException {
         // we must use reflection to invoke the AntPathMatcherFileFilter that reside in camel-spring.jar
         // and we don't want camel-core to have runtime dependency on camel-spring.jar
         // use class resolver from CamelContext to ensure it works with OSGi as well
-        Class clazz = context.getClassResolver().resolveClass(ANTPATHMATCHER_CLASSNAME);
+        Class<?> clazz = context.getClassResolver().resolveClass(ANTPATHMATCHER_CLASSNAME);
         ObjectHelper.notNull(clazz, ANTPATHMATCHER_CLASSNAME + " not found in classpath. camel-spring.jar is required in the classpath.");
 
         filter = ObjectHelper.newInstance(clazz);

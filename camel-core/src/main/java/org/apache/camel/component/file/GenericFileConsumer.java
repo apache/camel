@@ -230,7 +230,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
      * @param fileList  the current list of gathered files
      * @return <tt>true</tt> to continue, <tt>false</tt> to stop due hitting maxMessagesPerPoll limit
      */
-    public boolean canPollMoreFiles(List fileList) {
+    public boolean canPollMoreFiles(List<?> fileList) {
         if (maxMessagesPerPoll <= 0) {
             // no limitation
             return true;
