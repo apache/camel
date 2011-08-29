@@ -16,6 +16,9 @@
  */
 package org.apache.camel.model;
 
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,7 +26,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
@@ -73,6 +75,16 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
     public String getLabel() {
         return "convertBodyTo[" + getType() + "]";
     }
+    
+    public static void validateCharset(String charset) throws UnsupportedCharsetException {
+        if (charset != null) {
+            if (Charset.isSupported(charset)) {
+                Charset.forName(charset);
+                return;
+            }
+        }
+        throw new UnsupportedCharsetException(charset);
+    }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
@@ -82,7 +94,7 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
 
         // validate charset
         if (charset != null) {
-            IOConverter.validateCharset(charset);
+            validateCharset(charset);
         }
 
         return new ConvertBodyProcessor(getTypeClass(), getCharset());
