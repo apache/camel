@@ -549,6 +549,10 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         serviceName = service;
     }
 
+    public void setServiceName(String service) {
+        setServiceName(QName.valueOf(service));
+    }
+
     public QName getServiceName() {
         return serviceName;
     }
@@ -560,8 +564,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setPortName(QName port) {
         portName = port;
     }
+
     public void setEndpointName(QName port) {
         portName = port;
+    }
+
+    public void setEndpointName(String port) {
+        setEndpointName(QName.valueOf(port));
     }
 
     public String getDefaultOperationName() {

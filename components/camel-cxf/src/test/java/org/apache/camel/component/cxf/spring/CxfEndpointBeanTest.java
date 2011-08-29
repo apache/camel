@@ -18,14 +18,23 @@ package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Test;
+
+import javax.xml.namespace.QName;
 
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
     static int port1 = CXFTestSupport.getPort1();
-    static int port2 = CXFTestSupport.getPort2();
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts
+        System.setProperty("CxfEndpointBeans.serviceName", "{http://camel.apache.org/wsdl-first}PersonService");
+        System.setProperty("CxfEndpointBeans.endpointName", "{http://camel.apache.org/wsdl-first}soap");
+    }
+    private QName serviceName = QName.valueOf("{http://camel.apache.org/wsdl-first}PersonService");
+    private QName endpointName = QName.valueOf("{http://camel.apache.org/wsdl-first}soap");
 
-    
+
+
     protected String[] getApplicationContextFiles() {
         return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeans.xml"};
     }
@@ -40,6 +49,12 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         assertEquals("Got the wrong handlers size", 1, routerEndpoint.getHandlers().size());
         assertEquals("Got the wrong schemalocations size", 1, routerEndpoint.getSchemaLocations().size());
         assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", routerEndpoint.getSchemaLocations().get(0));
+
+        CxfEndpoint myEndpoint = (CxfEndpoint)ctx.getBean("myEndpoint");
+        assertEquals("Got the wrong endpointName", endpointName, myEndpoint.getPortName());
+        assertEquals("Got the wrong serviceName", serviceName, myEndpoint.getServiceName());
     }
+
+
    
 }

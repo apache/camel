@@ -34,11 +34,22 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
         return CxfSpringEndpoint.class;
     }
 
+    private boolean isSpringPlaceHolder(String value) {
+        if (value != null && value.startsWith("${") && value.endsWith("}")) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     protected void mapAttribute(BeanDefinitionBuilder bean, Element e, String name, String val) {
         if ("endpointName".equals(name) || "serviceName".equals(name)) {
-            QName q = parseQName(e, val);
-            bean.addPropertyValue(name, q);
+            if (isSpringPlaceHolder(val)) {
+                mapToProperty(bean, name, val);
+            } else {
+                QName q = parseQName(e, val);
+                bean.addPropertyValue(name, q);
+            }
         } else {
             mapToProperty(bean, name, val);
         }

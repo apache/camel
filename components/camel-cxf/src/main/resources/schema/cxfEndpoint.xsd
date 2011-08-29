@@ -54,8 +54,8 @@
           <xsd:attribute name="serviceClass" type="xsd:string"/>
           <xsd:attribute name="transportId" type="xsd:string"/>
           <xsd:attribute name="wsdlURL" type="xsd:string" />
-          <xsd:attribute name="endpointName" type="xsd:QName" />
-          <xsd:attribute name="serviceName" type="xsd:QName" />
+          <xsd:attribute name="endpointName" type="xsd:string" />
+          <xsd:attribute name="serviceName" type="xsd:string" />
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>
