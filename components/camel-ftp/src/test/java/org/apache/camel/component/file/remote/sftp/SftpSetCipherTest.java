@@ -41,7 +41,7 @@ public class SftpSetCipherTest extends SftpServerTestSupport {
         }
 
         String cipher = "blowfish-cbc";
-        String uri = "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&ciphers=" + cipher ;
+        String uri = "sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&ciphers=" + cipher;
         template.sendBodyAndHeader(uri , "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // test setting the cipher doesn't interfere with message payload

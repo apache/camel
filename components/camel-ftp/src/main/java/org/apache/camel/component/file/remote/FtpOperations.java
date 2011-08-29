@@ -544,7 +544,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             if (names == null) {
                 return false;
             }
-            return (names.length >= 1);
+            return names.length >= 1;
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
