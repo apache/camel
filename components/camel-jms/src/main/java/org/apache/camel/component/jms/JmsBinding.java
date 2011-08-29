@@ -46,7 +46,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
-import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
@@ -472,7 +472,7 @@ public class JmsBinding {
         // let body determine the type
         if (body instanceof Node || body instanceof String) {
             type = Text;
-        } else if (body instanceof byte[] || body instanceof GenericFile || body instanceof File || body instanceof Reader
+        } else if (body instanceof byte[] || body instanceof WrappedFile || body instanceof File || body instanceof Reader
                 || body instanceof InputStream || body instanceof ByteBuffer || body instanceof StreamCache) {
             type = Bytes;
         } else if (body instanceof Map) {

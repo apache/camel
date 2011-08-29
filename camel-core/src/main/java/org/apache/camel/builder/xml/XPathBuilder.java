@@ -47,8 +47,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.Service;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.bean.BeanInvocation;
-import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
@@ -779,7 +779,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         }
 
         // lets try coerce some common types into something JAXP can deal with
-        if (answer instanceof GenericFile) {
+        if (answer instanceof WrappedFile) {
             // special for files so we can work with them out of the box
             InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, answer);
             answer = new InputSource(is);

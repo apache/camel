@@ -27,6 +27,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StringSource;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -201,7 +202,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
         // set response body according to the message body
         Object body = out.getBody();
-        if (body instanceof GenericFile) {
+        if (body instanceof WrappedFile) {
             // grab body from generic file holder
             GenericFile<?> gf = (GenericFile<?>) body;
             body = gf.getBody();

@@ -30,7 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.StringSource;
-import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.WrappedFile;
 
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
@@ -213,7 +213,7 @@ public final class MessageHelper {
                 return prepend + "[Body is instance of java.io.Reader]";
             } else if (obj instanceof Writer) {
                 return prepend + "[Body is instance of java.io.Writer]";
-            } else if (obj instanceof GenericFile || obj instanceof File) {
+            } else if (obj instanceof WrappedFile || obj instanceof File) {
                 return prepend + "[Body is file based: " + obj + "]";
             }
         }
