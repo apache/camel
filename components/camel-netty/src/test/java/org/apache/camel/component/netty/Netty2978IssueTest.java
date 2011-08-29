@@ -32,11 +32,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
  * @version 
  */
+@Ignore("This test can cause CI servers to hang")
 public class Netty2978IssueTest extends BaseNettyTest {
 
     @Test
