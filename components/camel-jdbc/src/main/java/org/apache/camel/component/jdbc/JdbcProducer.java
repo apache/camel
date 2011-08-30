@@ -22,7 +22,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.sql.DataSource;
@@ -194,7 +194,7 @@ public class JdbcProducer extends DefaultProducer {
         List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
         int rowNumber = 0;
         while (rs.next() && (readSize == 0 || rowNumber < readSize)) {
-            Map<String, Object> row = new HashMap<String, Object>();
+            Map<String, Object> row = new LinkedHashMap<String, Object>();
             for (int i = 0; i < count; i++) {
                 int columnNumber = i + 1;
                 // use column label to get the name as it also handled SQL SELECT aliases
