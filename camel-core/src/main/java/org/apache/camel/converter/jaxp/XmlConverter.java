@@ -834,7 +834,9 @@ public class XmlConverter {
     }
 
     public TransformerFactory createTransformerFactory() {
-        return TransformerFactory.newInstance();
+        TransformerFactory factory = TransformerFactory.newInstance();
+        factory.setErrorListener(new XmlErrorListener());
+        return factory;
     }
 
 }
