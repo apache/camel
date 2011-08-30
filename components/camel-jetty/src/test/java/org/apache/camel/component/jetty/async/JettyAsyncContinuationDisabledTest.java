@@ -43,7 +43,7 @@ public class JettyAsyncContinuationDisabledTest extends BaseJettyTest {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("jetty:http://localhost:{{port}}/myservice?useContinuation=false")
-                    .to("async:Bye World")
+                    .to("async:bye:world")
                     .to("mock:result");
             }
         };

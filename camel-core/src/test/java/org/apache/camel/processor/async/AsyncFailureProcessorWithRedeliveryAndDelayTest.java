@@ -62,7 +62,7 @@ public class AsyncFailureProcessorWithRedeliveryAndDelayTest extends ContextTest
                         })
                         // invoking the async endpoint could also cause a failure so
                         // test that we can do redelivery
-                        .to("async:Bye Camel?failFirstAttempts=2")
+                        .to("async:bye:camel?failFirstAttempts=2")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();

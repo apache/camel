@@ -61,7 +61,7 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay3Test extends Con
                             beforeThreadName = Thread.currentThread().getName();
                         }
                     })
-                    .to("async:Bye Camel?failFirstAttempts=2")
+                    .to("async:bye:camel?failFirstAttempts=2")
                     .to("log:after")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

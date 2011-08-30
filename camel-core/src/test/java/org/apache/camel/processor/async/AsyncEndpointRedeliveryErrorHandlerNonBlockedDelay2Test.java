@@ -66,7 +66,7 @@ public class AsyncEndpointRedeliveryErrorHandlerNonBlockedDelay2Test extends Con
                             beforeThreadName = Thread.currentThread().getName();
                         }
                     })
-                    .to("async:Camel")
+                    .to("async:camel")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             LOG.info("Processing at attempt " + attempt + " " + exchange);

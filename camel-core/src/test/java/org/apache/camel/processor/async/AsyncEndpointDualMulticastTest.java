@@ -46,7 +46,7 @@ public class AsyncEndpointDualMulticastTest extends ContextTestSupport {
                         .to("mock:before")
                         .to("log:before")
                         .multicast()
-                            .to("async:Hi Camel").to("async:Bye Camel")
+                            .to("async:hi:camel").to("async:bye:camel")
                         .end()
                         // fully asynchronous support for multicasting is too complex
                         // so the main thread will block and wait for both to complete

@@ -53,7 +53,7 @@ public class AsyncEndpointSplitFineGrainedErrorHandlingTest extends ContextTestS
                 from("direct:start")
                     .split(body())
                         .to("mock:before")
-                        .to("async:Bye Camel")
+                        .to("async:bye:camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 if (counter++ == 1) {

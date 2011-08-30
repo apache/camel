@@ -45,7 +45,7 @@ public class AsyncEndpointSingleTopicLoadBalanceTest extends ContextTestSupport 
                         .to("log:before")
                         .loadBalance()
                             .topic()
-                            .to("async:Bye Camel")
+                            .to("async:bye:camel")
                         .end()
                         .to("log:after")
                         .to("mock:result");

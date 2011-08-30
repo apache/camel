@@ -46,7 +46,7 @@ public class JettyAsyncCBRTest extends BaseJettyTest {
                     .convertBodyTo(String.class)
                     .choice()
                         .when(body().contains("Camel"))
-                            .to("async:Bye World")
+                            .to("async:bye:world")
                         .end()
                     .to("mock:result");
             }

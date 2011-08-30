@@ -29,9 +29,20 @@ public class MyAsyncComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MyAsyncEndpoint answer = new MyAsyncEndpoint(uri, this);
-        answer.setReply(remaining);
+        answer.setReply(prepareReply(remaining));
         setProperties(answer, parameters);
         return answer;
     }
 
+    private String prepareReply(String value) {
+        // to make URIs valid we make the conventions of using ':' for ' ' and 
+        // capitalize words
+        String[] words = value.split(":");
+        String result = "";
+        for (String word : words) {
+            result += result.isEmpty() ? "" : " ";
+            result += word.substring(0, 1).toUpperCase() + word.substring(1);
+        }
+        return result;
+    }
 }

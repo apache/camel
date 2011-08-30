@@ -60,7 +60,7 @@ public class AsyncEndpointLoopTest extends ContextTestSupport {
                         })
                         .loop(2)
                             .to("mock:loop")
-                            .to("async:Bye Camel")
+                            .to("async:bye:camel")
                         .end()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

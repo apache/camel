@@ -62,7 +62,7 @@ public class AsyncEndpointRoundRobinLoadBalanceTest extends ContextTestSupport {
                         })
                         .loadBalance()
                             .roundRobin()
-                            .to("async:Bye Camel", "async:Bye World")
+                            .to("async:bye:camel", "async:Bye World")
                         .end()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

@@ -51,11 +51,11 @@ public class AsyncEndpointTryCatchFinally5Test extends ContextTestSupport {
                         .doCatch(IllegalArgumentException.class)
                             .to("mock:catch")
                             .to("log:catch")
-                            .to("async:Bye Camel")
+                            .to("async:bye:camel")
                         .doFinally()
                             .to("mock:finally")
                             .to("log:finally")
-                            .to("async:Bye World")
+                            .to("async:bye:world")
                         .end()
                         .to("mock:result")
                         .to("log:result");

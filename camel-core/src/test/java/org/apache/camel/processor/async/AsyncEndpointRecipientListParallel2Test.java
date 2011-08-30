@@ -60,7 +60,7 @@ public class AsyncEndpointRecipientListParallel2Test extends ContextTestSupport 
                         .recipientList(constant("direct:foo")).parallelProcessing();
 
                 from("direct:foo")
-                        .to("async:Bye Camel")
+                        .to("async:bye:camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();

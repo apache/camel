@@ -43,7 +43,7 @@ public class JettyAsyncTest extends BaseJettyTest {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("jetty:http://localhost:{{port}}/myservice")
-                    .to("async:Bye World")
+                    .to("async:bye:world")
                     .to("mock:result");
             }
         };

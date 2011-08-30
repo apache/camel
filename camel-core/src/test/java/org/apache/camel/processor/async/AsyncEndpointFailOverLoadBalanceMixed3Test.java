@@ -61,7 +61,7 @@ public class AsyncEndpointFailOverLoadBalanceMixed3Test extends ContextTestSuppo
                         .loadBalance()
                         .failover()
                             // first is async, the 2nd is sync based
-                            .to("async:Bye World?failFirstAttempts=5", "direct:ok")
+                            .to("async:bye:camel?failFirstAttempts=5", "direct:ok")
                         .end()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

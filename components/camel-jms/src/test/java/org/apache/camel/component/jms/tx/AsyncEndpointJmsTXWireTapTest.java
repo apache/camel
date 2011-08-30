@@ -71,7 +71,7 @@ public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
                                 assertTrue("Exchange should be transacted", exchange.isTransacted());
                             }
                         })
-                        .to("async:Bye Camel")
+                        .to("async:bye:camel")
                         .wireTap("direct:tap")
                         .to("mock:result");
 
@@ -82,7 +82,7 @@ public class AsyncEndpointJmsTXWireTapTest extends CamelSpringTestSupport {
                                 assertFalse("Exchange should NOT be transacted", exchange.isTransacted());
                             }
                         })
-                        .to("async:Hi Camel")
+                        .to("async:hi:camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();

@@ -57,7 +57,7 @@ public class AsyncEndpointSynchronousTest extends ContextTestSupport {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         })
-                        .to("async:Bye Camel?synchronous=true")
+                        .to("async:bye:camel?synchronous=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();

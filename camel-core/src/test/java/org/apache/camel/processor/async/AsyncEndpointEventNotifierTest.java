@@ -94,7 +94,7 @@ public class AsyncEndpointEventNotifierTest extends ContextTestSupport {
 
                 from("direct:start")
                         .to("mock:before")
-                        .to("async:Bye Camel?delay=250")
+                        .to("async:bye:camel?delay=250")
                         .to("mock:result");
             }
         };

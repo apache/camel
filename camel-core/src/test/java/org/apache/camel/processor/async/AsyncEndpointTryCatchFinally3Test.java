@@ -70,7 +70,7 @@ public class AsyncEndpointTryCatchFinally3Test extends ContextTestSupport {
                                     beforeThreadName = Thread.currentThread().getName();
                                 }
                             })
-                            .to("async:Bye Camel?failFirstAttempts=1")
+                            .to("async:bye:camel?failFirstAttempts=1")
                         .doCatch(Exception.class)
                             .to("log:catch")
                             .to("mock:catch")
@@ -79,7 +79,7 @@ public class AsyncEndpointTryCatchFinally3Test extends ContextTestSupport {
                                     middleThreadName = Thread.currentThread().getName();
                                 }
                             })
-                            .to("async:Bye World")
+                            .to("async:bye:world")
                         .doFinally()
                             .process(new Processor() {
                                 public void process(Exchange exchange) throws Exception {
@@ -88,7 +88,7 @@ public class AsyncEndpointTryCatchFinally3Test extends ContextTestSupport {
                             })
                             .to("log:after")
                             .to("mock:after")
-                            .to("async:Bye Camel")
+                            .to("async:bye:camel")
                         .end()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

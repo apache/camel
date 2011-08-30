@@ -61,7 +61,7 @@ public class AsyncTwoEndpointTest extends ContextTestSupport {
                                 beforeThreadName = Thread.currentThread().getName();
                             }
                         })
-                        .to("async:Hi Camel")
+                        .to("async:hi:camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 middleThreadName = Thread.currentThread().getName();
@@ -69,7 +69,7 @@ public class AsyncTwoEndpointTest extends ContextTestSupport {
                         })
                         .to("log:middle")
                         .to("mock:middle")
-                        .to("async:Bye Camel")
+                        .to("async:bye:camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();

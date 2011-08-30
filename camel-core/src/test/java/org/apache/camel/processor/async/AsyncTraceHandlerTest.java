@@ -67,7 +67,7 @@ public class AsyncTraceHandlerTest extends ContextTestSupport {
                 from("direct:start")
                         .tracing()
                         .to("log:before")
-                        .to("async:Bye Camel").id("async")
+                        .to("async:bye:camel").id("async")
                         .to("log:after")
                         .to("mock:result");
             }

@@ -88,7 +88,7 @@ public class AsyncEndpointJmsTXTryCatchFinallyTest extends CamelSpringTestSuppor
 
                 from("direct:foo")
                         // tx should be conveyed to this route as well
-                        .to("async:Bye Camel")
+                        .to("async:bye:camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();

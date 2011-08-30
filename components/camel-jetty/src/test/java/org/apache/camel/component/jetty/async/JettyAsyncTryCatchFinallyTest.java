@@ -52,10 +52,10 @@ public class JettyAsyncTryCatchFinallyTest extends BaseJettyTest {
                         .throwException(new IllegalArgumentException("Damn"))
                     .doCatch(IllegalArgumentException.class)
                         .to("mock:catch")
-                        .to("async:Bye Camel")
+                        .to("async:bye:camel")
                     .doFinally()
                         .to("mock:finally")
-                        .to("async:Bye World")
+                        .to("async:bye:world")
                     .end()
                     .to("mock:result");
             }

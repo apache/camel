@@ -58,7 +58,7 @@ public class AsyncEndpointSamplingTest extends ContextTestSupport {
                             }
                         })
                         .sample()
-                            .to("async:Bye Camel")
+                            .to("async:bye:camel")
                         .end()
                         .to("log:after")
                         .to("mock:after")

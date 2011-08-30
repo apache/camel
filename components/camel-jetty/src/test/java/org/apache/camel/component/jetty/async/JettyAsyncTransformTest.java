@@ -46,7 +46,7 @@ public class JettyAsyncTransformTest extends BaseJettyTest {
                     .to("log:foo")
                     .convertBodyTo(String.class)
                     .transform(constant("Hello World"))
-                    .to("async:Hi World")
+                    .to("async:hi:world")
                     .transform(constant("Bye World"))
                     .to("mock:result");
             }

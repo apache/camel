@@ -45,7 +45,7 @@ public class JettyAsyncFilterTest extends BaseJettyTest {
                 from("jetty:http://localhost:{{port}}/myservice")
                     .convertBodyTo(String.class)
                     .filter(body().contains("Camel"))
-                        .to("async:Bye World")
+                        .to("async:bye:world")
                     .end()
                     .to("mock:result");
             }

@@ -45,7 +45,7 @@ public class AsyncEndpointDualTopicLoadBalanceTest extends ContextTestSupport {
                         .to("log:before")
                         .loadBalance()
                             .topic()
-                            .to("async:Bye Camel", "async:Bye World")
+                            .to("async:bye:camel", "async:bye:world")
                         .end()
                         .to("log:after")
                         .to("mock:result");

@@ -69,7 +69,7 @@ public class AsyncEndpointIdempotentConsumerTest extends ContextTestSupport {
                             }
                         })
                         .idempotentConsumer(header("myId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
-                        .to("async:Bye Camel")
+                        .to("async:bye:camel")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 afterThreadName = Thread.currentThread().getName();

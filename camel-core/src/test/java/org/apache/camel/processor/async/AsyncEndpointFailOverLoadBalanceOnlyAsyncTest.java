@@ -60,7 +60,7 @@ public class AsyncEndpointFailOverLoadBalanceOnlyAsyncTest extends ContextTestSu
                         .loadBalance()
                             .failover()
                             // the last would succeed
-                            .to("async:Bye Camel?failFirstAttempts=5", "async:Bye Moon?failFirstAttempts=5", "async:Bye World")
+                            .to("async:bye:camel?failFirstAttempts=5", "async:Bye Moon?failFirstAttempts=5", "async:Bye World")
                         .end()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

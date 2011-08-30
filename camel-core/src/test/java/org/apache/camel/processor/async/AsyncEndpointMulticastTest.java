@@ -56,7 +56,7 @@ public class AsyncEndpointMulticastTest extends ContextTestSupport {
                             }
                         })
                         .multicast()
-                            .to("async:Hi Moon", "direct:foo")
+                            .to("async:hi:moon", "direct:foo")
                         .end()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

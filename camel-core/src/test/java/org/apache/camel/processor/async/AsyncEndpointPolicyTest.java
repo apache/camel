@@ -76,7 +76,7 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
                     // wraps the entire route in the same policy
                     .policy("foo")
                         .to("mock:foo")
-                        .to("async:Bye Camel")
+                        .to("async:bye:camel")
                         .to("mock:bar")
                         .to("mock:result");
 

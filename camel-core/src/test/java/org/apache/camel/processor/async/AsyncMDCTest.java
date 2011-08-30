@@ -71,7 +71,7 @@ public class AsyncMDCTest extends ContextTestSupport {
                             }
                         })
                         .to("log:before")
-                        .to("async:Bye Camel")
+                        .to("async:bye:camel")
                         .to("log:after")
                         .to("direct:b");
 

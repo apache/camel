@@ -62,7 +62,7 @@ public class AsyncEndpointFailOverLoadBalanceMixedTest extends ContextTestSuppor
                             .failover()
                             // the last would succeed
                             // and make it complex by having a direct endpoint which is not a real async processor
-                            .to("async:Bye Camel?failFirstAttempts=5", "direct:fail", "async:Bye Moon?failFirstAttempts=5", "async:Bye World")
+                            .to("async:bye:camel?failFirstAttempts=5", "direct:fail", "async:Bye Moon?failFirstAttempts=5", "async:Bye World")
                         .end()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

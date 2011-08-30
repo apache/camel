@@ -58,7 +58,7 @@ public class AsyncEndpointTryCatchFinallyTest extends ContextTestSupport {
                                     beforeThreadName = Thread.currentThread().getName();
                                 }
                             })
-                            .to("async:Bye Camel?failFirstAttempts=1")
+                            .to("async:bye:camel?failFirstAttempts=1")
                         .doCatch(Exception.class)
                             .process(new Processor() {
                                 public void process(Exchange exchange) throws Exception {
