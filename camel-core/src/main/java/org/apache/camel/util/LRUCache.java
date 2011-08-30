@@ -55,7 +55,6 @@ public class LRUCache<K, V> implements Service, Map<K, V> {
                 .Builder<K, V>()
                 .initialCapacity(initialCapacity)
                 .maximumWeightedCapacity(maximumCacheSize).build();
-//        super(initialCapacity, loadFactor, accessOrder);
         this.maxCacheSize = maximumCacheSize;
     }
 
@@ -101,6 +100,7 @@ public class LRUCache<K, V> implements Service, Map<K, V> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void putAll(Map<? extends K, ? extends V> map) {
         ((AbstractMap)map).putAll(map);
     }

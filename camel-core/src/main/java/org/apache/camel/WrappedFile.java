@@ -16,8 +16,16 @@
  */
 package org.apache.camel;
 
+/**
+ * Wraps a file.
+ */
 public interface WrappedFile<T> {
 
+    /**
+     * Gets the file.
+     *
+     * @return the file.
+     */
     T getFile();
 
 }
