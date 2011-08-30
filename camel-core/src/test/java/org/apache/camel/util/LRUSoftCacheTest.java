@@ -31,7 +31,6 @@ public class LRUSoftCacheTest extends TestSupport {
 
     public void testLRUSoftCacheGetAndPut() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
-        cache.start();
 
         cache.put(1, "foo");
         cache.put(2, "bar");
@@ -39,15 +38,11 @@ public class LRUSoftCacheTest extends TestSupport {
         assertEquals("foo", cache.get(1));
         assertEquals("bar", cache.get(2));
         assertEquals(null, cache.get(3));
-
         assertEquals(2, cache.size());
-
-        cache.stop();
     }
 
     public void testLRUSoftCacheHitsAndMisses() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
-        cache.start();
 
         cache.put(1, "foo");
         cache.put(2, "bar");
@@ -66,13 +61,10 @@ public class LRUSoftCacheTest extends TestSupport {
         cache.get(2);
         assertEquals(2, cache.getHits());
         assertEquals(1, cache.getMisses());
-
-        cache.stop();
     }
 
     public void testLRUSoftCachePutOverride() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
-        cache.start();
 
         Object old = cache.put(1, "foo");
         assertNull(old);
@@ -85,15 +77,11 @@ public class LRUSoftCacheTest extends TestSupport {
         old = cache.put(1, "changed");
         assertEquals("foo", old);
         assertEquals("changed", cache.get(1));
-
         assertEquals(2, cache.size());
-
-        cache.stop();
     }
 
     public void testLRUSoftCachePutAll() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
-        cache.start();
 
         Map<Integer, Object> map = new HashMap<Integer, Object>();
         map.put(1, "foo");
@@ -105,16 +93,12 @@ public class LRUSoftCacheTest extends TestSupport {
         assertEquals("bar", cache.get(2));
         assertEquals(null, cache.get(3));
         assertEquals(2, cache.size());
-
-        cache.stop();
     }
 
     public void testLRUSoftCachePutAllAnotherLRUSoftCache() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
-        cache.start();
 
         LRUSoftCache<Integer, Object> cache2 = new LRUSoftCache<Integer, Object>(1000);
-        cache2.start();
         cache2.put(1, "foo");
         cache2.put(2, "bar");
 
@@ -124,14 +108,10 @@ public class LRUSoftCacheTest extends TestSupport {
         assertEquals("bar", cache.get(2));
         assertEquals(null, cache.get(3));
         assertEquals(2, cache.size());
-
-        cache.stop();
-        cache2.stop();
     }
 
     public void testLRUSoftCacheRemove() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
-        cache.start();
 
         cache.put(1, "foo");
         cache.put(2, "bar");
@@ -139,13 +119,10 @@ public class LRUSoftCacheTest extends TestSupport {
         assertEquals("bar", cache.get(2));
         cache.remove(2);
         assertEquals(null, cache.get(2));
-
-        cache.stop();
     }
 
     public void testLRUSoftCacheValues() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
-        cache.start();
 
         cache.put(1, "foo");
         cache.put(2, "bar");
@@ -156,13 +133,10 @@ public class LRUSoftCacheTest extends TestSupport {
         Iterator<Object> it = col.iterator();
         assertEquals("foo", it.next());
         assertEquals("bar", it.next());
-
-        cache.stop();
     }
 
     public void testLRUSoftCacheEmpty() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
-        cache.start();
 
         assertTrue(cache.isEmpty());
 
@@ -177,28 +151,10 @@ public class LRUSoftCacheTest extends TestSupport {
 
         cache.clear();
         assertTrue(cache.isEmpty());
-
-        cache.stop();
-        assertTrue(cache.isEmpty());
-    }
-
-    public void testLRUSoftCacheStopEmpty() throws Exception {
-        LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
-        cache.start();
-
-        assertTrue(cache.isEmpty());
-
-        cache.put(1, "foo");
-        cache.put(2, "bar");
-        assertFalse(cache.isEmpty());
-
-        cache.stop();
-        assertTrue(cache.isEmpty());
     }
 
     public void testLRUSoftCacheContainsKey() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
-        cache.start();
 
         assertFalse(cache.containsKey(1));
         cache.put(1, "foo");
@@ -208,14 +164,13 @@ public class LRUSoftCacheTest extends TestSupport {
         cache.put(2, "foo");
         assertTrue(cache.containsKey(2));
 
-        cache.stop();
+        cache.clear();
         assertFalse(cache.containsKey(1));
         assertFalse(cache.containsKey(2));
     }
 
     public void testLRUSoftCacheKeySet() throws Exception {
         LRUSoftCache<Integer, Object> cache = new LRUSoftCache<Integer, Object>(1000);
-        cache.start();
 
         cache.put(1, "foo");
         cache.put(2, "foo");
@@ -226,8 +181,5 @@ public class LRUSoftCacheTest extends TestSupport {
         Iterator<Integer> it = keys.iterator();
         assertEquals(1, it.next().intValue());
         assertEquals(2, it.next().intValue());
-
-        cache.stop();
     }
-
 }

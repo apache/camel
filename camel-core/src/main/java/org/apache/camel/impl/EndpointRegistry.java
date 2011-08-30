@@ -20,8 +20,10 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Service;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUSoftCache}.
@@ -30,7 +32,7 @@ import org.apache.camel.util.LRUSoftCache;
  *
  * @version 
  */
-public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> {
+public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> implements Service {
 
     private final CamelContext context;
 
@@ -44,7 +46,20 @@ public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> {
         putAll(endpoints);
     }
 
-    /**
+	@Override
+	public void start() throws Exception {
+		resetStatistics();
+	}
+
+	@Override
+	public void stop() throws Exception {
+        if (!isEmpty()) {
+            ServiceHelper.stopServices(values());
+        }
+        purge();
+	}
+
+	/**
      * Purges the cache
      */
     public void purge() {

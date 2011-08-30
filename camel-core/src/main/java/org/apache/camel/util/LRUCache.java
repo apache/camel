@@ -16,21 +16,19 @@
  */
 package org.apache.camel.util;
 
-import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
-import org.apache.camel.Service;
 
 /**
  * A Least Recently Used Cache
  *
  * @version 
  */
-public class LRUCache<K, V> implements Service, Map<K, V> {
+public class LRUCache<K, V> implements Map<K, V> {
     private static final long serialVersionUID = -342098639681884414L;
     private int maxCacheSize = 10000;
     private final AtomicLong hits = new AtomicLong();
@@ -51,10 +49,9 @@ public class LRUCache<K, V> implements Service, Map<K, V> {
      *                                  or the load factor is non positive.
      */
     public LRUCache(int initialCapacity, int maximumCacheSize) {
-        map = new ConcurrentLinkedHashMap
-                .Builder<K, V>()
-                .initialCapacity(initialCapacity)
-                .maximumWeightedCapacity(maximumCacheSize).build();
+        map = new ConcurrentLinkedHashMap.Builder<K, V>()
+            .initialCapacity(initialCapacity)
+            .maximumWeightedCapacity(maximumCacheSize).build();
         this.maxCacheSize = maximumCacheSize;
     }
 
@@ -100,14 +97,14 @@ public class LRUCache<K, V> implements Service, Map<K, V> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void putAll(Map<? extends K, ? extends V> map) {
-        ((AbstractMap)map).putAll(map);
+        this.map.putAll(map);
     }
 
     @Override
     public void clear() {
         map.clear();
+        resetStatistics();
     }
 
     @Override
@@ -152,24 +149,6 @@ public class LRUCache<K, V> implements Service, Map<K, V> {
     public void resetStatistics() {
         hits.set(0);
         misses.set(0);
-    }
-
-    protected boolean removeEldestEntry(Map.Entry<K, V> entry) {
-        return map.size() > maxCacheSize;
-    }
-
-    public void start() throws Exception {
-        // noop
-    }
-
-    public void stop() throws Exception {
-        // stop the value and clear the cache
-        if (!isEmpty()) {
-            ServiceHelper.stopServices(values());
-            map.clear();
-            hits.set(0);
-            misses.set(0);
-        }
     }
 
     @Override

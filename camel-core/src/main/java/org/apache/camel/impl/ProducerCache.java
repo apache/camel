@@ -395,12 +395,14 @@ public class ProducerCache extends ServiceSupport {
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(producers, pool);
+        ServiceHelper.stopServices(pool);
+        ServiceHelper.stopServices(producers.values());
         producers.clear();
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(pool, producers);
+        ServiceHelper.startServices(producers.values());
+        ServiceHelper.startServices(pool);
     }
 
     /**
@@ -426,7 +428,7 @@ public class ProducerCache extends ServiceSupport {
     public int getCapacity() {
         int capacity = -1;
         if (producers instanceof LRUCache) {
-            LRUCache cache = (LRUCache) producers;
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
             capacity = cache.getMaxCacheSize();
         }
         return capacity;
@@ -442,7 +444,7 @@ public class ProducerCache extends ServiceSupport {
     public long getHits() {
         long hits = -1;
         if (producers instanceof LRUCache) {
-            LRUCache cache = (LRUCache) producers;
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
             hits = cache.getHits();
         }
         return hits;
@@ -458,7 +460,7 @@ public class ProducerCache extends ServiceSupport {
     public long getMisses() {
         long misses = -1;
         if (producers instanceof LRUCache) {
-            LRUCache cache = (LRUCache) producers;
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
             misses = cache.getMisses();
         }
         return misses;
@@ -469,7 +471,7 @@ public class ProducerCache extends ServiceSupport {
      */
     public void resetCacheStatistics() {
         if (producers instanceof LRUCache) {
-            LRUCache cache = (LRUCache) producers;
+            LRUCache<String, Producer> cache = (LRUCache<String, Producer>)producers;
             cache.resetStatistics();
         }
     }

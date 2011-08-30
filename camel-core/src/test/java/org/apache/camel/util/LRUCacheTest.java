@@ -81,35 +81,8 @@ public class LRUCacheTest extends TestCase {
         cache.get("B");
         assertEquals(1, cache.getHits());
         assertEquals(0, cache.getMisses());
-    }
 
-    public void testLRUCacheHitsAndMissesStop() throws Exception {
-        MyService service1 = new MyService();
-        MyService service2 = new MyService();
-
-        cache.put("A", service1);
-        cache.put("B", service2);
-
-        assertEquals(0, cache.getHits());
-        assertEquals(0, cache.getMisses());
-
-        cache.get("A");
-        assertEquals(1, cache.getHits());
-        assertEquals(0, cache.getMisses());
-
-        cache.get("A");
-        assertEquals(2, cache.getHits());
-        assertEquals(0, cache.getMisses());
-
-        cache.get("B");
-        assertEquals(3, cache.getHits());
-        assertEquals(0, cache.getMisses());
-
-        cache.stop();
-        assertEquals(0, cache.getHits());
-        assertEquals(0, cache.getMisses());
-
-        cache.start();
+        cache.clear();
         assertEquals(0, cache.getHits());
         assertEquals(0, cache.getMisses());
 
@@ -118,37 +91,11 @@ public class LRUCacheTest extends TestCase {
         assertEquals(1, cache.getMisses());
     }
 
-    public void testLRUCacheStop() throws Exception {
-        MyService service1 = new MyService();
-        MyService service2 = new MyService();
-
-        cache.put("A", service1);
-        cache.put("B", service2);
-
-        assertEquals(false, service1.isStopped());
-        assertEquals(false, service2.isStopped());
-
-        cache.stop();
-
-        assertEquals(0, cache.size());
-
-        assertEquals(true, service1.isStopped());
-        assertEquals(true, service2.isStopped());
-    }
-
     private static final class MyService implements Service {
-
-        private boolean stopped;
-
         public void start() throws Exception {
         }
 
         public void stop() throws Exception {
-            stopped = true;
-        }
-
-        public boolean isStopped() {
-            return stopped;
         }
     }
 }

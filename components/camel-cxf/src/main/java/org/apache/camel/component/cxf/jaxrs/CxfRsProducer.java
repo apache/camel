@@ -340,11 +340,11 @@ public class CxfRsProducer extends DefaultProducer {
         }
         
         public void start() throws Exception {
-            this.cache.start();
+            // noop
         }
         
         public void stop() throws Exception {
-            this.cache.stop();
+            cache.clear();
         }
 
         public JAXRSClientFactoryBean get(String address) throws Exception {
