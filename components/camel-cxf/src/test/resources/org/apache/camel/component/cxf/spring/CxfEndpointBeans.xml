@@ -44,4 +44,15 @@
     serviceClass="org.apache.camel.wsdl_first.Person" serviceName="${CxfEndpointBeans.serviceName}" endpointName="${CxfEndpointBeans.endpointName}"
     wsdlURL="person.wsdl"/>
 
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+     <route>
+        <from uri="direct:start" />
+        <to uri="cxf:bean:myEndpoint" />
+    </route>
+    <route>
+        <from uri="cxf:bean:myEndpoint" />
+        <to uri="mock:result" />
+    </route>
+  </camelContext>
+
 </beans>

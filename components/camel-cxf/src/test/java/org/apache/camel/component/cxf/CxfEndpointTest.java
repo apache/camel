@@ -54,12 +54,10 @@ public class CxfEndpointTest extends Assert {
         CxfComponent cxfComponent = new CxfComponent(new SpringCamelContext(ctx));
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint)cxfComponent.createEndpoint("cxf://bean:serviceEndpoint");
 
-        ServerFactoryBean svf = new ServerFactoryBean();
-        endpoint.configure(svf);
-        assertEquals("Got the wrong endpoint address", svf.getAddress(), 
+        assertEquals("Got the wrong endpoint address", endpoint.getAddress(),
                      "http://localhost:" + port2 + "/CxfEndpointTest/helloworld");
         assertEquals("Got the wrong endpont service class",
-            svf.getServiceClass().getCanonicalName(),
+            endpoint.getServiceClass().getCanonicalName(),
             "org.apache.camel.component.cxf.HelloService");
     }
     
