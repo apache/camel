@@ -71,7 +71,7 @@ public class JettyHttpProducerContentBasedRouteTest extends BaseJettyTest {
             public void configure() throws Exception {
                 from(serverUri)
                     .choice()
-                    .when().simple("in.header.one").to("mock:one")
+                    .when().simple("${header.one}").to("mock:one")
                     .otherwise()
                     .to("mock:other");
             }

@@ -58,7 +58,7 @@ public class BeanParameterValueOverloadedTest extends ContextTestSupport {
                     .to("mock:result");
 
                 from("direct:start2")
-                    .to("bean:foo?method=bar(body,false,true)")
+                    .to("bean:foo?method=bar(${body},false,true)")
                     .to("mock:result");
             }
         };

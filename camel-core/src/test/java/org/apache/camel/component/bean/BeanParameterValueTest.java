@@ -100,7 +100,7 @@ public class BeanParameterValueTest extends ContextTestSupport {
                     .to("mock:result");
 
                 from("direct:start2")
-                    .to("bean:foo?method=bar(body,true)")
+                    .to("bean:foo?method=bar(${body},true)")
                     .to("mock:result");
 
                 from("direct:start3")

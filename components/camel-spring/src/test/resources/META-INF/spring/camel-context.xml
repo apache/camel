@@ -56,7 +56,7 @@
     <route>
       <from uri="direct:c.start"/>
       <resequence>
-        <simple>body</simple>
+        <simple>${body}</simple>
         <to uri="mock:c.end"/>
       </resequence>
     </route>

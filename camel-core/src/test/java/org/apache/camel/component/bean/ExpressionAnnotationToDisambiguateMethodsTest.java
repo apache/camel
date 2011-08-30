@@ -72,7 +72,7 @@ public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSu
             fail("bar() called with: " + body);
         }
 
-        public void foo(@Simple("header.foo") String bar) {
+        public void foo(@Simple("${header.foo}") String bar) {
             this.bar = bar;
             LOG.info("foo() method called with: " + bar);
         }
@@ -90,7 +90,7 @@ public class ExpressionAnnotationToDisambiguateMethodsTest extends ContextTestSu
         }
 
         @Handler
-        public void foo(@Simple("header.foo") String bar) {
+        public void foo(@Simple("${header.foo}") String bar) {
             this.bar = bar;
             LOG.info("foo() method called with: " + bar);
         }

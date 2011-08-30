@@ -129,10 +129,20 @@ public final class GenericFileDefaultSorter {
     public static Comparator<Exchange> sortByFileLanguage(
             final CamelContext context, final String expression, final boolean reverse,
             final boolean ignoreCase, final Comparator<Exchange> nested) {
+
+        // the expression should be enclosed by ${ }
+        String text = expression;
+        if (!expression.startsWith("${")) {
+            text = "${" + text;
+        }
+        if (!expression.endsWith("}")) {
+            text = text + "}";
+        }
+        Language language = context.resolveLanguage("file");
+        final Expression exp = language.createExpression(text);
+
         return new Comparator<Exchange>() {
             public int compare(Exchange o1, Exchange o2) {
-                Language language = context.resolveLanguage("file");
-                final Expression exp = language.createExpression(expression);
                 Object result1 = exp.evaluate(o1, Object.class);
                 Object result2 = exp.evaluate(o2, Object.class);
                 int answer = ObjectHelper.compare(result1, result2, ignoreCase);

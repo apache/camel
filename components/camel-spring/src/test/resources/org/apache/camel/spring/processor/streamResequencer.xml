@@ -28,7 +28,7 @@
       <from uri="direct:start"/>
       <resequence>
         <stream-config/>
-        <simple>in.header.seqnum</simple>
+        <simple>${header.seqnum}</simple>
         <to uri="mock:result" />
       </resequence>
     </route>

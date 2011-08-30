@@ -27,7 +27,7 @@
     <route>
       <from uri="direct:start"/>
       <resequence>
-        <simple>body</simple>
+        <simple>${body}</simple>
         <to uri="mock:result"/>
       </resequence>
     </route>

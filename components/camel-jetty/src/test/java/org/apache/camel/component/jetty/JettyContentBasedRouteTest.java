@@ -55,7 +55,7 @@ public class JettyContentBasedRouteTest extends BaseJettyTest {
                 // START SNIPPET: e1
                 from("jetty:" + serverUri)
                     .choice()
-                    .when().simple("in.header.one").to("mock:one")
+                    .when().simple("${header.one}").to("mock:one")
                     .otherwise()
                     .to("mock:other");
                 // END SNIPPET: e1

@@ -26,7 +26,7 @@
         <route>
             <from uri="direct:start"/>
             <split onPrepareRef="fixNamePrepare">
-                <simple>body</simple>
+                <simple>${body}</simple>
                 <to uri="direct:a"/>
             </split>
         </route>

@@ -27,7 +27,7 @@
     <route>
       <from uri="seda:a"/>
       <setOutHeader headerName="oldBodyValue">
-        <simple>body</simple>
+        <simple>${body}</simple>
       </setOutHeader>
       <to uri="mock:b"/>     
     </route>

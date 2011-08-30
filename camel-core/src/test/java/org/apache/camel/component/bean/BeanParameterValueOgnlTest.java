@@ -67,7 +67,7 @@ public class BeanParameterValueOgnlTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("bean:foo?method=bar(body,true)")
+                    .to("bean:foo?method=bar(${body},true)")
                     .to("mock:result");
 
                 from("direct:start2")

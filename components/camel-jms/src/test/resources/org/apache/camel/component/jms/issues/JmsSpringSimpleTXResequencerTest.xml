@@ -27,7 +27,7 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
             <from uri="activemq:queue:in"/>
             <resequence>
                 <stream-config capacity="100" timeout="5000"/>
-                <simple>body</simple>
+                <simple>${body}</simple>
                 <to uri="activemq:queue:out"/>
             </resequence>
         </route>

@@ -84,7 +84,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${file:size}", file.length());
 
         // modified is a Date object
-        Date modified = SimpleLanguage.simple("file:modified").evaluate(exchange, Date.class);
+        Date modified = SimpleLanguage.simple("${file:modified}").evaluate(exchange, Date.class);
         assertEquals(new Date(file.lastModified()), modified);
     }
 
@@ -103,7 +103,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("$simple{file:size}", file.length());
 
         // modified is a Date object
-        Date modified = SimpleLanguage.simple("file:modified").evaluate(exchange, Date.class);
+        Date modified = SimpleLanguage.simple("${file:modified}").evaluate(exchange, Date.class);
         assertEquals(new Date(file.lastModified()), modified);
     }
 

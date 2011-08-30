@@ -27,7 +27,7 @@
     <route>
       <from uri="direct:start"/>
       <transform>
-        <simple>body</simple>
+        <simple>${body}</simple>
       </transform>
       <to uri="mock:a"/>
       <to uri="mock:b"/>

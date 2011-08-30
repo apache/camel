@@ -14,33 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language;
+package org.apache.camel.processor;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test routing with simple language.
+ * @version 
  */
-public class SimpleLanguageRouteTest extends ContextTestSupport {
-
-    public void testSimpleFilter() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:foo");
-        mock.expectedBodiesReceived("Hello Foo");
-
-        template.sendBody("seda:foo", "Hello Bar");
-        template.sendBodyAndHeader("seda:foo", "Hello Foo", "foo", "yes");
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+public class ValidateSimpleRegExpTest extends ValidateRegExpTest {
+    
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("seda:foo")
-                    .filter().simple("${header.foo}").to("mock:foo");
+            public void configure() {
+                from("direct:start")
+                    .validate().simple("${bodyAs(java.lang.String)} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'")
+                    .to("mock:result");
             }
         };
     }

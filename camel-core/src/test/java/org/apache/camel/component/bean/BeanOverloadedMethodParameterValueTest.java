@@ -34,7 +34,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .bean(MyBean.class, "hello(body)")
+                    .bean(MyBean.class, "hello(${body})")
                     .to("mock:result");
 
             }
@@ -73,7 +73,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e2
                 from("direct:start")
-                    .bean(MyBean.class, "hello(body, header.country)")
+                    .bean(MyBean.class, "hello(${body}, ${header.country})")
                     .to("mock:result");
                 // END SNIPPET: e2
             }
@@ -149,7 +149,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .bean(MyBean.class, "times(byte[], header.times)")
+                    .bean(MyBean.class, "times(byte[], ${header.times})")
                     .to("mock:result");
 
             }

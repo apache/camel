@@ -28,7 +28,7 @@
       <from uri="file://src/test/data/fixed?noop=true"/>
       <unmarshal ref="fixedFormat"/>
       <split>
-        <simple>in.body</simple>
+        <simple>${body}</simple>
         <convertBodyTo type="java.util.Map"/>
         <to uri="mock:results"/>
       </split>

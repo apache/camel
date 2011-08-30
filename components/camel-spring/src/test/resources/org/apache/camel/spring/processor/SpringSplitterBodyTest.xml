@@ -28,7 +28,7 @@
             <from uri="direct:start"/>
             <split>
                 <!-- split the body, which contains a List with the data to be splitted -->
-                <simple>body</simple>
+                <simple>${body}</simple>
                 <to uri="mock:split"/>
             </split>
         </route>

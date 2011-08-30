@@ -28,7 +28,7 @@
             <from uri="direct:start"/>
             <!-- will sort the body using a default comparator -->
             <sort>
-                <simple>body</simple>
+                <simple>${body}</simple>
             </sort>
             <to uri="mock:result"/>
         </route>
