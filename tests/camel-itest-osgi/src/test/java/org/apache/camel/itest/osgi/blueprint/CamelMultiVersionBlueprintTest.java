@@ -80,7 +80,7 @@ public class CamelMultiVersionBlueprintTest extends OSGiBlueprintTestSupport {
                 scanFeatures(getCamelKarafFeatureUrl(),
                                 "camel-blueprint", "camel-test")
 
-                );
+        );
         return options;
     }
 }
