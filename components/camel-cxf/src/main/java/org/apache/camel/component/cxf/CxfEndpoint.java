@@ -27,14 +27,10 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.Handler;
 
+import org.apache.camel.*;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.w3c.dom.Element;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelException;
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.Service;
 import org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
@@ -90,6 +86,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private Class<?> serviceClass;
     private QName portName;
     private QName serviceName;
+    private String portNameString;
+    private String serviceNameString;
     private String defaultOperationName;
     private String defaultOperationNamespace;
     // This is for invoking the CXFClient with wrapped parameters of unwrapped parameters
@@ -189,11 +187,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (sfb instanceof JaxWsServerFactoryBean && handlers != null) {
             ((JaxWsServerFactoryBean)sfb).setHandlers(handlers);
         }
-        if (transportId != null) {
-            sfb.setTransportId(transportId);
+        if (getTransportId() != null) {
+            sfb.setTransportId(getTransportId());
         }
-        if (bindingId != null) {
-            sfb.setBindingId(bindingId);
+        if (getBindingId() != null) {
+            sfb.setBindingId(getBindingId());
         }
         
         // wsdl url
@@ -319,11 +317,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (factoryBean instanceof JaxWsProxyFactoryBean && handlers != null) {
             ((JaxWsProxyFactoryBean)factoryBean).setHandlers(handlers);
         }
-        if (transportId != null) {
-            factoryBean.setTransportId(transportId);
+        if (getTransportId() != null) {
+            factoryBean.setTransportId(getTransportId());
         }
-        if (bindingId != null) {
-            factoryBean.setBindingId(bindingId);
+        if (getBindingId() != null) {
+            factoryBean.setBindingId(getBindingId());
         }
 
         // address
@@ -502,6 +500,18 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return answer;
     }
 
+    protected String resolvePropertyPlaceholders(String str) {
+        try {
+            if (getCamelContext() != null) {
+                return ((DefaultCamelContext)getCamelContext()).resolvePropertyPlaceholders(str);
+            } else {
+                return str;
+            }
+        } catch (Exception ex) {
+            throw new RuntimeCamelException(ex);
+        }
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -514,7 +524,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public String getPublishedEndpointUrl() {
-        return publishedEndpointUrl;
+        return resolvePropertyPlaceholders(publishedEndpointUrl);
     }
 
     public void setPublishedEndpointUrl(String url) {
@@ -522,7 +532,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public String getWsdlURL() {
-        return wsdlURL;
+        return resolvePropertyPlaceholders(wsdlURL);
     }
 
     public void setWsdlURL(String url) {
@@ -542,11 +552,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
     
     public void setServiceClass(String type) throws ClassNotFoundException {
-        serviceClass = ClassLoaderUtils.loadClass(type, getClass());
+        serviceClass = ClassLoaderUtils.loadClass(resolvePropertyPlaceholders(type), getClass());
     }
 
     public void setServiceNameString(String service) {
-        serviceName = QName.valueOf(service);
+        serviceNameString = service;
     }
 
     public void setServiceName(QName service) {
@@ -554,10 +564,16 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public QName getServiceName() {
+        if (serviceName == null && serviceNameString != null) {
+            serviceName = QName.valueOf(resolvePropertyPlaceholders(serviceNameString));
+        }
         return serviceName;
     }
 
     public QName getPortName() {
+        if (portName == null && portNameString != null) {
+            portName = QName.valueOf(resolvePropertyPlaceholders(portNameString));
+        }
         return portName;
     }
 
@@ -566,7 +582,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public void setEndpointNameString(String port) {
-        portName = QName.valueOf(port);
+        portNameString = port;
     }
 
     public void setEndpointName(QName port) {
@@ -574,7 +590,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public String getDefaultOperationName() {
-        return defaultOperationName;
+        return resolvePropertyPlaceholders(defaultOperationName);
     }
 
     public void setDefaultOperationName(String name) {
@@ -582,7 +598,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public String getDefaultOperationNamespace() {
-        return defaultOperationNamespace;
+        return resolvePropertyPlaceholders(defaultOperationNamespace);
     }
 
     public void setDefaultOperationNamespace(String namespace) {
@@ -737,7 +753,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public String getAddress() {
-        return address;
+        return resolvePropertyPlaceholders(address);
     }
 
     public void setMtomEnabled(boolean mtomEnabled) {
@@ -859,7 +875,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public String getTransportId() {
-        return transportId;
+        return resolvePropertyPlaceholders(transportId);
     }
 
     public void setTransportId(String transportId) {
@@ -867,7 +883,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
     
     public String getBindingId() {
-        return bindingId;
+        return resolvePropertyPlaceholders(bindingId);
     }
 
     public void setBindingId(String bindingId) {

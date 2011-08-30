@@ -30,6 +30,8 @@ import org.apache.cxf.transport.http.HTTPException;
 
 import org.junit.Test;
 
+import javax.xml.namespace.QName;
+
 public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
 
     protected String[] getApplicationContextFiles() {
@@ -66,6 +68,22 @@ public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
         assertTrue("Should get the fault here", 
                    ex instanceof org.apache.cxf.interceptor.Fault
                    || ex instanceof HTTPException);
+    }
+
+    @Test
+    public void testCxfBeanWithCamelPropertiesHolder() throws Exception {
+        // get the camelContext from application context
+        CamelContext camelContext = (CamelContext) ctx.getBean("camel");
+        CxfEndpoint testEndpoint = (CxfEndpoint)camelContext.getEndpoint("cxf:bean:testEndpoint");
+        QName endpointName = QName.valueOf("{http://org.apache.camel.component.cxf}myEndpoint");
+        QName serviceName = QName.valueOf("{http://org.apache.camel.component.cxf}myService");
+
+        assertEquals("Got a wrong address", "http://localhost:9000/testEndpoint", testEndpoint.getAddress());
+        assertEquals("Got a wrong bindingId", "http://schemas.xmlsoap.org/wsdl/soap12/", testEndpoint.getBindingId());
+        assertEquals("Got a wrong transportId", "http://cxf.apache.org/transports/http", testEndpoint.getTransportId());
+        assertEquals("Got a wrong endpointName", endpointName, testEndpoint.getPortName());
+        assertEquals("Got a wrong WsdlURL", "wsdl/test.wsdl", testEndpoint.getWsdlURL());
+        assertEquals("Got a wrong serviceName", serviceName, testEndpoint.getServiceName());
     }
    
 }

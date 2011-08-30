@@ -32,8 +32,13 @@
   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfEndpointBeansRouterTest/router"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointBeansRouterTest/service"
+    serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointBeansRouterTest/helloworld"
+  <cxf:cxfEndpoint id="testEndpoint" address="{{address}}"
+    bindingId="{{bindingId}}" transportId="{{transportId}}"
+    serviceName="{{serviceName}}" endpointName="{{endpointName}}"
+    wsdlURL="{{wsdlURL}}"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
   <!-- Setting the http conduit policy -->
@@ -46,6 +51,7 @@
   <bean id="myProcessor" class="org.apache.camel.component.cxf.spring.MyProcessor"/>
 
    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <propertyPlaceholder id="properties" location="org/apache/camel/component/cxf/spring/testEndpoint.properties"/>
     <route>
       <from uri="cxf:bean:routerEndpoint" />
       <process ref="myProcessor" />
