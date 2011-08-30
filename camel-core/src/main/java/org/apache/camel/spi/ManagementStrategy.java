@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.management.Statistic;
 
 /**
  * Strategy for management.
@@ -103,18 +102,6 @@ public interface ManagementStrategy extends Service {
      * @throws Exception can be thrown if the notification failed
      */
     void notify(EventObject event) throws Exception;
-
-    /**
-     * Creates a statistic; a representation of raw statistical data.
-     *
-     * @param name The unique name assigned to the statistic usage.
-     * @param owner The object whose identity is to be associated with the metric.
-     * @param updateMode The update mode to be assigned to the returned statistic.
-     * @return the statistic
-     *
-     * @see Statistic.UpdateMode
-     */
-    Statistic createStatistic(String name, Object owner, Statistic.UpdateMode updateMode);
 
     /**
      * Gets the event notifiers.

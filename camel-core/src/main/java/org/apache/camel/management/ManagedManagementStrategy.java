@@ -34,7 +34,6 @@ import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementAgent;
-import org.apache.camel.spi.management.Statistic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,11 +156,6 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
     @Override
     public boolean manageProcessor(ProcessorDefinition<?> definition) {
         return true;
-    }
-
-    @Override
-    public Statistic createStatistic(String name, Object owner, Statistic.UpdateMode updateMode) {
-        return new DefaultStatistic(updateMode);
     }
 
     private ObjectName getObjectName(Object managedObject, Object preferedName) throws Exception {

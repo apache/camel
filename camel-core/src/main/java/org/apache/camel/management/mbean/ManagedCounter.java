@@ -20,14 +20,13 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.management.ManagedAttribute;
 import org.apache.camel.spi.management.ManagedOperation;
 import org.apache.camel.spi.management.ManagedResource;
-import org.apache.camel.spi.management.Statistic;
 
 @ManagedResource(description = "Managed Counter")
 public abstract class ManagedCounter {
     protected Statistic exchangesTotal;
 
     public void init(ManagementStrategy strategy) {
-        this.exchangesTotal = strategy.createStatistic("org.apache.camel.exchangesTotal", this, Statistic.UpdateMode.COUNTER);
+        this.exchangesTotal = new Statistic("org.apache.camel.exchangesTotal", this, Statistic.UpdateMode.COUNTER);
     }
 
     @ManagedOperation(description = "Reset counters")

@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi.management;
+package org.apache.camel.management.mbean;
 
 /**
- * For gathering basic statistics
+ * Default implementation of {@link Statistic}
  */
-public interface Statistic {
-
+public class Statistic {
     /**
      * Statistics mode
      * <ul>
@@ -41,36 +40,71 @@ public interface Statistic {
         VALUE, DIFFERENCE, COUNTER, MAXIMUM, MINIMUM
     }
 
-    /**
-     * Shorthand for updateValue(1).
-     */
-    void increment();
+    private final UpdateMode updateMode;
+    private long value;
+    private long updateCount;
 
     /**
-     * Update statistic value. The update will be applied according to the
-     * {@link UpdateMode}
+     * Instantiates a new statistic.
+     * @param owner 
+     * @param name 
      *
-     * @param value the value
+     * @param updateMode The statistic update mode.
      */
-    void updateValue(long value);
+    public Statistic(String name, Object owner, UpdateMode updateMode) {
+        this.updateMode = updateMode;
+    }
 
-    /**
-     * Gets the current value of the statistic since the last reset.
-     *
-     * @return the value
-     */
-    long getValue();
+    public synchronized void updateValue(long newValue) {
+        switch (this.updateMode) {
+        case COUNTER:
+            this.value += newValue;
+            break;
+        case VALUE:
+            this.value = newValue;
+            break;
+        case DIFFERENCE:
+            this.value -= newValue;
+            if (this.value < 0) {
+                this.value = -this.value;
+            }
+            break;
+        case MAXIMUM:
+            // initialize value at first time
+            if (this.updateCount == 0 || this.value < newValue) {
+                this.value = newValue;
+            }
+            break;
+        case MINIMUM:
+            // initialize value at first time
+            if (this.updateCount == 0 || this.value > newValue) {
+                this.value = newValue;
+            }
+            break;
+        default:
+        }
+        this.updateCount++;
+    }
 
-    /**
-     * Gets the number of times the statistic has been updated since the last reset.
-     *
-     * @return the update count
-     */
-    long getUpdateCount();
+    public synchronized void increment() {
+        updateValue(1);
+    }
 
-    /**
-     * Resets the statistic's value and update count to zero.
-     */
-    void reset();
+    public synchronized long getValue() {
+        return this.value;
+    }
+
+    public synchronized long getUpdateCount() {
+        return this.updateCount;
+    }
+
+    public synchronized void reset() {
+        this.value = 0;
+        this.updateCount = 0;
+    }
+
+    public String toString() {
+        return "" + value;
+    }
 
 }

@@ -24,7 +24,6 @@ import org.apache.camel.spi.management.ManagedAttribute;
 import org.apache.camel.spi.management.ManagedOperation;
 import org.apache.camel.spi.management.ManagedResource;
 import org.apache.camel.spi.management.PerformanceCounter;
-import org.apache.camel.spi.management.Statistic;
 import org.apache.camel.util.ExchangeHelper;
 
 @ManagedResource(description = "PerformanceCounter")
@@ -46,22 +45,22 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
 
     public void init(ManagementStrategy strategy) {
         super.init(strategy);
-        this.exchangesCompleted = strategy.createStatistic("org.apache.camel.exchangesCompleted", this, Statistic.UpdateMode.COUNTER);
-        this.exchangesFailed = strategy.createStatistic("org.apache.camel.exchangesFailed", this, Statistic.UpdateMode.COUNTER);
+        this.exchangesCompleted = new Statistic("org.apache.camel.exchangesCompleted", this, Statistic.UpdateMode.COUNTER);
+        this.exchangesFailed = new Statistic("org.apache.camel.exchangesFailed", this, Statistic.UpdateMode.COUNTER);
 
-        this.failuresHandled = strategy.createStatistic("org.apache.camel.failuresHandled", this, Statistic.UpdateMode.COUNTER);
-        this.redeliveries = strategy.createStatistic("org.apache.camel.redeliveries", this, Statistic.UpdateMode.COUNTER);
+        this.failuresHandled = new Statistic("org.apache.camel.failuresHandled", this, Statistic.UpdateMode.COUNTER);
+        this.redeliveries = new Statistic("org.apache.camel.redeliveries", this, Statistic.UpdateMode.COUNTER);
 
-        this.minProcessingTime = strategy.createStatistic("org.apache.camel.minimumProcessingTime", this, Statistic.UpdateMode.MINIMUM);
-        this.maxProcessingTime = strategy.createStatistic("org.apache.camel.maximumProcessingTime", this, Statistic.UpdateMode.MAXIMUM);
-        this.totalProcessingTime = strategy.createStatistic("org.apache.camel.totalProcessingTime", this, Statistic.UpdateMode.COUNTER);
-        this.lastProcessingTime = strategy.createStatistic("org.apache.camel.lastProcessingTime", this, Statistic.UpdateMode.VALUE);
-        this.meanProcessingTime = strategy.createStatistic("org.apache.camel.meanProcessingTime", this, Statistic.UpdateMode.VALUE);
+        this.minProcessingTime = new Statistic("org.apache.camel.minimumProcessingTime", this, Statistic.UpdateMode.MINIMUM);
+        this.maxProcessingTime = new Statistic("org.apache.camel.maximumProcessingTime", this, Statistic.UpdateMode.MAXIMUM);
+        this.totalProcessingTime = new Statistic("org.apache.camel.totalProcessingTime", this, Statistic.UpdateMode.COUNTER);
+        this.lastProcessingTime = new Statistic("org.apache.camel.lastProcessingTime", this, Statistic.UpdateMode.VALUE);
+        this.meanProcessingTime = new Statistic("org.apache.camel.meanProcessingTime", this, Statistic.UpdateMode.VALUE);
 
-        this.firstExchangeCompletedTimestamp = strategy.createStatistic("org.apache.camel.firstExchangeCompletedTimestamp", this, Statistic.UpdateMode.VALUE);
-        this.firstExchangeFailureTimestamp = strategy.createStatistic("org.apache.camel.firstExchangeFailureTimestamp", this, Statistic.UpdateMode.VALUE);
-        this.lastExchangeCompletedTimestamp = strategy.createStatistic("org.apache.camel.lastExchangeCompletedTimestamp", this, Statistic.UpdateMode.VALUE);
-        this.lastExchangeFailureTimestamp = strategy.createStatistic("org.apache.camel.lastExchangeFailureTimestamp", this, Statistic.UpdateMode.VALUE);
+        this.firstExchangeCompletedTimestamp = new Statistic("org.apache.camel.firstExchangeCompletedTimestamp", this, Statistic.UpdateMode.VALUE);
+        this.firstExchangeFailureTimestamp = new Statistic("org.apache.camel.firstExchangeFailureTimestamp", this, Statistic.UpdateMode.VALUE);
+        this.lastExchangeCompletedTimestamp = new Statistic("org.apache.camel.lastExchangeCompletedTimestamp", this, Statistic.UpdateMode.VALUE);
+        this.lastExchangeFailureTimestamp = new Statistic("org.apache.camel.lastExchangeFailureTimestamp", this, Statistic.UpdateMode.VALUE);
     }
 
     @Override
