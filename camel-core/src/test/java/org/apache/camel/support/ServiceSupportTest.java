@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.support;
 
 import org.apache.camel.TestSupport;
-import org.apache.camel.support.ServiceSupport;
 
 /**
- * @version 
+ * @version
  */
 public class ServiceSupportTest extends TestSupport {
 
@@ -92,5 +91,31 @@ public class ServiceSupportTest extends TestSupport {
         assertEquals(true, service.isShutdown());
     }
 
+    public void testExceptionOnStart() throws Exception {
+        ServiceSupportTestExOnStart service = new ServiceSupportTestExOnStart();
+        try {
+            service.start();
+            fail("RuntimeException expected");
+        } catch (RuntimeException e) {
+            assertEquals(true, service.isStopped());
+            assertEquals(false, service.isStopping());
+            assertEquals(false, service.isStarted());
+            assertEquals(false, service.isStarting());
+        }
+    }
 
+    public static class ServiceSupportTestExOnStart extends ServiceSupport {
+
+        @Override
+        protected void doStart() throws Exception {
+            throw new RuntimeException("This service throws an exception when starting");
+        }
+
+        @Override
+        protected void doStop() throws Exception {
+            // TODO Auto-generated method stub
+
+        }
+
+    }
 }
