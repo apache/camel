@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.spring.ws;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import javax.xml.transform.Source;
 
 import org.apache.camel.Produce;
@@ -28,6 +25,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 
 @ContextConfiguration
 public class ProducerRemoteRouteTest extends AbstractJUnit4SpringContextTests {
