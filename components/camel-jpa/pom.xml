@@ -110,14 +110,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa-persistence-jdbc</artifactId>
-            <version>${openjpa-version}</version>
-          </dependency>
-        </dependencies>
-
         <executions>
           <execution>
             <phase>process-test-classes</phase>

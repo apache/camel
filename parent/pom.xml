@@ -1497,33 +1497,6 @@
             </goals>
           </execution>
         </executions>
-        <dependencies>
-          <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>${jaxb-api-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-xjc</artifactId>
-            <version>${jaxb-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>ant-contrib</groupId>
-            <artifactId>ant-contrib</artifactId>
-            <version>1.0b3</version>
-          </dependency>
-          <dependency>
-            <groupId>ant</groupId>
-            <artifactId>ant-optional</artifactId>
-            <version>1.5.3-1</version>
-          </dependency>
-        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -1689,34 +1662,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>on-sunjdk</id>
-      <activation>
-        <property>
-          <name>java.vendor</name>
-          <value>Sun Microsystems Inc.</value>
-        </property>
-      </activation>
-
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <inherited>true</inherited>
-            <dependencies>
-              <dependency>
-                <groupId>com.sun</groupId>
-                <artifactId>tools</artifactId>
-                <version>1.5.0</version>
-                <scope>system</scope>
-                <systemPath>${java.home}/../lib/tools.jar</systemPath>
-              </dependency>
-            </dependencies>
           </plugin>
         </plugins>
       </build>
