@@ -47,11 +47,11 @@ public class BeanComponentCustomCreateEndpointTest extends ContextTestSupport {
 
     public void testCreateEndpointUri() throws Exception {
         BeanComponent bc = context.getComponent("bean", BeanComponent.class);
-        ProcessorEndpoint pe = bc.createEndpoint(new MyFooBean(), "cheese");
+        ProcessorEndpoint pe = bc.createEndpoint(new MyFooBean(), "bean:cheese");
         assertNotNull(pe);
 
         String uri = pe.getEndpointUri();
-        assertEquals("cheese", uri);
+        assertEquals("bean:cheese", uri);
 
         Producer producer = pe.createProducer();
         Exchange exchange = producer.createExchange();
