@@ -42,12 +42,12 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
-    <felix-version>2.0.1</felix-version>
     <jdk.version>1.6</jdk.version>
     <compiler.fork>1.6</compiler.fork>
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.1.13</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
+    <maven-bundle-version>2.3.5</maven-bundle-version>
   </properties>
 
   <mailingLists>
@@ -345,7 +345,7 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>2.3.4</version>
+          <version>${maven-bundle-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -415,7 +415,7 @@
       <plugin>
         <groupId>org.apache.felix</groupId>
 	    <artifactId>maven-bundle-plugin</artifactId>
-	    <version>${felix-version}</version>
+	    <version>${maven-bundle-version}</version>
 	    <extensions>true</extensions>
 	    <configuration>
           <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
