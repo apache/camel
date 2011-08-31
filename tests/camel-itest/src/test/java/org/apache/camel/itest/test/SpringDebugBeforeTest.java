@@ -35,6 +35,12 @@ public class SpringDebugBeforeTest extends CamelSpringTestSupport {
     private final List<String> before = new ArrayList<String>();
 
     @Override
+    public boolean isUseDebugger() {
+        // must enable debugger
+        return true;
+    }
+
+    @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/itest/test/SpringDebugBeforeTest.xml");
     }
