@@ -29,7 +29,7 @@ import org.apache.camel.impl.JndiRegistry;
 public class MockAsBeanTest extends ContextTestSupport {
 
     // create foo bean as a mock endpoint
-    private MockEndpoint foo = new MockEndpoint();
+    private MockEndpoint foo = new MockEndpoint("mock:foo");
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

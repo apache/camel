@@ -47,6 +47,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long initialDelay = 1000;
     private Processor reporter;
 
+    @Deprecated
     public DataSetEndpoint() {
         this.log = LoggerFactory.getLogger(DataSetEndpoint.class);
     }
