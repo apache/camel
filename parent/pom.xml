@@ -120,7 +120,6 @@
     <netty-bundle-version>3.2.4.Final_1</netty-bundle-version>
     <ode-version>1.3.3</ode-version>
     <ognl-version>2.7.3_3</ognl-version>
-    <openjpa-version>1.2.2</openjpa-version>
     <osgi-version>4.2.0</osgi-version>
     <pax-exam-version>1.2.4</pax-exam-version>
     <pax-runner-version>1.6.1</pax-runner-version>

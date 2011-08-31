@@ -48,6 +48,8 @@
     <jaxb-version>2.1.13</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
     <maven-bundle-version>2.3.5</maven-bundle-version>
+
+    <openjpa-version>1.2.2</openjpa-version>
   </properties>
 
   <mailingLists>
@@ -654,49 +656,9 @@
             <inherited>false</inherited>
             <dependencies>
               <dependency>
-                <groupId>ant</groupId>
-                <artifactId>ant-nodeps</artifactId>
-                <version>1.6.5</version>
-              </dependency>
-              <dependency>
-                <groupId>ant</groupId>
-                <artifactId>ant-trax</artifactId>
-                <version>1.6.5</version>
-              </dependency>
-              <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-buildtools</artifactId>
                 <version>${project.version}</version>
-              </dependency>
-              <dependency>
-                <groupId>ant-contrib</groupId>
-                <artifactId>ant-contrib</artifactId>
-                <version>1.0b3</version>
-              </dependency>
-              <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>${jaxb-api-version}</version>
-              </dependency>
-              <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>${jaxb-version}</version>
-              </dependency>
-              <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-xjc</artifactId>
-                <version>${jaxb-version}</version>
-              </dependency>
-              <dependency>
-                <groupId>ant-contrib</groupId>
-                <artifactId>ant-contrib</artifactId>
-                <version>1.0b3</version>
-              </dependency>
-              <dependency>
-                <groupId>ant</groupId>
-                <artifactId>ant-optional</artifactId>
-                <version>1.5.3-1</version>
               </dependency>
             </dependencies>
             <executions>
