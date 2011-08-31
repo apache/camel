@@ -29,8 +29,6 @@ import org.apache.camel.util.ServiceHelper;
  * Endpoint registry which is a based on a {@link org.apache.camel.util.LRUSoftCache}.
  * <p/>
  * We use a soft reference cache to allow the JVM to re-claim memory if it runs low on memory.
- *
- * @version 
  */
 public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> implements Service {
 
@@ -46,20 +44,20 @@ public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> implem
         putAll(endpoints);
     }
 
-	@Override
-	public void start() throws Exception {
-		resetStatistics();
-	}
+    @Override
+    public void start() throws Exception {
+        resetStatistics();
+    }
 
-	@Override
-	public void stop() throws Exception {
+    @Override
+    public void stop() throws Exception {
         if (!isEmpty()) {
             ServiceHelper.stopServices(values());
         }
         purge();
-	}
+    }
 
-	/**
+    /**
      * Purges the cache
      */
     public void purge() {

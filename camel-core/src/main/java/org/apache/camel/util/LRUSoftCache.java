@@ -108,7 +108,7 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
         // only count as a size if there is a value
         int size = 0;
         for (V value : super.values()) {
-        	SoftReference<?> ref = (SoftReference<?>)value;
+            SoftReference<?> ref = (SoftReference<?>) value;
             if (ref != null && ref.get() != null) {
                 size++;
             }
