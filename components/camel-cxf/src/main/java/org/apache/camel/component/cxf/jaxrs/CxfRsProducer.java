@@ -340,7 +340,7 @@ public class CxfRsProducer extends DefaultProducer {
         }
         
         public void start() throws Exception {
-            // noop
+            cache.resetStatistics();
         }
         
         public void stop() throws Exception {
