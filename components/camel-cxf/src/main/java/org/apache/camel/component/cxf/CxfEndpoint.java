@@ -27,14 +27,20 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.Handler;
 
-import org.apache.camel.*;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.w3c.dom.Element;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelException;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Service;
 import org.apache.camel.component.cxf.common.header.CxfHeaderFilterStrategy;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
 import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
