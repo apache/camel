@@ -31,12 +31,12 @@
       <to uri="mock:a" id="task-a"/>
       <choice id="choice">
         <when id="when">
-          <simple>${body} contains Camel</simple>
+          <simple>${body} contains 'Camel'</simple>
           <to uri="mock:b" id="task-b"/>
           <to uri="mock:c" id="task-c"/>
         </when>
         <when id="when2">
-          <simple>${body} contains Donkey</simple>
+          <simple>${body} contains 'Donkey'</simple>
           <to uri="mock:d" id="task-d"/>
         </when>
         <otherwise id="otherwise">

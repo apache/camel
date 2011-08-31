@@ -28,7 +28,7 @@
             <from uri="direct:start"/>
             <aggregate strategyRef="aggregatorStrategy" completionTimeout="5000">
                 <correlationExpression>
-                    <simple>header.id</simple>
+                    <simple>${header.id}</simple>
                 </correlationExpression>
                 <completionTimeout>
                     <header>timeout</header>
