@@ -260,7 +260,55 @@
               <goal>run</goal>
             </goals>
           </execution>
-        </executions>
+              <execution>
+                  <id>process-sources</id>
+                  <phase>process-sources</phase>
+                  <configuration>
+                      <tasks>
+                          <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
+
+                          <echo>Copying code together for the XSD generation</echo>
+                          <mkdir dir="${project.build.directory}/schema-src" />
+                          <copy todir="${project.build.directory}/schema-src">
+                            <fileset dir="${basedir}/src/main/java">
+                              <include name="org/apache/camel/spring/Camel*.java" />
+                              <include name="org/apache/camel/spring/ErrorHandler*.java" />
+                              <include name="org/apache/camel/spring/package-info.java" />
+                              <include name="org/apache/camel/util/spring/**/*.java" />
+                            </fileset>
+                            <fileset dir="${basedir}/../camel-core-xml/src/main/java">
+                              <include name="org/apache/camel/core/xml/*.java" />
+                              <include name="org/apache/camel/core/xml/util/**/*.java" />
+                            </fileset>
+                            <fileset dir="${basedir}/../../camel-core/src/main/java">
+                              <include name="org/apache/camel/model/**/*.java" />
+                              <include name="org/apache/camel/ExchangePattern.java" />
+                              <include name="org/apache/camel/LoggingLevel.java" />
+                              <include name="org/apache/camel/ManagementStatisticsLevel.java" />
+                              <include name="org/apache/camel/ShutdownRoute.java" />
+                              <include name="org/apache/camel/ShutdownRunningTask.java" />
+                              <include name="org/apache/camel/ThreadPoolRejectedPolicy.java" />
+                              <include name="org/apache/camel/WaitForTaskToComplete.java" />
+                              <include name="org/apache/camel/package-info.java" />
+                            </fileset>
+                          </copy>
+
+                          <echo>Generating XSD schema</echo>
+                          <mkdir dir="${project.build.directory}/schema" />
+                          <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
+                              <schema namespace="http://camel.apache.org/schema/spring" file="camel-spring.xsd" />
+                              <classpath refid="maven.compile.classpath" />
+                          </schemagen>
+                          <copy file="${project.build.directory}/schema/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" />
+                          <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/spring/v${camel.schema.version}" />
+
+                      </tasks>
+                  </configuration>
+                  <goals>
+                      <goal>run</goal>
+                  </goals>
+              </execution>
+          </executions>              
       </plugin>
 
       <!-- add the sources from camel-core-osgi and camel-core-xml as source code in the camel-spring-sources.jar -->
@@ -338,61 +386,6 @@
               <linksource>true</linksource>
               <source>1.6</source>
             </configuration>
-          </plugin>
-          <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-antrun-plugin</artifactId>
-              <inherited>true</inherited>
-              <executions>
-                  <execution>
-                      <id>process-sources</id>
-                      <phase>process-sources</phase>
-                      <configuration>
-                          <tasks>
-                              <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
-
-                              <echo>Copying code together for the XSD generation</echo>
-                              <mkdir dir="${project.build.directory}/schema-src" />
-                              <copy todir="${project.build.directory}/schema-src">
-                                <fileset dir="${basedir}/src/main/java">
-                                  <include name="org/apache/camel/spring/Camel*.java" />
-                                  <include name="org/apache/camel/spring/ErrorHandler*.java" />
-                                  <include name="org/apache/camel/spring/package-info.java" />
-                                  <include name="org/apache/camel/util/spring/**/*.java" />
-                                </fileset>
-                                <fileset dir="${basedir}/../camel-core-xml/src/main/java">
-                                  <include name="org/apache/camel/core/xml/*.java" />
-                                  <include name="org/apache/camel/core/xml/util/**/*.java" />
-                                </fileset>
-                                <fileset dir="${basedir}/../../camel-core/src/main/java">
-                                  <include name="org/apache/camel/model/**/*.java" />
-                                  <include name="org/apache/camel/ExchangePattern.java" />
-                                  <include name="org/apache/camel/LoggingLevel.java" />
-                                  <include name="org/apache/camel/ManagementStatisticsLevel.java" />
-                                  <include name="org/apache/camel/ShutdownRoute.java" />
-                                  <include name="org/apache/camel/ShutdownRunningTask.java" />
-                                  <include name="org/apache/camel/ThreadPoolRejectedPolicy.java" />
-                                  <include name="org/apache/camel/WaitForTaskToComplete.java" />
-                                  <include name="org/apache/camel/package-info.java" />
-                                </fileset>
-                              </copy>
-
-                              <echo>Generating XSD schema</echo>
-                              <mkdir dir="${project.build.directory}/schema" />
-                              <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
-                                  <schema namespace="http://camel.apache.org/schema/spring" file="camel-spring.xsd" />
-                                  <classpath refid="maven.compile.classpath" />
-                              </schemagen>
-                              <copy file="${project.build.directory}/schema/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" />
-                              <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/spring/v${camel.schema.version}" />
-
-                          </tasks>
-                      </configuration>
-                      <goals>
-                          <goal>run</goal>
-                      </goals>
-                  </execution>
-              </executions>              
           </plugin>
         </plugins>
       </build>
