@@ -50,29 +50,28 @@ public class AsyncEndpointRoutingSlip3Test extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .routingSlip(constant("async:Hi World,direct:foo"));
+                    .to("mock:before")
+                    .to("log:before")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            beforeThreadName = Thread.currentThread().getName();
+                        }
+                    })
+                    .routingSlip(constant("async:hi:world, direct:foo"));
 
                 from("direct:foo")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                                String body = exchange.getIn().getBody(String.class);
-                                assertEquals("Hi World", body);
-                                exchange.getOut().setBody("Bye Camel");
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            afterThreadName = Thread.currentThread().getName();
+                            String body = exchange.getIn().getBody(String.class);
+                            assertEquals("Hi World", body);
+                            exchange.getOut().setBody("Bye Camel");
+                        }
+                    })
+                    .to("log:after")
+                    .to("mock:after")
+                    .to("mock:result");
             }
         };
     }
-
 }

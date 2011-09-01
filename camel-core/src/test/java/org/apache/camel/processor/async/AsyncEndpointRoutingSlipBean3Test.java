@@ -59,27 +59,27 @@ public class AsyncEndpointRoutingSlipBean3Test extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .beanRef("myBean");
+                    .to("mock:before")
+                    .to("log:before")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            beforeThreadName = Thread.currentThread().getName();
+                        }
+                    })
+                    .beanRef("myBean");
 
                 from("direct:foo")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                                String body = exchange.getIn().getBody(String.class);
-                                assertEquals("Hi World", body);
-                                exchange.getOut().setBody("Bye Camel");
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            afterThreadName = Thread.currentThread().getName();
+                            String body = exchange.getIn().getBody(String.class);
+                            assertEquals("Hi World", body);
+                            exchange.getOut().setBody("Bye Camel");
+                        }
+                    })
+                    .to("log:after")
+                    .to("mock:after")
+                    .to("mock:result");
             }
         };
     }
@@ -88,9 +88,7 @@ public class AsyncEndpointRoutingSlipBean3Test extends ContextTestSupport {
 
         @RoutingSlip
         public String doSomething() {
-            return "async:Hi World,direct:foo";
+            return "async:hi:world,direct:foo";
         }
     }
-
-
 }

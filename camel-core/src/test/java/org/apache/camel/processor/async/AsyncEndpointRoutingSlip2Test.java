@@ -37,9 +37,8 @@ public class AsyncEndpointRoutingSlip2Test extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start")
-                        .routingSlip(constant("async:Bye Camel,async:Bye World"));
+                    .routingSlip(constant("async:bye:camel,async:bye:world"));
             }
         };
     }
-
 }
