@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.language;
 
+import java.net.URLEncoder;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -38,7 +40,8 @@ public class LanguageRouteConvertBodyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start").to("language:simple:${mandatoryBodyAs(String)}").to("mock:result");
+                String script = URLEncoder.encode("${mandatoryBodyAs(String)}", "UTF-8");
+                from("direct:start").to("language:simple:" + script).to("mock:result");
                 // END SNIPPET: e1
             }
         };

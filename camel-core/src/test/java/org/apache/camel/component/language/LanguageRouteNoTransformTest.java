@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.language;
 
+import java.net.URLEncoder;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -37,7 +39,10 @@ public class LanguageRouteNoTransformTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("language:simple:Hello+${body}?transform=false").to("mock:result");
+                String script = URLEncoder.encode("Hello ${body}", "UTF-8");
+                from("direct:start")
+                    .to("language:simple:" + script + "?transform=false")
+                    .to("mock:result");
             }
         };
     }
