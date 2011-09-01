@@ -21,8 +21,8 @@ import java.util.concurrent.Future;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.WrappedFile;
 import org.apache.camel.component.bean.BeanInvocation;
-import org.apache.camel.component.file.GenericFile;
 
 /**
  * A simple converter that can convert any object to a String type by using the
@@ -52,7 +52,7 @@ public class ToStringTypeConverter implements TypeConverter {
             }
 
             // should not try to convert files
-            if (GenericFile.class.isAssignableFrom(value.getClass())) {
+            if (WrappedFile.class.isAssignableFrom(value.getClass())) {
                 return (T) Void.TYPE;
             }
 
