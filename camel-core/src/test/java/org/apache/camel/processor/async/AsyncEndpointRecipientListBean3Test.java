@@ -57,25 +57,25 @@ public class AsyncEndpointRecipientListBean3Test extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .beanRef("myBean");
+                    .to("mock:before")
+                    .to("log:before")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            beforeThreadName = Thread.currentThread().getName();
+                        }
+                    })
+                    .beanRef("myBean");
 
                 from("direct:foo")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                                exchange.getOut().setBody("Bye Camel");
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            afterThreadName = Thread.currentThread().getName();
+                            exchange.getOut().setBody("Bye Camel");
+                        }
+                    })
+                    .to("log:after")
+                    .to("mock:after")
+                    .to("mock:result");
             }
         };
     }
@@ -84,8 +84,7 @@ public class AsyncEndpointRecipientListBean3Test extends ContextTestSupport {
 
         @RecipientList
         public String doSomething() {
-            return "async:Hi Camel,direct:foo";
+            return "async:hi:camel,direct:foo";
         }
     }
-
 }

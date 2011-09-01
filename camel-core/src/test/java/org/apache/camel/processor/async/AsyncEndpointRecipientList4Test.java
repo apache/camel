@@ -50,25 +50,25 @@ public class AsyncEndpointRecipientList4Test extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadId = Thread.currentThread().getId();
-                            }
-                        })
-                        .recipientList(constant("async:Hi Camel,async:Hi World,direct:foo"));
+                    .to("mock:before")
+                    .to("log:before")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            beforeThreadId = Thread.currentThread().getId();
+                        }
+                    })
+                    .recipientList(constant("async:hi:camel,async:hi:world,direct:foo"));
 
                 from("direct:foo")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadId = Thread.currentThread().getId();
-                                exchange.getOut().setBody("Bye Camel");
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            afterThreadId = Thread.currentThread().getId();
+                            exchange.getOut().setBody("Bye Camel");
+                        }
+                    })
+                    .to("log:after")
+                    .to("mock:after")
+                    .to("mock:result");
             }
         };
     }

@@ -53,25 +53,25 @@ public class AsyncEndpointRoundRobinLoadBalanceTest extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .loadBalance()
-                            .roundRobin()
-                            .to("async:bye:camel", "async:Bye World")
-                        .end()
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                    .to("mock:before")
+                    .to("log:before")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            beforeThreadName = Thread.currentThread().getName();
+                        }
+                    })
+                    .loadBalance()
+                        .roundRobin()
+                        .to("async:bye:camel", "async:bye:world")
+                    .end()
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            afterThreadName = Thread.currentThread().getName();
+                        }
+                    })
+                    .to("log:after")
+                    .to("mock:after")
+                    .to("mock:result");
             }
         };
     }

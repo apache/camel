@@ -51,34 +51,33 @@ public class AsyncEndpointFailOverLoadBalanceMixed2Test extends ContextTestSuppo
                 context.addComponent("async", new MyAsyncComponent());
 
                 from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .loadBalance()
-                        .failover()
-                            // first is sync, the 2nd is async based
-                            .to("direct:fail", "async:Bye World")
-                        .end()
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // because the first is a sync then it will wait and thus use the same thread to continue
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                    .to("mock:before")
+                    .to("log:before")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            beforeThreadName = Thread.currentThread().getName();
+                        }
+                    })
+                    .loadBalance()
+                    .failover()
+                        // first is sync, the 2nd is async based
+                        .to("direct:fail", "async:bye:world")
+                    .end()
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            // because the first is a sync then it will wait and thus use the same thread to continue
+                            afterThreadName = Thread.currentThread().getName();
+                        }
+                    })
+                    .to("log:after")
+                    .to("mock:after")
+                    .to("mock:result");
 
                 from("direct:fail")
-                        .to("log:fail")
-                        .to("mock:fail")
-                        .throwException(new IllegalArgumentException("Damn"));
+                    .to("log:fail")
+                    .to("mock:fail")
+                    .throwException(new IllegalArgumentException("Damn"));
             }
         };
     }
-
 }

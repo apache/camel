@@ -35,7 +35,7 @@ public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextT
                 from("direct:start")
                     .to("mock:a")
                     .multicast().stopOnException()
-                    .to("mock:foo", "async:Bye Camel", "mock:bar");
+                    .to("mock:foo", "async:bye:camel", "mock:bar");
             }
         });
         context.start();
@@ -60,7 +60,7 @@ public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextT
                 from("direct:start")
                     .to("mock:a")
                     .multicast().stopOnException()
-                    .to("mock:foo", "async:Bye Camel").throwException(new IllegalArgumentException("Damn")).to("mock:bar");
+                    .to("mock:foo", "async:bye:camel").throwException(new IllegalArgumentException("Damn")).to("mock:bar");
             }
         });
         context.start();
@@ -83,5 +83,4 @@ public class AsyncEndpointMulticastFineGrainedErrorHandlingTest extends ContextT
     public boolean isUseRouteBuilder() {
         return false;
     }
-
 }

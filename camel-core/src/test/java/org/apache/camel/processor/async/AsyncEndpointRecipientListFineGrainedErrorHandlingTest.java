@@ -55,7 +55,7 @@ public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends Cont
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:baz").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:foo,async:Bye Camel,mock:bar,mock:baz");
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:foo,async:bye:camel,mock:bar,mock:baz");
 
         assertMockEndpointsSatisfied();
     }
@@ -105,5 +105,4 @@ public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends Cont
             throw new IllegalArgumentException("Damn");
         }
     }
-
 }
