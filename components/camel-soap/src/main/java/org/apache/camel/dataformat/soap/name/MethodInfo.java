@@ -16,29 +16,41 @@
  */
 package org.apache.camel.dataformat.soap.name;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Value object to hold information about a method in a JAX-WS service interface
+ * Value object to hold information about a method in a JAX-WS service interface.
+ * Method can have many parameters in the signature, but only one response object.
  */
 public final class MethodInfo {
     private String name;
     private String soapAction;
-    private TypeInfo in;
+    private TypeInfo[] in;
     private TypeInfo out;
+    
+    // map of type name to qname
+    private Map<String, TypeInfo> inTypeMap;
 
     /**
      * Initialize 
      * 
      * @param name method name
      * @param soapAction
-     * @param in input parameter (document style so only one parameter)
-     * @param out return type
+     * @param in input parameters
+     * @param out return types
      */
-    public MethodInfo(String name, String soapAction, TypeInfo in, TypeInfo out) {
+    public MethodInfo(String name, String soapAction, TypeInfo[] in, TypeInfo out) {
         super();
         this.name = name;
         this.soapAction = soapAction;
         this.in = in;
         this.out = out;
+        
+        this.inTypeMap = new HashMap<String, TypeInfo>();
+        for (int i = 0; i < in.length; i++) {
+            inTypeMap.put(in[i].getTypeName(), in[i]);
+        }
     }
 
     public String getName() {
@@ -49,12 +61,16 @@ public final class MethodInfo {
         return soapAction;
     }
 
-    public TypeInfo getIn() {
+    public TypeInfo[] getIn() {
         return in;
     }
 
     public TypeInfo getOut() {
         return out;
     }
-
+     
+    public TypeInfo getIn(String typeName) {
+        return this.inTypeMap.get(typeName);
+    }
+    
 }
