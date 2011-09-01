@@ -16,6 +16,8 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.net.URLEncoder;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -40,10 +42,10 @@ public class LanguageGroovyRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start").to("language:groovy:request.body * 2").to("mock:result");
+                String script = URLEncoder.encode("request.body * 2", "UTF-8");
+                from("direct:start").to("language:groovy:" + script).to("mock:result");
                 // END SNIPPET: e1
             }
         };
     }
-
 }
