@@ -18,7 +18,6 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
  * @version 
@@ -48,7 +47,7 @@ public class InterceptFromWhenNoStopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptFrom().when(toPredicate(simple("${body} contains 'Goofy'"))).to("mock:goofy");
+                interceptFrom().when(simple("${body} contains 'Goofy'")).to("mock:goofy");
 
                 from("direct:start").to("mock:end");
             }

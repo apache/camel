@@ -18,7 +18,6 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
  * @version 
@@ -64,7 +63,7 @@ public class InterceptFromWhenWithChoiceTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 interceptFrom()
-                    .when(toPredicate(simple("${body} contains 'Goofy'")))
+                    .when(simple("${body} contains 'Goofy'"))
                         .choice()
                             .when(body().contains("Hello")).to("mock:hello")
                             .otherwise().to("log:foo").to("mock:goofy")
