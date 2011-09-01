@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.language;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Expression;
@@ -72,7 +75,13 @@ public class LanguageEndpoint extends DefaultEndpoint {
 
     @Override
     protected String createEndpointUri() {
-        return languageName + ":" + script;
+        String s = script;
+        try {
+            s = URLEncoder.encode(s, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // ignore
+        }
+        return languageName + ":" + s;
     }
 
     public Language getLanguage() {

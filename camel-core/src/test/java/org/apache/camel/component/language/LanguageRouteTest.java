@@ -38,7 +38,7 @@ public class LanguageRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start").to("language:simple:Hello ${body}").to("mock:result");
+                from("direct:start").to("language:simple:Hello+${body}").to("mock:result");
                 // END SNIPPET: e1
             }
         };

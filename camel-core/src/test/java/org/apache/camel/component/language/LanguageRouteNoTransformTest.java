@@ -37,7 +37,7 @@ public class LanguageRouteNoTransformTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("language:simple:Hello ${body}?transform=false").to("mock:result");
+                from("direct:start").to("language:simple:Hello+${body}?transform=false").to("mock:result");
             }
         };
     }

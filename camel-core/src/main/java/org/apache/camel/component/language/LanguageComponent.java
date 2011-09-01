@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.language;
 
+import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -47,10 +48,9 @@ public class LanguageComponent extends DefaultComponent {
 
         Expression expression = null;
         if (ObjectHelper.isNotEmpty(script)) {
-            expression = language.createExpression(script);
+            expression = language.createExpression(URLDecoder.decode(script, "UTF-8"));
         }
 
         return new LanguageEndpoint(uri, this, language, expression);
     }
-
 }
