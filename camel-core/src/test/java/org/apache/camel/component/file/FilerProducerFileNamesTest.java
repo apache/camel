@@ -28,6 +28,12 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class FilerProducerFileNamesTest extends ContextTestSupport {
 
+    @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/reports");
+        super.setUp();
+    }
+
     // START SNIPPET: e1
     public void testProducerWithMessageIdAsFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:report");

@@ -34,7 +34,7 @@ public class FtpProducerFileWithPathPathSeparatorWindowsNoStepwiseTest extends F
         Exchange out = template.send(getFtpUrl(), new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
-                exchange.getIn().setHeader(Exchange.FILE_NAME, "hello/claus.txt");
+                exchange.getIn().setHeader(Exchange.FILE_NAME, "hello\\claus.txt");
             }
         });
         assertNotNull(out);
@@ -44,7 +44,7 @@ public class FtpProducerFileWithPathPathSeparatorWindowsNoStepwiseTest extends F
         assertTrue("The uploaded file should exists", file.exists());
         assertEquals("Hello World", IOConverter.toString(file, null));
 
-        assertEquals("upload/hello/claus.txt", out.getIn().getHeader(Exchange.FILE_NAME_PRODUCED));
+        assertEquals("upload/hello\\claus.txt", out.getIn().getHeader(Exchange.FILE_NAME_PRODUCED));
     }
 
 }
