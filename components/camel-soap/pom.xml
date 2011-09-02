@@ -33,7 +33,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>javax.xml.ws;version="[0.0,3)"</camel.osgi.import.before.defaults>
-        <camel.osgi.export.pkg>org.apache.camel.dataformat.soap.*, org.xmlsoap.schemas.soap.envelope.*
+        <camel.osgi.export.pkg>org.apache.camel.dataformat.soap.*;${camel.osgi.version},org.xmlsoap.schemas.soap.envelope.*
         </camel.osgi.export.pkg>
     </properties>
 
