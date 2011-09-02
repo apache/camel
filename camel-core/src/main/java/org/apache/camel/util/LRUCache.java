@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -28,8 +29,9 @@ import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
  *
  * @version 
  */
-public class LRUCache<K, V> implements Map<K, V> {
+public class LRUCache<K, V> implements Map<K, V>, Serializable {
     private static final long serialVersionUID = -342098639681884414L;
+    
     private int maxCacheSize = 10000;
     private final AtomicLong hits = new AtomicLong();
     private final AtomicLong misses = new AtomicLong();
