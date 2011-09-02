@@ -31,7 +31,7 @@
     <feature name='hibernate-feauture' version='${pom.version}'>
        <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/1.4.0</bundle>
        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.2.2_5</bundle>
-       <bundle>mvn:org.springframework/spring-jdbc/3.0.5.RELEASE</bundle>
+       <bundle>mvn:org.springframework/spring-jdbc/${spring-version}</bundle>
        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/1.6.1_2</bundle>
        <bundle>mvn:org.antlr/com.springsource.antlr/2.7.7</bundle>
        <bundle>mvn:org.objectweb.asm/com.springsource.org.objectweb.asm/1.5.3</bundle>
@@ -41,7 +41,7 @@
        <bundle>mvn:org.hibernate/com.springsource.org.hibernate.annotations/3.4.0.GA</bundle>
        <bundle>mvn:org.hibernate/com.springsource.org.hibernate.ejb/3.4.0.GA</bundle>
        <bundle>mvn:org.hibernate/com.springsource.org.hibernate/3.3.2.GA</bundle>
-       <bundle>mvn:org.springframework/spring-orm/3.0.5.RELEASE</bundle> 
+       <bundle>mvn:org.springframework/spring-orm/${spring-version}</bundle>
     </feature>
     
     <feature name='camel-example-etl' version='${pom.version}'>
