@@ -47,10 +47,10 @@ public class GAuthEndpointTest {
             .append("&").append("callback=" + encode("http://callback.example.org", "UTF-8"))
             .append("&").append("consumerKey=customConsumerKey")
             .append("&").append("consumerSecret=customConsumerSecret")
-            .append("&").append("authorizeBindingRef=#customAuthorizeBinding")
-            .append("&").append("upgradeBindingRef=#customUpgradeBinding")
-            .append("&").append("keyLoaderRef=#gAuthKeyLoader")
-            .append("&").append("serviceRef=#gAuthService");
+            .append("&").append("authorizeBindingRef=" + encode("#customAuthorizeBinding", "UTF-8"))
+            .append("&").append("upgradeBindingRef=" + encode("#customUpgradeBinding", "UTF-8"))
+            .append("&").append("keyLoaderRef=" + encode("#gAuthKeyLoader", "UTF-8"))
+            .append("&").append("serviceRef=" + encode("#gAuthService", "UTF-8"));
         GAuthEndpoint endpoint = component.createEndpoint(buffer.toString());
         assertEquals(AUTHORIZE, endpoint.getName());
         assertArrayEquals(new String [] {
