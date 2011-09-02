@@ -51,9 +51,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     private Map<Integer, KeyValuePairField> keyValuePairFields = new LinkedHashMap<Integer, KeyValuePairField>();
     private Map<Integer, Field> annotedFields = new LinkedHashMap<Integer, Field>();
     private Map<String, Integer> sections = new HashMap<String, Integer>();
-
     private Map<String, List> lists = new HashMap<String, List>();
-
     private String keyValuePairSeparator;
     private String pairSeparator;
     private boolean messageOrdered;
@@ -117,12 +115,18 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         }
     }
 
-    /**
-     * 
-     */
+    @Override
     public void bind(List<String> data, Map<String, Object> model, int line) throws Exception {
 
-        Map<Integer, List> results = new HashMap<Integer, List>();
+        // Map to hold the model @OneToMany classes while binding
+        Map<String, List<Object>> lists = new HashMap<String, List<Object>>();
+
+        bind(data, model, line, lists);
+    }
+
+    public void bind(List<String> data, Map<String, Object> model, int line, Map<String, List<Object>> lists) throws Exception {
+
+        Map<Integer, List<String>> results = new HashMap<Integer, List<String>>();
 
         LOG.debug("Key value pairs data : {}", data);
 
@@ -169,21 +173,14 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             if (obj != null) {
 
                 // Generate model from key value map
-                generateModelFromKeyValueMap(clazz, obj, results, line);
+                generateModelFromKeyValueMap(clazz, obj, results, line, lists);
 
             }
         }
 
     }
 
-    /**
-     * @param clazz
-     * @param obj
-     * @param results
-     * @param line
-     * @throws Exception
-     */
-    private void generateModelFromKeyValueMap(Class clazz, Object obj, Map<Integer, List> results, int line) throws Exception {
+    private void generateModelFromKeyValueMap(Class clazz, Object obj, Map<Integer, List<String>> results, int line, Map<String, List<Object>> lists) throws Exception {
 
         for (Field field : clazz.getDeclaredFields()) {
 
@@ -395,7 +392,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         lists.put(cl.getName(), new ArrayList());
                     }
 
-                    generateModelFromKeyValueMap(cl, null, results, line);
+                    generateModelFromKeyValueMap(cl, null, results, line, lists);
 
                     // Add list of objects
                     field.set(obj, lists.get(cl.getName()));
@@ -637,4 +634,5 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             }
         }
     }
+
 }

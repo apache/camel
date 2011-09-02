@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -79,6 +80,9 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
         // Pojos of the model
         Map<String, Object> model;
+        
+        // Map to hold the model @OneToMany classes while binding
+        Map<String, List<Object>> lists = new HashMap<String, List<Object>>();
 
         InputStreamReader in = new InputStreamReader(inputStream);
 
@@ -117,7 +121,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
                 if (result.size() > 0) {
                     // Bind data from message with model classes
                     // Counter is used to detect line where error occurs
-                    factory.bind(result, model, count);
+                    factory.bind(result, model, count, lists);
 
                     // Link objects together
                     factory.link(model);
