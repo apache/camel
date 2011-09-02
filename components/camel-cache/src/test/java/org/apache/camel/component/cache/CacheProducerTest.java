@@ -133,7 +133,7 @@ public class CacheProducerTest extends CamelTestSupport {
             public void configure() {
                 onException(CacheException.class).
                         handled(true).
-                        to("log:*** LOGGER").
+                        to("log:LOGGER").
                         to("mock:CacheProducerTest.cacheException");
 
                 from("direct:a").
@@ -185,7 +185,7 @@ public class CacheProducerTest extends CamelTestSupport {
             public void configure() {
                 onException(CacheException.class).
                         handled(true).
-                        to("log:*** LOGGER").
+                        to("log:LOGGER").
                         to("mock:CacheProducerTest.cacheException");
 
                 from("direct:a").
@@ -222,7 +222,7 @@ public class CacheProducerTest extends CamelTestSupport {
             public void configure() {
                 onException(CacheException.class).
                         handled(true).
-                        to("log:*** LOGGER").
+                        to("log:LOGGER").
                         to("mock:CacheProducerTest.cacheException");
 
                 from("direct:a").
@@ -258,7 +258,7 @@ public class CacheProducerTest extends CamelTestSupport {
             public void configure() {
                 onException(CacheException.class).
                         handled(true).
-                        to("log:*** LOGGER").
+                        to("log:LOGGER").
                         to("mock:CacheProducerTest.cacheException");
 
                 from("direct:a").
@@ -279,7 +279,7 @@ public class CacheProducerTest extends CamelTestSupport {
             public void configure() {
                 onException(CacheException.class).
                         handled(true).
-                        to("log:*** LOGGER").
+                        to("log:LOGGER").
                         to("mock:CacheProducerTest.cacheException");
 
                 from("direct:a").
@@ -305,7 +305,7 @@ public class CacheProducerTest extends CamelTestSupport {
                 onException(CacheException.class).
                         handled(true).
                         choice().when(exceptionMessage().isEqualTo(CacheConstants.CACHE_OPERATION + " UNKNOWN is not supported.")).
-                        to("log:*** LOGGER").
+                        to("log:LOGGER").
                         to("mock:CacheProducerTest.cacheException").end();
 
                 from("direct:a").
@@ -332,7 +332,7 @@ public class CacheProducerTest extends CamelTestSupport {
             public void configure() {
                 onException(CacheException.class).
                         handled(true).
-                        to("log:*** LOGGER").
+                        to("log:LOGGER").
                         to("mock:CacheProducerTest.cacheException");
 
                 from("direct:a").
@@ -360,7 +360,7 @@ public class CacheProducerTest extends CamelTestSupport {
             public void configure() {
                 onException(CacheException.class).
                         handled(true).
-                        to("log:*** LOGGER").
+                        to("log:LOGGER").
                         to("mock:CacheProducerTest.cacheException");
 
                 from("direct:a").
@@ -388,7 +388,7 @@ public class CacheProducerTest extends CamelTestSupport {
             public void configure() {
                 onException(CacheException.class).
                         handled(true).
-                        to("log:*** LOGGER").
+                        to("log:LOGGER").
                         to("mock:CacheProducerTest.cacheException");
 
                 from("direct:a").

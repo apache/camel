@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.exec;
 
+import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -31,7 +32,7 @@ public class ExecComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ExecEndpoint endpoint = new ExecEndpoint(uri, this);
         setProperties(endpoint, parameters);
-        endpoint.setExecutable(remaining);
+        endpoint.setExecutable(URLDecoder.decode(remaining, "UTF-8"));
         return endpoint;
     }
 }

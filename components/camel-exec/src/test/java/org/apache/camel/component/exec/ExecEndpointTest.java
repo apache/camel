@@ -18,6 +18,7 @@ package org.apache.camel.component.exec;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -102,7 +103,8 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
     @DirtiesContext
     public void testCreateEndpointWithArgs() throws Exception {
         String args = "arg1 arg2 arg3";
-        ExecEndpoint e = createExecEndpoint("exec:test?args=" + args);
+        // Need to properly encode the URI
+        ExecEndpoint e = createExecEndpoint("exec:test?args=" + args.replaceAll(" ", "+"));
         assertEquals(args, e.getArgs());
     }
 
@@ -110,7 +112,7 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
     @DirtiesContext
     public void testCreateEndpointWithArgs2() throws Exception {
         String args = "arg1 \"arg2 \" arg3";
-        ExecEndpoint e = createExecEndpoint("exec:test?args=" + args);
+        ExecEndpoint e = createExecEndpoint("exec:test?args=" + UnsafeUriCharactersEncoder.encode(args));
         assertEquals(args, e.getArgs());
     }
 
@@ -145,7 +147,7 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
         String dir = "\"c:/program files/wokr/temp\"";
         String uri = "exec:" + cmd + "?workingDir=" + dir;
 
-        ExecEndpoint endpoint = createExecEndpoint(uri);
+        ExecEndpoint endpoint = createExecEndpoint(UnsafeUriCharactersEncoder.encode(uri));
         assertEquals(cmd, endpoint.getExecutable());
         assertNull(endpoint.getArgs());
         assertNotNull(endpoint.getCommandExecutor());
@@ -159,7 +161,7 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
         String executable = "C:/Program Files/test/text.exe";
         String uri = "exec:" + executable;
 
-        ExecEndpoint endpoint = createExecEndpoint(uri);
+        ExecEndpoint endpoint = createExecEndpoint(UnsafeUriCharactersEncoder.encode(uri));
 
         assertNull(endpoint.getArgs());
         assertNull(endpoint.getWorkingDir());
@@ -175,7 +177,8 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
         String argsEscaped = "arg1 arg2 \"arg 3\"";
         long timeout = 10000L;
 
-        ExecEndpoint e = createExecEndpoint("exec:executable.exe?workingDir=" + workingDir + "&timeout=" + timeout + "&args=" + argsEscaped);
+        String uri = "exec:executable.exe?workingDir=" + workingDir + "&timeout=" + timeout + "&args=" + argsEscaped;
+        ExecEndpoint e = createExecEndpoint(UnsafeUriCharactersEncoder.encode(uri));
         assertEquals(workingDir, e.getWorkingDir());
         assertEquals(argsEscaped, e.getArgs());
         assertEquals(timeout, e.getTimeout());
@@ -192,7 +195,7 @@ public class ExecEndpointTest extends AbstractJUnit4SpringContextTests {
         builder.append("&outFile=" + outFile);
         builder.append("&commandExecutor=#customExecutor&binding=#customBinding");
 
-        ExecEndpoint e = createExecEndpoint(builder.toString());
+        ExecEndpoint e = createExecEndpoint(UnsafeUriCharactersEncoder.encode(builder.toString()));
         assertEquals(workingDir, e.getWorkingDir());
         assertEquals(timeout, e.getTimeout());
         assertEquals(outFile, e.getOutFile());
