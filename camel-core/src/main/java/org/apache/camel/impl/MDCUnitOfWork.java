@@ -36,8 +36,22 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     public static final String MDC_ROUTE_ID = "routeId";
     public static final String MDC_TRANSACTION_KEY = "transactionKey";
 
+    private final String originalBreadcrumbId;
+    private final String originalExchangeId;
+    private final String originalCorrelationId;
+    private final String originalRouteId;
+    private final String originalTransactionKey;
+
     public MDCUnitOfWork(Exchange exchange) {
         super(exchange);
+
+        // remember existing values
+        this.originalExchangeId = MDC.get(MDC_EXCHANGE_ID);
+        this.originalBreadcrumbId = MDC.get(MDC_BREADCRUMB_ID);
+        this.originalCorrelationId = MDC.get(MDC_CORRELATION_ID);
+        this.originalRouteId = MDC.get(MDC_ROUTE_ID);
+        this.originalTransactionKey = MDC.get(MDC_TRANSACTION_KEY);
+
         // must add exchange id in constructor
         MDC.put(MDC_EXCHANGE_ID, exchange.getExchangeId());
         // and add optional correlation id
@@ -107,11 +121,31 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
      * Clears information put on the MDC by this {@link MDCUnitOfWork}
      */
     public void clear() {
-        MDC.remove(MDC_BREADCRUMB_ID);
-        MDC.remove(MDC_EXCHANGE_ID);
-        MDC.remove(MDC_CORRELATION_ID);
-        MDC.remove(MDC_ROUTE_ID);
-        MDC.remove(MDC_TRANSACTION_KEY);
+        if (this.originalBreadcrumbId != null) {
+            MDC.put(MDC_BREADCRUMB_ID, originalBreadcrumbId);
+        } else {
+            MDC.remove(MDC_BREADCRUMB_ID);
+        }
+        if (this.originalExchangeId != null) {
+            MDC.put(MDC_EXCHANGE_ID, originalExchangeId);
+        } else {
+            MDC.remove(MDC_EXCHANGE_ID);
+        }
+        if (this.originalCorrelationId != null) {
+            MDC.put(MDC_CORRELATION_ID, originalCorrelationId);
+        } else {
+            MDC.remove(MDC_CORRELATION_ID);
+        }
+        if (this.originalRouteId != null) {
+            MDC.put(MDC_ROUTE_ID, originalRouteId);
+        } else {
+            MDC.remove(MDC_ROUTE_ID);
+        }
+        if (this.originalTransactionKey != null) {
+            MDC.put(MDC_TRANSACTION_KEY, originalTransactionKey);
+        } else {
+            MDC.remove(MDC_TRANSACTION_KEY);
+        }
     }
 
     @Override
