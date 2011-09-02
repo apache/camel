@@ -17,6 +17,7 @@
 package org.apache.camel.component.restlet;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.http.HttpResponse;
@@ -26,7 +27,7 @@ import org.junit.Test;
 
 /**
  *
- * @version 
+ * @version
  */
 public class RestletExceptionResponseTest extends RestletTestSupport {
 
@@ -51,6 +52,22 @@ public class RestletExceptionResponseTest extends RestletTestSupport {
         String body = EntityUtils.toString(response.getEntity());
 
         assertHttpResponse(response, 500, "text/plain");
+        assertTrue(body.contains("IllegalArgumentException"));
+        assertTrue(body.contains("Damn something went wrong"));
+    }
+
+    @Test
+    public void testRestletProducerGetExceptionResponse() throws Exception {
+        Exchange exchange = template.request(
+            "restlet:http://localhost:" + portNum + "/users/tester?restletMethod=POST",
+                new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setBody("<order foo='1'/>");
+                    }
+            });
+        RestletOperationException exception = (RestletOperationException) exchange.getException();
+        String body = exception.getResponseBody();
         assertTrue(body.contains("IllegalArgumentException"));
         assertTrue(body.contains("Damn something went wrong"));
     }
