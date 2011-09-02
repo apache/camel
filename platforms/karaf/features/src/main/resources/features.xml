@@ -17,6 +17,7 @@
       limitations under the License.
 -->
 <features name='camel-${pom.version}'>
+  <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
   <feature name='camel' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-spring</feature>
@@ -48,50 +49,6 @@
     <bundle>mvn:org.apache.camel/camel-test/${pom.version}</bundle>
   </feature>
 
-  <feature name="cxf" version="${cxf-version}" resolver='(obr)' start-level='50'>
-    <feature version="[3,4)">spring</feature>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/${geronimo-jms-spec-version}</bundle>
-    <bundle dependency="true">mvn:org.springframework/spring-jms/${spring-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/${asm-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.fastinfoset/${fastinfoset-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
-    <bundle dependency="true">mvn:commons-codec/commons-codec/${commons-codec}</bundle>
-    <bundle>mvn:org.codehaus.jettison/jettison/${jettison-bundle-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${xalan-bundle-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlbeans/${xmlbeans-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlsec/${xmlsec-bundle-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
-    <bundle dependency="true">mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-core-bundle-version}</bundle>
-    <bundle dependency="true">mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.ws.xmlschema/xmlschema-core/${xmlschema-version}</bundle>
-    <bundle dependency="true">mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
-    <bundle dependency="true">mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/${oro-bundle-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.velocity/${velocity-bundle-version}</bundle>
-    <bundle dependency="true">mvn:javax.mail/mail/${javax-mail-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.neethi/neethi/${neethi-bundle-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.ws.commons.axiom/axiom-impl/${axiom-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.ws.commons.axiom/axiom-api/${axiom-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.abdera/abdera-core/${abdera-version}</bundle>
-    <!--bundle dependency="true">mvn:org.apache.abdera/abdera-extensions-json/${abdera-version}</bundle-->
-    <bundle dependency="true">mvn:org.apache.abdera/abdera-extensions-main/${abdera-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.abdera/abdera-i18n/${abdera-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.abdera/abdera-parser/${abdera-version}</bundle>
-
-    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-${jaxws.api.version}/${servicemix-specs-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${gernimo-annotation-spec-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.saaj-api-1.3/${servicemix-specs-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saaj-impl/${saaj-impl-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.wsdl4j/${wsdl4j-bundle-version}</bundle>
-    <bundle>mvn:org.apache.ws.security/wss4j/${wss4j-version}</bundle>
-    <bundle>mvn:joda-time/joda-time/${joda-time-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.opensaml/${opensaml-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1/${servicemix-specs-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-ws-metadata_2.0_spec/${geronimo-ws-metadata-spec-version}</bundle>
-    <bundle>mvn:org.apache.cxf/cxf-bundle/${cxf-version}</bundle>
-  </feature>
   <feature name='camel-cxf' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-spring</feature>
     <feature>jetty</feature>
