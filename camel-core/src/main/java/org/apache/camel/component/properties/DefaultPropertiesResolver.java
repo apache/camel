@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -61,25 +62,42 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
     }
 
     protected Properties loadPropertiesFromFilePath(CamelContext context, String path) throws IOException {
+        Properties answer = null;
+
         if (path.startsWith("file:")) {
             path = ObjectHelper.after(path, "file:");
         }
+
         InputStream is = new FileInputStream(path);
-        Properties answer = new Properties();
-        answer.load(is);
+        try {
+            answer = new Properties();
+            answer.load(is);
+        } finally {
+            IOHelper.close(is);
+        }
+
         return answer;
     }
 
     protected Properties loadPropertiesFromClasspath(CamelContext context, String path) throws IOException {
+        Properties answer = null;
+
         if (path.startsWith("classpath:")) {
             path = ObjectHelper.after(path, "classpath:");
         }
+
         InputStream is = context.getClassResolver().loadResourceAsStream(path);
         if (is == null) {
             throw new FileNotFoundException("Properties file " + path + " not found in classpath");
         }
-        Properties answer = new Properties();
-        answer.load(is);
+
+        try {
+            answer = new Properties();
+            answer.load(is);
+        } finally {
+            IOHelper.close(is);
+        }
+
         return answer;
     }
 
