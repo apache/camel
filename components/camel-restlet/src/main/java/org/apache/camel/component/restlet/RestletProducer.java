@@ -168,7 +168,7 @@ public class RestletProducer extends DefaultAsyncProducer {
 
     protected RestletOperationException populateRestletProducerException(Exchange exchange, Response response, int responseCode) {
         RestletOperationException exception;
-        String uri = exchange.getFromEndpoint().getEndpointUri();
+        String uri = response.getRequest().getResourceRef().toString();
         String statusText = response.getStatus().getDescription();
         Map<String, String> headers = parseResponseHeaders(response, exchange);
         String copy;
