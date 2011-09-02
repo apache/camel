@@ -93,7 +93,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     }
 
     @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // do not trace if tracing is disabled
         if (!tracer.isEnabled() || (routeContext != null && !routeContext.isTracing())) {
             return super.process(exchange, callback);
@@ -106,7 +106,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
             return super.process(exchange, callback);
         }
 
-        boolean shouldLog = shouldLogNode(node) && shouldLogExchange(exchange);
+        final boolean shouldLog = shouldLogNode(node) && shouldLogExchange(exchange);
 
         // whether we should trace it or not, some nodes should be skipped as they are abstract
         // intermediate steps for instance related to on completion
@@ -149,37 +149,47 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
             }
 
             // log and trace the processor
-            Object traceState = null;
+            Object state = null;
             if (shouldLog && trace) {
                 logExchange(exchange);
                 // either call the in or generic trace method depending on OUT has been enabled or not
                 if (tracer.isTraceOutExchanges()) {
-                    traceState = traceExchangeIn(exchange);
+                    state = traceExchangeIn(exchange);
                 } else {
                     traceExchange(exchange);
                 }
             }
+            final Object traceState = state;
 
-            try {
-                // special for interceptor where we need to keep booking how far we have routed in the intercepted processors
-                if (node.getParent() instanceof InterceptDefinition && exchange.getUnitOfWork() != null) {
-                    TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
-                    traceIntercept((InterceptDefinition) node.getParent(), traced, exchange);
-                }
-
-                // process the exchange
-                try {
-                    sync = super.process(exchange, callback);
-                } catch (Throwable e) {
-                    exchange.setException(e);
-                }
-            } finally {
-                // after (trace out)
-                if (shouldLog && tracer.isTraceOutExchanges()) {
-                    logExchange(exchange);
-                    traceExchangeOut(exchange, traceState);
-                }
+            // special for interceptor where we need to keep booking how far we have routed in the intercepted processors
+            if (node.getParent() instanceof InterceptDefinition && exchange.getUnitOfWork() != null) {
+                TracedRouteNodes traced = exchange.getUnitOfWork().getTracedRouteNodes();
+                traceIntercept((InterceptDefinition) node.getParent(), traced, exchange);
             }
+
+            // process the exchange
+            sync = super.process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    try {
+                        // after (trace out)
+                        if (shouldLog && tracer.isTraceOutExchanges()) {
+                            logExchange(exchange);
+                            traceExchangeOut(exchange, traceState);
+                        }
+                    } catch (Throwable e) {
+                        // some exception occurred in trace logic
+                        if (shouldLogException(exchange)) {
+                            logException(exchange, e);
+                        }
+                        exchange.setException(e);
+                    } finally {
+                        // ensure callback is always invoked
+                        callback.done(doneSync);
+                    }
+                }
+            });
+
         } catch (Throwable e) {
             // some exception occurred in trace logic
             if (shouldLogException(exchange)) {
