@@ -18,15 +18,16 @@ package org.apache.camel
 package scala
 package dsl
 
+import languages.LanguageFunction
 import org.apache.camel.Exchange
 import org.apache.camel.model._
-import org.apache.camel.spi.Policy
 import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 import reflect.Manifest
 import java.lang.String
 import java.util.Comparator
+import spi.{Language, Policy}
 
 abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with Wrapper[P] with Block {
 
@@ -34,9 +35,9 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   val unwrap = target
   implicit val builder: RouteBuilder
 
-  implicit def expressionBuilder(expression: Exchange => Any) = new ScalaExpression(expression)
-
   implicit def predicateBuilder(predicate: Exchange => Any) = new ScalaPredicate(predicate)
+
+  implicit def expressionBuilder(expression: Exchange => Any) = new ScalaExpression(expression)
 
   def apply(block: => Unit) = {
     builder.build(this, block)

@@ -17,15 +17,23 @@
 package org.apache.camel
 package scala
 
+import dsl.languages.LanguageFunction
+
 /**
  * Scala implementation for an Apache Camel Expression
  */
 class ScalaExpression(val expression: Exchange => Any) extends Expression {
   
-  def evaluate(exchange: Exchange) = expression(exchange).asInstanceOf[Object]
+  def evaluate(exchange: Exchange) = {
+    val value = expression(exchange)
+    value match {
+      case f : LanguageFunction => f.evaluate(exchange, classOf[Object])
+      case _ => value.asInstanceOf[Object]
+    }
+  }
 
   def evaluate[Target](exchange: Exchange, toType: Class[Target]) = {
-    val value = expression(exchange)
+    val value = evaluate(exchange)
     exchange.getContext().getTypeConverter().convertTo(toType, value)
   }
 

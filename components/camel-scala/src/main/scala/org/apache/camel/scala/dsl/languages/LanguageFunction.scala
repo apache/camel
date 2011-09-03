@@ -14,24 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel
-package scala.dsl
+package org.apache.camel.scala.dsl.languages
 
-import org.apache.camel.model.ChoiceDefinition
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.apache.camel.{Expression, Predicate, Exchange}
+import org.apache.camel.spi.Language
 
-case class SChoiceDefinition(override val target: ChoiceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[ChoiceDefinition] {
-  
-  override def otherwise = {
-    target.otherwise
-    this
+/**
+ * A language which has a function that can be evaluated as either an {@link org.apache.camel.Expression}
+ * or {@link org.apache.camel.Predicate}.
+ */
+class LanguageFunction(language: Language, expression: String) extends Predicate with Expression {
+
+  def matches(exchange: Exchange) = {
+    language.createPredicate(expression).matches(exchange)
   }
-  
-  override def when(filter: Exchange => Any) = {
-    // uses implicit conversion
-    val predicate = filter
-    target.when(predicate)
-    this
+
+  def evaluate[T](exchange: Exchange, toType : Class[T]) = {
+    language.createExpression(expression).evaluate(exchange, toType)
   }
+
+  override def toString : String = language + "(" + expression + ")"
 
 }

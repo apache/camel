@@ -17,13 +17,18 @@
 package org.apache.camel
 package scala
 
+import dsl.languages.LanguageFunction
 import org.apache.camel.Predicate
-import org.apache.camel.util.ObjectHelper.evaluateValuePredicate
+import org.apache.camel.util.ObjectHelper._
 
 class ScalaPredicate(function: Exchange => Any) extends Predicate {
 
   override def matches(exchange: Exchange) = {
-    evaluateValuePredicate(function(exchange))
+    val predicate = function(exchange)
+    predicate match {
+      case f : LanguageFunction => f.matches(exchange)
+      case _ => evaluateValuePredicate(predicate)
+    }
   }
 
 }
