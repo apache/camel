@@ -63,10 +63,10 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // the result is a List
-        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
 
         // and each row in the list is a Map
-        Map row = assertIsInstanceOf(Map.class, received.get(0));
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
 
         // and we should be able the get the project from the map that should be Linux
         assertEquals("Linux", row.get("PROJECT"));

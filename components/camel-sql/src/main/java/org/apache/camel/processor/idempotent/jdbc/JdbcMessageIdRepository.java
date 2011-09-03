@@ -69,11 +69,10 @@ public class JdbcMessageIdRepository extends ServiceSupport implements Idempoten
     }
 
     @ManagedOperation(description = "Adds the key to the store")
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public boolean add(final String messageId) {
         // Run this in single transaction.
-        Boolean rc = (Boolean)transactionTemplate.execute(new TransactionCallback() {
-            public Object doInTransaction(TransactionStatus status) {
+        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
                 int count = jdbcTemplate.queryForInt(QUERY_STRING, processorName, messageId);
                 if (count == 0) {
                     jdbcTemplate.update(INSERT_STRING, processorName, messageId, new Timestamp(System.currentTimeMillis()));
@@ -87,11 +86,10 @@ public class JdbcMessageIdRepository extends ServiceSupport implements Idempoten
     }
 
     @ManagedOperation(description = "Does the store contain the given key")
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public boolean contains(final String messageId) {
         // Run this in single transaction.
-        Boolean rc = (Boolean)transactionTemplate.execute(new TransactionCallback() {
-            public Object doInTransaction(TransactionStatus status) {
+        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
                 int count = jdbcTemplate.queryForInt(QUERY_STRING, processorName, messageId);
                 if (count == 0) {
                     return Boolean.FALSE;
@@ -104,10 +102,9 @@ public class JdbcMessageIdRepository extends ServiceSupport implements Idempoten
     }
 
     @ManagedOperation(description = "Remove the key from the store")
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public boolean remove(final String messageId) {
-        Boolean rc = (Boolean)transactionTemplate.execute(new TransactionCallback() {
-            public Object doInTransaction(TransactionStatus status) {
+        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
                 int updateCount = jdbcTemplate.update(DELETE_STRING, processorName, messageId);
                 if (updateCount == 0) {
                     return Boolean.FALSE;

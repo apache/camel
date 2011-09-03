@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
@@ -39,11 +40,10 @@ public class SqlProducer extends DefaultProducer {
         this.query = query;
     }
 
-    @SuppressWarnings("unchecked")
     public void process(final Exchange exchange) throws Exception {
         String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
-        jdbcTemplate.execute(queryHeader != null ? queryHeader : query, new PreparedStatementCallback() {
-            public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
+        jdbcTemplate.execute(queryHeader != null ? queryHeader : query, new PreparedStatementCallback<Map<?, ?>>() {
+            public Map<?, ?> doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
                 int argNumber = 1;
 
                 // number of parameters must match
@@ -63,8 +63,8 @@ public class SqlProducer extends DefaultProducer {
                 boolean isResultSet = ps.execute();
                 
                 if (isResultSet) {
-                    RowMapperResultSetExtractor mapper = new RowMapperResultSetExtractor(new ColumnMapRowMapper());
-                    List<?> result = (List<?>) mapper.extractData(ps.getResultSet());
+                    RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(new ColumnMapRowMapper());
+                    List<Map<String, Object>> result = mapper.extractData(ps.getResultSet());
                     exchange.getOut().setBody(result);
                     exchange.getIn().setHeader(SqlConstants.SQL_ROW_COUNT, result.size());
                     // preserve headers

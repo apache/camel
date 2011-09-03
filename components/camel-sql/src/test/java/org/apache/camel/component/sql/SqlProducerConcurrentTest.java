@@ -58,10 +58,10 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future> responses = new ConcurrentHashMap<Integer, Future>();
+        Map<Integer, Future<?>> responses = new ConcurrentHashMap<Integer, Future<?>>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future out = executor.submit(new Callable<Object>() {
+            Future<?> out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     int id = index % 3;
                     return template.requestBody("direct:simple", "" + id);
@@ -75,8 +75,8 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
         assertEquals(files, responses.size());
 
         for (int i = 0; i < files; i++) {
-            List rows = (List) responses.get(i).get();
-            Map columns = (Map) rows.get(0);
+            List<?> rows = assertIsInstanceOf(List.class, responses.get(i).get());
+            Map<?, ?> columns = assertIsInstanceOf(Map.class, rows.get(0));
             if (i % 3 == 0) {
                 assertEquals("Camel", columns.get("PROJECT"));
             } else if (i % 3 == 1) {
