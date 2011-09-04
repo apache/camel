@@ -37,7 +37,6 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 public class ServletComponent extends HttpComponent {
 
     private String servletName = "CamelServlet";
-    
     private HttpRegistry httpRegistry;
 
     public String getServletName() {
@@ -47,23 +46,20 @@ public class ServletComponent extends HttpComponent {
     public void setServletName(String servletName) {
         this.servletName = servletName;
     }
-    
+
     public void setHttpRegistry(HttpRegistry httpRegistry) {
         this.httpRegistry = httpRegistry;
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        
         if (httpRegistry == null) {
             httpRegistry = DefaultHttpRegistry.getSingletonHttpRegistry();
         }
 
-        uri = uri.startsWith("servlet:") ? remaining : uri;
-
         HttpClientParams params = new HttpClientParams();
         IntrospectionSupport.setProperties(params, parameters, "httpClient.");
-        
+
         // create the configurer to use for this endpoint
         final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
@@ -78,7 +74,6 @@ public class ServletComponent extends HttpComponent {
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), CastUtils.cast(parameters));
-        uri = httpUri.toString();
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), configurer);
         endpoint.setServletName(servletName);
@@ -114,10 +109,8 @@ public class ServletComponent extends HttpComponent {
     /**
      * Strategy to create the servlet endpoint.
      */
-    protected ServletEndpoint createServletEndpoint(String endpointUri,
-            ServletComponent component, URI httpUri, HttpClientParams params,
-            HttpConnectionManager httpConnectionManager,
-            HttpClientConfigurer clientConfigurer) throws Exception {
+    protected ServletEndpoint createServletEndpoint(String endpointUri, ServletComponent component, URI httpUri, HttpClientParams params,
+                                                    HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws Exception {
         return new ServletEndpoint(endpointUri, component, httpUri, params, httpConnectionManager, clientConfigurer);
     }
 
@@ -130,6 +123,5 @@ public class ServletComponent extends HttpComponent {
     public void disconnect(HttpConsumer consumer) throws Exception {
         httpRegistry.unregister(consumer);
     }
-    
-    
+
 }
