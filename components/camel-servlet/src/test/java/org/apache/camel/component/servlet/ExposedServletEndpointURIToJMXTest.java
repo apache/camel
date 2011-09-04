@@ -34,7 +34,6 @@ public class ExposedServletEndpointURIToJMXTest extends CamelTestSupport {
 
     @Test
     public void exposedEndpointURIShouldContainContextAndOptions() throws Exception {
-        //Thread.sleep(1000000);
         checkServletEndpointURI("\"servlet:///test1\\?matchOnUriPrefix=true\"");
         checkServletEndpointURI("\"servlet:///test2\\?servletName=test2\"");
         checkServletEndpointURI("\"servlet:///test3\\?matchOnUriPrefix=true&servletName=test3\"");
