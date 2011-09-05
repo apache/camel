@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.processor.AsyncProcessorConverterHelper;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -53,7 +53,7 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         this.idempotentRepository = idempotentRepository;
         this.eager = eager;
         this.skipDuplicate = skipDuplicate;
-        this.processor = AsyncProcessorTypeConverter.convert(processor);
+        this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
     @Override

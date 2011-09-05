@@ -25,7 +25,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
@@ -75,7 +74,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
             // get the next processor
             Processor processor = processors.next();
 
-            AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
+            AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
             boolean sync = process(exchange, nextExchange, callback, processors, async);
 
             // continue as long its being processed synchronously
@@ -123,7 +122,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
                 // continue processing the pipeline asynchronously
                 Exchange nextExchange = exchange;
                 while (continueRouting(processors, nextExchange)) {
-                    AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
+                    AsyncProcessor processor = AsyncProcessorConverterHelper.convert(processors.next());
 
                     // check for error if so we should break out
                     if (!continueProcessing(nextExchange, "so breaking out of pipeline", LOG)) {

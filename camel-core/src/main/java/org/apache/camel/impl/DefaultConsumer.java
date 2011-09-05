@@ -20,7 +20,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.processor.AsyncProcessorConverterHelper;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
@@ -64,7 +64,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
      */
     public synchronized AsyncProcessor getAsyncProcessor() {
         if (asyncProcessor == null) {            
-            asyncProcessor = AsyncProcessorTypeConverter.convert(processor);
+            asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
         }
         return asyncProcessor;
     }

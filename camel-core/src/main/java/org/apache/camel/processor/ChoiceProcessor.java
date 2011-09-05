@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -46,7 +45,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
 
     public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
         this.filters = filters;
-        this.otherwise = AsyncProcessorTypeConverter.convert(otherwise);
+        this.otherwise = AsyncProcessorConverterHelper.convert(otherwise);
     }
 
     public void process(Exchange exchange) throws Exception {

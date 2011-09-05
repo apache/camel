@@ -26,7 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.routebox.RouteboxServiceSupport;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatcher;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.processor.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,7 @@ public class RouteboxDirectProducer extends RouteboxServiceSupport implements Pr
                 RouteboxDispatcher dispatcher = new RouteboxDispatcher(producer);
                 exchange = dispatcher.dispatchAsync(getRouteboxEndpoint(), exchange);      
                 if (getRouteboxEndpoint().getConfig().isSendToConsumer()) {
-                    AsyncProcessor processor = AsyncProcessorTypeConverter.convert(((RouteboxDirectEndpoint)getRouteboxEndpoint()).getConsumer().getProcessor());
+                    AsyncProcessor processor = AsyncProcessorConverterHelper.convert(((RouteboxDirectEndpoint)getRouteboxEndpoint()).getConsumer().getProcessor());
                     flag = AsyncProcessorHelper.process(processor, exchange, new AsyncCallback() {
                         public void done(boolean doneSync) {
                             // we only have to handle async completion of this policy

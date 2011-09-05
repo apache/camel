@@ -29,7 +29,6 @@ import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.TraceFormatter;
@@ -301,7 +300,7 @@ public class DefaultChannel extends ServiceSupport implements Channel {
             exchange.getUnitOfWork().pushRouteContext(routeContext);
         }
 
-        AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
+        AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
         boolean sync = async.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 // pop the route context we just used

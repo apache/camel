@@ -23,7 +23,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.component.routebox.RouteboxConsumer;
 import org.apache.camel.component.routebox.RouteboxServiceSupport;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.processor.AsyncProcessorConverterHelper;
 import org.apache.camel.spi.ShutdownAware;
 
 public class RouteboxDirectConsumer extends RouteboxServiceSupport implements RouteboxConsumer, ShutdownAware, SuspendableService {
@@ -78,7 +78,7 @@ public class RouteboxDirectConsumer extends RouteboxServiceSupport implements Ro
      */
     public synchronized AsyncProcessor getAsyncProcessor() {
         if (asyncProcessor == null) {            
-            asyncProcessor = AsyncProcessorTypeConverter.convert(processor);
+            asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
         }
         return asyncProcessor;
     }

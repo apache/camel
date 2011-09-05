@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.AsyncProcessorConverterHelper;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -121,7 +121,7 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
                     invoked++;
                     // let the original processor continue routing
                     exchange.getIn().setHeader(name, "was wrapped");
-                    AsyncProcessor ap = AsyncProcessorTypeConverter.convert(processor);
+                    AsyncProcessor ap = AsyncProcessorConverterHelper.convert(processor);
                     boolean sync = ap.process(exchange, new AsyncCallback() {
                         public void done(boolean doneSync) {
                             // we only have to handle async completion of this policy

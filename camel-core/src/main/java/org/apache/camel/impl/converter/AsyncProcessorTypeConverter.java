@@ -16,13 +16,12 @@
  */
 package org.apache.camel.impl.converter;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.AsyncProcessorConverterHelper;
 
 /**
  * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}.
@@ -33,49 +32,11 @@ import org.apache.camel.processor.DelegateProcessor;
  */
 public class AsyncProcessorTypeConverter implements TypeConverter {
 
-    private static final class ProcessorToAsyncProcessorBridge extends DelegateProcessor implements AsyncProcessor {
-
-        private ProcessorToAsyncProcessorBridge(Processor processor) {
-            super(processor);
-        }
-
-        public boolean process(Exchange exchange, AsyncCallback callback) {
-            if (processor == null) {
-                // no processor then we are done
-                callback.done(true);
-                return true;
-            }
-            try {
-                processor.process(exchange);
-            } catch (Throwable e) {
-                // must catch throwable so we catch all
-                exchange.setException(e);
-            } finally {
-                // we are bridging a sync processor as async so callback with true
-                callback.done(true);
-            }
-            return true;
-        }
-
-        @Override
-        public String toString() {
-            if (processor != null) {
-                return processor.toString();
-            } else {
-                return "Processor is null";
-            }
-        }
-    }
-
     public <T> T convertTo(Class<T> type, Object value) {
         if (value != null) {
             if (type.equals(AsyncProcessor.class)) {
-                if (value instanceof AsyncProcessor) {
-                    return type.cast(value);
-                } else if (value instanceof Processor) {
-                    // Provide an async bridge to the regular processor.
-                    final Processor processor = (Processor)value;
-                    return type.cast(new ProcessorToAsyncProcessorBridge(processor));
+                if (value instanceof Processor) {
+                    return type.cast(AsyncProcessorConverterHelper.convert((Processor)value));
                 }
             }
         }
@@ -93,11 +54,14 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
         return convertTo(type, exchange, value);
     }
-
+    
+    /**
+     * @deprecated use AnycProcessorConverter.convert instead
+     * @param value
+     * @return
+     */
+    @Deprecated
     public static AsyncProcessor convert(Processor value) {
-        if (value instanceof AsyncProcessor) {
-            return (AsyncProcessor)value;
-        }
-        return new ProcessorToAsyncProcessorBridge(value);
+        return AsyncProcessorConverterHelper.convert(value);
     }
 }

@@ -29,7 +29,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -185,7 +184,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.redeliveryProcessor = redeliveryProcessor;
         this.deadLetter = deadLetter;
         this.output = output;
-        this.outputAsync = AsyncProcessorTypeConverter.convert(output);
+        this.outputAsync = AsyncProcessorConverterHelper.convert(output);
         this.redeliveryPolicy = redeliveryPolicy;
         this.logger = logger;
         this.deadLetterUri = deadLetterUri;
@@ -695,7 +694,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
 
             // the failure processor could also be asynchronous
-            AsyncProcessor afp = AsyncProcessorTypeConverter.convert(processor);
+            AsyncProcessor afp = AsyncProcessorConverterHelper.convert(processor);
             sync = AsyncProcessorHelper.process(afp, exchange, new AsyncCallback() {
                 public void done(boolean sync) {
                     log.trace("Failure processor done: {} processing Exchange: {}", processor, exchange);

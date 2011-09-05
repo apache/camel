@@ -22,7 +22,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.processor.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
@@ -40,7 +40,7 @@ public abstract class QueueLoadBalancer extends LoadBalancerSupport {
             if (processor == null) {
                 throw new IllegalStateException("No processors could be chosen to process " + exchange);
             } else {
-                AsyncProcessor albp = AsyncProcessorTypeConverter.convert(processor);
+                AsyncProcessor albp = AsyncProcessorConverterHelper.convert(processor);
                 boolean sync = AsyncProcessorHelper.process(albp, exchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
                         // only handle the async case

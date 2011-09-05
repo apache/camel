@@ -20,7 +20,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 
@@ -53,7 +52,7 @@ public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements
      * @param target the target
      */
     public InterceptorToAsyncProcessorBridge(Processor interceptor, AsyncProcessor target) {
-        this.interceptor = AsyncProcessorTypeConverter.convert(interceptor);
+        this.interceptor = AsyncProcessorConverterHelper.convert(interceptor);
         this.target = target;
     }
 
@@ -89,7 +88,7 @@ public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements
     }
 
     public void setTarget(Processor target) {
-        this.target = AsyncProcessorTypeConverter.convert(target);
+        this.target = AsyncProcessorConverterHelper.convert(target);
     }
 
     @Override

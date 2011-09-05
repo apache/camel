@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -109,7 +108,7 @@ public class Enricher extends ServiceSupport implements AsyncProcessor {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final Exchange resourceExchange = createResourceExchange(exchange, ExchangePattern.InOut);
 
-        AsyncProcessor ap = AsyncProcessorTypeConverter.convert(producer);
+        AsyncProcessor ap = AsyncProcessorConverterHelper.convert(producer);
         boolean sync = AsyncProcessorHelper.process(ap, resourceExchange, new AsyncCallback() {
             public void done(boolean doneSync) {
                 // we only have to handle async completion of the routing slip

@@ -45,7 +45,6 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -569,7 +568,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             }
 
             // let the prepared process it, remember to begin the exchange pair
-            AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
+            AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
             pair.begin();
             sync = AsyncProcessorHelper.process(async, exchange, new AsyncCallback() {
                 public void done(boolean doneSync) {
@@ -701,7 +700,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
             // let the prepared process it, remember to begin the exchange pair
             // we invoke it synchronously as parallel async routing is too hard
-            AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
+            AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
             pair.begin();
             AsyncProcessorHelper.process(async, exchange);
         } finally {

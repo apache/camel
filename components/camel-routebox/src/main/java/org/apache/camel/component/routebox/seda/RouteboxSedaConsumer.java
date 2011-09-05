@@ -29,7 +29,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.component.routebox.RouteboxConsumer;
 import org.apache.camel.component.routebox.RouteboxServiceSupport;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatcher;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.processor.AsyncProcessorConverterHelper;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.slf4j.Logger;
@@ -42,7 +42,7 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
 
     public RouteboxSedaConsumer(RouteboxSedaEndpoint endpoint, Processor processor) {
         super(endpoint);
-        this.setProcessor(AsyncProcessorTypeConverter.convert(processor));
+        this.setProcessor(AsyncProcessorConverterHelper.convert(processor));
         this.producer = endpoint.getConfig().getInnerProducerTemplate();
     }
 

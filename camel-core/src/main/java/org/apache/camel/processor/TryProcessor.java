@@ -26,7 +26,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -48,7 +47,7 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
     private List<AsyncProcessor> processors;
 
     public TryProcessor(Processor tryProcessor, List<CatchProcessor> catchClauses, Processor finallyProcessor) {
-        this.tryProcessor = AsyncProcessorTypeConverter.convert(tryProcessor);
+        this.tryProcessor = AsyncProcessorConverterHelper.convert(tryProcessor);
         this.catchProcessor = new DoCatchProcessor(catchClauses);
         this.finallyProcessor = new DoFinallyProcessor(finallyProcessor);
     }

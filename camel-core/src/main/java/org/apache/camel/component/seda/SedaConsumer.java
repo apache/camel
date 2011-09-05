@@ -31,7 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.LoggingExceptionHandler;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.processor.AsyncProcessorConverterHelper;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
@@ -61,7 +61,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
 
     public SedaConsumer(SedaEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
-        this.processor = AsyncProcessorTypeConverter.convert(processor);
+        this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
     @Override
