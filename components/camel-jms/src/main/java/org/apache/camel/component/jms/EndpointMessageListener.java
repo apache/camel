@@ -27,7 +27,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ObjectHelper;
@@ -156,7 +155,7 @@ public class EndpointMessageListener implements MessageListener {
     }
 
     public Exchange createExchange(Message message, Object replyDestination) {
-        Exchange exchange = new DefaultExchange(endpoint, endpoint.getExchangePattern());
+        Exchange exchange = endpoint.createExchange();
         JmsBinding binding = getBinding();
         exchange.setProperty(Exchange.BINDING, binding);
         exchange.setIn(new JmsMessage(message, binding));

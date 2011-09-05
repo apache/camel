@@ -27,7 +27,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.slf4j.Logger;
@@ -73,7 +72,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
         final BlockingQueue queue = endpoint.getQueue();
 
         while (queue != null && isRunAllowed()) {
-            final Exchange exchange = new DefaultExchange(this.getEndpoint().getCamelContext());
+            final Exchange exchange = this.getEndpoint().createExchange();
 
             try {
                 final Object body = queue.poll(endpoint.getConfiguration().getPollInterval(), TimeUnit.MILLISECONDS);

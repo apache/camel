@@ -33,7 +33,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +64,7 @@ public class CamelInvocationHandler implements InvocationHandler {
         MethodInfo methodInfo = methodInfoCache.getMethodInfo(method);
 
         final ExchangePattern pattern = methodInfo != null ? methodInfo.getPattern() : ExchangePattern.InOut;
-        final Exchange exchange = new DefaultExchange(endpoint, pattern);
+        final Exchange exchange = endpoint.createExchange(pattern);
         exchange.getIn().setBody(invocation);
 
         // is the return type a future

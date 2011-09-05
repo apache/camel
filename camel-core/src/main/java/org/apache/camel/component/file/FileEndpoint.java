@@ -22,7 +22,6 @@ import java.io.FileNotFoundException;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -104,7 +103,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public Exchange createExchange(GenericFile<File> file) {
-        Exchange exchange = new DefaultExchange(this);
+        Exchange exchange =  createExchange();
         if (file != null) {
             file.bindToExchange(exchange);
         }
