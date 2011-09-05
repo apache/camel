@@ -41,6 +41,10 @@ public class JpaEndpointTest extends CamelTestSupport {
         assertEquals("camel", jpa.getPersistenceUnit());
     }
 
+    /**
+     * 
+     * @deprecated 
+     */
     @Test
     public void testJpaEndpointCtrUrl() throws Exception {
         JpaEndpoint jpa = new JpaEndpoint("jpa://org.apache.camel.examples.SendEmail");
@@ -53,6 +57,10 @@ public class JpaEndpointTest extends CamelTestSupport {
         assertEquals("camel", jpa.getPersistenceUnit());
     }
 
+    /**
+     * 
+     * @deprecated
+     */
     @Test
     public void testJpaEndpointCtrUrlEMF() throws Exception {
         EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");
@@ -67,6 +75,10 @@ public class JpaEndpointTest extends CamelTestSupport {
         assertEquals("camel", jpa.getPersistenceUnit());
     }
 
+    /**
+     * 
+     * @deprecated
+     */
     @Test
     public void testJpaEndpointCtrUrlEMFandTM() throws Exception {
         EntityManagerFactory fac = Persistence.createEntityManagerFactory("camel");

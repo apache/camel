@@ -73,11 +73,11 @@ public class JpaTemplateTransactionStrategy implements TransactionStrategy {
         return new JpaTemplateTransactionStrategy(template, tranasctionTemplate);
     }
 
-    @SuppressWarnings("unchecked")
-    public Object execute(final JpaCallback callback) {
-        return transactionTemplate.execute(new TransactionCallback() {
+    
+    public Object execute(final JpaCallback<?> callback) {
+        return transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-                return jpaTemplate.execute(new JpaCallback() {
+                return jpaTemplate.execute(new JpaCallback<Object>() {
                     public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                         return callback.doInJpa(entityManager);
                     }

@@ -66,5 +66,4 @@ public class QueryBuilderTest extends CamelTestSupport {
         assertEquals("Query: select x from SendEmail x where x.id = :a Parameters: {a=1}", q.toString());
     }
 
-
 }

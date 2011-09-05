@@ -52,7 +52,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
     private String query;
     private String namedQuery;
     private String nativeQuery;
-    private Class resultClass;
+    private Class<?> resultClass;
     private int maxMessagesPerPoll;
     private volatile ShutdownRunningTask shutdownRunningTask;
     private volatile int pendingExchanges;
@@ -77,7 +77,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        Object messagePolled = template.execute(new JpaCallback() {
+        Object messagePolled = template.execute(new JpaCallback<Object>() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 Queue<DataHolder> answer = new LinkedList<DataHolder>();
 
@@ -242,11 +242,11 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
         this.query = query;
     }
     
-    public Class getResultClass() {
+    public Class<?> getResultClass() {
         return resultClass;
     }
 
-    public void setResultClass(Class resultClass) {
+    public void setResultClass(Class<?> resultClass) {
         this.resultClass = resultClass;
     }    
 

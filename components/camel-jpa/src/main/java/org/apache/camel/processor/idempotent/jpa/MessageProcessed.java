@@ -36,6 +36,8 @@ import javax.persistence.UniqueConstraint;
     uniqueConstraints = @UniqueConstraint(columnNames = {"processorName", "messageId"})
 )
 public class MessageProcessed implements Serializable {
+    private static final long serialVersionUID = 5594244386689371118L;
+    
     protected Date createdAt;
     private Long id;
     private String messageId;

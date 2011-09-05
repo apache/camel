@@ -60,7 +60,7 @@ public class JpaTest extends Assert {
 
     @Test
     public void testProducerInsertsIntoDatabaseThenConsumerFiresMessageExchange() throws Exception {
-        transactionStrategy.execute(new JpaCallback() {
+        transactionStrategy.execute(new JpaCallback<Object>() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 // lets delete any exiting records before the test
                 entityManager.createQuery("delete from " + entityName).executeUpdate();
@@ -68,7 +68,7 @@ public class JpaTest extends Assert {
             }
         });
 
-        List results = jpaTemplate.find(queryText);
+        List<?> results = jpaTemplate.find(queryText);
         assertEquals("Should have no results: " + results, 0, results.size());
 
         // lets produce some objects

@@ -64,10 +64,10 @@ public class JpaProducerConcurrentTest extends CamelTestSupport {
         getMockEndpoint("mock:result").assertNoDuplicates(body());
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future> responses = new ConcurrentHashMap<Integer, Future>();
+        Map<Integer, Future<Object>> responses = new ConcurrentHashMap<Integer, Future<Object>>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future out = executor.submit(new Callable<Object>() {
+            Future<Object> out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
                     template.sendBody("direct:start", new SendEmail("user" + index + "@somewhere.org"));
                     return null;
@@ -81,7 +81,7 @@ public class JpaProducerConcurrentTest extends CamelTestSupport {
         assertEquals(files, responses.size());
 
         // get them so they are complete
-        for (Future future : responses.values()) {
+        for (Future<Object> future : responses.values()) {
             future.get();
         }
 
@@ -107,25 +107,24 @@ public class JpaProducerConcurrentTest extends CamelTestSupport {
     }
 
     private void assertEntityInDB(int number) throws Exception {
-        jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
-        List list = jpaTemplate.find(SELECT_ALL_STRING);
+        List<?> list = jpaTemplate.find(SELECT_ALL_STRING);
         assertEquals(number, list.size());
 
         assertIsInstanceOf(SendEmail.class, list.get(0));
     }
 
-    @SuppressWarnings("unchecked")
     protected void cleanupRepository() {
-        jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
         TransactionTemplate transactionTemplate = new TransactionTemplate();
         transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
-        transactionTemplate.execute(new TransactionCallback() {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus arg0) {
-                List list = jpaTemplate.find(SELECT_ALL_STRING);
+                List<?> list = jpaTemplate.find(SELECT_ALL_STRING);
                 for (Object item : list) {
                     jpaTemplate.remove(item);
                 }

@@ -39,7 +39,8 @@ import org.apache.camel.processor.interceptor.TraceEventMessage;
     name = "CAMEL_MESSAGETRACED"
 )
 public class JpaTraceEventMessage implements TraceEventMessage, Serializable {
-
+    private static final long serialVersionUID = -3577516047575267548L;
+    
     protected Long id;
     protected Date timestamp;
     protected String fromEndpointUri;

@@ -79,25 +79,24 @@ public class JpaRouteMaximumResultsTest extends CamelTestSupport {
     }
 
     private void assertEntityInDB() throws Exception {
-        jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
-        List list = jpaTemplate.find(SELECT_ALL_STRING);
+        List<?> list = jpaTemplate.find(SELECT_ALL_STRING);
         assertEquals(3, list.size());
 
         assertIsInstanceOf(SendEmail.class, list.get(0));
     }
 
-    @SuppressWarnings("unchecked")
     protected void cleanupRepository() {
-        jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
         TransactionTemplate transactionTemplate = new TransactionTemplate();
         transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
-        transactionTemplate.execute(new TransactionCallback() {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus arg0) {
-                List list = jpaTemplate.find(SELECT_ALL_STRING);
+                List<?> list = jpaTemplate.find(SELECT_ALL_STRING);
                 for (Object item : list) {
                     jpaTemplate.remove(item);
                 }

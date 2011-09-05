@@ -42,7 +42,7 @@ public class JpaUseMergeTest extends AbstractJpaMethodTest {
         setUp("jpa://" + Customer.class.getName() + "?usePersist=false");
         
         final Customer customer = createDefaultCustomer();
-        transactionStrategy.execute(new JpaCallback() {
+        transactionStrategy.execute(new JpaCallback<Object>() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 entityManager.persist(customer);
                 entityManager.flush();
@@ -68,7 +68,7 @@ public class JpaUseMergeTest extends AbstractJpaMethodTest {
         assertEquals(customer.getAddress().getAddressLine2(), receivedCustomer.getAddress().getAddressLine2());
         assertNotNull(receivedCustomer.getAddress().getId());
         
-        List results = jpaTemplate.find("select o from " + Customer.class.getName() + " o");
+        List<?> results = jpaTemplate.find("select o from " + Customer.class.getName() + " o");
         assertEquals(1, results.size());
         Customer persistedCustomer = (Customer) results.get(0);
         assertEquals(receivedCustomer.getName(), persistedCustomer.getName());

@@ -61,7 +61,7 @@ public class JpaWithNamedQueryTest extends Assert {
 
     @Test
     public void testProducerInsertsIntoDatabaseThenConsumerFiresMessageExchange() throws Exception {
-        transactionStrategy.execute(new JpaCallback() {
+        transactionStrategy.execute(new JpaCallback<Object>() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 // lets delete any exiting records before the test
                 entityManager.createQuery("delete from " + entityName).executeUpdate();
@@ -74,7 +74,7 @@ public class JpaWithNamedQueryTest extends Assert {
             }
         });
 
-        List results = jpaTemplate.find(queryText);
+        List<?> results = jpaTemplate.find(queryText);
         assertEquals("Should have no results: " + results, 0, results.size());
 
         // lets produce some objects
@@ -109,16 +109,17 @@ public class JpaWithNamedQueryTest extends Assert {
         // we need to sleep as we will be invoked from inside the transaction!
         Thread.sleep(1000);
 
-        transactionStrategy.execute(new JpaCallback() {
-            @SuppressWarnings("unchecked")
+        transactionStrategy.execute(new JpaCallback<Object>() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
 
                 // now lets assert that there are still 2 entities left
-                List<MultiSteps> rows = entityManager.createQuery("select x from MultiSteps x").getResultList();
+                List<?> rows = entityManager.createQuery("select x from MultiSteps x").getResultList();
                 assertEquals("Number of entities: " + rows, 2, rows.size());
 
                 int counter = 1;
-                for (MultiSteps row : rows) {
+                for (Object rowObj : rows) {
+                    assertTrue("Rows are not instances of MultiSteps",  rowObj instanceof MultiSteps);
+                    final MultiSteps row = (MultiSteps) rowObj;
                     LOG.info("entity: " + counter++ + " = " + row);
 
                     if (row.getAddress().equals("foo@bar.com")) {

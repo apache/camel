@@ -67,17 +67,16 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     protected void cleanupRepository() {
-        jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
         TransactionTemplate transactionTemplate = new TransactionTemplate();
         transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
-        transactionTemplate.execute(new TransactionCallback() {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus arg0) {
-                List list = jpaTemplate.find(SELECT_ALL_STRING, PROCESSOR_NAME);
+                List<?> list = jpaTemplate.find(SELECT_ALL_STRING, PROCESSOR_NAME);
                 for (Object item : list) {
                     jpaTemplate.remove(item);
                 }

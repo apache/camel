@@ -78,7 +78,7 @@ public abstract class AbstractJpaMethodTest extends Assert {
         assertEquals(customer.getAddress().getAddressLine2(), receivedCustomer.getAddress().getAddressLine2());
         assertNotNull(receivedCustomer.getAddress().getId());
         
-        List results = jpaTemplate.find("select o from " + Customer.class.getName() + " o");
+        List<?> results = jpaTemplate.find("select o from " + Customer.class.getName() + " o");
         assertEquals(1, results.size());
         Customer persistedCustomer = (Customer) results.get(0);
         assertEquals(receivedCustomer.getName(), persistedCustomer.getName());
@@ -99,7 +99,7 @@ public abstract class AbstractJpaMethodTest extends Assert {
         exchange.getIn().setBody(customers);
         Exchange returnedExchange = template.send(endpoint, exchange);
         
-        List returnedCustomers = returnedExchange.getIn().getBody(List.class);
+        List<?> returnedCustomers = returnedExchange.getIn().getBody(List.class);
         assertEquals(2, returnedCustomers.size());
         
         assertEntitiesInDatabase(2, Customer.class.getName());
@@ -167,7 +167,7 @@ public abstract class AbstractJpaMethodTest extends Assert {
         transactionStrategy = endpoint.createTransactionStrategy();
         jpaTemplate = endpoint.getTemplate();
         
-        transactionStrategy.execute(new JpaCallback() {
+        transactionStrategy.execute(new JpaCallback<Object>() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 entityManager.createQuery("delete from " + Customer.class.getName()).executeUpdate();
                 return null;
@@ -179,7 +179,7 @@ public abstract class AbstractJpaMethodTest extends Assert {
     }
     
     protected void save(final Customer customer) {
-        transactionStrategy.execute(new JpaCallback() {
+        transactionStrategy.execute(new JpaCallback<Object>() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 entityManager.persist(customer);
                 entityManager.flush();
@@ -192,7 +192,7 @@ public abstract class AbstractJpaMethodTest extends Assert {
     }
     
     protected void assertEntitiesInDatabase(int count, String entity) {
-        List results = jpaTemplate.find("select o from " + entity + " o");
+        List<?> results = jpaTemplate.find("select o from " + entity + " o");
         assertEquals(count, results.size());
     }
 

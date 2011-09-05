@@ -29,5 +29,5 @@ public interface TransactionStrategy {
      * @param callback the callback
      * @return the result
      */
-    Object execute(JpaCallback callback);
+    Object execute(JpaCallback<?> callback);
 }

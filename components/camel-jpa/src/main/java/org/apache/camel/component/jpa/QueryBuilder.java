@@ -86,7 +86,7 @@ public abstract class QueryBuilder implements QueryFactory {
     /**
      * Creates a native SQL query with a provided resultClass
      */
-    public static QueryBuilder nativeQuery(final String nativeQuery, final Class resultClass) {
+    public static QueryBuilder nativeQuery(final String nativeQuery, final Class<?> resultClass) {
         return new QueryBuilder() {
             protected Query makeQueryObject(EntityManager entityManager) {
                 return entityManager.createNativeQuery(nativeQuery, resultClass);
@@ -116,7 +116,7 @@ public abstract class QueryBuilder implements QueryFactory {
      * @param parameters the parameters to be configured on the query
      * @return this query builder
      */
-    public QueryBuilder parameters(final Collection parameters) {
+    public QueryBuilder parameters(final Collection<?> parameters) {
         checkNoParametersConfigured();
         parameterBuilder = new ParameterBuilder() {
             public void populateQuery(EntityManager entityManager, Query query) {

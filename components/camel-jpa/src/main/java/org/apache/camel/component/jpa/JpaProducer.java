@@ -48,8 +48,8 @@ public class JpaProducer extends DefaultProducer {
         exchange.getIn().setHeader(JpaConstants.JPA_TEMPLATE, endpoint.getTemplate());
         final Object values = expression.evaluate(exchange, Object.class);
         if (values != null) {
-            template.execute(new JpaCallback() {
-                @SuppressWarnings("unchecked")
+            template.execute(new JpaCallback<Object>() {
+                
                 public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[]) values;
@@ -60,9 +60,10 @@ public class JpaProducer extends DefaultProducer {
                             }
                         }
                     } else if (values instanceof Collection) {
-                        Collection collection = (Collection) values;
-                        List managedEntities = new ArrayList();
-                        for (Iterator iter = collection.iterator(); iter.hasNext();) {
+                        @SuppressWarnings("unchecked")
+                        Collection<Object> collection = (Collection<Object>) values;
+                        List<Object> managedEntities = new ArrayList<Object>();
+                        for (Iterator<?> iter = collection.iterator(); iter.hasNext();) {
                             Object managedEntity = save(iter.next(), entityManager);
                             managedEntities.add(managedEntity);
                         }
