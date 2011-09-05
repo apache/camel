@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
@@ -46,6 +47,11 @@ public class ServletEndpoint extends HttpEndpoint {
 
     public String getServletName() {
         return servletName;
+    }
+
+    @Override
+    public Producer createProducer() throws Exception {
+        throw new UnsupportedOperationException("You cannot create producer with servlet endpoint, please consider to use http or http4 endpoint.");
     }
 
     @Override

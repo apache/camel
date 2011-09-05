@@ -25,6 +25,7 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -62,6 +63,26 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         WebResponse response = client.getResponse(req);        
         assertEquals("The response message is wrong ", "OK", response.getResponseMessage());
         assertEquals("The response body is wrong", "Bye World", response.getText());
+    }
+
+    @Test
+    public void testCreateSerlvetEndpointProducer() throws Exception {
+        if (!startCamelContext) {
+            // don't test it with web.xml configure
+            return;
+        }
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start").to("servlet:///testworld");
+                }
+            });
+            fail("Excepts exception here");
+        } catch (Exception ex) {
+            assertTrue("Get a wrong exception." , ex instanceof FailedToCreateProducerException);
+            assertTrue("Get a wrong cause of exception.", ex.getCause() instanceof UnsupportedOperationException);
+        }
     }
     
     public static class MyServletRoute extends RouteBuilder {
