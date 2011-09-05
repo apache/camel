@@ -20,7 +20,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultAsyncProducer;
 
 /**
@@ -39,9 +38,10 @@ public class LogProducer extends DefaultAsyncProducer {
         try {
             logger.process(exchange);
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            exchange.setException(e);
+        } finally {
+            callback.done(true);
         }
-        callback.done(true);
         return true;
     }
 }

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.processor;
 
+import junit.framework.TestCase;
 import org.apache.camel.util.CamelLogger;
 import org.easymock.EasyMock;
 import org.slf4j.Logger;
-import junit.framework.TestCase;
 
 public class ThroughPutLoggerTest extends TestCase {
 

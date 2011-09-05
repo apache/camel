@@ -45,7 +45,7 @@ public class CamelLogger {
 
     public CamelLogger(Logger log, LoggingLevel level) {
         this.log = log;
-        this.level = level;
+        setLevel(level);
     }
 
     public CamelLogger(String logName) {
@@ -70,7 +70,7 @@ public class CamelLogger {
     
     public void log(String message) {
         if (shouldLog(log, level)) {
-            log(log, level,message);
+            log(log, level, message);
         }
     }
 
@@ -97,6 +97,10 @@ public class CamelLogger {
     }
 
     public void setLevel(LoggingLevel level) {
+        if (level == null) {
+            throw new IllegalArgumentException("Log level may not be null");
+        }
+
         this.level = level;
     }
 
@@ -105,9 +109,6 @@ public class CamelLogger {
     }
 
     public static boolean shouldLog(Logger log, LoggingLevel level) {
-        if (level == null) {
-            throw new NullPointerException("Log level may not be null");
-        }
         return level == LoggingLevel.DEBUG && log.isDebugEnabled() 
             || level == LoggingLevel.ERROR && log.isErrorEnabled()
             || level == LoggingLevel.INFO && log.isInfoEnabled()
@@ -116,9 +117,6 @@ public class CamelLogger {
     }
 
     public static void log(Logger log, LoggingLevel level, String message) {
-        if (level == null) {
-            throw new NullPointerException("Log level may not be null");
-        }
         switch (level) {
         case DEBUG:
             log.debug(message);
@@ -135,13 +133,11 @@ public class CamelLogger {
         case WARN:
             log.warn(message);
             break;
+        default:
         }
     }
     
     public static void log(Logger log, LoggingLevel level, String message, Throwable th) {
-        if (level == null) {
-            throw new NullPointerException("Log level may not be null");
-        }
         switch (level) {
         case DEBUG:
             log.debug(message, th);
@@ -158,6 +154,7 @@ public class CamelLogger {
         case WARN:
             log.warn(message, th);
             break;
+        default:
         }
     }
 
