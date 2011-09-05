@@ -66,7 +66,8 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
             URI httpUri, HttpClientParams params,
             HttpConnectionManager httpConnectionManager,
             HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        super(endpointUri, component, httpUri, params, httpConnectionManager, clientConfigurer);
+        // set the endpoint uri with httpUri as we need to create http producer here
+        super(httpUri.toString(), component, httpUri, params, httpConnectionManager, clientConfigurer);
         urlFetchService = URLFetchServiceFactory.getURLFetchService();
     }
 
@@ -145,6 +146,12 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
 
     public Producer createProducer() throws Exception {
         return new GHttpProducer(this);
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        // GHttpEndpoint knows about all it's options on the passed URI
+        return true;
     }
 
 }
