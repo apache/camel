@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultExchangeFormatter;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.util.CamelLogger;
 
@@ -34,13 +33,14 @@ import org.apache.camel.util.CamelLogger;
  */
 public class CamelLogProcessor implements Processor {
     private CamelLogger log;
-    private ExchangeFormatter formatter = DefaultExchangeFormatter.getInstance();
+    private ExchangeFormatter formatter;
 
     public CamelLogProcessor() {
         this(new CamelLogger(CamelLogProcessor.class.getName()));
     }
     
     public CamelLogProcessor(CamelLogger log) {
+        this.formatter = new DefaultExchangeFormatter();
         this.log = log;
     }
 
@@ -84,5 +84,9 @@ public class CamelLogProcessor implements Processor {
         log.setLevel(level);
     }
 
-
+    static class DefaultExchangeFormatter implements ExchangeFormatter {
+        public String format(Exchange exchange) {
+            return exchange.toString();
+        }
+    }
 }
