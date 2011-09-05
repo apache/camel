@@ -23,7 +23,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
+import org.apache.camel.Processor;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +35,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class ThroughputLogger extends CamelLogger {
+public class ThroughputLogger extends ServiceSupport implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(ThroughputLogger.class);
 
     private final AtomicInteger receivedCounter = new AtomicInteger();
@@ -46,53 +48,27 @@ public class ThroughputLogger extends CamelLogger {
     private long startTime;
     private long groupStartTime;
     private String action = "Received";
-    private String logMessage;
     private CamelContext camelContext;
     private ScheduledExecutorService logSchedulerService;
+    private CamelLogger log;
 
-    public ThroughputLogger() {
+    public ThroughputLogger(CamelLogger log) {
+        this.log = log;
     }
 
-    public ThroughputLogger(Logger log) {
-        super(log);
-    }
-
-    public ThroughputLogger(Logger log, LoggingLevel level) {
-        super(log, level);
-    }
-
-    public ThroughputLogger(String logName) {
-        super(logName);
-    }
-
-    public ThroughputLogger(String logName, LoggingLevel level) {
-        super(logName, level);
-    }
-
-    public ThroughputLogger(String logName, LoggingLevel level, Integer groupSize) {
-        super(logName, level);
+    public ThroughputLogger(CamelLogger log, Integer groupSize) {
+        this(log);
         setGroupSize(groupSize);
     }
 
-    public ThroughputLogger(CamelContext camelContext, String logName, LoggingLevel level,
-                            Long groupInterval, Long groupDelay, Boolean groupActiveOnly) {
-        super(logName, level);
-
+    public ThroughputLogger(CamelLogger log, CamelContext camelContext, Long groupInterval, Long groupDelay, Boolean groupActiveOnly) {
+        this(log);
         this.camelContext = camelContext;
         setGroupInterval(groupInterval);
         setGroupActiveOnly(groupActiveOnly);
         if (groupDelay != null) {
             setGroupDelay(groupDelay);
         }
-    }
-
-    public ThroughputLogger(String logName, int groupSize) {
-        super(logName);
-        setGroupSize(groupSize);
-    }
-
-    public ThroughputLogger(int groupSize) {
-        setGroupSize(groupSize);
     }
 
     @Override
@@ -105,8 +81,7 @@ public class ThroughputLogger extends CamelLogger {
         //only process if groupSize is set...otherwise we're in groupInterval mode
         if (groupSize != null) {
             if (receivedCount % groupSize == 0) {
-                logMessage = createLogMessage(exchange, receivedCount);
-                super.process(exchange);
+                log.log(createLogMessage(exchange, receivedCount));
             }
         }
     }
@@ -164,14 +139,9 @@ public class ThroughputLogger extends CamelLogger {
     public void setAction(String action) {
         this.action = action;
     }
-
+    
     @Override
-    protected String logMessage(Exchange exchange) {
-        return logMessage;
-    }
-
-    @Override
-    public void start() throws Exception {
+    public void doStart() throws Exception {
         // if an interval was specified, create a background thread
         if (groupInterval != null) {
             ObjectHelper.notNull(camelContext, "CamelContext", this);
@@ -185,7 +155,7 @@ public class ThroughputLogger extends CamelLogger {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void doStop() throws Exception {
         if (logSchedulerService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(logSchedulerService);
             logSchedulerService = null;
@@ -255,7 +225,7 @@ public class ThroughputLogger extends CamelLogger {
         String message = getAction() + ": " + currentCount + " new messages, with total " + receivedCount + " so far. Last group took: " + duration
                 + " millis which is: " + numberFormat.format(rate)
                 + " messages per second. average: " + numberFormat.format(average);
-        log(message);
+        log.log(message);
     }
 
     protected double messagesPerSecond(long messageCount, long startTime, long endTime) {

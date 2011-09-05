@@ -40,7 +40,7 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.processor.CamelLogger;
+import org.apache.camel.processor.CamelLogProcessor;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
 public class TraceInterceptor extends DelegateAsyncProcessor implements ExchangeFormatter {
     private static final transient Logger LOG = LoggerFactory.getLogger(TraceInterceptor.class);
 
-    private CamelLogger logger;
+    private CamelLogProcessor logger;
     private Producer traceEventProducer;
     private final ProcessorDefinition node;
     private final Tracer tracer;
@@ -276,7 +276,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
         return node;
     }
 
-    public CamelLogger getLogger() {
+    public CamelLogProcessor getLogger() {
         return logger;
     }
 

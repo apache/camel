@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.util.CamelLogger;
 
 /**
  * An {@link ErrorHandler} which uses commons-logging to dump the error

@@ -21,11 +21,11 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.LoggerFactory;
 

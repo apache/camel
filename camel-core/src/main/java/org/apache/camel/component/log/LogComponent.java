@@ -20,9 +20,11 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.processor.CamelLogger;
+import org.apache.camel.processor.CamelLogProcessor;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -38,20 +40,19 @@ public class LogComponent extends DefaultComponent {
         Integer groupSize = getAndRemoveParameter(parameters, "groupSize", Integer.class);
         Long groupInterval = getAndRemoveParameter(parameters, "groupInterval", Long.class);
 
-        CamelLogger logger;
+        CamelLogger camelLogger = new CamelLogger(remaining, level);
+        Processor logger;
         if (groupSize != null) {
-            logger = new ThroughputLogger(remaining, level, groupSize);
+            logger = new ThroughputLogger(camelLogger, groupSize);
         } else if (groupInterval != null) {
             Boolean groupActiveOnly = getAndRemoveParameter(parameters, "groupActiveOnly", Boolean.class, Boolean.TRUE);
             Long groupDelay = getAndRemoveParameter(parameters, "groupDelay", Long.class);
-            logger = new ThroughputLogger(this.getCamelContext(), remaining, level, groupInterval, groupDelay, groupActiveOnly);
+            logger = new ThroughputLogger(camelLogger, this.getCamelContext(), groupInterval, groupDelay, groupActiveOnly);
         } else {
             LogFormatter formatter = new LogFormatter();
             IntrospectionSupport.setProperties(formatter, parameters);
 
-            logger = new CamelLogger(remaining);
-            logger.setLevel(level);
-            logger.setFormatter(formatter);
+            logger = new CamelLogProcessor(camelLogger, formatter);
         }
 
         LogEndpoint endpoint = new LogEndpoint(uri, this);

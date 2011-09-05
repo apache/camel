@@ -1286,6 +1286,11 @@
       </dependency>
       <dependency>
         <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>${easymock-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.easymock</groupId>
         <artifactId>easymockclassextension</artifactId>
         <version>${easymock-version}</version>
       </dependency>

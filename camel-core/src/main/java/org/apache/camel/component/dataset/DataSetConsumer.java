@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.util.CamelLogger;
 
 /**
  * DataSet consumer.
@@ -105,7 +106,8 @@ public class DataSetConsumer extends DefaultConsumer {
     }
 
     protected ThroughputLogger createReporter() {
-        ThroughputLogger answer = new ThroughputLogger(endpoint.getEndpointUri(), (int) endpoint.getDataSet().getReportCount());
+        CamelLogger logger = new CamelLogger(endpoint.getEndpointUri());
+        ThroughputLogger answer = new ThroughputLogger(logger, (int) endpoint.getDataSet().getReportCount());
         answer.setAction("Sent");
         return answer;
     }

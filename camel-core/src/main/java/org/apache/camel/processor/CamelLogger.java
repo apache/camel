@@ -32,8 +32,9 @@ import org.slf4j.LoggerFactory;
  * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
  * which has a <tt>Logger</tt> class.
  *
- * @version 
+ * @deprecated This class has been split up into org.apache.camel.util.CamelLogger and org.apache.camel.processor.CamelLogProcessor 
  */
+@Deprecated
 public class CamelLogger extends ServiceSupport implements Processor {
     private Logger log;
     private LoggingLevel level;

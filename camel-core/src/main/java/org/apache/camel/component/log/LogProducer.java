@@ -19,23 +19,28 @@ package org.apache.camel.component.log;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.processor.CamelLogger;
 
 /**
  * Log producer.
  */
 public class LogProducer extends DefaultAsyncProducer {
 
-    private final CamelLogger logger;
+    private final Processor logger;
 
-    public LogProducer(Endpoint endpoint, CamelLogger logger) {
+    public LogProducer(Endpoint endpoint, Processor logger) {
         super(endpoint);
         this.logger = logger;
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        logger.process(exchange);
+        try {
+            logger.process(exchange);
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
         callback.done(true);
         return true;
     }

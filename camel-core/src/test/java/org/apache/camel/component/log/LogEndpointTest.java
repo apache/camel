@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.CamelLogger;
+import org.apache.camel.processor.CamelLogProcessor;
 
 /**
  * @version 
@@ -29,7 +29,7 @@ public class LogEndpointTest extends ContextTestSupport {
 
     private static Exchange logged;
 
-    private static class MyLogger extends CamelLogger {
+    private static class MyLogger extends CamelLogProcessor {
 
         @Override
         public void process(Exchange exchange) {
@@ -64,7 +64,6 @@ public class LogEndpointTest extends ContextTestSupport {
                 end.setLogger(new MyLogger());
 
                 assertEquals("log:myLogger", end.getEndpointUri());
-                assertNotNull(end.getLogger());
 
                 from("direct:start").to(end).to("mock:result");
             }

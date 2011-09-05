@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -208,7 +209,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     protected ThroughputLogger createReporter() {
-        ThroughputLogger answer = new ThroughputLogger(this.getEndpointUri(), (int) this.getDataSet().getReportCount());
+        CamelLogger logger = new CamelLogger(this.getEndpointUri());
+        ThroughputLogger answer = new ThroughputLogger(logger, (int) this.getDataSet().getReportCount());
         answer.setAction("Received");
         return answer;
     }

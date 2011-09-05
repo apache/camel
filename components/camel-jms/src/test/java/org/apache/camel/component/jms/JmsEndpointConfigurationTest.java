@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.DeliveryMode;
 import javax.jms.ExceptionListener;
@@ -28,7 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.processor.CamelLogger;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
@@ -40,12 +41,17 @@ import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
 import org.springframework.util.ErrorHandler;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
 /**
  * @version 
  */
 public class JmsEndpointConfigurationTest extends CamelTestSupport {
+
+    private final class FailProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            fail("Should not be reached");
+        }
+    }
 
     private ConnectionFactory cf = new ActiveMQConnectionFactory("vm:myBroker");
 
@@ -182,7 +188,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     public void testInvalidMaxConcurrentConsumers() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=5&maxConcurrentConsumers=2");
         try {
-            endpoint.createConsumer(new CamelLogger());
+            endpoint.createConsumer(new FailProcessor());
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertEquals("Property maxConcurrentConsumers: 2 must be higher than concurrentConsumers: 5", e.getMessage());
@@ -194,7 +200,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?concurrentConsumers=5&maxConcurrentConsumers=2&consumerType=Simple");
 
         try {
-            endpoint.createConsumer(new CamelLogger());
+            endpoint.createConsumer(new FailProcessor());
             fail("Should have thrown exception");
         } catch (IllegalArgumentException e) {
             assertEquals("Property maxConcurrentConsumers: 2 must be higher than concurrentConsumers: 5", e.getMessage());

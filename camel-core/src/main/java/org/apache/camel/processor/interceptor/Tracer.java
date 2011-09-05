@@ -26,10 +26,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
-import org.apache.camel.processor.CamelLogger;
+import org.apache.camel.processor.CamelLogProcessor;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.CamelLogger;
 
 /**
  * An interceptor strategy for tracing routes
@@ -51,7 +51,7 @@ public class Tracer implements InterceptStrategy, Service {
     private String destinationUri;
     private Endpoint destination;
     private boolean useJpa;
-    private CamelLogger logger;
+    private CamelLogProcessor logger;
     private TraceInterceptorFactory traceInterceptorFactory = new DefaultTraceInterceptorFactory();
     private TraceEventHandler traceHandler;
     private String jpaTraceEventMessageClassName = JPA_TRACE_EVENT_MESSAGE;
@@ -93,10 +93,9 @@ public class Tracer implements InterceptStrategy, Service {
      * @param formatter the exchange formatter
      * @return the logger to use
      */
-    public synchronized CamelLogger getLogger(ExchangeFormatter formatter) {
+    public synchronized CamelLogProcessor getLogger(ExchangeFormatter formatter) {
         if (logger == null) {
-            logger = new CamelLogger(LoggerFactory.getLogger(getLogName()), formatter);
-            logger.setLevel(getLogLevel());
+            logger = new CamelLogProcessor(new CamelLogger(getLogName(), getLogLevel()), formatter);
         }
         return logger;
     }
@@ -165,7 +164,7 @@ public class Tracer implements InterceptStrategy, Service {
         this.logLevel = logLevel;
         // update logger if its in use
         if (logger != null) {
-            logger.setLevel(logLevel);
+            logger.getLogger().setLevel(logLevel);
         }
     }
 
@@ -203,7 +202,7 @@ public class Tracer implements InterceptStrategy, Service {
         this.logName = logName;
         // update logger if its in use
         if (logger != null) {
-            logger.setLogName(logName);
+            logger.getLogger().setLogName(logName);
         }
     }
 

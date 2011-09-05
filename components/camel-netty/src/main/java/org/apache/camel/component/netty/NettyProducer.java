@@ -29,7 +29,7 @@ import org.apache.camel.ServicePoolAware;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.processor.CamelLogger;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.jboss.netty.bootstrap.ClientBootstrap;
 import org.jboss.netty.bootstrap.ConnectionlessBootstrap;

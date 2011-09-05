@@ -21,6 +21,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.CamelLogger;
 
 /**
  * A processor which evaluates an Expression and logs it.

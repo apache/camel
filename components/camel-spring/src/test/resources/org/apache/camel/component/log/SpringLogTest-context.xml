@@ -26,7 +26,7 @@
         <property name="logger" ref="myLogger"/>
     </bean>
 
-    <bean id="myLogger" class="org.apache.camel.processor.CamelLogger">
+    <bean id="myLogger" class="org.apache.camel.processor.CamelLogProcessor">
         <property name="level" value="WARN"/>
         <property name="logName" value="cool"/>
     </bean>
