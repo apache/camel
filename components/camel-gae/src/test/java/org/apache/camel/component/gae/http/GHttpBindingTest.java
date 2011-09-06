@@ -103,7 +103,7 @@ public class GHttpBindingTest {
         assertEquals("http://custom.org:8080/path?a=b", binding.getRequestUrl(endpoint, exchange).toString());
     }
     
-    // FIXME: URI encoding @Test
+    @Test
     public void testGetRequestUrlEncoding() throws Exception {
         GHttpEndpoint endpoint = createEndpoint("ghttp://somewhere.com:9090/path?bridgeEndpoint=false&a=b c");
         assertEquals("http://somewhere.com:9090/path?a=b+c", binding.getRequestUrl(endpoint, exchange).toString());
