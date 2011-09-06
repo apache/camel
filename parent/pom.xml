@@ -140,9 +140,9 @@
     <smpp-version>2.1.0_1</smpp-version>
     <spring-integration-version>2.0.5.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
-    <spring-version>3.0.5.RELEASE</spring-version>
+    <spring-version>3.0.6.RELEASE</spring-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
-    <spring-security-version>3.0.5.RELEASE</spring-security-version>
+    <spring-security-version>3.0.6.RELEASE</spring-security-version>
     <spring-ws-version>2.0.2.RELEASE</spring-ws-version>
     <spymemcached-version>2.5</spymemcached-version>
     <stax-api-version>1.0.1</stax-api-version>
