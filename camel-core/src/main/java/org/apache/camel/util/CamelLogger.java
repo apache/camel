@@ -108,14 +108,6 @@ public class CamelLogger {
         this.log = LoggerFactory.getLogger(logName);
     }
 
-    public static boolean shouldLog(Logger log, LoggingLevel level) {
-        return level == LoggingLevel.DEBUG && log.isDebugEnabled() 
-            || level == LoggingLevel.ERROR && log.isErrorEnabled()
-            || level == LoggingLevel.INFO && log.isInfoEnabled()
-            || level == LoggingLevel.TRACE && log.isTraceEnabled()
-            || level == LoggingLevel.WARN && log.isWarnEnabled();
-    }
-
     public static void log(Logger log, LoggingLevel level, String message) {
         switch (level) {
         case DEBUG:
@@ -162,4 +154,20 @@ public class CamelLogger {
         return CamelLogger.shouldLog(log, level);
     }
 
+    public static boolean shouldLog(Logger log, LoggingLevel level) {
+        switch (level) {
+        case DEBUG:
+            return log.isDebugEnabled(); 
+        case ERROR:
+            return log.isErrorEnabled(); 
+        case INFO:
+            return log.isInfoEnabled(); 
+        case TRACE:
+            return log.isTraceEnabled(); 
+        case WARN:
+            return log.isWarnEnabled(); 
+        default:
+        }
+        return false;
+    }
 }
