@@ -54,8 +54,13 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     public Endpoint createEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-        //encode URI string to the unsafe URI characters
-        URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
+        // check URI string to the unsafe URI characters
+        String encodedUri = UnsafeUriCharactersEncoder.encode(uri);
+        if (!encodedUri.equals(uri)) {
+            // uri supplied is not really valid
+            LOG.warn("Supplied URI '{}' contains unsafe characters, please check encoding", uri);
+        }
+        URI u = new URI(encodedUri);
         String path = u.getSchemeSpecificPart();
 
         // lets trim off any query arguments
@@ -87,11 +92,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             // if endpoint is strict (not lenient) and we have unknown parameters configured then
             // fail if there are parameters that could not be set, then they are probably misspell or not supported at all
             if (!endpoint.isLenientProperties()) {
-                validateParameters(uri, parameters, null);
+                validateParameters(encodedUri, parameters, null);
             }
         }
 
-        afterConfiguration(uri, path, endpoint, parameters);
+        afterConfiguration(encodedUri, path, endpoint, parameters);
         return endpoint;
     }
 

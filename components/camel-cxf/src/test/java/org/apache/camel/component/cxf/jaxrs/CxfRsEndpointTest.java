@@ -27,8 +27,8 @@ public class CxfRsEndpointTest extends CamelTestSupport {
     @Test
     public void testCreateCxfRsEndpoint() throws Exception {
         String endpointUri = "cxfrs://http://localhost:" + CTX + ""
-            + "?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService, "
-            + "java.lang.String ; org.apache.camel.component.cxf.jaxrs.testbean.Order";
+            + "?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService,"
+            + "java.lang.String;org.apache.camel.component.cxf.jaxrs.testbean.Order";
         CxfRsComponent component = new CxfRsComponent(context);
         CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint(endpointUri);
         
