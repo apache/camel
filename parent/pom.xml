@@ -56,8 +56,6 @@
     <commons-net-version>2.2</commons-net-version>
     <commons-pool-version>1.5.4</commons-pool-version>
     <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
-    <!-- When updating cxf-version, may need to change CXF version range in 
-         platforms/karaf/features/src/main/resources/features.xml -->
     <cxf-version>2.4.2</cxf-version>
     <cxf-xjc-utils-version>2.4.0</cxf-xjc-utils-version>
     <derby-version>10.4.2.0</derby-version>
@@ -110,7 +108,7 @@
     <jsch-version>0.1.44-1</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
-    <karaf-version>2.2.2</karaf-version>
+    <karaf-version>2.2.4-SNAPSHOT</karaf-version>
     <log4j-version>1.2.16</log4j-version>
     <lucene-version>3.0.3</lucene-version>
     <mina-version>1.1.7</mina-version>
