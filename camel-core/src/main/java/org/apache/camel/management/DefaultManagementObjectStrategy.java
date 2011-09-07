@@ -21,6 +21,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -49,8 +50,6 @@ import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThrottler;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Delayer;
-import org.apache.camel.processor.DelegateAsyncProcessor;
-import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
@@ -190,8 +189,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
             // no answer yet, so unwrap any delegates and try again
             if (target instanceof DelegateProcessor) {
                 target = ((DelegateProcessor) target).getProcessor();
-            } else if (target instanceof DelegateAsyncProcessor) {
-                target = ((DelegateAsyncProcessor) target).getProcessor();
             } else {
                 // no delegate so we dont have any target to try next
                 break;

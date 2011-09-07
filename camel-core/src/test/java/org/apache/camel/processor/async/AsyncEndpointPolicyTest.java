@@ -24,9 +24,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.AsyncProcessorConverterHelper;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**

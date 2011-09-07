@@ -26,7 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.routebox.RouteboxServiceSupport;
 import org.apache.camel.component.routebox.strategy.RouteboxDispatcher;
-import org.apache.camel.processor.AsyncProcessorConverterHelper;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

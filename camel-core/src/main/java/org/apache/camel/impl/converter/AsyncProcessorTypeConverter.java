@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.processor.AsyncProcessorConverterHelper;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 
 /**
  * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}.

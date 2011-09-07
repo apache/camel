@@ -23,8 +23,8 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.component.routebox.RouteboxConsumer;
 import org.apache.camel.component.routebox.RouteboxServiceSupport;
-import org.apache.camel.processor.AsyncProcessorConverterHelper;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 
 public class RouteboxDirectConsumer extends RouteboxServiceSupport implements RouteboxConsumer, ShutdownAware, SuspendableService {
     protected ProducerTemplate producer;

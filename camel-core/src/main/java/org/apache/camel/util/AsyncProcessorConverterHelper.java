@@ -14,12 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.util;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.Service;
 
 /**
  * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}.
@@ -34,10 +40,16 @@ public final class AsyncProcessorConverterHelper {
         // Helper class
     }
 
-    private static final class ProcessorToAsyncProcessorBridge extends DelegateProcessor implements AsyncProcessor {
+    /**
+     * Creates a AsnycProcossor that delegates to the given processor.
+     * It is important that this implements DelegateProcessor
+     *
+     */
+    private static final class ProcessorToAsyncProcessorBridge implements DelegateProcessor, AsyncProcessor, Navigate<Processor>, Service {
+        protected Processor processor;
 
         private ProcessorToAsyncProcessorBridge(Processor processor) {
-            super(processor);
+            this.processor = processor;
         }
 
         public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -65,6 +77,42 @@ public final class AsyncProcessorConverterHelper {
             } else {
                 return "Processor is null";
             }
+        }
+        
+        public void process(Exchange exchange) throws Exception {
+            processNext(exchange);
+        }
+
+        protected void processNext(Exchange exchange) throws Exception {
+            if (processor != null) {
+                processor.process(exchange);
+            }
+        }
+
+        public void start() throws Exception {
+            ServiceHelper.startServices(processor);
+        }
+
+        public void stop() throws Exception {
+            ServiceHelper.stopServices(processor);
+        }
+
+        public boolean hasNext() {
+            return processor != null;
+        }
+
+        public List<Processor> next() {
+            if (!hasNext()) {
+                return null;
+            }
+            List<Processor> answer = new ArrayList<Processor>(1);
+            answer.add(processor);
+            return answer;
+        }
+
+        @Override
+        public Processor getProcessor() {
+            return processor;
         }
     }
 

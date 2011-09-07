@@ -36,7 +36,7 @@ import org.apache.camel.util.ServiceHelper;
  * @version 
  * @see org.apache.camel.processor.DelegateAsyncProcessor
  */
-public class DelegateProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
+public class DelegateProcessor extends ServiceSupport implements org.apache.camel.DelegateProcessor, Processor, Navigate<Processor> {
     protected Processor processor;
 
     public DelegateProcessor() {

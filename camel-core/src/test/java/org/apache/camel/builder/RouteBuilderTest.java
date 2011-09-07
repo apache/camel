@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
+import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,7 +32,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -261,7 +261,7 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     protected List<Route> buildRouteWithInterceptor() throws Exception {
-        interceptor1 = new DelegateProcessor() {
+        interceptor1 = new org.apache.camel.processor.DelegateProcessor() {
         };
 
         interceptor2 = new MyInterceptorProcessor();

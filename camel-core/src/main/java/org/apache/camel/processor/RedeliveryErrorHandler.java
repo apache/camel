@@ -31,6 +31,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;

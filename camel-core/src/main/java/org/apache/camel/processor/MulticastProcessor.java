@@ -51,6 +51,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EventHelper;

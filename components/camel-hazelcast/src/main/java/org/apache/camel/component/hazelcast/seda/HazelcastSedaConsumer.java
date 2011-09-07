@@ -28,7 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultExchangeHolder;
-import org.apache.camel.processor.AsyncProcessorConverterHelper;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
