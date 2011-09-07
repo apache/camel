@@ -150,7 +150,7 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
 
     @Override
     public boolean isLenientProperties() {
-        // GHttpEndpoint knows about all it's options on the passed URI
+        // GHttpEndpoint could not know about all it's options on the passed URI
         return true;
     }
 
