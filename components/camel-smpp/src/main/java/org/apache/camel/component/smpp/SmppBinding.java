@@ -100,6 +100,8 @@ public class SmppBinding {
             
             if (shortMessage.length < 255) {
                 submitSm.setShortMessage(shortMessage);
+                // To avoid the NPE error
+                submitSm.setOptionalParametes(new OptionalParameter[]{});
             } else {
                 submitSm.setShortMessage(new byte[0]);
                 OptionalParameter messagePayloadTLV = OptionalParameters.deserialize(OptionalParameter.Tag.MESSAGE_PAYLOAD.code(), shortMessage);
