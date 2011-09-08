@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +63,7 @@ public class DefaultAhcBinding implements AhcBinding {
             String url = AhcHelper.createURL(exchange, endpoint);
             log.trace("Setting url {}", url);
             builder.setUrl(url);
-        } catch (URISyntaxException e) {
+        } catch (Exception e) {
             throw new CamelExchangeException("Error creating URL", exchange, e);
         }
         String method = extractMethod(exchange);

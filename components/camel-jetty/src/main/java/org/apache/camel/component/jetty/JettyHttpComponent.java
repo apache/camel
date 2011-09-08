@@ -38,6 +38,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.Address;
 import org.eclipse.jetty.client.HttpClient;
@@ -128,7 +129,6 @@ public class JettyHttpComponent extends HttpComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String addressUri = uri.startsWith("jetty:") ? remaining : uri;
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
         
         // must extract well known parameters before we create the endpoint
@@ -190,10 +190,12 @@ public class JettyHttpComponent extends HttpComponent {
         for (String key : parameters.keySet()) {
             httpClientParameters.remove(key);
         }
-        URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
-        
+
+        String address = uri.startsWith("jetty:") ? remaining : uri;
+        URI addressUri = new URI(UnsafeUriCharactersEncoder.encode(address));
+        URI endpointUri = URISupport.createRemainingURI(addressUri, CastUtils.cast(httpClientParameters));
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
+        URI httpUri = URISupport.createRemainingURI(addressUri, CastUtils.cast(parameters));
      
         // create endpoint after all known parameters have been extracted from parameters
         JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, endpointUri.toString(), httpUri);

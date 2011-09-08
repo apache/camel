@@ -33,7 +33,7 @@ public final class UnsafeUriCharactersEncoder {
         unsafeCharacters.set('<');
         unsafeCharacters.set('>');
         unsafeCharacters.set('#');
-        unsafeCharacters.set('%');
+        // unsafeCharacters.set('%');
         unsafeCharacters.set('{');
         unsafeCharacters.set('}');
         unsafeCharacters.set('|');

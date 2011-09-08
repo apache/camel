@@ -52,14 +52,23 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         this.camelContext = context;
     }
 
-    public Endpoint createEndpoint(String uri) throws Exception {
-        ObjectHelper.notNull(getCamelContext(), "camelContext");
+    @Deprecated
+    protected String preProcessUri(String uri) {
+        // Give components a chance to preprocess URIs and migrate to URI syntax that discourages invalid URIs
+        // (see CAMEL-4425)
         // check URI string to the unsafe URI characters
         String encodedUri = UnsafeUriCharactersEncoder.encode(uri);
         if (!encodedUri.equals(uri)) {
             // uri supplied is not really valid
             LOG.warn("Supplied URI '{}' contains unsafe characters, please check encoding", uri);
         }
+        return encodedUri;
+    }
+
+    public Endpoint createEndpoint(String uri) throws Exception {
+        ObjectHelper.notNull(getCamelContext(), "camelContext");
+        // check URI string to the unsafe URI characters
+        String encodedUri = preProcessUri(uri);
         URI u = new URI(encodedUri);
         String path = u.getSchemeSpecificPart();
 

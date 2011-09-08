@@ -78,7 +78,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
     }
     
     @Test
-    public void testCxfEndpointUris() throws URISyntaxException {
+    public void testCxfEndpointUris() throws Exception {
         CxfEndpoint endpoint = context.getEndpoint(getSimpleEndpointUri(), CxfEndpoint.class);
         assertEquals("Get a wrong endpoint uri", getSimpleEndpointUri(), endpoint.getEndpointUri());
         
