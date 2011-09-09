@@ -46,17 +46,11 @@ public class IrcConsumerTest {
         configuration = mock(IrcConfiguration.class);
         listener = mock(IRCEventAdapter.class);
 
-        List<String> channels = new ArrayList<String>();
-        List<String> keys = new ArrayList<String>();
-
-        channels.add("chan1");
-        channels.add("chan2");
-
-        keys.add("");
-        keys.add("chan2key");
+        List<IrcChannel> channels = new ArrayList<IrcChannel>();
+        channels.add(new IrcChannel("#chan1", null));
+        channels.add(new IrcChannel("#chan2", "chan2key"));
 
         when(configuration.getChannels()).thenReturn(channels);
-
         when(endpoint.getConfiguration()).thenReturn(configuration);
 
         consumer = new IrcConsumer(endpoint, processor, connection);
@@ -66,8 +60,8 @@ public class IrcConsumerTest {
     @Test
     public void doStopTest() throws Exception {
         consumer.doStop();
-        verify(connection).doPart("chan1");
-        verify(connection).doPart("chan2");
+        verify(connection).doPart("#chan1");
+        verify(connection).doPart("#chan2");
         verify(connection).removeIRCEventListener(listener);
     }
 

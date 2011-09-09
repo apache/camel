@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 public class IrcProducer extends DefaultProducer {
 
-    public static final String[] COMMANDS = new String[]{"AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES",
+    public static final String[] COMMANDS = new String[] {"AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES",
         "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO", "WHOIS", "WHOWAS", "USERHOST"};
 
     private static final transient Logger LOG = LoggerFactory.getLogger(IrcProducer.class);
@@ -57,9 +57,9 @@ public class IrcProducer extends DefaultProducer {
             LOG.debug("Sending to: {} message: {}", targetChannel, msg);
             connection.doPrivmsg(targetChannel, msg);
         } else {
-            for (String channel : endpoint.getConfiguration().getChannels()) {
+            for (IrcChannel channel : endpoint.getConfiguration().getChannels()) {
                 LOG.debug("Sending to: {} message: {}", channel, msg);
-                connection.doPrivmsg(channel, msg);
+                connection.doPrivmsg(channel.getName(), msg);
             }
         }
     }
@@ -76,9 +76,9 @@ public class IrcProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         if (connection != null) {
-            for (String channel : endpoint.getConfiguration().getChannels()) {
+            for (IrcChannel channel : endpoint.getConfiguration().getChannels()) {
                 LOG.debug("Parting: {}", channel);
-                connection.doPart(channel);
+                connection.doPart(channel.getName());
             }
             connection.removeIRCEventListener(listener);
         }

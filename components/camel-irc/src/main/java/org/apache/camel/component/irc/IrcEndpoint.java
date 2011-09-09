@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
@@ -44,7 +45,7 @@ public class IrcEndpoint extends DefaultEndpoint {
     private IrcComponent component;
 
     public IrcEndpoint(String endpointUri, IrcComponent component, IrcConfiguration configuration) {
-        super(endpointUri, component);
+        super(UnsafeUriCharactersEncoder.encode(endpointUri), component);
         this.component = component;
         this.configuration = configuration;
     }
@@ -179,28 +180,35 @@ public class IrcEndpoint extends DefaultEndpoint {
 
 
     public void joinChannels() {
-        for (String channel : configuration.getChannels()) {
+        for (IrcChannel channel : configuration.getChannels()) {
             joinChannel(channel);
         }
     }
 
-    public void joinChannel(String channel) {
+    public void joinChannel(String name) {
+        joinChannel(configuration.findChannel(name));
+    }
+
+    public void joinChannel(IrcChannel channel) {
+        if (channel == null) {
+            return;
+        }
 
         IRCConnection connection = component.getIRCConnection(configuration);
 
-        // check for key for channel
-        String key = configuration.getKey(channel);
+        String chn = channel.getName();
+        String key = channel.getKey();
 
         if (ObjectHelper.isNotEmpty(key)) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Joining: {} using {} with key {}", new Object[]{channel, connection.getClass().getName(), key});
+                LOG.debug("Joining: {} using {} with secret key", channel, connection.getClass().getName());
             }
-            connection.doJoin(channel, key);
+            connection.doJoin(chn, key);
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Joining: {} using {}", channel, connection.getClass().getName());
             }
-            connection.doJoin(channel);
+            connection.doJoin(chn);
         }
     }
 }

@@ -51,17 +51,11 @@ public class IrcProducerTest {
         exchange = mock(Exchange.class);
         message = mock(Message.class);
 
-        List<String> channels = new ArrayList<String>();
-        List<String> keys = new ArrayList<String>();
-
-        channels.add("chan1");
-        channels.add("chan2");
-
-        keys.add("");
-        keys.add("chan2key");
+        List<IrcChannel> channels = new ArrayList<IrcChannel>();
+        channels.add(new IrcChannel("#chan1", null));
+        channels.add(new IrcChannel("#chan2", "chan2key"));
 
         when(configuration.getChannels()).thenReturn(channels);
-
         when(endpoint.getConfiguration()).thenReturn(configuration);
 
         producer = new IrcProducer(endpoint, connection);
@@ -71,8 +65,8 @@ public class IrcProducerTest {
     @Test
     public void doStopTest() throws Exception {
         producer.doStop();
-        verify(connection).doPart("chan1");
-        verify(connection).doPart("chan2");
+        verify(connection).doPart("#chan1");
+        verify(connection).doPart("#chan2");
         verify(connection).removeIRCEventListener(listener);
     }
 
@@ -103,8 +97,8 @@ public class IrcProducerTest {
         when(message.getHeader(IrcConstants.IRC_TARGET, String.class)).thenReturn(null);
 
         producer.process(exchange);
-        verify(connection).doPrivmsg("chan1", "foo");
-        verify(connection).doPrivmsg("chan2", "foo");
+        verify(connection).doPrivmsg("#chan1", "foo");
+        verify(connection).doPrivmsg("#chan2", "foo");
     }
 
     @Test (expected = RuntimeCamelException.class)

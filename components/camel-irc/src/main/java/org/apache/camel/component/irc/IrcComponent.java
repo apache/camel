@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
@@ -67,7 +68,7 @@ public class IrcComponent extends DefaultComponent {
         if (configuration.getUsingSSL()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
-                        new Object[]{configuration.getHostname(), configuration.getListOfChannels(), configuration.getNickname(), configuration.getUsername()});
+                    new Object[]{configuration.getHostname(), configuration.getListOfChannels(), configuration.getNickname(), configuration.getUsername()});
             }
             SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
                     configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
@@ -124,5 +125,10 @@ public class IrcComponent extends DefaultComponent {
 
     protected IRCEventListener createIrcLogger(String hostname) {
         return new IrcLogger(LOG, hostname);
+    }
+
+    @Deprecated
+    protected String preProcessUri(String uri) {
+        return IrcConfiguration.sanitize(uri);
     }
 }

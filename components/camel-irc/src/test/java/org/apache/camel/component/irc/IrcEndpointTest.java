@@ -44,54 +44,44 @@ public class IrcEndpointTest {
         configuration = mock(IrcConfiguration.class);
         connection = mock(IRCConnection.class);
 
-        List<String> channels = new ArrayList<String>();
-        Dictionary<String, String> keys = new Hashtable<String, String>();
-
-        channels.add("chan1");
-        channels.add("chan2");
-
-        keys.put("chan1", "");
-        keys.put("chan2", "chan2key");
+        List<IrcChannel> channels = new ArrayList<IrcChannel>();
+        channels.add(new IrcChannel("#chan1", null));
+        channels.add(new IrcChannel("#chan2", "chan2key"));
 
         when(configuration.getChannels()).thenReturn(channels);
-        when(configuration.getKey("chan1")).thenReturn("");
-        when(configuration.getKey("chan2")).thenReturn("chan2key");
-
-
+        when(configuration.findChannel("#chan1")).thenReturn(channels.get(0));
+        when(configuration.findChannel("#chan2")).thenReturn(channels.get(1));
         when(component.getIRCConnection(configuration)).thenReturn(connection);
-
 
         endpoint = new IrcEndpoint("foo", component, configuration);
     }
 
     @Test
     public void doJoinChannelTestNoKey() throws Exception {
-        endpoint.joinChannel("chan1");
-        verify(connection).doJoin("chan1");
+        endpoint.joinChannel("#chan1");
+        verify(connection).doJoin("#chan1");
     }
 
     @Test
     public void doJoinChannelTestKey() throws Exception {
-        endpoint.joinChannel("chan2");
-        verify(connection).doJoin("chan2", "chan2key");
+        endpoint.joinChannel("#chan2");
+        verify(connection).doJoin("#chan2", "chan2key");
     }
 
     @Test
     public void doJoinChannels() throws Exception {
         endpoint.joinChannels();
-        verify(connection).doJoin("chan1");
-        verify(connection).doJoin("chan2", "chan2key");
+        verify(connection).doJoin("#chan1");
+        verify(connection).doJoin("#chan2", "chan2key");
     }
 
 
     @Test
     public void doHandleIrcErrorNickInUse() throws Exception {
         when(connection.getNick()).thenReturn("nick");
-
         endpoint.handleIrcError(IRCEventAdapter.ERR_NICKNAMEINUSE, "foo");
 
         verify(connection).doNick("nick-");
-
         when(connection.getNick()).thenReturn("nick---");
 
         // confirm doNick was not called
