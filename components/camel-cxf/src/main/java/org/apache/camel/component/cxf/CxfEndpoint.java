@@ -27,14 +27,6 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.Handler;
 
-import org.apache.cxf.common.injection.ResourceInjector;
-import org.apache.cxf.jaxws.context.WebServiceContextResourceResolver;
-import org.apache.cxf.jaxws.handler.AnnotationHandlerChainBuilder;
-import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
-import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
-import org.apache.cxf.resource.DefaultResourceManager;
-import org.apache.cxf.resource.ResourceManager;
-import org.apache.cxf.resource.ResourceResolver;
 import org.w3c.dom.Element;
 
 import org.apache.camel.CamelContext;
@@ -54,9 +46,12 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
+
+
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
+import org.apache.cxf.common.injection.ResourceInjector;
 import org.apache.cxf.common.util.ClassHelper;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
 import org.apache.cxf.endpoint.Client;
@@ -73,9 +68,16 @@ import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
+import org.apache.cxf.jaxws.context.WebServiceContextResourceResolver;
+import org.apache.cxf.jaxws.handler.AnnotationHandlerChainBuilder;
+import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
+import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.resource.DefaultResourceManager;
+import org.apache.cxf.resource.ResourceManager;
+import org.apache.cxf.resource.ResourceResolver;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.slf4j.Logger;
