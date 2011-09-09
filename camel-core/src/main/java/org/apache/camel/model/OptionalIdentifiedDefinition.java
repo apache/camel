@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.camel.NamedNode;
 import org.apache.camel.spi.NodeIdFactory;
 
 /**
@@ -35,7 +36,7 @@ import org.apache.camel.spi.NodeIdFactory;
  */
 @XmlType(name = "optionalIdentifiedDefinition")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> {
+public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode {
     private String id;
     @XmlTransient
     private boolean customId;
@@ -44,6 +45,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     /**
      * Gets the value of the id property.
      */
+    @Override
     public String getId() {
         return id;
     }
@@ -73,6 +75,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
      *
      * @return defaults to "node" but derived nodes should overload this to provide a unique name
      */
+    @Override
     public String getShortName() {
         return "node";
     }
@@ -140,6 +143,7 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     /**
      * Returns the description text or null if there is no description text associated with this node
      */
+    @Override
     public String getDescriptionText() {
         return (description != null) ? description.getText() : null;
     }

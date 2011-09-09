@@ -19,9 +19,9 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.InterceptStrategy;
@@ -57,7 +57,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // use our own id factory so we can generate the keys we like to use
                 context.setNodeIdFactory(new NodeIdFactory() {
-                    public String createId(OptionalIdentifiedDefinition<?> definition) {
+                    public String createId(NamedNode definition) {
                         return "#" + definition.getShortName() + ++counter + "#";
                     }
                 });

@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.NamedNode;
 import org.apache.camel.spi.NodeIdFactory;
 
 /**
@@ -32,7 +32,7 @@ public class DefaultNodeIdFactory implements NodeIdFactory {
 
     protected static Map<String, AtomicInteger> nodeCounters = new HashMap<String, AtomicInteger>();
 
-    public String createId(OptionalIdentifiedDefinition<?> definition) {
+    public String createId(NamedNode definition) {
         String key = definition.getShortName();
         return key + getNodeCounter(key).incrementAndGet();
     }

@@ -28,6 +28,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NamedNode;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
@@ -312,10 +313,10 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         String routeId = null;
 
         // extract id from source
-        if (source instanceof OptionalIdentifiedDefinition) {
+        if (source instanceof NamedNode) {
             id = ((OptionalIdentifiedDefinition) source).idOrCreate(this.camelContext.getNodeIdFactory());
             // and let source be the short name of the pattern
-            sourceId = ((OptionalIdentifiedDefinition) source).getShortName();
+            sourceId = ((NamedNode) source).getShortName();
         } else if (source instanceof String) {
             id = (String) source;
         } else if (source != null) {

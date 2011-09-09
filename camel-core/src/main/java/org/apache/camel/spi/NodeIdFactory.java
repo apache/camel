@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.NamedNode;
 
 /**
  * Factory to generate unique ids for model nodes.
@@ -32,5 +32,5 @@ public interface NodeIdFactory {
      *        (its most likely a {@link org.apache.camel.model.OutputDefinition OutputDefinition} instance)
      * @return the id created
      */
-    String createId(OptionalIdentifiedDefinition<?> definition);
+    String createId(NamedNode definition);
 }
