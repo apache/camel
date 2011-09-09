@@ -37,9 +37,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(BrowsableQueueTest.class);
 
     protected String componentName = "activemq";
-    protected String startEndpointUri;
-    protected int counter;
-    protected Object[] expectedBodies = {"body1", "body2"};
+    protected Object[] expectedBodies = {"body1", "body2", "body3", "body4", "body5", "body6", "body7", "body8"};
 
     @Test
     public void testSendMessagesThenBrowseQueue() throws Exception {
@@ -54,13 +52,7 @@ public class BrowsableQueueTest extends CamelTestSupport {
         assertEquals(6, endpoint.getMaximumBrowseSize());
         List<Exchange> list = endpoint.getExchanges();
         LOG.debug("Received: " + list);
-        assertEquals("Size of list", 2, endpoint.queueSize());
-
-        // for JMX stuff
-        for (int i = 0; i < 2; i++) {
-            String data = endpoint.browseExchange(i);
-            assertNotNull(data);
-        }
+        assertEquals("Size of list", 6, endpoint.queueSize());
 
         int index = -1;
         for (Exchange exchange : list) {
@@ -72,10 +64,55 @@ public class BrowsableQueueTest extends CamelTestSupport {
         }
     }
 
-    protected void sendExchange(final Object expectedBody) {
-        template.sendBodyAndHeader(startEndpointUri, expectedBody, "counter", ++counter);
+    @Test
+    public void testSendMessagesThenBrowseQueueLimitNotHit() throws Exception {
+        // send some messages
+        for (int i = 0; i < expectedBodies.length; i++) {
+            Object expectedBody = expectedBodies[i];
+            template.sendBodyAndHeader("activemq:test.b", expectedBody, "counter", i);
+        }
+
+        // now lets browse the queue
+        JmsQueueEndpoint endpoint = getMandatoryEndpoint("activemq:test.b?maximumBrowseSize=10", JmsQueueEndpoint.class);
+        assertEquals(10, endpoint.getMaximumBrowseSize());
+        List<Exchange> list = endpoint.getExchanges();
+        LOG.debug("Received: " + list);
+        assertEquals("Size of list", 8, endpoint.queueSize());
+
+        int index = -1;
+        for (Exchange exchange : list) {
+            String actual = exchange.getIn().getBody(String.class);
+            LOG.debug("Received body: " + actual);
+
+            Object expected = expectedBodies[++index];
+            assertEquals("Body: " + index, expected, actual);
+        }
     }
 
+    @Test
+    public void testSendMessagesThenBrowseQueueNoMax() throws Exception {
+        // send some messages
+        for (int i = 0; i < expectedBodies.length; i++) {
+            Object expectedBody = expectedBodies[i];
+            template.sendBodyAndHeader("activemq:test.b", expectedBody, "counter", i);
+        }
+
+        // now lets browse the queue
+        JmsQueueEndpoint endpoint = getMandatoryEndpoint("activemq:test.b", JmsQueueEndpoint.class);
+        assertEquals(-1, endpoint.getMaximumBrowseSize());
+        List<Exchange> list = endpoint.getExchanges();
+        LOG.debug("Received: " + list);
+        assertEquals("Size of list", 8, endpoint.queueSize());
+
+        int index = -1;
+        for (Exchange exchange : list) {
+            String actual = exchange.getIn().getBody(String.class);
+            LOG.debug("Received body: " + actual);
+
+            Object expected = expectedBodies[++index];
+            assertEquals("Body: " + index, expected, actual);
+        }
+    }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
