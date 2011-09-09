@@ -96,11 +96,10 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
     }
 
     public static class TestZookeeperServer {
+        private static int count;
         private NIOServerCnxn.Factory connectionFactory;
         private ZooKeeperServer zkServer;
-        
-        private static int count = 0;
-        File zookeeperBaseDir;
+        private File zookeeperBaseDir;
         
         public TestZookeeperServer(int clientPort, boolean clearServerData) throws Exception {
             // TODO This is necessary as zookeeper does not delete the log dir when it shuts down. Remove as soon as zookeeper shutdown works
