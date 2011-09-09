@@ -128,6 +128,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             // send the CXF request
             client.invoke(boi, getParams(endpoint, camelExchange), 
                       invocationContext, cxfExchange);
+
         } catch (Exception exception) {
             camelExchange.setException(exception);
         } finally {
@@ -161,6 +162,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         if (dataFormat == DataFormat.MESSAGE) {
             cxfExchange.put(Client.KEEP_CONDUIT_ALIVE, true);
             LOG.trace("Set CXF Exchange property: {}={}", Client.KEEP_CONDUIT_ALIVE, true);
+            // Ignore the partical response message handling
+            requestContext.put("org.apache.cxf.partial.response.handling", Boolean.FALSE);
         }
      
         // bind the request CXF exchange
