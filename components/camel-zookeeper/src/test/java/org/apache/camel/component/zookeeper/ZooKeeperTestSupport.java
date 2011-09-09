@@ -98,33 +98,43 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
     public static class TestZookeeperServer {
         private NIOServerCnxn.Factory connectionFactory;
         private ZooKeeperServer zkServer;
-
+        
+        private static int count = 0;
+        File zookeeperBaseDir;
+        
         public TestZookeeperServer(int clientPort, boolean clearServerData) throws Exception {
-
+            // TODO This is necessary as zookeeper does not delete the log dir when it shuts down. Remove as soon as zookeeper shutdown works
+            zookeeperBaseDir = new File("./target/zookeeper" + count++);
             if (clearServerData) {
-                File working = new File("./target/zookeeper");
-                deleteDir(working);
-                if (working.exists()) {
-                    throw new Exception("Could not delete Test Zookeeper Server working dir ./target/zookeeper");
-                }
+                cleanZookeeperDir();
             }
             zkServer = new ZooKeeperServer();
-            File dataDir = new File("./target/zookeeper/log");
-            File snapDir = new File("./target/zookeeper/data");
+            File dataDir = new File(zookeeperBaseDir, "log");
+            File snapDir = new File(zookeeperBaseDir, "data");
             FileTxnSnapLog ftxn = new FileTxnSnapLog(dataDir, snapDir);
             zkServer.setTxnLogFactory(ftxn);
             zkServer.setTickTime(1000);
             connectionFactory = new NIOServerCnxn.Factory(new InetSocketAddress("localhost", clientPort), 0);
             connectionFactory.startup(zkServer);
         }
+        
+        private void cleanZookeeperDir() throws Exception {
+            File working = zookeeperBaseDir;
+            deleteDir(working);
+            if (working.exists()) {
+                throw new Exception("Could not delete Test Zookeeper Server working dir " + zookeeperBaseDir);
+            }
+        }
 
         public void shutdown() throws Exception {
             connectionFactory.shutdown();
             connectionFactory.join();
+            zkServer.shutdown();
             while (zkServer.isRunning()) {
                 zkServer.shutdown();
                 Thread.sleep(100);
             }
+            //cleanZookeeperDir();
         }
     }
 
