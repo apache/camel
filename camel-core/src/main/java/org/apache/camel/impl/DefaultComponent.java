@@ -82,12 +82,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
         Map<String, Object> parameters = URISupport.parseParameters(u);
 
-        validateURI(uri, path, parameters);
+        validateURI(encodedUri, path, parameters);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", new Object[]{uri, path, parameters});
+            LOG.debug("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", new Object[]{encodedUri, path, parameters});
         }
-        Endpoint endpoint = createEndpoint(uri, path, parameters);
+        Endpoint endpoint = createEndpoint(encodedUri, path, parameters);
         if (endpoint == null) {
             return null;
         }

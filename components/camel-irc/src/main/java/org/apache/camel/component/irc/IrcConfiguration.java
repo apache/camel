@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.irc;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -99,7 +101,7 @@ public class IrcConfiguration implements Cloneable {
         return retval.trim();
     }
 
-    public void configure(String uriStr) throws URISyntaxException {
+    public void configure(String uriStr) throws URISyntaxException, UnsupportedEncodingException  {
         // fix provided URI and handle that we can use # to indicate the IRC room
         if (uriStr.startsWith("ircs")) {
             setUsingSSL(true);
@@ -121,9 +123,15 @@ public class IrcConfiguration implements Cloneable {
         setRealname(uri.getUserInfo());
         setHostname(uri.getHost());
 
-        if (uri.getFragment() != null && uri.getFragment().length() != 0) {
-            String channel = "#" + uri.getFragment();
-            addChannel(channel);
+        String path = uri.getPath();
+        if (path != null) {
+            path = URLDecoder.decode(path, "UTF-8");
+            if (path.startsWith("/")) {
+                path = path.substring(1);
+            }
+            if (path.startsWith("#")) {
+                addChannel(path);
+            } // else should probably issue a warning?
         }
     }
 
