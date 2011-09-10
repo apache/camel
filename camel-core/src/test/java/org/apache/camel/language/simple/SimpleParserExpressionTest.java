@@ -99,6 +99,22 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("121", exp.evaluate(exchange, String.class));
     }
 
+    public void testSimpleUnaryIncInt() throws Exception {
+        exchange.getIn().setBody(122);
+        SimpleExpressionParser parser = new SimpleExpressionParser("${body}++");
+        Expression exp = parser.parseExpression();
+
+        assertEquals(Integer.valueOf(123), exp.evaluate(exchange, Integer.class));
+    }
+
+    public void testSimpleUnaryDecInt() throws Exception {
+        exchange.getIn().setBody(122);
+        SimpleExpressionParser parser = new SimpleExpressionParser("${body}--");
+        Expression exp = parser.parseExpression();
+
+        assertEquals(Integer.valueOf(121), exp.evaluate(exchange, Integer.class));
+    }
+
     public void testSimpleEscape() throws Exception {
         exchange.getIn().setBody("World");
         // we escape the $ which mean it will not be a function

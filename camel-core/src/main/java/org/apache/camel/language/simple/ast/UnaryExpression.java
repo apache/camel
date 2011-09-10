@@ -19,6 +19,7 @@ package org.apache.camel.language.simple.ast;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.language.simple.SimpleParserException;
 import org.apache.camel.language.simple.SimpleToken;
 import org.apache.camel.language.simple.UnaryOperatorType;
@@ -82,7 +83,17 @@ public class UnaryExpression extends BaseSimpleNode {
                 if (num != null) {
                     long val = num.longValue();
                     val++;
-                    return exchange.getContext().getTypeConverter().convertTo(type, val);
+
+                    // convert value back to same type as input as we want to preserve type
+                    Object left = leftExp.evaluate(exchange, Object.class);
+                    try {
+                        left = exchange.getContext().getTypeConverter().mandatoryConvertTo(left.getClass(), exchange, val);
+                    } catch (NoTypeConversionAvailableException e) {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                    }
+
+                    // and return the result
+                    return exchange.getContext().getTypeConverter().convertTo(type, left);
                 }
                 // cannot convert the expression as a number
                 Exception cause = new CamelExchangeException("Cannot evaluate " + leftExp + " as a number", exchange);
@@ -104,7 +115,17 @@ public class UnaryExpression extends BaseSimpleNode {
                 if (num != null) {
                     long val = num.longValue();
                     val--;
-                    return exchange.getContext().getTypeConverter().convertTo(type, val);
+
+                    // convert value back to same type as input as we want to preserve type
+                    Object left = leftExp.evaluate(exchange, Object.class);
+                    try {
+                        left = exchange.getContext().getTypeConverter().mandatoryConvertTo(left.getClass(), exchange, val);
+                    } catch (NoTypeConversionAvailableException e) {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                    }
+
+                    // and return the result
+                    return exchange.getContext().getTypeConverter().convertTo(type, left);
                 }
                 // cannot convert the expression as a number
                 Exception cause = new CamelExchangeException("Cannot evaluate " + leftExp + " as a number", exchange);

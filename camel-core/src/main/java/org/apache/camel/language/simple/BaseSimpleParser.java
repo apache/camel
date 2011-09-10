@@ -104,8 +104,8 @@ public abstract class BaseSimpleParser {
      * as child to the given block. This is done to have the AST graph updated and prepared properly.
      * <p/>
      * So when the AST node is later used to create the {@link org.apache.camel.Predicate}s
-     * to be used by Camel then the AST graph has a linked and prepared
-     * graph of nodes which represent the input expression.
+     * or {@link org.apache.camel.Expression}s to be used by Camel then the AST graph
+     * has a linked and prepared graph of nodes which represent the input expression.
      */
     protected void prepareBlocks() {
         List<SimpleNode> answer = new ArrayList<SimpleNode>();
@@ -123,7 +123,7 @@ public abstract class BaseSimpleParser {
                 Block top = stack.pop();
                 answer.add(top);
             } else {
-                // if there is a model on the stack then it should accept the child model
+                // if there is a block on the stack then it should accept the child token
                 Block block = stack.isEmpty() ? null : stack.peek();
                 if (block != null) {
                     if (!block.acceptAndAddNode(token)) {
@@ -149,8 +149,8 @@ public abstract class BaseSimpleParser {
      * to have the AST graph updated and prepared properly.
      * <p/>
      * So when the AST node is later used to create the {@link org.apache.camel.Predicate}s
-     * to be used by Camel then the AST graph has a linked and prepared
-     * graph of nodes which represent the input expression.
+     * or {@link org.apache.camel.Expression}s to be used by Camel then the AST graph
+     * has a linked and prepared graph of nodes which represent the input expression.
      */
     protected void prepareUnaryExpressions() {
         Stack<SimpleNode> stack = new Stack<SimpleNode>();
@@ -226,4 +226,5 @@ public abstract class BaseSimpleParser {
             nextToken();
         }
     }
+
 }
