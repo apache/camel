@@ -26,9 +26,12 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -37,6 +40,8 @@ import org.slf4j.LoggerFactory;
 
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
+
+    protected Bus bus;
 
     private Map<String, String> parameters;
     private List<Class<?>> resourceClasses;
@@ -48,6 +53,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private int maxClientCacheSize = 10;
     
     private AtomicBoolean bindingInitialized = new AtomicBoolean(false);
+    private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
+
+	private boolean isSetDefaultBus;
 
     public CxfRsEndpoint(String endpointUri, CamelContext camelContext) {
         super(endpointUri, camelContext);
@@ -223,5 +231,30 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
      */
     public int getMaxClientCacheSize() {
         return maxClientCacheSize;
+    }
+    
+    public void setBus(Bus bus) {
+        this.bus = bus;
+    }
+
+    public Bus getBus() {
+        if (bus == null) {
+            bus = CxfEndpointUtils.createBus(getCamelContext());
+            LOG.debug("Using DefaultBus {}", bus);
+        }
+
+        if (!getBusHasBeenCalled.getAndSet(true) && isSetDefaultBus) {
+            BusFactory.setDefaultBus(bus);
+            LOG.debug("Set bus {} as thread default bus", bus);
+        }
+        return bus;
+    }
+    
+    public void setSetDefaultBus(boolean isSetDefaultBus) {
+        this.isSetDefaultBus = isSetDefaultBus;
+    }
+
+    public boolean isSetDefaultBus() {
+        return isSetDefaultBus;
     }
 }

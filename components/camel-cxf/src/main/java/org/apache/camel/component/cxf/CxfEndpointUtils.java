@@ -22,17 +22,23 @@ import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceProvider;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.util.WSDLSoapServiceFactoryBean;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 public final class CxfEndpointUtils {
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpointUtils.class);
@@ -169,6 +175,24 @@ public final class CxfEndpointUtils {
                 Exchange.DESTINATION_OVERRIDE_URL, retval);
         }
         return retval;
+    }
+    
+    /**
+     * Create a CXF bus with either BusFactory or SpringBusFactory if Camel Context
+     * is SpringCamelContext.  In the latter case, this method updates the bus 
+     * configuration with the applicationContext which SpringCamelContext holds 
+     * 
+     * @param context - the Camel Context
+     */
+    public static Bus createBus(CamelContext context) {
+        BusFactory busFactory = BusFactory.newInstance();
+
+        if (context instanceof SpringCamelContext) {
+            SpringCamelContext springCamelContext = (SpringCamelContext) context;
+            ApplicationContext applicationContext = springCamelContext.getApplicationContext();
+            busFactory = new SpringBusFactory(applicationContext);
+        }
+        return busFactory.createBus();
     }
 }
 

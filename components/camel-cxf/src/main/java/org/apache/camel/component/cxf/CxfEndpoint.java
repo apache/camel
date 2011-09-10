@@ -43,7 +43,6 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -82,7 +81,6 @@ import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>.
@@ -301,19 +299,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 // Do nothing here
             }
         };
-    }
-
-    protected Bus doGetBus() {
-        BusFactory busFactory = BusFactory.newInstance();
-        // need to check if the camelContext is SpringCamelContext and
-        // update the bus configuration with the applicationContext
-        // which SpringCamelContext holds
-        if (getCamelContext() instanceof SpringCamelContext) {
-            SpringCamelContext springCamelContext = (SpringCamelContext) getCamelContext();
-            ApplicationContext applicationContext = springCamelContext.getApplicationContext();
-            busFactory = new org.apache.cxf.bus.spring.SpringBusFactory(applicationContext);
-        }
-        return busFactory.createBus();
     }
 
     protected void setupHandlers(ClientFactoryBean factoryBean, Client client) {
@@ -638,7 +623,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public Bus getBus() {
         if (bus == null) {
-            bus = doGetBus();
+            bus = CxfEndpointUtils.createBus(getCamelContext());
             LOG.debug("Using DefaultBus {}", bus);
         }
 
