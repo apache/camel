@@ -50,7 +50,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContextAware {
 
     private String beanId;
-    private ConfigurerImpl configurer;
     private ApplicationContext applicationContext;
 
     public CxfSpringEndpoint(CamelContext context, String address) throws Exception {
@@ -113,9 +112,6 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
             // create client factory bean
             ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
 
-            // configure client factory bean by CXF configurer
-            configure(factoryBean);
-
             // setup client factory bean
             setupClientFactoryBean(factoryBean, cls);
 
@@ -139,9 +135,6 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
             
             ClientFactoryBean factoryBean = createClientFactoryBean();
 
-            // configure client factory bean by CXF configurer
-            configure(factoryBean);
-            
             // setup client factory bean
             setupClientFactoryBean(factoryBean);
             
@@ -193,9 +186,6 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
             answer = new ServerFactoryBean();
         }
 
-        // configure server factory bean by CXF configurer
-        configure(answer);
-        
         // setup server factory bean
         setupServerFactoryBean(answer, cls);
 
@@ -214,17 +204,6 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         return answer;
     }
 
-    void configure(Object beanInstance) {
-        // check the ApplicationContext states first , and call the refresh if necessary
-        if (((SpringCamelContext)getCamelContext()).getApplicationContext() instanceof ConfigurableApplicationContext) {
-            ConfigurableApplicationContext context = (ConfigurableApplicationContext)((SpringCamelContext)getCamelContext()).getApplicationContext();
-            if (!context.isActive()) {
-                context.refresh();
-            }
-        }
-        configurer.configureBean(beanId, beanInstance);
-    }
-    
     // Properties
     // -------------------------------------------------------------------------
     public String getBeanId() {
@@ -308,7 +287,6 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     @SuppressWarnings("deprecation")
     public void setApplicationContext(ApplicationContext ctx) throws BeansException {
         applicationContext = ctx;
-        configurer = new ConfigurerImpl(applicationContext);
 
         if (bus == null) {
             if (Version.getCurrentVersion().startsWith("2.3")) {
