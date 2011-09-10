@@ -185,6 +185,8 @@ public class CxfRsProducer extends DefaultProducer {
         
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
                                    .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
+
+        cfb.setBus(((CxfRsEndpoint)getEndpoint()).getBus());
         
         if (varValues == null) {
             target = cfb.create();
