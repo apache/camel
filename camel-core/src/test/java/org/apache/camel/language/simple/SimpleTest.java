@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language;
+package org.apache.camel.language.simple;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +34,6 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Language;
 
 /**
@@ -246,7 +245,7 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${property.foobar[bar}", null);
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertEquals("Illegal syntax: Valid syntax: ${property.OGNL} was: property.foobar[bar", e.getMessage());
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${property.OGNL} was: property.foobar[bar at location 0"));
         }
     }
 
@@ -260,8 +259,8 @@ public class SimpleTest extends LanguageTestSupport {
         try {
             assertExpression("date:yyyyMMdd", "19740420");
             fail("Should thrown an exception");
-        } catch (ExpressionIllegalSyntaxException e) {
-            // expected
+        } catch (SimpleParserException e) {
+            assertEquals("Valid syntax: ${date:command:pattern} was: date:yyyyMMdd", e.getMessage());
         }
     }
 
@@ -306,8 +305,8 @@ public class SimpleTest extends LanguageTestSupport {
         try {
             assertExpression("hey ${foo", "bad expression!");
             fail("Should have thrown an exception!");
-        } catch (IllegalArgumentException e) {
-            log.debug("Caught expected exception: " + e, e);
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(8, e.getIndex());
         }
     }
 
@@ -404,10 +403,10 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.getIn().setBody(null);
 
         try {
-            assertExpression("${body} is null", false);
+            assertPredicate("${body} is null", false);
             fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Syntax error in is operator: ${body} is null cannot be null. It must be a class type.", e.getMessage());
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(11, e.getIndex());
         }
     }
 
@@ -438,7 +437,7 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${headerAs(unknown String)}", null);
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertEquals("Illegal syntax: Valid syntax: ${headerAs(key, type)} was: headerAs(unknown String)", e.getMessage());
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${headerAs(key, type)} was: headerAs(unknown String)"));
         }
 
         try {
@@ -454,21 +453,21 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("hey ${xxx} how are you?", "");
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertEquals("Illegal syntax: xxx", e.getMessage());
+            assertTrue(e.getMessage().startsWith("Unknown function: xxx at location 4"));
         }
 
         try {
             assertExpression("${xxx}", "");
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertEquals("Illegal syntax: xxx", e.getMessage());
+            assertTrue(e.getMessage().startsWith("Unknown function: xxx at location 0"));
         }
 
         try {
             assertExpression("${bodyAs(xxx}", "");
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertEquals("Illegal syntax: Valid syntax: ${bodyAs(type)} was: bodyAs(xxx", e.getMessage());
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${bodyAs(type)} was: bodyAs(xxx"));
         }
     }
 
@@ -547,7 +546,7 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("${header.foo[bar}", null);
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertEquals("Illegal syntax: Valid syntax: ${header.name[key]} was: header.foo[bar", e.getMessage());
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${header.name[key]} was: header.foo[bar"));
         }
     }
 
@@ -609,15 +608,15 @@ public class SimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(camel);
 
-        assertExpression("${in.body.getName} contains 'Camel'", true);
-        assertExpression("${in.body.getName} contains 'Tiger'", false);
-        assertExpression("${in.body.getAge} < 10", true);
-        assertExpression("${in.body.getAge} > 10", false);
-        assertExpression("${in.body.getAge} <= '6'", true);
-        assertExpression("${in.body.getAge} > '6'", false);
+        assertPredicate("${in.body.getName} contains 'Camel'", true);
+        assertPredicate("${in.body.getName} contains 'Tiger'", false);
+        assertPredicate("${in.body.getAge} < 10", true);
+        assertPredicate("${in.body.getAge} > 10", false);
+        assertPredicate("${in.body.getAge} <= '6'", true);
+        assertPredicate("${in.body.getAge} > '6'", false);
 
-        assertExpression("${in.body.getAge} < ${body.getFriend.getAge}'", true);
-        assertExpression("${in.body.getFriend.isDangerous} == true", true);
+        assertPredicate("${in.body.getAge} < ${body.getFriend.getAge}", true);
+        assertPredicate("${in.body.getFriend.isDangerous} == true", true);
     }
 
     public void testBodyOGNLSimpleOperatorShorthand() throws Exception {
@@ -627,15 +626,15 @@ public class SimpleTest extends LanguageTestSupport {
 
         exchange.getIn().setBody(camel);
 
-        assertExpression("${in.body.name} contains 'Camel'", true);
-        assertExpression("${in.body.name} contains 'Tiger'", false);
-        assertExpression("${in.body.age} < 10", true);
-        assertExpression("${in.body.age} > 10", false);
-        assertExpression("${in.body.age} <= '6'", true);
-        assertExpression("${in.body.age} > '6'", false);
+        assertPredicate("${in.body.name} contains 'Camel'", true);
+        assertPredicate("${in.body.name} contains 'Tiger'", false);
+        assertPredicate("${in.body.age} < 10", true);
+        assertPredicate("${in.body.age} > 10", false);
+        assertPredicate("${in.body.age} <= '6'", true);
+        assertPredicate("${in.body.age} > '6'", false);
 
-        assertExpression("${in.body.age} < ${body.friend.age}'", true);
-        assertExpression("${in.body.friend.dangerous} == true", true);
+        assertPredicate("${in.body.age} < ${body.friend.age}", true);
+        assertPredicate("${in.body.friend.dangerous} == true", true);
     }
 
     public void testBodyOGNLNested() throws Exception {

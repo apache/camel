@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -433,5 +434,24 @@ public final class PredicateBuilder {
                 return expression + ".matches('" + pattern + "')";
             }
         };
+    }
+
+    /**
+     * Concat the given predicates into a single predicate, which
+     * only matches if all the predicates matches.
+     *
+     * @param predicates predicates
+     * @return a single predicate containing all the predicates
+     */
+    public static Predicate and(List<Predicate> predicates) {
+        Predicate answer = null;
+        for (Predicate predicate : predicates) {
+            if (answer == null) {
+                answer = predicate;
+            } else {
+                answer = and(answer, predicate);
+            }
+        }
+        return answer;
     }
 }

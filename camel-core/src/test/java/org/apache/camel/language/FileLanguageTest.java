@@ -65,7 +65,7 @@ public class FileLanguageTest extends LanguageTestSupport {
             assertExpression("${file:onlyName}", file.getName());
             fail("Should have thrown exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertEquals("Illegal syntax: File language syntax: onlyName", e.getMessage());
+            assertTrue(e.getMessage().startsWith("Unknown file language syntax: onlyName at location 0"));
         }
     }
 
@@ -187,21 +187,21 @@ public class FileLanguageTest extends LanguageTestSupport {
             assertExpression("${file.name}", "");
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertEquals("Illegal syntax: file.name", e.getMessage());
+            assertTrue(e.getMessage().startsWith("Unknown function: file.name at location 0"));
         }
 
         try {
             assertExpression("hey ${xxx} how are you?", "");
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertEquals("Illegal syntax: xxx", e.getMessage());
+            assertTrue(e.getMessage().startsWith("Unknown function: xxx at location 4"));
         }
 
         try {
             assertExpression("${xxx}", "");
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertEquals("Illegal syntax: xxx", e.getMessage());
+            assertTrue(e.getMessage().startsWith("Unknown function: xxx at location 0"));
         }
     }
 

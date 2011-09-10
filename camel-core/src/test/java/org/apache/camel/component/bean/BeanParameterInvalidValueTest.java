@@ -79,7 +79,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             ExpressionEvaluationException cause = assertIsInstanceOf(ExpressionEvaluationException.class, e.getCause());
-            assertEquals("Illegal syntax: xxx", cause.getCause().getMessage());
+            assertTrue(cause.getCause().getMessage().startsWith("Unknown function: xxx at location 0"));
         }
 
         assertMockEndpointsSatisfied();

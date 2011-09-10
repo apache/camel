@@ -17,11 +17,10 @@
 package org.apache.camel.language.simple;
 
 import org.apache.camel.Expression;
-import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.IsSingleton;
+import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.OgnlHelper;
-import org.apache.camel.util.StringHelper;
+import org.apache.camel.spi.Language;
 
 /**
  * A <a href="http://camel.apache.org/simple.html">simple language</a>
@@ -87,9 +86,8 @@ import org.apache.camel.util.StringHelper;
  * <br/>
  * The <b>only</b> file is the filename only with all paths clipped.
  *
- * @version
  */
-public class SimpleLanguage extends SimpleLanguageSupport {
+public class SimpleLanguage implements Language, IsSingleton {
 
     // singleton for expressions without a result type
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
@@ -110,11 +108,27 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         return false;
     }
 
-    @Override
+    public Predicate createPredicate(String expression) {
+        // support old simple language syntax
+        Predicate answer = SimpleBackwardsCompatibleParser.parsePredicate(expression);
+        if (answer == null) {
+            // use the new parser
+            SimplePredicateParser parser = new SimplePredicateParser(expression);
+            answer = parser.parsePredicate();
+        }
+        return answer;
+    }
+
     public Expression createExpression(String expression) {
-        Expression answer = super.createExpression(expression);
+        // support old simple language syntax
+        Expression answer = SimpleBackwardsCompatibleParser.parseExpression(expression);
+        if (answer == null) {
+            // use the new parser
+            SimpleExpressionParser parser = new SimpleExpressionParser(expression);
+            answer = parser.parseExpression();
+        }
         if (resultType != null) {
-            return ExpressionBuilder.convertToExpression(answer, resultType);
+            answer = ExpressionBuilder.convertToExpression(answer, resultType);
         }
         return answer;
     }
@@ -129,260 +143,12 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         return answer.createExpression(expression);
     }
 
-    protected Expression createSimpleExpressionDirectly(String expression) {
-
-        if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
-            return ExpressionBuilder.bodyExpression();
-        } else if (ObjectHelper.equal(expression, "out.body")) {
-            return ExpressionBuilder.outBodyExpression();
-        } else if (ObjectHelper.equal(expression, "id")) {
-            return ExpressionBuilder.messageIdExpression();
-        } else if (ObjectHelper.equal(expression, "exchangeId")) {
-            return ExpressionBuilder.exchangeIdExpression();
-        } else if (ObjectHelper.equal(expression, "exception")) {
-            return ExpressionBuilder.exchangeExceptionExpression();
-        } else if (ObjectHelper.equal(expression, "exception.message")) {
-            return ExpressionBuilder.exchangeExceptionMessageExpression();
-        } else if (ObjectHelper.equal(expression, "exception.stacktrace")) {
-            return ExpressionBuilder.exchangeExceptionStackTraceExpression();
-        } else if (ObjectHelper.equal(expression, "threadName")) {
-            return ExpressionBuilder.threadNameExpression();
-        }
-
-        return null;
+    public static void changeFunctionStartToken(String... startToken) {
+        SimpleTokenizer.changeFunctionStartToken(startToken);
     }
-
-    protected Expression createSimpleExpression(String expression, boolean strict) {
-
-        // return the expression directly if we can create expression without analyzing the prefix
-        Expression answer = createSimpleExpressionDirectly(expression);
-        if (answer != null) {
-            return answer;
-        }
-
-        // bodyAs
-        String remainder = ifStartsWithReturnRemainder("bodyAs", expression);
-        if (remainder != null) {
-            String type = ObjectHelper.between(remainder, "(", ")");
-            if (type == null) {
-                throw new ExpressionIllegalSyntaxException("Valid syntax: ${bodyAs(type)} was: " + expression);
-            }
-            type = StringHelper.removeQuotes(type);
-            return ExpressionBuilder.bodyExpression(type);
-        }
-        // mandatoryBodyAs
-        remainder = ifStartsWithReturnRemainder("mandatoryBodyAs", expression);
-        if (remainder != null) {
-            String type = ObjectHelper.between(remainder, "(", ")");
-            if (type == null) {
-                throw new ExpressionIllegalSyntaxException("Valid syntax: ${mandatoryBodyAs(type)} was: " + expression);
-            }
-            type = StringHelper.removeQuotes(type);
-            return ExpressionBuilder.mandatoryBodyExpression(type);
-        }
-
-        // body OGNL
-        remainder = ifStartsWithReturnRemainder("body", expression);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("in.body", expression);
-        }
-        if (remainder != null) {
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
-            if (invalid) {
-                throw new ExpressionIllegalSyntaxException("Valid syntax: ${body.OGNL} was: " + expression);
-            }
-            return ExpressionBuilder.bodyOgnlExpression(remainder);
-        }
-
-        // Exception OGNL
-        remainder = ifStartsWithReturnRemainder("exception", expression);
-        if (remainder != null) {
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
-            if (invalid) {
-                throw new ExpressionIllegalSyntaxException("Valid syntax: ${exception.OGNL} was: " + expression);
-            }
-            return ExpressionBuilder.exchangeExceptionOgnlExpression(remainder);
-        }
-
-        // headerAs
-        remainder = ifStartsWithReturnRemainder("headerAs", expression);
-        if (remainder != null) {
-            String keyAndType = ObjectHelper.between(remainder, "(", ")");
-            if (keyAndType == null) {
-                throw new ExpressionIllegalSyntaxException("Valid syntax: ${headerAs(key, type)} was: " + expression);
-            }
-
-            String key = ObjectHelper.before(keyAndType, ",");
-            String type = ObjectHelper.after(keyAndType, ",");
-            if (ObjectHelper.isEmpty(key) || ObjectHelper.isEmpty(type)) {
-                throw new ExpressionIllegalSyntaxException("Valid syntax: ${headerAs(key, type)} was: " + expression);
-            }
-            key = StringHelper.removeQuotes(key);
-            type = StringHelper.removeQuotes(type);
-            return ExpressionBuilder.headerExpression(key, type);
-        }
-
-        // headers expression
-        if ("in.headers".equals(expression) || "headers".equals(expression)) {
-            return ExpressionBuilder.headersExpression();
-        }
-
-        // in header expression
-        remainder = ifStartsWithReturnRemainder("in.headers", expression);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("in.header", expression);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("headers", expression);
-        }
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("header", expression);
-        }
-        if (remainder != null) {
-            // remove leading character (dot or ?)
-            remainder = remainder.substring(1);
-
-            // validate syntax
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
-            if (invalid) {
-                throw new ExpressionIllegalSyntaxException("Valid syntax: ${header.name[key]} was: " + expression);
-            }
-
-            if (OgnlHelper.isValidOgnlExpression(remainder)) {
-                // ognl based header
-                return ExpressionBuilder.headersOgnlExpression(remainder);
-            } else {
-                // regular header
-                return ExpressionBuilder.headerExpression(remainder);
-            }
-        }
-
-        // out header expression
-        remainder = ifStartsWithReturnRemainder("out.header.", expression);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("out.headers.", expression);
-        }
-        if (remainder != null) {
-            return ExpressionBuilder.outHeaderExpression(remainder);
-        }
-
-        // property
-        remainder = ifStartsWithReturnRemainder("property", expression);
-        if (remainder != null) {
-            // remove leading character (dot or ?)
-            remainder = remainder.substring(1);
-
-            // validate syntax
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
-            if (invalid) {
-                throw new ExpressionIllegalSyntaxException("Valid syntax: ${property.OGNL} was: " + expression);
-            }
-
-            if (OgnlHelper.isValidOgnlExpression(remainder)) {
-                // ognl based property
-                return ExpressionBuilder.propertyOgnlExpression(remainder);
-            } else {
-                // regular property
-                return ExpressionBuilder.propertyExpression(remainder);
-            }
-        }
-
-        // system property
-        remainder = ifStartsWithReturnRemainder("sys.", expression);
-        if (remainder != null) {
-            return ExpressionBuilder.systemPropertyExpression(remainder);
-        }
-
-        // system property
-        remainder = ifStartsWithReturnRemainder("sysenv.", expression);
-        if (remainder != null) {
-            return ExpressionBuilder.systemEnvironmentExpression(remainder);
-        }
-
-        // file: prefix
-        remainder = ifStartsWithReturnRemainder("file:", expression);
-        if (remainder != null) {
-            Expression fileExpression = createSimpleFileExpression(remainder);
-            if (expression != null) {
-                return fileExpression;
-            }
-        }
-
-        // date: prefix
-        remainder = ifStartsWithReturnRemainder("date:", expression);
-        if (remainder != null) {
-            String[] parts = remainder.split(":");
-            if (parts.length < 2) {
-                throw new ExpressionIllegalSyntaxException("Valid syntax: ${date:command:pattern} was: " + expression);
-            }
-            String command = ObjectHelper.before(remainder, ":");
-            String pattern = ObjectHelper.after(remainder, ":");
-            return ExpressionBuilder.dateExpression(command, pattern);
-        }
-
-        // bean: prefix
-        remainder = ifStartsWithReturnRemainder("bean:", expression);
-        if (remainder != null) {
-            return ExpressionBuilder.beanExpression(remainder);
-        }
-
-        // properties: prefix
-        remainder = ifStartsWithReturnRemainder("properties:", expression);
-        if (remainder != null) {
-            String[] parts = remainder.split(":");
-            if (parts.length > 2) {
-                throw new ExpressionIllegalSyntaxException("Valid syntax: ${properties:[locations]:key} was: " + expression);
-            }
-
-            String locations = null;
-            String key = remainder;
-            if (parts.length == 2) {
-                locations = ObjectHelper.before(remainder, ":");
-                key = ObjectHelper.after(remainder, ":");
-            }
-            return ExpressionBuilder.propertiesComponentExpression(key, locations);
-        }
-
-        // ref: prefix
-        remainder = ifStartsWithReturnRemainder("ref:", expression);
-        if (remainder != null) {
-            return ExpressionBuilder.refExpression(remainder);
-        }
-
-        if (strict) {
-            throw new ExpressionIllegalSyntaxException(expression);
-        } else {
-            return ExpressionBuilder.constantExpression(expression);
-        }
-    }
-
-    protected Expression createSimpleFileExpression(String remainder) {
-        if (ObjectHelper.equal(remainder, "name")) {
-            return ExpressionBuilder.fileNameExpression();
-        } else if (ObjectHelper.equal(remainder, "name.noext")) {
-            return ExpressionBuilder.fileNameNoExtensionExpression();
-        } else if (ObjectHelper.equal(remainder, "name.ext")) {
-            return ExpressionBuilder.fileExtensionExpression();
-        } else if (ObjectHelper.equal(remainder, "onlyname")) {
-            return ExpressionBuilder.fileOnlyNameExpression();
-        } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
-            return ExpressionBuilder.fileOnlyNameNoExtensionExpression();
-        } else if (ObjectHelper.equal(remainder, "ext")) {
-            return ExpressionBuilder.fileExtensionExpression();
-        } else if (ObjectHelper.equal(remainder, "parent")) {
-            return ExpressionBuilder.fileParentExpression();
-        } else if (ObjectHelper.equal(remainder, "path")) {
-            return ExpressionBuilder.filePathExpression();
-        } else if (ObjectHelper.equal(remainder, "absolute")) {
-            return ExpressionBuilder.fileAbsoluteExpression();
-        } else if (ObjectHelper.equal(remainder, "absolute.path")) {
-            return ExpressionBuilder.fileAbsolutePathExpression();
-        } else if (ObjectHelper.equal(remainder, "length") || ObjectHelper.equal(remainder, "size")) {
-            return ExpressionBuilder.fileSizeExpression();
-        } else if (ObjectHelper.equal(remainder, "modified")) {
-            return ExpressionBuilder.fileLastModifiedExpression();
-        }
-        throw new ExpressionIllegalSyntaxException("File language syntax: " + remainder);
+    
+    public static void changeFunctionEndToken(String... endToken) {
+        SimpleTokenizer.changeFunctionEndToken(endToken);
     }
 
 }
