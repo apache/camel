@@ -66,45 +66,6 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
     // Package private methods
     // -------------------------------------------------------------------------
 
-    /**
-     * Create a CXF client object
-     */
-    Client createClient() throws Exception {
-
-        // get service class
-        if (getDataFormat().equals(DataFormat.POJO)) {
-            ObjectHelper.notNull(getServiceClass(), CxfConstants.SERVICE_CLASS);
-        }
-
-        if (getWsdlURL() == null && getServiceClass() == null) {
-            // no WSDL and serviceClass specified, set our default serviceClass
-            setServiceClass(org.apache.camel.component.cxf.DefaultSEI.class.getName());
-            setDefaultOperationNamespace(CxfConstants.DISPATCH_NAMESPACE);
-            setDefaultOperationName(CxfConstants.DISPATCH_DEFAULT_OPERATION_NAMESPACE);
-            if (getDataFormat().equals(DataFormat.PAYLOAD)) {
-                setSkipPayloadMessagePartCheck(true);
-            }
-        }
-
-        Class<?> cls = null;
-        if (getServiceClass() != null) {
-            //Fool CXF classes to load their settings and bindings from the CXF bundle
-            cls = getServiceClass();
-            // create client factory bean
-            ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
-            // setup client factory bean
-            setupClientFactoryBean(factoryBean, cls);
-            return ((ClientProxy) Proxy.getInvocationHandler(factoryBean.create())).getClient();
-        } else {
-            checkName(getPortName(), "endpoint/port name");
-            checkName(getServiceName(), "service name");
-
-            ClientFactoryBean factoryBean = createClientFactoryBean();
-            // setup client factory bean
-            setupClientFactoryBean(factoryBean);
-            return factoryBean.create();
-        }
-    }
 
     protected void checkName(Object value, String name) {
         if (ObjectHelper.isEmpty(value)) {

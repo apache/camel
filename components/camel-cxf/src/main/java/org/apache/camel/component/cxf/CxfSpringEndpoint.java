@@ -110,7 +110,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         
         if (cls != null) {
             // create client factory bean
-            ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
+            ClientFactoryBean factoryBean = createClientFactoryBean(cls);
 
             // setup client factory bean
             setupClientFactoryBean(factoryBean, cls);
@@ -130,13 +130,16 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
                 factoryBean.setEndpointName(new QName(getEndpointNamespace(), getEndpointLocalName()));
             }
 
-            return ((ClientProxy)Proxy.getInvocationHandler(factoryBean.create())).getClient();
+            Client client = factoryBean.create();
+            // setup the handlers
+            setupHandlers(factoryBean, client);
+            return client;
         } else {
             
             ClientFactoryBean factoryBean = createClientFactoryBean();
 
             // setup client factory bean
-            setupClientFactoryBean(factoryBean);
+            setupClientFactoryBean(factoryBean, null);
             
             // fill in values that have not been filled.
             QName serviceQName = null;

@@ -48,6 +48,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
+import org.apache.cxf.common.injection.ResourceInjector;
 import org.apache.cxf.common.util.ClassHelper;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
 import org.apache.cxf.endpoint.Client;
@@ -64,9 +65,16 @@ import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
+import org.apache.cxf.jaxws.context.WebServiceContextResourceResolver;
+import org.apache.cxf.jaxws.handler.AnnotationHandlerChainBuilder;
+import org.apache.cxf.jaxws.support.JaxWsEndpointImpl;
+import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.resource.DefaultResourceManager;
+import org.apache.cxf.resource.ResourceManager;
+import org.apache.cxf.resource.ResourceResolver;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.slf4j.Logger;
@@ -252,21 +260,21 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * Create a client factory bean object.  Notice that the serviceClass <b>must</b> be
      * an interface.
      */
-    protected ClientProxyFactoryBean createClientFactoryBean(Class<?> cls) throws CamelException {
+    protected ClientFactoryBean createClientFactoryBean(Class<?> cls) throws CamelException {
         if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
-            return new JaxWsProxyFactoryBean(new JaxWsClientFactoryBean() {
+            return new JaxWsClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
                     return new CamelCxfClientImpl(getBus(), ep);
                 }
-            });
+            };
         } else {
-            return new ClientProxyFactoryBean(new ClientFactoryBean() {
+            return new ClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
                     return new CamelCxfClientImpl(getBus(), ep);
                 }
-            });
+            };
         }
     }
 
@@ -288,83 +296,46 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         };
     }
 
-    /**
-     * Populate a client factory bean
-     */
-    protected void setupClientFactoryBean(ClientProxyFactoryBean factoryBean, Class<?> cls) {
-        // service class
-        factoryBean.setServiceClass(cls);
+    protected void setupHandlers(ClientFactoryBean factoryBean, Client client) {
+        if (factoryBean instanceof JaxWsClientFactoryBean && handlers != null) {
+            AnnotationHandlerChainBuilder builder = new AnnotationHandlerChainBuilder();
+            JaxWsServiceFactoryBean sf = (JaxWsServiceFactoryBean)factoryBean.getServiceFactory();
+            List<Handler> chain = new ArrayList<Handler>(handlers);
 
-        factoryBean.setInInterceptors(in);
-        factoryBean.setOutInterceptors(out);
-        factoryBean.setOutFaultInterceptors(outFault);
-        factoryBean.setInFaultInterceptors(inFault); 
-        factoryBean.setFeatures(features);
-        
-        if (factoryBean instanceof JaxWsProxyFactoryBean && handlers != null) {
-            ((JaxWsProxyFactoryBean)factoryBean).setHandlers(handlers);
-        }
-        if (transportId != null) {
-            factoryBean.setTransportId(transportId);
-        }
-        if (bindingId != null) {
-            factoryBean.setBindingId(bindingId);
-        }
+            chain.addAll(builder.buildHandlerChainFromClass(sf.getServiceClass(),
+                                                            sf.getEndpointInfo().getName(),
+                                                            sf.getServiceQName(),
+                                                            factoryBean.getBindingId()));
 
-        // address
-        factoryBean.setAddress(getAddress());
-
-        // wsdl url
-        if (getWsdlURL() != null) {
-            factoryBean.setWsdlURL(getWsdlURL());
-        }
-
-        // service name qname
-        if (getServiceName() != null) {
-            factoryBean.setServiceName(getServiceName());
-        }
-
-        // port name qname
-        if (getPortName() != null) {
-            factoryBean.setEndpointName(getPortName());
-        }
-
-        // apply feature here
-        if (getDataFormat() == DataFormat.MESSAGE) {
-            factoryBean.getFeatures().add(new MessageDataFormatFeature());
-        } else if (getDataFormat() == DataFormat.PAYLOAD) {
-            factoryBean.getFeatures().add(new PayLoadDataFormatFeature());
-            factoryBean.setDataBinding(new HybridSourceDataBinding());
-        }
-
-        if (loggingFeatureEnabled) {
-            factoryBean.getFeatures().add(new LoggingFeature());
-        }
-
-        // set the document-literal wrapped style
-        if (getWrappedStyle() != null) {
-            factoryBean.getServiceFactory().setWrapped(getWrappedStyle());
-        }
-
-        // set the properties on CxfProxyFactoryBean
-        if (getProperties() != null) {
-            if (factoryBean.getProperties() != null) {
-                // add to existing properties
-                factoryBean.getProperties().putAll(getProperties());
-            } else {
-                factoryBean.setProperties(getProperties());
+            if (!chain.isEmpty()) {
+                ResourceManager resourceManager = getBus().getExtension(ResourceManager.class);
+                List<ResourceResolver> resolvers = resourceManager.getResourceResolvers();
+                resourceManager = new DefaultResourceManager(resolvers);
+                resourceManager.addResourceResolver(new WebServiceContextResourceResolver());
+                ResourceInjector injector = new ResourceInjector(resourceManager);
+                for (Handler h : chain) {
+                    if (Proxy.isProxyClass(h.getClass()) && getServiceClass() != null) {
+                        injector.inject(h, getServiceClass());
+                        injector.construct(h, getServiceClass());
+                    } else {
+                        injector.inject(h);
+                        injector.construct(h);
+                    }
+                }
             }
-            LOG.debug("ClientProxyFactoryBean: {} added properties: {}", factoryBean, properties);
-        }
 
-        factoryBean.setBus(getBus());
+            ((JaxWsEndpointImpl)client.getEndpoint()).getJaxwsBinding().setHandlerChain(chain);
+        }
     }
 
-    protected void setupClientFactoryBean(ClientFactoryBean factoryBean) {
+    protected void setupClientFactoryBean(ClientFactoryBean factoryBean, Class<?> cls) {
+        if (cls != null) {
+            factoryBean.setServiceClass(cls);
+        }
         factoryBean.setInInterceptors(in);
         factoryBean.setOutInterceptors(out);
         factoryBean.setOutFaultInterceptors(outFault);
-        factoryBean.setInFaultInterceptors(inFault); 
+        factoryBean.setInFaultInterceptors(inFault);
         factoryBean.setFeatures(features);
         factoryBean.setTransportId(transportId);
         factoryBean.setBindingId(bindingId);
@@ -434,17 +405,22 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (getServiceClass() != null) {
             cls = getServiceClass();
             // create client factory bean
-            ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
+            ClientFactoryBean factoryBean = createClientFactoryBean(cls);
             // setup client factory bean
             setupClientFactoryBean(factoryBean, cls);
-            return ((ClientProxy) Proxy.getInvocationHandler(factoryBean.create())).getClient();
+            Client client = factoryBean.create();
+            // setup the handlers
+            setupHandlers(factoryBean, client);
+            return client;
         } else {
+            // create the client without service class
+
             checkName(portName, "endpoint/port name");
             checkName(serviceName, "service name");
 
             ClientFactoryBean factoryBean = createClientFactoryBean();
             // setup client factory bean
-            setupClientFactoryBean(factoryBean);
+            setupClientFactoryBean(factoryBean, null);
             return factoryBean.create();
         }
     }
