@@ -38,7 +38,7 @@
       <outputDirectory>/examples</outputDirectory>
       <excludes>
         <!-- disable build, IDEA and Eclipse files -->
-        <exclude>**/*.i*</exclude>
+        <exclude>**/*.i??</exclude>
         <exclude>**/eclipse-classes/**</exclude>
         <exclude>**/.project</exclude>
         <exclude>**/.classpath</exclude>
