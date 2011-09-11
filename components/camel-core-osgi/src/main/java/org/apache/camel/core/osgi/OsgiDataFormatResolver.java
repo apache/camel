@@ -17,7 +17,6 @@
 package org.apache.camel.core.osgi;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -53,24 +52,6 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
             return (DataFormat) bean;
         }
         return getDataFormat(name, context);
-    }
-
-    public DataFormatDefinition resolveDataFormatDefinition(String name, CamelContext context) {
-        // lookup type and create the data format from it
-        DataFormatDefinition type = lookup(context, name, DataFormatDefinition.class);
-        if (type == null && context.getDataFormats() != null) {
-            type = context.getDataFormats().get(name);
-        }
-        return type;
-    }
-
-    private static <T> T lookup(CamelContext context, String ref, Class<T> type) {
-        try {
-            return context.getRegistry().lookup(ref, type);
-        } catch (Exception e) {
-            // need to ignore not same type and return it as null
-            return null;
-        }
     }
 
     protected DataFormat getDataFormat(String name, CamelContext context) {

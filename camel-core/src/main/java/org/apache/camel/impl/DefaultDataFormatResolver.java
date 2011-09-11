@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoFactoryAvailableException;
-import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinder;
@@ -63,15 +62,6 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
         }
 
         return dataFormat;
-    }
-
-    public DataFormatDefinition resolveDataFormatDefinition(String name, CamelContext context) {
-        // lookup type and create the data format from it
-        DataFormatDefinition type = lookup(context, name, DataFormatDefinition.class);
-        if (type == null && context.getDataFormats() != null) {
-            type = context.getDataFormats().get(name);
-        }
-        return type;
     }
 
     private static <T> T lookup(CamelContext context, String ref, Class<T> type) {

@@ -2240,7 +2240,21 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public DataFormatDefinition resolveDataFormatDefinition(String name) {
-        return dataFormatResolver.resolveDataFormatDefinition(name, this);
+        // lookup type and create the data format from it
+        DataFormatDefinition type = lookup(this, name, DataFormatDefinition.class);
+        if (type == null && getDataFormats() != null) {
+            type = getDataFormats().get(name);
+        }
+        return type;
+    }
+
+    private static <T> T lookup(CamelContext context, String ref, Class<T> type) {
+        try {
+            return context.getRegistry().lookup(ref, type);
+        } catch (Exception e) {
+            // need to ignore not same type and return it as null
+            return null;
+        }
     }
 
     public ShutdownStrategy getShutdownStrategy() {

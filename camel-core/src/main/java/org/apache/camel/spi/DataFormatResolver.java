@@ -17,7 +17,6 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.DataFormatDefinition;
 
 /**
  * Represents a resolver of data formats.
@@ -35,12 +34,4 @@ public interface DataFormatResolver {
      */
     DataFormat resolveDataFormat(String name, CamelContext context);
 
-    /**
-     * Resolves the given data format definition given its name.
-     *
-     * @param name the name of the data format to lookup in {@link org.apache.camel.spi.Registry} or create
-     * @param context the camel context
-     * @return the data format or <tt>null</tt> if not possible to resolve
-     */
-    DataFormatDefinition resolveDataFormatDefinition(String name, CamelContext context);
 }
