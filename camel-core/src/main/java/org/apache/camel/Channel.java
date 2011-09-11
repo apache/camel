@@ -18,7 +18,6 @@ package org.apache.camel;
 
 import java.util.List;
 
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -76,32 +75,6 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
     List<InterceptStrategy> getInterceptStrategies();
 
     /**
-     * Initializes the channel.
-     *
-     * @param outputDefinition  the route definition the {@link Channel} represents
-     * @param routeContext      the route context
-     * @throws Exception is thrown if some error occurred
-     */
-    void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception;
-
-    /**
-     * Post initializes the channel.
-     *
-     * @param outputDefinition  the route definition the {@link Channel} represents
-     * @param routeContext      the route context
-     * @throws Exception is thrown if some error occurred
-     */
-    void postInitChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception;
-
-    /**
-     * If the initialized output definition contained outputs (children) then we need to
-     * set the child so we can leverage fine grained tracing
-     *
-     * @param child the child
-     */
-    void setChildDefinition(ProcessorDefinition<?> child);
-
-    /**
      * Gets the wrapped output that at runtime should be delegated to.
      *
      * @return the output to route the {@link Exchange} to
@@ -121,13 +94,6 @@ public interface Channel extends AsyncProcessor, Navigate<Processor> {
      * @return  the next processor
      */
     Processor getNextProcessor();
-
-    /**
-     * Gets the definition of the next processor
-     *
-     * @return the processor definition
-     */
-    ProcessorDefinition<?> getProcessorDefinition();
 
     /**
      * Gets the {@link RouteContext}

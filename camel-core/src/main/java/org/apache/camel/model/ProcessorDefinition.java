@@ -223,7 +223,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     protected Processor wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition child) throws Exception {
         // put a channel in between this and each output to control the route flow logic
-        Channel channel = createChannel(routeContext);
+        ModelChannel channel = createChannel(routeContext);
         channel.setNextProcessor(processor);
 
         // add interceptor strategies to the channel must be in this order: camel context, route context, local
@@ -374,7 +374,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Creates a new instance of the {@link Channel}.
      */
-    protected Channel createChannel(RouteContext routeContext) throws Exception {
+    protected ModelChannel createChannel(RouteContext routeContext) throws Exception {
         return new DefaultChannel();
     }
 

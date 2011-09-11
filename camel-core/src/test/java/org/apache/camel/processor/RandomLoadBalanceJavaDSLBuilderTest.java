@@ -76,8 +76,8 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
 
         for (Processor child : nav.next()) {
 
-            if (child instanceof Channel) {
-                Channel channel = (Channel) child;
+            if (child instanceof DefaultChannel) {
+                DefaultChannel channel = (DefaultChannel) child;
                 ProcessorDefinition def = channel.getProcessorDefinition();
                 navigateDefinition(def, sb);
             }

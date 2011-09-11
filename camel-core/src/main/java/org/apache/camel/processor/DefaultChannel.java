@@ -29,6 +29,7 @@ import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
+import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.TraceFormatter;
@@ -57,7 +58,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultChannel extends ServiceSupport implements Channel {
+public class DefaultChannel extends ServiceSupport implements ModelChannel {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DefaultChannel.class);
 
@@ -234,7 +235,7 @@ public class DefaultChannel extends ServiceSupport implements Channel {
         output = target;
     }
 
-    @Override
+    //@Override
     public void postInitChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
         for (InterceptStrategy strategy : interceptors) {
             // apply stream caching at the end as it should be outer most
