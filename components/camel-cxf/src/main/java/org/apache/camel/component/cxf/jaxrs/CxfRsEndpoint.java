@@ -55,7 +55,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private AtomicBoolean bindingInitialized = new AtomicBoolean(false);
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
-	private boolean isSetDefaultBus;
+    private boolean isSetDefaultBus;
 
     public CxfRsEndpoint(String endpointUri, CamelContext camelContext) {
         super(endpointUri, camelContext);

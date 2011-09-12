@@ -46,41 +46,36 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
 
     @Before
     public void setUp() throws Exception {
-    	AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
-    	context1 = SpringCamelContext.springCamelContext(ac, false);
-		context1.start();	
-		
-		template1 = context1.createProducerTemplate();
-		template1.start();
+        AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest1.xml");
+        context1 = SpringCamelContext.springCamelContext(ac, false);
+        context1.start();
+        template1 = context1.createProducerTemplate();
+        template1.start();
 
-    	ac = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest2.xml");
-    	context2 = SpringCamelContext.springCamelContext(ac, false);
-    	context2.start();	
-		
-		template2 = context2.createProducerTemplate();
-		template2.start();
-		
+        ac = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/CxfRsProducerClientFactoryCacheTest2.xml");
+        context2 = SpringCamelContext.springCamelContext(ac, false);
+        context2.start();
+
+        template2 = context2.createProducerTemplate();
+        template2.start();
     }
     
     @After
     public void tearDown() throws Exception {
-    	context1.stop();	
-    	template1.stop();
-    	
-    	context2.stop();	
-    	template2.stop();
-    	
+        context1.stop();
+        template1.stop();
+
+        context2.stop();
+        template2.stop();
     }
     
     @Test
     public void testGetConstumerWithHttpCentralClientAPI() throws Exception {
-
-    	doRunTest(template2);
-    	doRunTest(template1);
-
+        doRunTest(template2);
+        doRunTest(template1);
     }
 
-	private void doRunTest(ProducerTemplate template) {
+    private void doRunTest(ProducerTemplate template) {
         Exchange exchange = template.send("direct://http", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
@@ -100,10 +95,9 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
         assertEquals("Get a wrong customer id ", String.valueOf(response.getId()), "123");
         assertEquals("Get a wrong customer name", response.getName(), "John");
         assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-		
-	}
+    }
 
-	public int getPort1() {
+    public int getPort1() {
         return port1;
     }
 }
