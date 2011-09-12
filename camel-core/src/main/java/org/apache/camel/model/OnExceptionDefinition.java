@@ -134,24 +134,25 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * Allows an exception handler to create a new redelivery policy for this exception type
      *
      * @param context      the camel context
-     * @param parentPolicy the current redelivery policy
+     * @param parentPolicy the current redelivery policy, is newer <tt>null</tt>
      * @return a newly created redelivery policy, or return the original policy if no customization is required
      *         for this exception handler.
      */
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
         if (redeliveryPolicyRef != null) {
-            parentPolicy = CamelContextHelper.mandatoryLookup(context, redeliveryPolicyRef, RedeliveryPolicy.class);
-        }
-
-        if (redeliveryPolicy != null) {
+            return CamelContextHelper.mandatoryLookup(context, redeliveryPolicyRef, RedeliveryPolicy.class);
+        } else if (redeliveryPolicy != null) {
             return redeliveryPolicy.createRedeliveryPolicy(context, parentPolicy);
-        } else if (errorHandler != null) {
-            // lets create a new error handler that has no retries
+        } else if (!outputs.isEmpty() && parentPolicy.getMaximumRedeliveries() > 0) {
+            // if we have outputs, then do not inherit parent maximumRedeliveries
+            // as you would have to explicit configure maximumRedeliveries on this onException to use it
+            // this is the behavior Camel has always had
             RedeliveryPolicy answer = parentPolicy.copy();
             answer.setMaximumRedeliveries(0);
             return answer;
+        } else {
+            return parentPolicy;
         }
-        return parentPolicy;
     }
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {

@@ -549,6 +549,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     }
 
     protected void prepareExchangeForRedelivery(Exchange exchange, RedeliveryData data) {
+        if (!redeliveryEnabled) {
+            throw new IllegalStateException("Redelivery is not enabled on " + this + ". Make sure you have configured the error handler properly.");
+        }
         // there must be a defensive copy of the exchange
         ObjectHelper.notNull(data.original, "Defensive copy of Exchange is null", this);
 
@@ -951,21 +954,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // walk them to see if any of them have a maximum redeliveries > 0 or retry until set
             for (OnExceptionDefinition def : exceptionPolicies.values()) {
 
-                if (def.getRedeliveryPolicy() != null) {
-                    String ref = def.getRedeliveryPolicyRef();
-                    if (ref != null) {
-                        // lookup in registry if ref provided
-                        RedeliveryPolicy policy = CamelContextHelper.mandatoryLookup(camelContext, ref, RedeliveryPolicy.class);
-                        if (policy.getMaximumRedeliveries() != 0) {
-                            // must check for != 0 as (-1 means redeliver forever)
-                            return true;
-                        }
-                    } else {
-                        Integer max = CamelContextHelper.parseInteger(camelContext, def.getRedeliveryPolicy().getMaximumRedeliveries());
-                        if (max != null && max != 0) {
-                            // must check for != 0 as (-1 means redeliver forever)
-                            return true;
-                        }
+                String ref = def.getRedeliveryPolicyRef();
+                if (ref != null) {
+                    // lookup in registry if ref provided
+                    RedeliveryPolicy policy = CamelContextHelper.mandatoryLookup(camelContext, ref, RedeliveryPolicy.class);
+                    if (policy.getMaximumRedeliveries() != 0) {
+                        // must check for != 0 as (-1 means redeliver forever)
+                        return true;
+                    }
+                } else if (def.getRedeliveryPolicy() != null) {
+                    Integer max = CamelContextHelper.parseInteger(camelContext, def.getRedeliveryPolicy().getMaximumRedeliveries());
+                    if (max != null && max != 0) {
+                        // must check for != 0 as (-1 means redeliver forever)
+                        return true;
                     }
                 }
 
