@@ -115,4 +115,54 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals(Integer.valueOf(121), exp.evaluate(exchange, Integer.class));
     }
 
+    public void testHeaderNestedFunction() throws Exception {
+        exchange.getIn().setBody("foo");
+        exchange.getIn().setHeader("foo", "abc");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${header.${body}}");
+        Expression exp = parser.parseExpression();
+
+        Object obj = exp.evaluate(exchange, Object.class);
+        assertNotNull(obj);
+        assertEquals("abc", obj);
+    }
+
+    public void testBodyAsNestedFunction() throws Exception {
+        exchange.getIn().setBody("123");
+        exchange.getIn().setHeader("foo", "Integer");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.foo})}");
+        Expression exp = parser.parseExpression();
+
+        Object obj = exp.evaluate(exchange, Object.class);
+        assertNotNull(obj);
+        Integer num = assertIsInstanceOf(Integer.class, obj);
+        assertEquals(123, num.intValue());
+    }
+
+    public void testThreeNestedFunctions() throws Exception {
+        exchange.getIn().setBody("123");
+        exchange.getIn().setHeader("foo", "Int");
+        exchange.getIn().setHeader("bar", "e");
+        exchange.getIn().setHeader("baz", "ger");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.foo}${header.bar}${header.baz})}");
+        Expression exp = parser.parseExpression();
+
+        Object obj = exp.evaluate(exchange, Object.class);
+        assertNotNull(obj);
+        Integer num = assertIsInstanceOf(Integer.class, obj);
+        assertEquals(123, num.intValue());
+    }
+
+    public void testNestedNestedFunctions() throws Exception {
+        exchange.getIn().setBody("123");
+        exchange.getIn().setHeader("foo", "Integer");
+        exchange.getIn().setHeader("bar", "foo");
+        SimpleExpressionParser parser = new SimpleExpressionParser("${bodyAs(${header.${header.bar}})}");
+        Expression exp = parser.parseExpression();
+
+        Object obj = exp.evaluate(exchange, Object.class);
+        assertNotNull(obj);
+        Integer num = assertIsInstanceOf(Integer.class, obj);
+        assertEquals(123, num.intValue());
+    }
+
 }

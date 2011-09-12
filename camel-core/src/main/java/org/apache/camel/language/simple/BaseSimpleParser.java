@@ -120,8 +120,18 @@ public abstract class BaseSimpleParser {
                 if (stack.isEmpty()) {
                     throw new SimpleParserException(token.getToken().getType().getType() + " has no matching start token", token.getToken().getIndex());
                 }
+
                 Block top = stack.pop();
-                answer.add(top);
+                // if there is a block on the stack then it should accept the child token
+                Block block = stack.isEmpty() ? null : stack.peek();
+                if (block != null) {
+                    if (!block.acceptAndAddNode(top)) {
+                        throw new SimpleParserException(block.getToken().getType() + " cannot accept " + token.getToken().getType(), token.getToken().getIndex());
+                    }
+                } else {
+                    // no block, so add to answer
+                    answer.add(top);
+                }
             } else {
                 // if there is a block on the stack then it should accept the child token
                 Block block = stack.isEmpty() ? null : stack.peek();

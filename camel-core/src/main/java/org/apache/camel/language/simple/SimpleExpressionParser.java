@@ -167,10 +167,17 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         if (accept(TokenType.functionStart)) {
             nextToken();
             while (!token.getType().isFunctionEnd() && !token.getType().isEol()) {
-                // we need to loop until we find the ending function quote, or the eol
+                if (token.getType().isFunctionStart()) {
+                    // embedded function
+                    functionText();
+                }
+                // we need to loop until we find the ending function quote, an embedded function, or the eol
                 nextToken();
             }
-            expect(TokenType.functionEnd);
+            // if its not an embedded function then we expect the end token
+            if (!token.getType().isFunctionStart()) {
+                expect(TokenType.functionEnd);
+            }
             return true;
         }
         return false;

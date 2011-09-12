@@ -47,6 +47,10 @@ public class CompositeNodes extends BaseSimpleNode {
         children.add(child);
     }
 
+    public List<SimpleNode> getChildren() {
+        return children;
+    }
+
     @Override
     public Expression createExpression(String expression) {
         if (children.isEmpty()) {

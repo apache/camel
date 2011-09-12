@@ -23,16 +23,6 @@ import org.apache.camel.ExchangeTestSupport;
  */
 public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
 
-    public void testSimpleFunctionInvalid() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("${body${foo}}");
-        try {
-            parser.parseExpression();
-            fail("Should thrown exception");
-        } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(6, e.getIndex());
-        }
-    }
-
     public void testSimpleUnbalanceFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("${body is a nice day");
         try {
@@ -43,6 +33,16 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    public void testSimpleNestedUnbalanceFunction() throws Exception {
+        SimpleExpressionParser parser = new SimpleExpressionParser("${body${foo}");
+        try {
+            parser.parseExpression();
+            fail("Should thrown exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(11, e.getIndex());
+        }
+    }
+
     public void testSimpleUnknownFunction() throws Exception {
         SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${foo} how are you?");
         try {
@@ -50,6 +50,17 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
             fail("Should thrown exception");
         } catch (SimpleIllegalSyntaxException e) {
             assertEquals(6, e.getIndex());
+        }
+    }
+
+    public void testSimpleNestedUnknownFunction() throws Exception {
+        SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${bodyAs(${foo})} how are you?");
+        try {
+            // nested functions can only be syntax evaluated when evaluating an exchange at runtime
+            parser.parseExpression().evaluate(exchange, String.class);
+            fail("Should thrown exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(15, e.getIndex());
         }
     }
 

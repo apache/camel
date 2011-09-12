@@ -494,13 +494,19 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     protected boolean functionText() {
         if (accept(TokenType.functionStart)) {
-            nextToken(TokenType.functionEnd, TokenType.eol);
             nextToken();
             while (!token.getType().isFunctionEnd() && !token.getType().isEol()) {
-                // we need to loop until we find the ending function quote, or the eol
-                nextToken(TokenType.functionEnd, TokenType.eol);
+                if (token.getType().isFunctionStart()) {
+                    // embedded function
+                    functionText();
+                }
+                // we need to loop until we find the ending function quote, an embedded function, or the eol
+                nextToken();
             }
-            expect(TokenType.functionEnd);
+            // if its not an embedded function then we expect the end token
+            if (!token.getType().isFunctionStart()) {
+                expect(TokenType.functionEnd);
+            }
             return true;
         }
         return false;
