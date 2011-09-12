@@ -415,7 +415,7 @@ public abstract class TestSupport extends Assert {
         boolean exists = true;
         while (exists && (tries < maxTries)) {
             recursivelyDeleteDirectory(file);
-            tries ++;
+            tries++;
             exists = file.exists(); 
             if (exists) {
                 try {
