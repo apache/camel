@@ -73,6 +73,10 @@ public final class SimpleTokenizer {
         // static methods
     }
 
+
+    /**
+     * @see SimpleLanguage#changeFunctionStartToken(String...)
+     */
     public static void changeFunctionStartToken(String... startToken) {
         for (SimpleTokenType type : KNOWN_TOKENS) {
             if (type.getType() == TokenType.functionStart) {
@@ -80,12 +84,15 @@ public final class SimpleTokenizer {
             }
         }
 
-        // add in start as its a more common token to be used
+        // add in start of list as its a more common token to be used
         for (String token : startToken) {
             KNOWN_TOKENS.add(0, new SimpleTokenType(TokenType.functionStart, token));
         }
     }
 
+    /**
+     * @see SimpleLanguage#changeFunctionEndToken(String...)
+     */
     public static void changeFunctionEndToken(String... endToken) {
         for (SimpleTokenType type : KNOWN_TOKENS) {
             if (type.getType() == TokenType.functionEnd) {
@@ -93,7 +100,7 @@ public final class SimpleTokenizer {
             }
         }
 
-        // add in start as its a more common token to be used
+        // add in start of list as its a more common token to be used
         for (String token : endToken) {
             KNOWN_TOKENS.add(0, new SimpleTokenType(TokenType.functionEnd, token));
         }

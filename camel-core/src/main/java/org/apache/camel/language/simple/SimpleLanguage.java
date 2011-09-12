@@ -143,10 +143,30 @@ public class SimpleLanguage implements Language, IsSingleton {
         return answer.createExpression(expression);
     }
 
+    /**
+     * Change the start tokens used for functions.
+     * <p/>
+     * This can be used to alter the function tokens to avoid clashes with other
+     * frameworks etc.
+     * <p/>
+     * The default start tokens is <tt>${</tt> and <tt>$simple{}</tt>.
+     *
+     * @param startToken new start token(s) to be used for functions
+     */
     public static void changeFunctionStartToken(String... startToken) {
         SimpleTokenizer.changeFunctionStartToken(startToken);
     }
     
+    /**
+     * Change the end tokens used for functions.
+     * <p/>
+     * This can be used to alter the function tokens to avoid clashes with other
+     * frameworks etc.
+     * <p/>
+     * The default end token is <tt>}</tt>
+     *
+     * @param endToken new end token(s) to be used for functions
+     */
     public static void changeFunctionEndToken(String... endToken) {
         SimpleTokenizer.changeFunctionEndToken(endToken);
     }
