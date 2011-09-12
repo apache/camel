@@ -43,6 +43,7 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint {
     protected ProcessorEndpoint() {
     }
 
+    @SuppressWarnings("deprecation")
     public ProcessorEndpoint(String endpointUri, CamelContext context, Processor processor) {
         super(endpointUri);
         this.setCamelContext(context);

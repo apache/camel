@@ -29,6 +29,7 @@ import org.apache.camel.impl.JndiRegistry;
 public class MockAsBeanTest extends ContextTestSupport {
 
     // create foo bean as a mock endpoint
+    @SuppressWarnings("deprecation")
     private MockEndpoint foo = new MockEndpoint("mock:foo");
 
     @Override

@@ -110,6 +110,7 @@ public class SimpleLanguage implements Language, IsSingleton {
 
     public Predicate createPredicate(String expression) {
         // support old simple language syntax
+        @SuppressWarnings("deprecation")
         Predicate answer = SimpleBackwardsCompatibleParser.parsePredicate(expression);
         if (answer == null) {
             // use the new parser
@@ -121,6 +122,7 @@ public class SimpleLanguage implements Language, IsSingleton {
 
     public Expression createExpression(String expression) {
         // support old simple language syntax
+        @SuppressWarnings("deprecation")
         Expression answer = SimpleBackwardsCompatibleParser.parseExpression(expression);
         if (answer == null) {
             // use the new parser

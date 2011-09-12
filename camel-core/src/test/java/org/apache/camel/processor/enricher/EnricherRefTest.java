@@ -29,6 +29,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  */
 public class EnricherRefTest extends ContextTestSupport {
 
+    @SuppressWarnings("deprecation")
     private MockEndpoint cool = new MockEndpoint("mock:cool");
 
     @Override
