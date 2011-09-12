@@ -440,11 +440,10 @@ public abstract class TestSupport extends Assert {
             for (int i = 0; i < files.length; i++) {
                 recursivelyDeleteDirectory(files[i]);
             }
-        } else {
-            boolean success = file.delete();
-            if (!success) {
-                LOG.warn("Deletion of file: " + file.getAbsolutePath() + " failed");
-            }
+        }
+        boolean success = file.delete();
+        if (!success) {
+            LOG.warn("Deletion of file: " + file.getAbsolutePath() + " failed");
         }
     }
 
