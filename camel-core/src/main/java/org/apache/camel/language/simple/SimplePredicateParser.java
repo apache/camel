@@ -442,10 +442,10 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     protected boolean singleQuotedLiteralWithFunctionsText() {
         if (accept(TokenType.singleQuote)) {
-            nextToken(TokenType.singleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd, TokenType.escapedValue);
+            nextToken(TokenType.singleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd);
             while (!token.getType().isSingleQuote() && !token.getType().isEol()) {
                 // we need to loop until we find the ending single quote, or the eol
-                nextToken(TokenType.singleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd, TokenType.escapedValue);
+                nextToken(TokenType.singleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd);
             }
             expect(TokenType.singleQuote);
             return true;
@@ -468,10 +468,10 @@ public class SimplePredicateParser extends BaseSimpleParser {
 
     protected boolean doubleQuotedLiteralWithFunctionsText() {
         if (accept(TokenType.doubleQuote)) {
-            nextToken(TokenType.doubleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd, TokenType.escapedValue);
+            nextToken(TokenType.doubleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd);
             while (!token.getType().isDoubleQuote() && !token.getType().isEol()) {
                 // we need to loop until we find the ending double quote, or the eol
-                nextToken(TokenType.doubleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd, TokenType.escapedValue);
+                nextToken(TokenType.doubleQuote, TokenType.eol, TokenType.functionStart, TokenType.functionEnd);
             }
             expect(TokenType.doubleQuote);
             return true;
@@ -609,27 +609,18 @@ public class SimplePredicateParser extends BaseSimpleParser {
     }
 
     protected boolean numericValue() {
-        if (accept(TokenType.numericValue)) {
-            // no other tokens to check so do not use nextToken
-            return true;
-        }
-        return false;
+        return accept(TokenType.numericValue);
+        // no other tokens to check so do not use nextToken
     }
 
     protected boolean booleanValue() {
-        if (accept(TokenType.booleanValue)) {
-            // no other tokens to check so do not use nextToken
-            return true;
-        }
-        return false;
+        return accept(TokenType.booleanValue);
+        // no other tokens to check so do not use nextToken
     }
 
     protected boolean nullValue() {
-        if (accept(TokenType.nullValue)) {
-            // no other tokens to check so do not use nextToken
-            return true;
-        }
-        return false;
+        return accept(TokenType.nullValue);
+        // no other tokens to check so do not use nextToken
     }
 
 }

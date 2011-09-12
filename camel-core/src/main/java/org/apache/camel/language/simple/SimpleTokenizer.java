@@ -131,16 +131,6 @@ public final class SimpleTokenizer {
 
     private static SimpleToken doNextToken(String expression, int index, TokenType... filters) {
 
-        boolean escapedAllowed = acceptType(TokenType.escapedValue, filters);
-        if (escapedAllowed) {
-            // is it an escaped value
-            if (expression.charAt(index) == '\\' && index < expression.length() - 1) {
-                String text = "" + expression.charAt(index + 1);
-                // use 2 as length for escaped as we need to jump to the next symbol
-                return new SimpleToken(new SimpleTokenType(TokenType.escapedValue, text), index, 2);
-            }
-        }
-
         boolean numericAllowed = acceptType(TokenType.numericValue, filters);
         if (numericAllowed) {
             // is it a numeric value

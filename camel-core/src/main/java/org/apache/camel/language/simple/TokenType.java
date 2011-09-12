@@ -22,10 +22,10 @@ package org.apache.camel.language.simple;
 public enum TokenType {
 
     whiteSpace, character,
-    escapedValue, booleanValue, numericValue, nullValue,
+    booleanValue, numericValue, nullValue,
     singleQuote, doubleQuote,
     functionStart, functionEnd,
     binaryOperator, unaryOperator, logicalOperator,
-    eol;
+    eol
 
 }

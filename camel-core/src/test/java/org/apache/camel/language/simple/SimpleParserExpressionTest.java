@@ -69,15 +69,15 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("World", exp.evaluate(exchange, String.class));
     }
 
-    public void testSimpleSingleQuoteWithEscape() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200\\$ today");
+    public void testSimpleSingleQuoteDollar() throws Exception {
+        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200$ today");
         Expression exp = parser.parseExpression();
 
         assertEquals("Pay 200$ today", exp.evaluate(exchange, String.class));
     }
 
-    public void testSimpleSingleQuoteWithEscapeEnd() throws Exception {
-        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200\\$");
+    public void testSimpleSingleQuoteDollarEnd() throws Exception {
+        SimpleExpressionParser parser = new SimpleExpressionParser("Pay 200$");
         Expression exp = parser.parseExpression();
 
         assertEquals("Pay 200$", exp.evaluate(exchange, String.class));
@@ -113,15 +113,6 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         Expression exp = parser.parseExpression();
 
         assertEquals(Integer.valueOf(121), exp.evaluate(exchange, Integer.class));
-    }
-
-    public void testSimpleEscape() throws Exception {
-        exchange.getIn().setBody("World");
-        // we escape the $ which mean it will not be a function
-        SimpleExpressionParser parser = new SimpleExpressionParser("Hello \\${body\\} how are you?");
-        Expression exp = parser.parseExpression();
-
-        assertEquals("Hello ${body} how are you?", exp.evaluate(exchange, String.class));
     }
 
 }
