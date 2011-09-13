@@ -273,6 +273,11 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Failed to achieve lock on entity: " + entity + ". Reason: " + e, e);
             }
+            //TODO: Find if possible an alternative way to handle results of netive queries.
+            //Result of native queries are Arrays and cannot be locked by all JPA Providers.
+            if (entity.getClass().isArray()) {
+                return true;
+            }
             return false;
         }
     }

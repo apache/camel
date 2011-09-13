@@ -72,6 +72,7 @@
     <geronimo-j2ee-management-spec-version>1.1</geronimo-j2ee-management-spec-version>
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
     <geronimo-jpa-spec-version>1.1.1</geronimo-jpa-spec-version>
+    <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
     <geronimo-jsp-spec-version>1.0.1</geronimo-jsp-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
     <geronimo-servlet-spec-version>1.1.1</geronimo-servlet-spec-version>
@@ -1014,6 +1015,11 @@
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jpa_3.0_spec</artifactId>
         <version>${geronimo-jpa-spec-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jpa_2.0_spec</artifactId>
+        <version>${geronimo-jpa2-spec-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.servicemix.specs</groupId>
