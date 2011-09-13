@@ -37,6 +37,8 @@ public class StreamResequencerConfig extends ResequencerConfig {
     private Integer capacity;
     @XmlAttribute
     private Long timeout;
+    @XmlAttribute
+    private Boolean ignoreInvalidExchanges;
     @XmlTransient
     private ExpressionResultComparator comparator;
 
@@ -104,6 +106,14 @@ public class StreamResequencerConfig extends ResequencerConfig {
 
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public Boolean getIgnoreInvalidExchanges() {
+        return ignoreInvalidExchanges;
+    }
+
+    public void setIgnoreInvalidExchanges(Boolean ignoreInvalidExchanges) {
+        this.ignoreInvalidExchanges = ignoreInvalidExchanges;
     }
 
     public ExpressionResultComparator getComparator() {

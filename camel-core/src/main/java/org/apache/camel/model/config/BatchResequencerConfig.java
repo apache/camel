@@ -36,6 +36,8 @@ public class BatchResequencerConfig extends ResequencerConfig {
     private Boolean allowDuplicates;
     @XmlAttribute
     private Boolean reverse;
+    @XmlAttribute
+    private Boolean ignoreInvalidExchanges;
 
     /**
      * Creates a new {@link BatchResequencerConfig} instance using default
@@ -107,5 +109,13 @@ public class BatchResequencerConfig extends ResequencerConfig {
 
     public void setReverse(Boolean reverse) {
         this.reverse = reverse;
+    }
+
+    public Boolean getIgnoreInvalidExchanges() {
+        return ignoreInvalidExchanges;
+    }
+
+    public void setIgnoreInvalidExchanges(Boolean ignoreInvalidExchanges) {
+        this.ignoreInvalidExchanges = ignoreInvalidExchanges;
     }
 }

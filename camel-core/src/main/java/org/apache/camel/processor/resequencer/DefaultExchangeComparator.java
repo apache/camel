@@ -30,29 +30,49 @@ public class DefaultExchangeComparator implements ExpressionResultComparator {
 
     private Expression expression;
 
+    @Override
     public void setExpression(Expression expression) {
         this.expression = expression;
     }
 
+    @Override
     public boolean predecessor(Exchange o1, Exchange o2) {
         long n1 = getSequenceNumber(o1);
         long n2 = getSequenceNumber(o2);
         return n1 == (n2 - 1L);
     }
 
+    @Override
     public boolean successor(Exchange o1, Exchange o2) {
         long n1 = getSequenceNumber(o1);
         long n2 = getSequenceNumber(o2);
         return n2 == (n1 - 1L);
     }
 
+    @Override
     public int compare(Exchange o1, Exchange o2) {
         Long n1 = getSequenceNumber(o1);
         Long n2 = getSequenceNumber(o2);
         return n1.compareTo(n2);
     }
 
-    private long getSequenceNumber(Exchange exchange) {
+    private Long getSequenceNumber(Exchange exchange) {
         return expression.evaluate(exchange, Long.class);
+    }
+
+    @Override
+    public boolean isValid(Exchange exchange) {
+        Long num = null;
+        try {
+            num = expression.evaluate(exchange, Long.class);
+        } catch (Exception e) {
+            // ignore
+        }
+        return num != null;
+    }
+
+    @Override
+    public String toString() {
+        return "Comparator[" + expression + "]";
     }
 }

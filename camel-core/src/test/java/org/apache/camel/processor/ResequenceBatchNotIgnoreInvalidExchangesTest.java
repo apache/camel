@@ -14,28 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.resequencer;
+package org.apache.camel.processor;
 
-public class TestComparator implements SequenceElementComparator<TestObject> {
+import org.apache.camel.builder.RouteBuilder;
 
-    @Override
-    public boolean predecessor(TestObject o1, TestObject o2) {
-        return (o2.getValue() - 1) == o1.getValue();
-    }
-
-    @Override
-    public boolean successor(TestObject o1, TestObject o2) {
-        return (o1.getValue() - 1) == o2.getValue();
-    }
+/**
+ *
+ */
+public class ResequenceBatchNotIgnoreInvalidExchangesTest extends ResequenceStreamNotIgnoreInvalidExchangesTest {
 
     @Override
-    public int compare(TestObject o1, TestObject o2) {
-        return Integer.valueOf(o1.getValue()).compareTo(o2.getValue());
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .resequence(header("seqno")).batch().timeout(1000)
+                    .to("mock:result");
+            }
+        };
     }
-
-    @Override
-    public boolean isValid(TestObject o1) {
-        return o1 != null;
-    }
-
 }

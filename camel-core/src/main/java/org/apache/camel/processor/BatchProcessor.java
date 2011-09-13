@@ -29,7 +29,9 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -60,7 +62,9 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
     private int outBatchSize;
     private boolean groupExchanges;
     private boolean batchConsumer;
+    private boolean ignoreInvalidExchanges;
     private Predicate completionPredicate;
+    private Expression expression;
 
     private final CamelContext camelContext;
     private final Processor processor;
@@ -69,15 +73,17 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
 
     private final BatchSender sender;
 
-    public BatchProcessor(CamelContext camelContext, Processor processor, Collection<Exchange> collection) {
+    public BatchProcessor(CamelContext camelContext, Processor processor, Collection<Exchange> collection, Expression expression) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(processor, "processor");
         ObjectHelper.notNull(collection, "collection");
+        ObjectHelper.notNull(expression, "expression");
 
         // wrap processor in UnitOfWork so what we send out of the batch runs in a UoW
         this.camelContext = camelContext;
         this.processor = new UnitOfWorkProcessor(processor);
         this.collection = collection;
+        this.expression = expression;
         this.sender = new BatchSender();
     }
 
@@ -157,6 +163,14 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
 
     public void setBatchConsumer(boolean batchConsumer) {
         this.batchConsumer = batchConsumer;
+    }
+
+    public boolean isIgnoreInvalidExchanges() {
+        return ignoreInvalidExchanges;
+    }
+
+    public void setIgnoreInvalidExchanges(boolean ignoreInvalidExchanges) {
+        this.ignoreInvalidExchanges = ignoreInvalidExchanges;
     }
 
     public Predicate getCompletionPredicate() {
@@ -242,7 +256,34 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
             }
         }
 
+        // validate that the exchange can be used
+        if (!isValid(exchange)) {
+            if (isIgnoreInvalidExchanges()) {
+                LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
+                return;
+            } else {
+                throw new CamelExchangeException("Exchange is not valid to be used by the BatchProcessor", exchange);
+            }
+        }
+
+        // exchange is valid so enqueue the exchange
         sender.enqueueExchange(exchange);
+    }
+
+    /**
+     * Is the given exchange valid to be used.
+     *
+     * @param exchange the given exchange
+     * @return <tt>true</tt> if valid, <tt>false</tt> otherwise
+     */
+    private boolean isValid(Exchange exchange) {
+        Object result = null;
+        try {
+            result = expression.evaluate(exchange, Object.class);
+        } catch (Exception e) {
+            // ignore
+        }
+        return result != null;
     }
 
     /**

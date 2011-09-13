@@ -44,5 +44,13 @@ public interface SequenceElementComparator<E> extends Comparator<E> {
      * @return true if its an immediate successor
      */
     boolean successor(E o1, E o2);
+
+    /**
+     * Returns <tt>true</tt> if the <code>o1</code> can be used in this comparator.
+     *
+     * @param o1 a sequence element
+     * @return true if its usable for this comparator
+     */
+    boolean isValid(E o1);
     
 }

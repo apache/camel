@@ -137,10 +137,14 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
      * @return the builder
      */
     public ResequenceDefinition timeout(long timeout) {
-        if (batchConfig != null) {
-            batchConfig.setBatchTimeout(timeout);
-        } else {
+        if (streamConfig != null) {
             streamConfig.setTimeout(timeout);
+        } else {
+            // initialize batch mode as its default mode
+            if (batchConfig == null) {
+                batch();
+            }
+            batchConfig.setBatchTimeout(timeout);
         }
         return this;
     }
@@ -210,6 +214,24 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
             batch();
         }
         batchConfig.setReverse(true);
+        return this;
+    }
+
+    /**
+     * If an incoming {@link org.apache.camel.Exchange} is invalid, then it will be ignored.
+     *
+     * @return builder
+     */
+    public ResequenceDefinition ignoreInvalidExchanges() {
+        if (streamConfig != null) {
+            streamConfig.setIgnoreInvalidExchanges(true);
+        } else {
+            // initialize batch mode as its default mode
+            if (batchConfig == null) {
+                batch();
+            }
+            batchConfig.setIgnoreInvalidExchanges(true);
+        }
         return this;
     }
 
@@ -318,6 +340,9 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
                 config.isAllowDuplicates(), config.isReverse());
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
+        if (config.getIgnoreInvalidExchanges() != null) {
+            resequencer.setIgnoreInvalidExchanges(config.getIgnoreInvalidExchanges());
+        }
         return resequencer;
     }
 
@@ -343,6 +368,9 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), processor, comparator);
         resequencer.setTimeout(config.getTimeout());
         resequencer.setCapacity(config.getCapacity());
+        if (config.getIgnoreInvalidExchanges() != null) {
+            resequencer.setIgnoreInvalidExchanges(config.getIgnoreInvalidExchanges());
+        }
         return resequencer;
     }
 

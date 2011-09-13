@@ -18,6 +18,7 @@ package org.apache.camel.processor.resequencer;
 
 import java.util.Timer;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.util.concurrent.ThreadHelper;
 
 /**
@@ -182,10 +183,17 @@ public class ResequencerEngine<E> {
      * scheduled for timing out. After being timed out it is ready for delivery.
      *
      * @param o an element.
+     * @throws IllegalArgumentException if the element cannot be used with this resequencer engine
      */
     public synchronized void insert(E o) {
         // wrap object into internal element
         Element<E> element = new Element<E>(o);
+
+        // validate the exchange has no problem
+        if (!sequence.comparator().isValid(element)) {
+            throw new IllegalArgumentException("Element cannot be used in comparator: " + sequence.comparator());
+        }
+
         // add element to sequence in proper order
         sequence.add(element);
 

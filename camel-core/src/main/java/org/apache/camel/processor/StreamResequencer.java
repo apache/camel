@@ -24,6 +24,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -35,6 +36,8 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A resequencer that re-orders a (continuous) stream of {@link Exchange}s. The
@@ -61,6 +64,7 @@ import org.apache.camel.util.ServiceHelper;
 public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, Processor, Navigate<Processor>, Traceable {
 
     private static final long DELIVERY_ATTEMPT_INTERVAL = 1000L;
+    private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);
 
     private final CamelContext camelContext;
     private final ExceptionHandler exceptionHandler;
@@ -68,6 +72,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     private final Processor processor;
     private Delivery delivery;
     private int capacity;
+    private boolean ignoreInvalidExchanges;
     
     /**
      * Creates a new {@link StreamResequencer} instance.
@@ -131,6 +136,20 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         engine.setTimeout(timeout);
     }
 
+    public boolean isIgnoreInvalidExchanges() {
+        return ignoreInvalidExchanges;
+    }
+
+    /**
+     * Sets whether to ignore invalid exchanges which cannot be used by this stream resequencer.
+     * <p/>
+     * Default is <tt>false</tt>, by which an {@link CamelExchangeException} is thrown if the {@link Exchange}
+     * is invalid.
+     */
+    public void setIgnoreInvalidExchanges(boolean ignoreInvalidExchanges) {
+        this.ignoreInvalidExchanges = ignoreInvalidExchanges;
+    }
+
     @Override
     public String toString() {
         return "StreamResequencer[to: " + processor + "]";
@@ -169,8 +188,18 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         while (engine.size() >= capacity) {
             Thread.sleep(getTimeout());
         }
-        engine.insert(exchange);
-        delivery.request();
+
+        try {
+            engine.insert(exchange);
+            delivery.request();
+        } catch (Exception e) {
+            if (isIgnoreInvalidExchanges()) {
+                LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
+                return;
+            } else {
+                throw new CamelExchangeException("Error processing Exchange in StreamResequencer", exchange, e);
+            }
+        }
     }
 
     public boolean hasNext() {

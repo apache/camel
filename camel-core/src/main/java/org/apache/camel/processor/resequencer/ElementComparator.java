@@ -28,7 +28,7 @@ class ElementComparator<E> implements SequenceElementComparator<Element<E>> {
     /**
      * A sequence element comparator this comparator delegates to.
      */
-    private SequenceElementComparator<E> comparator;
+    private final SequenceElementComparator<E> comparator;
     
     /**
      * Creates a new element comparator instance.
@@ -39,16 +39,28 @@ class ElementComparator<E> implements SequenceElementComparator<Element<E>> {
         this.comparator = comparator;
     }
     
+    @Override
     public boolean predecessor(Element<E> o1, Element<E> o2) {
         return comparator.predecessor(o1.getObject(), o2.getObject());
     }
 
+    @Override
     public boolean successor(Element<E> o1, Element<E> o2) {
         return comparator.successor(o1.getObject(), o2.getObject());
     }
 
+    @Override
     public int compare(Element<E> o1, Element<E> o2) {
         return comparator.compare(o1.getObject(), o2.getObject());
     }
 
+    @Override
+    public boolean isValid(Element<E> o1) {
+        return comparator.isValid(o1.getObject());
+    }
+
+    @Override
+    public String toString() {
+        return comparator.toString();
+    }
 }
