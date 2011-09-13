@@ -27,11 +27,12 @@ public final class Converter {
     }
 
     public static char getCharDelimitor(String separator) {
-
         if (separator.equals("\\u0001")) {
             return '\u0001';
         } else if (separator.equals("\\t") || separator.equals("\\u0009")) {
             return '\u0009';
+        } else if (separator.length() > 1) {
+            return separator.charAt(separator.length() - 1);
         } else {
             return separator.charAt(0);
         }
