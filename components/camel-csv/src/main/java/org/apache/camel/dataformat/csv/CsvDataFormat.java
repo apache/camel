@@ -105,11 +105,7 @@ public class CsvDataFormat implements DataFormat {
                 List<String> line = Arrays.asList(strings);
                 list.add(line);
             }
-            if (list.size() == 1) {
-                return list.get(0);
-            } else {
-                return list;
-            }
+            return list;
         } finally {
             in.close();
         }

@@ -37,7 +37,7 @@ public class CsvUnmarshalPipeDelimiterTest extends CamelTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testCsvMarshal() throws Exception {
+    public void testCsvUnMarshal() throws Exception {
         result.expectedMessageCount(1);
 
         template.sendBody("direct:start", "123|Camel in Action|1\n124|ActiveMQ in Action|2");
@@ -52,6 +52,22 @@ public class CsvUnmarshalPipeDelimiterTest extends CamelTestSupport {
         assertEquals("124", body.get(1).get(0));
         assertEquals("ActiveMQ in Action", body.get(1).get(1));
         assertEquals("2", body.get(1).get(2));        
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testCsvUnMarshalSingleLine() throws Exception {
+        result.expectedMessageCount(1);
+
+        template.sendBody("direct:start", "123|Camel in Action|1");
+
+        assertMockEndpointsSatisfied();
+
+        List<List<String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertEquals(1, body.size());
+        assertEquals("123", body.get(0).get(0));
+        assertEquals("Camel in Action", body.get(0).get(1));
+        assertEquals("1", body.get(0).get(2));
     }
     
     @Override
