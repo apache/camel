@@ -32,11 +32,11 @@ import org.junit.Test;
 public class BindyPipeDelimiterTest extends CamelTestSupport {
 
     @Test
-    public void testBindyPipeDelimiter() throws Exception {
+    public void testBindyPipeDelimiterUnmarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "COL1|COL2|COL3\nHAPPY | NEW | YEAR");
+        template.sendBody("direct:unmarshal", "COL1|COL2|COL3\nHAPPY | NEW | YEAR");
 
         assertMockEndpointsSatisfied();
 
@@ -55,13 +55,32 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
         assertEquals(" YEAR", rec2.getCol3());
     }
 
+    @Test
+    public void testBindyPipeDelimiterMarshal() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().startsWith("HAPPY|NEW|YEAR");
+
+        MyData data = new MyData();
+        data.setCol1("HAPPY");
+        data.setCol2("NEW");
+        data.setCol3("YEAR");
+        template.sendBody("direct:marshal", data);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:unmarshal")
                     .unmarshal().bindy(BindyType.Csv, "org.apache.camel.dataformat.bindy.model.simple.pipeline")
+                    .to("mock:result");
+
+                from("direct:marshal")
+                    .marshal().bindy(BindyType.Csv, "org.apache.camel.dataformat.bindy.model.simple.pipeline")
                     .to("mock:result");
             }
         };
