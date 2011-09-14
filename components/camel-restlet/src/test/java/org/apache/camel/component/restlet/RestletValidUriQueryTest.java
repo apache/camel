@@ -27,7 +27,7 @@ import org.junit.Test;
  *
  * @version 
  */
-public class RestletQueryTest extends RestletTestSupport {
+public class RestletValidUriQueryTest extends RestletTestSupport {
     private static final String QUERY_STRING = "foo=bar&test=123";
 
     @Override
@@ -35,8 +35,8 @@ public class RestletQueryTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://localhost:" + portNum + "/users/{username}").process(new SetUserProcessor());
-                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/{username}");
+                from("restlet:http://localhost:" + portNum + "/users/(username)").process(new SetUserProcessor());
+                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/(username)");
             }
         };
     }
@@ -67,7 +67,6 @@ public class RestletQueryTest extends RestletTestSupport {
                 
             }
         });
-        assertEquals(200, ex.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        
+        assertEquals(200, ex.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));   
     }
 }

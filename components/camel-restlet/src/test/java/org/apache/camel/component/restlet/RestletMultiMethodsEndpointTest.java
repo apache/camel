@@ -54,8 +54,7 @@ public class RestletMultiMethodsEndpointTest extends RestletTestSupport {
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // echo the method
-                            exchange.getOut().setBody(exchange.getIn().getHeader(Exchange.HTTP_METHOD,
-                                                                                 String.class));
+                            exchange.getOut().setBody(exchange.getIn().getHeader(Exchange.HTTP_METHOD, String.class));
                         }
                     });
                 // END SNIPPET: routeDefinition

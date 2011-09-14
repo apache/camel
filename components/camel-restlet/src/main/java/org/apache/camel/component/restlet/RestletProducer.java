@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RestletProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(RestletProducer.class);
-    private static final Pattern PATTERN = Pattern.compile("\\{([\\w\\.]*)\\}");
+    private static final Pattern PATTERN = Pattern.compile("\\(([\\w\\.]*)\\)");
     private Client client;
     private boolean throwException;
 
@@ -109,7 +109,7 @@ public class RestletProducer extends DefaultAsyncProducer {
         String uri = endpoint.getProtocol() + "://" + endpoint.getHost() + ":" + endpoint.getPort() + endpoint.getUriPattern();
 
         // substitute { } placeholders in uri and use mandatory headers
-        LOG.trace("Substituting { } placeholders in uri: {}", uri);
+        LOG.trace("Substituting '(value)' placeholders in uri: {}", uri);
         Matcher matcher = PATTERN.matcher(uri);
         while (matcher.find()) {
             String key = matcher.group(1);

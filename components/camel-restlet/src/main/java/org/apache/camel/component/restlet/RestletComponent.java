@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -68,7 +71,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         setProperties(result, parameters);
 
         // construct URI so we can use it to get the splitted information
-        URI u = new URI(UnsafeUriCharactersEncoder.encode(remaining));
+        URI u = new URI(remaining);
         String protocol = u.getScheme();
 
         String uriPattern = u.getPath();
@@ -133,8 +136,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
 
         List<MethodBasedRouter> routers = new ArrayList<MethodBasedRouter>();
 
-        if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
-            routers.add(getMethodRouter(endpoint.getUriPattern()));
+        String pattern = decodePattern(endpoint.getUriPattern());
+        if (pattern != null && !pattern.isEmpty()) {
+            routers.add(getMethodRouter(pattern));
         }
 
         if (endpoint.getRestletUriPatterns() != null) {
@@ -192,6 +196,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     }
 
     private void attachUriPatternToRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) {
+        uriPattern = decodePattern(uriPattern);
         MethodBasedRouter router = getMethodRouter(uriPattern);
 
         Map<String, String> realm = endpoint.getRestletRealm();
@@ -217,8 +222,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         } else {
             router.addRoute(endpoint.getRestletMethod(), target);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern,
-                          endpoint.getRestletMethod());
+                LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, endpoint.getRestletMethod());
             }
         }
 
@@ -228,4 +232,18 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         }
     }
 
+    @Deprecated
+    protected String preProcessUri(String uri) {
+        // If the URI was not valid (i.e. contains '{' and '}'
+        // it was most likely encoded by normalizeEndpointUri in DefaultCamelContext.getEndpoint(String)
+        return UnsafeUriCharactersEncoder.encode(uri.replaceAll("%7B", "(").replaceAll("%7D", ")"));
+    }
+    
+    private static String encodePattern(String pattern) {
+        return pattern == null ? null : pattern.replaceAll("\\{", "(").replaceAll("\\}", ")");
+    }
+
+    private static String decodePattern(String pattern) {
+        return pattern == null ? null : pattern.replaceAll("\\(", "{").replaceAll("\\)", "}");
+    }
 }

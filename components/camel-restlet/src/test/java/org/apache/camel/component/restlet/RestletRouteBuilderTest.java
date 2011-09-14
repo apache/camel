@@ -49,9 +49,9 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
                 from("restlet:http://localhost:" + portNum + "/orders?restletMethod=post").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody(
-                                "received [" + exchange.getIn().getBody(String.class)
-                                + "] as an order id = "
-                                + exchange.getIn().getHeader("id"));
+                            "received [" + exchange.getIn().getBody(String.class)
+                            + "] as an order id = "
+                            + exchange.getIn().getHeader("id"));
                     }
                 });
 
@@ -70,10 +70,10 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
                 from("restlet:http://localhost:" + portNum + "/orders/{id}/{x}").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody(
-                                "received GET request with id="
-                                + exchange.getIn().getHeader("id")
-                                + " and x="
-                                + exchange.getIn().getHeader("x"));
+                            "received GET request with id="
+                            + exchange.getIn().getHeader("id")
+                            + " and x="
+                            + exchange.getIn().getHeader("x"));
                     }
                 });
             }
@@ -86,34 +86,32 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
         
         response = (String)template.sendBodyAndHeader(
-             "restlet:http://localhost:" + portNum + "/orders?restletMethod=post&foo=bar", 
-             ExchangePattern.InOut,
-             "<order foo='1'/>", "id", "89531");
+            "restlet:http://localhost:" + portNum + "/orders?restletMethod=post&foo=bar", 
+            ExchangePattern.InOut,
+            "<order foo='1'/>", "id", "89531");
         assertEquals("received [<order foo='1'/>] as an order id = " + ID, response);
     }
 
     @Test
     public void testProducerJSON() throws IOException {
         String response = (String)template.sendBodyAndHeader(
-                "restlet:http://localhost:" + portNum + "/ordersJSON?restletMethod=post&foo=bar", 
-                ExchangePattern.InOut,
-                JSON,
-                Exchange.CONTENT_TYPE,
-                MediaType.APPLICATION_JSON);
+            "restlet:http://localhost:" + portNum + "/ordersJSON?restletMethod=post&foo=bar", 
+            ExchangePattern.InOut,
+            JSON,
+            Exchange.CONTENT_TYPE,
+            MediaType.APPLICATION_JSON);
            
         assertEquals(JSON, response);
     }
 
-
     @Test
     public void testProducerJSONFailure() throws IOException {
-        
         String response = (String)template.sendBodyAndHeader(
-                "restlet:http://localhost:" + portNum + "/ordersJSON?restletMethod=post&foo=bar", 
-                ExchangePattern.InOut,
-                "{'JSON'}",
-                Exchange.CONTENT_TYPE,
-                MediaType.APPLICATION_JSON);
+            "restlet:http://localhost:" + portNum + "/ordersJSON?restletMethod=post&foo=bar", 
+            ExchangePattern.InOut,
+            "{'JSON'}",
+            Exchange.CONTENT_TYPE,
+            MediaType.APPLICATION_JSON);
            
         assertEquals("{'JSON'}", response);
     }
@@ -122,19 +120,18 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
     public void testConsumer() throws IOException {
         Client client = new Client(Protocol.HTTP);
         Response response = client.handle(new Request(Method.GET, 
-                "http://localhost:" + portNum + "/orders/99991/6"));
+            "http://localhost:" + portNum + "/orders/99991/6"));
         assertEquals("received GET request with id=99991 and x=6",
-                response.getEntity().getText());
+            response.getEntity().getText());
     }
 
     @Test
     public void testUnhandledConsumer() throws IOException {
         Client client = new Client(Protocol.HTTP);
         Response response = client.handle(new Request(Method.POST, 
-                "http://localhost:" + portNum + "/orders/99991/6"));
+            "http://localhost:" + portNum + "/orders/99991/6"));
         // expect error status as no Restlet consumer to handle POST method
         assertEquals(Status.CLIENT_ERROR_NOT_FOUND, response.getStatus());
         assertNotNull(response.getEntity().getText());
     }
-
 }

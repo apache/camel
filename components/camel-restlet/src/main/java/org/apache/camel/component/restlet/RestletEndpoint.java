@@ -203,5 +203,4 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     protected void doStop() throws Exception {
         // noop
     }
-
 }

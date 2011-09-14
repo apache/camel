@@ -38,12 +38,11 @@ public class RestletRouteBuilderAuthTest extends CamelSpringTestSupport {
         headers.put(RestletConstants.RESTLET_PASSWORD, "foo");
         headers.put("id", id);
         
-        String response = (String) template.requestBodyAndHeaders("direct:start-auth", 
-                "<order foo='1'/>", headers);
+        String response = (String)template.requestBodyAndHeaders(
+            "direct:start-auth", "<order foo='1'/>", headers);
         // END SNIPPET: auth_request
 
-        assertEquals("received [<order foo='1'/>] as an order id = " + id,
-                response);
+        assertEquals("received [<order foo='1'/>] as an order id = " + id, response);
     }
 
     @Test(expected = CamelExecutionException.class)
@@ -61,7 +60,7 @@ public class RestletRouteBuilderAuthTest extends CamelSpringTestSupport {
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-                "org/apache/camel/component/restlet/camel-context.xml");
+            "org/apache/camel/component/restlet/camel-context.xml");
     }
 
 }
