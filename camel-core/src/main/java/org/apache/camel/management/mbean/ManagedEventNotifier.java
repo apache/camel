@@ -22,9 +22,9 @@ import javax.management.MBeanNotificationInfo;
 import javax.management.NotificationBroadcasterSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.JmxNotificationBroadcasterAware;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.spi.management.JmxNotificationBroadcasterAware;
 
 /**
  * @version 

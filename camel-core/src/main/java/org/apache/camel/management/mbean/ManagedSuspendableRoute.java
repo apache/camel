@@ -19,9 +19,9 @@ package org.apache.camel.management.mbean;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.spi.management.ManagedOperation;
-import org.apache.camel.spi.management.ManagedResource;
 
 @ManagedResource(description = "Managed Suspendable Route")
 public class ManagedSuspendableRoute extends ManagedRoute {

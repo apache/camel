@@ -18,10 +18,10 @@ package org.apache.camel.management;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.Traceable;
-import org.apache.camel.spi.management.PerformanceCounter;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

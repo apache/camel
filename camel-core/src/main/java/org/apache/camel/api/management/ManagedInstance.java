@@ -14,21 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi.management;
-
-import javax.management.NotificationBroadcasterSupport;
+package org.apache.camel.api.management;
 
 /**
- * Strategy to use a custom {@link NotificationBroadcasterSupport} when broadcasting
- * JMX notifications using for example the {@link org.apache.camel.management.JmxNotificationEventNotifier}.
+ * @version 
  */
-public interface JmxNotificationBroadcasterAware {
+public interface ManagedInstance {
 
     /**
-     * Sets to use a custom broadcaster
+     * Gets the resource which is being managed.
      *
-     * @param broadcaster the custom broadcaster
+     * @return the resource, such as a {@link org.apache.camel.Processor}, {@link org.apache.camel.Consumer} etc.
      */
-    void setNotificationBroadcaster(NotificationBroadcasterSupport broadcaster);
+    Object getInstance();
 
 }

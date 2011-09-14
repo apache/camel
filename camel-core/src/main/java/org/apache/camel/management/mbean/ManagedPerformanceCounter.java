@@ -19,11 +19,11 @@ package org.apache.camel.management.mbean;
 import java.util.Date;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.spi.management.ManagedAttribute;
-import org.apache.camel.spi.management.ManagedOperation;
-import org.apache.camel.spi.management.ManagedResource;
-import org.apache.camel.spi.management.PerformanceCounter;
 import org.apache.camel.util.ExchangeHelper;
 
 @ManagedResource(description = "PerformanceCounter")

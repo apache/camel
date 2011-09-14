@@ -17,9 +17,9 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.management.ManagedResource;
 
 /**
  * @version 

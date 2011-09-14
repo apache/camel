@@ -17,10 +17,10 @@
 package org.apache.camel.management;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.management.PerformanceCounter;
+import org.apache.camel.api.management.PerformanceCounter;
 
 /**
- * Delegates to another {@link org.apache.camel.spi.management.PerformanceCounter}.
+ * Delegates to another {@link org.apache.camel.api.management.PerformanceCounter}.
  * <p/>
  * This is used to allow Camel to pre initialize these delegate performance counters
  * when Camel creates the actual route from the model. Then later as the various
