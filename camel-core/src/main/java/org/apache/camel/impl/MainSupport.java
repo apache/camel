@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +34,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -408,7 +410,7 @@ public abstract class MainSupport extends ServiceSupport {
             }
             RouteDotGenerator generator = new RouteDotGenerator(outputDir);
             LOG.info("Generating DOT file for routes: " + outputDir + " for: " + camelContext + " with name: " + name);
-            generator.drawRoutes(camelContext);
+            generator.drawRoutes((ModelCamelContext)camelContext);
         }
     }
 
@@ -421,7 +423,7 @@ public abstract class MainSupport extends ServiceSupport {
         } else {
             CamelContext answer = new DefaultCamelContext();
             for (CamelContext camelContext : camelContexts) {
-                answer.addRouteDefinitions(camelContext.getRouteDefinitions());
+                answer.addRouteDefinitions(((ModelCamelContext)camelContext).getRouteDefinitions());
             }
             return answer;
         }

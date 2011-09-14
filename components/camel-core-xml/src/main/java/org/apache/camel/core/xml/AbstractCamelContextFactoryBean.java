@@ -46,6 +46,7 @@ import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
@@ -94,7 +95,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractCamelContextFactoryBean<T extends CamelContext> extends IdentifiedType implements RouteContainer {
+public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteContainer {
     
     /**
      * JVM system property to control lazy loading of type converters.

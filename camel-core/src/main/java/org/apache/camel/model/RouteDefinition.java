@@ -92,7 +92,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      *
      * @param context the camel context
      */
-    public void prepare(CamelContext context) {
+    public void prepare(ModelCamelContext context) {
         if (prepared.compareAndSet(false, true)) {
             RouteDefinitionHelper.prepareRoute(context, this);
         }
@@ -151,7 +151,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         }
     }
 
-    public List<RouteContext> addRoutes(CamelContext camelContext, Collection<Route> routes) throws Exception {
+    public List<RouteContext> addRoutes(ModelCamelContext camelContext, Collection<Route> routes) throws Exception {
         List<RouteContext> answer = new ArrayList<RouteContext>();
 
         ErrorHandlerBuilder handler = camelContext.getErrorHandlerBuilder();
@@ -179,6 +179,11 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         ObjectHelper.notNull(camelContext, "CamelContext");
         return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
+    
+    @Deprecated
+    public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
+        return adviceWith((ModelCamelContext)camelContext, builder);
+    }
 
     /**
      * Advices this route with the route builder.
@@ -204,7 +209,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @throws Exception can be thrown from the route builder
      * @see AdviceWithRouteBuilder
      */
-    public RouteDefinition adviceWith(CamelContext camelContext, RouteBuilder builder) throws Exception {
+    public RouteDefinition adviceWith(ModelCamelContext camelContext, RouteBuilder builder) throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
         ObjectHelper.notNull(builder, "RouteBuilder");
 

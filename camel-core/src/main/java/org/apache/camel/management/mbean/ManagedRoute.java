@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
@@ -37,9 +38,9 @@ public class ManagedRoute extends ManagedPerformanceCounter {
     public static final String VALUE_UNKNOWN = "Unknown";
     protected final Route route;
     protected final String description;
-    protected final CamelContext context;
+    protected final ModelCamelContext context;
 
-    public ManagedRoute(CamelContext context, Route route) {
+    public ManagedRoute(ModelCamelContext context, Route route) {
         this.route = route;
         this.context = context;
         this.description = route.toString();

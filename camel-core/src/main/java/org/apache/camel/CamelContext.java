@@ -310,6 +310,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @return list of the current route definitions
      */
+    @Deprecated
     List<RouteDefinition> getRouteDefinitions();
 
     /**
@@ -318,6 +319,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param id id of the route
      * @return the route definition or <tt>null</tt> if not found
      */
+    @Deprecated
     RouteDefinition getRouteDefinition(String id);
 
     /**
@@ -351,6 +353,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws Exception if the route definitions could not be loaded for whatever reason
      * @return the route definitions
      */
+    @Deprecated
     RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
 
     /**
@@ -359,6 +362,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param routeDefinitions the route(s) definition to add
      * @throws Exception if the route definitions could not be created for whatever reason
      */
+    @Deprecated
     void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
     /**
@@ -367,6 +371,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param routeDefinition the route definition to add
      * @throws Exception if the route definition could not be created for whatever reason
      */
+    @Deprecated
     void addRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
     /**
@@ -376,6 +381,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param routeDefinitions route(s) definitions to remove
      * @throws Exception if the route definitions could not be removed for whatever reason
      */
+    @Deprecated
     void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
     /**
@@ -385,6 +391,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param routeDefinition route definition to remove
      * @throws Exception if the route definition could not be removed for whatever reason
      */
+    @Deprecated
     void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception;
 
     /**
@@ -393,6 +400,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param route the route to start
      * @throws Exception is thrown if the route could not be started for whatever reason
      */
+    @Deprecated
     void startRoute(RouteDefinition route) throws Exception;
 
     /**
@@ -409,6 +417,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param route the route to stop
      * @throws Exception is thrown if the route could not be stopped for whatever reason
      */
+    @Deprecated
     void stopRoute(RouteDefinition route) throws Exception;
 
     /**
@@ -693,6 +702,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @return the builder
      */
+    @Deprecated
     ErrorHandlerBuilder getErrorHandlerBuilder();
 
     /**
@@ -700,6 +710,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param errorHandlerBuilder the builder
      */
+    @Deprecated
     void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder);
 
     /**
@@ -707,6 +718,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param dataFormats the data formats
      */
+    @Deprecated
     void setDataFormats(Map<String, DataFormatDefinition> dataFormats);
 
     /**
@@ -714,6 +726,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @return the data formats available
      */
+    @Deprecated
     Map<String, DataFormatDefinition> getDataFormats();
 
     /**
@@ -730,6 +743,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param name the data format definition name or a reference to it in the {@link Registry}
      * @return the resolved data format definition, or <tt>null</tt> if not found
      */
+    @Deprecated
     DataFormatDefinition resolveDataFormatDefinition(String name);
 
     /**

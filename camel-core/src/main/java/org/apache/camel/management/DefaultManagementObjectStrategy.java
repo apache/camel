@@ -48,6 +48,7 @@ import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.management.mbean.ManagedThrottler;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.ErrorHandler;
@@ -64,7 +65,7 @@ import org.apache.camel.spi.RouteContext;
 public class DefaultManagementObjectStrategy implements ManagementObjectStrategy {
 
     public Object getManagedObjectForCamelContext(CamelContext context) {
-        ManagedCamelContext mc = new ManagedCamelContext(context);
+        ManagedCamelContext mc = new ManagedCamelContext((ModelCamelContext)context);
         mc.init(context.getManagementStrategy());
         return mc;
     }
@@ -110,9 +111,9 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     public Object getManagedObjectForRoute(CamelContext context, Route route) {
         ManagedRoute mr;
         if (route.supportsSuspension()) {
-            mr = new ManagedSuspendableRoute(context, route);
+            mr = new ManagedSuspendableRoute((ModelCamelContext)context, route);
         } else {
-            mr = new ManagedRoute(context, route);
+            mr = new ManagedRoute((ModelCamelContext)context, route);
         }
         mr.init(context.getManagementStrategy());
         return mr;

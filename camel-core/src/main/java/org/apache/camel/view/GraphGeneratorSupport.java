@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 
 /**
@@ -47,7 +48,7 @@ public abstract class GraphGeneratorSupport extends GraphSupport {
 
     public String getRoutesText(CamelContext context) throws IOException {
         // used by web console
-        List<RouteDefinition> routes = context.getRouteDefinitions();
+        List<RouteDefinition> routes = ((ModelCamelContext)context).getRouteDefinitions();
         routeGroupMap = createRouteGroupMap(routes);
         return createRouteMapText();
     }

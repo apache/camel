@@ -25,6 +25,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -250,8 +251,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     
     // Properties
     // -----------------------------------------------------------------------
-    public CamelContext getContext() {
-        CamelContext context = super.getContext();
+    public ModelCamelContext getContext() {
+        ModelCamelContext context = super.getContext();
         if (context == null) {
             context = createContainer();
             setContext(context);
@@ -260,7 +261,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     public void addRoutesToCamelContext(CamelContext context) throws Exception {
-        configureRoutes(context);
+        configureRoutes((ModelCamelContext)context);
         // add routes to Camel by populating them
         populateRoutes();
     }
@@ -272,7 +273,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @return the routes configured
      * @throws Exception can be thrown during configuration
      */
-    public RoutesDefinition configureRoutes(CamelContext context) throws Exception {
+    public RoutesDefinition configureRoutes(ModelCamelContext context) throws Exception {
         setContext(context);
         checkInitialized();
         routeCollection.setCamelContext(context);
@@ -315,7 +316,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     protected void checkInitialized() throws Exception {
         if (initialized.compareAndSet(false, true)) {
             // Set the CamelContext ErrorHandler here
-            CamelContext camelContext = getContext();
+            ModelCamelContext camelContext = getContext();
             if (camelContext.getErrorHandlerBuilder() != null) {
                 setErrorHandlerBuilder(camelContext.getErrorHandlerBuilder());
             }
@@ -329,7 +330,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     protected void populateRoutes() throws Exception {
-        CamelContext camelContext = getContext();
+        ModelCamelContext camelContext = getContext();
         if (camelContext == null) {
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }
@@ -350,7 +351,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      *
      * @return the CamelContext
      */
-    protected CamelContext createContainer() {
+    protected ModelCamelContext createContainer() {
         return new DefaultCamelContext();
     }
 

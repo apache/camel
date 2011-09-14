@@ -26,6 +26,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.xml.XPathBuilder;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +38,11 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class BuilderSupport {
-    private CamelContext context;
+    private ModelCamelContext context;
     private ErrorHandlerBuilder errorHandlerBuilder;
 
     protected BuilderSupport(CamelContext context) {
-        this.context = context;
+        this.context = (ModelCamelContext)context;
     }
 
     // Builder methods
@@ -377,11 +378,16 @@ public abstract class BuilderSupport {
     // Properties
     // -------------------------------------------------------------------------
 
-    public CamelContext getContext() {
+    public ModelCamelContext getContext() {
         return context;
     }
-
+    
+    @Deprecated
     public void setContext(CamelContext context) {
+        this.context = (ModelCamelContext)context;
+    }
+
+    public void setContext(ModelCamelContext context) {
         this.context = context;
     }
 
