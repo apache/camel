@@ -26,9 +26,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
 import org.apache.camel.component.cxf.spring.SpringJAXRSServerFactoryBean;
-import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -57,7 +57,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private AtomicBoolean bindingInitialized = new AtomicBoolean(false);
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
-	private boolean isSetDefaultBus;
+    private boolean isSetDefaultBus;
 
     public CxfRsEndpoint(String endpointUri, CamelContext camelContext) {
         super(endpointUri, camelContext);
