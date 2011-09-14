@@ -24,12 +24,13 @@ import javax.management.modelmbean.ModelMBean;
 import javax.management.modelmbean.ModelMBeanInfo;
 import javax.management.modelmbean.RequiredModelMBean;
 
+import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.management.DefaultManagementMBeanAssembler;
-import org.apache.camel.spi.management.ManagedInstance;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
+;
 
 /**
  * An assembler to assemble a {@link javax.management.modelmbean.ModelMBean} which can be used
