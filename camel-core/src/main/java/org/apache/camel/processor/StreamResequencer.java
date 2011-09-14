@@ -192,7 +192,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         try {
             engine.insert(exchange);
             delivery.request();
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             if (isIgnoreInvalidExchanges()) {
                 LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
                 return;
