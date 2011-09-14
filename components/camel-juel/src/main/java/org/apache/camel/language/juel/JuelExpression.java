@@ -33,8 +33,8 @@ import de.odysseus.el.util.SimpleContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.support.ExpressionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -18,8 +18,8 @@ package org.apache.camel.language;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
-import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.ExpressionAdapter;
 
 public class RefTest extends LanguageTestSupport {
 

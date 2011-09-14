@@ -14,14 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.support;
+
+import org.apache.camel.Exchange;
 
 /**
- * 
- * @deprecated
- * @see org.apache.camel.support.ExpressionAdapter
+ * A helper class for developers wishing to implement an {@link org.apache.camel.Expression}
+ * using Java code with a minimum amount of code to write so that the developer only needs
+ * to implement one of the {@link #evaluate(org.apache.camel.Exchange, Class)} or
+ * {@link #evaluate(org.apache.camel.Exchange)} methods.
+ *
+ * @version 
  */
-@Deprecated
-public class ExpressionAdapter extends org.apache.camel.support.ExpressionAdapter {
+public abstract class ExpressionAdapter extends ExpressionSupport {
+
+    protected String assertionFailureMessage(Exchange exchange) {
+        return toString();
+    }
+
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        Object value = evaluate(exchange);
+        return exchange.getContext().getTypeConverter().convertTo(type, value);
+    }
 
 }

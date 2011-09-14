@@ -23,8 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.ExpressionAdapter;
 
 /**
  * Represents an XML &lt;interceptFrom/&gt; element

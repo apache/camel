@@ -22,8 +22,8 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
-import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.ExpressionAdapter;
 
 /**
  * A language for referred expressions.

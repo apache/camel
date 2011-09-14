@@ -16,32 +16,12 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.util.ObjectHelper;
-
 /**
- * A useful base class for {@link Predicate} and {@link Expression} implementations
- *
- * @version 
+ * 
+ * @deprecated
+ * @see org.apache.camel.support.ExpressionSupport
  */
-public abstract class ExpressionSupport implements Expression, Predicate {
+@Deprecated
+public abstract class ExpressionSupport extends org.apache.camel.support.ExpressionSupport {
 
-    public boolean matches(Exchange exchange) {
-        Object value = evaluate(exchange, Object.class);
-        return ObjectHelper.evaluateValuePredicate(value);
-    }
-
-    public Object evaluate(Exchange exchange) {
-        return evaluate(exchange, Object.class);
-    }
-
-    public void assertMatches(String text, Exchange exchange) {
-        if (!matches(exchange)) {
-            throw new AssertionError(text + " " + assertionFailureMessage(exchange) + " for exchange: " + exchange);
-        }
-    }
-
-    protected abstract String assertionFailureMessage(Exchange exchange);
 }
