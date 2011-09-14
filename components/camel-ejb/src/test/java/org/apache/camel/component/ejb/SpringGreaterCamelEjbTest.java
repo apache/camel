@@ -40,4 +40,10 @@ public class SpringGreaterCamelEjbTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testLocateOtherBeans() throws Exception {
+        GreaterLocal mySpringBean = context().getRegistry().lookup("mySpringBean", GreaterLocal.class);
+        assertNotNull("We should get the instance of spring bean", mySpringBean);
+    }
+
 }

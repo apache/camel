@@ -22,6 +22,8 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+    <!-- add other spring for testing -->
+    <bean id="mySpringBean" class="org.apache.camel.component.ejb.GreaterImpl" />
 
     <!-- START SNIPPET: e2 -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
