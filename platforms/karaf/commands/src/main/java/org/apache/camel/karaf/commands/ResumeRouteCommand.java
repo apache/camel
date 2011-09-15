@@ -16,20 +16,17 @@
  */
 package org.apache.camel.karaf.commands;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
- * Command to start a route.
+ * Command to resume a route.
  */
-@Command(scope = "camel", name = "start-route", description = "Start a Camel route.")
-public class StartRouteCommand extends OsgiCommandSupport {
+@Command(scope = "camel", name = "resume-route", description = "Resume a Camel route.")
+public class ResumeRouteCommand extends OsgiCommandSupport {
 
     @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
     String route;
@@ -46,20 +43,11 @@ public class StartRouteCommand extends OsgiCommandSupport {
     public Object doExecute() throws Exception {
         Route camelRoute = camelController.getRoute(route, context);
         if (camelRoute == null) {
-            List<CamelContext> camelContexts = camelController.getCamelContexts();
-            for (CamelContext camelContext : camelContexts) {
-                RouteDefinition routeDefinition = camelContext.getRouteDefinition(route);
-                if (routeDefinition != null) {
-                    camelContext.startRoute(routeDefinition.getId());
-                    return null;
-                }
-            }
             System.err.println("Camel route " + route + " not found.");
             return null;
-        } else {
-            CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
-            camelContext.startRoute(route);
         }
+        CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
+        camelContext.resumeRoute(route);
         return null;
     }
 

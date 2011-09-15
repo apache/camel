@@ -51,6 +51,14 @@ public interface CamelController {
     List<Route> getRoutes(String camelContextName);
 
     /**
+     * Get all route definitions. If Camel context name is null, all route definitions from all contexts are listed.
+     *
+     * @param camelContextName the Camel context name. If null, all contexts are considered.
+     * @return the list of the Camel route definitions.
+     */
+    List<RouteDefinition> getRouteDefinitions(String camelContextName);
+
+    /**
      * Return the route with the given route ID.
      *
      * @param routeId the route ID.

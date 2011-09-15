@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Implementation of <code>CamelConrtoller</code>.
+ * Implementation of <code>CamelController</code>.
  */
 public class CamelControllerImpl implements CamelController {
 
@@ -86,6 +86,26 @@ public class CamelControllerImpl implements CamelController {
                 }
             }
             return routes;
+        }
+        return null;
+    }
+
+
+    public List<RouteDefinition> getRouteDefinitions(String camelContextName) {
+        if (camelContextName != null) {
+            CamelContext context = this.getCamelContext(camelContextName);
+            if (context != null) {
+                return context.getRouteDefinitions();
+            }
+        } else {
+            ArrayList<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
+            List<CamelContext> camelContexts = this.getCamelContexts();
+            for (CamelContext camelContext : camelContexts) {
+                for (RouteDefinition routeDefinition : camelContext.getRouteDefinitions()) {
+                    routeDefinitions.add(routeDefinition);
+                }
+            }
+            return routeDefinitions;
         }
         return null;
     }

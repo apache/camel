@@ -16,9 +16,11 @@
  */
 package org.apache.camel.karaf.commands;
 
+import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.camel.Route;
+import org.apache.camel.CamelContext;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
@@ -29,7 +31,12 @@ import org.apache.karaf.shell.console.OsgiCommandSupport;
 @Command(scope = "camel", name = "list-routes", description = "List all Camel routes.")
 public class ListRoutesCommand extends OsgiCommandSupport {
 
-    protected static final String OUTPUT_FORMAT = "[%-20s]";
+    protected static final String HEADER_FORMAT = "%-20s %-20s %-20s";
+    protected static final String OUTPUT_FORMAT = "[%-18s] [%-18s] [%-18s]";
+    protected static final String UNKNOWN = "Unknown";
+    protected static final String ROUTE_ID = "Route Id";
+    protected static final String CONTEXT_ID = "Context Name";
+    protected static final String STATUS = "Status";
 
     @Argument(index = 0, name = "name", description = "The Camel context name where to look for the route", required = false, multiValued = false)
     String name;
@@ -41,10 +48,26 @@ public class ListRoutesCommand extends OsgiCommandSupport {
     }
 
     protected Object doExecute() throws Exception {
-        List<Route> routes = camelController.getRoutes(name);
-        for (Route route : routes) {
-            System.out.println(String.format(OUTPUT_FORMAT, route.getId()));
+        System.out.println(String.format(HEADER_FORMAT, ROUTE_ID, CONTEXT_ID, STATUS));
+
+        List<CamelContext> camelContexts = new LinkedList<CamelContext>();
+        if (name != null && camelController.getCamelContext(name) != null) {
+            camelContexts.add(camelController.getCamelContext(name));
+        } else {
+            camelContexts = camelController.getCamelContexts();
         }
+
+        for (CamelContext camelContext : camelContexts) {
+            List<RouteDefinition> routeDefinitions = camelController.getRouteDefinitions(camelContext.getName());
+            if (routeDefinitions != null && !routeDefinitions.isEmpty()) {
+                for (RouteDefinition routeDefinition : routeDefinitions) {
+                    String contextName = camelContext.getName();
+                    String status = camelContext.getRouteStatus(routeDefinition.getId()).name();
+                    System.out.println(String.format(OUTPUT_FORMAT, routeDefinition.getId(), contextName, status));
+                }
+            }
+        }
+
         return null;
     }
 

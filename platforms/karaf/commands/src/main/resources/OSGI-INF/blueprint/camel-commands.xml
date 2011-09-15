@@ -95,6 +95,24 @@
                 <null/>
             </completers>
         </command>
+        <command name="camel/resume-route">
+            <action class="org.apache.camel.karaf.commands.ResumeRouteCommand">
+                <property name="camelController" ref="camelController"/>
+            </action>
+            <completers>
+                <ref component-id="routeCompleter"/>
+                <null/>
+            </completers>
+        </command>
+        <command name="camel/suspend-route">
+            <action class="org.apache.camel.karaf.commands.SuspendRouteCommand">
+                <property name="camelController" ref="camelController"/>
+            </action>
+            <completers>
+                <ref component-id="routeCompleter"/>
+                <null/>
+            </completers>
+        </command>
     </command-bundle>
 
     <bean id="camelContextCompleter" class="org.apache.camel.karaf.commands.completers.CamelContextCompleter">
