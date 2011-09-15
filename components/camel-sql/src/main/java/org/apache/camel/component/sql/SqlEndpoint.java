@@ -21,6 +21,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -71,6 +72,7 @@ public class SqlEndpoint extends DefaultEndpoint {
 
     @Override
     protected String createEndpointUri() {
-        return "sql:" + query;
+        // Make sure it's properly encoded
+        return "sql:" + UnsafeUriCharactersEncoder.encode(query);
     }
 }
