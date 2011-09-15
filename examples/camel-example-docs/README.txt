@@ -3,7 +3,6 @@ Documentation Example
 
 This example creates a bunch of routes to show how the Maven reporting
 tools can visualise routes
-  http://camel.apache.org/docs-example.html
 
 This example also acts as an integration test case for the GraphViz
 visualisation feature 

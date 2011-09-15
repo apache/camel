@@ -107,7 +107,7 @@ To run the example on Apache ServiceMix 4.x or Apache Karaf 2.x
  Check through a POP request that a message has been published in the mailbox of someone (email address : incident@mycompany.com)
 
 This example is documented at
-  http://camel.apache.org/tutorial-example-reportincident-wssecurity.html
+  http://camel.apache.org/tutorial-osgi-camel-part1.html
 
 If you hit any problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
