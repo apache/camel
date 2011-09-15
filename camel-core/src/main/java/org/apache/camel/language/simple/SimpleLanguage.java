@@ -94,6 +94,23 @@ public class SimpleLanguage implements Language, IsSingleton {
 
     private Class<?> resultType;
 
+    /**
+     * Default constructor.
+     */
+    public SimpleLanguage() {
+    }
+
+    /**
+     * Constructor that customizes the function start and end tokens.
+     *
+     * @param functionStartToken The function start token.
+     * @param functionEndToken   The function end token.
+     */
+    public SimpleLanguage(String functionStartToken, String functionEndToken) {
+        changeFunctionStartToken(functionStartToken);
+        changeFunctionEndToken(functionEndToken);
+    }
+
     public Class<?> getResultType() {
         return resultType;
     }
@@ -172,5 +189,4 @@ public class SimpleLanguage implements Language, IsSingleton {
     public static void changeFunctionEndToken(String... endToken) {
         SimpleTokenizer.changeFunctionEndToken(endToken);
     }
-
 }
