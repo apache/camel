@@ -44,16 +44,18 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
         }
 
         List<?> params = message.getContent(List.class);
-        InputStream is = (InputStream)params.get(0);
-        OutputStream os = message.getContent(OutputStream.class);
+        if (null != params) {
+            InputStream is = (InputStream)params.get(0);
+            OutputStream os = message.getContent(OutputStream.class);
 
-        try {
-            IOHelper.copy(is, os);
-        } catch (Exception e) {
-            throw new Fault(e);
-        } finally {
-            IOHelper.close(is, "input stream", null);
-            // Should not close the output stream as the interceptor chain will close it
+            try {
+                IOHelper.copy(is, os);
+            } catch (Exception e) {
+                throw new Fault(e);
+            } finally {
+                IOHelper.close(is, "input stream", null);
+                // Should not close the output stream as the interceptor chain will close it
+            }
         }
     }
 }
