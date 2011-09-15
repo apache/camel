@@ -16,11 +16,11 @@
  */
 package org.apache.camel.management.mbean;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.spi.ManagementStrategy;
@@ -33,9 +33,9 @@ import org.apache.camel.spi.RouteContext;
 public class ManagedErrorHandler {
     private final RouteContext routeContext;
     private final Processor errorHandler;
-    private final ErrorHandlerBuilder errorHandlerBuilder;
+    private final ErrorHandlerFactory errorHandlerBuilder;
 
-    public ManagedErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder builder) {
+    public ManagedErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory builder) {
         this.routeContext = routeContext;
         this.errorHandler = errorHandler;
         this.errorHandlerBuilder = builder;
@@ -53,7 +53,7 @@ public class ManagedErrorHandler {
         return errorHandler;
     }
 
-    public ErrorHandlerBuilder getErrorHandlerBuilder() {
+    public ErrorHandlerFactory getErrorHandlerBuilder() {
         return errorHandlerBuilder;
     }
 

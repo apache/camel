@@ -18,28 +18,17 @@ package org.apache.camel.builder;
 
 import java.util.List;
 
-import org.apache.camel.Processor;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * A builder of a <a href="http://camel.apache.org/error-handler.html">Error Handler</a>
  *
  * @version 
  */
-public interface ErrorHandlerBuilder {
-
-    /**
-     * Creates the error handler interceptor
-     *
-     * @param routeContext the route context
-     * @param processor the outer processor
-     * @return the error handler
-     * @throws Exception is thrown if the error handler could not be created
-     */
-    Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception;
+public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
 
     /**
      * Adds error handler for the given exception type

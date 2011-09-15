@@ -22,11 +22,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
@@ -41,7 +41,7 @@ public interface ManagementObjectStrategy {
     Object getManagedObjectForEndpoint(CamelContext context, Endpoint endpoint);
 
     Object getManagedObjectForErrorHandler(CamelContext context, RouteContext routeContext,
-                                           Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder);
+                                           Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     Object getManagedObjectForRoute(CamelContext context, Route route);
 

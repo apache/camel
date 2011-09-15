@@ -40,11 +40,11 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -852,7 +852,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             }
 
             LOG.trace("Creating error handler for: {}", processor);
-            ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
+            ErrorHandlerFactory builder = routeContext.getRoute().getErrorHandlerBuilder();
             // create error handler (create error handler directly to keep it light weight,
             // instead of using ProcessorDefinition.wrapInErrorHandler)
             try {

@@ -34,6 +34,7 @@ import org.apache.camel.Channel;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -41,7 +42,6 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.PerformanceCounter;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.impl.EndpointRegistry;
@@ -520,7 +520,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
     }
 
-    public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder) {
+    public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         if (!shouldRegister(errorHandler, null)) {
             // avoid registering if not needed
             return;

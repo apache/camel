@@ -23,11 +23,11 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.management.mbean.ManagedBeanProcessor;
@@ -102,7 +102,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
     }
 
     public Object getManagedObjectForErrorHandler(CamelContext context, RouteContext routeContext,
-                                                  Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder) {
+                                                  Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
         ManagedErrorHandler me = new ManagedErrorHandler(routeContext, errorHandler, errorHandlerBuilder);
         me.init(context.getManagementStrategy());
         return me;

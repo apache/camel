@@ -179,7 +179,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         validateConfiguration();
 
         // lets attach this on exception to the route error handler
-        Processor child = routeContext.createProcessor(this);
+        Processor child = createOutputsProcessor(routeContext);
         if (child != null) {
             // wrap in our special safe fallback error handler if OnException have child output
             errorHandler = new FatalFallbackErrorHandler(child);
@@ -188,7 +188,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
             errorHandler = null;
         }
         // lookup the error handler builder
-        ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
+        ErrorHandlerBuilder builder = (ErrorHandlerBuilder)routeContext.getRoute().getErrorHandlerBuilder();
         // and add this as error handlers
         builder.addErrorHandlers(this);
     }

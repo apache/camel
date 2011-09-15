@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -49,14 +49,13 @@ public final class RouteDefinitionHelper {
     }
 
     @SuppressWarnings("unchecked")
-    public static void initParentAndErrorHandlerBuilder(ProcessorDefinition parent, ErrorHandlerBuilder builder) {
+    private static void initParentAndErrorHandlerBuilder(ProcessorDefinition parent) {
         List<ProcessorDefinition> children = parent.getOutputs();
         for (ProcessorDefinition child : children) {
             child.setParent(parent);
-            child.setErrorHandlerBuilder(builder);
             if (child.getOutputs() != null && !child.getOutputs().isEmpty()) {
                 // recursive the children
-                initParentAndErrorHandlerBuilder(child, builder);
+                initParentAndErrorHandlerBuilder(child);
             }
         }
     }
@@ -168,13 +167,13 @@ public final class RouteDefinitionHelper {
         }
 
         // init parent and error handler builder on the route
-        initParentAndErrorHandlerBuilder(route, route.getErrorHandlerBuilder());
+        initParentAndErrorHandlerBuilder(route);
 
         // set the parent and error handler builder on the global on exceptions
         if (onExceptions != null) {
             for (OnExceptionDefinition global : onExceptions) {
-                global.setErrorHandlerBuilder(context.getErrorHandlerBuilder());
-                initParentAndErrorHandlerBuilder(global, context.getErrorHandlerBuilder());
+                //global.setErrorHandlerBuilder(context.getErrorHandlerBuilder());
+                initParentAndErrorHandlerBuilder(global);
             }
         }
     }

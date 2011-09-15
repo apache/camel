@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.spi;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
@@ -66,7 +67,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         // if we should not support this we do not need to wrap the processor as we only need one transacted error handler
 
         // find the existing error handler builder
-        ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
+        ErrorHandlerFactory builder = routeContext.getRoute().getErrorHandlerBuilder();
 
         // check if its a ref if so then do a lookup
         if (builder instanceof ErrorHandlerBuilderRef) {

@@ -26,10 +26,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
@@ -127,7 +127,7 @@ public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
         // noop
     }
 
-    public void onErrorHandlerAdd(RouteContext routeContext, Processor processor, ErrorHandlerBuilder errorHandlerBuilder) {
+    public void onErrorHandlerAdd(RouteContext routeContext, Processor processor, ErrorHandlerFactory errorHandlerBuilder) {
         // noop
     }
 

@@ -63,15 +63,6 @@ public interface RouteContext extends RuntimeConfiguration {
     CamelContext getCamelContext();
 
     /**
-     * Creates a processor
-     *
-     * @param node  the node
-     * @return the created processor
-     * @throws Exception can be thrown
-     */
-    Processor createProcessor(ProcessorDefinition<?> node) throws Exception;
-
-    /**
      * Resolves an endpoint from the URI
      *
      * @param uri the URI

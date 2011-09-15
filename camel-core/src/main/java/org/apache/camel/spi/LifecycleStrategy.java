@@ -22,11 +22,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.VetoCamelContextStartException;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 
 /**
  * Strategy for lifecycle notifications.
@@ -125,7 +125,7 @@ public interface LifecycleStrategy {
      * @param errorHandler        the error handler
      * @param errorHandlerBuilder the error handler builder
      */
-    void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder errorHandlerBuilder);
+    void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder);
 
     /**
      * Notification on adding a thread pool.

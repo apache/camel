@@ -44,6 +44,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
@@ -172,7 +173,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean useMDCLogging = Boolean.FALSE;
     private Boolean useBreadcrumb = Boolean.TRUE;
     private Long delay;
-    private ErrorHandlerBuilder errorHandlerBuilder;
+    private ErrorHandlerFactory errorHandlerBuilder;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
     private DataFormatResolver dataFormatResolver = new DefaultDataFormatResolver();
     private Map<String, String> properties = new HashMap<String, String>();
@@ -1217,10 +1218,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public ErrorHandlerBuilder getErrorHandlerBuilder() {
-        return errorHandlerBuilder;
+        return (ErrorHandlerBuilder)errorHandlerBuilder;
     }
 
-    public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
+    public void setErrorHandlerBuilder(ErrorHandlerFactory errorHandlerBuilder) {
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 

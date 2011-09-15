@@ -102,10 +102,6 @@ public class DefaultRouteContext implements RouteContext {
         return camelContext;
     }
 
-    public Processor createProcessor(ProcessorDefinition<?> node) throws Exception {
-        return node.createOutputsProcessor(this);
-    }
-
     public Endpoint resolveEndpoint(String uri) {
         return route.resolveEndpoint(getCamelContext(), uri);
     }

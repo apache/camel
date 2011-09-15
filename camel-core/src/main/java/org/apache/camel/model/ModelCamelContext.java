@@ -22,26 +22,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 
 /**
  * Model level interface for a camel context
  *
  */
 public interface ModelCamelContext extends CamelContext {
-    /**
-     * Gets the default error handler builder which is inherited by the routes
-     *
-     * @return the builder
-     */
-    ErrorHandlerBuilder getErrorHandlerBuilder();
-
-    /**
-     * Sets the default error handler builder which is inherited by the routes
-     *
-     * @param errorHandlerBuilder the builder
-     */
-    void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder);
 
     /**
      * Returns a list of the current route definitions

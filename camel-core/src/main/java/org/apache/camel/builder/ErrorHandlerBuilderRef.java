@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -66,8 +67,8 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
      * @param ref          reference id for the error handler
      * @return the error handler
      */
-    public static ErrorHandlerBuilder lookupErrorHandlerBuilder(RouteContext routeContext, String ref) {
-        ErrorHandlerBuilder answer;
+    public static ErrorHandlerFactory lookupErrorHandlerBuilder(RouteContext routeContext, String ref) {
+        ErrorHandlerFactory answer;
 
         // if the ref is the default then we do not have any explicit error handler configured
         // if that is the case then use error handlers configured on the route, as for instance
@@ -98,7 +99,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
                 }
                 // inherit the error handlers from the other as they are to be shared
                 // this is needed by camel-spring when none error handler has been explicit configured
-                answer.setErrorHandlers(other.getErrorHandlers());
+                ((ErrorHandlerBuilder)answer).setErrorHandlers(other.getErrorHandlers());
             }
         } else {
             // use specific configured error handler
@@ -111,8 +112,8 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         return answer;
     }
 
-    protected static ErrorHandlerBuilder lookupErrorHandlerBuilder(ModelCamelContext camelContext) {
-        ErrorHandlerBuilder answer = camelContext.getErrorHandlerBuilder();
+    protected static ErrorHandlerFactory lookupErrorHandlerBuilder(ModelCamelContext camelContext) {
+        ErrorHandlerFactory answer = camelContext.getErrorHandlerBuilder();
         if (answer instanceof ErrorHandlerBuilderRef) {
             ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) answer;
             String otherRef = other.getRef();
@@ -146,12 +147,12 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         return ref;
     }
 
-    public ErrorHandlerBuilder getHandler() {
+    public ErrorHandlerFactory getHandler() {
         return handler;
     }
 
     private ErrorHandlerBuilder createErrorHandler(RouteContext routeContext) {
-        handler = lookupErrorHandlerBuilder(routeContext, getRef());
+        handler = (ErrorHandlerBuilder)lookupErrorHandlerBuilder(routeContext, getRef());
         ObjectHelper.notNull(handler, "error handler '" + ref + "'");
 
         // configure if the handler support transacted

@@ -699,6 +699,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets the default error handler builder which is inherited by the routes
+     * @deprecated The return type will be switched to ErrorHandlerFactory in Camel 3.0
      *
      * @return the builder
      */
@@ -710,8 +711,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param errorHandlerBuilder the builder
      */
-    @Deprecated
-    void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder);
+    void setErrorHandlerBuilder(ErrorHandlerFactory errorHandlerBuilder);
 
     /**
      * Sets the data formats that can be referenced in the routes.

@@ -25,11 +25,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventNotifier;
@@ -123,7 +123,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         return createObjectName(buffer);
     }
 
-    public ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerBuilder builder) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName + ":" + KEY_CONTEXT + "=" + getContextId(routeContext.getCamelContext()) + ","
                       + KEY_TYPE + "=" +  TYPE_ERRORHANDLER + ",");

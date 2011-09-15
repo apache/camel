@@ -36,6 +36,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
@@ -44,8 +45,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.DataFormatClause;
-import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
@@ -81,8 +80,6 @@ import org.slf4j.LoggerFactory;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition implements Block {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
-    protected ErrorHandlerBuilder errorHandlerBuilder;
-    protected String errorHandlerRef;
     protected Boolean inheritErrorHandler;
     private NodeFactory nodeFactory;
     private final LinkedList<Block> blocks = new LinkedList<Block>();
@@ -150,7 +147,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         }
         // fallback to default implementation if factory did not create the child
         if (children == null) {
-            children = routeContext.createProcessor(this);
+            children = createOutputsProcessor(routeContext);
         }
 
         if (children == null && mandatory) {
@@ -169,7 +166,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         output.setParent(this);
         output.setNodeFactory(getNodeFactory());
-        output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         configureChild(output);
         getOutputs().add(output);
     }
@@ -294,7 +290,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         if (isInheritErrorHandler() == null || isInheritErrorHandler()) {
             log.trace("{} is configured to inheritErrorHandler", this);
             Processor output = channel.getOutput();
-            Processor errorHandler = wrapInErrorHandler(routeContext, getErrorHandlerBuilder(), output);
+            Processor errorHandler = wrapInErrorHandler(routeContext, output);
             // set error handler on channel
             channel.setErrorHandler(errorHandler);
         } else {
@@ -310,7 +306,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the output wrapped with the error handler
      * @throws Exception can be thrown if failed to create error handler builder
      */
-    protected Processor wrapInErrorHandler(RouteContext routeContext, ErrorHandlerBuilder builder, Processor output) throws Exception {
+    protected Processor wrapInErrorHandler(RouteContext routeContext, Processor output) throws Exception {
+        ErrorHandlerFactory builder = routeContext.getRoute().getErrorHandlerBuilder();
         // create error handler
         Processor errorHandler = builder.createErrorHandler(routeContext, output);
 
@@ -557,15 +554,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 }
             }
         }
-    }
-
-    protected ErrorHandlerBuilder createErrorHandlerBuilder() {
-        if (errorHandlerRef != null) {
-            return new ErrorHandlerBuilderRef(errorHandlerRef);
-        }
-
-        // return a reference to the default error handler
-        return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
     /**
@@ -3060,21 +3048,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     public void setParent(ProcessorDefinition parent) {
         this.parent = parent;
-    }
-
-    @XmlTransient
-    public ErrorHandlerBuilder getErrorHandlerBuilder() {
-        if (errorHandlerBuilder == null) {
-            errorHandlerBuilder = createErrorHandlerBuilder();
-        }
-        return errorHandlerBuilder;
-    }
-
-    /**
-     * Sets the error handler to use with processors created by this builder
-     */
-    public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
-        this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
     @XmlTransient

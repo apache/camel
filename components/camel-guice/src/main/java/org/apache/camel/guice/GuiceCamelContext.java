@@ -27,10 +27,10 @@ import javax.naming.InitialContext;
 import com.google.inject.Binding;
 import com.google.inject.Inject;
 
+import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.guice.impl.GuiceInjector;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
@@ -109,7 +109,7 @@ public class GuiceCamelContext extends DefaultCamelContext {
 
     @Override
     @Inject(optional = true)
-    public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
+    public void setErrorHandlerBuilder(ErrorHandlerFactory errorHandlerBuilder) {
         super.setErrorHandlerBuilder(errorHandlerBuilder);
     }
 
