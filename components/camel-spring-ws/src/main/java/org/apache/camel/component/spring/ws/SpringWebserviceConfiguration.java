@@ -58,7 +58,7 @@ public class SpringWebserviceConfiguration {
     public String getEndpointUri() {
         if (endpointMappingKey != null) {
             // only for consumers, use lookup key as endpoint uri/key
-            return endpointMappingKey.getLookupKey();
+            return encode(endpointMappingKey.getLookupKey());
         } else if (webServiceTemplate != null) {
             return webServiceTemplate.getDefaultUri();
         }
@@ -107,5 +107,15 @@ public class SpringWebserviceConfiguration {
 
     public void setXmlConverter(XmlConverter xmlConverter) {
         this.xmlConverter = xmlConverter;
+    }
+
+    public static String encode(String uri) {
+        int i = uri.lastIndexOf('}');
+        return i == -1 ? uri : (uri.subSequence(0, i) + ")" + uri.substring(i + 1)).replaceFirst("\\{", "(");
+    }
+
+    public static String decode(String uri) {
+        int i = uri.lastIndexOf(')');
+        return i == -1 ? uri : (uri.subSequence(0, i) + "}" + uri.substring(i + 1)).replaceFirst("\\(", "{");
     }
 }

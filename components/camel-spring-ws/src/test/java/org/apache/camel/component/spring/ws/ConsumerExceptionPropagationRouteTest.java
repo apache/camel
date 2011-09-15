@@ -17,13 +17,17 @@
 package org.apache.camel.component.spring.ws;
 
 import java.io.StringReader;
+import java.net.URI;
+
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +71,15 @@ public class ConsumerExceptionPropagationRouteTest extends CamelTestSupport {
         return registry;
     }
 
+    @Ignore("For now getEndpointUri does not return the initial uri. Info like the endpoint scheme is lost")
+    public void testValidUri() throws Exception {
+        String deprecate = "spring-ws:rootqname:{http://www.webserviceX.NET/}GetQuote?endpointMapping=#endpointMapping";
+        String sanitized = "spring-ws:rootqname:(http://www.webserviceX.NET/)GetQuote?endpointMapping=#endpointMapping";
+        Endpoint endpoint = context.getComponent("spring-ws").createEndpoint(deprecate); 
+        assertEquals(sanitized, endpoint.getEndpointUri());
+        assertNotNull(new URI(endpoint.getEndpointUri()));
+    }
+
     @Test
     public void consumeWebserviceAndTestForSoapFault() throws Exception {
         StreamSource source = new StreamSource(new StringReader(xmlRequestForGoogleStockQuote));
@@ -84,5 +97,4 @@ public class ConsumerExceptionPropagationRouteTest extends CamelTestSupport {
             }
         };
     }
-
 }

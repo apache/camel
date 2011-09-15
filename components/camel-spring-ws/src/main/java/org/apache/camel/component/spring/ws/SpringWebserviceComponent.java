@@ -54,6 +54,12 @@ public class SpringWebserviceComponent extends DefaultComponent {
         super(context);
     }
 
+    @Deprecated
+    protected String preProcessUri(String uri) {
+        String[] u = uri.split("\\?");
+        return u[0].replaceAll("%7B", "(").replaceAll("%7D", ")") + (u.length > 1 ? "?" + u[1] : "");
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SpringWebserviceConfiguration configuration = new SpringWebserviceConfiguration();
@@ -61,11 +67,10 @@ public class SpringWebserviceComponent extends DefaultComponent {
         addProducerConfiguration(remaining, parameters, configuration);
         addXmlConverterToConfiguration(parameters, configuration);
         setProperties(configuration, parameters);
-        return new SpringWebserviceEndpoint(this, configuration);
+        return new SpringWebserviceEndpoint(this, uri, configuration);
     }
 
-    private void addConsumerConfiguration(String remaining, Map<String, Object> parameters,
-                                          SpringWebserviceConfiguration configuration) {
+    private void addConsumerConfiguration(String remaining, Map<String, Object> parameters, SpringWebserviceConfiguration configuration) {
         EndpointMappingType type = EndpointMappingType.getTypeFromUriPrefix(remaining);
         if (type != null) {
             LOG.debug("Building Spring Web Services consumer of type " + type);
@@ -75,12 +80,8 @@ public class SpringWebserviceComponent extends DefaultComponent {
             } else {
                 addEndpointMappingToConfiguration(parameters, configuration);
             }
-            if (EndpointMappingType.XPATHRESULT.equals(type)) {
-                XPathExpression expression = getXPathExpressionFromParameters(parameters);
-                configuration.setEndpointMappingKey(new EndpointMappingKey(type, lookupKey, expression));
-            } else {
-                configuration.setEndpointMappingKey(new EndpointMappingKey(type, lookupKey, null));
-            }
+            configuration.setEndpointMappingKey(new EndpointMappingKey(type, lookupKey, 
+                type.equals(EndpointMappingType.XPATHRESULT) ? getXPathExpressionFromParameters(parameters) : null));
         }
     }
 
@@ -115,7 +116,8 @@ public class SpringWebserviceComponent extends DefaultComponent {
 
     private String getLookupKey(String remaining, EndpointMappingType type) {
         String lookupKey = remaining.substring(type.getPrefix().length());
-        return lookupKey.startsWith("//") ? lookupKey.substring(2) : lookupKey;
+        lookupKey = lookupKey.startsWith("//") ? lookupKey.substring(2) : lookupKey;
+        return SpringWebserviceConfiguration.decode(lookupKey);
     }
 
     private XPathExpression getXPathExpressionFromParameters(Map<String, Object> parameters) {

@@ -26,8 +26,8 @@ public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
     private SpringWebserviceConfiguration configuration;
 
-    public SpringWebserviceEndpoint(Component component, SpringWebserviceConfiguration configuration) {
-        super(configuration.getEndpointUri(), component);
+    public SpringWebserviceEndpoint(Component component, String uri, SpringWebserviceConfiguration configuration) {
+        super(uri, component);
         this.configuration = configuration;
     }
 
@@ -50,5 +50,4 @@ public class SpringWebserviceEndpoint extends DefaultEndpoint {
     public SpringWebserviceConfiguration getConfiguration() {
         return configuration;
     }
-
 }
