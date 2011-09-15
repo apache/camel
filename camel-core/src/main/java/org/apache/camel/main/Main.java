@@ -23,7 +23,6 @@ import javax.xml.bind.JAXBException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.MainSupport;
 import org.apache.camel.view.ModelFileGenerator;
 
 /**

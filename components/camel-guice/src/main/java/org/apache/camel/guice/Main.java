@@ -35,7 +35,7 @@ import com.google.inject.internal.Maps;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.MainSupport;
+import org.apache.camel.main.MainSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
 import org.guiceyfruit.Injectors;
