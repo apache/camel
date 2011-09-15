@@ -29,7 +29,7 @@ public class SipComponent extends DefaultComponent {
         SipConfiguration config = new SipConfiguration();
         config.initialize(new URI(uri), parameters, this);
         
-        SipEndpoint sipEndpoint = new SipEndpoint(remaining, this, config);
+        SipEndpoint sipEndpoint = new SipEndpoint(uri, this, config);
         setProperties(sipEndpoint.getConfiguration(), parameters);
         return sipEndpoint;
     }
