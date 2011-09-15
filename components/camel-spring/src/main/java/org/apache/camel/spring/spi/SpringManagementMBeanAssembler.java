@@ -30,7 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
-;
 
 /**
  * An assembler to assemble a {@link javax.management.modelmbean.ModelMBean} which can be used
