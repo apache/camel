@@ -264,6 +264,12 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
                     continue;
                 }
 
+                // bundle resource should be skipped
+                if (url.toString().startsWith("bundleresource:") || urlPath.startsWith("bundleresource:")) {
+                    log.trace("Skipping bundleresource: {}", url);
+                    continue;
+                }
+
                 // Else it's in a JAR, grab the path to the jar
                 if (urlPath.indexOf('!') > 0) {
                     urlPath = urlPath.substring(0, urlPath.indexOf('!'));
