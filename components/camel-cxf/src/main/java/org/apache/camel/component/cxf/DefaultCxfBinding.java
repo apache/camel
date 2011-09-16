@@ -390,11 +390,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         MessageContentsList answer = new MessageContentsList();
 
         int i = 0;
-        
-        for (MessagePartInfo partInfo : boi.getOutput().getMessageParts()) {
-            if (elements.size() > i) {
-                answer.put(partInfo, elements.get(i++));
-                
+        if (boi.getOutput() != null) {
+            for (MessagePartInfo partInfo : boi.getOutput().getMessageParts()) {
+                if (elements.size() > i) {
+                    answer.put(partInfo, elements.get(i++));
+                }
             }
         }
 
