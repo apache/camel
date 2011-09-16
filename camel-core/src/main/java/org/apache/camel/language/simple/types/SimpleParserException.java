@@ -14,38 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.simple;
+package org.apache.camel.language.simple.types;
+
+import org.apache.camel.RuntimeCamelException;
 
 /**
- * Types of logical operators supported
+ * Holds information about error parsing the simple expression at a given location
+ * in the input.
  */
-public enum LogicalOperatorType {
+public class SimpleParserException extends RuntimeCamelException {
 
-    // TODO: and|or is @deprecated and to be removed in Camel 3.0
+    private final int index;
 
-    AND, OR;
-
-    public static LogicalOperatorType asOperator(String text) {
-        if ("&&".equals(text) || "and".equals(text)) {
-            return AND;
-        } else if ("||".equals(text) || "or".equals(text)) {
-            return OR;
-        }
-        throw new IllegalArgumentException("Operator not supported: " + text);
+    public SimpleParserException(String message, int index) {
+        super(message);
+        this.index = index;
     }
 
-    public String getOperatorText(LogicalOperatorType operator) {
-        if (operator == AND) {
-            return "&&";
-        } else if (operator == OR) {
-            return "||";
-        }
-        return "";
+    /**
+     * Index where the parsing error occurred
+     *
+     * @return index of the parsing error in the input
+     */
+    public int getIndex() {
+        return index;
     }
-
-    @Override
-    public String toString() {
-        return getOperatorText(this);
-    }
-
 }

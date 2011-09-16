@@ -17,8 +17,8 @@
 package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleParserException;
-import org.apache.camel.language.simple.SimpleToken;
+import org.apache.camel.language.simple.types.SimpleParserException;
+import org.apache.camel.language.simple.types.SimpleToken;
 
 /**
  * Represents a node in the Simple AST
@@ -37,7 +37,7 @@ public interface SimpleNode {
      *
      * @param expression the input string
      * @return the created {@link Expression}
-     * @throws org.apache.camel.language.simple.SimpleParserException
+     * @throws org.apache.camel.language.simple.types.SimpleParserException
      *          should be thrown if error parsing the model
      */
     Expression createExpression(String expression) throws SimpleParserException;

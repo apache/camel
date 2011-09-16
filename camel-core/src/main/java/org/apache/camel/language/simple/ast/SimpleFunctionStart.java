@@ -18,9 +18,9 @@ package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleIllegalSyntaxException;
-import org.apache.camel.language.simple.SimpleParserException;
-import org.apache.camel.language.simple.SimpleToken;
+import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.apache.camel.language.simple.types.SimpleParserException;
+import org.apache.camel.language.simple.types.SimpleToken;
 
 /**
  * Starts a function

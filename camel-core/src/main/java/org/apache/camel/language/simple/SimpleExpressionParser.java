@@ -27,6 +27,10 @@ import org.apache.camel.language.simple.ast.SimpleFunctionEnd;
 import org.apache.camel.language.simple.ast.SimpleFunctionStart;
 import org.apache.camel.language.simple.ast.SimpleNode;
 import org.apache.camel.language.simple.ast.UnaryExpression;
+import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.apache.camel.language.simple.types.SimpleParserException;
+import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.language.simple.types.TokenType;
 
 /**
  * A parser to parse simple language as a Camel {@link Expression}

@@ -14,45 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.simple;
+package org.apache.camel.language.simple.types;
 
 /**
- * Holder for a token, with associated type and position in the input.
+ * Types of logical operators supported
  */
-public final class SimpleToken {
+public enum LogicalOperatorType {
 
-    private final SimpleTokenType type;
-    private final int index;
-    private final int length;
+    // TODO: and|or is @deprecated and to be removed in Camel 3.0
 
-    public SimpleToken(SimpleTokenType type, int index) {
-        this(type, index, type.getValue() != null ? type.getValue().length() : 0);
+    AND, OR;
+
+    public static LogicalOperatorType asOperator(String text) {
+        if ("&&".equals(text) || "and".equals(text)) {
+            return AND;
+        } else if ("||".equals(text) || "or".equals(text)) {
+            return OR;
+        }
+        throw new IllegalArgumentException("Operator not supported: " + text);
     }
 
-    public SimpleToken(SimpleTokenType type, int index, int length) {
-        this.type = type;
-        this.index = index;
-        this.length = length;
-    }
-
-    public SimpleTokenType getType() {
-        return type;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public String getText() {
-        return type.getValue();
-    }
-
-    public int getLength() {
-        return length;
+    public String getOperatorText(LogicalOperatorType operator) {
+        if (operator == AND) {
+            return "&&";
+        } else if (operator == OR) {
+            return "||";
+        }
+        return "";
     }
 
     @Override
     public String toString() {
-        return type.toString();
+        return getOperatorText(this);
     }
+
 }

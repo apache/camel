@@ -17,7 +17,7 @@
 package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.SimpleToken;
+import org.apache.camel.language.simple.types.SimpleToken;
 
 /**
  * Ends a function

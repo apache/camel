@@ -28,10 +28,10 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.ValueBuilder;
-import org.apache.camel.language.simple.BinaryOperatorType;
-import org.apache.camel.language.simple.SimpleIllegalSyntaxException;
-import org.apache.camel.language.simple.SimpleParserException;
-import org.apache.camel.language.simple.SimpleToken;
+import org.apache.camel.language.simple.types.BinaryOperatorType;
+import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.apache.camel.language.simple.types.SimpleParserException;
+import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.util.ObjectHelper;
 
 /**

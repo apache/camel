@@ -38,6 +38,12 @@ import org.apache.camel.language.simple.ast.SimpleNode;
 import org.apache.camel.language.simple.ast.SingleQuoteEnd;
 import org.apache.camel.language.simple.ast.SingleQuoteStart;
 import org.apache.camel.language.simple.ast.UnaryExpression;
+import org.apache.camel.language.simple.types.BinaryOperatorType;
+import org.apache.camel.language.simple.types.LogicalOperatorType;
+import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.apache.camel.language.simple.types.SimpleParserException;
+import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.language.simple.types.TokenType;
 
 /**
  * A parser to parse simple language as a Camel {@link Predicate}

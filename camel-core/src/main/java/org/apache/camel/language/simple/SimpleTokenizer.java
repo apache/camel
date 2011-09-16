@@ -19,6 +19,10 @@ package org.apache.camel.language.simple;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.language.simple.types.SimpleTokenType;
+import org.apache.camel.language.simple.types.TokenType;
+
 /**
  * Tokenizer to create {@link SimpleToken} from the input.
  */

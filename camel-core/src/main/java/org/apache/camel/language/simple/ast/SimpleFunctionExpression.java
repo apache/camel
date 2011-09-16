@@ -18,8 +18,8 @@ package org.apache.camel.language.simple.ast;
 
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.language.simple.SimpleParserException;
-import org.apache.camel.language.simple.SimpleToken;
+import org.apache.camel.language.simple.types.SimpleParserException;
+import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
@@ -47,7 +47,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
      * @param strict whether to throw exception if the expression was not a function,
      *          otherwise <tt>null</tt> is returned
      * @return the created {@link Expression}
-     * @throws org.apache.camel.language.simple.SimpleParserException
+     * @throws org.apache.camel.language.simple.types.SimpleParserException
      *          should be thrown if error parsing the model
      */
     public Expression createExpression(String expression, boolean strict) {

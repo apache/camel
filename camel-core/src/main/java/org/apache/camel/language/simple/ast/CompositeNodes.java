@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.language.simple.SimpleToken;
+import org.apache.camel.language.simple.types.SimpleToken;
 
 /**
  * A node which contains other {@link SimpleNode nodes}.

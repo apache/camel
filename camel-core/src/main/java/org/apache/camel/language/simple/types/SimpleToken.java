@@ -14,29 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.simple;
-
-import org.apache.camel.RuntimeCamelException;
+package org.apache.camel.language.simple.types;
 
 /**
- * Holds information about error parsing the simple expression at a given location
- * in the input.
+ * Holder for a token, with associated type and position in the input.
  */
-public class SimpleParserException extends RuntimeCamelException {
+public final class SimpleToken {
 
+    private final SimpleTokenType type;
     private final int index;
+    private final int length;
 
-    public SimpleParserException(String message, int index) {
-        super(message);
-        this.index = index;
+    public SimpleToken(SimpleTokenType type, int index) {
+        this(type, index, type.getValue() != null ? type.getValue().length() : 0);
     }
 
-    /**
-     * Index where the parsing error occurred
-     *
-     * @return index of the parsing error in the input
-     */
+    public SimpleToken(SimpleTokenType type, int index, int length) {
+        this.type = type;
+        this.index = index;
+        this.length = length;
+    }
+
+    public SimpleTokenType getType() {
+        return type;
+    }
+
     public int getIndex() {
         return index;
+    }
+
+    public String getText() {
+        return type.getValue();
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    @Override
+    public String toString() {
+        return type.toString();
     }
 }

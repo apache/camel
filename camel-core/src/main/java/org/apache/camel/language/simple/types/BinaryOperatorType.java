@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.simple;
+package org.apache.camel.language.simple.types;
 
 /**
  * Types of binary operators supported
@@ -112,27 +112,27 @@ public enum BinaryOperatorType {
     public enum ParameterType {
         Literal, LiteralWithFunction, Function, NumericValue, BooleanValue, NullValue;
 
-        boolean isLiteralSupported() {
+        public boolean isLiteralSupported() {
             return this == Literal;
         }
 
-        boolean isLiteralWithFunctionSupport() {
+        public boolean isLiteralWithFunctionSupport() {
             return this == LiteralWithFunction;
         }
 
-        boolean isFunctionSupport() {
+        public boolean isFunctionSupport() {
             return this == Function;
         }
 
-        boolean isNumericValueSupported() {
+        public boolean isNumericValueSupported() {
             return this == NumericValue;
         }
 
-        boolean isBooleanValueSupported() {
+        public boolean isBooleanValueSupported() {
             return this == BooleanValue;
         }
 
-        boolean isNullValueSupported() {
+        public boolean isNullValueSupported() {
             return this == NullValue;
         }
     }

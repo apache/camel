@@ -25,6 +25,10 @@ import org.apache.camel.language.simple.ast.BlockEnd;
 import org.apache.camel.language.simple.ast.BlockStart;
 import org.apache.camel.language.simple.ast.SimpleNode;
 import org.apache.camel.language.simple.ast.UnaryExpression;
+import org.apache.camel.language.simple.types.SimpleParserException;
+import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.language.simple.types.SimpleTokenType;
+import org.apache.camel.language.simple.types.TokenType;
 
 /**
  * Base class for Simple language parser.
