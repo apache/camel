@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring;
 
+import org.apache.camel.language.simple.SimpleLanguage;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -36,4 +37,12 @@ public class SpringChangeFunctionStartFunctionEndTest extends SpringTestSupport 
         assertMockEndpointsSatisfied();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        // change the tokens back to default after testing
+        SimpleLanguage.changeFunctionStartToken("${", "$simple{");
+        SimpleLanguage.changeFunctionEndToken("}");
+
+        super.tearDown();
+    }
 }
