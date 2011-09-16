@@ -30,7 +30,9 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelContextHelper;
@@ -987,6 +989,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // camel context will shutdown the executor when it shutdown so no need to shut it down when stopping
             if (executorServiceRef != null) {
                 executorService = camelContext.getRegistry().lookup(executorServiceRef, ScheduledExecutorService.class);
+                if (executorService == null) {
+                    ExecutorServiceManager manager = camelContext.getExecutorServiceManager();
+                    ThreadPoolProfile profile = manager.getThreadPoolProfile(executorServiceRef);
+                    executorService = manager.newScheduledThreadPool(this, executorServiceRef, profile);
+                }
                 if (executorService == null) {
                     throw new IllegalArgumentException("ExecutorServiceRef " + executorServiceRef + " not found in registry.");
                 }
