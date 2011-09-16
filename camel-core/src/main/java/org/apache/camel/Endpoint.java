@@ -39,6 +39,13 @@ public interface Endpoint extends IsSingleton, Service {
     String getEndpointUri();
 
     /**
+     * Returns the object representation of the endpoint configuration
+     *
+     * @return the endpoint URI
+     */
+    EndpointConfiguration getEndpointConfiguration();
+
+    /**
      * Returns a string key of this endpoint.
      * <p/>
      * This key is used by {@link org.apache.camel.spi.LifecycleStrategy} when registering endpoint.

@@ -50,7 +50,7 @@ public final class UnsafeUriCharactersEncoder {
     }
 
     public static String encode(String s) {
-        int n = s.length();
+        int n = s == null ? 0 : s.length();
         if (n == 0) {
             return s;
         }

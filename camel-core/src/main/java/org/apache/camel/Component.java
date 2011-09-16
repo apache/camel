@@ -29,10 +29,18 @@ public interface Component extends CamelContextAware {
      * capable of handling the URI
      * 
      * @param uri the URI to create
-     * @return a newly created endpoint or null if this component cannot create
-     *         instances of the given uri
+     * @return a newly created {@link Endpoint} or null if this component cannot create
+     *         {@link Endpoint} instances using the given uri
      * @throws Exception is thrown if error creating the endpoint
      */
     Endpoint createEndpoint(String uri) throws Exception;
     
+    /**
+     * Attempt to create a configuration object from the give uri
+     * 
+     * @param uri the configuration URI
+     * @return a newly created {@link EndpointConfiguration}
+     * @throws Exception is thrown if the configuration URI is invalid
+     */
+    EndpointConfiguration createConfiguration(String uri) throws Exception;
 }

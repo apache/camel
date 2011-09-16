@@ -52,6 +52,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
@@ -96,14 +97,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public JmsEndpoint(String uri, JmsComponent component, String destinationName, boolean pubSubDomain, JmsConfiguration configuration) {
-        super(uri, component);
+        super(UnsafeUriCharactersEncoder.encode(uri), component);
         this.configuration = configuration;
         this.destinationName = destinationName;
         this.pubSubDomain = pubSubDomain;
     }
 
     public JmsEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destinationName, boolean pubSubDomain) {
-        super(endpointUri);
+        super(UnsafeUriCharactersEncoder.encode(endpointUri));
         this.binding = binding;
         this.configuration = configuration;
         this.destinationName = destinationName;
@@ -111,7 +112,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public JmsEndpoint(String endpointUri, String destinationName, boolean pubSubDomain) {
-        this(endpointUri, null, new JmsConfiguration(), destinationName, pubSubDomain);
+        this(UnsafeUriCharactersEncoder.encode(endpointUri), null, new JmsConfiguration(), destinationName, pubSubDomain);
         this.binding = new JmsBinding(this);
     }
 
@@ -119,7 +120,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * Creates a pub-sub endpoint with the given destination
      */
     public JmsEndpoint(String endpointUri, String destinationName) {
-        this(endpointUri, destinationName, true);
+        this(UnsafeUriCharactersEncoder.encode(endpointUri), destinationName, true);
     }
 
 

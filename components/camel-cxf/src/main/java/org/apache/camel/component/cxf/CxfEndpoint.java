@@ -45,7 +45,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
-
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -157,7 +157,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     // This method is for CxfComponent setting the EndpointUri
     protected void updateEndpointUri(String endpointUri) {
-        super.setEndpointUri(endpointUri);
+        super.setEndpointUri(UnsafeUriCharactersEncoder.encode(endpointUri));
     }
 
     public Producer createProducer() throws Exception {
@@ -719,7 +719,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public void setAddress(String address) {
-        super.setEndpointUri(address);
+        super.setEndpointUri(UnsafeUriCharactersEncoder.encode(address));
         this.address = address;
     }
 

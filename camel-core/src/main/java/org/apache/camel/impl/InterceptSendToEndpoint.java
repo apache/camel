@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
@@ -69,6 +70,9 @@ public class InterceptSendToEndpoint implements Endpoint {
         return delegate.getEndpointUri();
     }
 
+    public EndpointConfiguration getEndpointConfiguration() {
+        return delegate.getEndpointConfiguration();
+    }
     public String getEndpointKey() {
         return delegate.getEndpointKey();
     }

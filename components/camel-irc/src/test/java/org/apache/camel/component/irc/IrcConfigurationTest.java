@@ -101,7 +101,7 @@ public class IrcConfigurationTest extends CamelTestSupport {
 
         // Test with encoding of @realname
         deprecate = "irc://user@irc.freenode.net?keys=foo,&channels=#camel,#cxf&realname=Camel Bot&username=user&nickname=camelbot";
-        sanitized = "irc://user@irc.freenode.net?realname=Camel%20Bot&nickname=camelbot&channel=camel!foo&channel=cxf";
+        sanitized = "irc://user@irc.freenode.net?channel=camel!foo&channel=cxf&nickname=camelbot&realname=Camel%20Bot";
         endpoint = component.createEndpoint(deprecate); 
         assertEquals(sanitized, endpoint.getEndpointUri());
         assertNotNull(new URI(endpoint.getEndpointUri()));
@@ -156,7 +156,7 @@ public class IrcConfigurationTest extends CamelTestSupport {
         IrcComponent component = context.getComponent("irc", IrcComponent.class);
 
         // irc:nick@host[:port]/#room[?options]
-        IrcEndpoint endpoint = (IrcEndpoint) component.createEndpoint("irc://irc.freenode.net?keys=,foo&channels=#camel,#smx&nickname=camelbot");
+        IrcEndpoint endpoint = (IrcEndpoint) component.createEndpoint("irc://irc.freenode.net?keys=,foo&channels=%23camel,%23smx&nickname=camelbot");
 
         IrcConfiguration conf = endpoint.getConfiguration();
         assertEquals("camelbot", conf.getNickname());
@@ -174,7 +174,7 @@ public class IrcConfigurationTest extends CamelTestSupport {
 
         // irc:nick@host[:port]/#room[?options]
         IrcEndpoint  endpoint = (IrcEndpoint) component.
-        createEndpoint("irc://badnick@irc.freenode.net?keys=foo,&channels=#camel,#smx&realname=Camel Bot&nickname=camelbot");
+        createEndpoint("irc://badnick@irc.freenode.net?keys=foo,&channels=#camel,#smx&realname=Camel+Bot&nickname=camelbot");
 
         IrcConfiguration conf = endpoint.getConfiguration();
         assertEquals("camelbot", conf.getNickname());
@@ -192,7 +192,7 @@ public class IrcConfigurationTest extends CamelTestSupport {
 
         // irc:nick@host[:port]/#room[?options]
         IrcEndpoint  endpoint = (IrcEndpoint) component.
-        createEndpoint("irc://badnick@irc.freenode.net?keys=foo,bar&channels=#camel,#smx&realname=Camel Bot&nickname=camelbot");
+        createEndpoint("irc://badnick@irc.freenode.net?keys=foo,bar&channels=#camel,#smx&realname=Camel+Bot&nickname=camelbot");
 
         IrcConfiguration conf = endpoint.getConfiguration();
         assertEquals("camelbot", conf.getNickname());
