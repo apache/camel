@@ -22,7 +22,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 
+import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -166,4 +168,60 @@ public final class IOHelper {
         close(closeable, null, LOG);
     }
 
+    public static void validateCharset(String charset) throws UnsupportedCharsetException {
+        if (charset != null) {
+            if (Charset.isSupported(charset)) {
+                Charset.forName(charset);
+                return;
+            }
+        }
+        throw new UnsupportedCharsetException(charset);
+    }
+
+    /**
+     * This method will take off the quotes and double quotes of the charset
+     */
+    public static String normalizeCharset(String charset) {
+        if (charset != null) {
+            String answer = charset.trim();
+            if (answer.startsWith("'") || answer.startsWith("\"")) {
+                answer = answer.substring(1);
+            }
+            if (answer.endsWith("'") || answer.endsWith("\"")) {
+                answer = answer.substring(0, answer.length() - 1);
+            }
+            return answer.trim();
+        } else {
+            return null;
+        }
+    }
+
+    public static String getCharsetName(Exchange exchange) {
+        return getCharsetName(exchange, true);
+    }
+
+    /**
+     * Gets the charset name if set as property {@link Exchange#CHARSET_NAME}.
+     *
+     * @param exchange  the exchange
+     * @param useDefault should we fallback and use JVM default charset if no property existed?
+     * @return the charset, or <tt>null</tt> if no found
+     */
+    public static String getCharsetName(Exchange exchange, boolean useDefault) {
+        if (exchange != null) {
+            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            if (charsetName != null) {
+                return IOHelper.normalizeCharset(charsetName);
+            }
+        }
+        if (useDefault) {
+            return getDefaultCharsetName();
+        } else {
+            return null;
+        }
+    }
+    
+    private static String getDefaultCharsetName() {
+        return ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
+    }
 }

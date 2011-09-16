@@ -40,13 +40,11 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +84,7 @@ public final class IOConverter {
 
     @Converter
     public static BufferedReader toReader(File file, Exchange exchange) throws IOException {
-        return new BufferedReader(new EncodingFileReader(file, getCharsetName(exchange)));
+        return new BufferedReader(new EncodingFileReader(file, IOHelper.getCharsetName(exchange)));
     }
 
     @Converter
@@ -109,7 +107,7 @@ public final class IOConverter {
     
     @Converter
     public static BufferedWriter toWriter(File file, Exchange exchange) throws IOException {
-        return new BufferedWriter(new EncodingFileWriter(file, getCharsetName(exchange)));
+        return new BufferedWriter(new EncodingFileWriter(file, IOHelper.getCharsetName(exchange)));
     }
 
     /**
@@ -122,7 +120,7 @@ public final class IOConverter {
 
     @Converter
     public static Reader toReader(InputStream in, Exchange exchange) throws IOException {
-        return new InputStreamReader(in, getCharsetName(exchange));
+        return new InputStreamReader(in, IOHelper.getCharsetName(exchange));
     }
 
     /**
@@ -135,7 +133,7 @@ public final class IOConverter {
     
     @Converter
     public static Writer toWriter(OutputStream out, Exchange exchange) throws IOException {
-        return new OutputStreamWriter(out, getCharsetName(exchange));
+        return new OutputStreamWriter(out, IOHelper.getCharsetName(exchange));
     }
 
     @Converter
@@ -153,7 +151,7 @@ public final class IOConverter {
     
     @Converter
     public static InputStream toInputStream(String text, Exchange exchange) throws IOException {
-        return toInputStream(text.getBytes(getCharsetName(exchange)));
+        return toInputStream(text.getBytes(IOHelper.getCharsetName(exchange)));
     }
     
     /**
@@ -179,7 +177,7 @@ public final class IOConverter {
     
     @Converter
     public static String toString(byte[] data, Exchange exchange) throws IOException {
-        return new String(data, getCharsetName(exchange));
+        return new String(data, IOHelper.getCharsetName(exchange));
     }
 
     /**
@@ -296,7 +294,7 @@ public final class IOConverter {
 
     @Converter
     public static byte[] toByteArray(String value, Exchange exchange) throws IOException {
-        return value != null ? value.getBytes(getCharsetName(exchange)) : null;
+        return value != null ? value.getBytes(IOHelper.getCharsetName(exchange)) : null;
     }
 
     /**
@@ -361,16 +359,12 @@ public final class IOConverter {
 
     @Converter
     public static String toString(ByteArrayOutputStream os, Exchange exchange) throws IOException {
-        return os.toString(getCharsetName(exchange));
+        return os.toString(IOHelper.getCharsetName(exchange));
     }
 
     @Converter
     public static InputStream toInputStream(ByteArrayOutputStream os) {
         return new ByteArrayInputStream(os.toByteArray());
-    }
-
-    public static String getCharsetName(Exchange exchange) {
-        return getCharsetName(exchange, true);
     }
 
     /**
@@ -380,24 +374,11 @@ public final class IOConverter {
      * @param useDefault should we fallback and use JVM default charset if no property existed?
      * @return the charset, or <tt>null</tt> if no found
      */
+    @Deprecated
     public static String getCharsetName(Exchange exchange, boolean useDefault) {
-        if (exchange != null) {
-            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-            if (charsetName != null) {
-                return IOConverter.normalizeCharset(charsetName);
-            }
-        }
-        if (useDefault) {
-            return getDefaultCharsetName();
-        } else {
-            return null;
-        }
+        return IOHelper.getCharsetName(exchange);
     }
-    
-    public static String getDefaultCharsetName() {
-        return ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
-    }
-    
+
     /**
      * Encoding-aware file reader. 
      */
@@ -429,33 +410,18 @@ public final class IOConverter {
         }
 
     }
-
+    
     /**
      * This method will take off the quotes and double quotes of the charset
      */
+    @Deprecated
     public static String normalizeCharset(String charset) {
-        if (charset != null) {
-            String answer = charset.trim();
-            if (answer.startsWith("'") || answer.startsWith("\"")) {
-                answer = answer.substring(1);
-            }
-            if (answer.endsWith("'") || answer.endsWith("\"")) {
-                answer = answer.substring(0, answer.length() - 1);
-            }
-            return answer.trim();
-        } else {
-            return null;
-        }
+        return IOHelper.normalizeCharset(charset);
     }
     
+    @Deprecated
     public static void validateCharset(String charset) throws UnsupportedCharsetException {
-        if (charset != null) {
-            if (Charset.isSupported(charset)) {
-                Charset.forName(charset);
-                return;
-            }
-        }
-        throw new UnsupportedCharsetException(charset);
+        IOHelper.validateCharset(charset);
     }
     
 }

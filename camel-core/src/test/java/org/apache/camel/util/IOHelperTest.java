@@ -56,4 +56,11 @@ public class IOHelperTest extends TestCase {
         OutputStream os = new ByteArrayOutputStream();
         IOHelper.copyAndCloseInput(is, os, 256);
     }
+    
+    public void testCharsetNormalize() throws Exception {
+        assertEquals("UTF-8", IOHelper.normalizeCharset("'UTF-8'"));
+        assertEquals("UTF-8", IOHelper.normalizeCharset("\"UTF-8\""));
+        assertEquals("UTF-8", IOHelper.normalizeCharset("\"UTF-8 \""));
+        assertEquals("UTF-8", IOHelper.normalizeCharset("\' UTF-8\'"));
+    }
 }

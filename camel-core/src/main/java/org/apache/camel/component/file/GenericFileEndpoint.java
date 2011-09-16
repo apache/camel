@@ -32,7 +32,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -40,6 +39,7 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
@@ -360,7 +360,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     public void setCharset(String charset) {
-        IOConverter.validateCharset(charset);
+        IOHelper.validateCharset(charset);
         this.charset = charset;
     }
 
