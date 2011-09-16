@@ -378,6 +378,11 @@ public final class IOConverter {
     public static String getCharsetName(Exchange exchange, boolean useDefault) {
         return IOHelper.getCharsetName(exchange, useDefault);
     }
+    
+    @Deprecated
+    public static String getCharsetName(Exchange exchange) {
+        return getCharsetName(exchange, true);
+    }
 
     /**
      * Encoding-aware file reader. 
