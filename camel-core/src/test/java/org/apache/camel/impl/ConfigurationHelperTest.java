@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.util;
+package org.apache.camel.impl;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -26,8 +26,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.URIField;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultEndpointConfiguration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

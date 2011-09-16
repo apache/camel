@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.impl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -28,8 +28,10 @@ import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.URIField;
-import org.apache.camel.impl.DefaultEndpointConfiguration;
 import org.apache.camel.impl.converter.PropertyEditorTypeConverter;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

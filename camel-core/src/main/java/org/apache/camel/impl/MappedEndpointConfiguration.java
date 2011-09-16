@@ -29,7 +29,6 @@ import org.apache.camel.Component;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.PropertyEditorTypeConverter;
-import org.apache.camel.util.ConfigurationHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**

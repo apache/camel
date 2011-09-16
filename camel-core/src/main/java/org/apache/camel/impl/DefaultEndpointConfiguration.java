@@ -16,23 +16,12 @@
  */
 package org.apache.camel.impl;
 
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.Component;
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ConfigurationHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Default implementation of {@link EndpointConfiguration}.
