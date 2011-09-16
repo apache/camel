@@ -376,7 +376,7 @@ public final class IOConverter {
      */
     @Deprecated
     public static String getCharsetName(Exchange exchange, boolean useDefault) {
-        return IOHelper.getCharsetName(exchange);
+        return IOHelper.getCharsetName(exchange, useDefault);
     }
 
     /**
