@@ -50,10 +50,11 @@ public class RoutingSlipIgnoreInvalidEndpointsTest extends ContextTestSupport {
     
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+            @SuppressWarnings("deprecation")
             public void configure() {                
                 from("direct:a").routingSlip("myHeader", true).to("mock:end");
                 
-                from("direct:b").routingSlip("myHeader").to("mock:end");
+                from("direct:b").routingSlip(header("myHeader")).to("mock:end");
                 
                 from("direct:start").transform(constant("Hello World"));
             }

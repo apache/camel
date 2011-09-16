@@ -49,7 +49,7 @@ public class RoutingSlipInOutAndInOnlyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .routingSlip("slip")
+                    .routingSlip(header("slip"))
                     .to("mock:result");
 
                 from("direct:a")

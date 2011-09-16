@@ -148,7 +148,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").
                         doTry().
-                        routingSlip(ROUTING_SLIP_HEADER).to("mock:noexception").
+                        routingSlip(header(ROUTING_SLIP_HEADER)).to("mock:noexception").endDoTry().
                         doCatch(Exception.class).
                     to("mock:exception");
             }

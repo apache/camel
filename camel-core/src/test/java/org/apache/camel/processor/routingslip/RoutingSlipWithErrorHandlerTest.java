@@ -25,7 +25,7 @@ public class RoutingSlipWithErrorHandlerTest extends RoutingSlipWithExceptionTes
             public void configure() {                
                 onException(Exception.class).handled(true).to("mock:exception");
                 
-                from("direct:start").routingSlip(ROUTING_SLIP_HEADER).to("mock:noexception");
+                from("direct:start").routingSlip(header(ROUTING_SLIP_HEADER)).to("mock:noexception");
             }
         };
     }
