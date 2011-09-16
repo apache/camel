@@ -156,6 +156,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     public List<RouteContext> addRoutes(ModelCamelContext camelContext, Collection<Route> routes) throws Exception {
         List<RouteContext> answer = new ArrayList<RouteContext>();
 
+        @SuppressWarnings("deprecation")
         ErrorHandlerFactory handler = camelContext.getErrorHandlerBuilder();
         if (handler != null) {
             setErrorHandlerBuilderIfNull(handler);
@@ -211,6 +212,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @throws Exception can be thrown from the route builder
      * @see AdviceWithRouteBuilder
      */
+    @SuppressWarnings("deprecation")
     public RouteDefinition adviceWith(ModelCamelContext camelContext, RouteBuilder builder) throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
         ObjectHelper.notNull(builder, "RouteBuilder");

@@ -313,6 +313,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
     // Implementation methods
     // -----------------------------------------------------------------------
+    @SuppressWarnings("deprecation")
     protected void checkInitialized() throws Exception {
         if (initialized.compareAndSet(false, true)) {
             // Set the CamelContext ErrorHandler here

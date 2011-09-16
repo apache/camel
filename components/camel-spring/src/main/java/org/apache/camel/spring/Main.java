@@ -38,6 +38,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
  *
  * @version 
  */
+@SuppressWarnings("deprecation")
 public class Main extends MainSupport {
     protected static Main instance;
 

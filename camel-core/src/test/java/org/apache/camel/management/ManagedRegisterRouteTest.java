@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ManagedRegisterRouteTest extends ManagementTestSupport {
 
+    @SuppressWarnings("deprecation")
     public void testRoutes() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 

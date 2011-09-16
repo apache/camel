@@ -17,7 +17,6 @@
 package org.apache.camel.spring.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -41,7 +40,8 @@ public class SpringCustomExpressionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringCustomExpressionTest.xml");
     }
 
-    public static class MyExpression extends ExpressionAdapter {
+    @SuppressWarnings("deprecation")
+    public static class MyExpression extends org.apache.camel.impl.ExpressionAdapter {
 
         @Override
         public Object evaluate(Exchange exchange) {

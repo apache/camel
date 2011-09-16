@@ -45,6 +45,7 @@ public final class HttpHelper {
         // Helper class
     }
 
+    @SuppressWarnings("deprecation")
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         if (contentType != null) {
             // find the charset and set it to the Exchange

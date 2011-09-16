@@ -34,6 +34,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  * /spring/docs/current/spring-framework-reference/html/expressions.html">
  * Spring Expression Language</a> in the context of Camel.
  */
+@SuppressWarnings("deprecation")
 public class SpelExpression extends ExpressionSupport {
 
     private final String expressionString;

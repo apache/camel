@@ -37,6 +37,7 @@ import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
@@ -121,7 +122,8 @@ public class CxfRsProducer extends DefaultProducer {
             // Get the map from HTTP_QUERY header
             String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
             if (queryString != null) {
-                maps = getQueryParametersFromQueryString(queryString, IOConverter.getCharsetName(exchange));
+                maps = getQueryParametersFromQueryString(queryString,
+                                                         IOHelper.getCharsetName(exchange));
             }
         }
         if (maps == null) {

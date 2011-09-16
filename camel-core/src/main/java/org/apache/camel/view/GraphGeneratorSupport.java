@@ -66,6 +66,7 @@ public abstract class GraphGeneratorSupport extends GraphSupport {
         if (makeParentDirs) {
             parent.mkdirs();
         }
+        @SuppressWarnings("deprecation")
         List<RouteDefinition> routes = context.getRouteDefinitions();
         routeGroupMap = createRouteGroupMap(routes);
 

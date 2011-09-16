@@ -158,6 +158,7 @@ public final class RouteDefinitionHelper {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private static void initParentAndErrorHandlerBuilder(ModelCamelContext context, RouteDefinition route,
                                                          List<ProcessorDefinition> abstracts, List<OnExceptionDefinition> onExceptions) {
 
