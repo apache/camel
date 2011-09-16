@@ -17,20 +17,10 @@
 
 package org.apache.camel.component.cxf;
 
-import java.lang.reflect.Proxy;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.ws.handler.Handler;
-
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.frontend.ClientFactoryBean;
-import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.osgi.framework.BundleContext;

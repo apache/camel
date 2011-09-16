@@ -16,31 +16,22 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.lang.reflect.Proxy;
-
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.apache.cxf.common.classloader.ClassLoaderUtils;
-import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientFactoryBean;
-import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.version.Version;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>

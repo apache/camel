@@ -22,23 +22,18 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.Person;
-import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
     static int port1 = CXFTestSupport.getPort1();

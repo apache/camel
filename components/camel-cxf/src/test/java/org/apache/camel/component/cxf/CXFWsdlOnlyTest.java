@@ -24,7 +24,6 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;

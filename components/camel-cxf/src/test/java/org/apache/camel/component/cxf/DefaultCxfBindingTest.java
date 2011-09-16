@@ -89,7 +89,7 @@ public class DefaultCxfBindingTest extends Assert {
         verifyHeader(headers, "myFruitHeader", "peach");
         verifyHeader(headers, "MYFRUITHEADER", "peach");
         
-        Set<Attachment> attachments = CastUtils.cast((Set)requestContext.get(CxfConstants.CAMEL_CXF_ATTACHMENTS));
+        Set<Attachment> attachments = (Set<Attachment>)requestContext.get(CxfConstants.CAMEL_CXF_ATTACHMENTS);
         assertNotNull(attachments);
         assertNotNull(attachments.size() == 1);
         Attachment att = attachments.iterator().next();

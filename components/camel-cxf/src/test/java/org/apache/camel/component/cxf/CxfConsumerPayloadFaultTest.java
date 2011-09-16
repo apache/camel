@@ -29,7 +29,6 @@ import org.w3c.dom.Element;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
@@ -41,6 +40,7 @@ import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.junit.Test;
+
 
 
 /**
