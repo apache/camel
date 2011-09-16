@@ -32,4 +32,5 @@ http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.7.
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.7.2.xsd=schema/camel-spring-integration.xsd
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.7.3.xsd=schema/camel-spring-integration.xsd
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.8.0.xsd=schema/camel-spring-integration.xsd
+http\://camel.apache.org/schema/spring/integration/camel-spring-integration-2.8.1.xsd=schema/camel-spring-integration.xsd
 http\://camel.apache.org/schema/spring/integration/camel-spring-integration-${pom.version}.xsd=schema/camel-spring-integration.xsd
