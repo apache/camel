@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.Map;
@@ -30,7 +31,7 @@ import org.apache.camel.Service;
  *
  * @version 
  */
-public class LRUCache<K, V> implements Service, Map<K, V> {
+public class LRUCache<K, V> implements Service, Map<K, V>, Serializable {
     private static final long serialVersionUID = -342098639681884414L;
     private int maxCacheSize = 10000;
     private final AtomicLong hits = new AtomicLong();
@@ -102,7 +103,7 @@ public class LRUCache<K, V> implements Service, Map<K, V> {
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
-        ((AbstractMap)map).putAll(map);
+        this.map.putAll(map);
     }
 
     @Override
