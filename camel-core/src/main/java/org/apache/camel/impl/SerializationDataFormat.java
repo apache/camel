@@ -34,8 +34,8 @@ import org.apache.camel.util.ExchangeHelper;
  */
 public class SerializationDataFormat implements DataFormat {
 
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
-        ObjectOutput out = ExchangeHelper.convertToType(exchange, ObjectOutput.class, stream);
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        ObjectOutput out = ExchangeHelper.convertToMandatoryType(exchange, ObjectOutput.class, stream);
         try {
             out.writeObject(graph);
         } finally {
@@ -48,8 +48,8 @@ public class SerializationDataFormat implements DataFormat {
         }
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
-        ObjectInput in = ExchangeHelper.convertToType(exchange, ObjectInput.class, stream);
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        ObjectInput in = ExchangeHelper.convertToMandatoryType(exchange, ObjectInput.class, stream);
         try {
             return in.readObject();
         } finally {
