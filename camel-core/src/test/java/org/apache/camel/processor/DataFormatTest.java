@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import java.io.NotSerializableException;
 import java.io.Serializable;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+
 import static org.apache.camel.util.ObjectHelper.equal;
 
 /**
@@ -41,6 +44,15 @@ public class DataFormatTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    public void testMarshalNonSerializableBean() throws Exception {
+        MyNonSerializableBean bean = new MyNonSerializableBean("James");
+        try {
+            template.sendBody("direct:start", bean);
+            fail("Should throw exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(NotSerializableException.class, e.getCause());
+        }
+    }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -67,6 +79,14 @@ public class DataFormatTest extends ContextTestSupport {
         @Override
         public int hashCode() {
             return name.hashCode() + counter;
+        }
+    }
+
+    protected static class MyNonSerializableBean {
+        private String name;
+
+        public MyNonSerializableBean(String name) {
+            this.name = name;
         }
     }
 
