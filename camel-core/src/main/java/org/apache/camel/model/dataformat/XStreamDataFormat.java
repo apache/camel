@@ -49,7 +49,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private String encoding;
     @XmlAttribute
-    private String driver = "xml";
+    private String driver;
     @XmlAttribute
     private String driverRef;
     @XmlJavaTypeAdapter(ConvertersAdapter.class)
@@ -166,13 +166,16 @@ public class XStreamDataFormat extends DataFormatDefinition {
     public static class ConvertersAdapter extends XmlAdapter<ConverterList, List<String>> {
         @Override
         public ConverterList marshal(List<String> v) throws Exception {
+            if (v == null) {
+                return null;
+            }
+
             List<ConverterEntry> list = new ArrayList<ConverterEntry>();
             for (String str : v) {
                 ConverterEntry entry = new ConverterEntry();
                 entry.setClsName(str);
                 list.add(entry);
             }
-
             ConverterList converterList = new ConverterList();
             converterList.setList(list);
             return converterList;
@@ -180,6 +183,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
         @Override
         public List<String> unmarshal(ConverterList v) throws Exception {
+            if (v == null) {
+                return null;
+            }
+
             List<String> list = new ArrayList<String>();
             for (ConverterEntry entry : v.getList()) {
                 list.add(entry.getClsName());
@@ -191,7 +198,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     @XmlAccessorType(XmlAccessType.NONE)
     public static class ConverterList {
         @XmlElement(name = "converter")
-        private List<ConverterEntry> list = new ArrayList<ConverterEntry>();
+        private List<ConverterEntry> list;
 
         public List<ConverterEntry> getList() {
             return list;
@@ -222,6 +229,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
         @Override
         public ImplicitCollectionList marshal(Map<String, String[]> v) throws Exception {
+            if (v == null || v.isEmpty()) {
+                return null;
+            }
+
             List<ImplicitCollectionEntry> list = new ArrayList<ImplicitCollectionEntry>();
             for (Entry<String, String[]> e : v.entrySet()) {
                 ImplicitCollectionEntry entry = new ImplicitCollectionEntry(e.getKey(), e.getValue());
@@ -236,6 +247,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
         @Override
         public Map<String, String[]> unmarshal(ImplicitCollectionList v) throws Exception {
+            if (v == null) {
+                return null;
+            }
+
             Map<String, String[]> map = new HashMap<String, String[]>();
             for (ImplicitCollectionEntry entry : v.getList()) {
                 map.put(entry.getClsName(), entry.getFields());
@@ -247,7 +262,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     @XmlAccessorType(XmlAccessType.NONE)
     public static class ImplicitCollectionList {
         @XmlElement(name = "class")
-        private List<ImplicitCollectionEntry> list = new ArrayList<ImplicitCollectionEntry>();
+        private List<ImplicitCollectionEntry> list;
 
         public List<ImplicitCollectionEntry> getList() {
             return list;
@@ -302,7 +317,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
         @Override
         public AliasList marshal(Map<String, String> value) throws Exception {
             if (value == null || value.isEmpty()) {
-                return new AliasList();
+                return null;
             }
 
             List<AliasEntry> ret = new ArrayList<AliasEntry>(value.size());
@@ -316,6 +331,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
         @Override
         public Map<String, String> unmarshal(AliasList value) throws Exception {
+            if (value == null || value.getList() == null || value.getList().isEmpty()) {
+                return null;
+            }
+
             Map<String, String> answer = new HashMap<String, String>();
             for (AliasEntry alias : value.getList()) {
                 answer.put(alias.getName(), alias.getClsName());
@@ -327,7 +346,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     @XmlAccessorType(XmlAccessType.NONE)
     public static class AliasList {
         @XmlElement(name = "alias")
-        private List<AliasEntry> list = new ArrayList<AliasEntry>();
+        private List<AliasEntry> list;
 
         public List<AliasEntry> getList() {
             return list;
@@ -383,6 +402,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
         @Override
         public OmitFieldList marshal(Map<String, String[]> v) throws Exception {
+            if (v == null || v.isEmpty()) {
+                return null;
+            }
+
             List<OmitFieldEntry> list = new ArrayList<OmitFieldEntry>();
             for (Entry<String, String[]> e : v.entrySet()) {
                 OmitFieldEntry entry = new OmitFieldEntry(e.getKey(), e.getValue());
@@ -397,6 +420,10 @@ public class XStreamDataFormat extends DataFormatDefinition {
 
         @Override
         public Map<String, String[]> unmarshal(OmitFieldList v) throws Exception {
+            if (v == null || v.getList() == null || v.getList().isEmpty()) {
+                return null;
+            }
+
             Map<String, String[]> map = new HashMap<String, String[]>();
             for (OmitFieldEntry entry : v.getList()) {
                 map.put(entry.getClsName(), entry.getFields());
@@ -408,7 +435,7 @@ public class XStreamDataFormat extends DataFormatDefinition {
     @XmlAccessorType(XmlAccessType.NONE)
     public static class OmitFieldList {
         @XmlElement(name = "omitField")
-        private List<OmitFieldEntry> list = new ArrayList<OmitFieldEntry>();
+        private List<OmitFieldEntry> list;
 
         public List<OmitFieldEntry> getList() {
             return list;
