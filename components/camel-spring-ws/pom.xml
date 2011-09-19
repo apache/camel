@@ -105,11 +105,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>net.javacrumbs</groupId>
             <artifactId>spring-ws-test</artifactId>
             <version>0.19</version>
