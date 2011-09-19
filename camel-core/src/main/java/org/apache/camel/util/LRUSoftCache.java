@@ -104,13 +104,12 @@ public class LRUSoftCache<K, V> extends LRUCache<K, V> {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public int size() {
         // only count as a size if there is a value
         int size = 0;
-        Collection<SoftReference<V>> col = (Collection<SoftReference<V>>) super.values();
-        for (SoftReference<V> ref : col) {
-            if (ref.get() != null) {
+        for (V value : super.values()) {
+        	SoftReference<?> ref = (SoftReference<?>)value;
+            if (ref != null && ref.get() != null) {
                 size++;
             }
         }

@@ -150,7 +150,7 @@ public class ConsumerCache extends ServiceSupport {
     public int getCapacity() {
         int capacity = -1;
         if (consumers instanceof LRUCache) {
-            LRUCache cache = (LRUCache) consumers;
+            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
             capacity = cache.getMaxCacheSize();
         }
         return capacity;
@@ -166,7 +166,7 @@ public class ConsumerCache extends ServiceSupport {
     public long getHits() {
         long hits = -1;
         if (consumers instanceof LRUCache) {
-            LRUCache cache = (LRUCache) consumers;
+            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
             hits = cache.getHits();
         }
         return hits;
@@ -182,7 +182,7 @@ public class ConsumerCache extends ServiceSupport {
     public long getMisses() {
         long misses = -1;
         if (consumers instanceof LRUCache) {
-            LRUCache cache = (LRUCache) consumers;
+            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
             misses = cache.getMisses();
         }
         return misses;
@@ -193,7 +193,7 @@ public class ConsumerCache extends ServiceSupport {
      */
     public void resetCacheStatistics() {
         if (consumers instanceof LRUCache) {
-            LRUCache cache = (LRUCache) consumers;
+            LRUCache<String, PollingConsumer> cache = (LRUCache<String, PollingConsumer>)consumers;
             cache.resetStatistics();
         }
     }
@@ -211,11 +211,11 @@ public class ConsumerCache extends ServiceSupport {
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(consumers);
+        ServiceHelper.startServices(consumers.values());
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(consumers);
+        ServiceHelper.stopServices(consumers.values());
         consumers.clear();
     }
 
