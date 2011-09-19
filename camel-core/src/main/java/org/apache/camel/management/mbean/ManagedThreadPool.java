@@ -149,7 +149,7 @@ public class ManagedThreadPool {
     }
 
     @ManagedAttribute(description = "Keep alive time in seconds")
-    public void setKeepAliveTime(int keepAliveTimeInSeconds) {
+    public void setKeepAliveTime(long keepAliveTimeInSeconds) {
         threadPool.setKeepAliveTime(keepAliveTimeInSeconds, TimeUnit.SECONDS);
     }
 
