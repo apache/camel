@@ -60,7 +60,8 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
     public String[] lookupPropertyPlaceholderIds() {
         List<String> ids = new ArrayList<String>();
 
-        for (String id : container.getComponentIds()) {
+        for (Object componentId : container.getComponentIds()) {
+            String id = (String) componentId;
             ComponentMetadata meta = container.getComponentMetadata(id);
             if (meta instanceof ExtendedBeanMetadata) {
                 Class clazz = ((ExtendedBeanMetadata) meta).getRuntimeClass();
