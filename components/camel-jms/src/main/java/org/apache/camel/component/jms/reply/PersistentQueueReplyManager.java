@@ -193,6 +193,9 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         if (endpoint.getExceptionListener() != null) {
             answer.setExceptionListener(endpoint.getExceptionListener());
         }
+        if (endpoint.getErrorHandler() != null) {
+            answer.setErrorHandler(endpoint.getErrorHandler());
+        }
         if (endpoint.getReceiveTimeout() >= 0) {
             answer.setReceiveTimeout(endpoint.getReceiveTimeout());
         }

@@ -37,6 +37,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
+import org.springframework.util.ErrorHandler;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
@@ -222,6 +223,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("jms://queue:Foo", endpoint.getEndpointKey());
         assertEquals("jms://queue:Foo", endpoint.getEndpointUri());
         assertNull(endpoint.getExceptionListener());
+        assertNull(endpoint.getErrorHandler());
         assertEquals(1, endpoint.getIdleTaskExecutionLimit());
         assertEquals(1, endpoint.getIdleConsumerLimit());
         assertEquals(null, endpoint.getJmsMessageType());
@@ -315,6 +317,12 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         });
         assertNotNull(endpoint.getExceptionListener());
 
+        endpoint.setErrorHandler(new ErrorHandler() {
+            public void handleError(Throwable t) {
+            }
+        });
+        assertNotNull(endpoint.getErrorHandler());
+        
         endpoint.setExplicitQosEnabled(true);
         assertEquals(true, endpoint.isExplicitQosEnabled());
 

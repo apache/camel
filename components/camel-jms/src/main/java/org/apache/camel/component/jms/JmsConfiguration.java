@@ -41,6 +41,7 @@ import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
+import org.springframework.util.ErrorHandler;
 
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 
@@ -64,6 +65,7 @@ public class JmsConfiguration implements Cloneable {
     private String acknowledgementModeName;
     // Used to configure the spring Container
     private ExceptionListener exceptionListener;
+    private ErrorHandler errorHandler;    
     private boolean autoStartup = true;
     private boolean acceptMessagesWhileStopping;
     private String clientId;
@@ -460,6 +462,14 @@ public class JmsConfiguration implements Cloneable {
         this.exceptionListener = exceptionListener;
     }
 
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
+    }
+
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
+    
     @Deprecated
     public boolean isSubscriptionDurable() {
         return subscriptionDurable;
@@ -839,6 +849,10 @@ public class JmsConfiguration implements Cloneable {
             container.setExceptionListener(exceptionListener);
         }
 
+        if (errorHandler != null) {
+            container.setErrorHandler(errorHandler);
+        }
+        
         container.setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
         container.setExposeListenerSession(exposeListenerSession);
         container.setSessionTransacted(transacted);
