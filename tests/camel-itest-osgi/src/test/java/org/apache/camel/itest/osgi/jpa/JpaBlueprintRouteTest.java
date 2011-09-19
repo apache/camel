@@ -17,6 +17,8 @@
 
 package org.apache.camel.itest.osgi.jpa;
 
+import java.io.InputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,8 +31,6 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
-
-import java.io.InputStream;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
@@ -52,8 +52,8 @@ public class JpaBlueprintRouteTest extends OSGiBlueprintTestSupport {
         mock.expectedMessageCount(1);
 
         ProducerTemplate template = ctx.createProducerTemplate();
-        template.sendBody("direct:start", new SendEmail(1L,"someone@somewhere.org"));
-        template.sendBody("direct:start", new SendEmail(2L,"someoneelse@somewhere.org"));
+        template.sendBody("direct:start", new SendEmail(1L, "someone@somewhere.org"));
+        template.sendBody("direct:start", new SendEmail(2L, "someoneelse@somewhere.org"));
 
         assertMockEndpointsSatisfied();
     }

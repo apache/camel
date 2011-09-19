@@ -16,6 +16,10 @@
  */
 package org.apache.camel.itest.osgi.jpa;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
@@ -41,10 +45,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
@@ -68,7 +68,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", new SendEmail(1L,"someone@somewhere.org"));
+        template.sendBody("direct:start", new SendEmail(1L, "someone@somewhere.org"));
 
         assertMockEndpointsSatisfied();
         assertEntityInDB();

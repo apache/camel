@@ -34,7 +34,7 @@ public class SendEmail {
     public SendEmail() {
     }
 
-    public SendEmail(Long id,String address) {
+    public SendEmail(Long id, String address) {
         setId(id);
         setAddress(address);
     }
