@@ -50,7 +50,8 @@ public class FtpChangedReadLockTest extends FtpServerTestSupport {
         String[] lines = content.split("\n");
         assertEquals("There should be 20 lines in the file", 20, lines.length);
         for (int i = 0; i < 20; i++) {
-            assertEquals("Line " + i, lines[i]);
+            // there may be windows line terminators
+            assertTrue(lines[i].startsWith("Line " + i));
         }
     }
 
