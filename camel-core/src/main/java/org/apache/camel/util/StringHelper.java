@@ -76,6 +76,20 @@ public final class StringHelper {
         return s;
     }
 
+    public static String removeLeadingAndEndingQuotes(String s) {
+        if (ObjectHelper.isEmpty(s)) {
+            return s;
+        }
+
+        if (s.startsWith("'") && s.endsWith("'")) {
+            return s.substring(1, s.length() - 1);
+        }
+        if (s.startsWith("\"") && s.endsWith("\"")) {
+            return s.substring(1, s.length() - 1);
+        }
+        return s;
+    }
+
     /**
      * Encodes the text into safe XML by replacing < > and & with XML tokens
      *
@@ -105,6 +119,29 @@ public final class StringHelper {
             if (Character.isUpperCase(ch)) {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * Does the expression have the language start token?
+     *
+     * @param expression the expression
+     * @param language the name of the language, such as simple
+     * @return <tt>true</tt> if the expression contains the start token, <tt>false</tt> otherwise
+     */
+    public static boolean hasStartToken(String expression, String language) {
+        if (expression == null) {
+            return false;
+        }
+
+        if (expression.indexOf("${") >= 0) {
+            return true;
+        }
+
+        if (language != null && expression.indexOf("$" + language + "{") >= 0) {
+            return true;
         }
 
         return false;
