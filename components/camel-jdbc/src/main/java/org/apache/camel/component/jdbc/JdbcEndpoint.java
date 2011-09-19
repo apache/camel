@@ -31,6 +31,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 public class JdbcEndpoint extends DefaultEndpoint {
     private int readSize;
     private boolean transacted;
+    private boolean resetAutoCommit = true;
     private DataSource dataSource;
     private Map<String, Object> parameters;
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;
@@ -69,6 +70,14 @@ public class JdbcEndpoint extends DefaultEndpoint {
 
     public void setTransacted(boolean transacted) {
         this.transacted = transacted;
+    }
+
+    public boolean isResetAutoCommit() {
+        return resetAutoCommit;
+    }
+
+    public void setResetAutoCommit(boolean resetAutoCommit) {
+        this.resetAutoCommit = resetAutoCommit;
     }
 
     public DataSource getDataSource() {

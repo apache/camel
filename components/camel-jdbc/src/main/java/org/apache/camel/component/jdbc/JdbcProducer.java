@@ -58,23 +58,34 @@ public class JdbcProducer extends DefaultProducer {
      * Execute sql of exchange and set results on output
      */
     public void process(Exchange exchange) throws Exception {
+        if (getEndpoint().isResetAutoCommit()) {
+            processingSqlBySettingAutoCommit(exchange);
+        } else {
+            processingSqlWithoutSettingAutoCommit(exchange);
+        }
+        // populate headers
+        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+    }
+
+    private void processingSqlBySettingAutoCommit(Exchange exchange) throws Exception {
         String sql = exchange.getIn().getBody(String.class);
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
         Boolean autoCommit = null;
-        
         try {
             conn = dataSource.getConnection();
             autoCommit = conn.getAutoCommit();
-            conn.setAutoCommit(false);
-            
+            if (autoCommit) {
+                conn.setAutoCommit(false);
+            }
+
             stmt = conn.createStatement();
-            
+
             if (parameters != null && !parameters.isEmpty()) {
                 IntrospectionSupport.setProperties(stmt, parameters);
             }
-            
+
             LOG.debug("Executing JDBC statement: {}", sql);
 
             if (stmt.execute(sql)) {
@@ -98,9 +109,36 @@ public class JdbcProducer extends DefaultProducer {
             resetAutoCommit(conn, autoCommit);
             closeQuietly(conn);
         }
+    }
 
-        // populate headers
-        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+    private void processingSqlWithoutSettingAutoCommit(Exchange exchange) throws Exception {
+        String sql = exchange.getIn().getBody(String.class);
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        try {
+            conn = dataSource.getConnection();
+
+            stmt = conn.createStatement();
+
+            if (parameters != null && !parameters.isEmpty()) {
+                IntrospectionSupport.setProperties(stmt, parameters);
+            }
+
+            LOG.debug("Executing JDBC statement: {}", sql);
+
+            if (stmt.execute(sql)) {
+                rs = stmt.getResultSet();
+                setResultSet(exchange, rs);
+            } else {
+                int updateCount = stmt.getUpdateCount();
+                exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
+            }
+        } finally {
+            closeQuietly(rs);
+            closeQuietly(stmt);
+            closeQuietly(conn);
+        }
     }
 
     private void closeQuietly(ResultSet rs) {
