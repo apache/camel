@@ -20,11 +20,14 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a wellformed HTML document (XML well Formed) {@link DataFormat}
@@ -32,7 +35,9 @@ import org.apache.camel.spi.DataFormat;
 @XmlRootElement(name = "tidyMarkup")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TidyMarkupDataFormat extends DataFormatDefinition {
-    @XmlAttribute
+    @XmlAttribute(name = "dataObjectType")
+    private String dataObjectTypeName;
+    @XmlTransient
     private Class<?> dataObjectType;
 
     public TidyMarkupDataFormat() {
@@ -56,14 +61,31 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
         return dataObjectType;
     }
 
-    // Implementation methods
-    //-------------------------------------------------------------------------
+    public String getDataObjectTypeName() {
+        return dataObjectTypeName;
+    }
+
+    public void setDataObjectTypeName(String dataObjectTypeName) {
+        this.dataObjectTypeName = dataObjectTypeName;
+    }
+
+    @Override
+    protected DataFormat createDataFormat(RouteContext routeContext) {
+        if (dataObjectType == null && dataObjectTypeName != null) {
+            try {
+                dataObjectType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(dataObjectTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return super.createDataFormat(routeContext);
+    }
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
-        Class<?> type = getDataObjectType();
-        if (type != null) {
-            setProperty(dataFormat, "dataObjectType", type);
+        if (dataObjectType != null) {
+            setProperty(dataFormat, "dataObjectType", dataObjectType);
         }
     }
 

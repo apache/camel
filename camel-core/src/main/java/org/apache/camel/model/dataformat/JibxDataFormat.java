@@ -20,20 +20,23 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the JiBX XML {@link org.apache.camel.spi.DataFormat}
- *
  */
 @XmlRootElement(name = "jibx")
 @XmlAccessorType(XmlAccessType.NONE)
 public class JibxDataFormat extends DataFormatDefinition {
-    @XmlAttribute
-    private Class unmarshallClass;
+    @XmlAttribute(name = "unmarshallClass")
+    private String unmarshallTypeName;
+    @XmlTransient
+    private Class<?> unmarshallClass;
 
     public JibxDataFormat() {
         super("jibx");
@@ -44,21 +47,40 @@ public class JibxDataFormat extends DataFormatDefinition {
         setUnmarshallClass(unmarshallClass);
     }
 
-    @Override
-    protected DataFormat createDataFormat(RouteContext routeContext) {
-        DataFormat answer = super.createDataFormat(routeContext);
-        if (unmarshallClass != null) {
-            setProperty(answer, "unmarshallClass", unmarshallClass);
-        }
-        return answer;
-    }
-
     public Class getUnmarshallClass() {
         return unmarshallClass;
     }
 
     public void setUnmarshallClass(Class unmarshallClass) {
         this.unmarshallClass = unmarshallClass;
+    }
+
+    public String getUnmarshallTypeName() {
+        return unmarshallTypeName;
+    }
+
+    public void setUnmarshallTypeName(String unmarshallTypeName) {
+        this.unmarshallTypeName = unmarshallTypeName;
+    }
+
+    @Override
+    protected DataFormat createDataFormat(RouteContext routeContext) {
+        if (unmarshallClass == null && unmarshallTypeName != null) {
+            try {
+                unmarshallClass = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(unmarshallTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return super.createDataFormat(routeContext);
+    }
+
+    @Override
+    protected void configureDataFormat(DataFormat dataFormat) {
+        if (unmarshallClass != null) {
+            setProperty(dataFormat, "unmarshallClass", unmarshallClass);
+        }
     }
 
 }

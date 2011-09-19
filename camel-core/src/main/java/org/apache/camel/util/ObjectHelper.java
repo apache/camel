@@ -716,6 +716,10 @@ public final class ObjectHelper {
         // and these is common as well
         } else if ("java.lang.String".equals(name) || "String".equals(name)) {
             return String.class;
+        } else if ("java.lang.Boolean".equals(name) || "Boolean".equals(name)) {
+            return Boolean.class;
+        } else if ("boolean".equals(name)) {
+            return boolean.class;
         } else if ("java.lang.Integer".equals(name) || "Integer".equals(name)) {
             return Integer.class;
         } else if ("int".equals(name)) {

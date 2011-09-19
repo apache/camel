@@ -86,6 +86,27 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
 
     }
 
+    @Test
+    public void testSetHeaderXPathResultType() throws Exception {
+        getInstalledBundle("CamelBlueprintTestBundle21").start();
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle21)", 10000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle21)", 10000);
+
+        ProducerTemplate template = ctx.createProducerTemplate();
+
+        MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
+        mock.expectedMessageCount(1);
+        mock.message(0).header("foo").isInstanceOf(Boolean.class);
+        mock.message(0).header("foo").isEqualTo(true);
+        mock.message(0).header("bar").isInstanceOf(Boolean.class);
+        mock.message(0).header("bar").isEqualTo(false);
+
+        template.sendBody("direct:start", "<hello>World</hello>");
+
+        mock.assertIsSatisfied();
+        template.stop();
+    }
+
     @Configuration
     public static Option[] configure() throws Exception {
 
@@ -104,12 +125,20 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle20")
                         .build()).noStart(),
                 
+<<<<<<< .working
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-13.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle22")
                         .add(TestRouteBuilder.class)
                         .build(withBnd())).noStart(),
 
+=======
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-21.xml"))
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle21")
+                        .build()).noStart(),
+
+>>>>>>> .merge-right.r1150311
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
                         "camel-blueprint", "camel-velocity"));

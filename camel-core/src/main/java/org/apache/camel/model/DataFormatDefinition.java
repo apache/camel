@@ -89,7 +89,7 @@ public class DataFormatDefinition extends IdentifiedType {
             } else {
                 throw new IllegalArgumentException(
                     "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
-                    + "Ensure that the dataformat is valid and the associated Camel component is present on the classpath");
+                    + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
             }
         }
         return dataFormat;

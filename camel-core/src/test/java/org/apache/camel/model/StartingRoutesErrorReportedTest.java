@@ -80,7 +80,6 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    
                     from("direct:start").routeId("route3")
                         .unmarshal().jaxb()
                         .log("Will never get here");
@@ -88,7 +87,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
             });
             context.start();
         } catch (FailedToCreateRouteException e) {
-            assertTrue(e.getMessage().contains("Ensure that the dataformat is valid and the associated Camel component is present on the classpath"));
+            assertTrue(e.getMessage().contains("Ensure that the data format is valid and the associated Camel component is present on the classpath"));
         }
     }
     
