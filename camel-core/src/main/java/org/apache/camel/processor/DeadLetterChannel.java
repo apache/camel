@@ -21,9 +21,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.CamelLogger;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * Implements a <a
@@ -74,6 +74,6 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
     @Override
     protected Predicate getDefaultHandledPredicate() {
         // DeadLetterChannel handles errors before sending to DLQ
-        return PredicateBuilder.toPredicate(ExpressionBuilder.constantExpression(true));
+        return ExpressionToPredicateAdapter.toPredicate(ExpressionBuilder.constantExpression(true));
     }
 }

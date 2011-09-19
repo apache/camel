@@ -34,7 +34,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CastUtils;
-import static org.apache.camel.builder.PredicateBuilder.toPredicate;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * Represents an XML &lt;catch/&gt; element
@@ -197,7 +197,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      */
     @Deprecated
     public CatchDefinition handled(Expression handled) {
-        setHandledPolicy(toPredicate(handled));
+        setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
         return this;
     }
 

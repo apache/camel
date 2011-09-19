@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -41,26 +42,12 @@ public final class PredicateBuilder {
      */
     private PredicateBuilder() {
     }
-
+    
     /**
      * Converts the given expression into an {@link Predicate}
      */
     public static Predicate toPredicate(final Expression expression) {
-        return new Predicate() {
-            public boolean matches(Exchange exchange) {
-                if (expression instanceof Predicate) {
-                    return ((Predicate) expression).matches(exchange);
-                } else {
-                    Object value = expression.evaluate(exchange, Object.class);
-                    return ObjectHelper.evaluateValuePredicate(value);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return expression.toString();
-            }
-        };
+        return ExpressionToPredicateAdapter.toPredicate(expression);
     }
 
     /**

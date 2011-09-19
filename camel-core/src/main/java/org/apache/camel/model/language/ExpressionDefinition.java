@@ -38,6 +38,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -146,7 +147,7 @@ public class ExpressionDefinition implements Expression, Predicate {
             if (getExpressionType() != null) {
                 predicate = getExpressionType().createPredicate(camelContext);
             } else if (getExpressionValue() != null) {
-                predicate = PredicateBuilder.toPredicate(getExpressionValue());
+                predicate = new ExpressionToPredicateAdapter(getExpressionValue());
             } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
                 Language language = camelContext.resolveLanguage(getLanguage());

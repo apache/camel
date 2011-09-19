@@ -20,8 +20,8 @@ import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * A language for header expressions.
@@ -33,7 +33,7 @@ public class HeaderLanguage implements Language, IsSingleton {
     }
 
     public Predicate createPredicate(String expression) {
-        return PredicateBuilder.toPredicate(createExpression(expression));
+        return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
 
     public Expression createExpression(String expression) {

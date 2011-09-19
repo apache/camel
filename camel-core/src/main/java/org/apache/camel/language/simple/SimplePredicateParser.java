@@ -44,6 +44,7 @@ import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.TokenType;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * A parser to parse simple language as a Camel {@link Predicate}
@@ -422,7 +423,7 @@ public class SimplePredicateParser extends BaseSimpleParser {
         for (SimpleNode node : nodes) {
             Expression exp = node.createExpression(expression);
             if (exp != null) {
-                Predicate predicate = PredicateBuilder.toPredicate(exp);
+                Predicate predicate = ExpressionToPredicateAdapter.toPredicate(exp);
                 answer.add(predicate);
             }
         }

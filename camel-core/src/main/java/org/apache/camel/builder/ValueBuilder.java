@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * A builder of expressions or predicates based on values.
@@ -54,11 +55,11 @@ public class ValueBuilder implements Expression {
     // -------------------------------------------------------------------------
 
     public Predicate matches(Expression expression) {
-        return onNewPredicate(PredicateBuilder.toPredicate(expression));
+        return onNewPredicate(ExpressionToPredicateAdapter.toPredicate(expression));
     }
 
     public ExpressionClause<Predicate> matches() {
-        return new ExpressionClause<Predicate>(onNewPredicate(PredicateBuilder.toPredicate(expression))); 
+        return new ExpressionClause<Predicate>(onNewPredicate(ExpressionToPredicateAdapter.toPredicate(expression))); 
     }
 
     public Predicate isNotEqualTo(Object value) {

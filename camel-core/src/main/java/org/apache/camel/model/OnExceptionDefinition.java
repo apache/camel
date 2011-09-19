@@ -42,9 +42,8 @@ import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
  * Represents an XML &lt;onException/&gt; element
@@ -281,7 +280,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @return the builder
      */
     public OnExceptionDefinition handled(Expression handled) {
-        setHandledPolicy(toPredicate(handled));
+        setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
         return this;
     }
 
@@ -320,7 +319,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @return the builder
      */
     public OnExceptionDefinition continued(Expression continued) {
-        setContinuedPolicy(toPredicate(continued));
+        setContinuedPolicy(ExpressionToPredicateAdapter.toPredicate(continued));
         return this;
     }
 
@@ -360,7 +359,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @return the builder
      */
     public OnExceptionDefinition retryWhile(Expression retryWhile) {
-        setRetryWhilePolicy(toPredicate(retryWhile));
+        setRetryWhilePolicy(ExpressionToPredicateAdapter.toPredicate(retryWhile));
         return this;
     }
 

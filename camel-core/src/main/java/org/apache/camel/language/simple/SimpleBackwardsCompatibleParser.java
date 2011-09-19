@@ -18,11 +18,11 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.language.simple.ast.SimpleFunctionExpression;
 import org.apache.camel.language.simple.types.SimpleToken;
 import org.apache.camel.language.simple.types.SimpleTokenType;
 import org.apache.camel.language.simple.types.TokenType;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * A backwards compatible parser, which supports the old simple language
@@ -50,7 +50,7 @@ public final class SimpleBackwardsCompatibleParser {
     public static Predicate parsePredicate(String expression) {
         Expression answer = doParseExpression(expression);
         if (answer != null) {
-            return PredicateBuilder.toPredicate(answer);
+            return ExpressionToPredicateAdapter.toPredicate(answer);
         } else {
             return null;
         }

@@ -27,9 +27,8 @@ import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelLogger;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
  * The default error handler builder.
@@ -249,7 +248,7 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
      * @return the builder
      */
     public DefaultErrorHandlerBuilder retryWhile(Expression retryWhile) {
-        setRetryWhile(toPredicate(retryWhile));
+        setRetryWhile(ExpressionToPredicateAdapter.toPredicate(retryWhile));
         return this;
     }
 

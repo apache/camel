@@ -23,6 +23,7 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.language.simple.types.LogicalOperatorType;
 import org.apache.camel.language.simple.types.SimpleParserException;
 import org.apache.camel.language.simple.types.SimpleToken;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -79,8 +80,8 @@ public class LogicalExpression extends BaseSimpleNode {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Predicate predicate = PredicateBuilder.toPredicate(leftExp);
-                predicate = PredicateBuilder.and(predicate, PredicateBuilder.toPredicate(rightExp));
+                Predicate predicate = ExpressionToPredicateAdapter.toPredicate(leftExp);
+                predicate = PredicateBuilder.and(predicate, ExpressionToPredicateAdapter.toPredicate(rightExp));
 
                 boolean answer = predicate.matches(exchange);
                 return exchange.getContext().getTypeConverter().convertTo(type, answer);
@@ -97,8 +98,8 @@ public class LogicalExpression extends BaseSimpleNode {
         return new Expression() {
             @Override
             public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Predicate predicate = PredicateBuilder.toPredicate(leftExp);
-                predicate = PredicateBuilder.or(predicate, PredicateBuilder.toPredicate(rightExp));
+                Predicate predicate = ExpressionToPredicateAdapter.toPredicate(leftExp);
+                predicate = PredicateBuilder.or(predicate, ExpressionToPredicateAdapter.toPredicate(rightExp));
 
                 boolean answer = predicate.matches(exchange);
                 return exchange.getContext().getTypeConverter().convertTo(type, answer);

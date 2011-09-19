@@ -34,8 +34,7 @@ import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CastUtils;
-
-import static org.apache.camel.builder.PredicateBuilder.toPredicate;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * Represents an XML &lt;try/&gt; element
@@ -191,7 +190,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      */
     @Deprecated
     public TryDefinition handled(Expression handled) {
-        return handled(toPredicate(handled));
+        return handled(ExpressionToPredicateAdapter.toPredicate(handled));
     }
 
     // Properties
