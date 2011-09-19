@@ -52,7 +52,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
 
     private static String toString(InputStream input) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-        CollectionStringBuffer builder = new CollectionStringBuffer("\n");
+        CollectionStringBuffer builder = new CollectionStringBuffer();
         while (true) {
             String line = reader.readLine();
             if (line == null) {

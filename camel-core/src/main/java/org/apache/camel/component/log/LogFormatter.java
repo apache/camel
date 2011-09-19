@@ -31,6 +31,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class LogFormatter implements ExchangeFormatter {
 
+    protected static final String LS = System.getProperty("line.separator");
+
     private boolean showExchangeId;
     private boolean showExchangePattern = true;
     private boolean showProperties;
@@ -50,41 +52,41 @@ public class LogFormatter implements ExchangeFormatter {
     public String format(Exchange exchange) {
         Message in = exchange.getIn();
 
-        StringBuilder sb = new StringBuilder("");
+        StringBuilder sb = new StringBuilder();
         if (showAll || showExchangeId) {
             if (multiline) {
-                sb.append('\n');
+                sb.append(LS);
             }
             sb.append(", Id:").append(exchange.getExchangeId());
         }
         if (showAll || showExchangePattern) {
             if (multiline) {
-                sb.append('\n');
+                sb.append(LS);
             }
             sb.append(", ExchangePattern:").append(exchange.getPattern());
         }
 
         if (showAll || showProperties) {
             if (multiline) {
-                sb.append('\n');
+                sb.append(LS);
             }
             sb.append(", Properties:").append(exchange.getProperties());
         }
         if (showAll || showHeaders) {
             if (multiline) {
-                sb.append('\n');
+                sb.append(LS);
             }
             sb.append(", Headers:").append(in.getHeaders());
         }
         if (showAll || showBodyType) {
             if (multiline) {
-                sb.append('\n');
+                sb.append(LS);
             }
             sb.append(", BodyType:").append(getBodyTypeAsString(in));
         }
         if (showAll || showBody) {
             if (multiline) {
-                sb.append('\n');
+                sb.append(LS);
             }
             sb.append(", Body:").append(getBodyAsString(in));
         }
@@ -102,7 +104,7 @@ public class LogFormatter implements ExchangeFormatter {
 
             if (exception != null) {
                 if (multiline) {
-                    sb.append('\n');
+                    sb.append(LS);
                 }
                 if (caught) {
                     sb.append(", CaughtExceptionType:").append(exception.getClass().getCanonicalName());
@@ -124,25 +126,25 @@ public class LogFormatter implements ExchangeFormatter {
                 Message out = exchange.getOut();
                 if (showAll || showHeaders) {
                     if (multiline) {
-                        sb.append('\n');
+                        sb.append(LS);
                     }
                     sb.append(", OutHeaders:").append(out.getHeaders());
                 }
                 if (showAll || showBodyType) {
                     if (multiline) {
-                        sb.append('\n');
+                        sb.append(LS);
                     }
                     sb.append(", OutBodyType:").append(getBodyTypeAsString(out));
                 }
                 if (showAll || showBody) {
                     if (multiline) {
-                        sb.append('\n');
+                        sb.append(LS);
                     }
                     sb.append(", OutBody:").append(getBodyAsString(out));
                 }
             } else {
                 if (multiline) {
-                    sb.append('\n');
+                    sb.append(LS);
                 }
                 sb.append(", Out: null");
             }
@@ -150,7 +152,7 @@ public class LogFormatter implements ExchangeFormatter {
 
         if (maxChars > 0) {
             StringBuilder answer = new StringBuilder();
-            for (String s : sb.toString().split("\n")) {
+            for (String s : sb.toString().split(LS)) {
                 if (s != null) {
                     if (s.length() > maxChars) {
                         s = s.substring(0, maxChars);
@@ -159,7 +161,7 @@ public class LogFormatter implements ExchangeFormatter {
                         answer.append(s);
                     }
                     if (multiline) {
-                        answer.append("\n");
+                        answer.append(LS);
                     }
                 }
             }

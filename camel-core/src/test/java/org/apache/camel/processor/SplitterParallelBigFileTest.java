@@ -47,7 +47,7 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
         File file = new File("target/split/bigfile.txt");
         FileOutputStream fos = new FileOutputStream(file);
         for (int i = 0; i < lines; i++) {
-            String line = "line-" + i + "\n";
+            String line = "line-" + i + LS;
             fos.write(line.getBytes());
         }
         IOHelper.close(fos);
@@ -83,7 +83,7 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
                 //context.getExecutorServiceStrategy().getDefaultThreadPoolProfile().setMaxPoolSize(10);
 
                 from("file:target/split")
-                    .split(body().tokenize("\n")).streaming().parallelProcessing()
+                    .split(body().tokenize(LS)).streaming().parallelProcessing()
                         .to("log:split?groupSize=1000")
                     .end()
                     .log("Done splitting ${file:name}");

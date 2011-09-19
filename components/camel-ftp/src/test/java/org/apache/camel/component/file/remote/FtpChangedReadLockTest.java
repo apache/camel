@@ -47,11 +47,10 @@ public class FtpChangedReadLockTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         String content = context.getTypeConverter().convertTo(String.class, new File("target/changed/out/slowfile.dat").getAbsoluteFile());
-        String[] lines = content.split("\n");
+        String[] lines = content.split(LS);
         assertEquals("There should be 20 lines in the file", 20, lines.length);
         for (int i = 0; i < 20; i++) {
-            // there may be windows line terminators
-            assertTrue(lines[i].startsWith("Line " + i));
+            assertEquals("Line " + i, lines[i]);
         }
     }
 
@@ -61,7 +60,7 @@ public class FtpChangedReadLockTest extends FtpServerTestSupport {
         createDirectory(FTP_ROOT_DIR + "/changed");
         FileOutputStream fos = new FileOutputStream(FTP_ROOT_DIR + "changed/slowfile.dat", true);
         for (int i = 0; i < 20; i++) {
-            fos.write(("Line " + i + "\n").getBytes());
+            fos.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line " + i);
             Thread.sleep(200);
         }

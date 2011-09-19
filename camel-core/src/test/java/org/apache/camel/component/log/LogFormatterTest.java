@@ -34,7 +34,6 @@ public class LogFormatterTest extends ContextTestSupport {
         template.sendBody("log:org.apache.camel.TEST", "Hello World");
     }
 
-    @SuppressWarnings("unchecked")
     public void testSendMessageToLogSingleOptions() throws Exception {
         template.sendBody("log:org.apache.camel.TEST?showExchangeId=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showExchangePattern=true", "Hello World");
@@ -49,13 +48,13 @@ public class LogFormatterTest extends ContextTestSupport {
         template.sendBody("log:org.apache.camel.TEST?showOut=true&showBody=true", "Hello World");
         template.sendBody("log:org.apache.camel.TEST?showAll=true", "Hello World");
 
-        template.sendBody("log:org.apache.camel.TEST?showFuture=true", new MyFuture(new Callable() {
-            public Object call() throws Exception {
+        template.sendBody("log:org.apache.camel.TEST?showFuture=true", new MyFuture(new Callable<String>() {
+            public String call() throws Exception {
                 return "foo";
             }
         }));
-        template.sendBody("log:org.apache.camel.TEST?showFuture=false", new MyFuture(new Callable() {
-            public Object call() throws Exception {
+        template.sendBody("log:org.apache.camel.TEST?showFuture=false", new MyFuture(new Callable<String>() {
+            public String call() throws Exception {
                 return "bar";
             }
         }));
@@ -178,13 +177,13 @@ public class LogFormatterTest extends ContextTestSupport {
         assertEquals(0, formatter.getMaxChars());
     }
 
-    private class MyFuture extends FutureTask<Object> {
+    private class MyFuture extends FutureTask<String> {
 
-        public MyFuture(Callable<Object> callable) {
+        public MyFuture(Callable<String> callable) {
             super(callable);
         }
 
-        public MyFuture(Runnable runnable, Object o) {
+        public MyFuture(Runnable runnable, String o) {
             super(runnable, o);
         }
 
@@ -194,7 +193,7 @@ public class LogFormatterTest extends ContextTestSupport {
         }
 
         @Override
-        public Object get() throws InterruptedException, ExecutionException {
+        public String get() throws InterruptedException, ExecutionException {
             return "foo";
         }
 
