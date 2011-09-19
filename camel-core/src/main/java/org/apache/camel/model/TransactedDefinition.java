@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.WrapProcessor;
@@ -191,6 +192,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
             answer = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
         }
 
+        // this logic only applies if we are a transacted policy
         // still no policy found then try lookup the platform transaction manager and use it as policy
         if (answer == null && type == TransactedPolicy.class) {
             Class tmClazz = routeContext.getCamelContext().getClassResolver().resolveClass("org.springframework.transaction.PlatformTransactionManager");
@@ -220,16 +222,15 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
                         ObjectHelper.invokeMethod(method, txPolicy, transactionManager);
                         return txPolicy;
                     } else {
-                        LOG.warn("Cannot create a transacted policy as camel-spring.jar is not on the classpath!");
+                        // camel-spring is missing on the classpath
+                        throw new RuntimeCamelException("Cannot create a transacted policy as camel-spring.jar is not on the classpath!");
                     }
                 } else {
-                    if (LOG.isDebugEnabled()) {
-                        if (maps.isEmpty()) {
-                            LOG.debug("No PlatformTransactionManager found in registry.");
-                        } else {
-                            LOG.debug("Found {} PlatformTransactionManager in registry. "
-                                    + "Cannot determine which one to use. Please configure a TransactionTemplate on the policy", maps.size());
-                        }
+                    if (maps.isEmpty()) {
+                        throw new NoSuchBeanException(null, "PlatformTransactionManager");
+                    } else {
+                        throw new IllegalArgumentException("Found " + maps.size() + " PlatformTransactionManager in registry. "
+                                + "Cannot determine which one to use. Please configure a TransactionTemplate on the transacted policy.");
                     }
                 }
             }

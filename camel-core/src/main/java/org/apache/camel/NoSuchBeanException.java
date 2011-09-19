@@ -31,7 +31,7 @@ public class NoSuchBeanException extends RuntimeCamelException {
     }
 
     public NoSuchBeanException(String name, String type) {
-        super("No bean could be found in the registry for: " + name + " of type: " + type);
+        super("No bean could be found in the registry" + (name != null ? " for: " + name : "") + " of type: " + type);
         this.name = name;
     }
 
