@@ -182,7 +182,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         try {
             FactoryFinder finder = getCamelContext().getFactoryFinder("META-INF/services/org/apache/camel/component/");
             log.trace("Using FactoryFinder: {}", finder);
-            factory = finder.findClass(getScheme(), "strategy.factory.");
+            factory = finder.findClass(getScheme(), "strategy.factory.", CamelContext.class);
         } catch (ClassNotFoundException e) {
             log.trace("'strategy.factory.class' not found", e);
         } catch (IOException e) {

@@ -43,14 +43,14 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
     }
 
     @Override
-    public Class<?> findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
+    public Class<?> findClass(String key, String propertyPrefix, Class<?> checkClass) throws ClassNotFoundException, IOException {
         if (propertyPrefix == null) {
             propertyPrefix = "";
         }
 
         Class clazz = classMap.get(propertyPrefix + key);
         if (clazz == null) {
-            BundleEntry entry = getResource(key);
+            BundleEntry entry = getResource(key, checkClass);
             if (entry != null) {
                 URL url = entry.url;
                 InputStream in = url.openStream();
@@ -77,11 +77,21 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
 
         return clazz;
     }
-    
+
+    @Override
+    public Class<?> findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
+        return findClass(key, propertyPrefix, null);
+    }
+
     // As the META-INF of the Factory could not be export,
     // we need to go through the bundles to look for it
     // NOTE, the first found factory will be return
     public BundleEntry getResource(String name) {
+        return getResource(name, null);
+    }
+
+    // The clazz can make sure we get right version of class that we need
+    public BundleEntry getResource(String name, Class<?> clazz) {
         BundleEntry entry = null;
         Bundle[] bundles = null; 
         
@@ -90,7 +100,7 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
         URL url;
         for (Bundle bundle : bundles) {
             url = bundle.getEntry(getResourcePath() + name);
-            if (url != null) {
+            if (url != null && checkCompat(bundle, clazz)) {
                 entry = new BundleEntry();
                 entry.url = url;
                 entry.bundle = bundle;
@@ -99,6 +109,21 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
         }
 
         return entry;
+    }
+
+    private boolean checkCompat(Bundle bundle, Class clazz) {
+        if (clazz == null) {
+            return true;
+        }
+        // Check bundle compatibility
+        try {
+            if (bundle.loadClass(clazz.getName()) != clazz) {
+                return false;
+            }
+        } catch (Throwable t) {
+            return false;
+        }
+        return true;
     }
 
 }
