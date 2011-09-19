@@ -17,8 +17,8 @@
 package org.apache.camel.itest.osgi.jpa;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Represents a task which is added to the database, then removed from the database when it is consumed
@@ -26,11 +26,17 @@ import javax.persistence.Id;
  * @version 
  */
 @Entity
+@Table(name = "SENDEMAIL")
 public class SendEmail {
     private Long id;
     private String address;
 
     public SendEmail() {
+    }
+
+    public SendEmail(Long id,String address) {
+        setId(id);
+        setAddress(address);
     }
 
     public SendEmail(String address) {
@@ -43,7 +49,6 @@ public class SendEmail {
     }
 
     @Id
-    @GeneratedValue
     public Long getId() {
         return id;
     }

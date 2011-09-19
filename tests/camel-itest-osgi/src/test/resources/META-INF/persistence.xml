@@ -16,8 +16,8 @@
 -->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             version="1.0"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+             version="2.0"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 
     <persistence-unit name="camel" transaction-type="RESOURCE_LOCAL">
     <!--
@@ -31,6 +31,7 @@
     </provider>
 
     <class>org.apache.camel.itest.osgi.jpa.SendEmail</class>
+    <exclude-unlisted-classes/>
 
     <properties>
       <property name="openjpa.ConnectionURL" value="jdbc:derby:target/derby;create=true"/>

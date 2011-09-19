@@ -92,6 +92,15 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         return mavenBundle().groupId("org.apache.karaf.assemblies.features").
             artifactId("standard").version(karafVersion).type(type);
     }
+
+    public static UrlReference getKarafEnterpriseFeatureUrl() {
+        String karafVersion = System.getProperty("karafVersion");
+        System.out.println("*** The karaf version is " + karafVersion + " ***");
+
+        String type = "xml/features";
+        return mavenBundle().groupId("org.apache.karaf.assemblies.features").
+            artifactId("enterprise").version(karafVersion).type(type);
+    }
     
     private static URL getResource(String location) {
         URL url = null;

@@ -16,22 +16,23 @@
  */
 package org.apache.camel.itest.osgi.jpa;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.karaf.testing.Helper;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.options.UrlProvisionOption;
+import org.ops4j.store.Store;
+import org.ops4j.store.StoreFactory;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
@@ -40,15 +41,19 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
+import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("TODO: fix me")
 public class JpaRouteTest extends OSGiIntegrationTestSupport {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
@@ -63,7 +68,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", new SendEmail("someone@somewhere.org"));
+        template.sendBody("direct:start", new SendEmail(1L,"someone@somewhere.org"));
 
         assertMockEndpointsSatisfied();
         assertEntityInDB();
@@ -86,6 +91,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
+        setThreadContextClassLoader();
         applicationContext = new OsgiBundleXmlApplicationContext(
             new String[]{"org/apache/camel/itest/osgi/jpa/springJpaRouteContext.xml"});
         if (bundleContext != null) {
@@ -134,14 +140,13 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             // this is how you set the default log level when using pax logging (logProfile)
                 Helper.setLogLevel("WARN")),
                 
-            // install the spring, http features first
-            scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
+            // install the spring.
+            scanFeatures(getKarafFeatureUrl(), "spring"),
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
                           "camel-core", "camel-spring", "camel-test", "camel-jpa"),
             
-            mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"), 
-
+            mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"),
             workingDirectory("target/paxrunner/"),
 
             felix(), equinox());
