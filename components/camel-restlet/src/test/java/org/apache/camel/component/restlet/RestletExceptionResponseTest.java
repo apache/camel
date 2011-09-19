@@ -41,6 +41,7 @@ public class RestletExceptionResponseTest extends RestletTestSupport {
                         exchange.setException(new IllegalArgumentException("Damn something went wrong"));
                     }
                 });
+                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/tester?restletMethod=POST");
             }
         };
     }
@@ -54,4 +55,31 @@ public class RestletExceptionResponseTest extends RestletTestSupport {
         assertTrue(body.contains("IllegalArgumentException"));
         assertTrue(body.contains("Damn something went wrong"));
     }
+
+    @Test
+    public void testRestletProducerGetExceptionResponse() throws Exception {
+        sendRequest("restlet:http://localhost:" + portNum + "/users/tester?restletMethod=POST");
+    }
+
+    @Test
+    public void testSendRequestDirectEndpoint() throws Exception {
+        sendRequest("direct:start");
+    }
+
+    protected void sendRequest(String endpointUri) throws Exception {
+        Exchange exchange = template.request(
+            endpointUri,
+                new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setBody("<order foo='1'/>");
+                    }
+            });
+        RestletOperationException exception = (RestletOperationException) exchange.getException();
+        String body = exception.getResponseBody();
+        assertEquals("http://localhost:" + portNum + "/users/tester", exception.getUri());
+        assertTrue(body.contains("IllegalArgumentException"));
+        assertTrue(body.contains("Damn something went wrong"));
+    }
+
 }
