@@ -81,7 +81,7 @@ public class NagiosConfiguration implements Cloneable {
                     nagiosSettings.setEncryptionMethod(Encryption.NO_ENCRYPTION);
                 } else if (NagiosEncryptionMethod.Xor == encryptionMethod) {
                     nagiosSettings.setEncryptionMethod(Encryption.XOR_ENCRYPTION);
-                } else if (NagiosEncryptionMethod.TripeDes == encryptionMethod) {
+                } else if (NagiosEncryptionMethod.TripleDes == encryptionMethod) {
                     nagiosSettings.setEncryptionMethod(Encryption.TRIPLE_DES_ENCRYPTION);
                 } else {
                     throw new IllegalArgumentException("Unknown encryption method: " + encryptionMethod);
