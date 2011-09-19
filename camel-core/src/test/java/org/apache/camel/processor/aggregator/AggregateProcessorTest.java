@@ -559,4 +559,50 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
 
+    public void testAggregateForceCompletion() throws Exception {
+        // camel context must be started
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("B+END", "A+END");
+        mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
+
+        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        Expression corr = header("id");
+        AggregationStrategy as = new BodyInAggregatingStrategy();
+
+        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
+        ap.setCompletionSize(10);
+        ap.start();
+
+        Exchange e1 = new DefaultExchange(context);
+        e1.getIn().setBody("A");
+        e1.getIn().setHeader("id", 123);
+
+        Exchange e2 = new DefaultExchange(context);
+        e2.getIn().setBody("B");
+        e2.getIn().setHeader("id", 456);
+
+        Exchange e3 = new DefaultExchange(context);
+        e3.getIn().setBody("END");
+        e3.getIn().setHeader("id", 123);
+
+        Exchange e4 = new DefaultExchange(context);
+        e4.getIn().setBody("END");
+        e4.getIn().setHeader("id", 456);
+
+        ap.process(e1);
+        ap.process(e2);
+        ap.process(e3);
+        ap.process(e4);
+
+        assertEquals("should not have completed yet", 0, mock.getExchanges().size());
+
+        ap.forceCompletionOfAllGroups();
+
+        assertMockEndpointsSatisfied();
+
+        ap.stop();
+    }
+
 }

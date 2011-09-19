@@ -78,6 +78,7 @@ public interface Exchange {
     String AGGREGATED_COMPLETED_BY          = "CamelAggregatedCompletedBy";
     String AGGREGATED_CORRELATION_KEY       = "CamelAggregatedCorrelationKey";
     String AGGREGATION_STRATEGY             = "CamelAggregationStrategy";
+    String AGGREGATION_COMPLETE_ALL_GROUPS  = "CamelAggregationCompleteAllGroups";
     String ASYNC_WAIT                       = "CamelAsyncWait";
 
     String BATCH_INDEX                = "CamelBatchIndex";

@@ -157,6 +157,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     }
 
     public void process(Exchange exchange) throws Exception {
+
+        //check for the special header to force completion of all groups (and ignore the exchange otherwise)
+        boolean completeAllGroups = exchange.getIn().getHeader(Exchange.AGGREGATION_COMPLETE_ALL_GROUPS, false, boolean.class);
+        if (completeAllGroups) {
+            forceCompletionOfAllGroups();
+            return;
+        }
+
         // compute correlation expression
         String key = correlationExpression.evaluate(exchange, String.class);
         if (ObjectHelper.isEmpty(key)) {
@@ -879,4 +887,37 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         super.doShutdown();
     }
 
+    public void forceCompletionOfAllGroups() {
+
+        // only run if CamelContext has been fully started
+        if (!camelContext.getStatus().isStarted()) {
+            LOG.warn("cannot start force completion because CamelContext({}) has not been started yet", camelContext.getName());
+            return;
+        }
+
+        LOG.trace("Starting force completion of all groups task");
+
+        // trigger completion for all in the repository
+        Set<String> keys = aggregationRepository.getKeys();
+
+        if (keys != null && !keys.isEmpty()) {
+            // must acquire the shared aggregation lock to be able to trigger force completion
+            lock.lock();
+            try {
+                for (String key : keys) {
+                    Exchange exchange = aggregationRepository.get(camelContext, key);
+                    if (exchange != null) {
+                        LOG.trace("force completion triggered for correlation key: {}", key);
+                        // indicate it was completed by a force completion request
+                        exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
+                        onCompletion(key, exchange, false);
+                    }
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        LOG.trace("Completed force completion of all groups task");
+    }
 }
