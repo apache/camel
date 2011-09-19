@@ -35,7 +35,9 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.core.SessionCallback;
+import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
+import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.JmsUtils;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -65,6 +67,7 @@ public class JmsConfiguration implements Cloneable {
     private String acknowledgementModeName;
     // Used to configure the spring Container
     private ExceptionListener exceptionListener;
+    private ConsumerType consumerType = ConsumerType.Default;
     private ErrorHandler errorHandler;    
     private boolean autoStartup = true;
     private boolean acceptMessagesWhileStopping;
@@ -359,15 +362,33 @@ public class JmsConfiguration implements Cloneable {
         return template;
     }
 
-    public DefaultMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) throws Exception {
-        DefaultMessageListenerContainer container = new JmsMessageListenerContainer(endpoint);
+    public AbstractMessageListenerContainer createMessageListenerContainer(JmsEndpoint endpoint) throws Exception {
+        AbstractMessageListenerContainer container = chooseMessageListenerContainerImplementation(endpoint);
         configureMessageListenerContainer(container, endpoint);
         return container;
     }
 
+    public AbstractMessageListenerContainer chooseMessageListenerContainerImplementation(JmsEndpoint endpoint) {
+        switch (consumerType) {
+        case Simple:
+            return new SimpleJmsMessageListenerContainer(endpoint);
+        case Default:
+            return new DefaultJmsMessageListenerContainer(endpoint);
+        default:
+            throw new IllegalArgumentException("Unknown consumer type: " + consumerType);
+        }
+    }
 
     // Properties
     // -------------------------------------------------------------------------
+    
+    public ConsumerType getConsumerType(){
+    	return consumerType;
+    }
+    
+    public void setConsumerType(ConsumerType consumerType) {
+        this.consumerType = consumerType;
+    }
 
     public ConnectionFactory getConnectionFactory() {
         if (connectionFactory == null) {
@@ -827,7 +848,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
 
-    protected void configureMessageListenerContainer(DefaultMessageListenerContainer container,
+    protected void configureMessageListenerContainer(AbstractMessageListenerContainer container,
                                                      JmsEndpoint endpoint) throws Exception {
         container.setConnectionFactory(getListenerConnectionFactory());
         if (endpoint instanceof DestinationEndpoint) {
@@ -852,7 +873,7 @@ public class JmsConfiguration implements Cloneable {
         if (errorHandler != null) {
             container.setErrorHandler(errorHandler);
         }
-        
+
         container.setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
         container.setExposeListenerSession(exposeListenerSession);
         container.setSessionTransacted(transacted);
@@ -870,6 +891,33 @@ public class JmsConfiguration implements Cloneable {
             container.setMessageSelector(endpoint.getSelector());
         }
 
+        if (container instanceof DefaultMessageListenerContainer) {
+            DefaultMessageListenerContainer listenerContainer = (DefaultMessageListenerContainer) container;
+            configureDefaultMessageListenerContainer(endpoint, listenerContainer);
+        } else if (container instanceof SimpleMessageListenerContainer) {
+        	SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer) container;
+        	configureSimpleMessageListenerContainer(listenerContainer); 
+        }
+    }
+
+    private void configureSimpleMessageListenerContainer(SimpleMessageListenerContainer listenerContainer) {
+        if (maxConcurrentConsumers > 0) {
+            if (maxConcurrentConsumers < concurrentConsumers) {
+                throw new IllegalArgumentException("Property maxConcurrentConsumers: " + maxConcurrentConsumers + " must be higher than concurrentConsumers: "
+                        + concurrentConsumers);
+            }
+            listenerContainer.setConcurrency(concurrentConsumers + "-" + maxConcurrentConsumers);
+        } else if (concurrentConsumers >= 0) {
+            listenerContainer.setConcurrentConsumers(concurrentConsumers);
+        }
+
+        listenerContainer.setPubSubNoLocal(pubSubNoLocal);
+        if (taskExecutor != null) {
+            listenerContainer.setTaskExecutor(taskExecutor);
+        }
+    }
+
+    private void configureDefaultMessageListenerContainer(JmsEndpoint endpoint, DefaultMessageListenerContainer container) {
         if (concurrentConsumers >= 0) {
             container.setConcurrentConsumers(concurrentConsumers);
         }
