@@ -20,7 +20,6 @@ package org.apache.camel.itest.osgi.aws;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
-import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
