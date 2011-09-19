@@ -43,6 +43,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private ScheduledFuture<?> future;
 
     // if adding more options then align with ScheduledPollEndpoint#configureScheduledPollConsumerProperties
+    private boolean startScheduler = true;
     private long initialDelay = 1000;
     private long delay = 500;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
@@ -227,6 +228,21 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         this.pollStrategy = pollStrategy;
     }
 
+    public boolean isStartScheduler() {
+        return startScheduler;
+    }
+
+    /**
+     * Sets whether the scheduler should be started when this consumer starts.
+     * <p/>
+     * This option is default true.
+     *
+     * @param startScheduler whether to start scheduler
+     */
+    public void setStartScheduler(boolean startScheduler) {
+        this.startScheduler = startScheduler;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -244,6 +260,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         ObjectHelper.notNull(executor, "executor", this);
         ObjectHelper.notNull(pollStrategy, "pollStrategy", this);
 
+        if (isStartScheduler()) {
+            startScheduler();
+        }
+    }
+
+    protected void startScheduler() {
         if (isUseFixedDelay()) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",

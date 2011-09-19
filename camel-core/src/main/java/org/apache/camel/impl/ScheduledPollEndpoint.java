@@ -86,18 +86,23 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     private void configureScheduledPollConsumerProperties(Map<String, Object> options, Map<String, Object> consumerProperties) {
         // special for scheduled poll consumers as we want to allow end users to configure its options
         // from the URI parameters without the consumer. prefix
+        Object startScheduler = options.remove("startScheduler");
         Object initialDelay = options.remove("initialDelay");
         Object delay = options.remove("delay");
         Object timeUnit = options.remove("timeUnit");
         Object useFixedDelay = options.remove("useFixedDelay");
         Object pollStrategy = options.remove("pollStrategy");
         Object runLoggingLevel = options.remove("runLoggingLevel");
-        if (initialDelay != null || delay != null || timeUnit != null || useFixedDelay != null || pollStrategy != null || runLoggingLevel != null) {
+        if (initialDelay != null || delay != null || timeUnit != null || useFixedDelay != null || pollStrategy != null
+                || runLoggingLevel != null || startScheduler != null) {
             if (consumerProperties == null) {
                 consumerProperties = new HashMap<String, Object>();
             }
             if (initialDelay != null) {
                 consumerProperties.put("initialDelay", initialDelay);
+            }
+            if (startScheduler != null) {
+                consumerProperties.put("startScheduler", startScheduler);
             }
             if (delay != null) {
                 consumerProperties.put("delay", delay);
