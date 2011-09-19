@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.osgi.cxf.blueprint.jaxrs.testbean;
+package org.apache.camel.itest.osgi.cxf.jaxrs.testbean;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -22,10 +22,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @version 
  */
-@XmlRootElement(name = "Customer")
-public class Customer {
+@XmlRootElement(name = "Product")
+public class Product {
     private long id;
-    private String name;
+    private String description;
 
     public long getId() {
         return id;
@@ -35,11 +35,11 @@ public class Customer {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String d) {
+        this.description = d;
     }
 }

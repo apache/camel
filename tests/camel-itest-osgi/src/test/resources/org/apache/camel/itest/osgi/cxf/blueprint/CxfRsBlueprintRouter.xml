@@ -21,15 +21,15 @@
            xmlns:camel="http://camel.apache.org/schema/blueprint"
            xmlns:camelcxf="http://camel.apache.org/schema/blueprint/cxf">
   
-  <bean id="customerService" class="org.apache.camel.itest.osgi.cxf.blueprint.jaxrs.testbean.CustomerService" />
+  <bean id="customerService" class="org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService" />
    
   <!-- Defined the server endpoint to create the cxf-rs consumer --> 
   <camelcxf:rsServer id="rsServer" address="http://localhost:9000/route"
-    serviceClass="org.apache.camel.itest.osgi.cxf.blueprint.jaxrs.testbean.CustomerService" />
+    serviceClass="org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService" />
 
   <!-- Defined the client endpoint to create the cxf-rs consumer -->
   <camelcxf:rsClient id="rsClient" address="http://localhost:9002/rest"
-    serviceClass="org.apache.camel.itest.osgi.cxf.blueprint.jaxrs.testbean.CustomerService"/>
+    serviceClass="org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService"/>
   
   <!-- The camel route context -->
   <camel:camelContext>
