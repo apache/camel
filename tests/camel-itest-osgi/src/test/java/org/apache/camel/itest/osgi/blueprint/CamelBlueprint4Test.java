@@ -125,20 +125,17 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle20")
                         .build()).noStart(),
                 
-<<<<<<< .working
+                bundle(newBundle()
+                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-21.xml"))
+                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle21")
+                        .build()).noStart(),
+
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-13.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle22")
                         .add(TestRouteBuilder.class)
                         .build(withBnd())).noStart(),
 
-=======
-                bundle(newBundle()
-                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-21.xml"))
-                        .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle21")
-                        .build()).noStart(),
-
->>>>>>> .merge-right.r1150311
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
                         "camel-blueprint", "camel-velocity"));
