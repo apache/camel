@@ -49,9 +49,9 @@ import org.testng.Assert;
  * @version $Revision$
  */
 public abstract class TestSupport extends Assert {
+    protected static final String LS = System.getProperty("line.separator");
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
     protected transient Logger log = LoggerFactory.getLogger(getClass());
-    protected static final String LS = System.getProperty("line.separator");
 
     // Builder methods for expressions used when testing
     // -------------------------------------------------------------------------
