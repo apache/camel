@@ -381,11 +381,11 @@ public class JmsConfiguration implements Cloneable {
 
     // Properties
     // -------------------------------------------------------------------------
-    
-    public ConsumerType getConsumerType(){
-    	return consumerType;
+
+    public ConsumerType getConsumerType() {
+        return consumerType;
     }
-    
+
     public void setConsumerType(ConsumerType consumerType) {
         this.consumerType = consumerType;
     }
@@ -895,8 +895,8 @@ public class JmsConfiguration implements Cloneable {
             DefaultMessageListenerContainer listenerContainer = (DefaultMessageListenerContainer) container;
             configureDefaultMessageListenerContainer(endpoint, listenerContainer);
         } else if (container instanceof SimpleMessageListenerContainer) {
-        	SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer) container;
-        	configureSimpleMessageListenerContainer(listenerContainer); 
+            SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer) container;
+            configureSimpleMessageListenerContainer(listenerContainer);
         }
     }
 
