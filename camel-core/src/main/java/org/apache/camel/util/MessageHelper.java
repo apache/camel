@@ -253,8 +253,20 @@ public final class MessageHelper {
      * @return the XML
      */
     public static String dumpAsXml(Message message) {
+        return dumpAsXml(message, true);
+    }
+
+    /**
+     * Dumps the message as a generic XML structure.
+     *
+     * @param message  the message
+     * @param includeBody whether or not to include the message body
+     * @return the XML
+     */
+    public static String dumpAsXml(Message message, boolean includeBody) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<message>\n");
+        // include exchangeId as attribute on the <message> tag
+        sb.append("<message exchangeId=\"").append(message.getExchange().getExchangeId()).append("\">\n");
 
         // headers
         if (message.hasHeaders()) {
@@ -288,24 +300,24 @@ public final class MessageHelper {
             sb.append("</headers>\n");
         }
 
-        sb.append("<body");
-        String type = ObjectHelper.classCanonicalName(message.getBody());
-        if (type != null) {
-            sb.append(" type=\"" + type + "\"");
-        }
-        sb.append(">");
+        if (includeBody) {
+            sb.append("<body");
+            String type = ObjectHelper.classCanonicalName(message.getBody());
+            if (type != null) {
+                sb.append(" type=\"" + type + "\"");
+            }
+            sb.append(">");
 
-        // dump body value as XML, use Camel type converter to convert to String
-        try {
-            String xml = message.getBody(String.class);
+            // dump body value as XML, use Camel type converter to convert to String
+            // do not allow streams and clip very big message bodies (128kb)
+            String xml = extractBodyForLogging(message, "", false, 128 * 1024);
             if (xml != null) {
+                // must always xml encode
                 sb.append(StringHelper.xmlEncode(xml));
             }
-        } catch (Exception e) {
-            // ignore as the body is for logging purpose
-        }
 
-        sb.append("</body>\n");
+            sb.append("</body>\n");
+        }
 
         sb.append("</message>");
         return sb.toString();
