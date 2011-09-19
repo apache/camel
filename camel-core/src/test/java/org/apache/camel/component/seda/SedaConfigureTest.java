@@ -23,19 +23,34 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 
 /**
- * @version 
+ * @version
  */
 public class SedaConfigureTest extends ContextTestSupport {
 
+    @SuppressWarnings("unchecked")
     public void testBlockingQueueConfigured() throws Exception {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo?size=2000", SedaEndpoint.class);
         BlockingQueue<Exchange> queue = endpoint.getQueue();
-        LinkedBlockingQueue blockingQueue = assertIsInstanceOf(LinkedBlockingQueue.class, queue);
+
+        LinkedBlockingQueue<Exchange> blockingQueue = assertIsInstanceOf(LinkedBlockingQueue.class, queue);
         assertEquals("remainingCapacity", 2000, blockingQueue.remainingCapacity());
     }
-    
+
     public void testConcurrentConsumersConfigured() {
         SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo?concurrentConsumers=5", SedaEndpoint.class);
         assertEquals("concurrentConsumers", 5, endpoint.getConcurrentConsumers());
+    }
+
+    public void testBlockWhenFull() {
+        SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo?size=2000&blockWhenFull=true", SedaEndpoint.class);
+        assertTrue("blockWhenFull", endpoint.isBlockWhenFull());
+    }
+
+    public void testDefaults() {
+        SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo", SedaEndpoint.class);
+        assertFalse("blockWhenFull: wrong default", endpoint.isBlockWhenFull());
+        assertEquals("concurrentConsumers: wrong default", 1, endpoint.getConcurrentConsumers());
+        assertEquals("size (remainingCapacity): wrong default", Integer.MAX_VALUE, endpoint.getSize());
+        assertEquals("timeout: wrong default", 30000L, endpoint.getTimeout());
     }
 }
