@@ -119,7 +119,7 @@
       <regexp-bundle-version>1.3_1</regexp-bundle-version>      
       <rome-bundle-version>1.0_1</rome-bundle-version>
       <saxon-bundle-version>9.1.0.8_1</saxon-bundle-version>
-      <scala-bundle-version>2.9.0_1</scala-bundle-version>
+      <scala-bundle-version>2.9.1_1</scala-bundle-version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_2</serp-bundle-version>
       <smack-bundle-version>3.2.0_1</smack-bundle-version>

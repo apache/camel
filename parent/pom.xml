@@ -131,7 +131,7 @@
     <restlet-version>2.0.9</restlet-version>
     <rome-version>1.0</rome-version>
     <saxon-version>9.1.0.8</saxon-version>
-    <scala-version>2.9.0</scala-version>
+    <scala-version>2.9.1</scala-version>
     <scala-plugin-version>2.15.1</scala-plugin-version>
     <servicemix-specs-version>1.8.0</servicemix-specs-version>
     <shiro-bundle-version>1.1.0_1</shiro-bundle-version>
