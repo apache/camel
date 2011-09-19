@@ -143,6 +143,7 @@ public class JettyHttpComponent extends HttpComponent {
         Boolean enableMultipartFilter = getAndRemoveParameter(parameters, "enableMultipartFilter",
                                                               Boolean.class, true);
         Filter multipartFilter = resolveAndRemoveReferenceParameter(parameters, "multipartFilterRef", Filter.class);
+        List<Filter> filters = resolveAndRemoveReferenceListParameter(parameters, "filtersRef", Filter.class);
         Long continuationTimeout = getAndRemoveParameter(parameters, "continuationTimeout", Long.class);
         Boolean useContinuation = getAndRemoveParameter(parameters, "useContinuation", Boolean.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
@@ -234,7 +235,6 @@ public class JettyHttpComponent extends HttpComponent {
         if (matchOnUriPrefix != null) {
             endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
         }
-        
         if (enableJmx != null) {
             endpoint.setEnableJmx(enableJmx);
         } else { 
@@ -247,6 +247,10 @@ public class JettyHttpComponent extends HttpComponent {
         if (multipartFilter != null) {
             endpoint.setMultipartFilter(multipartFilter);
             endpoint.setEnableMultipartFilter(true);
+        }
+        
+        if (filters != null) {
+            endpoint.setFilters(filters);
         }
 
         if (continuationTimeout != null) {
@@ -316,10 +320,15 @@ public class JettyHttpComponent extends HttpComponent {
             if (endpoint.isEnableMultipartFilter()) {
                 enableMultipartFilter(endpoint, connectorRef.server, connectorKey);
             }
+            
+            if (endpoint.getFilters() != null && endpoint.getFilters().size() > 0) {
+                setFilters(endpoint, connectorRef.server, connectorKey);
+            }
             connectorRef.servlet.connect(consumer);
         }
     }
     
+
     private void enableJmx(Server server) {
         MBeanContainer containerToRegister = getMbContainer();
         if (containerToRegister != null) {
@@ -343,6 +352,25 @@ public class JettyHttpComponent extends HttpComponent {
         }
     }
     
+    private void setFilters(JettyHttpEndpoint endpoint, Server server, String connectorKey) {
+        ServletContextHandler context = (ServletContextHandler) server
+            .getChildHandlerByClass(ServletContextHandler.class);
+        List<Filter> filters = endpoint.getFilters();
+        for (Filter filter : filters) {
+            FilterHolder filterHolder = new FilterHolder();
+            filterHolder.setFilter(new CamelFilterWrapper(filter));
+            String pathSpec = endpoint.getPath();
+            if (pathSpec == null || "".equals(pathSpec)) {
+                pathSpec = "/";
+            }
+            if (endpoint.isMatchOnUriPrefix()) {
+                pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
+            }
+            context.addFilter(filterHolder, pathSpec, 0);
+        }
+        
+    }
+    
     private void enableMultipartFilter(HttpEndpoint endpoint, Server server, String connectorKey) throws Exception {
         ServletContextHandler context = (ServletContextHandler) server
                 .getChildHandlerByClass(ServletContextHandler.class);
@@ -364,7 +392,7 @@ public class JettyHttpComponent extends HttpComponent {
             // if no filter ref was provided, use the default filter
             filter = new MultiPartFilter();
         }
-        filterHolder.setFilter(new CamelMultipartFilter(filter));
+        filterHolder.setFilter(new CamelFilterWrapper(filter));
         String pathSpec = endpoint.getPath();
         if (pathSpec == null || "".equals(pathSpec)) {
             pathSpec = "/";
