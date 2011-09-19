@@ -17,8 +17,45 @@
 
 package org.apache.camel.component.cxf.blueprint;
 
+import java.util.StringTokenizer;
+
+import org.w3c.dom.Element;
+
+import org.apache.aries.blueprint.ParserContext;
+import org.apache.aries.blueprint.mutable.MutableBeanMetadata;
+import org.apache.camel.component.cxf.CxfBlueprintEndpoint;
+import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.blueprint.AbstractBPBeanDefinitionParser;
 
 public class AbstractBeanDefinitionParser extends AbstractBPBeanDefinitionParser {
+    public static String getIdOrName(Element elem) {
+        String id = elem.getAttribute("id");
+
+        if (null == id || "".equals(id)) {
+            String names = elem.getAttribute("name");
+            if (null != names) {
+                StringTokenizer st = new StringTokenizer(names, ",");
+                if (st.countTokens() > 0) {
+                    id = st.nextToken();
+                }
+            }
+        }
+        return id;
+    }
+    
+    public MutableBeanMetadata createBeanMetadata(Element element, ParserContext context, Class runtimeClass) {
+        MutableBeanMetadata answer = context.createMetadata(MutableBeanMetadata.class);
+        answer.setRuntimeClass(runtimeClass);
+        answer.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
+        answer.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
+        
+        if (!StringUtils.isEmpty(getIdOrName(element))) {
+            answer.setId(getIdOrName(element));
+        } else {
+            // TODO we may need to throw exception for it
+            answer.setId("camel.cxf.endpoint." + runtimeClass.getSimpleName() + "." + context.generateId());
+        }
+        return answer;
+    }
 
 }

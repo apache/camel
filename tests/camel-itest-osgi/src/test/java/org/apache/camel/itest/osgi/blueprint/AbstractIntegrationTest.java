@@ -43,13 +43,6 @@ public abstract class AbstractIntegrationTest extends OSGiIntegrationTestSupport
     @Inject
     protected BundleContext bundleContext;
 
-    @Before
-    public void setUp() throws Exception {
-        log.info("********************************************************************************");
-        log.info("Testing: " + getTestMethodName() + "(" + getClass().getName() + ")");
-        log.info("********************************************************************************");
-    }
-
     protected <T> T getOsgiService(Class<T> type, long timeout) {
         return getOsgiService(type, null, timeout);
     }

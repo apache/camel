@@ -18,6 +18,8 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
+import org.apache.camel.component.cxf.spring.SpringJAXRSServerFactoryBean;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
@@ -26,9 +28,6 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 
-/**
- * 
- */
 public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     private AbstractJAXRSFactoryBean bean;
     private ApplicationContext applicationContext;
@@ -61,26 +60,32 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
         configurer.configureBean(beanId, beanInstance);
     }
     
-    void checkBeanType(Class<?> clazz) {
-        if (!clazz.isAssignableFrom(bean.getClass())) {
-            throw new IllegalArgumentException("The configure bean is not the instance of " + clazz.getName());
-        }
-    }
+    
     
     @Override
     protected void setupJAXRSServerFactoryBean(JAXRSServerFactoryBean sfb) {
-        checkBeanType(JAXRSServerFactoryBean.class);
+        checkBeanType(bean, JAXRSServerFactoryBean.class);
         configure(sfb);
         
     }
     
     @Override
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
-        checkBeanType(JAXRSClientFactoryBean.class);
+        checkBeanType(bean, JAXRSClientFactoryBean.class);
         configure(cfb);      
         cfb.setAddress(address);
         // Need to enable the option of ThreadSafe
         cfb.setThreadSafe(true);
+    }
+    
+    @Override
+    protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
+        return new SpringJAXRSServerFactoryBean();
+    }
+    
+    @Override
+    protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
+        return new SpringJAXRSClientFactoryBean();
     }
     
     public String getBeanId() {

@@ -236,6 +236,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient4-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.openjpa</groupId>
       <artifactId>openjpa-persistence-jdbc</artifactId>
       <scope>test</scope>
@@ -283,22 +289,10 @@
       <!-- cxf -->
       <dependency>
           <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-core</artifactId>
+          <artifactId>cxf-bundle</artifactId>
           <version>${cxf-version}</version>
+          <scope>test</scope>
       </dependency>
-      <!-- used by the real web service -->
-      <dependency>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-frontend-jaxws</artifactId>
-          <version>${cxf-version}</version>
-      </dependency>
-      <!-- regular http transport -->
-      <dependency>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-rt-transports-http</artifactId>
-          <version>${cxf-version}</version>
-      </dependency>
-
       <dependency>
         <groupId>org.apache.ftpserver</groupId>
         <artifactId>ftpserver-core</artifactId>

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.cxf.blueprint.BlueprintSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.CamelContextHelper;
@@ -52,9 +53,11 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
 
             AbstractJAXRSFactoryBean bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, 
                 AbstractJAXRSFactoryBean.class);
-
-            answer = new CxfRsSpringEndpoint(this.getCamelContext(), bean);
-           
+            if (bean instanceof BlueprintSupport) {
+                answer = new CxfRsBlueprintEndpoint(this.getCamelContext(), bean);
+            } else {
+                answer = new CxfRsSpringEndpoint(this.getCamelContext(), bean);
+            }
             // Apply Spring bean properties (including # notation referenced bean).  Note that the
             // Spring bean properties values can be overridden by property defined in URI query.
             // The super class (DefaultComponent) will invoke "setProperties" after this method 

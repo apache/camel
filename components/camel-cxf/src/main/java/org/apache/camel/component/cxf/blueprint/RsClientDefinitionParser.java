@@ -17,47 +17,87 @@
 
 package org.apache.camel.component.cxf.blueprint;
 
+import java.util.List;
 import java.util.StringTokenizer;
 
+import javax.xml.namespace.QName;
+
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 
 import org.apache.aries.blueprint.ParserContext;
 import org.apache.aries.blueprint.mutable.MutableBeanMetadata;
+import org.apache.aries.blueprint.mutable.MutablePassThroughMetadata;
+import org.apache.aries.blueprint.mutable.MutableValueMetadata;
 import org.apache.camel.component.cxf.CxfBlueprintEndpoint;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.blueprint.AbstractBPBeanDefinitionParser;
+import org.apache.cxf.helpers.DOMUtils;
+import org.apache.cxf.jaxrs.model.UserResource;
+import org.apache.cxf.jaxrs.utils.ResourceUtils;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.reflect.Metadata;
 
 
-public class RsClientDefinitionParser extends AbstractBPBeanDefinitionParser {
+public class RsClientDefinitionParser extends AbstractBeanDefinitionParser {
 
     public Metadata parse(Element element, ParserContext context) {
-        MutableBeanMetadata endpointConfig = context.createMetadata(MutableBeanMetadata.class);
-        endpointConfig.setRuntimeClass(CxfBlueprintEndpoint.class);
-        endpointConfig.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
-        endpointConfig.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
+        MutableBeanMetadata beanMetadata = createBeanMetadata(element, context, RsClientBlueprintBean.class);
+        NamedNodeMap atts = element.getAttributes();
 
-        if (!StringUtils.isEmpty(getIdOrName(element))) {
-            endpointConfig.setId(getIdOrName(element));
-        } else {
-            endpointConfig.setId("camel.cxf.endpoint." + context.generateId());
-        }
-
-        return null;
-    }
-
-    public static String getIdOrName(Element elem) {
-        String id = elem.getAttribute("id");
-
-        if (null == id || "".equals(id)) {
-            String names = elem.getAttribute("name");
-            if (null != names) {
-                StringTokenizer st = new StringTokenizer(names, ",");
-                if (st.countTokens() > 0) {
-                    id = st.nextToken();
+        String bus = null;
+        for (int i = 0; i < atts.getLength(); i++) {
+            Attr node = (Attr) atts.item(i);
+            String val = node.getValue();
+            String pre = node.getPrefix();
+            String name = node.getLocalName();
+            if ("bus".equals(name)) {
+                bus = val;
+            } else if (isAttribute(pre, name)) {
+                if ("depends-on".equals(name)) {
+                    beanMetadata.addDependsOn(val);
+                } else if (!"name".equals(name)) {
+                    beanMetadata.addProperty(name, AbstractBPBeanDefinitionParser.createValue(context, val));
                 }
             }
         }
-        return id;
+
+        Element elem = DOMUtils.getFirstElement(element);
+        while (elem != null) {
+            String name = elem.getLocalName();
+            if ("properties".equals(name) || "headers".equals(name)) {
+                Metadata map = parseMapData(context, beanMetadata, elem);
+                beanMetadata.addProperty(name, map);
+            } else if ("binding".equals(name)) {
+                setFirstChildAsProperty(element, context, beanMetadata, "bindingConfig");
+            } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name) || "outInterceptors".equals(name)
+                || "outFaultInterceptors".equals(name) || "features".equals(name) || "schemaLocations".equals(name) || "handlers".equals(name)) {
+                Metadata list = parseListData(context, beanMetadata, elem);
+                beanMetadata.addProperty(name, list);
+            } else if ("features".equals(name) || "providers".equals(name)
+                || "schemaLocations".equals(name) || "modelBeans".equals(name)
+                || "serviceBeans".equals(name)) {
+                Metadata list = parseListData(context, beanMetadata, elem);
+                beanMetadata.addProperty(name, list);
+            } else if ("model".equals(name)) {
+                List<UserResource> resources = ResourceUtils.getResourcesFromElement(elem);
+                MutablePassThroughMetadata value = context.createMetadata(MutablePassThroughMetadata.class);
+                value.setObject(resources);
+                beanMetadata.addProperty(name, value);
+            } else {
+                setFirstChildAsProperty(element, context, beanMetadata, name);
+            }
+        } 
+ 
+        if (StringUtils.isEmpty(bus)) {
+            bus = "cxf";
+        }
+        //Will create a bus if needed...
+
+        beanMetadata.addProperty("bus", getBusRef(context, bus));
+        return beanMetadata;
     }
+
+    
 }
