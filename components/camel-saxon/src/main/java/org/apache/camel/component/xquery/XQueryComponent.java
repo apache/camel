@@ -16,31 +16,45 @@
  */
 package org.apache.camel.component.xquery;
 
+import java.net.URL;
 import java.util.Map;
 
+import net.sf.saxon.query.ModuleURIResolver;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.springframework.core.io.Resource;
 
-
 /**
  * An <a href="http://camel.apache.org/xquery.html">XQuery Component</a>
  * for performing transforming messages
- *
- * @version 
  */
 public class XQueryComponent extends ResourceBasedComponent {
+
+    private ModuleURIResolver moduleURIResolver = new XQueryModuleURIResolver(this);
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Resource resource = resolveMandatoryResource(remaining);
         log.debug("{} using schema resource: {}", this, resource);
         XQueryBuilder xslt = XQueryBuilder.xquery(resource.getURL());
+        xslt.setModuleURIResolver(getModuleURIResolver());
         configureXslt(xslt, uri, remaining, parameters);
         return new ProcessorEndpoint(uri, this, xslt);
     }
 
     protected void configureXslt(XQueryBuilder xQueryBuilder, String uri, String remaining, Map<String, Object> parameters) throws Exception {
         setProperties(xQueryBuilder, parameters);
+    }
+
+    public URL resolveModuleResource(String uri) throws Exception {
+        return resolveMandatoryResource(uri).getURL();
+    }
+
+    public ModuleURIResolver getModuleURIResolver() {
+        return moduleURIResolver;
+    }
+
+    public void setModuleURIResolver(ModuleURIResolver moduleURIResolver) {
+        this.moduleURIResolver = moduleURIResolver;
     }
 }
