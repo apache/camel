@@ -93,12 +93,12 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return serverAliveCountMax;
     }
 
-	public void setChmod(String chmod) {
-		this.chmod = chmod;
-	}
-	
-	public String getChmod() {
-		return chmod;
-	}
-	
+    public void setChmod(String chmod) {
+        this.chmod = chmod;
+    }
+
+    public String getChmod() {
+        return chmod;
+    }
+
 }
