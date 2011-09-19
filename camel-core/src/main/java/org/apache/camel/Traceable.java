@@ -14,34 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.Traceable;
+package org.apache.camel;
 
 /**
- * The processor which implements the ThrowException DSL
+ * Traceable processors allowing easier tracing using constructed labels to help identify the processor
+ * and where its defined in the route model.
+ *
+ * @version 
  */
-public class ThrowExceptionProcessor implements Processor, Traceable {
-    private final Exception exception;
-
-    public ThrowExceptionProcessor(Exception exception) {
-        this.exception = exception;
-    }
+public interface Traceable {
 
     /**
-     * Set the exception in the exchange
+     * Gets the trace label used for logging when tracing is enabled.
+     * <p/>
+     * The label should be short and precise.
+     *
+     * @return  the label
      */
-    public void process(Exchange exchange) throws Exception {
-        exchange.setException(exception);
-    }
+    String getTraceLabel();
 
-    public String getTraceLabel() {
-        return "throwException[" + exception.getClass().getSimpleName() + "]";
-    }
-
-    public String toString() {
-        return "ThrowException";
-    }
 }

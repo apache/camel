@@ -24,6 +24,7 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
+import org.apache.camel.processor.interceptor.DefaultChannel;
 import org.apache.camel.processor.interceptor.StreamCaching;
 
 /**

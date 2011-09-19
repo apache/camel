@@ -17,20 +17,10 @@
 package org.apache.camel.processor;
 
 /**
- * Traceable processors allowing easier tracing using constructed labels to help identify the processor
- * and where its defined in the route model.
- *
- * @version 
+ * @deprecated
+ * @see org.apache.camel.Traceable
  */
-public interface Traceable {
-
-    /**
-     * Gets the trace label used for logging when tracing is enabled.
-     * <p/>
-     * The label should be short and precise.
-     *
-     * @return  the label
-     */
-    String getTraceLabel();
+@Deprecated
+public interface Traceable extends org.apache.camel.Traceable {
 
 }

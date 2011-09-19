@@ -20,8 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.RouteNode;
+import org.apache.camel.Traceable;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.Traceable;
 
 /**
  * A default implementation of the {@link org.apache.camel.RouteNode}
@@ -60,6 +60,12 @@ public class DefaultRouteNode implements RouteNode {
         Processor target = processor;
         if (target != null && target instanceof Traceable) {
             Traceable trace = (Traceable) target;
+            return trace.getTraceLabel();
+        }
+        
+        // Compatiblity for old Traceable interface
+        if (target != null && target instanceof org.apache.camel.processor.Traceable) {
+            org.apache.camel.processor.Traceable trace = (org.apache.camel.processor.Traceable) target;
             return trace.getTraceLabel();
         }
 

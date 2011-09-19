@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
+import org.apache.camel.Traceable;
 
 /**
  * Processor for marking an {@link org.apache.camel.Exchange} to rollback.

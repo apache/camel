@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Traceable;
 
 /**
  * A <a href="http://camel.apache.org/delayer.html">Delayer</a> which

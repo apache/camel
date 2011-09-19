@@ -19,7 +19,7 @@ package org.apache.camel.processor.validation;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.Traceable;
+import org.apache.camel.Traceable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

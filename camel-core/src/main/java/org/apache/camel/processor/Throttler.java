@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Traceable;
 import org.apache.camel.util.ObjectHelper;
 
 /**

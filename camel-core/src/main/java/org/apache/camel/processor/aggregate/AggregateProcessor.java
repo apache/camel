@@ -35,16 +35,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TimeoutMap;
+import org.apache.camel.Traceable;
 import org.apache.camel.impl.LoggingExceptionHandler;
-import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.processor.Traceable;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.RecoverableAggregationRepository;
@@ -94,8 +93,6 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private Set<String> batchConsumerCorrelationKeys = new LinkedHashSet<String>();
     private final Set<String> inProgressCompleteExchanges = new HashSet<String>();
     private final Map<String, RedeliveryData> redeliveryState = new ConcurrentHashMap<String, RedeliveryData>();
-    // optional dead letter channel for exhausted recovered exchanges
-    private Processor deadLetterProcessor;
 
     // keep booking about redelivery
     private class RedeliveryData {
@@ -118,6 +115,8 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private boolean completionFromBatchConsumer;
     private AtomicInteger batchConsumerCounter = new AtomicInteger();
     private boolean discardOnCompletionTimeout;
+
+    private ProducerTemplate deadLetterProducerTemplate;
 
     public AggregateProcessor(CamelContext camelContext, Processor processor,
                               Expression correlationExpression, AggregationStrategy aggregationStrategy,
@@ -741,7 +740,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                                 // set redelivery counter
                                 exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, data.redeliveryCounter);
                                 exchange.getIn().setHeader(Exchange.REDELIVERY_EXHAUSTED, Boolean.TRUE);
-                                deadLetterProcessor.process(exchange);
+                                deadLetterProducerTemplate.send(recoverable.getDeadLetterUri(), exchange);
                             } catch (Throwable e) {
                                 exchange.setException(e);
                             }
@@ -830,9 +829,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                     if (endpoint == null) {
                         throw new NoSuchEndpointException(recoverable.getDeadLetterUri());
                     }
-                    // force MEP to be InOnly so when sending to DLQ we would not expect a reply if the MEP was InOut
-                    deadLetterProcessor = new SendProcessor(endpoint, ExchangePattern.InOnly);
-                    ServiceHelper.startService(deadLetterProcessor);
+                    deadLetterProducerTemplate = camelContext.createProducerTemplate();
                 }
             }
         }
@@ -865,7 +862,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         if (recoverService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(recoverService);
         }
-        ServiceHelper.stopServices(timeoutMap, processor, deadLetterProcessor);
+        ServiceHelper.stopServices(timeoutMap, processor, deadLetterProducerTemplate);
 
         if (closedCorrelationKeys != null) {
             // it may be a service so stop it as well

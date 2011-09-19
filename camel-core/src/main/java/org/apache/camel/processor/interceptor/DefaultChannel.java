@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.processor.interceptor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,10 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.interceptor.StreamCaching;
-import org.apache.camel.processor.interceptor.TraceFormatter;
-import org.apache.camel.processor.interceptor.TraceInterceptor;
-import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
