@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.seda;
 
-import java.util.Collection;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +32,7 @@ import org.apache.camel.util.ExchangeHelper;
  * @version 
  */
 public class SedaProducer extends DefaultAsyncProducer {
-    protected final Collection<Exchange> queue;
+    protected final BlockingQueue<Exchange> queue;
     private final SedaEndpoint endpoint;
     private final WaitForTaskToComplete waitForTaskToComplete;
     private final long timeout;
@@ -177,9 +176,10 @@ public class SedaProducer extends DefaultAsyncProducer {
     protected void addToQueue(Exchange exchange) {
         if (blockWhenFull) {
             try {
-                ((BlockingQueue<Exchange>)queue).put(exchange);
+                queue.put(exchange);
             } catch (InterruptedException e) {
                 // ignore
+                log.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
             }
         } else {
             queue.add(exchange);
