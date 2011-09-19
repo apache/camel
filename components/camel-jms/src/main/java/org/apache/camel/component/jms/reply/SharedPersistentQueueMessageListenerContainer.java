@@ -27,6 +27,8 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
  * designated reply messages from the shared queue. Since the queue is shared, then we can only
  * pickup the reply messages which is intended for us, so to support that we must use JMS
  * Message Selectors.
+ * <p/>
+ * See more details at <a href="http://camel.apache.org/jms">camel-jms</a>.
  *
  * @see ExclusivePersistentQueueMessageListenerContainer
  */
