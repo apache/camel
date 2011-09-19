@@ -30,7 +30,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
-        <scalate-version>1.5.1</scalate-version>
+        <scalate-version>1.5.2</scalate-version>
         <jersey-version>1.8</jersey-version>
         <logback-version>0.9.29</logback-version>
         <jetty-port>8080</jetty-port>
