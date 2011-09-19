@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Locale;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
@@ -38,21 +37,20 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A bunch of useful testing methods
- *
- * @version 
  */
-public abstract class TestSupport extends TestCase {    
-    
-    private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class); 
-	protected static final String LS = System.getProperty("line.separator");
-    
+public abstract class TestSupport extends TestCase {
+
+    protected static final String LS = System.getProperty("line.separator");
+    private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
+
     protected transient Logger log = LoggerFactory.getLogger(getClass());
     // Builder methods for expressions used when testing
     // -------------------------------------------------------------------------
 
     /**
      * Runs the bare test sequence only if this platform is supported
-     * @exception Throwable if any exception is thrown
+     *
+     * @throws Throwable if any exception is thrown
      */
     @Override
     public void runBare() throws Throwable {
@@ -82,8 +80,8 @@ public abstract class TestSupport extends TestCase {
      */
     public static ValueBuilder property(String name) {
         return Builder.property(name);
-    }    
-    
+    }
+
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
@@ -151,7 +149,7 @@ public abstract class TestSupport extends TestCase {
     public static <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
         assertNotNull("Expected an instance of type: " + expectedType.getName() + " but was null", value);
         assertTrue("object should be a " + expectedType.getName() + " but was: " + value + " with type: "
-                   + value.getClass().getName(), expectedType.isInstance(value));
+                + value.getClass().getName(), expectedType.isInstance(value));
         return expectedType.cast(value);
     }
 
@@ -296,7 +294,7 @@ public abstract class TestSupport extends TestCase {
      * Resolves an endpoint and asserts that it is found
      */
     public static <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String uri,
-                                                              Class<T> endpointType) {
+                                                                  Class<T> endpointType) {
         T endpoint = context.getEndpoint(uri, endpointType);
 
         assertNotNull("No endpoint found for URI: " + uri, endpoint);
@@ -368,7 +366,7 @@ public abstract class TestSupport extends TestCase {
     /**
      * Asserts that the text contains the given string
      *
-     * @param text the text to compare
+     * @param text          the text to compare
      * @param containedText the text which must be contained inside the other text parameter
      */
     public static void assertStringContains(String text, String containedText) {
@@ -383,9 +381,9 @@ public abstract class TestSupport extends TestCase {
     public static Processor unwrap(Processor processor) {
         while (true) {
             if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor)processor).getProcessor();
+                processor = ((DelegateProcessor) processor).getProcessor();
             } else if (processor instanceof DelegateAsyncProcessor) {
-                processor = ((DelegateAsyncProcessor)processor).getProcessor();
+                processor = ((DelegateAsyncProcessor) processor).getProcessor();
             } else {
                 return processor;
             }
@@ -403,11 +401,11 @@ public abstract class TestSupport extends TestCase {
             if (processor instanceof Channel) {
                 return (Channel) processor;
             } else if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor)processor).getProcessor();
+                processor = ((DelegateProcessor) processor).getProcessor();
             } else if (processor instanceof DelegateAsyncProcessor) {
-                processor = ((DelegateAsyncProcessor)processor).getProcessor();
+                processor = ((DelegateAsyncProcessor) processor).getProcessor();
             } else if (processor instanceof ErrorHandlerSupport) {
-                processor = ((ErrorHandlerSupport)processor).getOutput();
+                processor = ((ErrorHandlerSupport) processor).getOutput();
             } else {
                 return null;
             }
@@ -436,7 +434,7 @@ public abstract class TestSupport extends TestCase {
             }
         }
 
-		file.delete();
+        file.delete();
     }
 
     /**
