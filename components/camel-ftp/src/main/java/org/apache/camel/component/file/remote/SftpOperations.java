@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
@@ -137,6 +138,16 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
         SftpConfiguration sftpConfig = (SftpConfiguration) configuration;
 
+        if (isNotEmpty(sftpConfig.getCiphers())) {
+            LOG.debug("Using ciphers: " + sftpConfig.getCiphers());
+            Hashtable<String,String> ciphers = new Hashtable<String, String>();
+            
+            ciphers.put("cipher.s2c", sftpConfig.getCiphers());
+            ciphers.put("cipher.c2s", sftpConfig.getCiphers());
+
+            JSch.setConfig(ciphers);
+        }
+        
         if (isNotEmpty(sftpConfig.getPrivateKeyFile())) {
             LOG.debug("Using private keyfile: " + sftpConfig.getPrivateKeyFile());
             if (isNotEmpty(sftpConfig.getPrivateKeyFilePassphrase())) {
@@ -160,7 +171,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         
         session.setServerAliveInterval(sftpConfig.getServerAliveInterval());
         session.setServerAliveCountMax(sftpConfig.getServerAliveCountMax());
-        
+
         // set user information
         session.setUserInfo(new UserInfo() {
             public String getPassphrase() {
