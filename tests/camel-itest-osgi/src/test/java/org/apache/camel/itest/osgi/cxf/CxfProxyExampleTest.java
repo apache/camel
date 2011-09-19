@@ -21,8 +21,6 @@ import org.apache.camel.example.reportincident.OutputReportIncident;
 import org.apache.camel.example.reportincident.ReportIncidentEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.apache.karaf.testing.Helper;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
