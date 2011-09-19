@@ -678,7 +678,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         LOG.trace("existsFile({})", name);
-        if (endpoint.isFastExist()) {
+        if (endpoint.isFastExistsCheck()) {
             return fastExistsFile(name);
         }
         // check whether a file already exists

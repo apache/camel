@@ -33,7 +33,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     private int maximumReconnectAttempts = 3;
     private long reconnectDelay = 1000;
     private boolean disconnect;
-    private boolean fastExist;
+    private boolean fastExistsCheck;
 
     public RemoteFileEndpoint() {
         // no args constructor for spring bean endpoint configuration
@@ -172,12 +172,12 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         this.disconnect = disconnect;
     }
 
-    public boolean isFastExist() {
-        return fastExist;
+    public boolean isFastExistsCheck() {
+        return fastExistsCheck;
     }
 
-    public void setFastExist(boolean fastExist) {
-        this.fastExist = fastExist;
+    public void setFastExistsCheck(boolean fastExistsCheck) {
+        this.fastExistsCheck = fastExistsCheck;
     }
 
 }
