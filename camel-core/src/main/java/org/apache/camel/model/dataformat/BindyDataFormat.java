@@ -70,6 +70,8 @@ public class BindyDataFormat extends DataFormatDefinition {
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (type == BindyType.Csv) {
             setDataFormatName("bindy-csv");
+        } else if (type == BindyType.Fixed) {
+            setDataFormatName("bindy-fixed");
         } else {
             setDataFormatName("bindy-kvp");
         }
