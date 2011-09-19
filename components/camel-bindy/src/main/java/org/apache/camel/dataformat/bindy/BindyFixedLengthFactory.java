@@ -173,7 +173,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
             if (offset - 1 <= -1) {
                 throw new IllegalArgumentException("Offset/Position of the field " + dataField.toString()
-                                                   + " cannot be negative!");
+                                                   + " cannot be negative");
             }
 
             token = record.substring(offset - 1, offset + length - 1);
@@ -358,7 +358,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                                 temp.append(generatePaddingChars(padChar, fieldLength, result.length()));
                             } else {
                                 throw new IllegalArgumentException("Alignment for the field: " + field.getName()
-                                        + " must be equal to R for RIGHT or L for LEFT !");
+                                        + " must be equal to R for RIGHT or L for LEFT");
                             }
 
                             result = temp.toString();
@@ -376,7 +376,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                     } else {
                         throw new IllegalArgumentException("Length of the field: " + field.getName()
-                                + " is a mandatory field and cannot be equal to zero or to be negative !");
+                                + " is a mandatory field and cannot be equal to zero or to be negative, was: " + fieldLength);
                     }
 
                     if (LOG.isDebugEnabled()) {
@@ -426,31 +426,31 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             FixedLengthRecord record = cl.getAnnotation(FixedLengthRecord.class);
 
             if (record != null) {
-                LOG.debug("Fixed length record : {}", record);
+                LOG.debug("Fixed length record: {}", record);
 
                 // Get carriage return parameter
                 crlf = record.crlf();
-                LOG.debug("Carriage return defined for the CSV : {}", crlf);
+                LOG.debug("Carriage return defined for the CSV: {}", crlf);
 
                 // Get hasHeader parameter
                 hasHeader = record.hasHeader();
-                LOG.debug("Has Header :  {}", hasHeader);
+                LOG.debug("Has Header: {}", hasHeader);
 
                 // Get hasFooter parameter
                 hasFooter = record.hasFooter();
-                LOG.debug("Has Footer :  {}", hasFooter);
+                LOG.debug("Has Footer: {}", hasFooter);
 
                 // Get padding character
                 paddingChar = record.paddingChar();
-                LOG.debug("Padding char :  {}", paddingChar);
+                LOG.debug("Padding char: {}", paddingChar);
 
                 // Get length of the record
                 recordLength = record.length();
-                LOG.debug("Length of the record : {}", recordLength);
+                LOG.debug("Length of the record: {}", recordLength);
 
                 // Get length of the record
                 recordLength = record.length();
-                LOG.debug("Length of the record : {}", recordLength);
+                LOG.debug("Length of the record: {}", recordLength);
             }
         }
     }

@@ -95,7 +95,7 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
         // and check that we have the caused exception stored
         Exception cause = error.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
         TestSupport.assertIsInstanceOf(Exception.class, cause.getCause());
-        assertEquals("String provided does not fit the Integer pattern defined or is not parseable, position : 1, line : 1", cause.getMessage());
+        assertEquals("String provided does not fit the Integer pattern defined or is not parseable, position: 1, line: 1", cause.getMessage());
 
     }
 

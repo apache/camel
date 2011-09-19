@@ -156,7 +156,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 result = unquoteTokens(result);
 
                 if (result.size() == 0 || result.isEmpty()) {
-                    throw new java.lang.IllegalArgumentException("No records have been defined in the CSV !");
+                    throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
                 }
 
                 if (result.size() > 0) {
@@ -173,14 +173,14 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                     // Add objects graph to the list
                     models.add(model);
 
-                    LOG.debug("Graph of objects created : {}", model);
+                    LOG.debug("Graph of objects created: {}", model);
                 }
             }
 
             // Test if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
             if (models.size() == 0) {
-                throw new java.lang.IllegalArgumentException("No records have been defined in the CSV !");
+                throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
             } else {
                 return models;
             }

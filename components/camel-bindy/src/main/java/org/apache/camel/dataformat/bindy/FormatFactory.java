@@ -51,7 +51,7 @@ public final class FormatFactory {
      * Retrieves the format to use for the given type
      * 
      * @param clazz represents the type of the format (String, Integer, Byte)
-     * @param pattern is the pattern to be used during the formating of the data
+     * @param pattern is the pattern to be used during the formatting of the data
      * @param locale optional locale for NumberFormat and DateFormat parsing.
      * @param precision optional scale for BigDecimal parsing.
      * @return Format the formatter
