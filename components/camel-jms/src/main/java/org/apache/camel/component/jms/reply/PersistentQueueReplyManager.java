@@ -25,6 +25,7 @@ import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.jms.ReplyToType;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -124,45 +125,35 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         }
     };
 
-    private final class PersistentQueueMessageListenerContainer extends DefaultMessageListenerContainer {
-
-        private String fixedMessageSelector;
-        private MessageSelectorCreator creator;
-
-        private PersistentQueueMessageListenerContainer(String fixedMessageSelector) {
-            this.fixedMessageSelector = fixedMessageSelector;
-        }
-
-        private PersistentQueueMessageListenerContainer(MessageSelectorCreator creator) {
-            this.creator = creator;
-        }
-
-        @Override
-        public String getMessageSelector() {
-            String id = null;
-            if (fixedMessageSelector != null) {
-                id = fixedMessageSelector;
-            } else if (creator != null) {
-                id = creator.get();
-            }
-            log.trace("Using MessageSelector[{}]", id);
-            return id;
-        }
-    }
-
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
         DefaultMessageListenerContainer answer;
 
-        String replyToSelectorName = endpoint.getReplyToDestinationSelectorName();
-        if (replyToSelectorName != null) {
-            // create a random selector value we will use for the persistent reply queue
-            replyToSelectorValue = "ID:" + new BigInteger(24 * 8, new Random()).toString(16);
-            String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + "'";
-            answer = new PersistentQueueMessageListenerContainer(fixedMessageSelector);
+        ReplyToType type = endpoint.getConfiguration().getReplyToType();
+        if (type == null) {
+            // use shared by default for persistent reply queues
+            type = ReplyToType.Shared;
+        }
+
+        if (ReplyToType.Shared == type) {
+            // shared reply to queues support either a fixed or dynamic JMS message selector
+            String replyToSelectorName = endpoint.getReplyToDestinationSelectorName();
+            if (replyToSelectorName != null) {
+                // create a random selector value we will use for the persistent reply queue
+                replyToSelectorValue = "ID:" + new BigInteger(24 * 8, new Random()).toString(16);
+                String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + "'";
+                answer = new SharedPersistentQueueMessageListenerContainer(fixedMessageSelector);
+                log.debug("Using shared queue: " + endpoint.getReplyTo() + " with fixed message selector [" + fixedMessageSelector + "] as reply listener: " + answer);
+            } else {
+                // use a dynamic message selector which will select the message we want to receive as reply
+                dynamicMessageSelector = new MessageSelectorCreator();
+                answer = new SharedPersistentQueueMessageListenerContainer(dynamicMessageSelector);
+                log.debug("Using shared queue: " + endpoint.getReplyTo() + " with dynamic message selector as reply listener: " + answer);
+            }
+        } else if (ReplyToType.Exclusive == type) {
+            answer = new ExclusivePersistentQueueMessageListenerContainer();
+            log.debug("Using exclusive queue:" + endpoint.getReplyTo() + " as reply listener: " + answer);
         } else {
-            // use a dynamic message selector which will select the message we want to receive as reply
-            dynamicMessageSelector = new MessageSelectorCreator();
-            answer = new PersistentQueueMessageListenerContainer(dynamicMessageSelector);
+            throw new IllegalArgumentException("ReplyToType " + type + " is not supported for persistent reply queues");
         }
 
         DestinationResolver resolver = endpoint.getDestinationResolver();

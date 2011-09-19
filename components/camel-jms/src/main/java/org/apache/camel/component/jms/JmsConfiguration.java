@@ -124,6 +124,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean forceSendOriginalMessage;
     // to force disabling time to live (works in both in-only or in-out mode)
     private boolean disableTimeToLive;
+    private ReplyToType replyToType;
 
     public JmsConfiguration() {
     }
@@ -1175,5 +1176,20 @@ public class JmsConfiguration implements Cloneable {
 
     public void setDisableTimeToLive(boolean disableTimeToLive) {
         this.disableTimeToLive = disableTimeToLive;
+    }
+
+    /**
+     * Gets the reply to type.
+     * <p/>
+     * Will only return a value if this option has been explicit configured.
+     *
+     * @return the reply type if configured, otherwise <tt>null</tt>
+     */
+    public ReplyToType getReplyToType() {
+        return replyToType;
+    }
+
+    public void setReplyToType(ReplyToType replyToType) {
+        this.replyToType = replyToType;
     }
 }

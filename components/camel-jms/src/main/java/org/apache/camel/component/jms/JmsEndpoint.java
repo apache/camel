@@ -983,6 +983,21 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         configuration.setDisableTimeToLive(disableTimeToLive);
     }
 
+    @ManagedAttribute
+    public String getReplyToType() {
+        if (configuration.getReplyToType() != null) {
+            return configuration.getReplyToType().name();
+        } else {
+            return null;
+        }
+    }
+
+    @ManagedAttribute
+    public void setReplyToType(String replyToType) {
+        ReplyToType type = ReplyToType.valueOf(replyToType);
+        configuration.setReplyToType(type);
+    }
+
     @ManagedAttribute(description = "Camel id")
     public String getCamelId() {
         return getCamelContext().getName();
@@ -1021,7 +1036,5 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
         return super.createEndpointUri();
     }
-
-
 
 }
