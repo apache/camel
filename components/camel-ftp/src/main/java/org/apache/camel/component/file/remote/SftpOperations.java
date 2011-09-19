@@ -53,12 +53,12 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
     private static final transient Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
-    private RemoteFileEndpoint endpoint;
+    private SftpEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
 
     public void setEndpoint(GenericFileEndpoint endpoint) {
-        this.endpoint = (RemoteFileEndpoint) endpoint;
+        this.endpoint = (SftpEndpoint) endpoint;
     }
 
     public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
@@ -644,7 +644,18 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                 // override is default
                 channel.put(is, targetName);
             }
+
+            // after storing file, we may set chmod on the file
+            String mode = endpoint.getConfiguration().getChmod();
+            if (ObjectHelper.isNotEmpty(mode)) {
+                // parse to int using 8bit mode
+                int permissions = Integer.parseInt(mode, 8);
+                LOG.trace("Setting chmod: {} on file: ", mode, targetName);
+            	channel.chmod(permissions, targetName);
+            }
+            
             return true;
+        
         } catch (SftpException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } catch (InvalidPayloadException e) {
