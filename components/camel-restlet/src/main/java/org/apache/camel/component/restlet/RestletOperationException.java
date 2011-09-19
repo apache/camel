@@ -35,7 +35,7 @@ public class RestletOperationException extends CamelException implements Seriali
     public RestletOperationException(String uri, int statusCode, String statusText, String location, Map<String, String> responseHeaders,
                                      String responseBody) {
         super("Restlet operation failed invoking " + uri + " with statusCode: " + statusCode + (location != null ? ", redirectLocation: " + location
-            : ""));
+            : "" + " /n responseBody:" + responseBody));
         this.uri = uri;
         this.statusCode = statusCode;
         this.statusText = statusText;
