@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -89,6 +90,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementLifecycleStrategy.class);
     private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();
+    private final List<PreRegisterService> preServices = new ArrayList<PreRegisterService>();
     private CamelContext camelContext;
     private volatile boolean initialized;
     private final Set<String> knowRouteIds = new HashSet<String>();
@@ -171,6 +173,9 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
 
         // yes we made it and are initialized
         initialized = true;
+
+        // register any pre registered now that we are initialized
+        enlistPreRegisteredServices();
     }
 
     private String findFreeName(Object mc, CamelContextNameStrategy strategy, String managementName) throws MalformedObjectNameException {
@@ -196,6 +201,35 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         return name;
     }
 
+    /**
+     * After {@link CamelContext} has been enlisted in JMX using {@link #onContextStart(org.apache.camel.CamelContext)}
+     * then we can enlist any pre registered services as well, as we had to wait for {@link CamelContext} to be
+     * enlisted first.
+     * <p/>
+     * A component/endpoint/service etc. can be pre registered when using dependency injection and annotations such as
+     * {@link org.apache.camel.Produce}, {@link org.apache.camel.EndpointInject}. Therefore we need to capture those
+     * registrations up front, and then afterwards enlist in JMX when {@link CamelContext} is being started.
+     */
+    private void enlistPreRegisteredServices() {
+        if (preServices.isEmpty()) {
+            return;
+        }
+
+        LOG.debug("Registering {} pre registered services", preServices.size());
+        for (PreRegisterService pre : preServices) {
+            if (pre.getComponent() != null) {
+                onComponentAdd(pre.getName(), pre.getComponent());
+            } else if (pre.getEndpoint() != null) {
+                onEndpointAdd(pre.getEndpoint());
+            } else if (pre.getService() != null) {
+                onServiceAdd(pre.getCamelContext(), pre.getService(), pre.getRoute());
+            }
+        }
+
+        // we are done so clear the list
+        preServices.clear();
+    }
+
     public void onContextStop(CamelContext context) {
         // the agent hasn't been started
         if (!initialized) {
@@ -215,6 +249,10 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     public void onComponentAdd(String name, Component component) {
         // always register components as there are only a few of those
         if (!initialized) {
+            // pre register so we can register later when we have been initialized
+            PreRegisterService pre = new PreRegisterService();
+            pre.onComponentAdd(name, component);
+            preServices.add(pre);
             return;
         }
         try {
@@ -246,6 +284,14 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
      * @param endpoint the Endpoint attempted to be added
      */
     public void onEndpointAdd(Endpoint endpoint) {
+        if (!initialized) {
+            // pre register so we can register later when we have been initialized
+            PreRegisterService pre = new PreRegisterService();
+            pre.onEndpointAdd(endpoint);
+            preServices.add(pre);
+            return;
+        }
+
         if (!shouldRegister(endpoint, null)) {
             // avoid registering if not needed
             return;
@@ -278,6 +324,14 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     }
 
     public void onServiceAdd(CamelContext context, Service service, Route route) {
+        if (!initialized) {
+            // pre register so we can register later when we have been initialized
+            PreRegisterService pre = new PreRegisterService();
+            pre.onServiceAdd(context, service, route);
+            preServices.add(pre);
+            return;
+        }
+
         // services can by any kind of misc type but also processors
         // so we have special logic when its a processor
 
@@ -614,6 +668,7 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
     public void stop() throws Exception {
         initialized = false;
         knowRouteIds.clear();
+        preServices.clear();
     }
 
     /**
@@ -661,6 +716,60 @@ public class DefaultManagementLifecycleStrategy implements LifecycleStrategy, Se
         }
 
         return false;
+    }
+
+    /**
+     * Class which holds any pre registration details.
+     *
+     * @see org.apache.camel.management.DefaultManagementLifecycleStrategy#enlistPreRegisteredServices()
+     */
+    private final class PreRegisterService {
+
+        private String name;
+        private Component component;
+        private Endpoint endpoint;
+        private CamelContext camelContext;
+        private Service service;
+        private Route route;
+
+        public void onComponentAdd(String name, Component component) {
+            this.name = name;
+            this.component = component;
+        }
+
+        public void onEndpointAdd(Endpoint endpoint) {
+            this.endpoint = endpoint;
+        }
+
+        public void onServiceAdd(CamelContext camelContext, Service service, Route route) {
+            this.camelContext = camelContext;
+            this.service = service;
+            this.route = route;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Component getComponent() {
+            return component;
+        }
+
+        public Endpoint getEndpoint() {
+            return endpoint;
+        }
+
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+
+        public Service getService() {
+            return service;
+        }
+
+        public Route getRoute() {
+            return route;
+        }
     }
 
 }
