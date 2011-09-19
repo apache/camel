@@ -196,6 +196,7 @@ public class BeanInfo {
     protected void introspect(Class<?> clazz) {
         // get the target clazz as it could potentially have been enhanced by CGLIB etc.
         clazz = getTargetClass(clazz);
+        ObjectHelper.notNull(clazz, "clazz", this);
 
         LOG.trace("Introspecting class: {}", clazz);
 
@@ -782,6 +783,28 @@ public class BeanInfo {
      */
     public boolean hasMethod(String methodName) {
         return getOperations(methodName) != null;
+    }
+
+    /**
+     * Do we have a static method with the given name.
+     * <p/>
+     * Shorthand method names for getters is supported, so you can pass in eg 'name' and Camel
+     * will can find the real 'getName' method instead.
+     *
+     * @param methodName the method name
+     * @return <tt>true</tt> if we have such a static method.
+     */
+    public boolean hasStaticMethod(String methodName) {
+        List<MethodInfo> methods = getOperations(methodName);
+        if (methods == null || methods.isEmpty()) {
+            return false;
+        }
+        for (MethodInfo method : methods) {
+            if (method.isStaticMethod()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

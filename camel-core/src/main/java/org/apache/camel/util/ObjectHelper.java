@@ -22,9 +22,11 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
@@ -1093,6 +1095,19 @@ public final class ObjectHelper {
         } catch (IllegalAccessException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    /**
+     * Does the given class have a default public no-arg constructor.
+     */
+    public static boolean hasDefaultPublicNoArgConstructor(Class type) {
+        // getConstructors() returns only public constructors
+        for (Constructor ctr : type.getConstructors()) {
+            if (ctr.getParameterTypes().length == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

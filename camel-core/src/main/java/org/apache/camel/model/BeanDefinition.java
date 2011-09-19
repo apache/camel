@@ -23,8 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.spi.Required;
@@ -170,6 +173,9 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     @Override
     public Processor createProcessor(RouteContext routeContext) {
         BeanProcessor answer;
+        Class<?> clazz = bean != null ? bean.getClass() : null;
+        BeanInfo beanInfo = null;
+
         if (ObjectHelper.isNotEmpty(ref)) {
             RegistryBean beanHolder = new RegistryBean(routeContext.getCamelContext(), ref);
             // bean holder will check if the bean exists
@@ -178,15 +184,17 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         } else {
             if (bean == null) {
                 ObjectHelper.notNull(beanType, "bean, ref or beanType", this);
-                Class<?> clazz;
                 try {
                     clazz = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(beanType);
                 } catch (ClassNotFoundException e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
-                bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), clazz);
+                // create a bean if there is a default public no-arg constructor
+                if (ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
+                    bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), clazz);
+                    ObjectHelper.notNull(bean, "bean", this);
+                }
             }
-            ObjectHelper.notNull(bean, "bean", this);
 
             // validate the bean type is not from java so you by mistake think its a reference
             // to a bean name but the String is being invoke instead
@@ -194,15 +202,32 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
                 throw new IllegalArgumentException("The bean instance is a java.lang.String type: " + bean
                     + ". We suppose you want to refer to a bean instance by its id instead. Please use beanRef.");
             }
-            answer = new BeanProcessor(bean, routeContext.getCamelContext());
+
+            // notice bean may be null if its a static class
+            beanInfo = new BeanInfo(routeContext.getCamelContext(), clazz);
+            answer = new BeanProcessor(new ConstantBeanHolder(bean, beanInfo));
         }
         if (method != null) {
             answer.setMethod(method);
 
             // check there is a method with the given name, and leverage BeanInfo for that
-            BeanInfo info = new BeanInfo(routeContext.getCamelContext(), bean.getClass());
-            if (!info.hasMethod(method)) {
-                throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
+            if (bean != null) {
+                clazz = bean.getClass();
+            }
+            if (beanInfo == null) {
+                beanInfo = new BeanInfo(routeContext.getCamelContext(), clazz);
+            }
+
+            if (bean != null) {
+                // there is a bean instance, so check for any methods
+                if (!beanInfo.hasMethod(method)) {
+                    throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
+                }
+            } else {
+                // there is no bean instance, so check for static methods only
+                if (!beanInfo.hasStaticMethod(method)) {
+                    throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, clazz, method, true));
+                }
             }
         }
         return answer;
