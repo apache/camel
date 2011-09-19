@@ -495,6 +495,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getConfiguration().getIdleTaskExecutionLimit();
     }
 
+    @ManagedAttribute
+    public int getIdleConsumerLimit() {
+        return getConfiguration().getIdleConsumerLimit();
+    }
+    
     public JmsOperations getJmsOperations() {
         return getConfiguration().getJmsOperations();
     }
@@ -755,6 +760,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setIdleTaskExecutionLimit(idleTaskExecutionLimit);
     }
 
+    @ManagedAttribute
+    public void setIdleConsumerLimit(int idleConsumerLimit) {
+        getConfiguration().setIdleConsumerLimit(idleConsumerLimit);
+    }
+    
     public void setJmsOperations(JmsOperations jmsOperations) {
         getConfiguration().setJmsOperations(jmsOperations);
     }
