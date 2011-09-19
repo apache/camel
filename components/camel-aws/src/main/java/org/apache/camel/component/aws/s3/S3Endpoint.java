@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.aws.s3;
 
-import java.util.List;
-
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.CreateBucketRequest;
+import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 
@@ -76,11 +75,14 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         String bucketName = getConfiguration().getBucketName();
         LOG.trace("Quering whether bucket [{}] already exists...", bucketName);
         
-        List<Bucket> buckets = getS3Client().listBuckets();
-        for (Bucket bucket : buckets) {
-            if (bucketName.equals(bucket.getName())) {
-                LOG.trace("Bucket [{}] already exist", bucketName);
-                return;
+        try {
+            getS3Client().listObjects(new ListObjectsRequest(bucketName, null, null, null, 0));
+            LOG.trace("Bucket [{}] already exists", bucketName);
+            return;
+        } catch (AmazonServiceException ase) {
+            /* 404 means the bucket doesn't exist */
+            if (ase.getStatusCode() != 404) {
+                throw ase;
             }
         }
         
