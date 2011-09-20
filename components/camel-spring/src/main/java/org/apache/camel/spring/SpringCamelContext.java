@@ -216,7 +216,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         String maybeStart = System.getProperty("maybeStartCamelContext", "true");
 
         if ("true".equals(maybeStart) 
-            || NO_START.get() == null) {
+            && NO_START.get() == null) {
             if (!isStarted() && !isStarting()) {
                 start();
             } else {
