@@ -1393,6 +1393,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         getManagementStrategy().start();
 
         // start lifecycle strategies
+        ServiceHelper.startServices(lifecycleStrategies);
         Iterator<LifecycleStrategy> it = lifecycleStrategies.iterator();
         while (it.hasNext()) {
             LifecycleStrategy strategy = it.next();
@@ -1502,6 +1503,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
         // shutdown management as the last one
         shutdownServices(managementStrategy);
+        shutdownServices(lifecycleStrategies);
+        lifecycleStrategies.clear();
 
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
