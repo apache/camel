@@ -23,8 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ConstantBeanHolder;
@@ -160,7 +158,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
     
     /**
-     * Sets the Class of the bean that camel will instantiation it for calling
+     * Sets the Class of the bean
      *
      * @param beanType the Class of the bean
      * @return the builder
