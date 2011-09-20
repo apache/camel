@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class PropertyEditorTypeConverter implements TypeConverter {
+public class PropertyEditorTypeConverter implements TypeConverter, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertyEditorTypeConverter.class);
     // use a soft bound cache to avoid using too much memory in case a lot of different classes
@@ -113,4 +114,15 @@ public class PropertyEditorTypeConverter implements TypeConverter {
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
     }
+
+    public void start() throws Exception {
+        // noop
+    }
+
+    public void stop() throws Exception {
+        // clear caches so we dont leak
+        cache.clear();
+        misses.clear();
+    }
+
 }
