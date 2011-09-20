@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -41,8 +42,9 @@ import org.apache.camel.spi.ManagementStrategy;
  * @version 
  */
 @ManagedResource(description = "Managed CamelContext")
-public class ManagedCamelContext {
-    private final ModelCamelContext context;
+public class ManagedCamelContext implements TimerListener {
+    private final ModelCamelContext context;   
+    private final LoadTriplet load = new LoadTriplet();
 
     public ManagedCamelContext(ModelCamelContext context) {
         this.context = context;
@@ -133,6 +135,26 @@ public class ManagedCamelContext {
     @ManagedAttribute(description = "Whether to force shutdown now when a timeout occurred")
     public boolean isShutdownNowOnTimeout() {
         return context.getShutdownStrategy().isShutdownNowOnTimeout();
+    }
+    
+    @ManagedAttribute(description = "Average load over the last minute")
+    public String getLoad01() {
+        return String.format("%.2f", load.getLoad1());
+    }
+
+    @ManagedAttribute(description = "Average load over the last five minutes")
+    public String getLoad05() {
+        return String.format("%.2f", load.getLoad5());
+    }
+
+    @ManagedAttribute(description = "Average load over the last fifteen minutes")
+    public String getLoad15() {
+        return String.format("%.2f", load.getLoad15());
+    }
+
+    @Override
+    public void onTimer() {
+        load.update(getInflightExchanges());
     }
 
     @ManagedOperation(description = "Start Camel")

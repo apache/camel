@@ -20,6 +20,7 @@ package org.apache.camel.management.mbean;
  * Default implementation of {@link Statistic}
  */
 public class Statistic {
+
     /**
      * Statistics mode
      * <ul>
@@ -46,9 +47,9 @@ public class Statistic {
 
     /**
      * Instantiates a new statistic.
-     * @param owner 
-     * @param name 
      *
+     * @param name  name of statistic
+     * @param owner owner
      * @param updateMode The statistic update mode.
      */
     public Statistic(String name, Object owner, UpdateMode updateMode) {

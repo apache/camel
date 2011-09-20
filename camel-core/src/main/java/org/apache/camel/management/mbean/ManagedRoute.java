@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -34,11 +35,12 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed Route")
-public class ManagedRoute extends ManagedPerformanceCounter {
+public class ManagedRoute extends ManagedPerformanceCounter implements TimerListener {
     public static final String VALUE_UNKNOWN = "Unknown";
     protected final Route route;
     protected final String description;
     protected final ModelCamelContext context;
+    private final LoadTriplet load = new LoadTriplet();
 
     public ManagedRoute(ModelCamelContext context, Route route) {
         this.route = route;
@@ -132,6 +134,26 @@ public class ManagedRoute extends ManagedPerformanceCounter {
         return sb.toString();
     }
 
+    @ManagedAttribute(description = "Average load over the last minute")
+    public String getLoad01() {
+        return String.format("%.2f", load.getLoad1());
+    }
+
+    @ManagedAttribute(description = "Average load over the last five minutes")
+    public String getLoad05() {
+        return String.format("%.2f", load.getLoad5());
+    }
+
+    @ManagedAttribute(description = "Average load over the last fifteen minutes")
+    public String getLoad15() {
+        return String.format("%.2f", load.getLoad15());
+    }
+
+    @Override
+    public void onTimer() {
+        load.update(getInflightExchanges());
+    }
+    
     @ManagedOperation(description = "Start route")
     public void start() throws Exception {
         if (!context.getStatus().isStarted()) {
