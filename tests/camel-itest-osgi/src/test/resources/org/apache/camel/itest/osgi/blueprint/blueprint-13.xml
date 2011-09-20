@@ -18,10 +18,17 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:camel="http://camel.apache.org/schema/blueprint">
 
-    <camel:camelContext>
+    <camel:camelContext id="camel1">
         <camel:route>
             <camel:from uri="file:target/foo"/>
             <camel:to uri="mock:result"/>
+        </camel:route>
+    </camel:camelContext>
+
+    <camel:camelContext id="camel2">
+        <camel:route>
+            <camel:from uri="direct:start"/>
+            <camel:to uri="mock:end"/>
         </camel:route>
     </camel:camelContext>
 
