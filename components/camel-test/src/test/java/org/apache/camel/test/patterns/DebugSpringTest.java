@@ -27,7 +27,7 @@ import org.springframework.context.support.GenericApplicationContext;
 
 public class DebugSpringTest extends CamelSpringTestSupport {
     private boolean debugged;
-
+    
     @Override
     protected void debugBefore(Exchange exchange, Processor processor,
                                ProcessorDefinition definition, String id, String shortName) {
