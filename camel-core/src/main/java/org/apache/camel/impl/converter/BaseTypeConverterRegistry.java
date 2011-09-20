@@ -431,15 +431,14 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(propertyEditorTypeConverter);
+        // noop
     }
 
     @Override
     protected void doStop() throws Exception {
         typeMappings.clear();
         misses.clear();
-        // let property editor type converter stop and cleanup resources
-        ServiceHelper.stopService(propertyEditorTypeConverter);
+        propertyEditorTypeConverter.clear();
     }
 
     /**
@@ -511,5 +510,4 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             return fallbackTypeConverter;
         }
     }
-
 }
