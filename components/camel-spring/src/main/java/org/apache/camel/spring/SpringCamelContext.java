@@ -55,6 +55,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         ApplicationContextAware {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
+    private static final ThreadLocal<Boolean> NO_START = new ThreadLocal<Boolean>();
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
 
@@ -65,6 +66,14 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         setApplicationContext(applicationContext);
     }
 
+    
+    public static void setNoStart(boolean b) {
+        if (b) {
+            NO_START.set(b);
+        } else {
+            NO_START.remove();
+        }
+    }
     
     public static SpringCamelContext springCamelContext(ApplicationContext applicationContext) throws Exception {
         return springCamelContext(applicationContext, true);
@@ -206,7 +215,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         // publish a ContextRefreshedEvent
         String maybeStart = System.getProperty("maybeStartCamelContext", "true");
 
-        if ("true".equals(maybeStart)) {
+        if ("true".equals(maybeStart) 
+            || NO_START.get() == null) {
             if (!isStarted() && !isStarting()) {
                 start();
             } else {
