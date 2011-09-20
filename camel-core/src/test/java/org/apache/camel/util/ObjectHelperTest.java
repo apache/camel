@@ -27,6 +27,7 @@ import java.util.List;
 import junit.framework.TestCase;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.bean.MyStaticClass;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
@@ -297,6 +298,11 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("CamelFileName", ObjectHelper.lookupConstantFieldValue(Exchange.class, "FILE_NAME"));
         assertEquals(null, ObjectHelper.lookupConstantFieldValue(Exchange.class, "XXX"));
         assertEquals(null, ObjectHelper.lookupConstantFieldValue(null, "FILE_NAME"));
+    }
+
+    public void testHasDefaultPublicNoArgConstructor() {
+        assertTrue(ObjectHelper.hasDefaultPublicNoArgConstructor(ObjectHelperTest.class));
+        assertFalse(ObjectHelper.hasDefaultPublicNoArgConstructor(MyStaticClass.class));
     }
 
 }
