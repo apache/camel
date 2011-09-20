@@ -24,11 +24,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
@@ -63,6 +65,7 @@ public class XsltBuilder implements Processor {
     private boolean failOnNullBody = true;
     private URIResolver uriResolver;
     private boolean deleteOutputFile;
+    private ErrorListener errorListener = new XsltErrorListener();
 
     public XsltBuilder() {
     }
@@ -243,6 +246,7 @@ public class XsltBuilder implements Processor {
      */
     public void setTransformerSource(Source source) throws TransformerConfigurationException {
         TransformerFactory factory = converter.getTransformerFactory();
+        factory.setErrorListener(errorListener);
         if (getUriResolver() != null) {
             factory.setURIResolver(getUriResolver());
         }
@@ -305,6 +309,14 @@ public class XsltBuilder implements Processor {
 
     public void setDeleteOutputFile(boolean deleteOutputFile) {
         this.deleteOutputFile = deleteOutputFile;
+    }
+
+    public ErrorListener getErrorListener() {
+        return errorListener;
+    }
+
+    public void setErrorListener(ErrorListener errorListener) {
+        this.errorListener = errorListener;
     }
 
     // Implementation methods
