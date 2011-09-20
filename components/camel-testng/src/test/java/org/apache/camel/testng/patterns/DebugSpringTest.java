@@ -26,8 +26,6 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.testng.annotations.Test;
 
-import org.testng.annotations.Test;
-
 public class DebugSpringTest extends CamelSpringTestSupport {
     private boolean debugged;
 

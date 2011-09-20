@@ -68,13 +68,12 @@ public class RestletExceptionResponseTest extends RestletTestSupport {
     }
 
     protected void sendRequest(String endpointUri) throws Exception {
-        Exchange exchange = template.request(
-            endpointUri,
-                new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody("<order foo='1'/>");
-                    }
+        Exchange exchange = template.request(endpointUri,
+            new Processor() {
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    exchange.getIn().setBody("<order foo='1'/>");
+                }
             });
         RestletOperationException exception = (RestletOperationException) exchange.getException();
         String body = exception.getResponseBody();

@@ -140,7 +140,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
         if (isNotEmpty(sftpConfig.getCiphers())) {
             LOG.debug("Using ciphers: " + sftpConfig.getCiphers());
-            Hashtable<String,String> ciphers = new Hashtable<String, String>();
+            Hashtable<String, String> ciphers = new Hashtable<String, String>();
             
             ciphers.put("cipher.s2c", sftpConfig.getCiphers());
             ciphers.put("cipher.c2s", sftpConfig.getCiphers());
@@ -722,7 +722,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             if (files == null) {
                 return false;
             }
-            return (files.size() >= 1);
+            return files.size() >= 1;
         } catch (SftpException e) {
             // or an exception can be thrown with id 2 which means file does not exists
             if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {

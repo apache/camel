@@ -46,20 +46,20 @@ public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> implem
         putAll(endpoints);
     }
 
-	@Override
-	public void start() throws Exception {
-		resetStatistics();
-	}
+    @Override
+    public void start() throws Exception {
+        resetStatistics();
+    }
 
-	@Override
-	public void stop() throws Exception {
+    @Override
+    public void stop() throws Exception {
         if (!isEmpty()) {
             ServiceHelper.stopServices(values());
         }
         purge();
-	}
+    }
 
-	/**
+    /**
      * Purges the cache
      */
     public void purge() {

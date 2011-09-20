@@ -689,7 +689,8 @@ public class RunMojo extends AbstractExecMojo {
             }
 
             Artifact art = this.artifactFactory.createDependencyArtifact(groupId, artifactId, versionRange,
-                                                                         type, classifier, scope, optional);
+                                                                         type, classifier, scope, 
+                                                                         null, optional);
 
             if (scope.equalsIgnoreCase(Artifact.SCOPE_SYSTEM)) {
                 art.setFile(new File(dependency.getSystemPath()));
