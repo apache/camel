@@ -16,62 +16,32 @@
  */
 package org.apache.camel.dataformat.xmlsecurity;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.net.URL;
 import java.security.KeyStore;
+import java.util.HashMap;
 import java.util.Map;
 
-import javax.crypto.Cipher;
 import javax.xml.transform.OutputKeys;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.xml.security.encryption.XMLCipher;
-import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.junit.Test;
 
 /**
  * Unit test of the encryptXML data format.
  */
 public class XMLSecurityDataFormatTest extends CamelTestSupport {
-    private static final boolean HAS_3DES;
-    static {
-        boolean ok = false;
-        try {
-            XMLCipher.getInstance(XMLCipher.TRIPLEDES_KeyWrap);
-            ok = true;
-        } catch (XMLEncryptionException e) {
-        }
-        HAS_3DES = ok;
-    }
-    
-    private static final String XML_FRAGMENT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + "<cheesesites>"
-        + "<netherlands>"
-        + "<source>cow</source>"
-        + "<cheese>gouda</cheese>"
-        + "</netherlands>"
-        + "<italy>"
-        + "<source>cow</source>"
-        + "<cheese>gorgonzola</cheese>"
-        + "</italy>"
-        + "<france>"
-        + "<source>goat</source>"
-        + "<cheese>brie</cheese>"
-        + "</france>"
-        + "</cheesesites>";
     
     // one could use testCypherAlgorithm = XMLCipher.AES_128 if she had the AES Optional Pack installed
-    private String testCypherAlgorithm = XMLCipher.AES_128;
+    protected static String testCypherAlgorithm = XMLCipher.AES_128;
+    
+    TestHelper xmlsecTestHelper = new TestHelper();
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -83,81 +53,15 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         super.setUp();
         context.getProperties().put(XmlConverter.OUTPUT_PROPERTIES_PREFIX + OutputKeys.ENCODING, "UTF-8");
     }
-
-    private void sendText() throws Exception {
-        template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // Set the property of the charset encoding
-                exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
-                Message in = exchange.getIn();
-                in.setBody(XML_FRAGMENT);
-                log.info("xmlFragment: " + XML_FRAGMENT);
-            }
-        });
-    }
     
-    private void testEncryption() throws Exception {
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:encrypted", MockEndpoint.class);
-        resultEndpoint.setExpectedMessageCount(1);
-        context.start();
-        sendText();
-        resultEndpoint.assertIsSatisfied(100);
-        Exchange exchange = resultEndpoint.getExchanges().get(0);
-        Document inDoc = getDocumentForInMessage(exchange);
-        if (log.isDebugEnabled()) {
-            logMessage(exchange, inDoc);
-        }
-        assertTrue("The XML message has no encrypted data.", hasEncryptedData(inDoc));
-    }
     
-    private void testDecryption() throws Exception {
-        MockEndpoint resultEndpoint = context.getEndpoint("mock:decrypted", MockEndpoint.class);
-        resultEndpoint.setExpectedMessageCount(1);
-        // verify that the message was encrypted before checking that it is decrypted
-        testEncryption();
-
-        resultEndpoint.assertIsSatisfied(100);
-        Exchange exchange = resultEndpoint.getExchanges().get(0);
-        Document inDoc = getDocumentForInMessage(exchange);
-        if (log.isDebugEnabled()) {
-            logMessage(exchange, inDoc);
-        }
-        assertFalse("The XML message has encrypted data.", hasEncryptedData(inDoc));
-        
-        // verify that the decrypted message matches what was sent
-        XmlConverter converter = new XmlConverter();
-        String xmlStr = converter.toString(inDoc, exchange);
-        assertTrue(xmlStr.equals(XML_FRAGMENT));
-    }
-    
-    private boolean hasEncryptedData(Document doc) throws Exception {
-        NodeList nodeList = doc.getElementsByTagNameNS("http://www.w3.org/2001/04/xmlenc#", "EncryptedData");
-        return nodeList.getLength() > 0;
-    }
-    
-    private void logMessage(Exchange exchange, Document inDoc) throws Exception {
-        XmlConverter converter = new XmlConverter();
-        String xmlStr = converter.toString(inDoc, exchange);
-        log.debug(xmlStr);   
-    }
-    
-    private Document getDocumentForInMessage(Exchange exchange) {
-        byte[] body = exchange.getIn().getBody(byte[].class);
-        Document d = createDocumentfromInputStream(new ByteArrayInputStream(body));
-        return d;
-    }
-    
-    private Document createDocumentfromInputStream(InputStream is) {
-        return context.getTypeConverter().convertTo(Document.class, is);
-    }
-
     /*
      * Encryption Tests
      */
     
     @Test
     public void testFullPayloadXMLEncryption() throws Exception {
-        if (!HAS_3DES) {
+        if (!TestHelper.HAS_3DES) {
             return;
         }
         context.addRoutes(new RouteBuilder() {
@@ -167,12 +71,12 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                     .to("mock:encrypted");
             }
         });
-        testEncryption();
+        xmlsecTestHelper.testEncryption(context);
     }
 
     @Test
     public void testPartialPayloadXMLContentEncryption() throws Exception {       
-        if (!HAS_3DES) {
+        if (!TestHelper.HAS_3DES) {
             return;
         }
         context.addRoutes(new RouteBuilder() {
@@ -182,12 +86,12 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                     .to("mock:encrypted");
             }
         });
-        testEncryption();
+        xmlsecTestHelper.testEncryption(context);
     }
 
     @Test
     public void testPartialPayloadMultiNodeXMLContentEncryption() throws Exception {
-        if (!HAS_3DES) {
+        if (!TestHelper.HAS_3DES) {
             return;
         }
         context.addRoutes(new RouteBuilder() {
@@ -197,12 +101,12 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                      .to("mock:encrypted");
             }
         });
-        testEncryption();
+        xmlsecTestHelper.testEncryption(context);
     }
 
     @Test
     public void testPartialPayloadXMLElementEncryptionWithKey() throws Exception {
-        if (!HAS_3DES) {
+        if (!TestHelper.HAS_3DES) {
             return;
         }
         context.addRoutes(new RouteBuilder() {
@@ -212,7 +116,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                      .to("mock:encrypted");
             }    
         });
-        testEncryption();
+        xmlsecTestHelper.testEncryption(context);
     }
 
     @Test
@@ -231,7 +135,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                     .to("mock:encrypted");
             }
         });
-        testEncryption();
+        xmlsecTestHelper.testEncryption(context);
     }
 
     @Test
@@ -253,24 +157,27 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                     .marshal(xmlEncDataFormat).to("mock:encrypted");
             }
         });
-        testEncryption();
+        xmlsecTestHelper.testEncryption(context);
     }
 
     @Test
     public void testPartialPayloadAsymmetricKeyEncryptionWithContextTruststoreProperties() throws Exception {
+        
+        final KeyStoreParameters tsParameters = new KeyStoreParameters();
+        tsParameters.setPassword("password");
+        tsParameters.setResource("sender.ts");
+        
         Map<String, String> contextProps = context.getProperties();
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_TRUST_STORE_URL, 
-            getClass().getClassLoader().getResource("sender.ts").toString());
         contextProps.put(XMLSecurityDataFormat.XML_ENC_TRUST_STORE_PASSWORD, "password");
  
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal().secureXML("//cheesesites/italy/cheese", true, "recipient", testCypherAlgorithm, XMLCipher.RSA_v1dot5)
+                    .marshal().secureXML("//cheesesites/italy/cheese", true, "recipient", testCypherAlgorithm, XMLCipher.RSA_v1dot5, tsParameters)
                     .to("mock:encrypted");
             }
         });
-        testEncryption();
+        xmlsecTestHelper.testEncryption(context);
     }
  
     @Test
@@ -278,10 +185,12 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         MockEndpoint resultEndpoint = context.getEndpoint("mock:foo", MockEndpoint.class);
         resultEndpoint.setExpectedMessageCount(1);
  
+        final KeyStoreParameters tsParameters = new KeyStoreParameters();
+        tsParameters.setPassword("password");
+        tsParameters.setResource("sender.ts");
+        String tsParametersId = "testTrustStoreParameters";
+        
         Map<String, String> contextProps = context.getProperties();
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_TRUST_STORE_URL,
-            getClass().getClassLoader().getResource("sender.ts").toString());
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_TRUST_STORE_PASSWORD, "password");
  
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -291,11 +200,11 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                             exchange.getIn().setHeader(XMLSecurityDataFormat.XML_ENC_RECIPIENT_ALIAS, "recipient");
                         }
                     })
-                    .marshal().secureXML("//cheesesites/italy/cheese", true, null, testCypherAlgorithm, XMLCipher.RSA_v1dot5)
+                    .marshal().secureXML("//cheesesites/italy/cheese", true, null, testCypherAlgorithm, XMLCipher.RSA_v1dot5, tsParameters)
                     .to("mock:encrypted");
             }
         });
-        testEncryption();
+        xmlsecTestHelper.testEncryption(context);
     }
  
     /*
@@ -303,7 +212,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     */
     @Test
     public void testFullPayloadXMLDecryption() throws Exception {
-        if (!HAS_3DES) {
+        if (!TestHelper.HAS_3DES) {
             return;
         }
         context.addRoutes(new RouteBuilder() {
@@ -313,12 +222,12 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                     .unmarshal().secureXML().to("mock:decrypted");
             }
         });
-        testDecryption();
+        xmlsecTestHelper.testDecryption(context);
     }
     
     @Test
     public void testPartialPayloadXMLContentDecryption() throws Exception {
-        if (!HAS_3DES) {
+        if (!TestHelper.HAS_3DES) {
             return;
         }
         context.addRoutes(new RouteBuilder() {
@@ -328,12 +237,12 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                     .unmarshal().secureXML("//cheesesites/italy/cheese", true).to("mock:decrypted");
             }
         });
-        testDecryption();
+        xmlsecTestHelper.testDecryption(context);
     }
     
     @Test
     public void testPartialPayloadMultiNodeXMLContentDecryption() throws Exception {
-        if (!HAS_3DES) {
+        if (!TestHelper.HAS_3DES) {
             return;
         }
         context.addRoutes(new RouteBuilder() {
@@ -343,12 +252,12 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                     .unmarshal().secureXML("//cheesesites/*/cheese", true).to("mock:decrypted");
             }
         });
-        testDecryption();
+        xmlsecTestHelper.testDecryption(context);
     }
 
     @Test
     public void testPartialPayloadXMLElementDecryptionWithKey() throws Exception {
-        if (!HAS_3DES) {
+        if (!TestHelper.HAS_3DES) {
             return;
         }
         context.addRoutes(new RouteBuilder() {
@@ -358,7 +267,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                     .unmarshal().secureXML("//cheesesites/france", false, "Just another 24 Byte key").to("mock:decrypted");
             }
         });
-        testDecryption();
+        xmlsecTestHelper.testDecryption(context);
     }
 
     @Test
@@ -369,6 +278,7 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
             (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
             (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17};
         final String passCode = new String(bits128);
+  
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
@@ -376,55 +286,78 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
                     .unmarshal().secureXML("//cheesesites/italy", true, passCode, XMLCipher.AES_128).to("mock:decrypted");
             }
         });
-        testDecryption();
+        xmlsecTestHelper.testDecryption(context);
     }
 
     @Test
     public void testFullPayloadAsymmetricKeyDecryption() throws Exception {
-
-        Map<String, String> contextProps = context.getProperties();
-        // context properties for encryption
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_TRUST_STORE_URL, getClass().getClassLoader().getResource("sender.ts").toString());
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_TRUST_STORE_PASSWORD, "password");
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_RECIPIENT_ALIAS, "recipient");
-
-        // context properties for decryption
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_KEY_STORE_URL, getClass().getClassLoader().getResource("recipient.ks").toString());
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_KEY_STORE_PASSWORD, "password");
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_KEY_STORE_ALIAS, "recipient");
+                      
+        final KeyStoreParameters tsParameters = new KeyStoreParameters();
+        tsParameters.setPassword("password");
+        tsParameters.setResource("sender.ts");
+        
+        final KeyStoreParameters ksParameters = new KeyStoreParameters();
+        ksParameters.setPassword("password");
+        ksParameters.setResource("recipient.ks");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal().secureXML("", true, null, testCypherAlgorithm, XMLCipher.RSA_v1dot5).to("mock:encrypted")
-                    .unmarshal().secureXML("", true, null, testCypherAlgorithm, XMLCipher.RSA_v1dot5).to("mock:decrypted");
+                    .marshal().secureXML("", true, "recipient", testCypherAlgorithm, XMLCipher.RSA_v1dot5, tsParameters).to("mock:encrypted")
+                    .unmarshal().secureXML("", true, "recipient", testCypherAlgorithm, XMLCipher.RSA_v1dot5, ksParameters).to("mock:decrypted");
             }
         });
-        testDecryption();
+        xmlsecTestHelper.testDecryption(context);
     }
 
     @Test
     public void testPartialPayloadAsymmetricKeyDecryption() throws Exception {
-
-        Map<String, String> contextProps = context.getProperties();
-
-        // context properties for encryption
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_TRUST_STORE_URL, getClass().getClassLoader().getResource("sender.ts").toString());
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_TRUST_STORE_PASSWORD, "password");
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_RECIPIENT_ALIAS, "recipient");
-
-        // context properties for decryption
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_KEY_STORE_URL, getClass().getClassLoader().getResource("recipient.ks").toString());
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_KEY_STORE_PASSWORD, "password");
-        contextProps.put(XMLSecurityDataFormat.XML_ENC_KEY_STORE_ALIAS, "recipient");
+                
+        final Map<String, String> namespaces = new HashMap<String, String>();
+        namespaces.put("ns1", "http://cheese.xmlsecurity.camel.apache.org/");
+        
+        final KeyStoreParameters tsParameters = new KeyStoreParameters();
+        tsParameters.setPassword("password");
+        tsParameters.setResource("sender.ts");
+        
+        final KeyStoreParameters ksParameters = new KeyStoreParameters();
+        ksParameters.setPassword("password");
+        ksParameters.setResource("recipient.ks");
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .marshal().secureXML("//cheesesites/italy", true, null, testCypherAlgorithm, XMLCipher.RSA_v1dot5).to("mock:encrypted")
-                    .unmarshal().secureXML("//cheesesites/italy", true, null, testCypherAlgorithm, XMLCipher.RSA_v1dot5).to("mock:decrypted");
+                    .marshal().secureXML("//ns1:cheesesites/italy", namespaces, true, "recipient", testCypherAlgorithm, XMLCipher.RSA_v1dot5, tsParameters).to("mock:encrypted")
+                    .unmarshal().secureXML("//ns1:cheesesites/italy", namespaces, true, "recipient", testCypherAlgorithm, XMLCipher.RSA_v1dot5, ksParameters).to("mock:decrypted");
             }
         });
-        testDecryption();
+        xmlsecTestHelper.testDecryption(TestHelper.NS_XML_FRAGMENT, context);
     }
+    
+    @Test
+    public void testPartialPayloadAsymmetricKeyDecryptionCustomNS() throws Exception {
+        
+        final KeyStoreParameters tsParameters = new KeyStoreParameters();
+        tsParameters.setPassword("password");
+        tsParameters.setResource("sender.ts");
+        
+        final KeyStoreParameters ksParameters = new KeyStoreParameters();
+        ksParameters.setPassword("password");
+        ksParameters.setResource("recipient.ks");
+        
+        
+        final Map<String, String> namespaces = new HashMap<String, String>();
+        namespaces.put("cust", "http://cheese.xmlsecurity.camel.apache.org/");
+
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start")
+                    .marshal().secureXML("//cust:cheesesites/italy", namespaces, true, "recipient", testCypherAlgorithm, XMLCipher.RSA_v1dot5, tsParameters).to("mock:encrypted")
+                    .unmarshal().secureXML("//cust:cheesesites/italy", namespaces, true, "recipient", testCypherAlgorithm, XMLCipher.RSA_v1dot5, ksParameters).to("mock:decrypted");
+            }
+        });
+        xmlsecTestHelper.testDecryption(TestHelper.NS_XML_FRAGMENT, context);
+    }
+    
 }

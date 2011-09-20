@@ -35,7 +35,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
@@ -50,12 +49,6 @@
             <artifactId>xalan</artifactId>
             <version>${xalan-version}</version>
         </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>${xerces-version}</version>
-        </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -72,7 +65,17 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
- 
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>${xmlunit-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>        
     </dependencies>
 
 </project>

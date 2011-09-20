@@ -61,7 +61,7 @@
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
-            <version>1.3</version>
+            <version>${xmlunit-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

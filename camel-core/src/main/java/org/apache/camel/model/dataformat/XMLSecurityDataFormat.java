@@ -16,20 +16,26 @@
  */
 package org.apache.camel.model.dataformat;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
  * Represents as XML Security Encrypter/Decrypter {@link DataFormat}
  */
 @XmlRootElement(name = "secureXML")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XMLSecurityDataFormat extends DataFormatDefinition {
+public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {
 
     private static final transient String TRIPLEDES = "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
 
@@ -45,8 +51,16 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
     private String keyCipherAlgorithm;
     @XmlAttribute
     private String recipientKeyAlias;
+    @XmlAttribute
+    private String keyOrTrustStoreParametersId;
     
-
+    @XmlTransient
+    private KeyStoreParameters keyOrTrustStoreParameters;
+    
+    @XmlTransient
+    private Map<String, String> namespaces;
+    
+    
     public XMLSecurityDataFormat() {
         super("secureXML");
     }
@@ -56,24 +70,102 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
         this.setSecureTag(secureTag);
         this.setSecureTagContents(secureTagContents);
     }
+    
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents) {
+        this();
+        this.setSecureTag(secureTag);
+        this.setSecureTagContents(secureTagContents);
+        this.setNamespaces(namespaces);
+    }
 
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String passPhrase) {
         this(secureTag, secureTagContents);
         this.setPassPhrase(passPhrase);
     }
-
+    
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, 
+                                 String passPhrase) {
+        this(secureTag, secureTagContents);
+        this.setPassPhrase(passPhrase);
+        this.setNamespaces(namespaces);
+    }
+    
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String passPhrase,
                                  String xmlCipherAlgorithm) {
         this(secureTag, secureTagContents, passPhrase);
         this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
     }
-
+    
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String passPhrase,
+                                 String xmlCipherAlgorithm) {
+        this(secureTag, secureTagContents, passPhrase);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setNamespaces(namespaces);
+    }
+    
+    /**
+     * @deprecated  use {{@link #XMLSecurityDataFormat(String, boolean, String, String, String, String)} or 
+     *                  {{@link #XMLSecurityDataFormat(String, boolean, String, String, String, KeyStoreParameters)} instead
+     */
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
-                                 String xmlCipherAlgorithm, String keyCipherAlgorithm) {
+            String xmlCipherAlgorithm, String keyCipherAlgorithm) {
         this(secureTag, secureTagContents);
         this.setRecipientKeyAlias(recipientKeyAlias);
         this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+    }
+
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
+                                 String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId) {
+        this(secureTag, secureTagContents);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setKeyOrTrustStoreParametersId(keyOrTrustStoreParametersId);
+    }
+    
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias,
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
+        this(secureTag, secureTagContents);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+    }
+    
+    /**
+     * @deprecated  use {{@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, String)} or 
+     *                  {{@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead
+     */
+    @Deprecated
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
+            String xmlCipherAlgorithm, String keyCipherAlgorithm) {
+        this(secureTag, secureTagContents);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setNamespaces(namespaces);
+    }
+    
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId) {
+        this(secureTag, secureTagContents);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setNamespaces(namespaces);
+        this.setKeyOrTrustStoreParametersId(keyOrTrustStoreParametersId);
+    }
+
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
+        this(secureTag, secureTagContents);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setNamespaces(namespaces);
+        this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
     }
 
     @Override
@@ -101,6 +193,15 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
         }
         if (getRecipientKeyAlias() != null) {
             setProperty(dataFormat, "recipientKeyAlias", getRecipientKeyAlias());
+        }
+        if (getKeyOrTrustStoreParametersId() != null) {
+            setProperty(dataFormat, "keyOrTrustStoreParametersId", getKeyOrTrustStoreParametersId());
+        }
+        if (keyOrTrustStoreParameters != null) {
+            setProperty(dataFormat, "keyOrTrustStoreParameters", this.keyOrTrustStoreParameters);
+        }
+        if (namespaces != null) {
+            setProperty(dataFormat, "namespaces", this.namespaces);
         }
     }
 
@@ -155,4 +256,26 @@ public class XMLSecurityDataFormat extends DataFormatDefinition {
     public String getRecipientKeyAlias() {
         return recipientKeyAlias;
     }
+    
+    public void setKeyOrTrustStoreParametersId(String id) {
+        this.keyOrTrustStoreParametersId = id;
+    }
+    
+    public String getKeyOrTrustStoreParametersId() {
+        return this.keyOrTrustStoreParametersId;
+    }
+    
+    private void setKeyOrTrustStoreParameters(KeyStoreParameters keyOrTrustStoreParameters) {
+        this.keyOrTrustStoreParameters = keyOrTrustStoreParameters;
+        
+    }
+
+    @Override
+    public void setNamespaces(Map<String, String> nspaces) {
+        if (this.namespaces == null) {
+            this.namespaces = new HashMap<String, String>();
+        }
+        this.namespaces.putAll(nspaces);
+    }
+    
 }

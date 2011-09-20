@@ -40,29 +40,63 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.traversal.NodeIterator;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
+
+import org.apache.camel.builder.xml.DefaultNamespaceContext;
+import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+
 import org.apache.xml.security.encryption.EncryptedData;
 import org.apache.xml.security.encryption.EncryptedKey;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.apache.xml.security.keys.KeyInfo;
-import org.apache.xpath.XPathAPI;
+
 
 public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
 
+    /**
+     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
+     */
+    @Deprecated
     public static final String XML_ENC_RECIPIENT_ALIAS = "CamelXmlEncryptionRecipientAlias";
+    
+    /**
+     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
+     */
+    @Deprecated
     public static final String XML_ENC_TRUST_STORE_URL = "CamelXmlEncryptionTrustStoreUrl";
+    
+    /**
+     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
+     */
+    @Deprecated
     public static final String XML_ENC_TRUST_STORE_PASSWORD = "CamelXmlEncryptionTrustStorePassword";
+    
+    /**
+     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
+     */                 
+    @Deprecated
     public static final String XML_ENC_KEY_STORE_URL = "CamelXmlEncryptionKeyStoreUrl";
+    
+    /**
+     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
+     */
+    @Deprecated
     public static final String XML_ENC_KEY_STORE_PASSWORD = "CamelXmlEncryptionKeyStorePassword";
+    
+    /**
+     * @deprecated  Use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.
+     */
+    @Deprecated
     public static final String XML_ENC_KEY_STORE_ALIAS = "CamelXmlEncryptionKeyAlias";
+        
 
     private String xmlCipherAlgorithm;
     private String keyCipherAlgorithm;
@@ -73,12 +107,16 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     
     private KeyStore keyStore;
     private KeyStore trustStore;
-    private String keyStoreAlias;
+
     private String keyStorePassword;
     private String trustStorePassword;
     private String recipientKeyAlias;
     
+    private KeyStoreParameters keyOrTrustStoreParameters;
+    private String keyOrTrustStoreParametersId;
+    
     private CamelContext camelContext;
+    private DefaultNamespaceContext nsContext = new DefaultNamespaceContext();
         
 
     public XMLSecurityDataFormat() {
@@ -95,12 +133,27 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         this.setSecureTag(secureTag);
         this.setSecureTagContents(secureTagContents);
     }
+    
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents) {
+        this();
+        this.setSecureTag(secureTag);
+        this.setSecureTagContents(secureTagContents);
+        this.setNamespaces(namespaces);
+    }
 
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, byte[] passPhrase) {
         this();
         this.setSecureTag(secureTag);
         this.setSecureTagContents(secureTagContents);
         this.setPassPhrase(passPhrase);
+    }
+    
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, byte[] passPhrase) {
+        this();
+        this.setSecureTag(secureTag);
+        this.setSecureTagContents(secureTagContents);
+        this.setPassPhrase(passPhrase);
+        this.setNamespaces(namespaces);
     }
 
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, byte[] passPhrase, 
@@ -112,6 +165,11 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
     }
     
+    /**
+     * @deprecated  use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, String)} or
+     *                  {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead. 
+     */
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String xmlCipherAlgorithm, 
             String keyCipherAlgorithm) {
         this();
@@ -120,9 +178,14 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
         this.setKeyCipherAlgorithm(keyCipherAlgorithm);
     }
-      
+            
+    /**
+     * @deprecated  use {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, String)} or
+     *                  {@link #XMLSecurityDataFormat(String, Map, boolean, String, String, String, KeyStoreParameters)} instead.  
+     */
+    @Deprecated
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias, 
-                                 String xmlCipherAlgorithm, String keyCipherAlgorithm) {
+            String xmlCipherAlgorithm, String keyCipherAlgorithm) {
         this();
         this.setSecureTag(secureTag);
         this.setSecureTagContents(secureTagContents);
@@ -130,11 +193,61 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         this.setRecipientKeyAlias(recipientKeyAlias);
         this.setKeyCipherAlgorithm(keyCipherAlgorithm);
     }
+      
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias, 
+                                 String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId) {
+        this();
+        this.setSecureTag(secureTag);
+        this.setSecureTagContents(secureTagContents);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setKeyOrTrustStoreParametersId(keyOrTrustStoreParametersId);
+    }
+        
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, String keyOrTrustStoreParametersId) {
+        this();
+        this.setSecureTag(secureTag);
+        this.setSecureTagContents(secureTagContents);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setNamespaces(namespaces);
+        if (null != keyOrTrustStoreParametersId && !keyOrTrustStoreParametersId.equals("")) {
+            this.keyOrTrustStoreParametersId = keyOrTrustStoreParametersId;
+        }
+    }
+    
+    public XMLSecurityDataFormat(String secureTag, boolean secureTagContents, String recipientKeyAlias, 
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
+        this();
+        this.setSecureTag(secureTag);
+        this.setSecureTagContents(secureTagContents);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+    }
+
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
+        this();
+        this.setSecureTag(secureTag);
+        this.setSecureTagContents(secureTagContents);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setNamespaces(namespaces);
+        this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+    }
     
     @Override
     public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
         try {
             setDefaultsFromContext(camelContext);
+
         } catch (Exception e) {
             throw new IllegalStateException("Could not initialize XMLSecurityDataFormat with camelContext. ", e);
         }
@@ -147,14 +260,18 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     
     /**
      * Sets missing properties that are defined in the Camel context.
+     * @deprecated  this operation populates the data format using depreciated properties and will be
+     *              removed at the end of the deprecation period
      */
+    @Deprecated
     private void setDefaultsFromContext(CamelContext context) throws Exception {
+
         Map<String, String> contextProps = context.getProperties();
-        
+               
         if (this.recipientKeyAlias == null) {
             recipientKeyAlias = contextProps.get(XML_ENC_RECIPIENT_ALIAS);
         }
-        
+
         if (this.trustStore == null && contextProps.containsKey(XML_ENC_TRUST_STORE_URL)) {
             trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
             URL trustStoreUrl = new URL(contextProps.get(XML_ENC_TRUST_STORE_URL));
@@ -170,13 +287,14 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
             if (keyStorePassword == null) {
                 keyStorePassword = contextProps.get(XML_ENC_KEY_STORE_PASSWORD);
             }
-            keyStore.load(keyStoreUrl.openStream(), keyStorePassword.toCharArray());
+            keyStore.load(keyStoreUrl.openStream(), keyStorePassword.toCharArray());    
         }
         
-        if (this.keyStoreAlias == null) {
-            keyStoreAlias = contextProps.get(XML_ENC_KEY_STORE_ALIAS);
+        if (context.getProperties().containsKey(XML_ENC_KEY_STORE_ALIAS) && this.recipientKeyAlias == null) {
+            recipientKeyAlias = contextProps.get(XML_ENC_KEY_STORE_ALIAS);
         }
     }
+    
     
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         // Retrieve the message body as input stream
@@ -208,6 +326,11 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         
         if (null == exchangeRecipientAlias) {
             throw new IllegalStateException("The  recipient's key alias must be defined for asymmetric key encryption.");
+        }
+        
+        if (trustStore == null && null != this.keyOrTrustStoreParameters) {
+            trustStore = keyOrTrustStoreParameters.createKeyStore();
+            trustStorePassword = keyOrTrustStoreParameters.getPassword();
         }
 
         if (null == trustStore) {
@@ -290,13 +413,19 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
             embedKeyInfoInEncryptedData(document, keyCipher, xmlCipher, dataEncryptionKey);
             document = xmlCipher.doFinal(document, document.getDocumentElement());
         } else {
-            NodeIterator iter = XPathAPI.selectNodeIterator(document, secureTag);
-            Node node;
-            while ((node = iter.nextNode()) != null) {
-                embedKeyInfoInEncryptedData(document, keyCipher, xmlCipher, dataEncryptionKey);
-                Document temp = xmlCipher.doFinal(document, (Element) node, getSecureTagContents());
+                          
+            XPathBuilder xpathBuilder = new XPathBuilder(secureTag);
+            xpathBuilder.setNamespaceContext(getNamespaceContext());
+            NodeList nodeList = xpathBuilder.evaluate(exchange, NodeList.class);
+            
+            
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                document = node.getOwnerDocument();
+                embedKeyInfoInEncryptedData(node.getOwnerDocument(), keyCipher, xmlCipher, dataEncryptionKey);
+                Document temp = xmlCipher.doFinal(node.getOwnerDocument(), (Element) node, getSecureTagContents());
                 document.importNode(temp.getDocumentElement().cloneNode(true), true);
-            }
+            }    
         }
 
         try {
@@ -307,6 +436,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
             stream.close();
         }
     }
+    
     
     public Object unmarshal(Exchange exchange, Document document) throws Exception {
         InputStream is = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
@@ -337,12 +467,18 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         return decode(exchange, encodedDocument, keyEncryptionKey);
     }
     
-    private Object decodeWithAsymmetricKey(Exchange exchange, Document encodedDocument) throws Exception {        
+    private Object decodeWithAsymmetricKey(Exchange exchange, Document encodedDocument) throws Exception { 
+        
+        if (keyStore == null && null != keyOrTrustStoreParameters) {
+            keyStore = keyOrTrustStoreParameters.createKeyStore();
+            keyStorePassword = keyOrTrustStoreParameters.getPassword();
+        }
+        
         if (this.keyStore ==  null) {
             throw new IllegalStateException("A key store must be defined for asymmetric key decryption.");
         }
         
-        Key keyEncryptionKey = getPrivateKey(this.keyStore, this.keyStoreAlias, this.keyStorePassword);
+        Key keyEncryptionKey = getPrivateKey(this.keyStore, this.recipientKeyAlias, this.keyStorePassword);
         return decode(exchange, encodedDocument, keyEncryptionKey);
     }
     
@@ -354,17 +490,22 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         if (secureTag.equalsIgnoreCase("")) {
             encodedDocument = xmlCipher.doFinal(encodedDocument, encodedDocument.getDocumentElement());
         } else {
-            NodeIterator iter =
-                XPathAPI.selectNodeIterator(encodedDocument, secureTag);
-            Node node;
-            while ((node = iter.nextNode()) != null) {
+
+            XPathBuilder xpathBuilder = new XPathBuilder(secureTag);
+            xpathBuilder.setNamespaceContext(getNamespaceContext());
+            NodeList nodeList = xpathBuilder.evaluate(exchange, NodeList.class);
+
+
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node node = nodeList.item(i);
+                encodedDocument = node.getOwnerDocument();
                 if (getSecureTagContents()) {
                     Document temp = xmlCipher.doFinal(encodedDocument, (Element) node, true);
                     encodedDocument.importNode(temp.getDocumentElement().cloneNode(true), true);
                 } else {
                     NodeList childNodes = node.getChildNodes();
-                    for (int i = 0; i < childNodes.getLength(); i++) {
-                        Node childNode = childNodes.item(i);
+                    for (int j = 0; j < childNodes.getLength(); j++) {
+                        Node childNode = childNodes.item(j);
                         if (childNode.getLocalName().equals("EncryptedData")) {
                             Document temp = xmlCipher.doFinal(encodedDocument, (Element) childNode, false);
                             encodedDocument.importNode(temp.getDocumentElement().cloneNode(true), true);
@@ -462,6 +603,10 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         }
         return alias;
     }
+     
+    private DefaultNamespaceContext getNamespaceContext() {
+        return this.nsContext;
+    };
 
     public String getXmlCipherAlgorithm() {
         return xmlCipherAlgorithm;
@@ -502,7 +647,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     public void setSecureTag(String secureTag) {
         this.secureTag = secureTag;
     }
-
+    
     public boolean isSecureTagContents() {
         return secureTagContents;
     }
@@ -515,43 +660,118 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         this.secureTagContents = secureTagContents;
     }
     
+    /**
+     * Gets the KeyStore configured for this data format.
+     * @deprecated  Will change to private access in the future.
+     */
+    @Deprecated
     public KeyStore getKeyStore() {
+        if (keyStore == null && this.keyOrTrustStoreParameters != null) {
+            try {
+                keyStore = keyOrTrustStoreParameters.createKeyStore();
+            } catch (Exception e) {
+                throw new RuntimeException("Unable to create KeyStore with configured KeyStoreParameters. " + e.getMessage(), e);
+            }
+        }
         return this.keyStore;
     }
     
+    /**
+     * @deprecated  Use {@link #getKeyOrTrustStoreParameters()} instead.
+     */
+    @Deprecated  
     public void setKeyStore(KeyStore keyStore) {
         this.keyStore = keyStore;
     }
          
+    /**
+     * @deprecated  Will change to private access in the future. Use {@link #getKeyOrTrustStoreParameters()} instead.
+     */
+    @Deprecated
     public KeyStore getTrustStore() {
+        if (trustStore == null && this.keyOrTrustStoreParameters != null) {
+            try {
+                trustStore = keyOrTrustStoreParameters.createKeyStore();
+            } catch (Exception e) {
+                throw new RuntimeException("Unable to create KeyStore with configured KeyStoreParameters. " + e.getMessage(), e);
+            }
+        }
         return this.trustStore;
     }
     
+    /**
+     * @deprecated  Use {@link #setKeyOrTrustStoreParameters()} instead.
+     */
+    @Deprecated  
     public void setTrustStore(KeyStore trustStore) {
         this.trustStore = trustStore;
     }
-    
-    public String getKeyStoreAlias() {
-        return this.keyStoreAlias;
-    }
-    
-    public void setKeyStoreAlias(String keyStoreAlias) {
-        this.keyStoreAlias = keyStoreAlias;
-    }
-    
+      
+    /**
+     * @deprecated  Will change to private access in the future. Use {@link #getKeyOrTrustStoreParameters()} instead.
+     */
+    @Deprecated
     public String getKeyStorePassword() {
+        if (this.keyOrTrustStoreParameters != null) {
+            return keyOrTrustStoreParameters.getPassword();
+        }
         return this.keyStorePassword;
     }
     
+    /**
+     * @deprecated  Use {@link #setKeyOrTrustStoreParameters()} instead.
+     */
+    @Deprecated
     public void setKeyStorePassword(String keyStorePassword) {
         this.keyStorePassword = keyStorePassword;
     }
     
-    public String getTrustStorePassowrd() {
+    /**
+     * @deprecated  Will change to private access in the future.  Use {@link #setKeyOrTrustStoreParameters()} instead.
+     */
+    @Deprecated
+    public String getTrustStorePassword() {
+        if (this.keyOrTrustStoreParameters != null) {
+            return keyOrTrustStoreParameters.getPassword();
+        }
         return this.trustStorePassword;
     }
     
+    /**
+     * @deprecated  Use {@link #setKeyOrTrustStoreParameters()} instead.
+     */
+    @Deprecated
     public void setTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
+    }
+    
+    public void setKeyOrTrustStoreParameters(KeyStoreParameters parameters) {
+        this.keyOrTrustStoreParameters = parameters;
+    }
+    
+    public KeyStoreParameters getKeyOrTrustStoreParameters() {
+        return this.keyOrTrustStoreParameters;
+    }
+    
+    public void setKeyOrTrustStoreParametersId(String registryId) {
+        this.keyOrTrustStoreParametersId = registryId;
+        if (camelContext != null) {
+            Object parametersObj = camelContext.getRegistry().lookup(this.keyOrTrustStoreParametersId);
+            if (parametersObj instanceof KeyStoreParameters) {
+                this.keyOrTrustStoreParameters = (KeyStoreParameters)parametersObj;
+            } else {
+                throw new IllegalStateException("Could not initialize XMLSecurityDataFormat with camelContext." 
+                        + "The id for the keyOrTrustStoreParameters specified [ " + keyOrTrustStoreParametersId 
+                        + " ] does not identify a KeyStoreParameters bean.");
+            }
+        } 
+    }
+    
+    public String getKeyOrTrustStoreParametersId() {
+        return this.keyOrTrustStoreParametersId;
+    }
+
+    public void setNamespaces(Map<String, String> namespaces) {
+        getNamespaceContext().setNamespaces(namespaces);
     }
 }
