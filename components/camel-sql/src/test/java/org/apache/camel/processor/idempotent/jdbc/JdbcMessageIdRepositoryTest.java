@@ -73,14 +73,13 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/processor/idempotent/jdbc/spring.xml");
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected void setupRepository() {
         TransactionTemplate transactionTemplate = new TransactionTemplate();
         transactionTemplate.setTransactionManager(new DataSourceTransactionManager(dataSource));
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         
-        transactionTemplate.execute(new TransactionCallback() {
-            public Object doInTransaction(TransactionStatus status) {
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
                 try {
                     jdbcTemplate.execute("CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(20), messageId VARCHAR(10), createdAt timestamp)");
                 } catch (DataAccessException e) {

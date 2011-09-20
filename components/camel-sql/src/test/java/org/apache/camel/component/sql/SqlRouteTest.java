@@ -17,8 +17,10 @@
 package org.apache.camel.component.sql;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -52,8 +54,8 @@ public class SqlRouteTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         template.sendBody("direct:simple", "XXX");
         mock.assertIsSatisfied();
-        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
-        Map row = assertIsInstanceOf(Map.class, received.get(0));
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("Linux", row.get("PROJECT"));
     }
 
@@ -64,8 +66,8 @@ public class SqlRouteTest extends CamelTestSupport {
 
         template.sendBodyAndHeader("direct:simple", "Camel", SqlConstants.SQL_QUERY, "select * from projects where project = ? order by id");
         mock.assertIsSatisfied();
-        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
-        Map row = assertIsInstanceOf(Map.class, received.get(0));
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals(1, row.get("id"));
         assertEquals("ASF", row.get("license"));
         mock.reset();
@@ -88,9 +90,15 @@ public class SqlRouteTest extends CamelTestSupport {
         body.add("Camel");
         template.sendBody("direct:list", body);
         mock.assertIsSatisfied();
-        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
-        Map row = assertIsInstanceOf(Map.class, received.get(0));
-        assertEquals(1, row.get("ID"));
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        Map<?, ?> firstRow = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals(1, firstRow.get("ID"));
+        
+        // unlikely to have accidental ordering with 3 rows x 3 columns
+        for (Object obj : received) {
+            Map<?, ?> row = assertIsInstanceOf(Map.class, obj);
+            assertTrue("not preserving key ordering for a given row keys: " + row.keySet(), isOrdered(row.keySet()));
+        }
     }
 
     @Test
@@ -124,11 +132,11 @@ public class SqlRouteTest extends CamelTestSupport {
         body.add("ASF");
         template.sendBody("direct:simple", body);
         mock.assertIsSatisfied();
-        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(2, received.size());
-        Map row1 = assertIsInstanceOf(Map.class, received.get(0));
+        Map<?, ?> row1 = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("Camel", row1.get("PROJECT"));
-        Map row2 = assertIsInstanceOf(Map.class, received.get(1));
+        Map<?, ?> row2 = assertIsInstanceOf(Map.class, received.get(1));
         assertEquals("AMQ", row2.get("PROJECT"));
     }
 
@@ -140,9 +148,9 @@ public class SqlRouteTest extends CamelTestSupport {
         body.add("ASF");
         template.sendBody("direct:simpleLimited", body);
         mock.assertIsSatisfied();
-        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
         assertEquals(1, received.size());
-        Map row1 = assertIsInstanceOf(Map.class, received.get(0));
+        Map<?, ?> row1 = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("Camel", row1.get("PROJECT"));
     }
 
@@ -170,8 +178,8 @@ public class SqlRouteTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         template.sendBody("direct:no-param", null);
         mock.assertIsSatisfied();
-        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
-        Map row = assertIsInstanceOf(Map.class, received.get(0));
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("Camel", row.get("PROJECT"));
     }
     
@@ -183,7 +191,7 @@ public class SqlRouteTest extends CamelTestSupport {
         mock.assertIsSatisfied();
         Number received = assertIsInstanceOf(Number.class, mock.getReceivedExchanges().get(0).getIn().getHeader(SqlConstants.SQL_UPDATE_COUNT));
         assertEquals(1, received.intValue());
-        Map projectNameInserted = jdbcTemplate.queryForMap("select project, license from projects where id = 5");
+        Map<?, ?> projectNameInserted = jdbcTemplate.queryForMap("select project, license from projects where id = 5");
         assertEquals("#", projectNameInserted.get("PROJECT"));
         assertEquals("XGPL", projectNameInserted.get("LICENSE"));
     }
@@ -194,8 +202,8 @@ public class SqlRouteTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         template.sendBody("direct:no-param", "Mock body");
         mock.assertIsSatisfied();
-        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
-        Map row = assertIsInstanceOf(Map.class, received.get(0));
+        List<?> received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("Camel", row.get("PROJECT"));
     }
 
@@ -248,6 +256,18 @@ public class SqlRouteTest extends CamelTestSupport {
                 from("direct:no-param-insert").to("sql:insert into projects values (5, '#', param)?placeholder=param").to("mock:result");
             }
         };
+    }
+    
+    private boolean isOrdered(Set<?> keySet) {
+        assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("id"));
+        assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("project"));
+        assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("license"));
+        
+        // the implementation uses a case insensitive Map
+        final Iterator<?> it = keySet.iterator();
+        return "id".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()))
+            && "project".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()))
+            && "license".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()));
     }
 
 }

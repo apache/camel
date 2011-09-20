@@ -33,7 +33,7 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
     /**
      * <p>Maps primitive type names to corresponding class objects.</p>
      */
-    private static final HashMap<String, Class> PRIM_CLASSES = new HashMap<String, Class>(8, 1.0F);
+    private static final HashMap<String, Class<?>> PRIM_CLASSES = new HashMap<String, Class<?>>(8, 1.0F);
     
     private CamelContext camelContext;
 
@@ -51,7 +51,7 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
     @Override
     protected Class<?> resolveProxyClass(String[] interfaces) throws IOException, ClassNotFoundException {
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        Class[] cinterfaces = new Class[interfaces.length];
+        Class<?>[] cinterfaces = new Class[interfaces.length];
         for (int i = 0; i < interfaces.length; i++) {
             cinterfaces[i] = camelContext.getClassResolver().resolveClass(interfaces[i], cl);
         }
