@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://activemq.apache.org/camel/schema/spring"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+       http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="dataset:testset"/>
+            <setProperty propertyName="BLOB_NAME">
+                <constant>testName</constant>
+            </setProperty>
+            <to uri="jclouds:blobstore:foo"/>
+        </route>
+
+        <route>
+            <from uri="jclouds:blobstore:foo"/>
+            <to uri="mock:result"/>
+        </route>
+
+    </camelContext>
+
+    <bean id="testset" class="org.apache.camel.component.dataset.SimpleDataSet">
+        <property name="size" value="1"/>
+    </bean>
+
+    <bean id="jclouds" class="org.apache.camel.component.jclouds.JcloudsComponent">
+        <property name="provider" value="transient"/>
+        <property name="identity"  value="identity"/>
+        <property name="creadential" value="creadential"/>
+    </bean>
+
+</beans>
