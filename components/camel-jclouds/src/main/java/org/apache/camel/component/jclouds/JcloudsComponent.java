@@ -27,11 +27,9 @@ import org.jclouds.blobstore.BlobStoreContextFactory;
  * Represents the component that manages {@link JcloudsEndpoint}.
  */
 public class JcloudsComponent extends DefaultComponent {
-
     private String provider;
     private String identity;
     private String creadential;
-
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = null;
@@ -52,7 +50,9 @@ public class JcloudsComponent extends DefaultComponent {
                 String container = uriParts[1];
                 BlobStoreContext blobStoreContext = new BlobStoreContextFactory().createContext(provider, identity, creadential);
                 endpoint = new JcloudsBlobStoreEndpoint(uri, this, blobStoreContext, container);
-            } else throw new Exception("Invalid Endpoint URI. It should contains a valid container name");
+            } else {
+                throw new Exception("Invalid Endpoint URI. It should contains a valid container name");
+            }
         }
 
         setProperties(endpoint, parameters);

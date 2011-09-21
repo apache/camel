@@ -24,14 +24,11 @@ import org.slf4j.LoggerFactory;
 public class JcloudsProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(JcloudsProducer.class);
 
-    private JcloudsEndpoint endpoint;
-
     public JcloudsProducer(JcloudsEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
     }
 
     public void process(Exchange exchange) throws Exception {
-        System.out.println(exchange.getIn().getBody());    
+        LOG.debug("JcloudsProducer received: {}", exchange.getIn().getBody());    
     }
 }

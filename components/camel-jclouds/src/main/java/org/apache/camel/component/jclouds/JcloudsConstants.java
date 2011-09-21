@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jclouds;
 
-public class JcloudsConstants {
+public final class JcloudsConstants {
     public static final String DELIMETER = ":";
     public static final String BLOBSTORE = "blobstore";
     public static final String BLOB_NAME = "BLOB_NAME";
-
+    
+    private JcloudsConstants() {
+        // utility class
+    }
 }

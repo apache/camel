@@ -34,8 +34,8 @@ public class JcloudsComponentTest extends CamelSpringTestSupport {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-       BlobStoreContext context = new BlobStoreContextFactory().createContext("transient","id","credential");
-       context.getBlobStore().createContainerInLocation(null, "foo");
+        BlobStoreContext context = new BlobStoreContextFactory().createContext("transient", "id", "credential");
+        context.getBlobStore().createContainerInLocation(null, "foo");
     }
 
     @Override
@@ -45,7 +45,7 @@ public class JcloudsComponentTest extends CamelSpringTestSupport {
 
     @Test
     public void testProduce() throws InterruptedException {
-         result.expectedMessageCount(1);
-         result.assertIsSatisfied();
+        result.expectedMessageCount(1);
+        result.assertIsSatisfied();
     }
 }

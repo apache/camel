@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,8 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jclouds;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
@@ -32,17 +38,9 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
-import java.util.LinkedList;
-import java.util.Queue;
-
-
 public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchConsumer, ShutdownAware {
 
-    private static final Logger logger = LoggerFactory.getLogger(JcloudsBlobStoreConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JcloudsBlobStoreConsumer.class);
 
     private final JcloudsBlobStoreEndpoint endpoint;
 
@@ -83,9 +81,7 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
             exchange.setProperty(JcloudsConstants.BLOB_NAME, blobName);
             queue.add(exchange);
         }
-        if (!queue.isEmpty())
-            return processBatch(CastUtils.cast(queue));
-        else return 0;
+        return queue.isEmpty() ? 0 : processBatch(CastUtils.cast(queue));
     }
 
     @Override
@@ -119,7 +115,7 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
                 }
             });
 
-            logger.trace("Processing exchange [{}]...", exchange);
+            LOG.trace("Processing exchange [{}]...", exchange);
             getProcessor().process(exchange);
         }
 

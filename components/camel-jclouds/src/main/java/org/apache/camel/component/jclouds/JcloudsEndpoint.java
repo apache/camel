@@ -21,15 +21,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 
-
-
 public abstract class JcloudsEndpoint extends DefaultEndpoint {
 
-    /**
-     * Constructor
-     * @param uri
-     * @param component
-     */
     public JcloudsEndpoint(String uri, JcloudsComponent component) {
         super(uri, component);
     }
@@ -37,7 +30,4 @@ public abstract class JcloudsEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return true;
     }
-
-    public abstract Producer createProducer() throws Exception;
-    public abstract Consumer createConsumer(Processor processor);
 }

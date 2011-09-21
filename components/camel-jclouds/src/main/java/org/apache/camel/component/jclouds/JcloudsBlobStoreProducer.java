@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,24 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jclouds;
-
-import org.apache.camel.Exchange;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.domain.Blob;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
+import org.apache.camel.Exchange;
+
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.domain.Blob;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JcloudsBlobStoreProducer extends JcloudsProducer {
 
-    private static final Logger logger = LoggerFactory.getLogger(JcloudsBlobStoreProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JcloudsBlobStoreProducer.class);
 
     private BlobStoreContext blobStoreContext;
     private String container;
@@ -57,7 +57,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
                 blob.setPayload(baos.toByteArray());
                 blobStore.putBlob(container, blob);
             } catch (IOException e) {
-                logger.error("Error while writing blob", e);
+                LOG.error("Error while writing blob", e);
             } finally {
                 if (oos != null) {
                     try {
