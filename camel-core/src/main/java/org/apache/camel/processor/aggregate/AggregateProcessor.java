@@ -115,6 +115,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private boolean completionFromBatchConsumer;
     private AtomicInteger batchConsumerCounter = new AtomicInteger();
     private boolean discardOnCompletionTimeout;
+    private boolean forceCompletionOnStop;
 
     private ProducerTemplate deadLetterProducerTemplate;
 
@@ -567,6 +568,10 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.discardOnCompletionTimeout = discardOnCompletionTimeout;
     }
 
+    public void setForceCompletionOnStop(boolean forceCompletionOnStop) {
+        this.forceCompletionOnStop = forceCompletionOnStop;
+    }
+
     /**
      * On completion task which keeps the booking of the in progress up to date
      */
@@ -859,6 +864,16 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     @Override
     protected void doStop() throws Exception {
+
+        if (forceCompletionOnStop) {
+            forceCompletionOfAllGroups();
+
+            while (inProgressCompleteExchanges.size() > 0) {
+                LOG.trace("waiting for {} in progress exchanges to complete", inProgressCompleteExchanges.size());
+                Thread.sleep(100);
+            }
+        }
+
         if (recoverService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(recoverService);
         }

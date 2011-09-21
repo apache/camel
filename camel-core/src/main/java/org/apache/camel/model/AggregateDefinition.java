@@ -93,6 +93,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private Integer closeCorrelationKeyOnCompletion;
     @XmlAttribute
     private Boolean discardOnCompletionTimeout;
+    @XmlAttribute
+    private Boolean forceCompletionOnStop;
 
     public AggregateDefinition() {
     }
@@ -208,6 +210,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
         if (getDiscardOnCompletionTimeout() != null) {
             answer.setDiscardOnCompletionTimeout(isDiscardOnCompletionTimeout());
+        }
+        if (getForceCompletionOnStop() != null) {
+            answer.setForceCompletionOnStop(getForceCompletionOnStop());
         }
 
         return answer;
@@ -646,6 +651,29 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         checkNoCompletedPredicate();
         setCompletionPredicate(new ExpressionSubElementDefinition(predicate));
         return this;
+    }
+
+     /**
+     * Sets the force completion on stop flag, which considers the current group as complete
+     * and sends out the aggregated exchange when the stop event is executed
+     *
+     * @return builder
+     */
+    public AggregateDefinition forceCompletionOnStop() {
+        setForceCompletionOnStop(true);
+        return this;
+    }
+
+    public Boolean getForceCompletionOnStop() {
+        return forceCompletionOnStop;
+    }
+
+    public boolean isForceCompletionOnStop() {
+        return forceCompletionOnStop != null && forceCompletionOnStop;
+    }
+
+    public void setForceCompletionOnStop(Boolean forceCompletionOnStop) {
+        this.forceCompletionOnStop = forceCompletionOnStop;
     }
 
     /**
