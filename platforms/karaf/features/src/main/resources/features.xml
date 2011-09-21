@@ -338,6 +338,11 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jaxb/${pom.version}</bundle>
   </feature>
+  <feature name='camel-jclouds' version='${pom.version}' resolver='(obr)' start-level='50'>
+    <feature version="${jclouds-version}">jclouds</feature>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-jclouds/${pom.version}</bundle>
+  </feature>
   <feature name='camel-jcr' version='${pom.version}' resolver='(obr)' start-level='50'>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jcr-api/${jcr-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/${jackrabbit-version}</bundle>

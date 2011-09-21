@@ -85,6 +85,7 @@
     <module>camel-javaspace</module>
     <module>camel-jaxb</module>
     <module>camel-jasypt</module>
+    <module>camel-jclouds</module>
     <module>camel-jcr</module>
     <module>camel-jdbc</module>
     <module>camel-jibx</module>
