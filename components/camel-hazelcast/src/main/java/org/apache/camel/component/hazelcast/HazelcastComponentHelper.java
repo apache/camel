@@ -43,8 +43,10 @@ public class HazelcastComponentHelper {
             headers.remove(HazelcastConstants.OPERATION);
         }
 
-        // set out headers
-        ex.getOut().setHeaders(headers);
+        // propagate headers if OUT message created
+        if (ex.hasOut()) {
+            ex.getOut().setHeaders(headers);
+        }
     }
 
     public static void setListenerHeaders(Exchange ex, String listenerType, String listenerAction, String cacheName) {
