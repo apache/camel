@@ -88,8 +88,8 @@
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
     <hsqldb-version>1.8.0.7</hsqldb-version>
     <httpunit-version>1.6.2</httpunit-version>
-    <httpcore4-version>4.1.1</httpcore4-version>
-    <httpclient4-version>4.1.1</httpclient4-version>
+    <httpcore4-version>4.1.2</httpcore4-version>
+    <httpclient4-version>4.1.2</httpclient4-version>
     <httpclient-version>3.1</httpclient-version>
     <icu4j-version>4.0.1</icu4j-version>
     <jackson-version>1.8.4</jackson-version>
