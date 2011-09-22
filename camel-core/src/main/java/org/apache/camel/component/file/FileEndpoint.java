@@ -127,7 +127,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     @Override
     protected String createEndpointUri() {
-        return "file://" + getFile().getAbsolutePath();
+        return getFile().toURI().toString();
     }
 
     @Override
