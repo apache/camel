@@ -18,8 +18,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:soap="http://cxf.apache.org/bindings/soap"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
@@ -40,9 +42,13 @@
   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointBeanTest/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
-  <cxf:cxfEndpoint id="myEndpoint" address="http://localhot:${CXFTestSupport.port3}/test"
+  <cxf:cxfEndpoint id="myEndpoint" address="http://localhost:${CXFTestSupport.port3}/test"
     serviceClass="org.apache.camel.wsdl_first.Person" serviceName="${CxfEndpointBeans.serviceName}" endpointName="${CxfEndpointBeans.endpointName}"
-    wsdlURL="person.wsdl"/>
+    wsdlURL="person.wsdl">
+    <cxf:binding>
+         <soap:soapBinding version="1.2"/>
+    </cxf:binding>
+  </cxf:cxfEndpoint>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
      <route>

@@ -49,10 +49,12 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.binding.BindingConfiguration;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.injection.ResourceInjector;
 import org.apache.cxf.common.util.ClassHelper;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
+import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
@@ -74,6 +76,7 @@ import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.resource.DefaultResourceManager;
 import org.apache.cxf.resource.ResourceManager;
 import org.apache.cxf.resource.ResourceResolver;
+import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.slf4j.Logger;
@@ -130,7 +133,10 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private List<String> schemaLocations;
     private String transportId;
     private String bindingId;
-
+    
+    private BindingConfiguration bindingConfig;
+    private DataBinding dataBinding;
+    private ReflectionServiceFactoryBean serviceFactoryBean;
     
 
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
@@ -192,6 +198,17 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         sfb.setFeatures(features);
         if (schemaLocations != null) {
             sfb.setSchemaLocations(schemaLocations);
+        }
+        if (bindingConfig != null) {
+            sfb.setBindingConfig(bindingConfig);
+        }
+        
+        if (dataBinding != null) {
+            sfb.setDataBinding(dataBinding);
+        }
+        
+        if (serviceFactoryBean != null) {
+            sfb.setServiceFactory(serviceFactoryBean);
         }
         
         if (sfb instanceof JaxWsServerFactoryBean && handlers != null) {
@@ -342,6 +359,18 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         factoryBean.setFeatures(features);
         factoryBean.setTransportId(transportId);
         factoryBean.setBindingId(bindingId);
+        
+        if (bindingConfig != null) {
+            factoryBean.setBindingConfig(bindingConfig);
+        }
+        
+        if (dataBinding != null) {
+            factoryBean.setDataBinding(dataBinding);
+        }
+        
+        if (serviceFactoryBean != null) {
+            factoryBean.setServiceFactory(serviceFactoryBean);
+        }
 
         // address
         factoryBean.setAddress(getAddress());
@@ -860,5 +889,30 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setBindingId(String bindingId) {
         this.bindingId = bindingId;
     }
+    
+    public BindingConfiguration getBindingConfig() {
+        return bindingConfig;
+    }
+
+    public void setBindingConfig(BindingConfiguration bindingConfig) {
+        this.bindingConfig = bindingConfig;
+    }
+
+    public DataBinding getDataBinding() {
+        return dataBinding;
+    }
+
+    public void setDataBinding(DataBinding dataBinding) {
+        this.dataBinding = dataBinding;
+    }
+
+    public ReflectionServiceFactoryBean getServiceFactoryBean() {
+        return serviceFactoryBean;
+    }
+
+    public void setServiceFactoryBean(ReflectionServiceFactoryBean serviceFactoryBean) {
+        this.serviceFactoryBean = serviceFactoryBean;
+    }
+
     
 }

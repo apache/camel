@@ -20,6 +20,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
+import org.apache.cxf.binding.soap.SoapBindingConfiguration;
 import org.junit.Test;
 
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
@@ -53,6 +54,10 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         CxfEndpoint myEndpoint = (CxfEndpoint)ctx.getBean("myEndpoint");
         assertEquals("Got the wrong endpointName", endpointName, myEndpoint.getPortName());
         assertEquals("Got the wrong serviceName", serviceName, myEndpoint.getServiceName());
+        assertTrue("We should get a soap binding", myEndpoint.getBindingConfig() instanceof SoapBindingConfiguration);
+        SoapBindingConfiguration configuration = (SoapBindingConfiguration)myEndpoint.getBindingConfig();
+        assertEquals("We should get a right soap version", "1.2", String.valueOf(configuration.getVersion().getVersion()));
+        
     }
 
 
