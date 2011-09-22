@@ -35,6 +35,7 @@ import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -302,11 +303,17 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
         boolean sync = async.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
-                // pop the route context we just used
-                if (exchange.getUnitOfWork() != null) {
-                    exchange.getUnitOfWork().popRouteContext();
+                try {
+                    UnitOfWork uow = exchange.getUnitOfWork();
+                    // pop the route context we just used
+                    if (uow != null) {
+                        uow.popRouteContext();
+                    }
+                } catch (Exception e) {
+                    exchange.setException(e);
+                } finally {
+                    callback.done(doneSync);
                 }
-                callback.done(doneSync);
             }
         });
 

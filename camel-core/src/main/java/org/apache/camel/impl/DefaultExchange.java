@@ -323,7 +323,12 @@ public final class DefaultExchange implements Exchange {
     }
 
     public boolean isTransacted() {
-        return getUnitOfWork() != null && getUnitOfWork().isTransacted();
+        UnitOfWork uow = getUnitOfWork();
+        if (uow != null) {
+            return uow.isTransacted();
+        } else {
+            return false;
+        }
     }
 
     public boolean isRollbackOnly() {
