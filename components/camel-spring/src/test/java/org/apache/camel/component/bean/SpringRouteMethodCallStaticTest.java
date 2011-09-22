@@ -25,7 +25,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringRouteMethodCallStaticTest extends RouteMethodCallStaticTest {
 
-   protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/component/bean/SpringRouteMethodCallStaticTest.xml");
     }
 }
