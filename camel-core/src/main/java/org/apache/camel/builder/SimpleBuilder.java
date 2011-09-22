@@ -33,6 +33,9 @@ public class SimpleBuilder implements Predicate, Expression {
 
     private final String text;
     private Class<?> resultType;
+    // cache the expression/predicate
+    private volatile Expression expression;
+    private volatile Predicate predicate;
 
     public SimpleBuilder(String text) {
         this.text = text;
@@ -62,11 +65,17 @@ public class SimpleBuilder implements Predicate, Expression {
     }
 
     public boolean matches(Exchange exchange) {
-        return exchange.getContext().resolveLanguage("simple").createPredicate(text).matches(exchange);
+        if (predicate == null) {
+            predicate = exchange.getContext().resolveLanguage("simple").createPredicate(text);
+        }
+        return predicate.matches(exchange);
     }
 
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        return createExpression(exchange).evaluate(exchange, type);
+        if (expression == null) {
+            expression = createExpression(exchange);
+        }
+        return expression.evaluate(exchange, type);
     }
 
     private Expression createExpression(Exchange exchange) {
