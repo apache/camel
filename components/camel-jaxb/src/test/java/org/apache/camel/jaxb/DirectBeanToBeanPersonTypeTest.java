@@ -24,12 +24,14 @@ import org.junit.Test;
 /**
  * PersonType has a ObjectFactory so JAXB can convert to it, but we should still route it as is
  */
-public class TimerBeanToBeanPersonTypeTest extends CamelTestSupport {
+public class DirectBeanToBeanPersonTypeTest extends CamelTestSupport {
 
     @Test
     public void testBeanToBean() throws Exception {
         getMockEndpoint("mock:person").expectedMessageCount(1);
         getMockEndpoint("mock:person").message(0).body().isInstanceOf(PersonType.class);
+
+        template.sendBody("direct:start", null);
 
         assertMockEndpointsSatisfied();
     }
@@ -39,8 +41,7 @@ public class TimerBeanToBeanPersonTypeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?repeatCount=1")
-                    .log("Timer triggered")
+                from("direct:start")
                     .bean(MyPersonService.class, "createPerson")
                     .bean(MyPersonService.class, "sendPerson");
             }
