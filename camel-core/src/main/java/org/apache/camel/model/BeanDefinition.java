@@ -23,9 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ConstantBeanHolder;
+import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.spi.Required;
@@ -172,10 +174,10 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     public Processor createProcessor(RouteContext routeContext) {
         BeanProcessor answer;
         Class<?> clazz = bean != null ? bean.getClass() : null;
-        BeanInfo beanInfo = null;
+        BeanHolder beanHolder;
 
         if (ObjectHelper.isNotEmpty(ref)) {
-            RegistryBean beanHolder = new RegistryBean(routeContext.getCamelContext(), ref);
+            beanHolder = new RegistryBean(routeContext.getCamelContext(), ref);
             // bean holder will check if the bean exists
             bean = beanHolder.getBean();
             answer = new BeanProcessor(beanHolder);
@@ -201,33 +203,31 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
                     + ". We suppose you want to refer to a bean instance by its id instead. Please use beanRef.");
             }
 
-            // notice bean may be null if its a static class
-            beanInfo = new BeanInfo(routeContext.getCamelContext(), clazz);
-            answer = new BeanProcessor(new ConstantBeanHolder(bean, beanInfo));
+            // the holder should either be bean or type based
+            beanHolder = bean != null ? new ConstantBeanHolder(bean, routeContext.getCamelContext()) : new ConstantTypeBeanHolder(clazz, routeContext.getCamelContext());
+            answer = new BeanProcessor(beanHolder);
         }
+
+        // check for method exists
         if (method != null) {
             answer.setMethod(method);
 
             // check there is a method with the given name, and leverage BeanInfo for that
-            if (bean != null) {
-                clazz = bean.getClass();
-            }
-            if (beanInfo == null) {
-                beanInfo = new BeanInfo(routeContext.getCamelContext(), clazz);
-            }
-
+            BeanInfo beanInfo = beanHolder.getBeanInfo();
             if (bean != null) {
                 // there is a bean instance, so check for any methods
                 if (!beanInfo.hasMethod(method)) {
                     throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
                 }
-            } else {
+            } else if (clazz != null) {
                 // there is no bean instance, so check for static methods only
                 if (!beanInfo.hasStaticMethod(method)) {
                     throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, clazz, method, true));
                 }
             }
         }
+
         return answer;
     }
+
 }

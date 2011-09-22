@@ -17,26 +17,12 @@
 package org.apache.camel.component.bean;
 
 /**
-*
-*/
-public final class MyStaticClass {
+ * Object holder for a bean type.
+ *
+ * @version 
+ */
+public interface BeanTypeHolder extends BeanHolder {
 
-    private MyStaticClass() {
-    }
-
-    public static String changeSomething(String s) {
-        if ("Hello World".equals(s)) {
-            return "Bye World";
-        }
-        return null;
-    }
-
-    public static boolean isCamel(String body) {
-        return body.contains("Camel");
-    }
-
-    public void doSomething() {
-        // noop
-    }
+    Class<?> getType();
 
 }
