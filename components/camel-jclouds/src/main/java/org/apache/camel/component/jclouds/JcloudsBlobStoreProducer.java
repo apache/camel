@@ -48,7 +48,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         if (blobName != null && exchange.getIn() != null && exchange.getIn().getBody() != null) {
             Object body = exchange.getIn().getBody();
             BlobStore blobStore = blobStoreContext.getBlobStore();
-            Blob blob = blobStore.newBlob(blobName);
+            Blob blob = blobStore.blobBuilder(blobName).build();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = null;
             try {

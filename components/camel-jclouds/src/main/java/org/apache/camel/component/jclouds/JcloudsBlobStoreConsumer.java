@@ -177,7 +177,7 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
         try {
             ois = new ObjectInputStream(is) {
                 @Override
-                public Class resolveClass(ObjectStreamClass desc) throws IOException,
+                public Class<?> resolveClass(ObjectStreamClass desc) throws IOException,
                         ClassNotFoundException {
                     try {
                         return getEndpoint().getCamelContext().getClassResolver().resolveClass(desc.getName());
