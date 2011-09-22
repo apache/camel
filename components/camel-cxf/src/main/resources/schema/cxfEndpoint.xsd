@@ -44,7 +44,6 @@
             <xsd:element name="handlers" type="xsd:anyType" minOccurs="0"/>
             <xsd:element name="properties" type="beans:mapType" minOccurs="0"/>
             <xsd:element name="schemaLocations" type="schemasType" minOccurs="0"/>
-            <xsd:element name="serviceBean" type="xsd:anyType" minOccurs="0"/>
             <xsd:element name="serviceFactory" type="xsd:anyType" minOccurs="0"/>
           </xsd:all>
           <xsd:attributeGroup ref="cxf-beans:beanAttributes"/>
