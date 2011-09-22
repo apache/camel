@@ -39,6 +39,7 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.ServiceHelper;
@@ -304,11 +305,17 @@ public class DefaultChannel extends ServiceSupport implements Channel {
         AsyncProcessor async = AsyncProcessorTypeConverter.convert(processor);
         boolean sync = async.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
-                // pop the route context we just used
-                if (exchange.getUnitOfWork() != null) {
-                    exchange.getUnitOfWork().popRouteContext();
+                try {
+                    UnitOfWork uow = exchange.getUnitOfWork();
+                    // pop the route context we just used
+                    if (uow != null) {
+                        uow.popRouteContext();
+                    }
+                } catch (Exception e) {
+                    exchange.setException(e);
+                } finally {
+                    callback.done(doneSync);
                 }
-                callback.done(doneSync);
             }
         });
 
