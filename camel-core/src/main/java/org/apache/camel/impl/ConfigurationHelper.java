@@ -48,7 +48,7 @@ public final class ConfigurationHelper {
         //Utility Class
     }
 
-    public static interface ParameterSetter {
+    public interface ParameterSetter {
         <T> void set(EndpointConfiguration config, String name, T value);
     }
 
