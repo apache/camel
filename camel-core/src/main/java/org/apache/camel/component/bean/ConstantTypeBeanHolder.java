@@ -18,50 +18,52 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A constant (singleton) bean implementation of {@link BeanHolder}
+ * A constant (singleton) bean implementation of {@link org.apache.camel.component.bean.BeanTypeHolder}
  *
- * @version 
+ * @version
  */
-public class ConstantBeanHolder implements BeanHolder {
-    private final Object bean;
+public class ConstantTypeBeanHolder implements BeanTypeHolder {
+    private final Class<?> type;
     private final BeanInfo beanInfo;
-    private final Processor processor;
 
-    public ConstantBeanHolder(Object bean, BeanInfo beanInfo) {
-        ObjectHelper.notNull(bean, "bean");
+    public ConstantTypeBeanHolder(Class<?> type, BeanInfo beanInfo) {
+        ObjectHelper.notNull(type, "type");
         ObjectHelper.notNull(beanInfo, "beanInfo");
 
-        this.bean = bean;
+        this.type = type;
         this.beanInfo = beanInfo;
-        this.processor = CamelContextHelper.convertTo(beanInfo.getCamelContext(), Processor.class, bean);
     }
 
-    public ConstantBeanHolder(Object bean, CamelContext context) {
-        this(bean, new BeanInfo(context, bean.getClass()));
+    public ConstantTypeBeanHolder(Class<?> type, CamelContext context) {
+        this(type, new BeanInfo(context, type));
     }
 
-    public ConstantBeanHolder(Object bean, CamelContext context, ParameterMappingStrategy parameterMappingStrategy) {
-        this(bean, new BeanInfo(context, bean.getClass(), parameterMappingStrategy));
+    public ConstantTypeBeanHolder(Class<?> type, CamelContext context, ParameterMappingStrategy parameterMappingStrategy) {
+        this(type, new BeanInfo(context, type, parameterMappingStrategy));
     }
 
     @Override
     public String toString() {
-        return bean.toString();
+        return type.toString();
     }
 
     public Object getBean()  {
-        return bean;
+        return null;
     }
 
     public Processor getProcessor() {
-        return processor;
+        return null;
     }
 
     public BeanInfo getBeanInfo() {
         return beanInfo;
     }
+
+    public Class<?> getType() {
+        return type;
+    }
+
 }

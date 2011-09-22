@@ -16,27 +16,16 @@
  */
 package org.apache.camel.component.bean;
 
+import org.apache.camel.CamelContext;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
 /**
-*
-*/
-public final class MyStaticClass {
+ *
+ */
+public class SpringRouteMethodCallStaticTest extends RouteMethodCallStaticTest {
 
-    private MyStaticClass() {
+   protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/component/bean/SpringRouteMethodCallStaticTest.xml");
     }
-
-    public static String changeSomething(String s) {
-        if ("Hello World".equals(s)) {
-            return "Bye World";
-        }
-        return null;
-    }
-
-    public static boolean isCamel(String body) {
-        return body.contains("Camel");
-    }
-
-    public void doSomething() {
-        // noop
-    }
-
 }

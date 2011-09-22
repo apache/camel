@@ -31,6 +31,7 @@ import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.language.bean.BeanExpression;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 
@@ -154,8 +155,13 @@ public class MethodCallExpression extends ExpressionDefinition {
         }
 
         if (beanType != null) {
-            instance = camelContext.getInjector().newInstance(beanType);
-            answer = new BeanExpression(instance, getMethod());
+            // create a bean if there is a default public no-arg constructor
+            if (ObjectHelper.hasDefaultPublicNoArgConstructor(beanType)) {
+                instance = camelContext.getInjector().newInstance(beanType);
+                answer = new BeanExpression(instance, getMethod());
+            } else {
+                answer = new BeanExpression(beanType, getMethod());
+            }
         } else if (instance != null) {
             answer = new BeanExpression(instance, getMethod());
         } else {
@@ -167,7 +173,7 @@ public class MethodCallExpression extends ExpressionDefinition {
             answer = new BeanExpression(ref, getMethod());
         }
 
-        validateHasMethod(camelContext, instance, getMethod());
+        validateHasMethod(camelContext, instance, beanType, getMethod());
         return answer;
     }
 
@@ -183,12 +189,17 @@ public class MethodCallExpression extends ExpressionDefinition {
      *
      * @param context  camel context
      * @param bean     the bean instance
+     * @param type     the bean type
      * @param method   the method, can be <tt>null</tt> if no method name provided
      * @throws org.apache.camel.RuntimeCamelException is thrown if bean does not have the method
      */
-    protected void validateHasMethod(CamelContext context, Object bean, String method) {
+    protected void validateHasMethod(CamelContext context, Object bean, Class<?> type, String method) {
         if (method == null) {
             return;
+        }
+
+        if (bean == null && type == null) {
+            throw new IllegalArgumentException("Either bean or type should be provided on " + this);
         }
 
         // do not try to validate ognl methods
@@ -199,12 +210,20 @@ public class MethodCallExpression extends ExpressionDefinition {
         // if invalid OGNL then fail
         if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
             ExpressionIllegalSyntaxException cause = new ExpressionIllegalSyntaxException(method);
-            throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(bean, method, cause));
+            throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(bean != null ? bean : type, method, cause));
         }
 
-        BeanInfo info = new BeanInfo(context, bean.getClass());
-        if (!info.hasMethod(method)) {
-            throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
+        if (bean != null) {
+            BeanInfo info = new BeanInfo(context, bean.getClass());
+            if (!info.hasMethod(method)) {
+                throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
+            }
+        } else {
+            BeanInfo info = new BeanInfo(context, type);
+            // must be a static method as we do not have a bean instance to invoke
+            if (!info.hasStaticMethod(method)) {
+                throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, type, method, true));
+            }
         }
     }
 
