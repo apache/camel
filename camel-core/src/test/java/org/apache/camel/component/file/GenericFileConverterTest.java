@@ -17,11 +17,13 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -138,6 +140,34 @@ public class GenericFileConverterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(InputStream.class);
+        mock.message(0).body(String.class).isEqualTo("Hello World");
+
+        template.sendBodyAndHeader("file://target/gf", "Hello World", Exchange.FILE_NAME, "hello.txt");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testToFileInputStream() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("file://target/gf")
+                    .convertBodyTo(InputStream.class)
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            Object body = exchange.getIn().getBody();
+                            assertIsInstanceOf(FileInputStream.class, body);
+                        }
+                    })
+                    .to("mock:result");
+            }
+        });
+        context.start();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(FileInputStream.class);
         mock.message(0).body(String.class).isEqualTo("Hello World");
 
         template.sendBodyAndHeader("file://target/gf", "Hello World", Exchange.FILE_NAME, "hello.txt");
