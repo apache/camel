@@ -333,11 +333,19 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     }
 
     public ReplyToType getReplyToType() {
-        return configuration.getReplyToType();
+        return getConfiguration().getReplyToType();
     }
 
     public void setReplyToType(ReplyToType replyToType) {
-        configuration.setReplyToType(replyToType);
+        getConfiguration().setReplyToType(replyToType);
+    }
+
+    public boolean isPreserveMessageQos() {
+        return getConfiguration().isPreserveMessageQos();
+    }
+
+    public void setPreserveMessageQos(boolean preserveMessageQos) {
+        getConfiguration().setPreserveMessageQos(preserveMessageQos);
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
