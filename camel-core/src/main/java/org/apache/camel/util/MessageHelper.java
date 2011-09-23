@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Map;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
