@@ -47,7 +47,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         // strip trailing slash
         fileName = FileUtil.stripTrailingSeparator(fileName);
 
-        boolean answer = doPollDirectory(fileName, null, fileList);
+        boolean answer = doPollDirectory(fileName, null, fileList, depth);
         if (currentDir != null) {
             operations.changeCurrentDirectory(currentDir);
         }
@@ -55,8 +55,8 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         return answer;
     }
 
-    protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
-        boolean answer = doPollDirectory(absolutePath, dirName, fileList);
+    protected boolean pollSubDirectory(String absolutePath, String dirName, List<GenericFile<ChannelSftp.LsEntry>> fileList, int depth) {
+        boolean answer = doPollDirectory(absolutePath, dirName, fileList, depth);
         // change back to parent directory when finished polling sub directory
         if (isStepwise()) {
             operations.changeToParentDirectory();
@@ -64,8 +64,10 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         return answer;
     }
 
-    protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
+    protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<ChannelSftp.LsEntry>> fileList, int depth) {
         log.trace("doPollDirectory from absolutePath: {}, dirName: {}", absolutePath, dirName);
+
+        depth++;
 
         // remove trailing /
         dirName = FileUtil.stripTrailingSeparator(dirName);
@@ -103,11 +105,11 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
             if (file.getAttrs().isDir()) {
                 RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
-                if (endpoint.isRecursive() && isValidFile(remote, true)) {
+                if (endpoint.isRecursive() && isValidFile(remote, true) && depth < endpoint.getMaxDepth()) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getFilename();
                     String path = absolutePath + "/" + subDirectory;
-                    boolean canPollMore = pollSubDirectory(path, subDirectory, fileList);
+                    boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
                     if (!canPollMore) {
                         return false;
                     }
@@ -116,7 +118,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
                 // just assuming its a file we should poll
             } else {
                 RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(absolutePath, file);
-                if (isValidFile(remote, false)) {
+                if (isValidFile(remote, false) && depth >= endpoint.getMinDepth()) {
                     if (isInProgress(remote)) {
                         if (log.isTraceEnabled()) {
                             log.trace("Skipping as file is already in progress: {}", remote.getFileName());
