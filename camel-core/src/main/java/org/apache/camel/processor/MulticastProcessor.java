@@ -794,6 +794,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             result.add(createProcessorExchangePair(index++, processor, copy, routeContext));
         }
 
+        if (exchange.getException() != null) {
+            // force any exceptions occurred during creation of exchange paris to be thrown
+            // before returning the answer;
+            throw exchange.getException();
+        }
+
         return result;
     }
 
