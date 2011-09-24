@@ -98,14 +98,26 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     @Override
-    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) throws Exception {
         Object value = expression.evaluate(exchange, Object.class);
-
-        if (isStreaming()) {
-            return createProcessorExchangePairsIterable(exchange, value);
-        } else {
-            return createProcessorExchangePairsList(exchange, value);
+        if (exchange.getException() != null) {
+            // force any exceptions occurred during evaluation to be thrown
+            throw exchange.getException();
         }
+
+        Iterable<ProcessorExchangePair> answer;
+        if (isStreaming()) {
+            answer = createProcessorExchangePairsIterable(exchange, value);
+        } else {
+            answer = createProcessorExchangePairsList(exchange, value);
+        }
+        if (exchange.getException() != null) {
+            // force any exceptions occurred during creation of exchange paris to be thrown
+            // before returning the answer;
+            throw exchange.getException();
+        }
+
+        return answer;
     }
 
     @SuppressWarnings("unchecked")
