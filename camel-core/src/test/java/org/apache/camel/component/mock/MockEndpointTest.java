@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -798,6 +799,29 @@ public class MockEndpointTest extends ContextTestSupport {
         template.sendBody("direct:a", ExpressionBuilder.constantExpression("0987"));
 
         assertMockEndpointsSatisfied();
+    }
+
+    public void testResetDefaultProcessor() throws Exception {
+        final AtomicInteger counter = new AtomicInteger();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.whenAnyExchangeReceived(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                counter.incrementAndGet();
+            }
+        });
+        mock.expectedMessageCount(1);
+        sendMessages(1);
+        mock.assertIsSatisfied();
+        assertEquals(1, counter.get());
+
+        resetMocks();
+        mock.expectedMessageCount(1);
+        sendMessages(1);
+        mock.assertIsSatisfied();
+        // counter should not be changed this time
+        assertEquals(1, counter.get());
     }
 
     protected void sendMessages(int... counters) {
