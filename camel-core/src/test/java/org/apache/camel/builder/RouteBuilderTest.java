@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -32,6 +33,7 @@ import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.EvaluateExpressionProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -367,7 +369,17 @@ public class RouteBuilderTest extends TestSupport {
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumer.getProcessor());
 
-            assertIsInstanceOf(RecipientList.class, channel.getNextProcessor());
+            Pipeline line = assertIsInstanceOf(Pipeline.class, channel.getNextProcessor());
+            Iterator it = line.getProcessors().iterator();
+
+            // EvaluateExpressionProcessor should be wrapped in error handler
+            Object first = it.next();
+            first = assertIsInstanceOf(DeadLetterChannel.class, first).getOutput();
+            assertIsInstanceOf(EvaluateExpressionProcessor.class, first);
+
+            // and the second should NOT be wrapped in error handler
+            Object second = it.next();
+            assertIsInstanceOf(RecipientList.class, second);
         }
     }
 

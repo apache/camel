@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,6 +28,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.processor.EvaluateExpressionProcessor;
+import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
@@ -91,7 +95,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Expression expression = getExpression().createExpression(routeContext);
+        final Expression expression = getExpression().createExpression(routeContext);
 
         RecipientList answer;
         if (delimiter != null) {
@@ -129,7 +133,29 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
             throw new IllegalArgumentException("Timeout is used but ParallelProcessing has not been enabled.");
         }
 
-        return answer;
+        // create a pipeline with two processors
+        // the first is the eval processor which evaluates the expression to use
+        // the second is the recipient list
+        List<Processor> pipe = new ArrayList<Processor>(2);
+
+        // the eval processor must be wrapped in error handler, so in case there was an
+        // error during evaluation, the error handler can deal with it
+        // the recipient list is not in error handler, as its has its own special error handling
+        // when sending to the recipients individually
+        Processor evalProcessor = new EvaluateExpressionProcessor(expression);
+        evalProcessor = super.wrapInErrorHandler(routeContext, getErrorHandlerBuilder(), evalProcessor);
+
+        pipe.add(evalProcessor);
+        pipe.add(answer);
+
+        // wrap in nested pipeline so this appears as one processor
+        // (threads definition does this as well)
+        return new Pipeline(routeContext.getCamelContext(), pipe) {
+            @Override
+            public String toString() {
+                return "RecipientList[" + expression + "]";
+            }
+        };
     }
     
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
