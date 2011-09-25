@@ -101,7 +101,13 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
             throw new IllegalStateException("RecipientList has not been started: " + this);
         }
 
-        Object recipientList = expression.evaluate(exchange, Object.class);
+        // use the evaluate expression result if exists
+        Object recipientList = exchange.removeProperty(Exchange.EVALUATE_EXPRESSION_RESULT);
+        if (recipientList == null && expression != null) {
+            // fallback and evaluate the expression
+            recipientList = expression.evaluate(exchange, Object.class);
+        }
+
         return sendToRecipientList(exchange, recipientList, callback);
     }
 

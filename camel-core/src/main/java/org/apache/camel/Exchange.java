@@ -104,8 +104,9 @@ public interface Exchange {
     String DISABLE_HTTP_STREAM_CACHE = "CamelDisableHttpStreamCache";
     String DUPLICATE_MESSAGE         = "CamelDuplicateMessage";
 
-    String ERRORHANDLER_HANDLED = "CamelErrorHandlerHandled";
-    String EXCEPTION_CAUGHT     = "CamelExceptionCaught";
+    String EXCEPTION_CAUGHT           = "CamelExceptionCaught";
+    String EVALUATE_EXPRESSION_RESULT = "CamelEvaluateExpressionResult";
+    String ERRORHANDLER_HANDLED       = "CamelErrorHandlerHandled";
 
     String FAILURE_HANDLED      = "CamelFailureHandled";
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
