@@ -40,6 +40,7 @@ import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Splitter;
+import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 
@@ -451,6 +452,48 @@ public class RouteBuilderTest extends TestSupport {
             assertIsInstanceOf(MemoryIdempotentRepository.class, idempotentConsumer.getIdempotentRepository());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(idempotentConsumer.getProcessor()).getNextProcessor());
             assertEquals("Endpoint URI", "seda://b", sendProcessor.getDestination().getEndpointUri());
+        }
+    }
+
+    protected List<Route> buildThreads() throws Exception {
+        // START SNIPPET: e10
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
+                from("seda:a")
+                    .threads(5, 10)
+                    .to("mock:a")
+                    .to("mock:b");
+            }
+        };
+        // END SNIPPET: e10
+        return getRouteList(builder);
+    }
+
+    public void testThreads() throws Exception {
+
+        List<Route> routes = buildThreads();
+
+        log.debug("Created routes: " + routes);
+
+        assertEquals("Number routes created", 1, routes.size());
+        for (Route route : routes) {
+            Endpoint key = route.getEndpoint();
+            assertEquals("From endpoint", "seda://a", key.getEndpointUri());
+
+            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Channel channel = unwrapChannel(consumer.getProcessor());
+
+            Pipeline line = assertIsInstanceOf(Pipeline.class, channel.getNextProcessor());
+            Iterator it = line.getProcessors().iterator();
+
+            assertIsInstanceOf(ThreadsProcessor.class, it.next());
+            // output should be wrapped in a pipeline
+            Pipeline threadsLine = assertIsInstanceOf(Pipeline.class, it.next());
+            Iterator<Processor> it2 = threadsLine.getProcessors().iterator();
+            assertIsInstanceOf(SendProcessor.class, unwrapChannel(it2.next()).getNextProcessor());
+            assertIsInstanceOf(SendProcessor.class, unwrapChannel(it2.next()).getNextProcessor());
         }
     }
 

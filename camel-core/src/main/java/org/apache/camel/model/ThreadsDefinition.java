@@ -107,7 +107,13 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
         pipe.add(thread);
         pipe.add(createChildProcessor(routeContext, true));
         // wrap in nested pipeline so this appears as one processor
-        return new Pipeline(routeContext.getCamelContext(), pipe);
+        // (recipient list definition does this as well)
+        return new Pipeline(routeContext.getCamelContext(), pipe) {
+            @Override
+            public String toString() {
+                return "Threads[" + getOutputs() + "]";
+            }
+        };
     }
 
     @Override
