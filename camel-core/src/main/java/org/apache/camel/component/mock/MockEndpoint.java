@@ -1014,6 +1014,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private void init() {
         expectedCount = -1;
         counter = 0;
+        defaultProcessor = null;
         processors = new HashMap<Integer, Processor>();
         receivedExchanges = new CopyOnWriteArrayList<Exchange>();
         failures = new CopyOnWriteArrayList<Throwable>();
