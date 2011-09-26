@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.s3;
 
 import java.io.InputStream;
+import java.util.Date;
 
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -53,6 +54,31 @@ public class S3Producer extends DefaultProducer {
         String contentType = exchange.getIn().getHeader(S3Constants.CONTENT_TYPE, String.class);
         if (contentType != null) {
             objectMetadata.setContentType(contentType);
+        }
+        
+        String cacheControl = exchange.getIn().getHeader(S3Constants.CACHE_CONTROL, String.class);
+        if (cacheControl != null) {
+            objectMetadata.setCacheControl(cacheControl);
+        }
+        
+        String contentDisposition = exchange.getIn().getHeader(S3Constants.CONTENT_DISPOSITION, String.class);
+        if (contentDisposition != null) {
+            objectMetadata.setContentDisposition(contentDisposition);
+        }
+        
+        String contentEncoding = exchange.getIn().getHeader(S3Constants.CONTENT_ENCODING, String.class);
+        if (contentEncoding != null) {
+            objectMetadata.setContentEncoding(contentEncoding);
+        }
+        
+        String contentMD5 = exchange.getIn().getHeader(S3Constants.CONTENT_MD5, String.class);
+        if (contentMD5 != null) {
+            objectMetadata.setContentMD5(contentMD5);
+        }
+        
+        Date lastModified = exchange.getIn().getHeader(S3Constants.LAST_MODIFIED, Date.class);
+        if (lastModified != null) {
+            objectMetadata.setLastModified(lastModified);
         }
         
         PutObjectRequest putObjectRequest = new PutObjectRequest(
