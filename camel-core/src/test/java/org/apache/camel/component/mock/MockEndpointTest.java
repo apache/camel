@@ -19,6 +19,7 @@ package org.apache.camel.component.mock;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -535,6 +536,29 @@ public class MockEndpointTest extends ContextTestSupport {
             assertEquals("Assertion error at index 1 on mock mock://result with predicate: header(bar) instanceof"
                     + " java.lang.String on Exchange[Message: Hello World]", e.getMessage());
         }
+    }
+
+    public void testResetDefaultProcessor() throws Exception {
+        final AtomicInteger counter = new AtomicInteger();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.whenAnyExchangeReceived(new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                counter.incrementAndGet();
+            }
+        });
+        mock.expectedMessageCount(1);
+        sendMessages(1);
+        mock.assertIsSatisfied();
+        assertEquals(1, counter.get());
+
+        resetMocks();
+        mock.expectedMessageCount(1);
+        sendMessages(1);
+        mock.assertIsSatisfied();
+        // counter should not be changed this time
+        assertEquals(1, counter.get());
     }
 
     protected void sendMessages(int... counters) {
