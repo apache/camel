@@ -59,6 +59,12 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint {
         super(endpointUri, component);
     }
 
+    @Deprecated
+    public ProcessorEndpoint(String endpointUri, Processor processor) {
+        super(endpointUri);
+        this.processor = processor;
+    }
+
     public Producer createProducer() throws Exception {
         return new DefaultProducer(this) {
             public void process(Exchange exchange) throws Exception {
