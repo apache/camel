@@ -71,7 +71,7 @@ public class ProxyReturnFutureTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
-    public static interface Echo {
+    public interface Echo {
 
         // returning a Future indicate asynchronous invocation
         Future<String> asText(int number);

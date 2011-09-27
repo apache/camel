@@ -85,7 +85,7 @@ public class ProxyReturnFutureListTest extends ContextTestSupport {
         };
     }
 
-    public static interface Users {
+    public interface Users {
         Future<List<String>> getUsers(boolean gold);
     }
 

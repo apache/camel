@@ -117,12 +117,12 @@ public class BeanWithAnnotationInheritedTest extends ContextTestSupport {
         };
     }
 
-    private static interface I1 {
+    private interface I1 {
         String m1(@Header("foo")String h1, @Header("bar")String h2);
         String m2(@Header("foo")String h1, String h2);
     }
 
-    private static interface I2 {
+    private interface I2 {
         String m2(String h1, @Header("bar")String h2);
         String m3(@Header("foo")String h1, String h2);
         String m4(@Header("foo")String h1, String h2);

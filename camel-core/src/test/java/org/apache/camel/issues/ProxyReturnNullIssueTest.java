@@ -46,7 +46,7 @@ public class ProxyReturnNullIssueTest extends ContextTestSupport {
         };
     }
 
-    public static interface Echo {
+    public interface Echo {
         String echo(String text);
     }
 

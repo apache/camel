@@ -56,7 +56,7 @@ public class ProxyReturnFutureExceptionTest extends ContextTestSupport {
         };
     }
 
-    public static interface Echo {
+    public interface Echo {
         Future<String> asText(int number);
     }
 
