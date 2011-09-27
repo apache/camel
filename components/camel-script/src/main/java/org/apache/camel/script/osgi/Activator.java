@@ -126,7 +126,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             resolvers.add(new BundleScriptEngineResolver(bundle, configURL));
         }
     } 
-    public static interface ScriptEngineResolver {
+    public interface ScriptEngineResolver {
         ScriptEngine resolveScriptEngine(String name);
     }
     protected static class BundleScriptEngineResolver implements ScriptEngineResolver {
