@@ -32,16 +32,16 @@ import org.slf4j.LoggerFactory;
  * A useful base class for endpoints which depend on a resource
  * such as things like Velocity or XQuery based components.
  */
-public class ResourceBasedEndpoint extends ProcessorEndpoint {
+public abstract class ResourceEndpoint extends ProcessorEndpoint {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private String resourceUri;
     private boolean contentCache;
     private byte[] buffer;
 
-    public ResourceBasedEndpoint() {
+    public ResourceEndpoint() {
     }
 
-    public ResourceBasedEndpoint(String endpointUri, Component component, String resourceUri) {
+    public ResourceEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component);
         this.resourceUri = resourceUri;
     }

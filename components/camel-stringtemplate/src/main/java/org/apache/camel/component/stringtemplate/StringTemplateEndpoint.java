@@ -26,13 +26,13 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.apache.camel.component.ResourceBasedEndpoint;
+import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
  * @version 
  */
-public class StringTemplateEndpoint extends ResourceBasedEndpoint {
+public class StringTemplateEndpoint extends ResourceEndpoint {
 
     public StringTemplateEndpoint() {
     }

@@ -28,14 +28,14 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.apache.camel.component.ResourceBasedEndpoint;
+import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Freemarker endpoint
  */
-public class FreemarkerEndpoint extends ResourceBasedEndpoint {
+public class FreemarkerEndpoint extends ResourceEndpoint {
 
     private String encoding;
     private Configuration configuration;

@@ -28,7 +28,7 @@ import java.util.Properties;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
-import org.apache.camel.component.ResourceBasedEndpoint;
+import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -42,7 +42,7 @@ import org.apache.velocity.runtime.log.CommonsLogLogChute;
 /**
  * @version 
  */
-public class VelocityEndpoint extends ResourceBasedEndpoint {
+public class VelocityEndpoint extends ResourceEndpoint {
     private VelocityEngine velocityEngine;
     private boolean loaderCache = true;
     private String encoding;
