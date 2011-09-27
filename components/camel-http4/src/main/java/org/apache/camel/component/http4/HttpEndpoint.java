@@ -219,7 +219,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public int getPort() {
         if (httpUri.getPort() == -1) {
-            if ("https".equals(getProtocol())) {
+            if ("https".equals(getProtocol()) || "https4".equals(getProtocol())) {
                 return 443;
             } else {
                 return 80;

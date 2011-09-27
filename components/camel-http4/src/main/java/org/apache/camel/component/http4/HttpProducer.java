@@ -245,7 +245,7 @@ public class HttpProducer extends DefaultProducer {
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
             return HttpHelper.deserializeJavaObjectFromStream(response);
         } else {
-            return response;
+				    return response;
         }
     }
 
@@ -284,7 +284,18 @@ public class HttpProducer extends DefaultProducer {
             queryString = getEndpoint().getHttpUri().getRawQuery();
         }
 
-        StringBuilder builder = new StringBuilder(uri.getScheme()).append("://").append(uri.getHost());
+        if (uri.getScheme() == null || uri.getHost() == null) {
+            throw new IllegalArgumentException("Invalid uri: " + uri
+                    + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: " + getEndpoint());
+        }
+        
+        // Changed the schema to http4 to normal http by default
+        String schema = "http";
+        if (uri.getScheme().equals("https4")) {
+            schema = "https";
+        }
+        
+        StringBuilder builder = new StringBuilder(schema).append("://").append(uri.getHost());
 
         if (uri.getPort() != -1) {
             builder.append(":").append(uri.getPort());
@@ -298,6 +309,9 @@ public class HttpProducer extends DefaultProducer {
             builder.append('?');
             builder.append(queryString);
         }
+        
+        LOG.debug(" The uri used by http request is " + builder.toString());
+       
 
         HttpRequestBase httpRequest = methodToUse.createMethod(builder.toString());
 
