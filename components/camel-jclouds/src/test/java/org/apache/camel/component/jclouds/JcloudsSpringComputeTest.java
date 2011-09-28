@@ -124,6 +124,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Ignore("For now not possible to combine stub provider with ssh module, requird for runScript")
     @Test
     public void testRunScript() throws InterruptedException {
@@ -143,7 +144,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         for (NodeMetadata nodeMetadata : nodeMetadatas) {
             runScriptHeaders.put(JcloudsConstants.NODE_ID, nodeMetadata.getId());
             destroyHeaders.put(JcloudsConstants.NODE_ID, nodeMetadata.getId());
-            String output = (String) template.requestBodyAndHeaders("direct:in-out", "Some message", runScriptHeaders);
+            template.requestBodyAndHeaders("direct:in-out", "Some message", runScriptHeaders);
             template.sendBodyAndHeaders("direct:in-out", "Some message", destroyHeaders);
         }
     }

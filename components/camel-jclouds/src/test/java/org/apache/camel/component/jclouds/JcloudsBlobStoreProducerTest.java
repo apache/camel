@@ -34,8 +34,6 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     BlobStoreContextFactory contextFactory = new BlobStoreContextFactory();
     BlobStoreContext blobStoreContext = contextFactory.createContext("transient", "identity", "credential");
     BlobStore blobStore = blobStoreContext.getBlobStore();
-    JcloudsComponent jcloudsComponent = new JcloudsComponent();
-
 
     @Test
     public void testBlobStorePut() throws InterruptedException {
@@ -58,11 +56,10 @@ public class JcloudsBlobStoreProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
 
         blobStore.createContainerInLocation(null, TEST_CONTAINER);
-        jcloudsComponent.setBlobStores(Lists.newArrayList(blobStore));
+        ((JcloudsComponent)context.getComponent("jclouds")).setBlobStores(Lists.newArrayList(blobStore));
 
         return new RouteBuilder() {
             public void configure() {
-                getContext().addComponent("jclouds", jcloudsComponent);
                 from("direct:put")
                         .setHeader(JcloudsConstants.BLOB_NAME, constant(TEST_BLOB))
                         .setHeader(JcloudsConstants.CONTAINER_NAME, constant(TEST_CONTAINER))

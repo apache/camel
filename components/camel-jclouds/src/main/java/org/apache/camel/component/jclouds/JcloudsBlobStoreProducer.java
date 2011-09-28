@@ -45,6 +45,7 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
         String blobName = getBlobName(exchange);
         String operation = getOperation(exchange);
 
+        LOG.trace("Processing {} operation on '{}'", operation, container + "/" + blobName);
         Object body = exchange.getIn().getBody();
         if (JcloudsConstants.GET.equals(operation)) {
             exchange.getOut().setBody(JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName, Thread.currentThread().getContextClassLoader()));
