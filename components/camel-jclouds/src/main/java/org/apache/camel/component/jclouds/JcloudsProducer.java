@@ -31,4 +31,5 @@ public class JcloudsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         LOG.debug("JcloudsProducer received: {}", exchange.getIn().getBody());    
     }
+
 }

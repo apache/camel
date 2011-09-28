@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jclouds;
 
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 
 public abstract class JcloudsEndpoint extends DefaultEndpoint {

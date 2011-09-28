@@ -19,35 +19,60 @@ package org.apache.camel.component.jclouds;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStore;
 
 
 public class JcloudsBlobStoreEndpoint extends JcloudsEndpoint {
 
+    private String blobName;
     private String container;
+    private String operation;
 
-    private BlobStoreContext blobStoreContext;
+    private BlobStore blobStore;
 
     /**
      * Constructor
      *
      * @param uri
      * @param component
-     * @param blobStoreContext
+     * @param blobStore
      */
-    public JcloudsBlobStoreEndpoint(String uri, JcloudsComponent component, BlobStoreContext blobStoreContext, String container) {
+    public JcloudsBlobStoreEndpoint(String uri, JcloudsComponent component, BlobStore blobStore) {
         super(uri, component);
-        this.blobStoreContext = blobStoreContext;
-        this.container = container;
+        this.blobStore = blobStore;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new JcloudsBlobStoreProducer(this, blobStoreContext, container);
+        return new JcloudsBlobStoreProducer(this, blobStore);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) {
-        return new JcloudsBlobStoreConsumer(this, processor, blobStoreContext, container);
+        return new JcloudsBlobStoreConsumer(this, processor, blobStore);
+    }
+
+    public String getContainer() {
+        return container;
+    }
+
+    public void setContainer(String container) {
+        this.container = container;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getBlobName() {
+        return blobName;
+    }
+
+    public void setBlobName(String blobName) {
+        this.blobName = blobName;
     }
 }

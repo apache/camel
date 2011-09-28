@@ -57,6 +57,12 @@
             <version>${jclouds-version}</version>
         </dependency>
 
+         <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-compute</artifactId>
+            <version>${jclouds-version}</version>
+        </dependency>
+
         <!-- logging -->
         <dependency>
             <groupId>org.slf4j</groupId>

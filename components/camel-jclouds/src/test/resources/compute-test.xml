@@ -15,9 +15,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:camel="http://activemq.apache.org/camel/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
@@ -25,48 +25,33 @@
 
         <route>
             <from uri="direct:start"/>
-            <setHeader headerName="CamelJcloudsBlobName">
-                <constant>testName</constant>
-            </setHeader>
-            <setHeader headerName="CamelJcloudsContainerName">
-                <constant>foo</constant>
-            </setHeader>
-            <to uri="jclouds:blobstore:transient"/>
+            <to uri="jclouds:compute:stub?operation=CamelJcloudsListImages"/>
+            <to uri="mock:result"/>
         </route>
 
         <route>
-            <from uri="jclouds:blobstore:transient?container=foo"/>
-            <to uri="mock:result-foo"/>
-        </route>
-
-        <route>
-            <from uri="direct:start-with-url-parameters"/>
-            <to uri="jclouds:blobstore:transient?container=bar&amp;blobName=testName"/>
-        </route>
-
-        <route>
-            <from uri="jclouds:blobstore:transient?container=bar"/>
-            <to uri="mock:result-bar"/>
+            <from uri="direct:in-out"/>
+            <to uri="jclouds:compute:stub?operation=CamelJcloudsListImages"/>
         </route>
 
     </camelContext>
 
     <bean id="jclouds" class="org.apache.camel.component.jclouds.JcloudsComponent">
-        <property name="blobStores">
+        <property name="computeServices">
             <list>
-                <ref bean="blobStore"/>
+                <ref bean="computeService"/>
             </list>
         </property>
     </bean>           
 
-    <bean id="blobStoreContextFactory" class="org.jclouds.blobstore.BlobStoreContextFactory"/>
+    <bean id="computeServiceContextFactory" class="org.jclouds.compute.ComputeServiceContextFactory"/>
 
-    <bean id="blobStoreContext" factory-bean="blobStoreContextFactory" factory-method="createContext">
-        <constructor-arg name="provider" value="transient"/>
+    <bean id="computeServiceContext" factory-bean="computeServiceContextFactory" factory-method="createContext">
+        <constructor-arg name="provider" value="stub"/>
         <constructor-arg name="identity"  value="identity"/>
         <constructor-arg name="credential" value="credential"/>
     </bean>
 
-    <bean id="blobStore" factory-bean="blobStoreContext" factory-method="getBlobStore"/>
+    <bean id="computeService" factory-bean="computeServiceContext" factory-method="getComputeService"/>
 
 </beans>

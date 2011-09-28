@@ -32,7 +32,6 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.slf4j.Logger;
@@ -44,7 +43,6 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
 
     private final JcloudsBlobStoreEndpoint endpoint;
 
-    private BlobStoreContext blobStoreContext;
     private String container;
     private BlobStore blobStore;
 
@@ -54,12 +52,10 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
     private volatile int pendingExchanges;
 
 
-    public JcloudsBlobStoreConsumer(JcloudsBlobStoreEndpoint endpoint, Processor processor, BlobStoreContext blobStoreContext, String container) {
+    public JcloudsBlobStoreConsumer(JcloudsBlobStoreEndpoint endpoint, Processor processor, BlobStore blobStore) {
         super(endpoint, processor);
+        this.blobStore = blobStore;
         this.endpoint = endpoint;
-        this.blobStoreContext = blobStoreContext;
-        this.container = container;
-        blobStore = blobStoreContext.getBlobStore();
     }
 
     @Override
@@ -72,10 +68,10 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
 
         ListContainerOptions opt = new ListContainerOptions();
 
-        for (StorageMetadata md : blobStore.list(container, opt.maxResults(maxMessagesPerPoll))) {
+        for (StorageMetadata md : blobStore.list(endpoint.getContainer(), opt.maxResults(maxMessagesPerPoll))) {
             messages++;
             String blobName = md.getName();
-            Object body = readBlob(container, blobName);
+            Object body = JcloudsBlobStoreHelper.readBlob(blobStore, endpoint.getContainer(), blobName, Thread.currentThread().getContextClassLoader());
             Exchange exchange = endpoint.createExchange();
             exchange.getIn().setBody(body);
             exchange.setProperty(JcloudsConstants.BLOB_NAME, blobName);
@@ -159,56 +155,14 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
 
     }
 
-    /**
-     * Reads from a {@link BlobStore}. It returns an Object.
-     *
-     * @param container
-     * @param blobName
-     * @return
-     */
-    protected Object readBlob(String container, String blobName) {
-        Object result = null;
-        ObjectInputStream ois = null;
-        BlobStore blobStore = blobStoreContext.getBlobStore();
-        blobStore.createContainerInLocation(null, container);
 
-        InputStream is = blobStore.getBlob(container, blobName).getPayload().getInput();
-
-        try {
-            ois = new ObjectInputStream(is) {
-                @Override
-                public Class<?> resolveClass(ObjectStreamClass desc) throws IOException,
-                        ClassNotFoundException {
-                    try {
-                        return getEndpoint().getCamelContext().getClassResolver().resolveClass(desc.getName());
-                    } catch (Exception e) {
-                    }
-                    return super.resolveClass(desc);
-                }
-            };
-            result = ois.readObject();
-        } catch (IOException
-                e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException
-                e) {
-            e.printStackTrace();
-        } finally {
-            if (ois != null) {
-                try {
-                    ois.close();
-                } catch (IOException e) {
-                }
-            }
-
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-
-        return result;
+    public String getContainer() {
+        return container;
     }
+
+    public void setContainer(String container) {
+        this.container = container;
+    }
+
+
 }

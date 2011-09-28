@@ -23,7 +23,6 @@ import java.io.ObjectOutputStream;
 import org.apache.camel.Exchange;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 
 import org.slf4j.Logger;
@@ -33,65 +32,67 @@ public class JcloudsBlobStoreProducer extends JcloudsProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JcloudsBlobStoreProducer.class);
 
-    private BlobStoreContext blobStoreContext;
-    private String container;
+    private BlobStore blobStore;
 
-    public JcloudsBlobStoreProducer(JcloudsEndpoint endpoint, BlobStoreContext blobStoreContext, String container) {
+    public JcloudsBlobStoreProducer(JcloudsEndpoint endpoint, BlobStore blobStore) {
         super(endpoint);
-        this.blobStoreContext = blobStoreContext;
-        this.container = container;
+        this.blobStore = blobStore;
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String blobName = extractBlobName(exchange);
-        if (blobName != null && exchange.getIn() != null && exchange.getIn().getBody() != null) {
-            Object body = exchange.getIn().getBody();
-            BlobStore blobStore = blobStoreContext.getBlobStore();
-            Blob blob = blobStore.blobBuilder(blobName).build();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = null;
-            try {
-                oos = new ObjectOutputStream(baos);
-                oos.writeObject(body);
-                blob.setPayload(baos.toByteArray());
-                blobStore.putBlob(container, blob);
-            } catch (IOException e) {
-                LOG.error("Error while writing blob", e);
-            } finally {
-                if (oos != null) {
-                    try {
-                        oos.close();
-                    } catch (IOException e) {
-                    }
-                }
+        String container = getContainerName(exchange);
+        String blobName = getBlobName(exchange);
+        String operation = getOperation(exchange);
 
-                if (baos != null) {
-                    try {
-                        baos.close();
-                    } catch (IOException e) {
-                    }
-                }
-            }
+        Object body = exchange.getIn().getBody();
+        if (JcloudsConstants.GET.equals(operation)) {
+            exchange.getOut().setBody(JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName, Thread.currentThread().getContextClassLoader()));
+        } else {
+            JcloudsBlobStoreHelper.writeBlob(blobStore, container, blobName, body);
         }
-
     }
 
     /**
-     * Extracts the BLOB_NAME from Exchange headers / properties.
+     * Retrieves the blobName from the URI or from the exchange headers. The header will take precedence over the URI.
      *
      * @param exchange
      * @return
      */
-    public String extractBlobName(Exchange exchange) {
-        String blobName = null;
-        if (exchange != null) {
-            if (exchange.getProperty(JcloudsConstants.BLOB_NAME) != null) {
-                blobName = (String) exchange.getProperty(JcloudsConstants.BLOB_NAME);
-            } else if (exchange.getIn() != null && exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME) != null) {
-                blobName = (String) exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME);
-            }
+    protected String getBlobName(Exchange exchange) {
+        String blobName = ((JcloudsBlobStoreEndpoint) getEndpoint()).getBlobName();
+        if (exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME) != null) {
+            blobName = (String) exchange.getIn().getHeader(JcloudsConstants.BLOB_NAME);
         }
         return blobName;
+    }
+
+    /**
+     * Retrieves the containerName from the URI or from the exchange headers. The header will take precedence over the URI.
+     *
+     * @param exchange
+     * @return
+     */
+    protected String getContainerName(Exchange exchange) {
+        String containerName = ((JcloudsBlobStoreEndpoint) getEndpoint()).getContainer();
+        if (exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME) != null) {
+            containerName = (String) exchange.getIn().getHeader(JcloudsConstants.CONTAINER_NAME);
+        }
+        return containerName;
+    }
+
+    /**
+     * Retrieves the operation from the URI or from the exchange headers. The header will take precedence over the URI.
+     *
+     * @param exchange
+     * @return
+     */
+    public String getOperation(Exchange exchange) {
+        String operation = ((JcloudsBlobStoreEndpoint) getEndpoint()).getOperation();
+
+        if (exchange.getIn().getHeader(JcloudsConstants.OPERATION) != null) {
+            operation = (String) exchange.getIn().getHeader(JcloudsConstants.OPERATION);
+        }
+        return operation;
     }
 }

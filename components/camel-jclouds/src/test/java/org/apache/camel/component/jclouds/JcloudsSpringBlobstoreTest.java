@@ -26,16 +26,21 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class JcloudsComponentTest extends CamelSpringTestSupport {
+public class JcloudsSpringBlobstoreTest extends CamelSpringTestSupport {
 
 
-    @EndpointInject(uri = "mock:result")
-    protected MockEndpoint result;
+    @EndpointInject(uri = "mock:result-foo")
+    protected MockEndpoint resultFoo;
+
+
+    @EndpointInject(uri = "mock:result-bar")
+    protected MockEndpoint resultBar;
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         BlobStoreContext context = new BlobStoreContextFactory().createContext("transient", "id", "credential");
         context.getBlobStore().createContainerInLocation(null, "foo");
+        context.getBlobStore().createContainerInLocation(null, "bar");
     }
 
     @Override
@@ -44,8 +49,23 @@ public class JcloudsComponentTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testProduce() throws InterruptedException {
-        result.expectedMessageCount(1);
-        result.assertIsSatisfied();
+    public void testBlobStorePut() throws InterruptedException {
+        template.sendBody("direct:start", "Some message");
+        resultFoo.expectedMessageCount(1);
+        resultFoo.assertIsSatisfied();
+    }
+
+    @Test
+    public void testBlobStoreGet() throws InterruptedException {
+        template.sendBody("direct:start", "Some message");
+        resultFoo.expectedMessageCount(1);
+        resultFoo.assertIsSatisfied();
+    }
+
+    @Test
+    public void testProduceWithUrlParametes() throws InterruptedException {
+        template.sendBody("direct:start-with-url-parameters", "Some message");
+        resultBar.expectedMessageCount(1);
+        resultBar.assertIsSatisfied();
     }
 }
