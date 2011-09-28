@@ -58,7 +58,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
 
     protected Exchange doReceive(int timeout) {
         Exchange exchange = endpoint.createExchange();
-        HttpMethod method = createMethod();
+        HttpMethod method = createMethod(exchange);
 
         // set optional timeout in millis
         if (timeout > 0) {
@@ -111,8 +111,8 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected HttpMethod createMethod() {
-        String uri = endpoint.getEndpointUri();
+    protected HttpMethod createMethod(Exchange exchange) {
+        String uri = HttpHelper.createURL(exchange, endpoint);
         return new GetMethod(uri);
     }
 
