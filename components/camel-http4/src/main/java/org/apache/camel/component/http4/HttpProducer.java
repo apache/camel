@@ -289,13 +289,7 @@ public class HttpProducer extends DefaultProducer {
                     + ". If you are forwarding/bridging http endpoints, then enable the bridgeEndpoint option on the endpoint: " + getEndpoint());
         }
         
-        // Changed the schema to http4 to normal http by default
-        String schema = "http";
-        if (uri.getScheme().equals("https4")) {
-            schema = "https";
-        }
-        
-        StringBuilder builder = new StringBuilder(schema).append("://").append(uri.getHost());
+        StringBuilder builder = new StringBuilder(uri.getScheme()).append("://").append(uri.getHost());
 
         if (uri.getPort() != -1) {
             builder.append(":").append(uri.getPort());

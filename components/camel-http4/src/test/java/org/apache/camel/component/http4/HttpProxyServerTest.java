@@ -182,6 +182,15 @@ public class HttpProxyServerTest extends BaseHttpTest {
 
         assertExchange(exchange);
     }
+    
+    public void httpGetPullEndpointWithProxyAndWithUser() {
+        proxy.register("*", new ProxyAuthenticationValidationHandler("GET", null, null, getExpectedContent(), user, password));
+
+        Exchange exchange = consumer.receive("http4://" + getHostName() + ":" + getPort() + "?proxyAuthHost="
+                + getProxyHost() + "&proxyAuthPort=" + getProxyPort() + "&proxyAuthUsername=camel&proxyAuthPassword=password");
+
+        assertExchange(exchange);
+    }
 
     private String getProxyHost() {
         return proxy.getServiceAddress().getHostName();
@@ -194,7 +203,12 @@ public class HttpProxyServerTest extends BaseHttpTest {
     class RequestProxyBasicAuth implements HttpRequestInterceptor {
         public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
             String auth = null;
-
+            
+            String requestLine = request.getRequestLine().toString();
+            // assert we set a write GET URI
+            if (requestLine.contains("http4://localhost")) {
+                throw new HttpException("Get a wrong proxy GET url");
+            }
             Header h = request.getFirstHeader(AUTH.PROXY_AUTH_RESP);
             if (h != null) {
                 String s = h.getValue();

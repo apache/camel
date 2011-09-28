@@ -177,7 +177,15 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
+        // The httpUri should be start with http or https
+        String httpUriAddress = addressUri;
+        if (addressUri.startsWith("http4")) {
+            httpUriAddress = "http" + addressUri.substring(5);
+        }
+        if (addressUri.startsWith("https4")) {
+            httpUriAddress = "https" + addressUri.substring(6);
+        }
+        URI httpUri = URISupport.createRemainingURI(new URI(httpUriAddress), CastUtils.cast(parameters));
 
         // validate http uri that end-user did not duplicate the http part that can be a common error
         String part = httpUri.getSchemeSpecificPart();
