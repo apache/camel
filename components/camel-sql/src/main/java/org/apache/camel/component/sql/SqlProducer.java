@@ -52,7 +52,10 @@ public class SqlProducer extends DefaultProducer {
                 if (expected > 0 && exchange.getIn().getBody() != null) {
                     Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
                     while (iterator != null && iterator.hasNext()) {
-                        ps.setObject(argNumber++, iterator.next());
+                        Object value = iterator.next();
+                        log.trace("Setting parameter #{} with value: {}", argNumber, value);
+                        ps.setObject(argNumber, value);
+                        argNumber++;
                     }
                 }
 
