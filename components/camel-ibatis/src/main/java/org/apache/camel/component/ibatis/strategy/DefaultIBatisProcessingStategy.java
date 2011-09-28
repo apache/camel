@@ -29,13 +29,15 @@ import org.apache.camel.component.ibatis.IBatisEndpoint;
  */
 public class DefaultIBatisProcessingStategy implements IBatisProcessingStrategy {
 
+    private int isolation = Connection.TRANSACTION_REPEATABLE_READ;
+
     public void commit(IBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatements) throws Exception {
         SqlMapClient client = endpoint.getSqlMapClient();
         boolean useTrans = endpoint.isUseTransactions();
         String[] statements = consumeStatements.split(",");
         try {
             if (useTrans) {
-                client.startTransaction(Connection.TRANSACTION_REPEATABLE_READ);
+                client.startTransaction(isolation);
             }
             for (String statement : statements) {
                 client.update(statement.trim(), data);
@@ -53,5 +55,13 @@ public class DefaultIBatisProcessingStategy implements IBatisProcessingStrategy 
     public List poll(IBatisConsumer consumer, IBatisEndpoint endpoint) throws Exception {
         SqlMapClient client = endpoint.getSqlMapClient();
         return client.queryForList(endpoint.getStatement(), null);
+    }
+
+    public int getIsolation() {
+        return isolation;
+    }
+
+    public void setIsolation(int isolation) {
+        this.isolation = isolation;
     }
 }

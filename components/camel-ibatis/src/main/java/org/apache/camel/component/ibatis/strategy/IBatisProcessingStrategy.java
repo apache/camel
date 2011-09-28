@@ -47,4 +47,18 @@ public interface IBatisProcessingStrategy {
      * @throws Exception can be thrown in case of error
      */
     void commit(IBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatements) throws Exception;
+
+    /**
+     * Returns the transaction isolation level set on the processing strategy.
+     *
+     * @return the transaction isolation level.
+     */
+    int getIsolation();
+
+    /**
+     * Sets the transaction isolation level on the processing strategy.
+     *
+     * @param isolation the transaction isolation level.
+     */
+    void setIsolation(int isolation);
 }

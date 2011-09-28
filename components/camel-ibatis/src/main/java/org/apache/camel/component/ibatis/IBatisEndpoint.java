@@ -17,20 +17,18 @@
 package org.apache.camel.component.ibatis;
 
 import java.io.IOException;
-
 import com.ibatis.sqlmap.client.SqlMapClient;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ibatis.strategy.DefaultIBatisProcessingStategy;
 import org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy;
+import org.apache.camel.component.ibatis.strategy.TransactionIsolationLevel;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * An <a href="http://camel.apache.org/ibatis.html>iBatis Endpoint</a>
  * for performing SQL operations using an XML mapping file to abstract away the SQL
- *
- * @version 
  */
 public class IBatisEndpoint extends DefaultPollingEndpoint {
     private IBatisProcessingStrategy strategy;
@@ -52,7 +50,7 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
     public IBatisComponent getComponent() {
         return (IBatisComponent) super.getComponent();
     }
-    
+
     public boolean isSingleton() {
         return true;
     }
@@ -93,11 +91,11 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
 
     /**
      * Statement to run when polling or processing
-    */
+     */
     public String getStatement() {
         return statement;
     }
-    
+
     /**
      * Statement to run when polling or processing
      */
@@ -134,5 +132,14 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
 
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
         this.maxMessagesPerPoll = maxMessagesPerPoll;
+    }
+
+
+    public String getIsolation() throws Exception {
+        return TransactionIsolationLevel.nameOf(strategy.getIsolation());
+    }
+
+    public void setIsolation(String isolation) throws Exception {
+        strategy.setIsolation(TransactionIsolationLevel.intValueOf(isolation));
     }
 }
