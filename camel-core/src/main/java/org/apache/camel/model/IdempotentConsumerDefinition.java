@@ -31,8 +31,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;idempotentConsumer/&gt; element
- *
- * @version 
  */
 @XmlRootElement(name = "idempotentConsumer")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -43,6 +41,8 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     private Boolean eager;
     @XmlAttribute
     private Boolean skipDuplicate;
+    @XmlAttribute
+    private Boolean removeOnFailure;
     @XmlTransient
     private IdempotentRepository<?> idempotentRepository;
 
@@ -58,7 +58,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     public String toString() {
         return "IdempotentConsumer[" + getExpression() + " -> " + getOutputs() + "]";
     }
-    
+
     @Override
     public String getLabel() {
         return "idempotentConsumer[" + getExpression() + "]";
@@ -68,25 +68,25 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     public String getShortName() {
         return "idempotentConsumer";
     }
-    
+
     // Fluent API
     //-------------------------------------------------------------------------
 
     /**
      * Sets the reference name of the message id repository
      *
-     * @param messageIdRepositoryRef  the reference name of message id repository
+     * @param messageIdRepositoryRef the reference name of message id repository
      * @return builder
      */
     public IdempotentConsumerDefinition messageIdRepositoryRef(String messageIdRepositoryRef) {
         setMessageIdRepositoryRef(messageIdRepositoryRef);
         return this;
     }
-    
+
     /**
      * Sets the the message id repository for the idempotent consumer
      *
-     * @param idempotentRepository  the repository instance of idempotent
+     * @param idempotentRepository the repository instance of idempotent
      * @return builder
      */
     public IdempotentConsumerDefinition messageIdRepository(IdempotentRepository<?> idempotentRepository) {
@@ -98,12 +98,26 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
      * Sets whether to eagerly add the key to the idempotent repository or wait until the exchange
      * is complete. Eager is default enabled.
      *
-     * @param eager  <tt>true</tt> to add the key before processing, <tt>false</tt> to wait until
-     * the exchange is complete.
+     * @param eager <tt>true</tt> to add the key before processing, <tt>false</tt> to wait until
+     *              the exchange is complete.
      * @return builder
      */
     public IdempotentConsumerDefinition eager(boolean eager) {
         setEager(eager);
+        return this;
+    }
+
+    /**
+     * Sets whether to remove or keep the key on failure.
+     * <p/>
+     * The default behavior is to remove the key on failure.
+     *
+     * @param removeOnFailure <tt>true</tt> to remove the key, <tt>false</tt> to keep the key
+     *                        if the exchange fails.
+     * @return builder
+     */
+    public IdempotentConsumerDefinition removeOnFailure(boolean removeOnFailure) {
+        setRemoveOnFailure(removeOnFailure);
         return this;
     }
 
@@ -115,7 +129,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
      * A duplicate message would have the Exchange property {@link org.apache.camel.Exchange#DUPLICATE_MESSAGE} set
      * to a {@link Boolean#TRUE} value. A none duplicate message will not have this property set.
      *
-     * @param skipDuplicate  <tt>true</tt> to skip duplicates, <tt>false</tt> to allow duplicates.
+     * @param skipDuplicate <tt>true</tt> to skip duplicates, <tt>false</tt> to allow duplicates.
      * @return builder
      */
     public IdempotentConsumerDefinition skipDuplicate(boolean skipDuplicate) {
@@ -165,13 +179,27 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         return skipDuplicate != null ? skipDuplicate : true;
     }
 
+    public Boolean getRemoveOnFailure() {
+        return removeOnFailure;
+    }
+
+    public void setRemoveOnFailure(Boolean removeOnFailure) {
+        this.removeOnFailure = removeOnFailure;
+    }
+
+    public boolean isRemoveOnFailure() {
+        // defaults to true if not configured
+        return removeOnFailure != null ? removeOnFailure : true;
+    }
+
+
     @Override
     @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
         IdempotentRepository<String> idempotentRepository =
-            (IdempotentRepository<String>) resolveMessageIdRepository(routeContext);
+                (IdempotentRepository<String>) resolveMessageIdRepository(routeContext);
         ObjectHelper.notNull(idempotentRepository, "idempotentRepository", this);
 
         // add as service to CamelContext so we can managed it and it ensures it will be shutdown when camel shutdowns
@@ -179,13 +207,13 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
 
         Expression expression = getExpression().createExpression(routeContext);
 
-        return new IdempotentConsumer(expression, idempotentRepository, isEager(), isSkipDuplicate(), childProcessor);
+        return new IdempotentConsumer(expression, idempotentRepository, isEager(), isSkipDuplicate(), isRemoveOnFailure(), childProcessor);
     }
 
     /**
      * Strategy method to resolve the {@link org.apache.camel.spi.IdempotentRepository} to use
      *
-     * @param routeContext  route context
+     * @param routeContext route context
      * @return the repository
      */
     protected IdempotentRepository<?> resolveMessageIdRepository(RouteContext routeContext) {

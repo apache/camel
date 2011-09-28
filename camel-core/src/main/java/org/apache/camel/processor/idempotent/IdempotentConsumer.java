@@ -36,8 +36,6 @@ import org.slf4j.LoggerFactory;
 /**
  * An implementation of the <a
  * href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
- * 
- * @version 
  */
 public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
     private static final transient Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
@@ -46,13 +44,15 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     private final IdempotentRepository<String> idempotentRepository;
     private final boolean eager;
     private final boolean skipDuplicate;
+    private final boolean removeOnFailure;
 
     public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository<String> idempotentRepository,
-                              boolean eager, boolean skipDuplicate, Processor processor) {
+                              boolean eager, boolean skipDuplicate, boolean removeOnFailure, Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
         this.eager = eager;
         this.skipDuplicate = skipDuplicate;
+        this.removeOnFailure = removeOnFailure;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
@@ -98,7 +98,7 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         }
 
         // register our on completion callback
-        exchange.addOnCompletion(new IdempotentOnCompletion(idempotentRepository, messageId, eager));
+        exchange.addOnCompletion(new IdempotentOnCompletion(idempotentRepository, messageId, eager, removeOnFailure));
 
         // process the exchange
         return processor.process(exchange, callback);
@@ -145,8 +145,8 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     /**
      * A strategy method to allow derived classes to overload the behaviour of
      * processing a duplicate message
-     * 
-     * @param exchange the exchange
+     *
+     * @param exchange  the exchange
      * @param messageId the message ID of this exchange
      */
     protected void onDuplicateMessage(Exchange exchange, String messageId) {

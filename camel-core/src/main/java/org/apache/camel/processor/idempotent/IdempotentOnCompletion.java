@@ -28,19 +28,19 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This strategy adds the message id to the idempotent repository in cast the exchange
  * was processed successfully. In case of failure the message id is <b>not</b> added.
- *
- * @version 
  */
 public class IdempotentOnCompletion implements Synchronization {
     private static final transient Logger LOG = LoggerFactory.getLogger(IdempotentOnCompletion.class);
     private final IdempotentRepository<String> idempotentRepository;
     private final String messageId;
     private final boolean eager;
+    private final boolean removeOnFailure;
 
-    public IdempotentOnCompletion(IdempotentRepository<String> idempotentRepository, String messageId, boolean eager) {
+    public IdempotentOnCompletion(IdempotentRepository<String> idempotentRepository, String messageId, boolean eager, boolean removeOnFailure) {
         this.idempotentRepository = idempotentRepository;
         this.messageId = messageId;
         this.eager = eager;
+        this.removeOnFailure = removeOnFailure;
     }
 
     public void onComplete(Exchange exchange) {
@@ -61,7 +61,7 @@ public class IdempotentOnCompletion implements Synchronization {
      * A strategy method to allow derived classes to overload the behavior of
      * processing a completed message
      *
-     * @param exchange the exchange
+     * @param exchange  the exchange
      * @param messageId the message ID of this exchange
      */
     protected void onCompletedMessage(Exchange exchange, String messageId) {
@@ -76,12 +76,14 @@ public class IdempotentOnCompletion implements Synchronization {
      * A strategy method to allow derived classes to overload the behavior of
      * processing a failed message
      *
-     * @param exchange the exchange
+     * @param exchange  the exchange
      * @param messageId the message ID of this exchange
      */
     protected void onFailedMessage(Exchange exchange, String messageId) {
-        idempotentRepository.remove(messageId);
-        LOG.debug("Removed from repository as exchange failed: {} with id: {}", exchange, messageId);
+        if (removeOnFailure) {
+            idempotentRepository.remove(messageId);
+            LOG.debug("Removed from repository as exchange failed: {} with id: {}", exchange, messageId);
+        }
     }
 
     @Override
