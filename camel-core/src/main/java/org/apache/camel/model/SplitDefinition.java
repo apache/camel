@@ -329,7 +329,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     }
 
     public Long getTimeout() {
-        return timeout != null ? timeout : 0;
+        return timeout;
     }
 
     public void setTimeout(Long timeout) {
