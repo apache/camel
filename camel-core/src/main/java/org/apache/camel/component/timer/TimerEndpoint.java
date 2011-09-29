@@ -35,7 +35,7 @@ import org.apache.camel.impl.DefaultEndpoint;
  * @version 
  */
 @ManagedResource(description = "Managed Timer Endpoint")
-public class TimerEndpoint extends DefaultEndpoint implements Service {
+public class TimerEndpoint extends DefaultEndpoint {
     private String timerName;
     private Date time;
     private long period = 1000;

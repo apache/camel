@@ -36,7 +36,7 @@ public interface Component extends CamelContextAware {
     Endpoint createEndpoint(String uri) throws Exception;
     
     /**
-     * Attempt to create a configuration object from the give uri
+     * Attempt to create a configuration object from the given uri
      * 
      * @param uri the configuration URI
      * @return a newly created {@link EndpointConfiguration}
