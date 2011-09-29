@@ -140,6 +140,7 @@ public class BeanInfo {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public MethodInvocation createInvocation(Object pojo, Exchange exchange)
         throws AmbiguousMethodCallException, MethodNotFoundException {
         MethodInfo methodInfo = null;
@@ -153,25 +154,37 @@ public class BeanInfo {
                 name = ObjectHelper.before(methodName, "(");
             }
 
-            List<MethodInfo> methods = getOperations(name);
-            if (methods != null && methods.size() == 1) {
-                // only one method then choose it
-                methodInfo = methods.get(0);
-            } else if (methods != null) {
-                // there are more methods with that name so we cannot decide which to use
-
-                // but first lets try to choose a method and see if that comply with the name
-                // must use the method name which may have qualifiers
-                methodInfo = chooseMethod(pojo, exchange, methodName);
-
-                if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
-                    throw new AmbiguousMethodCallException(exchange, methods);
+            // special for getClass, as we want the user to be able to invoke this method
+            // for example to log the class type or the likes
+            if ("class".equals(name) || "getClass".equals(name)) {
+                try {
+                    Method method = pojo.getClass().getMethod("getClass");
+                    methodInfo = new MethodInfo(exchange.getContext(), pojo.getClass(), method, Collections.EMPTY_LIST, Collections.EMPTY_LIST, false, false);
+                } catch (NoSuchMethodException e) {
+                    throw new MethodNotFoundException(exchange, pojo, "getClass");
                 }
             } else {
-                // a specific method was given to invoke but not found
-                throw new MethodNotFoundException(exchange, pojo, methodName);
+                List<MethodInfo> methods = getOperations(name);
+                if (methods != null && methods.size() == 1) {
+                    // only one method then choose it
+                    methodInfo = methods.get(0);
+                } else if (methods != null) {
+                    // there are more methods with that name so we cannot decide which to use
+
+                    // but first lets try to choose a method and see if that comply with the name
+                    // must use the method name which may have qualifiers
+                    methodInfo = chooseMethod(pojo, exchange, methodName);
+
+                    if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
+                        throw new AmbiguousMethodCallException(exchange, methods);
+                    }
+                } else {
+                    // a specific method was given to invoke but not found
+                    throw new MethodNotFoundException(exchange, pojo, methodName);
+                }
             }
         }
+
         if (methodInfo == null) {
             // no name or type
             methodInfo = chooseMethod(pojo, exchange, null);
@@ -203,7 +216,7 @@ public class BeanInfo {
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
             boolean valid = isValidMethod(clazz, method);
-            LOG.trace("Method:  {} is valid: {}", method, valid);
+            LOG.trace("Method: {} is valid: {}", method, valid);
             if (valid) {
                 introspect(clazz, method);
             }

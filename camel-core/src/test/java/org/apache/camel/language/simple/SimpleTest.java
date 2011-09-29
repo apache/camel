@@ -986,6 +986,15 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.dangerous}", "false");
     }
 
+    public void testClassSimpleName() throws Exception {
+        Animal tiger = new Animal("Tony the Tiger", 13);
+        exchange.getIn().setBody(tiger);
+
+        assertExpression("${body.getClass().getSimpleName()}", "Animal");
+        assertExpression("${body.getClass.getSimpleName}", "Animal");
+        assertExpression("${body.class.simpleName}", "Animal");
+    }
+
     protected String getLanguageName() {
         return "simple";
     }
