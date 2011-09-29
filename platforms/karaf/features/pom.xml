@@ -82,7 +82,7 @@
       <isorelax-bundle-version>20050913_1</isorelax-bundle-version>
       <java-apns-bundle-version>0.1.6_1</java-apns-bundle-version>
       <jaxb-bundle-version>2.2.1.1_1</jaxb-bundle-version>
-      <jasypt-bundle-version>1.7_2</jasypt-bundle-version>
+      <jasypt-bundle-version>1.7_3</jasypt-bundle-version>
       <jetty-bundle-version>6.1.26_3</jetty-bundle-version>
       <jexcelapi-bundle-version>2.4.2_2</jexcelapi-bundle-version>
       <javax.el-bundle-version>2.1.0</javax.el-bundle-version>
