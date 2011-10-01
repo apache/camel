@@ -92,7 +92,6 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     public String getOutFilterPattern() {
         return outFilterPattern == null ? null : outFilterPattern.pattern();
     }
-    
 
     /**
      * Sets the "out" direction filter regular expression {@link Pattern}.  The
@@ -162,7 +161,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     /**
-     * Gets the isLowercase property which is a boolean to determinte
+     * Gets the isLowercase property which is a boolean to determine
      * whether header names should be converted to lowercase before
      * checking it the filter Set.  It does not affect filtering using
      * regular expression pattern.
@@ -172,7 +171,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
     
     /**
-     * Sets the isLowercase property which is a boolean to determinte
+     * Sets the isLowercase property which is a boolean to determine
      * whether header names should be converted to lowercase before
      * checking it the filter Set.  It does not affect filtering using
      * regular expression pattern.
@@ -235,4 +234,5 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
             
         return false;
     }
+
 }

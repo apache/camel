@@ -305,7 +305,16 @@ public final class FileUtil {
         }
     }
 
-    public static boolean renameFile(File from, File to) {
+    /**
+     * Renames a file.
+     *
+     * @param from the from file
+     * @param to   the to file
+     * @param copyAndDeleteOnRenameFail whether to fallback and do copy and delete, if renameTo fails
+     * @return <tt>true</tt> if the file was renamed, otherwise <tt>false</tt>
+     * @throws java.io.IOException is thrown if error renaming file
+     */
+    public static boolean renameFile(File from, File to, boolean copyAndDeleteOnRenameFail) throws IOException {
         // do not try to rename non existing files
         if (!from.exists()) {
             return false;
@@ -333,18 +342,14 @@ public final class FileUtil {
 
         // we could not rename using renameTo, so lets fallback and do a copy/delete approach.
         // for example if you move files between different file systems (linux -> windows etc.)
-        if (!renamed) {
+        if (!renamed && copyAndDeleteOnRenameFail) {
             // now do a copy and delete as all rename attempts failed
-            try {
-                LOG.debug("Cannot rename file from: {} to: {}, will now use a copy/delete approach instead", from, to);
-                copyFile(from, to);
-                if (!deleteFile(from)) {
-                    LOG.warn("Renaming file from: {} to: {} failed due cannot delete from file: {} after copy succeeded", new Object[]{from, to, from});
-                    renamed = false;
-                }
+            LOG.debug("Cannot rename file from: {} to: {}, will now use a copy/delete approach instead", from, to);
+            copyFile(from, to);
+            if (!deleteFile(from)) {
+                throw new IOException("Renaming file from: " + from + " to: " + to + " failed due cannot delete from file: " + from + " after copy succeeded");
+            } else {
                 renamed = true;
-            } catch (IOException e) {
-                LOG.debug("Error renaming file from: " + from + " to: " + to + " using copy/delete", e);
             }
         }
 
