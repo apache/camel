@@ -83,7 +83,7 @@ public class PrinterProducer extends DefaultProducer {
         PrintService printService;
         
         if ((config.getHostname().equalsIgnoreCase("localhost")) 
-            && (config.getPrintername().equalsIgnoreCase("/default"))) {
+            && (config.getPrintername().equalsIgnoreCase("default"))) {
             printService = PrintServiceLookup.lookupDefaultPrintService();            
         } else {
             PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);

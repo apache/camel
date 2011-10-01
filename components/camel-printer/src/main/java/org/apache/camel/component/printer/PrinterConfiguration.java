@@ -23,9 +23,8 @@ import javax.print.DocFlavor;
 import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.Sides;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PrinterConfiguration {
     private URI uri;
@@ -59,7 +58,12 @@ public class PrinterConfiguration {
         setUri(uri);
         setHostname(uri.getHost());
         setPort(uri.getPort());
-        setPrintername(uri.getPath());
+
+        // use path as printer name, but without any leading slashes
+        String path = uri.getPath();
+        path = ObjectHelper.removeStartingCharacters(path, '/');
+        path = ObjectHelper.removeStartingCharacters(path, '\\');
+        setPrintername(path);
         
         Map printSettings = URISupport.parseParameters(uri);
         setFlavor((String)printSettings.get("flavor"));
