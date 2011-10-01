@@ -41,7 +41,6 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Component for Jetty Cometd
  */

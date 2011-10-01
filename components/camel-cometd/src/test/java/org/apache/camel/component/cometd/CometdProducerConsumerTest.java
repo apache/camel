@@ -19,6 +19,7 @@ package org.apache.camel.component.cometd;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -37,13 +38,37 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
     @Test
     public void testProducer() throws Exception {
         Person person = new Person("David", "Greco");
-        template.requestBody("direct:input", person);
+        //act
+        template.requestBodyAndHeader("direct:input", person, "testHeading", "value");
+
+        //assert
         MockEndpoint ep = (MockEndpoint) context.getEndpoint("mock:test");
         List<Exchange> exchanges = ep.getReceivedExchanges();
         for (Exchange exchange : exchanges) {
-            Person person1 = (Person) exchange.getIn().getBody();
+            Message message = exchange.getIn();
+            Person person1 = (Person) message.getBody();
             assertEquals("David", person1.getName());
             assertEquals("Greco", person1.getSurname());
+        }
+    }
+
+    @Test
+    public void testHeadersSupported() throws Exception {
+        //setup
+        String headerName = "testHeading";
+        String headerValue = "value";
+
+        //act
+        template.requestBodyAndHeader("direct:input", "message", headerName, headerValue);
+
+        //assert
+        MockEndpoint ep = (MockEndpoint) context.getEndpoint("mock:test");
+        List<Exchange> exchanges = ep.getReceivedExchanges();
+        assertTrue(exchanges.size() > 0);
+        for (Exchange exchange : exchanges) {
+            Message message = exchange.getIn();
+            assertEquals(headerValue, message.getHeader(headerName));
+            assertNotNull(message.getHeader(CometdBinding.COMETD_CLIENT_ID_HEADER_NAME));
         }
     }
 
@@ -52,7 +77,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable(23500);
         uri = "cometd://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
-            + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
         super.setUp();
     }

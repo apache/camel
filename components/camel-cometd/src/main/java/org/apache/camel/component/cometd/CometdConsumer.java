@@ -20,8 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
+import org.cometd.bayeux.server.ServerChannel;
 import org.cometd.bayeux.server.ServerMessage;
 import org.cometd.bayeux.server.ServerSession;
 import org.cometd.server.AbstractService;
@@ -71,9 +71,11 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
 
         private final CometdEndpoint endpoint;
         private final CometdConsumer consumer;
+        private final CometdBinding binding;
 
         public ConsumerService(String channel, BayeuxServerImpl bayeux, CometdConsumer consumer) {
             super(bayeux, channel);
+            this.binding = new CometdBinding(bayeux);
             this.consumer = consumer;
             this.endpoint = consumer.getEndpoint();
             addService(channel, "push");
@@ -82,12 +84,7 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
         public void push(ServerSession remote, String channelName, ServerMessage cometdMessage, String messageId) throws Exception {
             Object data = null;
 
-            if (cometdMessage != null) {
-                data = cometdMessage.getData();
-            }
-
-            Message message = new DefaultMessage();
-            message.setBody(data);
+            Message message = binding.createCamelMessage(remote, cometdMessage, data);
 
             Exchange exchange = endpoint.createExchange();
             exchange.setIn(message);
@@ -95,10 +92,14 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
             consumer.getProcessor().process(exchange);
 
             if (ExchangeHelper.isOutCapable(exchange)) {
-                Message camelOutMessage = exchange.getOut();
-                remote.deliver(getServerSession(), channelName, camelOutMessage.getBody(), null);
+                ServerChannel channel = getBayeux().getChannel(channelName);
+                ServerSession serverSession = getServerSession();
+
+                ServerMessage.Mutable outMessage = binding.createCometdMessage(channel, serverSession, exchange.getOut());
+                remote.deliver(serverSession, outMessage);
             }
         }
+
     }
 
 }
