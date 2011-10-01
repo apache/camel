@@ -45,6 +45,7 @@
     <bouncycastle-version>140</bouncycastle-version>
     <castor-bundle-version>1.3.1_1</castor-bundle-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
+    <cometd-java-server>2.1.1</cometd-java-server>
     <commons-codec>1.4</commons-codec>
     <commons-collections-version>3.2.1</commons-collections-version>
     <commons-csv>1.0-r706899_3</commons-csv>
