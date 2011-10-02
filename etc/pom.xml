@@ -66,7 +66,7 @@
                       <id>setup.workspace</id>
                       <phase>validate</phase>
                       <configuration>
-                          <tasks>
+                          <target>
                               <path id="ecp.ws.path" location="${workspace}" />
                               <property name="full.eclipse.workspace" refid="ecp.ws.path" />
                               <path path="${basedir}" id="etc.path"/>
@@ -123,7 +123,7 @@
                                   <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M," />
                                         <entry key="org.eclipse.jdt.ui.enable.visibility.order" value="true" />
                               </propertyfile>
-                          </tasks>
+                          </target>
                       </configuration>
                       <goals>
                           <goal>run</goal>

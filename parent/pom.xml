@@ -1485,7 +1485,7 @@
             <id>create-prop</id>
             <phase>initialize</phase>
             <configuration>
-              <tasks>
+              <target>
                 <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
                 <property name="ant.regexp.regexpimpl" value="org.apache.tools.ant.util.regexp.Jdk14RegexpRegexp" />
                 <property name="mv" value="${project.version}" />
@@ -1506,7 +1506,7 @@
                   camel.osgi.version.clean = ${ov}
                   camel.schema.version = ${os}
                  </echo>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>

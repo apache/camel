@@ -121,13 +121,13 @@
                         <id>package</id>
                         <phase>package</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
                                 <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar" update="true">
                                   <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*" />
                                   <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*" />
                                 </jar>
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -236,7 +236,7 @@
                           <id>process-sources</id>
                           <phase>process-sources</phase>
                           <configuration>
-                              <tasks>
+                              <target>
                                   <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
 
                                   <echo>Copying to code together for the XSD generation</echo>
@@ -269,7 +269,7 @@
                                   </schemagen>
                                   <replace file="${project.build.directory}/schema/camel-blueprint.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/blueprint" />
 
-                              </tasks>
+                              </target>
                           </configuration>
                           <goals>
                               <goal>run</goal>

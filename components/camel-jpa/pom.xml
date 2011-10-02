@@ -122,7 +122,7 @@
           <execution>
             <phase>process-test-classes</phase>
             <configuration>
-              <tasks>
+              <target>
                 <path id="cp">
                   <path refid="maven.test.classpath" />
                   <path refid="maven.compile.classpath" />
@@ -154,7 +154,7 @@
                 <copy overwrite="true" todir="${basedir}/target/test-classes">
                   <fileset dir="${basedir}/target/jpa-test-classes" />
                 </copy>
-              </tasks>
+              </target>
             </configuration>
             <goals>
               <goal>run</goal>
