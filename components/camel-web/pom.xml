@@ -487,7 +487,7 @@
                         <id>process-sources</id>
                         <phase>process-sources</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
 
                                 <echo>Copying to code together for the XSD generation</echo>
@@ -509,7 +509,7 @@
                                     <classpath refid="maven.compile.classpath" />
                                 </schemagen>
 
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

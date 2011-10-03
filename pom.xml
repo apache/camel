@@ -666,7 +666,7 @@
                 <id>setup.workspace</id>
                 <phase>validate</phase>
                 <configuration>
-                  <tasks>
+                  <target>
                     <path id="ecp.ws.path" location="${eclipse.workspace.dir}" />
                     <property name="full.eclipse.workspace" refid="ecp.ws.path" />
                     <path path="${basedir}/etc" id="etc.path" />
@@ -731,7 +731,7 @@
                        <!-- Add Camel templates for Spring DSL -->
                       <entry key="org.eclipse.wst.sse.ui.custom_templates" value="${eclipse.camel.xml.code.templates}" /> 
                     </propertyfile>
-                  </tasks>
+                  </target>
                 </configuration>
                 <goals>
                   <goal>run</goal>
