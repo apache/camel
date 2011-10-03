@@ -62,7 +62,11 @@ public class FileOperations implements GenericFileOperations<File> {
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         File file = new File(from);
         File target = new File(to);
-        return FileUtil.renameFile(file, target);
+        try {
+            return FileUtil.renameFile(file, target, endpoint.isCopyAndDeleteOnRenameFail());
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Error renaming file from " + from + " to " + to, e);
+        }
     }
 
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
@@ -234,10 +238,10 @@ public class FileOperations implements GenericFileOperations<File> {
         }
     }
 
-    private boolean writeFileByLocalWorkPath(File source, File file) {
+    private boolean writeFileByLocalWorkPath(File source, File file) throws IOException {
         LOG.trace("Using local work file being renamed from: {} to: {}", source, file);
 
-        return FileUtil.renameFile(source, file);
+        return FileUtil.renameFile(source, file, endpoint.isCopyAndDeleteOnRenameFail());
     }
 
     private void writeFileByFile(File source, File target) throws IOException {
