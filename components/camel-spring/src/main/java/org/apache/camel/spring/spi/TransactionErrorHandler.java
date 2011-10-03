@@ -123,7 +123,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         } catch (TransactionRollbackException e) {
             // ignore as its just a dummy exception to force spring TX to rollback
             log.debug("Transaction rollback ({}) for ExchangeId: {} due exchange was marked for rollbackOnly", transactionKey, exchange.getExchangeId());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.warn("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId() + " due exception: " + e.getMessage());
             exchange.setException(e);
         } finally {
