@@ -430,8 +430,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         if (result) {
             log.trace("Renaming local in progress file from: {} to: {}", temp, local);
             // operation went okay so rename temp to local after we have retrieved the data
-            if (!FileUtil.renameFile(temp, local)) {
-                throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
+            try {
+                if (!FileUtil.renameFile(temp, local, false)) {
+                    throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
+                }
+            } catch (IOException e) {
+                throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local, e);
             }
         }
 

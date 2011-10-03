@@ -589,8 +589,12 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
         // operation went okay so rename temp to local after we have retrieved the data
         LOG.trace("Renaming local in progress file from: {} to: {}", temp, local);
-        if (!FileUtil.renameFile(temp, local)) {
-            throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
+        try {
+            if (!FileUtil.renameFile(temp, local, false)) {
+                throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
+            }
+        } catch (IOException e) {
+            throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local, e);
         }
 
         return true;
