@@ -52,6 +52,7 @@ public class DefaultRouteNode implements RouteNode {
         return processorDefinition;
     }
 
+    @SuppressWarnings("deprecation")
     public String getLabel(Exchange exchange) {
         if (expression != null) {
             return expression.evaluate(exchange, String.class);

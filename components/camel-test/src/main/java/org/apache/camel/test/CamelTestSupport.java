@@ -42,6 +42,7 @@ import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -56,7 +57,7 @@ import org.apache.camel.util.TimeUtils;
  */
 public abstract class CamelTestSupport extends TestSupport {
     
-    protected volatile CamelContext context;
+    protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
     private boolean useRouteBuilder = true;
@@ -139,7 +140,7 @@ public abstract class CamelTestSupport extends TestSupport {
             enableJMX();
         }
 
-        context = createCamelContext();
+        context = (ModelCamelContext)createCamelContext();
         assertNotNull("No context found!", context);
 
         // reduce default shutdown timeout to avoid waiting for 300 seconds

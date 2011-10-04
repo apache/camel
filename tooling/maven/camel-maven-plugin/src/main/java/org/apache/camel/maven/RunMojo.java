@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.camel.util.CastUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
@@ -142,7 +143,7 @@ public class RunMojo extends AbstractExecMojo {
      * @parameter expression="${plugin.artifacts}"
      * @readonly
      */
-    private List pluginDependencies;
+    private List<Artifact> pluginDependencies;
 
     /**
      * Whether to enable the tracer or not
@@ -523,9 +524,9 @@ public class RunMojo extends AbstractExecMojo {
 
     private void terminateThreads(ThreadGroup threadGroup) {
         long startTime = System.currentTimeMillis();
-        Set uncooperativeThreads = new HashSet(); // these were not responsive
+        Set<Thread> uncooperativeThreads = new HashSet<Thread>(); // these were not responsive
         // to interruption
-        for (Collection threads = getActiveThreads(threadGroup); !threads.isEmpty(); threads = getActiveThreads(threadGroup), threads
+        for (Collection<Thread> threads = getActiveThreads(threadGroup); !threads.isEmpty(); threads = getActiveThreads(threadGroup), threads
             .removeAll(uncooperativeThreads)) {
             // Interrupt all threads we know about as of this instant (harmless
             // if spuriously went dead (! isAlive())
@@ -584,10 +585,10 @@ public class RunMojo extends AbstractExecMojo {
         }
     }
 
-    private Collection getActiveThreads(ThreadGroup threadGroup) {
+    private Collection<Thread> getActiveThreads(ThreadGroup threadGroup) {
         Thread[] threads = new Thread[threadGroup.activeCount()];
         int numThreads = threadGroup.enumerate(threads);
-        Collection result = new ArrayList(numThreads);
+        Collection<Thread> result = new ArrayList<Thread>(numThreads);
         for (int i = 0; i < threads.length && threads[i] != null; i++) {
             result.add(threads[i]);
         }
@@ -616,7 +617,7 @@ public class RunMojo extends AbstractExecMojo {
      * @throws MojoExecutionException
      */
     private ClassLoader getClassLoader() throws MojoExecutionException {
-        List classpathURLs = new ArrayList();
+        List<URL> classpathURLs = new ArrayList<URL>();
         this.addRelevantPluginDependenciesToClasspath(classpathURLs);
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
 
@@ -631,7 +632,7 @@ public class RunMojo extends AbstractExecMojo {
      * @param path classpath of {@link java.net.URL} objects
      * @throws MojoExecutionException
      */
-    private void addRelevantPluginDependenciesToClasspath(List path) throws MojoExecutionException {
+    private void addRelevantPluginDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
         if (hasCommandlineArgs()) {
             arguments = parseCommandlineArgs();
         }
@@ -657,7 +658,7 @@ public class RunMojo extends AbstractExecMojo {
      * @param path classpath of {@link java.net.URL} objects
      * @throws MojoExecutionException
      */
-    private void addRelevantProjectDependenciesToClasspath(List path) throws MojoExecutionException {
+    private void addRelevantProjectDependenciesToClasspath(List<URL> path) throws MojoExecutionException {
         if (this.includeProjectDependencies) {
             try {
                 getLog().debug("Project Dependencies will be included.");
@@ -666,7 +667,7 @@ public class RunMojo extends AbstractExecMojo {
                 getLog().debug("Adding to classpath : " + mainClasses);
                 path.add(mainClasses);
 
-                Set dependencies = project.getArtifacts();
+                Set<Artifact> dependencies = CastUtils.cast(project.getArtifacts());
 
                 // system scope dependencies are not returned by maven 2.0. See
                 // MEXEC-17
@@ -692,8 +693,8 @@ public class RunMojo extends AbstractExecMojo {
 
     }
 
-    private Collection getAllNonTestScopedDependencies() throws MojoExecutionException {
-        List answer = new ArrayList();
+    private Collection<Artifact> getAllNonTestScopedDependencies() throws MojoExecutionException {
+        List<Artifact> answer = new ArrayList<Artifact>();
 
         for (Iterator artifacts = getAllDependencies().iterator(); artifacts.hasNext();) {
             Artifact artifact = (Artifact)artifacts.next();
@@ -707,8 +708,8 @@ public class RunMojo extends AbstractExecMojo {
     }
 
     // generic method to retrieve all the transitive dependencies
-    private Collection getAllDependencies() throws MojoExecutionException {
-        List artifacts = new ArrayList();
+    private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
+        List<Artifact> artifacts = new ArrayList<Artifact>();
 
         for (Iterator dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
             Dependency dependency = (Dependency)dependencies.next();
@@ -741,7 +742,7 @@ public class RunMojo extends AbstractExecMojo {
                 art.setFile(new File(dependency.getSystemPath()));
             }
 
-            List exclusions = new ArrayList();
+            List<String> exclusions = new ArrayList<String>();
             for (Iterator j = dependency.getExclusions().iterator(); j.hasNext();) {
                 Exclusion e = (Exclusion)j.next();
                 exclusions.add(e.getGroupId() + ":" + e.getArtifactId());
@@ -765,12 +766,12 @@ public class RunMojo extends AbstractExecMojo {
      *         relevant plugin dependencies.)
      * @throws MojoExecutionException
      */
-    private Set determineRelevantPluginDependencies() throws MojoExecutionException {
-        Set relevantDependencies;
+    private Set<Artifact> determineRelevantPluginDependencies() throws MojoExecutionException {
+        Set<Artifact> relevantDependencies;
         if (this.includePluginDependencies) {
             if (this.executableDependency == null) {
                 getLog().debug("All Plugin Dependencies will be included.");
-                relevantDependencies = new HashSet(this.pluginDependencies);
+                relevantDependencies = new HashSet<Artifact>(this.pluginDependencies);
             } else {
                 getLog().debug("Selected plugin Dependencies will be included.");
                 Artifact executableArtifact = this.findExecutableArtifact();
@@ -778,7 +779,7 @@ public class RunMojo extends AbstractExecMojo {
                 relevantDependencies = this.resolveExecutableDependencies(executablePomArtifact);
             }
         } else {
-            relevantDependencies = Collections.EMPTY_SET;
+            relevantDependencies = Collections.emptySet();
             getLog().debug("Plugin Dependencies will be excluded.");
         }
         return relevantDependencies;
@@ -823,20 +824,21 @@ public class RunMojo extends AbstractExecMojo {
         return executableTool;
     }
 
-    private Set resolveExecutableDependencies(Artifact executablePomArtifact) throws MojoExecutionException {
+    private Set<Artifact> resolveExecutableDependencies(Artifact executablePomArtifact) throws MojoExecutionException {
 
-        Set executableDependencies;
+        Set<Artifact> executableDependencies;
         try {
             MavenProject executableProject = this.projectBuilder.buildFromRepository(executablePomArtifact,
                                                                                      this.remoteRepositories,
                                                                                      this.localRepository);
 
             // get all of the dependencies for the executable project
-            List dependencies = executableProject.getDependencies();
+            List<Artifact> dependencies = CastUtils.cast(executableProject.getDependencies());
 
             // make Artifacts of all the dependencies
-            Set dependencyArtifacts = MavenMetadataSource.createArtifacts(this.artifactFactory, dependencies,
-                                                                          null, null, null);
+            Set<Artifact> dependencyArtifacts 
+                = CastUtils.cast(MavenMetadataSource.createArtifacts(this.artifactFactory, dependencies,
+                                                                          null, null, null));
 
             // not forgetting the Artifact of the project itself
             dependencyArtifacts.add(executableProject.getArtifact());
@@ -850,7 +852,7 @@ public class RunMojo extends AbstractExecMojo {
                                                                                    this.remoteRepositories,
                                                                                    metadataSource, null,
                                                                                    Collections.EMPTY_LIST);
-            executableDependencies = result.getArtifacts();
+            executableDependencies = CastUtils.cast(result.getArtifacts());
 
         } catch (Exception ex) {
             throw new MojoExecutionException("Encountered problems resolving dependencies of the executable "

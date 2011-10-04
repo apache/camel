@@ -26,6 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.jndi.JndiTest;
 
@@ -37,7 +38,7 @@ import org.apache.camel.util.jndi.JndiTest;
  */
 public abstract class ContextTestSupport extends TestSupport {
     
-    protected volatile CamelContext context;
+    protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
     protected volatile NotifyBuilder oneExchangeDone;
@@ -85,7 +86,12 @@ public abstract class ContextTestSupport extends TestSupport {
         } else {
             enableJMX();
         }
-        context = createCamelContext();
+        CamelContext c2 = createCamelContext();
+        if (c2 instanceof ModelCamelContext) {
+            context = (ModelCamelContext)c2;
+        } else {
+            throw new Exception("Context must be a ModelCamelContext");
+        }
         assertValidContext(context);
 
         // reduce default shutdown timeout to avoid waiting for 300 seconds

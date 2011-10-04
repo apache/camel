@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class XmlConfigTestSupport extends TestSupport {
     protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);
 
-        List<RouteDefinition> routes = context.getRouteDefinitions();
+        List<RouteDefinition> routes = ((ModelCamelContext)context).getRouteDefinitions();
         LOG.debug("Found routes: " + routes);
 
         assertEquals("One Route should be found", 1, routes.size());

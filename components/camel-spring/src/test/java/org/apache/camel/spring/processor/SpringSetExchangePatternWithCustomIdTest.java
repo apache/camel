@@ -24,7 +24,6 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringSetExchangePatternWithCustomIdTest extends SetExchangePatternTest {
 
-    @SuppressWarnings("deprecation")
     @Override
     public void testToWithInOnlyParam() throws Exception {
         super.testToWithInOnlyParam();

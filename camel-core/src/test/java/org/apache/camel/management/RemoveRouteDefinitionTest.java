@@ -63,7 +63,6 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         boolean registered = mbeanServer.isRegistered(on);
         assertEquals("Should be registered", true, registered);
 
-        @SuppressWarnings("deprecation")
         RouteDefinition definition = context.getRouteDefinition("route1");
         List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
         routeDefinitions.add(definition);
@@ -87,7 +86,6 @@ public class RemoveRouteDefinitionTest extends ManagementTestSupport {
         boolean registered = mbeanServer.isRegistered(on);
         assertEquals("Should be registered", true, registered);
         
-        @SuppressWarnings("deprecation")
         RouteDefinition definition = context.getRouteDefinition("route1");
         List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
         routeDefinitions.add(definition);
