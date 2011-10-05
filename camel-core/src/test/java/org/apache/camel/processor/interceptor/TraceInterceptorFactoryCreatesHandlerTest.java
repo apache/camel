@@ -35,7 +35,9 @@ public class TraceInterceptorFactoryCreatesHandlerTest extends TracingTestBase {
             this.traceAllNodes = traceAllNodes;
         }
 
+        @SuppressWarnings("deprecation")
         public Processor createTraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
+            
             TraceInterceptor interceptor = new TraceInterceptor(node, target, formatter, tracer);
 
             while (target instanceof DelegateProcessor) {

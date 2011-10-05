@@ -51,7 +51,8 @@ public class AsyncTraceHandlerTest extends ContextTestSupport {
 
         Tracer tracer = (Tracer) contextLocal.getDefaultTracer();
         tracer.setEnabled(true);
-        tracer.setTraceHandler(new MyTraceHandler());
+        tracer.getTraceHandlers().clear();
+        tracer.getTraceHandlers().add(new MyTraceHandler());
         tracer.setTraceOutExchanges(true);
 
         return contextLocal;

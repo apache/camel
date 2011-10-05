@@ -31,14 +31,15 @@ public class TraceHandlerTest extends TracingTestBase {
         Tracer tracer = (Tracer) contextLocal.getDefaultTracer();
         tracer.setEnabled(true);
         tracer.setTraceExceptions(true);
-        tracer.setTraceHandler(new TraceHandlerTestHandler(tracedMessages));
+        tracer.getTraceHandlers().clear();
+        tracer.getTraceHandlers().add(new TraceHandlerTestHandler(tracedMessages));
 
         return contextLocal;
     }
 
     @Override
     protected void prepareTestTracerExceptionInOut() {
-        ((TraceHandlerTestHandler) ((Tracer) context.getDefaultTracer()).getTraceHandler()).setTraceAllNodes(true);
+        ((TraceHandlerTestHandler) ((Tracer) context.getDefaultTracer()).getTraceHandlers().get(0)).setTraceAllNodes(true);
     }
 
 }

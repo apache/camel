@@ -16,8 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -54,11 +54,11 @@ public class Tracer implements InterceptStrategy, Service {
     private boolean useJpa;
     private CamelLogProcessor logger;
     private TraceInterceptorFactory traceInterceptorFactory = new DefaultTraceInterceptorFactory();
-    private List<TraceEventHandler> traceHandlers;
+    private CopyOnWriteArrayList<TraceEventHandler> traceHandlers;
     private String jpaTraceEventMessageClassName = JPA_TRACE_EVENT_MESSAGE;
     
     public Tracer() {
-        traceHandlers = new ArrayList<TraceEventHandler>();
+        traceHandlers = new CopyOnWriteArrayList<TraceEventHandler>();
         traceHandlers.add(new DefaultTraceEventHandler(this));
     }
 

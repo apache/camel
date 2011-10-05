@@ -17,6 +17,7 @@
 package org.apache.camel.processor.interceptor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.AsyncCallback;
@@ -72,8 +73,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
         if (tracer.getFormatter() != null) {
             this.formatter = tracer.getFormatter();
         }
-        this.traceHandlers = new ArrayList<TraceEventHandler>();
-        this.traceHandlers.addAll(tracer.getTraceHandlers());
+        this.traceHandlers = tracer.getTraceHandlers();
     }
 
     @Override
@@ -367,7 +367,6 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
 
     @Deprecated
     public void setTraceHandler(TraceEventHandler traceHandler) {
-        traceHandlers.clear();
-        traceHandlers.add(traceHandler);
+        traceHandlers = Collections.singletonList(traceHandler);
     }
 }
