@@ -38,8 +38,27 @@ import org.slf4j.LoggerFactory;
  */
 public class PropertiesComponent extends DefaultComponent {
 
-    public static final String PREFIX_TOKEN = "{{";
-    public static final String SUFFIX_TOKEN = "}}";
+    /**
+     * The default prefix token.
+     */
+    public static final String DEFAULT_PREFIX_TOKEN = "{{";
+    
+    /**
+     * The default suffix token.
+     */
+    public static final String DEFAULT_SUFFIX_TOKEN = "}}";
+    
+    /**
+     * The default prefix token.
+     * @deprecated Use {@link #DEFAULT_PREFIX_TOKEN} instead.
+     */
+    public static final String PREFIX_TOKEN = DEFAULT_PREFIX_TOKEN;
+    
+    /**
+     * The default suffix token.
+     * @deprecated Use {@link #DEFAULT_SUFFIX_TOKEN} instead.
+     */
+    public static final String SUFFIX_TOKEN = DEFAULT_SUFFIX_TOKEN;
 
     // must be non greedy patterns
     private static final Pattern ENV_PATTERN = Pattern.compile("\\$\\{env:(.*?)\\}", Pattern.DOTALL);
@@ -51,6 +70,11 @@ public class PropertiesComponent extends DefaultComponent {
     private PropertiesParser propertiesParser = new DefaultPropertiesParser();
     private String[] locations;
     private boolean cache = true;
+    private String propertyPrefix;
+    private String propertySuffix;
+    private boolean fallbackToUnaugmentedProperty = true;
+    private String prefixToken = DEFAULT_PREFIX_TOKEN;
+    private String suffixToken = DEFAULT_SUFFIX_TOKEN;
     
     public PropertiesComponent() {
     }
@@ -100,15 +124,21 @@ public class PropertiesComponent extends DefaultComponent {
         }
 
         // enclose tokens if missing
-        if (!uri.contains(PREFIX_TOKEN) && !uri.startsWith(PREFIX_TOKEN)) {
-            uri = PREFIX_TOKEN + uri;
+        if (!uri.contains(prefixToken) && !uri.startsWith(prefixToken)) {
+            uri = prefixToken + uri;
         }
-        if (!uri.contains(SUFFIX_TOKEN) && !uri.endsWith(SUFFIX_TOKEN)) {
-            uri = uri + SUFFIX_TOKEN;
+        if (!uri.contains(suffixToken) && !uri.endsWith(suffixToken)) {
+            uri = uri + suffixToken;
         }
 
         LOG.trace("Parsing uri {} with properties: {}", uri, prop);
-        return propertiesParser.parseUri(uri, prop, PREFIX_TOKEN, SUFFIX_TOKEN);
+        
+        if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
+            return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(uri, prop, prefixToken, suffixToken,
+                                                                                            propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty);
+        } else {
+            return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
+        }
     }
 
     public String[] getLocations() {
@@ -145,6 +175,62 @@ public class PropertiesComponent extends DefaultComponent {
 
     public void setCache(boolean cache) {
         this.cache = cache;
+    }
+    
+    public String getPropertyPrefix() {
+        return propertyPrefix;
+    }
+
+    public void setPropertyPrefix(String propertyPrefix) {
+        this.propertyPrefix = propertyPrefix;
+    }
+
+    public String getPropertySuffix() {
+        return propertySuffix;
+    }
+
+    public void setPropertySuffix(String propertySuffix) {
+        this.propertySuffix = propertySuffix;
+    }
+
+    public boolean isFallbackToUnaugmentedProperty() {
+        return fallbackToUnaugmentedProperty;
+    }
+
+    public void setFallbackToUnaugmentedProperty(boolean fallbackToUnaugmentedProperty) {
+        this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
+    }
+    
+    public String getPrefixToken() {
+        return prefixToken;
+    }
+
+    /**
+     * Sets the value of the prefix token used to identify properties to replace.  Setting a value of
+     * {@code null} restores the default token (@link {@link #DEFAULT_PREFIX_TOKEN}).
+     */
+    public void setPrefixToken(String prefixToken) {
+        if (prefixToken == null) {
+            this.prefixToken = DEFAULT_PREFIX_TOKEN;
+        } else {
+            this.prefixToken = prefixToken;
+        }
+    }
+
+    public String getSuffixToken() {
+        return suffixToken;
+    }
+
+    /**
+     * Sets the value of the suffix token used to identify properties to replace.  Setting a value of
+     * {@code null} restores the default token (@link {@link #DEFAULT_SUFFIX_TOKEN}).
+     */
+    public void setSuffixToken(String suffixToken) {
+        if (suffixToken == null) {
+            this.suffixToken = DEFAULT_SUFFIX_TOKEN;
+        } else {
+            this.suffixToken = suffixToken;
+        }
     }
 
     @Override

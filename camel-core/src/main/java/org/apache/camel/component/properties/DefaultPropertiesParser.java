@@ -28,10 +28,16 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultPropertiesParser implements PropertiesParser {
+public class DefaultPropertiesParser implements AugmentedPropertyNameAwarePropertiesParser {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     
+    @Override
     public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
+        return parseUri(text, properties, prefixToken, suffixToken, null, null, false);
+    }
+
+    public String parseUri(String text, Properties properties, String prefixToken, String suffixToken,
+                           String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty) throws IllegalArgumentException {
         String answer = text;
         boolean done = false;
 
@@ -40,7 +46,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
         List<String> visited = new ArrayList<String>();
         while (!done) {
             List<String> replaced = new ArrayList<String>();
-            answer = doParseUri(answer, properties, replaced, prefixToken, suffixToken);
+            answer = doParseUri(answer, properties, replaced, prefixToken, suffixToken, propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty);
 
             // check the replaced with the visited to avoid circular reference
             for (String replace : replaced) {
@@ -61,7 +67,8 @@ public class DefaultPropertiesParser implements PropertiesParser {
         return value;
     }
 
-    private String doParseUri(String uri, Properties properties, List<String> replaced, String prefixToken, String suffixToken) {
+    private String doParseUri(String uri, Properties properties, List<String> replaced, String prefixToken, String suffixToken,
+                              String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty) {
         StringBuilder sb = new StringBuilder();
 
         int pivot = 0;
@@ -81,10 +88,35 @@ public class DefaultPropertiesParser implements PropertiesParser {
                     throw new IllegalArgumentException("Expecting " + suffixToken + " but found end of string from text: " + uri);
                 }
                 String key = uri.substring(pivot, endIdx);
+                String augmentedKey = key;
+                
+                if (propertyPrefix != null) {
+                    log.debug("Augmenting property key [{}] with prefix: {}", key, propertyPrefix);
+                    augmentedKey = propertyPrefix + augmentedKey;
+                }
+                
+                if (propertySuffix != null) {
+                    log.debug("Augmenting property key [{}] with suffix: {}", key, propertySuffix);
+                    augmentedKey = augmentedKey + propertySuffix;
+                }
 
-                String part = createPlaceholderPart(key, properties, replaced);
+                String part = createPlaceholderPart(augmentedKey, properties, replaced);
+                
+                // Note: Only fallback to unaugmented when the original key was actually augmented
+                if (part == null && fallbackToUnaugmentedProperty && (propertyPrefix != null || propertySuffix != null)) {
+                    log.debug("Property wth key [{}] not found, attempting with unaugmented key: {}", augmentedKey, key);
+                    part = createPlaceholderPart(key, properties, replaced);
+                }
+                
                 if (part == null) {
-                    throw new IllegalArgumentException("Property with key [" + key + "] not found in properties from text: " + uri);
+                    StringBuilder esb = new StringBuilder();
+                    esb.append("Property with key [").append(augmentedKey).append("] ");
+                    if (fallbackToUnaugmentedProperty && (propertyPrefix != null || propertySuffix != null)) {
+                        esb.append("(and original key [").append(key).append("]) ");
+                    }
+                    esb.append("not found in properties from text: ").append(uri);
+                    
+                    throw new IllegalArgumentException(esb.toString());
                 }
                 sb.append(part);
                 pivot = endIdx + suffixToken.length();
