@@ -24,6 +24,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.test.junit4.TestSupport;
@@ -114,7 +115,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
             ? policy instanceof SimpleScheduledRoutePolicy 
             : policy instanceof CronScheduledRoutePolicy);
         routes.get(0).routePolicy(policy);
-        context.addRouteDefinitions(routes);
+        ((ModelCamelContext)context).addRouteDefinitions(routes);
         context.start();
         return context;
     }

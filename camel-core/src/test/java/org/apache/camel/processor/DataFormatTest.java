@@ -88,6 +88,10 @@ public class DataFormatTest extends ContextTestSupport {
         public MyNonSerializableBean(String name) {
             this.name = name;
         }
+        
+        public String getName() {
+            return name;
+        }
     }
 
 }

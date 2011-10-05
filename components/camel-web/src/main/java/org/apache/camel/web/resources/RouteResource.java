@@ -43,6 +43,7 @@ import com.sun.jersey.api.view.Viewable;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.RouteDotGenerator;
@@ -92,7 +93,7 @@ public class RouteResource extends CamelChildResourceSupport {
         URI routesURI = null;
         try {
             routesURI = new URI("/routes");
-            getCamelContext().removeRouteDefinition(route);
+            ((ModelCamelContext)getCamelContext()).removeRouteDefinition(route);
             return Response.seeOther(routesURI).build();
         } catch (Exception e) {
             LOG.error("failed to remove route " + id + ", error " + e.getMessage());
@@ -153,7 +154,7 @@ public class RouteResource extends CamelChildResourceSupport {
         routeDefinition.setId(id);
 
         // lets install the updated route
-        getCamelContext().addRouteDefinitions(Collections.singletonList(routeDefinition));
+        ((ModelCamelContext)getCamelContext()).addRouteDefinitions(Collections.singletonList(routeDefinition));
     }
 
     /**

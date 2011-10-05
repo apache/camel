@@ -24,7 +24,7 @@ import groovy.lang.Binding;
 import groovy.lang.Script;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.ExpressionSupport;
+import org.apache.camel.support.ExpressionSupport;
 import org.apache.camel.util.ExchangeHelper;
 
 /**

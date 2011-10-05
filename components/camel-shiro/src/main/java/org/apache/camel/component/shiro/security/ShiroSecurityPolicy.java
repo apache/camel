@@ -30,6 +30,7 @@ import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -133,7 +134,7 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
                 
                 // If here, then user is authenticated and authorized
                 // Now let the original processor continue routing supporting the async routing engine
-                AsyncProcessor ap = AsyncProcessorTypeConverter.convert(processor);
+                AsyncProcessor ap = AsyncProcessorConverterHelper.convert(processor);
                 sync = AsyncProcessorHelper.process(ap, exchange, new AsyncCallback() {
                     public void done(boolean doneSync) {
                         // we only have to handle async completion of this policy

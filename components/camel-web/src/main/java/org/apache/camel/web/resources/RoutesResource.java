@@ -42,6 +42,7 @@ import javax.xml.bind.Unmarshaller;
 import com.sun.jersey.api.view.Viewable;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.util.ObjectHelper;
@@ -175,7 +176,7 @@ public class RoutesResource extends CamelChildResourceSupport {
             if (value instanceof RouteDefinition) {
                 RouteDefinition routeDefinition = (RouteDefinition)value;
                 // add the route
-                getCamelContext().addRouteDefinitions(Collections.singletonList(routeDefinition));
+                ((ModelCamelContext)getCamelContext()).addRouteDefinitions(Collections.singletonList(routeDefinition));
                 return Response.seeOther(new URI("/routes")).build();
             } else {
                 error = "Posted XML is not a route but is of type " + ObjectHelper.className(value);

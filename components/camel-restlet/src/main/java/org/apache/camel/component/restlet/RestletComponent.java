@@ -239,10 +239,6 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
         return UnsafeUriCharactersEncoder.encode(uri.replaceAll("%7B", "(").replaceAll("%7D", ")"));
     }
     
-    private static String encodePattern(String pattern) {
-        return pattern == null ? null : pattern.replaceAll("\\{", "(").replaceAll("\\}", ")");
-    }
-
     private static String decodePattern(String pattern) {
         return pattern == null ? null : pattern.replaceAll("\\(", "{").replaceAll("\\)", "}");
     }

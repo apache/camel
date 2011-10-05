@@ -18,10 +18,10 @@ package org.apache.camel.language.groovy;
 
 import groovy.lang.Closure;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.support.ExpressionSupport;
 
 /**
  * @version 

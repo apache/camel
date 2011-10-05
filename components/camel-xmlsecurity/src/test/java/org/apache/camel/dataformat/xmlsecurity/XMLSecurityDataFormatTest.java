@@ -188,9 +188,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
         tsParameters.setResource("sender.ts");
-        String tsParametersId = "testTrustStoreParameters";
-        
-        Map<String, String> contextProps = context.getProperties();
  
         context.addRoutes(new RouteBuilder() {
             public void configure() {

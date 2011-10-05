@@ -43,6 +43,7 @@ import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -65,8 +66,8 @@ public abstract class CamelTestSupport extends TestSupport {
     private static final ThreadLocal<Boolean> INIT = new ThreadLocal<Boolean>();
 
 
-    private static ThreadLocal<CamelContext> threadCamelContext
-        = new ThreadLocal<CamelContext>();
+    private static ThreadLocal<ModelCamelContext> threadCamelContext
+        = new ThreadLocal<ModelCamelContext>();
     private static ThreadLocal<ProducerTemplate> threadTemplate
         = new ThreadLocal<ProducerTemplate>();
     private static ThreadLocal<ConsumerTemplate> threadConsumer
@@ -74,7 +75,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private static ThreadLocal<Service> threadService
         = new ThreadLocal<Service>();
 
-    protected volatile CamelContext context;
+    protected volatile ModelCamelContext context;
     protected volatile ProducerTemplate template;
     protected volatile ConsumerTemplate consumer;
     protected volatile Service camelContextService;
@@ -231,7 +232,12 @@ public abstract class CamelTestSupport extends TestSupport {
             enableJMX();
         }
 
-        context = createCamelContext();
+        CamelContext c2 = createCamelContext();
+        if (c2 instanceof ModelCamelContext) {
+            context = (ModelCamelContext)c2;
+        } else {
+            throw new Exception("Context must be a ModelCamelContext");
+        }
         threadCamelContext.set(context);
 
         assertNotNull(context, "No context found!");

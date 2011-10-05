@@ -22,7 +22,7 @@ import ognl.OgnlException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
-import org.apache.camel.impl.ExpressionSupport;
+import org.apache.camel.support.ExpressionSupport;
 
 /**
  * An <a href="http://www.ognl.org/">OGNL</a> {@link Expression}

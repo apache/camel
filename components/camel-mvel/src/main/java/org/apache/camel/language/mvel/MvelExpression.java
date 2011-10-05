@@ -21,7 +21,7 @@ import java.io.Serializable;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
-import org.apache.camel.impl.ExpressionSupport;
+import org.apache.camel.support.ExpressionSupport;
 
 public class MvelExpression extends ExpressionSupport {
 

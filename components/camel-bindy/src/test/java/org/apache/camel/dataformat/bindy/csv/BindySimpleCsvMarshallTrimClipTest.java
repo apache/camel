@@ -31,7 +31,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 public class BindySimpleCsvMarshallTrimClipTest extends AbstractJUnit4SpringContextTests {
 
     private static final String URI_MOCK_RESULT = "mock:result";
-    private static final String URI_MOCK_ERROR = "mock:error";
     private static final String URI_DIRECT_START = "direct:start";
 
     private String expected;

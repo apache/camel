@@ -445,7 +445,7 @@ public class DotMojo extends AbstractMavenReport {
         CommandLineUtils.StringStreamConsumer stdout = new CommandLineUtils.StringStreamConsumer();
         CommandLineUtils.StringStreamConsumer stderr = new CommandLineUtils.StringStreamConsumer();
 
-        int exitCode = CommandLineUtils.executeCommandLine(cl, stdout, stderr);
+        CommandLineUtils.executeCommandLine(cl, stdout, stderr);
 
         String output = stdout.getOutput();
         if (output.length() > 0) {
