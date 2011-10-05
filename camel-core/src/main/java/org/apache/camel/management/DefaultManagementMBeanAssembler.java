@@ -26,6 +26,7 @@ import javax.management.modelmbean.RequiredModelMBean;
 
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.NotificationSenderAware;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -74,6 +75,11 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
             mbean.setManagedResource(obj, "ObjectReference");
         } catch (InvalidTargetObjectTypeException e) {
             throw new JMException(e.getMessage());
+        }
+        
+        // Allows the managed object to send notifications
+        if (obj instanceof NotificationSenderAware) {
+            ((NotificationSenderAware)obj).setNotificationSender(new NotificationSenderAdapter(mbean));
         }
 
         return mbean;

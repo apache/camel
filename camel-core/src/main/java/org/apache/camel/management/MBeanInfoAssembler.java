@@ -27,9 +27,12 @@ import javax.management.JMException;
 import javax.management.modelmbean.ModelMBeanAttributeInfo;
 import javax.management.modelmbean.ModelMBeanInfo;
 import javax.management.modelmbean.ModelMBeanInfoSupport;
+import javax.management.modelmbean.ModelMBeanNotificationInfo;
 import javax.management.modelmbean.ModelMBeanOperationInfo;
 
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedNotification;
+import org.apache.camel.api.management.ManagedNotifications;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.util.IntrospectionSupport;
@@ -59,21 +62,35 @@ public class MBeanInfoAssembler {
         List<ManagedOperationInfo> operations = new ArrayList<ManagedOperationInfo>();
         List<ModelMBeanAttributeInfo> mBeanAttributes = new ArrayList<ModelMBeanAttributeInfo>();
         List<ModelMBeanOperationInfo> mBeanOperations = new ArrayList<ModelMBeanOperationInfo>();
+        
 
         // extract details
         extractAttributesAndOperations(managedBean, attributes, operations);
         extractMbeanAttributes(managedBean, attributes, mBeanAttributes, mBeanOperations);
         extractMbeanOperations(managedBean, operations, mBeanOperations);
+        List<ModelMBeanNotificationInfo> mBeanNotifications = extractMbeanNotifiations(managedBean);
 
         // create the ModelMBeanInfo
         String name = getName(managedBean, objectName);
         String description = getDescription(managedBean, objectName);
         ModelMBeanAttributeInfo[] arrayAttributes = mBeanAttributes.toArray(new ModelMBeanAttributeInfo[mBeanAttributes.size()]);
         ModelMBeanOperationInfo[] arrayOperations = mBeanOperations.toArray(new ModelMBeanOperationInfo[mBeanOperations.size()]);
+        ModelMBeanNotificationInfo[] arrayNotifications = mBeanNotifications.toArray(new ModelMBeanNotificationInfo[mBeanNotifications.size()]);
 
-        ModelMBeanInfo info = new ModelMBeanInfoSupport(name, description, arrayAttributes, null, arrayOperations, null);
+        ModelMBeanInfo info = new ModelMBeanInfoSupport(name, description, arrayAttributes, null, arrayOperations, arrayNotifications);
         LOG.trace("Created ModelMBeanInfo {}", info);
         return info;
+    }
+
+    private List<ModelMBeanNotificationInfo> extractMbeanNotifiations(Object managedBean) {
+        List<ModelMBeanNotificationInfo> mBeanNotifications = new ArrayList<ModelMBeanNotificationInfo>();
+        ManagedNotifications notifications = managedBean.getClass().getAnnotation(ManagedNotifications.class);
+        if (notifications != null) {
+            for (ManagedNotification notification : notifications.value()) {
+                mBeanNotifications.add(new ModelMBeanNotificationInfo(notification.notificationTypes(), notification.name(), notification.description()));
+            }
+        }
+        return mBeanNotifications;
     }
 
     private void extractAttributesAndOperations(Object managedBean, Map<String, ManagedAttributeInfo> attributes, List<ManagedOperationInfo> operations) {
