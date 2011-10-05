@@ -22,9 +22,8 @@
 
     <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
+        <artifactId>camel</artifactId>
         <version>2.9-SNAPSHOT</version>
-        <relativePath>../parent</relativePath>
     </parent>
        
     <artifactId>camel-buildtools</artifactId>
