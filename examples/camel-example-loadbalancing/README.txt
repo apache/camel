@@ -16,7 +16,7 @@ who will display in its log the content of the Report object.
 
 
 For the latest & greatest documentation on how to use this example please see 
-  http://camel.apache.org/loadbalacing-mina.html
+  http://camel.apache.org/loadbalancing-mina-example.html
 
 
 1. Description of the routes 
