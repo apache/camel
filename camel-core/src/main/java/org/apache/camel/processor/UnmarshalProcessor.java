@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
@@ -55,10 +56,12 @@ public class UnmarshalProcessor extends ServiceSupport implements Processor, Tra
 
             Object result = dataFormat.unmarshal(exchange, stream);
             out.setBody(result);
+        } catch (Exception e) {
+            // remove OUT message, as an exception occurred
+            exchange.setOut(null);
+            throw e;
         } finally {
-            if (stream != null) {
-                stream.close();
-            }
+            IOHelper.close(stream, "input stream");
         }
     }
 
