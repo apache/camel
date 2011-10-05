@@ -289,7 +289,10 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     protected Object traceExchangeIn(Exchange exchange) throws Exception {
         Object result = null;
         for (TraceEventHandler traceHandler : tracer.getTraceHandlers()) {
-            result = traceHandler.traceExchangeIn(node, processor, this, exchange);
+            Object result1 = traceHandler.traceExchangeIn(node, processor, this, exchange);
+            if (result1 != null) {
+                result = result1;
+            }
         }
         return result;
     }
