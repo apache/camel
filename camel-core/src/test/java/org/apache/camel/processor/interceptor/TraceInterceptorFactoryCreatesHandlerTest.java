@@ -44,7 +44,7 @@ public class TraceInterceptorFactoryCreatesHandlerTest extends TracingTestBase {
             if (traceAllNodes || !target.getClass().equals(TraceTestProcessor.class)) {
                 TraceHandlerTestHandler traceHandler = new TraceHandlerTestHandler(eventMessages);
                 traceHandler.setTraceAllNodes(true);
-                tracer.addTraceHandler(traceHandler);
+                interceptor.setTraceHandler(traceHandler);
             }
 
             return interceptor;

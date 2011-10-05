@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -58,6 +61,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     private TraceFormatter formatter;
 
     private RouteContext routeContext;
+    private List<TraceEventHandler> traceHandlers;
 
     public TraceInterceptor(ProcessorDefinition<?> node, Processor target, TraceFormatter formatter, Tracer tracer) {
         super(target);
@@ -68,6 +72,8 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
         if (tracer.getFormatter() != null) {
             this.formatter = tracer.getFormatter();
         }
+        this.traceHandlers = new ArrayList<TraceEventHandler>();
+        this.traceHandlers.addAll(tracer.getTraceHandlers());
     }
 
     @Override
@@ -281,14 +287,14 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     }
 
     protected void traceExchange(Exchange exchange) throws Exception {
-        for (TraceEventHandler traceHandler : tracer.getTraceHandlers()) {
+        for (TraceEventHandler traceHandler : traceHandlers) {
             traceHandler.traceExchange(node, processor, this, exchange);
         }
     }
 
     protected Object traceExchangeIn(Exchange exchange) throws Exception {
         Object result = null;
-        for (TraceEventHandler traceHandler : tracer.getTraceHandlers()) {
+        for (TraceEventHandler traceHandler : traceHandlers) {
             Object result1 = traceHandler.traceExchangeIn(node, processor, this, exchange);
             if (result1 != null) {
                 result = result1;
@@ -298,7 +304,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     }
 
     protected void traceExchangeOut(Exchange exchange, Object traceState) throws Exception {
-        for (TraceEventHandler traceHandler : tracer.getTraceHandlers()) {
+        for (TraceEventHandler traceHandler : traceHandlers) {
             traceHandler.traceExchangeOut(node, processor, this, exchange, traceState);
         }
     }
@@ -350,12 +356,18 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ServiceHelper.startService(tracer.getTraceHandlers());
+        ServiceHelper.startService(traceHandlers);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ServiceHelper.stopService(tracer.getTraceHandlers());
+        ServiceHelper.stopService(traceHandlers);
+    }
+
+    @Deprecated
+    public void setTraceHandler(TraceEventHandler traceHandler) {
+        traceHandlers.clear();
+        traceHandlers.add(traceHandler);
     }
 }

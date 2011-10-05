@@ -308,7 +308,8 @@ public class Tracer implements InterceptStrategy, Service {
      */
     @Deprecated
     public void setTraceHandler(TraceEventHandler traceHandler) {
-        this.traceHandlers.add(0, traceHandler);
+        this.traceHandlers.clear();
+        this.traceHandlers.add(traceHandler);
     }
     
     /**
