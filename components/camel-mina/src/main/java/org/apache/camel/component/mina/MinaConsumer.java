@@ -25,6 +25,7 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoHandler;
 import org.apache.mina.common.IoHandlerAdapter;
@@ -106,7 +107,7 @@ public class MinaConsumer extends DefaultConsumer {
             Exchange exchange = getEndpoint().createExchange(session, object);
             //Set the exchange charset property for converting
             if (getEndpoint().getConfiguration().getCharsetName() != null) {
-                exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
+                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
             }
 
             try {

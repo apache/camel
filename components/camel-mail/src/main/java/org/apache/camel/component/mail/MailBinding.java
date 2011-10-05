@@ -47,6 +47,7 @@ import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +93,7 @@ public class MailBinding {
         // and headers the headers win.
         String subject = endpoint.getConfiguration().getSubject();
         if (subject != null) {
-            mimeMessage.setSubject(subject, IOConverter.getCharsetName(exchange, false));
+            mimeMessage.setSubject(subject, IOHelper.getCharsetName(exchange, false));
         }
 
         // append the rest of the headers (no recipients) that could be subject, reply-to etc.
@@ -155,7 +156,7 @@ public class MailBinding {
         // look for charset
         String charset = MailUtils.getCharSetFromContentType(contentType);
         if (charset != null) {
-            charset = IOConverter.normalizeCharset(charset);
+            charset = IOHelper.normalizeCharset(charset);
             if (charset != null) {
                 boolean supported;
                 try {
@@ -175,7 +176,7 @@ public class MailBinding {
         }
 
         // Using the charset header of exchange as a fall back
-        return IOConverter.getCharsetName(exchange, false);
+        return IOHelper.getCharsetName(exchange, false);
     }
 
     protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange)
@@ -329,7 +330,7 @@ public class MailBinding {
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
                     if (headerName.equalsIgnoreCase("subject")) {
-                        mimeMessage.setSubject(asString(exchange, headerValue), IOConverter.getCharsetName(exchange, false));
+                        mimeMessage.setSubject(asString(exchange, headerValue), IOHelper.getCharsetName(exchange, false));
                         continue;
                     }
                     if (isRecipientHeader(headerName)) {

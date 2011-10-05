@@ -109,7 +109,7 @@ public class DefaultAhcBinding implements AhcBinding {
 
         String contentType = ExchangeHelper.getContentType(exchange);
         BodyGenerator body = in.getBody(BodyGenerator.class);
-        String charset = IOConverter.getCharsetName(exchange, false);
+        String charset = IOHelper.getCharsetName(exchange, false);
 
         if (body == null) {
             try {

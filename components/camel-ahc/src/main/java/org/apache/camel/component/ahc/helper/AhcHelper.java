@@ -85,7 +85,7 @@ public final class AhcHelper {
             int index = contentType.indexOf("charset=");
             if (index > 0) {
                 String charset = contentType.substring(index + 8);
-                exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
+                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(charset));
             }
         }
     }

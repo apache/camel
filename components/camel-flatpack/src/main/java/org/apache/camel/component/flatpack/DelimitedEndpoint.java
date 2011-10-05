@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
@@ -52,7 +53,7 @@ public class DelimitedEndpoint extends FixedLengthEndpoint {
             return getParserFactory().newDelimitedParser(bodyReader, delimiter, textQualifier);
         } else {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), definition);
-            InputStreamReader reader = new InputStreamReader(is, IOConverter.getCharsetName(exchange));
+            InputStreamReader reader = new InputStreamReader(is, IOHelper.getCharsetName(exchange));
             return getParserFactory().newDelimitedParser(reader, bodyReader, delimiter, textQualifier, ignoreFirstRecord);
         }
     }

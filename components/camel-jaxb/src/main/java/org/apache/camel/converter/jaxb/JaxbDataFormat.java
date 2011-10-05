@@ -40,6 +40,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,7 +164,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     }
 
     private NonXmlFilterReader createNonXmlFilterReader(Exchange exchange, InputStream stream) throws UnsupportedEncodingException {
-        return new NonXmlFilterReader(new InputStreamReader(stream, IOConverter.getCharsetName(exchange)));
+        return new NonXmlFilterReader(new InputStreamReader(stream, IOHelper.getCharsetName(exchange)));
     }
 
     protected boolean needFiltering(Exchange exchange) {

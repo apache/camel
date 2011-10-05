@@ -195,7 +195,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         try {
             if (value instanceof InputStream) {
                 if (needFiltering(exchange)) {
-                    return unmarshaller.unmarshal(new NonXmlFilterReader(new InputStreamReader((InputStream)value, IOConverter.getCharsetName(exchange))));
+                    return unmarshaller.unmarshal(new NonXmlFilterReader(new InputStreamReader((InputStream)value, IOHelper.getCharsetName(exchange))));
                 }
                 return unmarshaller.unmarshal((InputStream)value);
             } else if (value instanceof Reader) {

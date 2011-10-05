@@ -28,6 +28,7 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.mina.common.ConnectFuture;
 import org.apache.mina.common.IoConnector;
 import org.apache.mina.common.IoHandler;
@@ -82,7 +83,7 @@ public class MinaProducer extends DefaultProducer implements ServicePoolAware {
 
         // set the exchange encoding property
         if (getEndpoint().getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
+            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
         }
 
         Object body = MinaPayloadHelper.getIn(getEndpoint(), exchange);
