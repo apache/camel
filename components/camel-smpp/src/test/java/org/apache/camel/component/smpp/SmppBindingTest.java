@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.smpp;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import org.apache.camel.Exchange;
@@ -28,17 +27,17 @@ import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.OctetString;
-import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.session.SMPPSession;
 import org.jsmpp.util.DeliveryReceiptState;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppBinding</code>
@@ -72,109 +71,6 @@ public class SmppBindingTest {
     }
 
     @Test
-    public void createSubmitSmShouldCreateASubmitSmFromDefaults() throws UnsupportedEncodingException {
-        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
-        exchange.getIn().setBody("Hello SMPP world!");
-        SubmitSm submitSm = binding.createSubmitSm(exchange);
-        
-        assertEquals("Hello SMPP world!", new String(submitSm.getShortMessage()));
-        assertEquals("1717", submitSm.getDestAddress());
-        assertEquals(0x00, submitSm.getDestAddrNpi());
-        assertEquals(0x00, submitSm.getDestAddrTon());
-        assertEquals(0x01, submitSm.getPriorityFlag());
-        assertEquals(0x00, submitSm.getProtocolId());
-        assertEquals(0x01, submitSm.getRegisteredDelivery());
-        assertEquals(0x00, submitSm.getReplaceIfPresent());
-        // To avoid the test failure when running in different TimeZone
-        //assertEquals("090830230627004+", submitSm.getScheduleDeliveryTime());
-        assertEquals("CMT", submitSm.getServiceType());
-        assertEquals("1616", submitSm.getSourceAddr());
-        assertEquals(0x00, submitSm.getSourceAddrNpi());
-        assertEquals(0x00, submitSm.getSourceAddrTon());
-        assertNull(submitSm.getValidityPeriod());
-        // not relevant
-        //assertEquals(0, submitSm.getCommandId());
-        //assertEquals(0, submitSm.getCommandStatus());
-        //assertEquals(0, submitSm.getSequenceNumber());
-    }
-
-    @Test
-    public void createSubmitSmWithDifferentEncoding() throws UnsupportedEncodingException {
-        binding.getConfiguration().setEncoding("UTF-16");
-        
-        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
-        exchange.getIn().setBody("Hello SMPP world!");
-        SubmitSm submitSm = binding.createSubmitSm(exchange);
-
-        assertArrayEquals("Hello SMPP world!".getBytes("UTF-16"), submitSm.getShortMessage());
-    }
-
-    @Test
-    public void createSubmitSmShouldCreateASubmitSmFromHeaders() throws UnsupportedEncodingException {
-        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
-        exchange.getIn().setBody("Hello SMPP world!");
-        exchange.getIn().setHeader(SmppBinding.DEST_ADDR, "1919");
-        exchange.getIn().setHeader(SmppBinding.DEST_ADDR_NPI, NumberingPlanIndicator.NATIONAL.value());
-        exchange.getIn().setHeader(SmppBinding.DEST_ADDR_TON, TypeOfNumber.NATIONAL.value());
-        exchange.getIn().setHeader(SmppBinding.PRIORITY_FLAG, (byte) 0);
-        exchange.getIn().setHeader(SmppBinding.PROTOCOL_ID, (byte) 1);
-        exchange.getIn().setHeader(SmppBinding.REGISTERED_DELIVERY, (byte) 0);
-        exchange.getIn().setHeader(SmppBinding.REPLACE_IF_PRESENT_FLAG, (byte) 1);
-        exchange.getIn().setHeader(SmppBinding.SCHEDULE_DELIVERY_TIME, new Date(1251753000000L));
-        exchange.getIn().setHeader(SmppBinding.SERVICE_TYPE, "XXX");
-        exchange.getIn().setHeader(SmppBinding.VALIDITY_PERIOD, new Date(1251753600000L));
-        exchange.getIn().setHeader(SmppBinding.SOURCE_ADDR, "1818");
-        exchange.getIn().setHeader(SmppBinding.SOURCE_ADDR_NPI, NumberingPlanIndicator.NATIONAL.value());
-        exchange.getIn().setHeader(SmppBinding.SOURCE_ADDR_TON, TypeOfNumber.NATIONAL.value());
-        SubmitSm submitSm = binding.createSubmitSm(exchange);
-        
-        assertEquals("Hello SMPP world!", new String(submitSm.getShortMessage()));
-        assertEquals("1919", submitSm.getDestAddress());
-        assertEquals(0x08, submitSm.getDestAddrNpi());
-        assertEquals(0x02, submitSm.getDestAddrTon());
-        assertEquals(0x00, submitSm.getPriorityFlag());
-        assertEquals(0x01, submitSm.getProtocolId());
-        assertEquals(0x00, submitSm.getRegisteredDelivery());
-        assertEquals(0x01, submitSm.getReplaceIfPresent());
-        // To avoid the test failure when running in different TimeZone
-        //assertEquals("090831231000004+", submitSm.getScheduleDeliveryTime());
-        assertEquals("XXX", submitSm.getServiceType());
-        assertEquals("1818", submitSm.getSourceAddr());
-        assertEquals(0x08, submitSm.getSourceAddrNpi());
-        assertEquals(0x02, submitSm.getSourceAddrTon());
-        //assertEquals("090831232000004+", submitSm.getValidityPeriod());
-        // not relevant
-        //assertEquals(0, submitSm.getCommandId());
-        //assertEquals(0, submitSm.getCommandStatus());
-        //assertEquals(0, submitSm.getSequenceNumber());
-    }
-    
-    @Test
-    public void createSubmitSmWithLongMessageBody() throws UnsupportedEncodingException {
-        String payload = "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
-            + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
-            + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "; // 270 chars
-        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
-        exchange.getIn().setBody(payload);
-        SubmitSm submitSm = binding.createSubmitSm(exchange);
-
-        assertArrayEquals(new byte[0], submitSm.getShortMessage());
-        
-        OptionalParameter[] optionalParametes = submitSm.getOptionalParametes();
-        assertEquals(1, optionalParametes.length);
-        
-        OptionalParameter messagePayloadTLV = optionalParametes[0];
-        assertEquals(OptionalParameter.Tag.MESSAGE_PAYLOAD.code(), messagePayloadTLV.tag);
-        byte[] expectedTLV = new byte[274];
-        expectedTLV[0] = 4;
-        expectedTLV[1] = 36;
-        expectedTLV[2] = 1;
-        expectedTLV[3] = 14;
-        System.arraycopy(payload.getBytes(), 0, expectedTLV, 4, 270);
-        assertArrayEquals(expectedTLV, messagePayloadTLV.serialize());
-    }
-
-    @Test
     public void createSmppMessageFromAlertNotificationShouldReturnASmppMessage() {
         AlertNotification alertNotification = new AlertNotification();
         alertNotification.setCommandId(1);
@@ -189,16 +85,16 @@ public class SmppBindingTest {
         
         assertNull(smppMessage.getBody());
         assertEquals(10, smppMessage.getHeaders().size());
-        assertEquals(1, smppMessage.getHeader(SmppBinding.SEQUENCE_NUMBER));
-        assertEquals(1, smppMessage.getHeader(SmppBinding.COMMAND_ID));
-        assertEquals(0, smppMessage.getHeader(SmppBinding.COMMAND_STATUS));
-        assertEquals("1616", smppMessage.getHeader(SmppBinding.SOURCE_ADDR));
-        assertEquals((byte) 8, smppMessage.getHeader(SmppBinding.SOURCE_ADDR_NPI));
-        assertEquals((byte) 2, smppMessage.getHeader(SmppBinding.SOURCE_ADDR_TON));
-        assertEquals("1717", smppMessage.getHeader(SmppBinding.ESME_ADDR));
-        assertEquals((byte) 8, smppMessage.getHeader(SmppBinding.ESME_ADDR_NPI));
-        assertEquals((byte) 2, smppMessage.getHeader(SmppBinding.ESME_ADDR_TON));
-        assertEquals(SmppMessageType.AlertNotification.toString(), smppMessage.getHeader(SmppBinding.MESSAGE_TYPE));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.SEQUENCE_NUMBER));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.COMMAND_ID));
+        assertEquals(0, smppMessage.getHeader(SmppConstants.COMMAND_STATUS));
+        assertEquals("1616", smppMessage.getHeader(SmppConstants.SOURCE_ADDR));
+        assertEquals((byte) 8, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_NPI));
+        assertEquals((byte) 2, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_TON));
+        assertEquals("1717", smppMessage.getHeader(SmppConstants.ESME_ADDR));
+        assertEquals((byte) 8, smppMessage.getHeader(SmppConstants.ESME_ADDR_NPI));
+        assertEquals((byte) 2, smppMessage.getHeader(SmppConstants.ESME_ADDR_TON));
+        assertEquals(SmppMessageType.AlertNotification.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
     }
 
     @Test
@@ -210,15 +106,15 @@ public class SmppBindingTest {
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
         assertEquals(8, smppMessage.getHeaders().size());
-        assertEquals("2", smppMessage.getHeader(SmppBinding.ID));
-        assertEquals(1, smppMessage.getHeader(SmppBinding.DELIVERED));
+        assertEquals("2", smppMessage.getHeader(SmppConstants.ID));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.DELIVERED));
         // To avoid the test failure when running in different TimeZone
-        //assertEquals(new Date(1251753060000L), smppMessage.getHeader(SmppBinding.DONE_DATE));
-        assertEquals("xxx", smppMessage.getHeader(SmppBinding.ERROR));
-        //assertEquals(new Date(1251753000000L), smppMessage.getHeader(SmppBinding.SUBMIT_DATE));
-        assertEquals(1, smppMessage.getHeader(SmppBinding.SUBMITTED));
-        assertEquals(DeliveryReceiptState.DELIVRD, smppMessage.getHeader(SmppBinding.FINAL_STATUS));
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(), smppMessage.getHeader(SmppBinding.MESSAGE_TYPE));
+        //assertEquals(new Date(1251753060000L), smppMessage.getHeader(SmppConstants.DONE_DATE));
+        assertEquals("xxx", smppMessage.getHeader(SmppConstants.ERROR));
+        //assertEquals(new Date(1251753000000L), smppMessage.getHeader(SmppConstants.SUBMIT_DATE));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.SUBMITTED));
+        assertEquals(DeliveryReceiptState.DELIVRD, smppMessage.getHeader(SmppConstants.FINAL_STATUS));
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
     }
     
     @Test
@@ -236,14 +132,14 @@ public class SmppBindingTest {
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
         assertEquals(8, smppMessage.getHeaders().size());
-        assertEquals(1, smppMessage.getHeader(SmppBinding.SEQUENCE_NUMBER));
-        assertEquals(1, smppMessage.getHeader(SmppBinding.COMMAND_ID));
-        assertEquals("1818", smppMessage.getHeader(SmppBinding.SOURCE_ADDR));
-        assertEquals("1919", smppMessage.getHeader(SmppBinding.DEST_ADDR));
-        assertEquals("090831230627004+", smppMessage.getHeader(SmppBinding.SCHEDULE_DELIVERY_TIME));
-        assertEquals("090901230627004+", smppMessage.getHeader(SmppBinding.VALIDITY_PERIOD));
-        assertEquals("WAP", smppMessage.getHeader(SmppBinding.SERVICE_TYPE));
-        assertEquals(SmppMessageType.DeliverSm.toString(), smppMessage.getHeader(SmppBinding.MESSAGE_TYPE));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.SEQUENCE_NUMBER));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.COMMAND_ID));
+        assertEquals("1818", smppMessage.getHeader(SmppConstants.SOURCE_ADDR));
+        assertEquals("1919", smppMessage.getHeader(SmppConstants.DEST_ADDR));
+        assertEquals("090831230627004+", smppMessage.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME));
+        assertEquals("090901230627004+", smppMessage.getHeader(SmppConstants.VALIDITY_PERIOD));
+        assertEquals("WAP", smppMessage.getHeader(SmppConstants.SERVICE_TYPE));
+        assertEquals(SmppMessageType.DeliverSm.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
     }
     
     @Test
@@ -261,14 +157,14 @@ public class SmppBindingTest {
         
         assertEquals("Hello SMPP world!", smppMessage.getBody());
         assertEquals(8, smppMessage.getHeaders().size());
-        assertEquals(1, smppMessage.getHeader(SmppBinding.SEQUENCE_NUMBER));
-        assertEquals(1, smppMessage.getHeader(SmppBinding.COMMAND_ID));
-        assertEquals("1818", smppMessage.getHeader(SmppBinding.SOURCE_ADDR));
-        assertEquals("1919", smppMessage.getHeader(SmppBinding.DEST_ADDR));
-        assertEquals("090831230627004+", smppMessage.getHeader(SmppBinding.SCHEDULE_DELIVERY_TIME));
-        assertEquals("090901230627004+", smppMessage.getHeader(SmppBinding.VALIDITY_PERIOD));
-        assertEquals("WAP", smppMessage.getHeader(SmppBinding.SERVICE_TYPE));
-        assertEquals(SmppMessageType.DeliverSm.toString(), smppMessage.getHeader(SmppBinding.MESSAGE_TYPE));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.SEQUENCE_NUMBER));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.COMMAND_ID));
+        assertEquals("1818", smppMessage.getHeader(SmppConstants.SOURCE_ADDR));
+        assertEquals("1919", smppMessage.getHeader(SmppConstants.DEST_ADDR));
+        assertEquals("090831230627004+", smppMessage.getHeader(SmppConstants.SCHEDULE_DELIVERY_TIME));
+        assertEquals("090901230627004+", smppMessage.getHeader(SmppConstants.VALIDITY_PERIOD));
+        assertEquals("WAP", smppMessage.getHeader(SmppConstants.SERVICE_TYPE));
+        assertEquals(SmppMessageType.DeliverSm.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
     }
     
     @Test
@@ -289,20 +185,20 @@ public class SmppBindingTest {
         
         assertNull(smppMessage.getBody());
         assertEquals(14, smppMessage.getHeaders().size());
-        assertEquals("1", smppMessage.getHeader(SmppBinding.ID));
-        assertEquals(1, smppMessage.getHeader(SmppBinding.SEQUENCE_NUMBER));
-        assertEquals(1, smppMessage.getHeader(SmppBinding.COMMAND_ID));
-        assertEquals(0, smppMessage.getHeader(SmppBinding.COMMAND_STATUS));
-        assertEquals("1818", smppMessage.getHeader(SmppBinding.SOURCE_ADDR));
-        assertEquals((byte) 8, smppMessage.getHeader(SmppBinding.SOURCE_ADDR_NPI));
-        assertEquals((byte) 2, smppMessage.getHeader(SmppBinding.SOURCE_ADDR_TON));
-        assertEquals("1919", smppMessage.getHeader(SmppBinding.DEST_ADDR));
-        assertEquals((byte) 8, smppMessage.getHeader(SmppBinding.DEST_ADDR_NPI));
-        assertEquals((byte) 2, smppMessage.getHeader(SmppBinding.DEST_ADDR_TON));
-        assertEquals("WAP", smppMessage.getHeader(SmppBinding.SERVICE_TYPE));
-        assertEquals((byte) 0, smppMessage.getHeader(SmppBinding.REGISTERED_DELIVERY));
-        assertEquals((byte) 0, smppMessage.getHeader(SmppBinding.DATA_CODING));
-        assertEquals(SmppMessageType.DataSm.toString(), smppMessage.getHeader(SmppBinding.MESSAGE_TYPE));
+        assertEquals("1", smppMessage.getHeader(SmppConstants.ID));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.SEQUENCE_NUMBER));
+        assertEquals(1, smppMessage.getHeader(SmppConstants.COMMAND_ID));
+        assertEquals(0, smppMessage.getHeader(SmppConstants.COMMAND_STATUS));
+        assertEquals("1818", smppMessage.getHeader(SmppConstants.SOURCE_ADDR));
+        assertEquals((byte) 8, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_NPI));
+        assertEquals((byte) 2, smppMessage.getHeader(SmppConstants.SOURCE_ADDR_TON));
+        assertEquals("1919", smppMessage.getHeader(SmppConstants.DEST_ADDR));
+        assertEquals((byte) 8, smppMessage.getHeader(SmppConstants.DEST_ADDR_NPI));
+        assertEquals((byte) 2, smppMessage.getHeader(SmppConstants.DEST_ADDR_TON));
+        assertEquals("WAP", smppMessage.getHeader(SmppConstants.SERVICE_TYPE));
+        assertEquals((byte) 0, smppMessage.getHeader(SmppConstants.REGISTERED_DELIVERY));
+        assertEquals((byte) 0, smppMessage.getHeader(SmppConstants.DATA_CODING));
+        assertEquals(SmppMessageType.DataSm.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
     }
 
     @Test
@@ -311,5 +207,70 @@ public class SmppBindingTest {
         binding.setConfiguration(configuration);
         
         assertSame(configuration, binding.getConfiguration());
+    }
+    
+    @Test
+    public void createSmppSubmitSmCommand() {
+        SMPPSession session = new SMPPSession();
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        
+        SmppCommand command = binding.createSmppCommand(session, exchange);
+        
+        assertTrue(command instanceof SmppSubmitSmCommand);
+    }
+    
+    @Test
+    public void createSmppSubmitMultiCommand() {
+        SMPPSession session = new SMPPSession();
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitMulti");
+        
+        SmppCommand command = binding.createSmppCommand(session, exchange);
+        
+        assertTrue(command instanceof SmppSubmitMultiCommand);
+    }
+    
+    @Test
+    public void createSmppDataSmCommand() {
+        SMPPSession session = new SMPPSession();
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
+        
+        SmppCommand command = binding.createSmppCommand(session, exchange);
+        
+        assertTrue(command instanceof SmppDataSmCommand);
+    }
+    
+    @Test
+    public void createSmppReplaceSmCommand() {
+        SMPPSession session = new SMPPSession();
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
+        
+        SmppCommand command = binding.createSmppCommand(session, exchange);
+        
+        assertTrue(command instanceof SmppReplaceSmCommand);
+    }
+    
+    @Test
+    public void createSmppQuerySmCommand() {
+        SMPPSession session = new SMPPSession();
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "QuerySm");
+        
+        SmppCommand command = binding.createSmppCommand(session, exchange);
+        
+        assertTrue(command instanceof SmppQuerySmCommand);
+    }
+    
+    @Test
+    public void createSmppCancelSmCommand() {
+        SMPPSession session = new SMPPSession();
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "CancelSm");
+        
+        SmppCommand command = binding.createSmppCommand(session, exchange);
+        
+        assertTrue(command instanceof SmppCancelSmCommand);
     }
 }

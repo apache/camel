@@ -17,10 +17,11 @@
 package org.apache.camel.component.smpp.integration;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.smpp.SmppBinding;
+import org.apache.camel.component.smpp.SmppConstants;
 import org.apache.camel.component.smpp.SmppMessageType;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Ignore;
@@ -42,66 +43,65 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 @Ignore("Must be manually tested")
 public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
 
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint result;
+    
+    @EndpointInject(uri = "direct:start")
+    private Endpoint start;
+    
     @Test
-    public void sendInOut() throws Exception {
-        MockEndpoint result = getMockEndpoint("mock:result");
+    public void sendSubmitSMInOut() throws Exception {
         result.expectedMessageCount(1);
         
-        Endpoint start = getMandatoryEndpoint("direct:start");
-        Exchange exchange = start.createExchange();
-        exchange.setPattern(ExchangePattern.InOut);
+        Exchange exchange = start.createExchange(ExchangePattern.InOut);
         exchange.getIn().setBody("Hello SMPP World!");
 
         template.send(start, exchange);
         
         assertMockEndpointsSatisfied();
         Exchange resultExchange = result.getExchanges().get(0);
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppBinding.MESSAGE_TYPE));
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
         assertEquals("Hello SMPP World!", resultExchange.getIn().getBody());
-        assertNotNull(resultExchange.getIn().getHeader(SmppBinding.ID));
-        assertEquals(1, resultExchange.getIn().getHeader(SmppBinding.SUBMITTED));
-        assertEquals(1, resultExchange.getIn().getHeader(SmppBinding.DELIVERED));
-        assertNotNull(resultExchange.getIn().getHeader(SmppBinding.DONE_DATE));
-        assertNotNull(resultExchange.getIn().getHeader(SmppBinding.SUBMIT_DATE));
-        assertNull(resultExchange.getIn().getHeader(SmppBinding.ERROR));
+        assertNotNull(resultExchange.getIn().getHeader(SmppConstants.ID));
+        assertEquals(1, resultExchange.getIn().getHeader(SmppConstants.SUBMITTED));
+        assertEquals(1, resultExchange.getIn().getHeader(SmppConstants.DELIVERED));
+        assertNotNull(resultExchange.getIn().getHeader(SmppConstants.DONE_DATE));
+        assertNotNull(resultExchange.getIn().getHeader(SmppConstants.SUBMIT_DATE));
+        assertNull(resultExchange.getIn().getHeader(SmppConstants.ERROR));
         
-        assertNotNull(exchange.getOut().getHeader(SmppBinding.ID));
+        assertNotNull(exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
     
     @Test
-    public void sendInOnly() throws Exception {
-        MockEndpoint result = getMockEndpoint("mock:result");
+    public void sendSubmitSMInOnly() throws Exception {
         result.expectedMessageCount(1);
         
-        Endpoint start = getMandatoryEndpoint("direct:start");
-        Exchange exchange = start.createExchange();
-        exchange.setPattern(ExchangePattern.InOnly);
+        Exchange exchange = start.createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody("Hello SMPP World!");
 
         template.send(start, exchange);
         
         assertMockEndpointsSatisfied();
         Exchange resultExchange = result.getExchanges().get(0);
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppBinding.MESSAGE_TYPE));
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppConstants.MESSAGE_TYPE));
         assertEquals("Hello SMPP World!", resultExchange.getIn().getBody());
-        assertNotNull(resultExchange.getIn().getHeader(SmppBinding.ID));
-        assertEquals(1, resultExchange.getIn().getHeader(SmppBinding.SUBMITTED));
-        assertEquals(1, resultExchange.getIn().getHeader(SmppBinding.DELIVERED));
-        assertNotNull(resultExchange.getIn().getHeader(SmppBinding.DONE_DATE));
-        assertNotNull(resultExchange.getIn().getHeader(SmppBinding.SUBMIT_DATE));
-        assertNull(resultExchange.getIn().getHeader(SmppBinding.ERROR));
+        assertNotNull(resultExchange.getIn().getHeader(SmppConstants.ID));
+        assertEquals(1, resultExchange.getIn().getHeader(SmppConstants.SUBMITTED));
+        assertEquals(1, resultExchange.getIn().getHeader(SmppConstants.DELIVERED));
+        assertNotNull(resultExchange.getIn().getHeader(SmppConstants.DONE_DATE));
+        assertNotNull(resultExchange.getIn().getHeader(SmppConstants.SUBMIT_DATE));
+        assertNull(resultExchange.getIn().getHeader(SmppConstants.ERROR));
         
-        assertNotNull(exchange.getIn().getHeader(SmppBinding.ID));
+        assertNotNull(exchange.getIn().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getIn().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
     
     @Test
-    public void sendLongMessage() throws Exception {
-        MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedMessageCount(1);
+    public void sendLongSubmitSM() throws Exception {
+        result.expectedMessageCount(2);
         
-        Endpoint start = getMandatoryEndpoint("direct:start");
-        Exchange exchange = start.createExchange();
-        exchange.setPattern(ExchangePattern.InOnly);
+        Exchange exchange = start.createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody("Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
                 + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
                 + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "); // 270 chars
@@ -109,10 +109,72 @@ public class SmppComponentSpringIntegrationTest extends CamelSpringTestSupport {
         template.send(start, exchange);
         
         assertMockEndpointsSatisfied();
-        Exchange resultExchange = result.getExchanges().get(0);
-        assertEquals(SmppMessageType.DeliveryReceipt.toString(), resultExchange.getIn().getHeader(SmppBinding.MESSAGE_TYPE));
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(), result.getExchanges().get(0).getIn().getHeader(SmppConstants.MESSAGE_TYPE));
+        assertEquals(SmppMessageType.DeliveryReceipt.toString(), result.getExchanges().get(1).getIn().getHeader(SmppConstants.MESSAGE_TYPE));
         
-        assertNotNull(exchange.getIn().getHeader(SmppBinding.ID));
+        assertNotNull(exchange.getIn().getHeader(SmppConstants.ID));
+        assertEquals(2, exchange.getIn().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+    }
+    
+    @Test
+    public void sendCancelSM() throws Exception {
+        Exchange exchange = start.createExchange(ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "CancelSm");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+
+        template.send(start, exchange);
+        
+        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+    }
+    
+    @Test
+    public void sendQuerySM() throws Exception {
+        Exchange exchange = start.createExchange(ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "QuerySm");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+
+        template.send(start, exchange);
+        
+        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals((byte) 0, exchange.getOut().getHeader(SmppConstants.ERROR));
+        assertNotNull(exchange.getOut().getHeader(SmppConstants.FINAL_DATE));
+        assertEquals("DELIVERED", exchange.getOut().getHeader(SmppConstants.MESSAGE_STATE));
+    }
+    
+    @Test
+    public void sendReplaceSM() throws Exception {
+        Exchange exchange = start.createExchange(ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
+        exchange.getIn().setBody("Hello Camel World!");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+
+        template.send(start, exchange);
+        
+        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+    }
+
+    @Test
+    public void sendDataSM() throws Exception {
+        Exchange exchange = start.createExchange(ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
+
+        template.send(start, exchange);
+        
+        assertNotNull(exchange.getOut().getHeader(SmppConstants.ID));
+    }
+    
+    @Test
+    public void sendSubmitMultiSM() throws Exception {
+        Exchange exchange = start.createExchange(ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitMulti");
+        exchange.getIn().setBody("Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "
+                + "Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! Hello SMPP World! "); // 270 chars
+
+        template.send(start, exchange);
+        
+        assertNotNull(exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals(2, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
 
     @Override

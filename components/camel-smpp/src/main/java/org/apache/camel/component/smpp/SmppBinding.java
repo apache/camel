@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.jsmpp.bean.AlertNotification;
 import org.jsmpp.bean.Command;
 import org.jsmpp.bean.DataSm;
@@ -30,10 +29,7 @@ import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.DeliveryReceipt;
 import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.OptionalParameter.OctetString;
-import org.jsmpp.bean.OptionalParameters;
-import org.jsmpp.bean.SubmitSm;
-import org.jsmpp.util.AbsoluteTimeFormatter;
-import org.jsmpp.util.TimeFormatter;
+import org.jsmpp.session.SMPPSession;
 
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and
@@ -42,37 +38,6 @@ import org.jsmpp.util.TimeFormatter;
  * @version 
  */
 public class SmppBinding {
-
-    public static final String SEQUENCE_NUMBER = "CamelSmppSequenceNumber";
-    public static final String SUBMITTED = "CamelSmppSubmitted";
-    public static final String SUBMIT_DATE = "CamelSmppSubmitDate";
-    public static final String ERROR = "CamelSmppError";
-    public static final String DONE_DATE = "CamelSmppDoneDate";
-    public static final String DELIVERED = "CamelSmppDelivered";
-    public static final String COMMAND_ID = "CamelSmppCommandId";
-    public static final String COMMAND_STATUS = "CamelSmppCommandStatus";
-    public static final String ID = "CamelSmppId";
-    public static final String REPLACE_IF_PRESENT_FLAG = "CamelSmppReplaceIfPresentFlag";
-    public static final String VALIDITY_PERIOD = "CamelSmppValidityPeriod";
-    public static final String SCHEDULE_DELIVERY_TIME = "CamelSmppScheduleDeliveryTime";
-    public static final String PRIORITY_FLAG = "CamelSmppPriorityFlag";
-    public static final String PROTOCOL_ID = "CamelSmppProtocolId";
-    public static final String REGISTERED_DELIVERY = "CamelSmppRegisteredDelivery";
-    public static final String SERVICE_TYPE = "CamelSmppServiceType";
-    public static final String SOURCE_ADDR_NPI = "CamelSmppSourceAddrNpi";
-    public static final String SOURCE_ADDR_TON = "CamelSmppSourceAddrTon";
-    public static final String SOURCE_ADDR = "CamelSmppSourceAddr";
-    public static final String DEST_ADDR_NPI = "CamelSmppDestAddrNpi";
-    public static final String DEST_ADDR_TON = "CamelSmppDestAddrTon";
-    public static final String DEST_ADDR = "CamelSmppDestAddr";
-    public static final String ESME_ADDR_NPI = "CamelSmppEsmeAddrNpi";
-    public static final String ESME_ADDR_TON = "CamelSmppEsmeAddrTon";
-    public static final String ESME_ADDR = "CamelSmppEsmeAddr";
-    public static final String FINAL_STATUS = "CamelSmppStatus";
-    public static final String DATA_CODING = "CamelSmppDataCoding";
-    public static final String MESSAGE_TYPE = "CamelSmppMessageType";
-
-    private static TimeFormatter timeFormatter = new AbsoluteTimeFormatter();
 
     private SmppConfiguration configuration;
 
@@ -85,112 +50,15 @@ public class SmppBinding {
     }
 
     /**
-     * Create the SubmitSm object from the inbound exchange
+     * Create the SmppCommand object from the inbound exchange
      * 
      * @throws UnsupportedEncodingException if the encoding is not supported
      */
-    public SubmitSm createSubmitSm(Exchange exchange) throws UnsupportedEncodingException {
-        Message in = exchange.getIn();
-        String body = exchange.getIn().getBody(String.class);
+    public SmppCommand createSmppCommand(SMPPSession session, Exchange exchange) {
+        SmppCommandType commandType = SmppCommandType.fromExchange(exchange);
+        SmppCommand command = commandType.createCommand(session, configuration);
         
-        SubmitSm submitSm = new SubmitSm();
-        
-        if (body != null) {
-            byte[] shortMessage = body.getBytes(configuration.getEncoding());
-            
-            if (shortMessage.length < 255) {
-                submitSm.setShortMessage(shortMessage);
-                // To avoid the NPE error
-                submitSm.setOptionalParametes(new OptionalParameter[]{});
-            } else {
-                submitSm.setShortMessage(new byte[0]);
-                OptionalParameter messagePayloadTLV = OptionalParameters.deserialize(OptionalParameter.Tag.MESSAGE_PAYLOAD.code(), shortMessage);
-
-                submitSm.setOptionalParametes(messagePayloadTLV);
-            }
-        }
-
-        if (in.getHeaders().containsKey(DEST_ADDR)) {
-            submitSm.setDestAddress(in.getHeader(DEST_ADDR, String.class));
-        } else {
-            submitSm.setDestAddress(configuration.getDestAddr());
-        }
-
-        if (in.getHeaders().containsKey(DEST_ADDR_TON)) {
-            submitSm.setDestAddrTon(in.getHeader(DEST_ADDR_TON, Byte.class));
-        } else {
-            submitSm.setDestAddrTon(configuration.getDestAddrTon());
-        }
-
-        if (in.getHeaders().containsKey(DEST_ADDR_NPI)) {
-            submitSm.setDestAddrNpi(in.getHeader(DEST_ADDR_NPI, Byte.class));
-        } else {
-            submitSm.setDestAddrNpi(configuration.getDestAddrNpi());
-        }
-
-        if (in.getHeaders().containsKey(SOURCE_ADDR)) {
-            submitSm.setSourceAddr(in.getHeader(SOURCE_ADDR, String.class));
-        } else {
-            submitSm.setSourceAddr(configuration.getSourceAddr());
-        }
-
-        if (in.getHeaders().containsKey(SOURCE_ADDR_TON)) {
-            submitSm.setSourceAddrTon(in.getHeader(SOURCE_ADDR_TON, Byte.class));
-        } else {
-            submitSm.setSourceAddrTon(configuration.getSourceAddrTon());
-        }
-
-        if (in.getHeaders().containsKey(SOURCE_ADDR_NPI)) {
-            submitSm.setSourceAddrNpi(in.getHeader(SOURCE_ADDR_NPI, Byte.class));
-        } else {
-            submitSm.setSourceAddrNpi(configuration.getSourceAddrNpi());
-        }
-
-        if (in.getHeaders().containsKey(SERVICE_TYPE)) {
-            submitSm.setServiceType(in.getHeader(SERVICE_TYPE, String.class));
-        } else {
-            submitSm.setServiceType(configuration.getServiceType());
-        }
-
-        if (in.getHeaders().containsKey(REGISTERED_DELIVERY)) {
-            submitSm.setRegisteredDelivery(in.getHeader(REGISTERED_DELIVERY, Byte.class));
-        } else {
-            submitSm.setRegisteredDelivery(configuration.getRegisteredDelivery());
-        }
-
-        if (in.getHeaders().containsKey(PROTOCOL_ID)) {
-            submitSm.setProtocolId(in.getHeader(PROTOCOL_ID, Byte.class));
-        } else {
-            submitSm.setProtocolId(configuration.getProtocolId());
-        }
-
-        if (in.getHeaders().containsKey(PRIORITY_FLAG)) {
-            submitSm.setPriorityFlag(in.getHeader(PRIORITY_FLAG, Byte.class));
-        } else {
-            submitSm.setPriorityFlag(configuration.getPriorityFlag());
-        }
-
-        if (in.getHeaders().containsKey(SCHEDULE_DELIVERY_TIME)) {
-            submitSm.setScheduleDeliveryTime(timeFormatter.format(in.getHeader(SCHEDULE_DELIVERY_TIME, Date.class)));
-        } 
-
-        if (in.getHeaders().containsKey(VALIDITY_PERIOD)) {
-            submitSm.setValidityPeriod(timeFormatter.format(in.getHeader(VALIDITY_PERIOD, Date.class)));
-        }
-
-        if (in.getHeaders().containsKey(REPLACE_IF_PRESENT_FLAG)) {
-            submitSm.setReplaceIfPresent(in.getHeader(REPLACE_IF_PRESENT_FLAG, Byte.class));
-        } else {
-            submitSm.setReplaceIfPresent(configuration.getReplaceIfPresentFlag());
-        }
-        
-        if (in.getHeaders().containsKey(DATA_CODING)) {
-            submitSm.setDataCoding(in.getHeader(DATA_CODING, Byte.class));
-        } else {
-            submitSm.setDataCoding(configuration.getDataCoding());
-        }
-
-        return submitSm;
+        return command;
     }
 
     /**
@@ -199,16 +67,16 @@ public class SmppBinding {
     public SmppMessage createSmppMessage(AlertNotification alertNotification) {
         SmppMessage smppMessage = new SmppMessage(alertNotification, configuration);
 
-        smppMessage.setHeader(MESSAGE_TYPE, SmppMessageType.AlertNotification.toString());
-        smppMessage.setHeader(SEQUENCE_NUMBER, alertNotification.getSequenceNumber());
-        smppMessage.setHeader(COMMAND_ID, alertNotification.getCommandId());
-        smppMessage.setHeader(COMMAND_STATUS, alertNotification.getCommandStatus());
-        smppMessage.setHeader(SOURCE_ADDR, alertNotification.getSourceAddr());
-        smppMessage.setHeader(SOURCE_ADDR_NPI, alertNotification.getSourceAddrNpi());
-        smppMessage.setHeader(SOURCE_ADDR_TON, alertNotification.getSourceAddrTon());
-        smppMessage.setHeader(ESME_ADDR, alertNotification.getEsmeAddr());
-        smppMessage.setHeader(ESME_ADDR_NPI, alertNotification.getEsmeAddrNpi());
-        smppMessage.setHeader(ESME_ADDR_TON, alertNotification.getEsmeAddrTon());
+        smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.AlertNotification.toString());
+        smppMessage.setHeader(SmppConstants.SEQUENCE_NUMBER, alertNotification.getSequenceNumber());
+        smppMessage.setHeader(SmppConstants.COMMAND_ID, alertNotification.getCommandId());
+        smppMessage.setHeader(SmppConstants.COMMAND_STATUS, alertNotification.getCommandStatus());
+        smppMessage.setHeader(SmppConstants.SOURCE_ADDR, alertNotification.getSourceAddr());
+        smppMessage.setHeader(SmppConstants.SOURCE_ADDR_NPI, alertNotification.getSourceAddrNpi());
+        smppMessage.setHeader(SmppConstants.SOURCE_ADDR_TON, alertNotification.getSourceAddrTon());
+        smppMessage.setHeader(SmppConstants.ESME_ADDR, alertNotification.getEsmeAddr());
+        smppMessage.setHeader(SmppConstants.ESME_ADDR_NPI, alertNotification.getEsmeAddrNpi());
+        smppMessage.setHeader(SmppConstants.ESME_ADDR_TON, alertNotification.getEsmeAddrTon());
 
         return smppMessage;
     }
@@ -220,21 +88,21 @@ public class SmppBinding {
         SmppMessage smppMessage = new SmppMessage(deliverSm, configuration);
 
         if (deliverSm.isSmscDeliveryReceipt()) {
-            smppMessage.setHeader(MESSAGE_TYPE, SmppMessageType.DeliveryReceipt.toString());
+            smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DeliveryReceipt.toString());
             DeliveryReceipt smscDeliveryReceipt = deliverSm.getShortMessageAsDeliveryReceipt();
             smppMessage.setBody(smscDeliveryReceipt.getText());
 
-            smppMessage.setHeader(ID, smscDeliveryReceipt.getId());
-            smppMessage.setHeader(DELIVERED, smscDeliveryReceipt.getDelivered());
-            smppMessage.setHeader(DONE_DATE, smscDeliveryReceipt.getDoneDate());
+            smppMessage.setHeader(SmppConstants.ID, smscDeliveryReceipt.getId());
+            smppMessage.setHeader(SmppConstants.DELIVERED, smscDeliveryReceipt.getDelivered());
+            smppMessage.setHeader(SmppConstants.DONE_DATE, smscDeliveryReceipt.getDoneDate());
             if (!"000".equals(smscDeliveryReceipt.getError())) {
-                smppMessage.setHeader(ERROR, smscDeliveryReceipt.getError());
+                smppMessage.setHeader(SmppConstants.ERROR, smscDeliveryReceipt.getError());
             }
-            smppMessage.setHeader(SUBMIT_DATE, smscDeliveryReceipt.getSubmitDate());
-            smppMessage.setHeader(SUBMITTED, smscDeliveryReceipt.getSubmitted());
-            smppMessage.setHeader(FINAL_STATUS, smscDeliveryReceipt.getFinalStatus());
+            smppMessage.setHeader(SmppConstants.SUBMIT_DATE, smscDeliveryReceipt.getSubmitDate());
+            smppMessage.setHeader(SmppConstants.SUBMITTED, smscDeliveryReceipt.getSubmitted());
+            smppMessage.setHeader(SmppConstants.FINAL_STATUS, smscDeliveryReceipt.getFinalStatus());
         } else {
-            smppMessage.setHeader(MESSAGE_TYPE, SmppMessageType.DeliverSm.toString());
+            smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DeliverSm.toString());
             if (deliverSm.getShortMessage() != null) {
                 smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(),
                         configuration.getEncoding())));
@@ -249,13 +117,13 @@ public class SmppBinding {
                 }
             }
 
-            smppMessage.setHeader(SEQUENCE_NUMBER, deliverSm.getSequenceNumber());
-            smppMessage.setHeader(COMMAND_ID, deliverSm.getCommandId());
-            smppMessage.setHeader(SOURCE_ADDR, deliverSm.getSourceAddr());
-            smppMessage.setHeader(DEST_ADDR, deliverSm.getDestAddress());
-            smppMessage.setHeader(SCHEDULE_DELIVERY_TIME, deliverSm.getScheduleDeliveryTime());
-            smppMessage.setHeader(VALIDITY_PERIOD, deliverSm.getValidityPeriod());
-            smppMessage.setHeader(SERVICE_TYPE, deliverSm.getServiceType());
+            smppMessage.setHeader(SmppConstants.SEQUENCE_NUMBER, deliverSm.getSequenceNumber());
+            smppMessage.setHeader(SmppConstants.COMMAND_ID, deliverSm.getCommandId());
+            smppMessage.setHeader(SmppConstants.SOURCE_ADDR, deliverSm.getSourceAddr());
+            smppMessage.setHeader(SmppConstants.DEST_ADDR, deliverSm.getDestAddress());
+            smppMessage.setHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, deliverSm.getScheduleDeliveryTime());
+            smppMessage.setHeader(SmppConstants.VALIDITY_PERIOD, deliverSm.getValidityPeriod());
+            smppMessage.setHeader(SmppConstants.SERVICE_TYPE, deliverSm.getServiceType());
         }
 
         return smppMessage;
@@ -264,20 +132,20 @@ public class SmppBinding {
     public SmppMessage createSmppMessage(DataSm dataSm, String smppMessageId) {
         SmppMessage smppMessage = new SmppMessage(dataSm, configuration);
 
-        smppMessage.setHeader(MESSAGE_TYPE, SmppMessageType.DataSm.toString());
-        smppMessage.setHeader(ID, smppMessageId);
-        smppMessage.setHeader(SEQUENCE_NUMBER, dataSm.getSequenceNumber());
-        smppMessage.setHeader(COMMAND_ID, dataSm.getCommandId());
-        smppMessage.setHeader(COMMAND_STATUS, dataSm.getCommandStatus());
-        smppMessage.setHeader(SOURCE_ADDR, dataSm.getSourceAddr());
-        smppMessage.setHeader(SOURCE_ADDR_NPI, dataSm.getSourceAddrNpi());
-        smppMessage.setHeader(SOURCE_ADDR_TON, dataSm.getSourceAddrTon());
-        smppMessage.setHeader(DEST_ADDR, dataSm.getDestAddress());
-        smppMessage.setHeader(DEST_ADDR_NPI, dataSm.getDestAddrNpi());
-        smppMessage.setHeader(DEST_ADDR_TON, dataSm.getDestAddrTon());
-        smppMessage.setHeader(SERVICE_TYPE, dataSm.getServiceType());
-        smppMessage.setHeader(REGISTERED_DELIVERY, dataSm.getRegisteredDelivery());
-        smppMessage.setHeader(DATA_CODING, dataSm.getDataCoding());
+        smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DataSm.toString());
+        smppMessage.setHeader(SmppConstants.ID, smppMessageId);
+        smppMessage.setHeader(SmppConstants.SEQUENCE_NUMBER, dataSm.getSequenceNumber());
+        smppMessage.setHeader(SmppConstants.COMMAND_ID, dataSm.getCommandId());
+        smppMessage.setHeader(SmppConstants.COMMAND_STATUS, dataSm.getCommandStatus());
+        smppMessage.setHeader(SmppConstants.SOURCE_ADDR, dataSm.getSourceAddr());
+        smppMessage.setHeader(SmppConstants.SOURCE_ADDR_NPI, dataSm.getSourceAddrNpi());
+        smppMessage.setHeader(SmppConstants.SOURCE_ADDR_TON, dataSm.getSourceAddrTon());
+        smppMessage.setHeader(SmppConstants.DEST_ADDR, dataSm.getDestAddress());
+        smppMessage.setHeader(SmppConstants.DEST_ADDR_NPI, dataSm.getDestAddrNpi());
+        smppMessage.setHeader(SmppConstants.DEST_ADDR_TON, dataSm.getDestAddrTon());
+        smppMessage.setHeader(SmppConstants.SERVICE_TYPE, dataSm.getServiceType());
+        smppMessage.setHeader(SmppConstants.REGISTERED_DELIVERY, dataSm.getRegisteredDelivery());
+        smppMessage.setHeader(SmppConstants.DATA_CODING, dataSm.getDataCoding());
 
         return smppMessage;
     }

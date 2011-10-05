@@ -19,7 +19,9 @@ package org.apache.camel.component.smpp;
 import java.net.URI;
 
 import org.apache.camel.RuntimeCamelException;
+import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
 
@@ -35,12 +37,12 @@ public class SmppConfiguration implements Cloneable {
     private String systemId = "smppclient";
     private String password = "password";
     private String systemType = "cp";
-    private byte dataCoding = (byte) 0;
+    // TODO: document deleting of dataCoding
+    private byte alphabet = Alphabet.ALPHA_DEFAULT.value();
     private String encoding = "ISO-8859-1";
     private Integer enquireLinkTimer = 5000;
     private Integer transactionTimer = 10000;
-    private byte registeredDelivery = SMSCDeliveryReceipt.SUCCESS_FAILURE
-            .value();
+    private byte registeredDelivery = SMSCDeliveryReceipt.SUCCESS_FAILURE.value();
     private String serviceType = "CMT";
     private String sourceAddr = "1616";
     private String destAddr = "1717";
@@ -50,7 +52,7 @@ public class SmppConfiguration implements Cloneable {
     private byte destAddrNpi = NumberingPlanIndicator.UNKNOWN.value();
     private byte protocolId = (byte) 0;
     private byte priorityFlag = (byte) 1;
-    private byte replaceIfPresentFlag = (byte) 0;
+    private byte replaceIfPresentFlag = ReplaceIfPresentFlag.DEFAULT.value();
     private byte typeOfNumber = TypeOfNumber.UNKNOWN.value();
     private byte numberingPlanIndicator = NumberingPlanIndicator.UNKNOWN.value();
     private boolean usingSSL;
@@ -108,12 +110,12 @@ public class SmppConfiguration implements Cloneable {
         return password;
     }
     
-    public byte getDataCoding() {
-        return dataCoding;
+    public byte getAlphabet() {
+        return alphabet;
     }
 
-    public void setDataCoding(byte dataCoding) {
-        this.dataCoding = dataCoding;
+    public void setAlphabet(byte alphabet) {
+        this.alphabet = alphabet;
     }
     
     public String getEncoding() {
@@ -297,7 +299,7 @@ public class SmppConfiguration implements Cloneable {
             + ", port=" + port 
             + ", systemId=" + systemId 
             + ", systemType=" + systemType
-            + ", dataCoding=" + dataCoding
+            + ", alphabet=" + alphabet
             + ", encoding=" + encoding
             + ", transactionTimer=" + transactionTimer
             + ", registeredDelivery=" + registeredDelivery

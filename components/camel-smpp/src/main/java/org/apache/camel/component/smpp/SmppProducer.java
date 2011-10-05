@@ -24,14 +24,8 @@ import org.apache.camel.impl.DefaultProducer;
 import org.jsmpp.DefaultPDUReader;
 import org.jsmpp.DefaultPDUSender;
 import org.jsmpp.SynchronizedPDUSender;
-import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.BindType;
-import org.jsmpp.bean.ESMClass;
-import org.jsmpp.bean.GeneralDataCoding;
-import org.jsmpp.bean.MessageClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
-import org.jsmpp.bean.RegisteredDelivery;
-import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.extra.SessionState;
 import org.jsmpp.session.BindParameter;
@@ -135,48 +129,13 @@ public class SmppProducer extends DefaultProducer {
             }
         }
         
-        LOG.debug("Sending a short message for exchange id '{}'...", exchange.getExchangeId());
-        
         // only possible by trying to reconnect 
         if (this.session == null) {
             throw new IOException("Lost connection to " + getEndpoint().getConnectionString() + " and yet not reconnected");
         }
-
-        SubmitSm submitSm = getEndpoint().getBinding().createSubmitSm(exchange);
-        String messageId = session.submitShortMessage(
-                submitSm.getServiceType(), 
-                TypeOfNumber.valueOf(submitSm.getSourceAddrTon()),
-                NumberingPlanIndicator.valueOf(submitSm.getSourceAddrNpi()),
-                submitSm.getSourceAddr(),
-                TypeOfNumber.valueOf(submitSm.getDestAddrTon()),
-                NumberingPlanIndicator.valueOf(submitSm.getDestAddrNpi()),
-                submitSm.getDestAddress(),
-                new ESMClass(),
-                submitSm.getProtocolId(),
-                submitSm.getPriorityFlag(),
-                submitSm.getScheduleDeliveryTime(),
-                submitSm.getValidityPeriod(),
-                new RegisteredDelivery(submitSm.getRegisteredDelivery()),
-                submitSm.getReplaceIfPresent(),
-                new GeneralDataCoding(
-                        false,
-                        true,
-                        MessageClass.CLASS1,
-                        Alphabet.valueOf(submitSm.getDataCoding())),
-                (byte) 0,
-                submitSm.getShortMessage(),
-                submitSm.getOptionalParametes());
-
-        LOG.debug("Sent a short message for exchange id '{}' and received message id '{}'",
-                exchange.getExchangeId(), messageId);
-
-        if (exchange.getPattern().isOutCapable()) {
-            LOG.debug("Exchange is out capable, setting headers on out exchange...");
-            exchange.getOut().setHeader(SmppBinding.ID, messageId);
-        } else {
-            LOG.debug("Exchange is not out capable, setting headers on in exchange...");
-            exchange.getIn().setHeader(SmppBinding.ID, messageId);
-        }
+        
+        SmppCommand command = getEndpoint().getBinding().createSmppCommand(session, exchange);
+        command.execute(exchange);
     }
 
     @Override
