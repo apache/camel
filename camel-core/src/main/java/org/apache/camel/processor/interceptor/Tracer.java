@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -53,11 +54,12 @@ public class Tracer implements InterceptStrategy, Service {
     private boolean useJpa;
     private CamelLogProcessor logger;
     private TraceInterceptorFactory traceInterceptorFactory = new DefaultTraceInterceptorFactory();
-    private TraceEventHandler traceHandler;
+    private List<TraceEventHandler> traceHandlers;
     private String jpaTraceEventMessageClassName = JPA_TRACE_EVENT_MESSAGE;
     
     public Tracer() {
-        traceHandler = new DefaultTraceEventHandler(this);
+        traceHandlers = new ArrayList<TraceEventHandler>();
+        traceHandlers.add(new DefaultTraceEventHandler(this));
     }
 
     /**
@@ -278,8 +280,21 @@ public class Tracer implements InterceptStrategy, Service {
         this.traceInterceptorFactory = traceInterceptorFactory;
     }
 
+    /**
+     * 
+     * @return the first trace event handler
+     */
+    @Deprecated
     public TraceEventHandler getTraceHandler() {
-        return traceHandler;
+        return traceHandlers.get(0);
+    }
+    
+    /**
+     * 
+     * @return list of tracehandlers
+     */
+    public List<TraceEventHandler> getTraceHandlers() {
+        return traceHandlers;
     }
 
     /**
@@ -291,8 +306,25 @@ public class Tracer implements InterceptStrategy, Service {
      * The TraceHandler should only be set before any routes are created, hence this
      * method is not thread safe.
      */
+    @Deprecated
     public void setTraceHandler(TraceEventHandler traceHandler) {
-        this.traceHandler = traceHandler;
+        this.traceHandlers.add(0, traceHandler);
+    }
+    
+    /**
+     * Add the given tracehandler
+     * @param traceHandler
+     */
+    public void addTraceHandler(TraceEventHandler traceHandler) {
+        this.traceHandlers.add(traceHandler);
+    }
+    
+    /**
+     * Remove the given tracehandler
+     * @param traceHandler
+     */
+    public void removeTraceHandler(TraceEventHandler traceHandler) {
+        this.traceHandlers.add(traceHandler);
     }
 
     public String getJpaTraceEventMessageClassName() {

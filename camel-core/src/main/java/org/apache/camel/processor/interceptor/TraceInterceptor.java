@@ -58,7 +58,6 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     private TraceFormatter formatter;
 
     private RouteContext routeContext;
-    private TraceEventHandler traceHandler;
 
     public TraceInterceptor(ProcessorDefinition<?> node, Processor target, TraceFormatter formatter, Tracer tracer) {
         super(target);
@@ -69,7 +68,6 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
         if (tracer.getFormatter() != null) {
             this.formatter = tracer.getFormatter();
         }
-        this.traceHandler = tracer.getTraceHandler();
     }
 
     @Override
@@ -277,38 +275,27 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
         return tracer;
     }
 
-    public TraceEventHandler getTraceHandler() {
-        return traceHandler;
-    }
-
-    /*
-     * Note that this should only be set before the route has been started
-     */
-    public void setTraceHandler(TraceEventHandler traceHandler) {
-        this.traceHandler = traceHandler;
-    }
-
     protected void logExchange(Exchange exchange) {
         // process the exchange that formats and logs it
         logger.process(exchange);
     }
 
     protected void traceExchange(Exchange exchange) throws Exception {
-        if (traceHandler != null) {
+        for (TraceEventHandler traceHandler : tracer.getTraceHandlers()) {
             traceHandler.traceExchange(node, processor, this, exchange);
         }
     }
 
     protected Object traceExchangeIn(Exchange exchange) throws Exception {
-        if (traceHandler != null) {
-            return traceHandler.traceExchangeIn(node, processor, this, exchange);
-        } else {
-            return null;
+        Object result = null;
+        for (TraceEventHandler traceHandler : tracer.getTraceHandlers()) {
+            result = traceHandler.traceExchangeIn(node, processor, this, exchange);
         }
+        return result;
     }
 
     protected void traceExchangeOut(Exchange exchange, Object traceState) throws Exception {
-        if (traceHandler != null) {
+        for (TraceEventHandler traceHandler : tracer.getTraceHandlers()) {
             traceHandler.traceExchangeOut(node, processor, this, exchange, traceState);
         }
     }
@@ -360,12 +347,12 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ServiceHelper.startService(traceHandler);
+        ServiceHelper.startService(tracer.getTraceHandlers());
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ServiceHelper.stopService(traceHandler);
+        ServiceHelper.stopService(tracer.getTraceHandlers());
     }
 }

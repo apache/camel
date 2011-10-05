@@ -24,8 +24,6 @@ import org.apache.camel.api.management.ManagedNotifications;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.NotificationSender;
 import org.apache.camel.api.management.NotificationSenderAware;
-import org.apache.camel.processor.interceptor.DispatchingTraceEventHandler;
-import org.apache.camel.processor.interceptor.TraceEventHandler;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
@@ -45,16 +43,8 @@ public class ManagedTracer implements NotificationSenderAware {
     public ManagedTracer(CamelContext camelContext, Tracer tracer) {
         this.camelContext = camelContext;
         this.tracer = tracer;
-        TraceEventHandler oldHandler = tracer.getTraceHandler();
         jmxTraceHandler = new JMXNotificationTraceEventHandler();
-        if (oldHandler != null) {
-            DispatchingTraceEventHandler teh = new DispatchingTraceEventHandler();
-            teh.addHandler(oldHandler);
-            teh.addHandler(jmxTraceHandler);
-            tracer.setTraceHandler(teh);
-        } else {
-            tracer.setTraceHandler(jmxTraceHandler);
-        }
+        tracer.addTraceHandler(jmxTraceHandler);
     }
 
     public void init(ManagementStrategy strategy) {
