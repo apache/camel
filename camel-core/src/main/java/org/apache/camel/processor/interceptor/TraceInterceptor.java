@@ -16,17 +16,10 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.impl.AggregateRouteNode;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultRouteNode;
 import org.apache.camel.impl.DoCatchRouteNode;
 import org.apache.camel.impl.DoFinallyRouteNode;
@@ -46,8 +39,6 @@ import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,16 +52,15 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     private static final transient Logger LOG = LoggerFactory.getLogger(TraceInterceptor.class);
 
     private CamelLogProcessor logger;
-    private Producer traceEventProducer;
-    private final ProcessorDefinition node;
+
+    private final ProcessorDefinition<?> node;
     private final Tracer tracer;
     private TraceFormatter formatter;
-    private Class<?> jpaTraceEventMessageClass;
+
     private RouteContext routeContext;
     private TraceEventHandler traceHandler;
-    private String jpaTraceEventMessageClassName;
 
-    public TraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
+    public TraceInterceptor(ProcessorDefinition<?> node, Processor target, TraceFormatter formatter, Tracer tracer) {
         super(target);
         this.tracer = tracer;
         this.node = node;
@@ -80,7 +70,6 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
             this.formatter = tracer.getFormatter();
         }
         this.traceHandler = tracer.getTraceHandler();
-        this.jpaTraceEventMessageClassName = tracer.getJpaTraceEventMessageClassName();
     }
 
     @Override
@@ -307,64 +296,6 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
     protected void traceExchange(Exchange exchange) throws Exception {
         if (traceHandler != null) {
             traceHandler.traceExchange(node, processor, this, exchange);
-        } else if (tracer.getDestination() != null || tracer.getDestinationUri() != null) {
-
-            // create event exchange and add event information
-            Date timestamp = new Date();
-            Exchange event = new DefaultExchange(exchange);
-            event.setProperty(Exchange.TRACE_EVENT_NODE_ID, node.getId());
-            event.setProperty(Exchange.TRACE_EVENT_TIMESTAMP, timestamp);
-            // keep a reference to the original exchange in case its needed
-            event.setProperty(Exchange.TRACE_EVENT_EXCHANGE, exchange);
-
-            // create event message to sent as in body containing event information such as
-            // from node, to node, etc.
-            TraceEventMessage msg = new DefaultTraceEventMessage(timestamp, node, exchange);
-
-            // should we use ordinary or jpa objects
-            if (tracer.isUseJpa()) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Using class: " + this.jpaTraceEventMessageClassName + " for tracing event messages");
-                }
-
-                // load the jpa event message class
-                loadJpaTraceEventMessageClass(exchange);
-                // create a new instance of the event message class
-                Object jpa = ObjectHelper.newInstance(jpaTraceEventMessageClass);
-
-                // copy options from event to jpa
-                Map<String, Object> options = new HashMap<String, Object>();
-                IntrospectionSupport.getProperties(msg, options, null);
-                IntrospectionSupport.setProperties(jpa, options);
-                // and set the timestamp as its not a String type
-                IntrospectionSupport.setProperty(jpa, "timestamp", msg.getTimestamp());
-
-                event.getIn().setBody(jpa);
-            } else {
-                event.getIn().setBody(msg);
-            }
-
-            // marker property to indicate its a tracing event being routed in case
-            // new Exchange instances is created during trace routing so we can check
-            // for this marker when interceptor also kick in during routing of trace events
-            event.setProperty(Exchange.TRACE_EVENT, Boolean.TRUE);
-            try {
-                // process the trace route
-                getTraceEventProducer(exchange).process(event);
-            } catch (Exception e) {
-                // log and ignore this as the original Exchange should be allowed to continue
-                LOG.error("Error processing trace event (original Exchange will continue): " + event, e);
-            }
-        }
-    }
-
-    private synchronized void loadJpaTraceEventMessageClass(Exchange exchange) {
-        if (jpaTraceEventMessageClass == null) {
-            jpaTraceEventMessageClass = exchange.getContext().getClassResolver().resolveClass(jpaTraceEventMessageClassName);
-            if (jpaTraceEventMessageClass == null) {
-                throw new IllegalArgumentException("Cannot find class: " + jpaTraceEventMessageClassName
-                        + ". Make sure camel-jpa.jar is in the classpath.");
-            }
         }
     }
 
@@ -372,16 +303,13 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
         if (traceHandler != null) {
             return traceHandler.traceExchangeIn(node, processor, this, exchange);
         } else {
-            traceExchange(exchange);
+            return null;
         }
-        return null;
     }
 
     protected void traceExchangeOut(Exchange exchange, Object traceState) throws Exception {
         if (traceHandler != null) {
             traceHandler.traceExchangeOut(node, processor, this, exchange, traceState);
-        } else {
-            traceExchange(exchange);
         }
     }
 
@@ -429,27 +357,15 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
         return true;
     }
 
-    private synchronized Producer getTraceEventProducer(Exchange exchange) throws Exception {
-        if (traceEventProducer == null) {
-            // create producer when we have access the the camel context (we dont in doStart)
-            Endpoint endpoint = tracer.getDestination() != null ? tracer.getDestination() : exchange.getContext().getEndpoint(tracer.getDestinationUri());
-            traceEventProducer = endpoint.createProducer();
-            ServiceHelper.startService(traceEventProducer);
-        }
-        return traceEventProducer;
-    }
-
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        traceEventProducer = null;
+        ServiceHelper.startService(traceHandler);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (traceEventProducer != null) {
-            ServiceHelper.stopService(traceEventProducer);
-        }
+        ServiceHelper.stopService(traceHandler);
     }
 }

@@ -19,7 +19,13 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedNotification;
+import org.apache.camel.api.management.ManagedNotifications;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.NotificationSender;
+import org.apache.camel.api.management.NotificationSenderAware;
+import org.apache.camel.processor.interceptor.DispatchingTraceEventHandler;
+import org.apache.camel.processor.interceptor.TraceEventHandler;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
@@ -28,13 +34,27 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 @ManagedResource(description = "Managed Tracer")
-public class ManagedTracer {
+@ManagedNotifications(@ManagedNotification(name = "javax.management.Notification", 
+    description = "Fine grained trace events", 
+    notificationTypes = {"TraceNotification"}))
+public class ManagedTracer implements NotificationSenderAware {
     private final CamelContext camelContext;
     private final Tracer tracer;
+    private JMXNotificationTraceEventHandler jmxTraceHandler;
 
     public ManagedTracer(CamelContext camelContext, Tracer tracer) {
         this.camelContext = camelContext;
         this.tracer = tracer;
+        TraceEventHandler oldHandler = tracer.getTraceHandler();
+        jmxTraceHandler = new JMXNotificationTraceEventHandler();
+        if (oldHandler != null) {
+            DispatchingTraceEventHandler teh = new DispatchingTraceEventHandler();
+            teh.addHandler(oldHandler);
+            teh.addHandler(jmxTraceHandler);
+            tracer.setTraceHandler(teh);
+        } else {
+            tracer.setTraceHandler(jmxTraceHandler);
+        }
     }
 
     public void init(ManagementStrategy strategy) {
@@ -408,6 +428,11 @@ public class ManagedTracer {
             return;
         }
         tracer.getDefaultTraceFormatter().setMaxChars(maxChars);
+    }
+
+    @Override
+    public void setNotificationSender(NotificationSender sender) {
+        jmxTraceHandler.setNotificationSender(sender);
     }
 
 }

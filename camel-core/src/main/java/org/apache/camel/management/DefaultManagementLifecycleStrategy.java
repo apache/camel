@@ -101,6 +101,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     private CamelContext camelContext;
     private volatile boolean initialized;
     private final Set<String> knowRouteIds = new HashSet<String>();
+    private Map<Object, ManagedTracer> managedTracers = new HashMap<Object, ManagedTracer>();
 
     public DefaultManagementLifecycleStrategy() {
     }
@@ -395,9 +396,14 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             return ((ManagementAware) service).getManagedObject(service);
         } else if (service instanceof Tracer) {
             // special for tracer
-            ManagedTracer mt = new ManagedTracer(context, (Tracer) service);
-            mt.init(getManagementStrategy());
-            return mt;
+            Object mo = this.managedTracers.get(service);
+            if (mo == null) {
+                ManagedTracer mt = new ManagedTracer(context, (Tracer) service);
+                mt.init(getManagementStrategy());
+                this.managedTracers.put(service, mt);
+                mo = mt;
+            }
+            return mo;
         } else if (service instanceof EventNotifier) {
             answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
         } else if (service instanceof Producer) {

@@ -55,6 +55,10 @@ public class Tracer implements InterceptStrategy, Service {
     private TraceInterceptorFactory traceInterceptorFactory = new DefaultTraceInterceptorFactory();
     private TraceEventHandler traceHandler;
     private String jpaTraceEventMessageClassName = JPA_TRACE_EVENT_MESSAGE;
+    
+    public Tracer() {
+        traceHandler = new DefaultTraceEventHandler(this);
+    }
 
     /**
      * Creates a new tracer.
