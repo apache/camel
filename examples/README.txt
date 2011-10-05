@@ -10,9 +10,6 @@ View the individual example READMEs for details.
 They are described in detail here
   http://camel.apache.org/examples.html
 
-For details of how to run these examples see
-  http://camel.apache.org/running-examples.html
-
 Before you start we recommend you install a recent distribution of
 Maven, which we use to run our examples
   http://maven.apache.org/
