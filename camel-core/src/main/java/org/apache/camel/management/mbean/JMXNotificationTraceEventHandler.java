@@ -31,13 +31,17 @@ import org.apache.camel.api.management.NotificationSenderAware;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.TraceEventHandler;
 import org.apache.camel.processor.interceptor.TraceInterceptor;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.util.MessageHelper;
 
 public final class JMXNotificationTraceEventHandler implements TraceEventHandler, NotificationSenderAware {
+    private static final int MAX_MESSAGE_LENGTH = 60;
     private long num;
     private NotificationSender notificationSender;
+    private Tracer tracer;
 
-    public JMXNotificationTraceEventHandler() {
+    public JMXNotificationTraceEventHandler(Tracer tracer) {
+        this.tracer = tracer;
     }
 
     @SuppressWarnings("rawtypes")
@@ -51,13 +55,13 @@ public final class JMXNotificationTraceEventHandler implements TraceEventHandler
 
     @SuppressWarnings("rawtypes")
     public void traceExchange(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
-        if (notificationSender != null) {
-            String body = MessageHelper.extractBodyForLogging(exchange.getIn(), "", false, true, 10000);
+        if (notificationSender != null && tracer.isJmxTraceNotifications()) {
+            String body = MessageHelper.extractBodyForLogging(exchange.getIn(), "", false, true, tracer.getTraceBodySize());
             
             if (body == null) {
                 body = "";
             }
-            String message = body.substring(0, Math.min(body.length(), 60));
+            String message = body.substring(0, Math.min(body.length(), MAX_MESSAGE_LENGTH));
             Map tm = createTraceMessage(node, exchange, body);
 
             Notification notification = new Notification("TraceNotification", exchange.toString(), num++, System.currentTimeMillis(), message);

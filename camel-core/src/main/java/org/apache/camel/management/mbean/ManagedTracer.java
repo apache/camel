@@ -43,7 +43,7 @@ public class ManagedTracer implements NotificationSenderAware {
     public ManagedTracer(CamelContext camelContext, Tracer tracer) {
         this.camelContext = camelContext;
         this.tracer = tracer;
-        jmxTraceHandler = new JMXNotificationTraceEventHandler();
+        jmxTraceHandler = new JMXNotificationTraceEventHandler(tracer);
         tracer.addTraceHandler(jmxTraceHandler);
     }
 
@@ -418,6 +418,26 @@ public class ManagedTracer implements NotificationSenderAware {
             return;
         }
         tracer.getDefaultTraceFormatter().setMaxChars(maxChars);
+    }
+    
+    @ManagedAttribute(description = "Should trace events be sent as jmx notifications")
+    public boolean isJmxTraceNotifications() {
+        return this.tracer.isJmxTraceNotifications();
+    }
+
+    @ManagedAttribute
+    public void setJmxTraceNotifications(boolean jmxTraceNotifications) {
+        this.tracer.setJmxTraceNotifications(jmxTraceNotifications);
+    }
+
+    @ManagedAttribute(description = "Maximum size of a message body for trace notification")
+    public int getTraceBodySize() {
+        return this.tracer.getTraceBodySize();
+    }
+
+    @ManagedAttribute
+    public void setTraceBodySize(int traceBodySize) {
+        this.tracer.setTraceBodySize(traceBodySize);
     }
 
     @Override
