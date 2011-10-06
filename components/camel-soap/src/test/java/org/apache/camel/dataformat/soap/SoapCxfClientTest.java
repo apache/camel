@@ -32,10 +32,8 @@ import com.example.customerservice.SaveCustomer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
-import org.apache.camel.processor.interceptor.Tracer;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -60,7 +58,6 @@ public class SoapCxfClientTest extends RouteBuilder {
     }
 
     @Test
-    @Ignore
     public void testSuccess() throws NoSuchCustomerException {
         GetCustomersByName request = new GetCustomersByName();
         request.setName("test");
@@ -72,7 +69,6 @@ public class SoapCxfClientTest extends RouteBuilder {
     }
 
     @Test
-    @Ignore
     public void testRoundTripGetAllCustomers() throws Exception {
         GetAllCustomersResponse response = customerService.getAllCustomers();
         Assert.assertEquals(1, response.getReturn().size());
@@ -81,7 +77,6 @@ public class SoapCxfClientTest extends RouteBuilder {
     }
 
     @Test
-    @Ignore
     public void testRoundTripSaveCustomer() throws Exception {
         Customer testCustomer = new Customer();
         testCustomer.setName("testName");
@@ -93,7 +88,6 @@ public class SoapCxfClientTest extends RouteBuilder {
     }
 
     @Test
-    @Ignore
     public void testFault() {
         GetCustomersByName request = new GetCustomersByName();
         request.setName("none");
@@ -111,7 +105,6 @@ public class SoapCxfClientTest extends RouteBuilder {
         String jaxbPackage = GetCustomersByName.class.getPackage().getName();
         ElementNameStrategy elNameStrat = new ServiceInterfaceStrategy(CustomerService.class, false);
         SoapJaxbDataFormat soapDataFormat = new SoapJaxbDataFormat(jaxbPackage, elNameStrat);
-        getContext().addInterceptStrategy(new Tracer());
         getContext().setTracing(true);
         from("direct:cxfclient") //
                 .onException(Exception.class).handled(true).marshal(soapDataFormat).end() //
