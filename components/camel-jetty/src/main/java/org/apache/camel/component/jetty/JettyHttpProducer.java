@@ -98,8 +98,8 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         // set query parameters
         doSetQueryParameters(exchange, httpExchange);
 
-        // if we post then set data
-        if (HttpMethods.POST.equals(methodToUse)) {
+        // if we post or put then set data
+        if (HttpMethods.POST.equals(methodToUse) || HttpMethods.PUT.equals(methodToUse)) {
 
             String contentType = ExchangeHelper.getContentType(exchange);
             if (contentType != null) {
