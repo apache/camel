@@ -34,7 +34,6 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 /**
  *
  */
-@Ignore("Got NPE error when the CmPropertyPlaceholder init is called")
 @RunWith(JUnit4TestRunner.class)
 public class BlueprintPropertiesRouteTest extends OSGiBlueprintTestSupport {
 
@@ -74,6 +73,7 @@ public class BlueprintPropertiesRouteTest extends OSGiBlueprintTestSupport {
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", BlueprintPropertiesRouteTest.class.getResource("blueprint-17.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, BlueprintPropertiesRouteTest.class.getName())
+                        .set(Constants.BUNDLE_VERSION, "1.0.0")
                         .build()).noStart(),
 
                 // using the features to install the camel components

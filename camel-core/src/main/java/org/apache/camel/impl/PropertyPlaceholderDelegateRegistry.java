@@ -41,7 +41,11 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
 
     public Object lookup(String name) {
         try {
-            name = context.resolvePropertyPlaceholders(name);
+            // Must avoid attempting placeholder resolution when looking up
+            // the properties component or else we end up in an infinite loop.
+            if (!name.equals("properties")) {
+                name = context.resolvePropertyPlaceholders(name);
+            }
             return delegate.lookup(name);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -50,7 +54,11 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
 
     public <T> T lookup(String name, Class<T> type) {
         try {
-            name = context.resolvePropertyPlaceholders(name);
+            // Must avoid attempting placeholder resolution when looking up
+            // the properties component or else we end up in an infinite loop.
+            if (!name.equals("properties")) {
+                name = context.resolvePropertyPlaceholders(name);
+            }
             return delegate.lookup(name, type);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);

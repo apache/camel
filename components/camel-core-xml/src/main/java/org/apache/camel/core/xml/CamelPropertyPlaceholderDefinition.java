@@ -40,6 +40,21 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
 
     @XmlAttribute
     private String propertiesParserRef;
+    
+    @XmlAttribute
+    private String propertyPrefix;
+    
+    @XmlAttribute
+    private String propertySuffix;
+    
+    @XmlAttribute
+    private Boolean fallbackToUnaugmentedProperty;
+    
+    @XmlAttribute
+    private String prefixToken;
+    
+    @XmlAttribute
+    private String suffixToken;
 
     public String getLocation() {
         return location;
@@ -63,5 +78,45 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
 
     public void setPropertiesParserRef(String propertiesParserRef) {
         this.propertiesParserRef = propertiesParserRef;
+    }
+
+    public String getPropertyPrefix() {
+        return propertyPrefix;
+    }
+
+    public void setPropertyPrefix(String propertyPrefix) {
+        this.propertyPrefix = propertyPrefix;
+    }
+
+    public String getPropertySuffix() {
+        return propertySuffix;
+    }
+
+    public void setPropertySuffix(String propertySuffix) {
+        this.propertySuffix = propertySuffix;
+    }
+
+    public Boolean isFallbackToUnaugmentedProperty() {
+        return fallbackToUnaugmentedProperty;
+    }
+
+    public void setFallbackToUnaugmentedProperty(Boolean fallbackToUnaugmentedProperty) {
+        this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
+    }
+
+    public String getPrefixToken() {
+        return prefixToken;
+    }
+
+    public void setPrefixToken(String prefixToken) {
+        this.prefixToken = prefixToken;
+    }
+
+    public String getSuffixToken() {
+        return suffixToken;
+    }
+
+    public void setSuffixToken(String suffixToken) {
+        this.suffixToken = suffixToken;
     }
 }

@@ -958,32 +958,53 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // no language resolved
         return answer;
     }
+    
+    public String getPropertyPrefixToken() {
+        PropertiesComponent pc = getPropertiesComponent();
+        
+        if (pc != null) {
+            return pc.getPrefixToken();
+        } else {
+            return null;
+        }
+    }
+    
+    public String getPropertySuffixToken() {
+        PropertiesComponent pc = getPropertiesComponent();
+        
+        if (pc != null) {
+            return pc.getSuffixToken();
+        } else {
+            return null;
+        }
+    }
 
     public String resolvePropertyPlaceholders(String text) throws Exception {
-        // do not parse uris that are designated for the properties component as it will handle that itself
-        if (text != null && !text.startsWith("properties:") && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
-            // the uri contains property placeholders so lookup mandatory properties component and let it parse it
-            Component component = hasComponent("properties");
-            if (component == null) {
-                // then fallback to lookup the component
-                component = getRegistry().lookup("properties", Component.class);
-            }
-            if (component == null) {
+        // While it is more efficient to only do the lookup if we are sure we need the component,
+        // with custom tokens, we cannot know if the URI contains a property or not without having
+        // the component.  We also lose fail-fast behavior for the missing component with this change.
+        PropertiesComponent pc = getPropertiesComponent();
+        
+        // Do not parse uris that are designated for the properties component as it will handle that itself
+        if (text != null && !text.startsWith("properties:")) {
+            // No component, assume default tokens.
+            if (pc == null && text.contains(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
                 throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
                         + " in CamelContext to support property placeholders.");
+                
+            // Component available, use actual tokens
+            } else if (pc != null && text.contains(pc.getPrefixToken())) {
+                // the parser will throw exception if property key was not found
+                String answer = pc.parseUri(text);
+                log.debug("Resolved text: {} -> {}", text, answer);
+                return answer; 
             }
-            // force component to be created and registered as a component
-            PropertiesComponent pc = getComponent("properties", PropertiesComponent.class);
-            // the parser will throw exception if property key was not found
-            String answer = pc.parseUri(text);
-            log.debug("Resolved text: {} -> {}", text, answer);
-            return answer;
         }
 
         // return original text as is
         return text;
     }
-
+    
     // Properties
     // -----------------------------------------------------------------------
 
@@ -2065,6 +2086,27 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      */
     protected boolean shouldStartRoutes() {
         return isStarted() && !isStarting();
+    }
+    
+    /**
+     * Looks up the properties component if one may be resolved or has already been created.
+     * Returns {@code null} if one was not created or is not in the registry.
+     */
+    protected PropertiesComponent getPropertiesComponent() {
+        Component component = hasComponent("properties");
+        if (component == null) {
+            // then fallback to lookup the component
+            component = getRegistry().lookup("properties", Component.class);
+        }
+        
+        PropertiesComponent pc = null;
+        // Ensure that we don't create one if one is not really available.
+        if (component != null) {
+            // force component to be created and registered as a component
+            pc = getComponent("properties", PropertiesComponent.class);
+        }
+        
+        return pc;
     }
 
     public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {

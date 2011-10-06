@@ -26,26 +26,29 @@
 
         <propertyPlaceholder id="properties"
                              location="classpath:org/apache/camel/component/properties/cheese.properties"
+                             prefixToken="[["
+                             suffixToken="]]"
+                             propertyPrefix="cool."
                              xmlns="http://camel.apache.org/schema/spring"/>
 
         <route>
             <from uri="direct:start"/>
-            <to uri="properties:{{cool.end}}"/>
+            <to uri="properties:[[end]]"/>
         </route>
 
         <route>
             <from uri="direct:bar"/>
-            <to uri="properties:mock:{{cool.bar}}"/>
+            <to uri="properties:mock:[[bar]]"/>
         </route>
 
         <route>
             <from uri="direct:start2"/>
-            <to uri="{{cool.end}}"/>
+            <to uri="[[end]]"/>
         </route>
 
         <route>
             <from uri="direct:bar2"/>
-            <to uri="mock:{{cool.bar}}"/>
+            <to uri="mock:[[bar]]"/>
         </route>
     </camelContext>
 

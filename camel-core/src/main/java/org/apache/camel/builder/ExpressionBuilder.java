@@ -1512,7 +1512,7 @@ public final class ExpressionBuilder {
                                 .mandatoryConvertTo(PropertiesComponent.class, component);
                         // enclose key with {{ }} to force parsing
                         String[] paths = locations.split(",");
-                        return pc.parseUri(PropertiesComponent.PREFIX_TOKEN + key + PropertiesComponent.SUFFIX_TOKEN, paths);
+                        return pc.parseUri(pc.getPrefixToken() + key + pc.getSuffixToken(), paths);
                     } else {
                         // the properties component is mandatory if no locations provided
                         Component component = exchange.getContext().hasComponent("properties");
@@ -1523,7 +1523,7 @@ public final class ExpressionBuilder {
                         PropertiesComponent pc = exchange.getContext().getTypeConverter()
                                 .mandatoryConvertTo(PropertiesComponent.class, component);
                         // enclose key with {{ }} to force parsing
-                        return pc.parseUri(PropertiesComponent.PREFIX_TOKEN + key + PropertiesComponent.SUFFIX_TOKEN);
+                        return pc.parseUri(pc.getPrefixToken() + key + pc.getSuffixToken());
                     }
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);

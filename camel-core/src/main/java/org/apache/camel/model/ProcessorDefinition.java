@@ -471,11 +471,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                     if (value != null && value instanceof String) {
                         // value must be enclosed with placeholder tokens
                         String s = (String) value;
-                        if (!s.startsWith(PropertiesComponent.PREFIX_TOKEN)) {
-                            s = PropertiesComponent.PREFIX_TOKEN + s;
+                        String prefixToken = routeContext.getCamelContext().getPropertyPrefixToken();
+                        String suffixToken = routeContext.getCamelContext().getPropertySuffixToken();
+                        if (prefixToken == null) {
+                            throw new IllegalArgumentException("Property with name [" + local + "] uses property placeholders; however, no properties component is configured.");
                         }
-                        if (!s.endsWith(PropertiesComponent.SUFFIX_TOKEN)) {
-                            s = s + PropertiesComponent.SUFFIX_TOKEN;
+                        
+                        if (!s.startsWith(prefixToken)) {
+                            s = prefixToken + s;
+                        }
+                        if (!s.endsWith(suffixToken)) {
+                            s = s + suffixToken;
                         }
                         value = s;
                     }

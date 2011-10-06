@@ -411,6 +411,16 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                                                                              PropertiesParser.class);
                 pc.setPropertiesParser(parser);
             }
+            
+            pc.setPropertyPrefix(def.getPropertyPrefix());
+            pc.setPropertySuffix(def.getPropertySuffix());
+            
+            if (def.isFallbackToUnaugmentedProperty() != null) {
+                pc.setFallbackToUnaugmentedProperty(def.isFallbackToUnaugmentedProperty());
+            }
+            
+            pc.setPrefixToken(def.getPrefixToken());
+            pc.setSuffixToken(def.getSuffixToken());
 
             // register the properties component
             getContext().addComponent("properties", pc);

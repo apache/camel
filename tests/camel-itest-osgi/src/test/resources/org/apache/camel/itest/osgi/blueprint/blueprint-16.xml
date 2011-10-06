@@ -26,20 +26,22 @@
     <cm:property-placeholder id="myblueprint.placeholder" persistent-id="camel.blueprint">
         <!-- list some properties for this test -->
         <cm:default-properties>
-            <cm:property name="result" value="mock:result"/>
+            <cm:property name="prefix.result" value="mock:result"/>
         </cm:default-properties>
     </cm:property-placeholder>
 
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
         <!-- using Camel properties component and refer to the blueprint property placeholder by its id -->
-        <propertyPlaceholder id="properties" location="blueprint:myblueprint.placeholder"/>
+        <propertyPlaceholder id="properties" location="blueprint:myblueprint.placeholder"
+                             prefixToken="[[" suffixToken="]]"
+                             propertyPrefix="prefix."/>
 
         <!-- in the route we can use {{ }} placeholders which will lookup in blueprint -->
         <route>
             <from uri="direct:start"/>
             <to uri="mock:foo"/>
-            <to uri="{{result}}"/>
+            <to uri="[[result]]"/>
         </route>
 
     </camelContext>

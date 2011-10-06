@@ -619,6 +619,22 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws Exception is thrown if property placeholders was used and there was an error resolving them
      */
     String resolvePropertyPlaceholders(String text) throws Exception;
+    
+    /**
+     * Returns the configured property placeholder prefix token if and only if the context has
+     * property placeholder abilities, otherwise returns {@code null}.
+     * 
+     * @return the prefix token or {@code null}
+     */
+    String getPropertyPrefixToken();
+    
+    /**
+     * Returns the configured property placeholder suffix token if and only if the context has
+     * property placeholder abilities, otherwise returns {@code null}.
+     * 
+     * @return the suffix token or {@code null}
+     */
+    String getPropertySuffixToken();
 
     /**
      * Gets a readonly list with the names of the languages currently registered.
@@ -1037,5 +1053,4 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param useBreadcrumb <tt>true</tt> to enable breadcrumb, <tt>false</tt> to disable
      */
     void setUseBreadcrumb(Boolean useBreadcrumb);
-
 }
