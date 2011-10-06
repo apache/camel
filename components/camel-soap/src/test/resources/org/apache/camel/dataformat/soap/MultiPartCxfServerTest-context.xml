@@ -26,9 +26,7 @@
 		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-http.xml" />
-    <import resource="classpath:META-INF/cxf/cxf-extension-camel.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-camel.xml" />
 
 	<bean id="serviceImpl" class="org.apache.camel.dataformat.soap.MultiPartCustomerServiceImpl"/>
 	
