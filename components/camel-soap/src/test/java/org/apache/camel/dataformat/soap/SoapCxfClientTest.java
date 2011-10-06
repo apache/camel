@@ -72,6 +72,7 @@ public class SoapCxfClientTest extends RouteBuilder {
     }
 
     @Test
+    @Ignore
     public void testRoundTripGetAllCustomers() throws Exception {
         GetAllCustomersResponse response = customerService.getAllCustomers();
         Assert.assertEquals(1, response.getReturn().size());
@@ -80,6 +81,7 @@ public class SoapCxfClientTest extends RouteBuilder {
     }
 
     @Test
+    @Ignore
     public void testRoundTripSaveCustomer() throws Exception {
         Customer testCustomer = new Customer();
         testCustomer.setName("testName");
