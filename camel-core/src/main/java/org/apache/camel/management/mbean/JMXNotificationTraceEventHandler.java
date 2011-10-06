@@ -31,6 +31,7 @@ import org.apache.camel.api.management.NotificationSenderAware;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.interceptor.TraceEventHandler;
 import org.apache.camel.processor.interceptor.TraceInterceptor;
+import org.apache.camel.util.MessageHelper;
 
 public final class JMXNotificationTraceEventHandler implements TraceEventHandler, NotificationSenderAware {
     private long num;
@@ -51,7 +52,8 @@ public final class JMXNotificationTraceEventHandler implements TraceEventHandler
     @SuppressWarnings("rawtypes")
     public void traceExchange(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
         if (notificationSender != null) {
-            String body = exchange.getIn().getBody(String.class);
+            String body = MessageHelper.extractBodyForLogging(exchange.getIn(), "", false, true, 10000);
+            
             if (body == null) {
                 body = "";
             }
