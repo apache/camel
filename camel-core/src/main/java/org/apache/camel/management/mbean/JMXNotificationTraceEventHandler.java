@@ -27,6 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Traceable;
+import org.apache.camel.processor.interceptor.DefaultTraceEventHandler;
 import org.apache.camel.processor.interceptor.TraceEventHandler;
 import org.apache.camel.processor.interceptor.TraceInterceptor;
 import org.apache.camel.processor.interceptor.Tracer;
@@ -39,22 +40,26 @@ public final class JMXNotificationTraceEventHandler implements TraceEventHandler
     private long num;
     private NotificationPublisher notificationSender;
     private Tracer tracer;
+    private DefaultTraceEventHandler defaultTracer;
 
     public JMXNotificationTraceEventHandler(Tracer tracer) {
         this.tracer = tracer;
+        this.defaultTracer = new DefaultTraceEventHandler(tracer);
     }
 
     @SuppressWarnings("rawtypes")
     public void traceExchangeOut(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception {
+        defaultTracer.traceExchangeOut(node, target, traceInterceptor, exchange, traceState);
     }
 
     @SuppressWarnings("rawtypes")
     public Object traceExchangeIn(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
-        return null;
+        return defaultTracer.traceExchangeIn(node, target, traceInterceptor, exchange);
     }
 
     @SuppressWarnings("rawtypes")
     public void traceExchange(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
+        defaultTracer.traceExchange(node, target, traceInterceptor, exchange);
         if (notificationSender != null && tracer.isJmxTraceNotifications()) {
             String body = MessageHelper.extractBodyForLogging(exchange.getIn(), "", false, tracer.getTraceBodySize());
             
