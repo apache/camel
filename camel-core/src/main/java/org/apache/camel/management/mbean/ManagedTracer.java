@@ -22,19 +22,31 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedNotification;
+import org.springframework.jmx.export.annotation.ManagedNotifications;
 import org.springframework.jmx.export.annotation.ManagedResource;
+import org.springframework.jmx.export.notification.NotificationPublisher;
+import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
 /**
  * @version 
  */
 @ManagedResource(description = "Managed Tracer")
-public class ManagedTracer {
+@ManagedNotifications(@ManagedNotification(name = "javax.management.Notification", 
+description = "Fine grained trace events", 
+notificationTypes = {"TraceNotification"}))
+public class ManagedTracer implements NotificationPublisherAware {
     private final CamelContext camelContext;
     private final Tracer tracer;
+    private JMXNotificationTraceEventHandler jmxTraceHandler;
 
     public ManagedTracer(CamelContext camelContext, Tracer tracer) {
         this.camelContext = camelContext;
         this.tracer = tracer;
+        this.jmxTraceHandler = new JMXNotificationTraceEventHandler(tracer);
+        if (this.tracer.getTraceHandler() == null) {
+            this.tracer.setTraceHandler(this.jmxTraceHandler);
+        }
     }
 
     public void init(ManagementStrategy strategy) {
@@ -408,6 +420,31 @@ public class ManagedTracer {
             return;
         }
         tracer.getDefaultTraceFormatter().setMaxChars(maxChars);
+    }
+    
+    @ManagedAttribute(description = "Should trace events be sent as jmx notifications")
+    public boolean isJmxTraceNotifications() {
+        return this.tracer.isJmxTraceNotifications();
+    }
+
+    @ManagedAttribute
+    public void setJmxTraceNotifications(boolean jmxTraceNotifications) {
+        this.tracer.setJmxTraceNotifications(jmxTraceNotifications);
+    }
+
+    @ManagedAttribute(description = "Maximum size of a message body for trace notification")
+    public int getTraceBodySize() {
+        return this.tracer.getTraceBodySize();
+    }
+
+    @ManagedAttribute
+    public void setTraceBodySize(int traceBodySize) {
+        this.tracer.setTraceBodySize(traceBodySize);
+    }
+
+    @Override
+    public void setNotificationPublisher(NotificationPublisher notificationPublisher) {
+        this.jmxTraceHandler.setNotificationPublisher(notificationPublisher);
     }
 
 }

@@ -54,6 +54,8 @@ public class Tracer implements InterceptStrategy, Service {
     private TraceInterceptorFactory traceInterceptorFactory = new DefaultTraceInterceptorFactory();
     private TraceEventHandler traceHandler;
     private String jpaTraceEventMessageClassName = JPA_TRACE_EVENT_MESSAGE;
+    private boolean jmxTraceNotifications;
+    private int traceBodySize;
 
     /**
      * Creates a new tracer.
@@ -304,6 +306,22 @@ public class Tracer implements InterceptStrategy, Service {
      */
     public void setJpaTraceEventMessageClassName(String jpaTraceEventMessageClassName) {
         this.jpaTraceEventMessageClassName = jpaTraceEventMessageClassName;
+    }
+
+    public boolean isJmxTraceNotifications() {
+        return jmxTraceNotifications;
+    }
+
+    public void setJmxTraceNotifications(boolean jmxTraceNotifications) {
+        this.jmxTraceNotifications = jmxTraceNotifications;
+    }
+
+    public int getTraceBodySize() {
+        return traceBodySize;
+    }
+
+    public void setTraceBodySize(int traceBodySize) {
+        this.traceBodySize = traceBodySize;
     }
 
     @Override

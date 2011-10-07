@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
 import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler;
+import org.springframework.jmx.export.notification.ModelMBeanNotificationPublisher;
+import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
 /**
  * An assembler to assemble a {@link javax.management.modelmbean.RequiredModelMBean} which can be used
@@ -77,6 +79,11 @@ public class JmxMBeanAssembler {
             mbean.setManagedResource(obj, "ObjectReference");
         } catch (InvalidTargetObjectTypeException e) {
             throw new JMException(e.getMessage());
+        }
+        
+        if (obj instanceof NotificationPublisherAware) {
+            NotificationPublisherAware publishereAwareObj = (NotificationPublisherAware) obj;
+            publishereAwareObj.setNotificationPublisher(new ModelMBeanNotificationPublisher(mbean, name, obj));
         }
 
         return mbean;
