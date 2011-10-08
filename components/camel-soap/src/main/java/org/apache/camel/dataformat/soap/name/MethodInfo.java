@@ -19,6 +19,8 @@ package org.apache.camel.dataformat.soap.name;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.RuntimeCamelException;
+
 /**
  * Value object to hold information about a method in a JAX-WS service interface.
  * Method can have many parameters in the signature, but only one response object.
@@ -49,6 +51,15 @@ public final class MethodInfo {
         
         this.inTypeMap = new HashMap<String, TypeInfo>();
         for (int i = 0; i < in.length; i++) {
+            TypeInfo ti = in[i];
+            if (inTypeMap.containsKey(ti.getTypeName())
+                && (!(ti.getTypeName().equals("javax.xml.ws.Holder")))
+                && (!(inTypeMap.get(ti.getTypeName()).equals(ti.getElName())))) {
+                throw new RuntimeCamelException("Ambiguous QName mapping. The type [ "
+                                                  + ti.getTypeName()
+                                                  + " ] is already mapped to a QName in this method."
+                                                  + " This is not supported.");                   
+            }
             inTypeMap.put(in[i].getTypeName(), in[i]);
         }
     }

@@ -143,4 +143,51 @@ public class MultiPartCxfServerTest extends RouteBuilder {
         assertTrue(((Company)companyHeaderObj).getName().equals("MultipartSoft"));
     }
     
+    /**
+     * This test validates the end-to-end behavior of the service interface mapping when a parameter type
+     * is defined with a different QName in two different Web method. It also tests the case where a 
+     * QName and type are directly reused across methods.
+     */
+    @Test
+    public void testSendRequestWithReusedInAndInOutParts() throws Exception {
+        
+        Exchange exchange = producerTemplate.send("direct:start",  new Processor() {
+
+            public void process(Exchange exchange) throws Exception {
+                BeanInvocation beanInvocation = new BeanInvocation();
+              
+                beanInvocation.setMethod(MultiPartCustomerService.class.getMethod("saveCustomerToo", 
+                        SaveCustomer.class, Product.class, Holder.class));
+                
+                Customer customer = new Customer();
+                customer.setName("TestCustomerToo");
+                customer.setRevenue(50000);
+                SaveCustomer saveCustomer = new SaveCustomer();
+                saveCustomer.setCustomer(customer);
+                
+                Product product = new Product();
+                product.setName("Multiuse Product");
+                product.setDescription("Useful for lots of things.");
+                
+                Holder<Company> holder = new Holder<Company>();
+                
+                Object[] args = new Object[] {saveCustomer, product, holder};
+                beanInvocation.setArgs(args);
+                exchange.getIn().setBody(beanInvocation); 
+            }
+           
+        });
+        
+        if (exchange.getException() != null) {
+            throw exchange.getException();
+        }
+        
+        @SuppressWarnings("unchecked")
+        List<Object> headers = (List<Object>) exchange.getOut().getHeader(SoapJaxbDataFormat.SOAP_UNMARSHALLED_HEADER_LIST);
+        assertTrue(headers.size() == 1);
+        Object companyHeaderObj = headers.get(0);
+        assertTrue(companyHeaderObj instanceof Company);
+        assertTrue(((Company)companyHeaderObj).getName().equals("MultipartSoft"));
+    }
+   
 }

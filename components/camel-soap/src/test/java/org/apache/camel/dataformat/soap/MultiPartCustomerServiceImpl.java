@@ -64,7 +64,6 @@ public class MultiPartCustomerServiceImpl implements MultiPartCustomerService {
         company.value = returnCompany;
 
         lastSavedCustomer = parameters.getCustomer();
-
     }
 
     @Override
@@ -82,6 +81,26 @@ public class MultiPartCustomerServiceImpl implements MultiPartCustomerService {
     
     public Customer getLastSavedCustomer() {
         return lastSavedCustomer;
+    }
+
+    @Override
+    public void saveCustomerToo(SaveCustomer parameters, Product product,
+            Holder<Company> company) {
+        if (product == null) {
+            throw new IllegalArgumentException("product may not be null.");
+        }
+
+        if (company == null) {
+            throw new IllegalArgumentException("company may not be null.");
+        }
+
+        Company returnCompany = new Company();
+        returnCompany.setName("MultipartSoft");
+        returnCompany.setPresident("Dr. Multipart");
+
+        company.value = returnCompany;
+
+        lastSavedCustomer = parameters.getCustomer();
     }
 
 }
