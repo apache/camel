@@ -34,11 +34,15 @@ import javax.xml.ws.WebFault;
 
 import org.apache.camel.RuntimeCamelException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Offers a finder for a webservice interface to determine the QName of a
  * webservice data element
  */
 public class ServiceInterfaceStrategy implements ElementNameStrategy {
+    private static final transient Logger LOG = LoggerFactory.getLogger(ServiceInterfaceStrategy.class);
     private Map<String, MethodInfo> soapActionToMethodInfo = new HashMap<String, MethodInfo>();
     private Map<String, QName> inTypeNameToQName = new HashMap<String, QName>();
     private Map<String, QName> outTypeNameToQName = new HashMap<String, QName>();
@@ -85,7 +89,6 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         }
     }
 
-    @SuppressWarnings("rawtypes")
     private List<TypeInfo> getInInfo(Method method) {
         List<TypeInfo> typeInfos = new ArrayList<TypeInfo>();
         RequestWrapper requestWrapper = method.getAnnotation(RequestWrapper.class);
@@ -160,9 +163,10 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
                 if (inTypeNameToQName.containsKey(ti.getTypeName())
                     && (!(ti.getTypeName().equals("javax.xml.ws.Holder")))
                     && (!(inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())))) {
-                    throw new RuntimeCamelException("Ambiguous parameter mapping. The type [ "
+                    LOG.warn("Ambiguous QName mapping. The type [ "
                                                     + ti.getTypeName()
                                                     + " ] is already mapped to a QName in this context.");
+                    continue;
                 }
                 inTypeNameToQName.put(ti.getTypeName(), ti.getElName());
             }

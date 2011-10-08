@@ -62,6 +62,10 @@
 
 			<xs:element name="saveCustomer" type="tns:saveCustomer">
 			</xs:element>
+			
+			<!--  This element reuses the tns:SaveCustomer type, but applies a different element QName (than above) -->
+			<xs:element name="saveCustomerToo" type="tns:saveCustomer">
+            </xs:element>
 			<xs:complexType name="saveCustomer">
 				<xs:sequence>
 					<xs:element name="customer" type="tns:customer"></xs:element>
@@ -116,18 +120,27 @@
         <wsdl:part name="parameters" element="typens:getAllCustomersResponse"/>
         <wsdl:part name="companyType" element="typens:companyType"/>
     </wsdl:message> 
-     
+        
     <!--  multiple in parts and an inout -->  
     <wsdl:message name="saveCustomer">
         <wsdl:part name="parameters" element="typens:saveCustomer"/>
         <wsdl:part name="product" element="typens:product"/>
-        <wsdl:part name="company" element="typens:company"/>               
+        <wsdl:part name="company" element="typens:company"/>          
     </wsdl:message>    
     <wsdl:message name="saveCustomerResponse">
        <wsdl:part name="company" element="typens:company"/>
-    </wsdl:message>    
-   
-   
+    </wsdl:message>
+    
+    <wsdl:message name="saveCustomerToo">
+        <wsdl:part name="parameters" element="typens:saveCustomerToo"/>
+        <wsdl:part name="product" element="typens:product"/>
+        <wsdl:part name="company" element="typens:company"/>          
+    </wsdl:message>  
+    <wsdl:message name="saveCustomerResponseToo">
+       <wsdl:part name="company" element="typens:company"/>
+    </wsdl:message>
+    
+    <!--  message with an out part -->   
     <wsdl:portType name="MultiPartCustomerService">
         <wsdl:operation name="getCustomersByName">
             <wsdl:input name="getCustomersByName" message="tns:getCustomersByName"/>
@@ -142,8 +155,12 @@
             <wsdl:input message="tns:saveCustomer"/>
             <wsdl:output message="tns:saveCustomerResponse"/>
         </wsdl:operation>
+        <wsdl:operation name="saveCustomerToo">
+            <wsdl:input message="tns:saveCustomerToo"/>
+            <wsdl:output name="saveCustomerResponseToo" message="tns:saveCustomerResponseToo"/>
+        </wsdl:operation>
     </wsdl:portType>
-
+    
     <wsdl:binding name="CustomerServiceMultiPart" type="tns:MultiPartCustomerService">
     
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
@@ -172,7 +189,7 @@
                 <soap:body use="literal" />      
             </wsdl:output>
         </wsdl:operation>
-            
+              
         <!--  operation with two header values in request - one is an inout -->
         <wsdl:operation name="saveCustomer">
             <soap:operation soapAction="http://multipart.customerservice.example.com/saveCustomer" />
@@ -185,7 +202,22 @@
 	            <soap:header use="literal" part="company" message="tns:saveCustomer" />
                 <soap:body use="literal" />
             </wsdl:output>
-        </wsdl:operation>         
+        </wsdl:operation>
+        
+        <!--  operation to test reused parameters and a parameters that reuses a type but applies a new namespace -->
+        <wsdl:operation name="saveCustomerToo">
+            <soap:operation soapAction="http://multipart.customerservice.example.com/saveCustomerToo" />
+            <wsdl:input>
+                <soap:header use="literal" part="product" message="tns:saveCustomerToo" />
+                <soap:header use="literal" part="company" message="tns:saveCustomerToo" />
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output name="saveCustomerResponseToo">
+                <soap:header use="literal" part="company" message="tns:saveCustomerToo" />
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>  
+              
     </wsdl:binding>
     
     
