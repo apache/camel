@@ -131,7 +131,9 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         LoadBalancer loadBalancer = LoadBalancerDefinition.getLoadBalancer(routeContext, loadBalancerType, ref);
         for (ProcessorDefinition<?> processorType : getOutputs()) {
             // output must not be another load balancer
-            if (processorType instanceof LoadBalanceDefinition) {
+            // check for instanceof as the code below as there is compilation errors on earlier versions of JDK6
+            // on Windows boxes or with IBM JDKs etc.
+            if (LoadBalanceDefinition.class.isInstance(processorType)) {
                 throw new IllegalArgumentException("Loadbalancer already configured to: " + loadBalancerType + ". Cannot set it to: " + processorType);
             }
             Processor processor = processorType.createProcessor(routeContext);
