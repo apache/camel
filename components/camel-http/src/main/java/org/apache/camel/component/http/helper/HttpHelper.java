@@ -22,6 +22,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -214,14 +215,28 @@ public final class HttpHelper {
      *
      * @param exchange  the exchange
      * @return the created method
+     * @throws URISyntaxException 
      */
-    public static HttpMethods createMethod(Exchange exchange, HttpEndpoint endpoint, boolean hasPayload) {
+    public static HttpMethods createMethod(Exchange exchange, HttpEndpoint endpoint, boolean hasPayload) throws URISyntaxException {
         // is a query string provided in the endpoint URI or in a header (header
         // overrules endpoint)
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        // We need also check the HTTP_URI header query part
+        String uriString = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+        // resolve placeholders in uriString
+        try {
+            uriString = exchange.getContext().resolvePropertyPlaceholders(uriString);
+        } catch (Exception e) {
+            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uriString, exchange, e);
+        }
+        if (uriString != null) {
+            URI uri = new URI(uriString);
+            queryString = uri.getQuery();
+        }
         if (queryString == null) {
             queryString = endpoint.getHttpUri().getQuery();
         }
+        
 
         // compute what method to use either GET or POST
         HttpMethods answer;
