@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -318,11 +320,13 @@ public class HttpProducer extends DefaultProducer {
      * @param exchange the exchange
      * @return the created method as either GET or POST
      * @throws CamelExchangeException is thrown if error creating RequestEntity
+     * @throws URISyntaxException 
      */
     @SuppressWarnings("deprecation")
-    protected HttpMethod createMethod(Exchange exchange) throws CamelExchangeException {
+    protected HttpMethod createMethod(Exchange exchange) throws CamelExchangeException, URISyntaxException {
 
         String url = HttpHelper.createURL(exchange, getEndpoint());
+        URI uri = new URI(url);
 
         RequestEntity requestEntity = createRequestEntity(exchange);
         HttpMethods methodToUse = HttpHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
@@ -332,6 +336,10 @@ public class HttpProducer extends DefaultProducer {
         String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         if (queryString == null) {
             queryString = getEndpoint().getHttpUri().getRawQuery();
+        }
+        // We should user the query string from the HTTP_URI header
+        if (queryString == null) {
+            queryString = uri.getQuery();
         }
         if (queryString != null) {
             // need to make sure the queryString is URI safe

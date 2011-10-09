@@ -86,6 +86,18 @@ public class HttpClientRouteTest extends BaseJettyTest {
         template.sendBody("direct:start4", "test");
         mockEndpoint.assertIsSatisfied();        
     }
+    
+    @Test
+    public void testHttpRouteWithHttpURI() throws Exception {
+        Exchange exchange = template.send("http://localhost:" + port2 + "/querystring", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("");
+                exchange.getIn().setHeader(Exchange.HTTP_URI, "http://localhost:" + port2 + "/querystring?id=test");
+            }
+        });
+        assertEquals("Get a wrong response.", "test", exchange.getOut().getBody(String.class));
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

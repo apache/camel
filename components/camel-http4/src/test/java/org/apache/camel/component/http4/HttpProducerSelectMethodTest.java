@@ -131,6 +131,23 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
         producer.process(exchange);
         producer.stop();
     }
+    
+    @Test 
+    public void withHttpURIInHeader() throws Exception {
+        localServer.register("/", new BasicValidationHandler("GET", "q=Camel", null, getExpectedContent()));
+
+        HttpComponent component = context.getComponent("http4", HttpComponent.class);
+
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http4://" + getHostName() + ":" + getPort());
+        HttpProducer producer = new HttpProducer(endpoiont);
+
+        Exchange exchange = producer.createExchange();
+        exchange.getIn().setBody("");
+        exchange.getIn().setHeader(Exchange.HTTP_URI, "http://" + getHostName() + ":" + getPort() + "?q=Camel");
+        producer.start();
+        producer.process(exchange);
+        producer.stop();
+    }
 
     @Test
     public void withQueryInHeaderOverrideEndpoint() throws Exception {
