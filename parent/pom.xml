@@ -108,6 +108,7 @@
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jibx-version>1.2.2</jibx-version>
     <jruby-version>1.5.6</jruby-version>
+    <jsmpp-version>2.1.0_3</jsmpp-version>
     <jsch-version>0.1.44-1</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
@@ -140,7 +141,6 @@
     <slf4j-version>1.6.1</slf4j-version>
     <smack-version>3.2.0</smack-version>
     <snmp4j-version>1.8.1_3</snmp4j-version>
-    <smpp-version>2.1.0_1</smpp-version>
     <spring-integration-version>2.0.5.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-version>3.0.6.RELEASE</spring-version>

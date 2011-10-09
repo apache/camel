@@ -2,7 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!--
-
         Licensed to the Apache Software Foundation (ASF) under one or more
         contributor license agreements.  See the NOTICE file distributed with
         this work for additional information regarding copyright ownership.
@@ -99,7 +98,7 @@
       <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
       <juel-bundle-version>2.1.2_1</juel-bundle-version>
       <junit-bundle-version>4.7_1</junit-bundle-version>
-      <jsmpp-bundle-version>2.1.0_1</jsmpp-bundle-version>
+      <jsmpp-bundle-version>2.1.0_3</jsmpp-bundle-version>
       <kxml2-bundle-version>2.3.0_1</kxml2-bundle-version>
       <lucene-bundle-version>3.0.3_1</lucene-bundle-version>
       <mvel-bundle-version>2.0.8_4</mvel-bundle-version>
