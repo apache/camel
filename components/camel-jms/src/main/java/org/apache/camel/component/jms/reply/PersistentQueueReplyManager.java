@@ -68,6 +68,8 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         // no not arrived early
         if (dynamicMessageSelector != null) {
             // also remember to keep the dynamic selector updated with the new correlation id
+            // at first removing the old correlationID and then add the new correlationID
+            dynamicMessageSelector.removeCorrelationID(correlationId);
             dynamicMessageSelector.addCorrelationID(newCorrelationId);
         }
     }
