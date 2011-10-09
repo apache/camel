@@ -19,11 +19,15 @@ package org.apache.camel.component.jms.reply;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A creator which can build the JMS message selector query string to use
  * with a shared persistent reply-to queue, so we can select the correct messages we expect as replies.
  */
 public class MessageSelectorCreator {
+    protected static final Logger LOG = LoggerFactory.getLogger(MessageSelectorCreator.class);
     protected Map<String, String> correlationIds;
     protected boolean dirty = true;
     protected StringBuilder expression;
@@ -34,11 +38,13 @@ public class MessageSelectorCreator {
 
     public synchronized void addCorrelationID(String id) {
         correlationIds.put(id, id);
+        LOG.trace("Added correlationID: {}", id);
         dirty = true;
     }
 
     public synchronized void removeCorrelationID(String id) {
-        correlationIds.remove(id);
+        boolean answer = correlationIds.remove(id) != null;
+        LOG.trace("Removed correlationID: {} -> {}", id, answer);
         dirty = true;
     }
 

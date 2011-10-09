@@ -81,10 +81,6 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
             try {
                 handler.onReply(correlationID, message);
             } finally {
-                if (dynamicMessageSelector != null) {
-                    // also remember to keep the dynamic selector updated with the new correlation id
-                    dynamicMessageSelector.removeCorrelationID(correlationID);
-                }
                 correlation.remove(correlationID);
             }
         } else {

@@ -38,19 +38,25 @@ public class PersistentQueueReplyHandler extends TemporaryQueueReplyHandler {
 
     @Override
     public void onReply(String correlationId, Message reply) {
-        if (dynamicMessageSelector != null) {
-            // remove correlation id from message selector
-            dynamicMessageSelector.removeCorrelationID(correlationId);
+        try {
+            if (dynamicMessageSelector != null) {
+                // remove correlation id from message selector
+                dynamicMessageSelector.removeCorrelationID(correlationId);
+            }
+        } finally {
+            super.onReply(correlationId, reply);
         }
-        super.onReply(correlationId, reply);
     }
 
     @Override
     public void onTimeout(String correlationId) {
-        if (dynamicMessageSelector != null) {
-            // remove correlation id from message selector
-            dynamicMessageSelector.removeCorrelationID(correlationId);
+        try {
+            if (dynamicMessageSelector != null) {
+                // remove correlation id from message selector
+                dynamicMessageSelector.removeCorrelationID(correlationId);
+            }
+        } finally {
+            super.onTimeout(correlationId);
         }
-        super.onTimeout(correlationId);
     }
 }

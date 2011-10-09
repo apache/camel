@@ -22,6 +22,8 @@ import javax.jms.Message;
 import javax.jms.Session;
 
 import org.apache.camel.component.jms.MessageSentCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Callback to be used when using the option <tt>useMessageIDAsCorrelationID</tt>.
@@ -33,6 +35,7 @@ import org.apache.camel.component.jms.MessageSentCallback;
  */
 public class UseMessageIdAsCorrelationIdMessageSentCallback implements MessageSentCallback {
 
+    private static final Logger LOG = LoggerFactory.getLogger(MessageSelectorCreator.class);
     private ReplyManager replyManager;
     private String correlationId;
     private long requestTimeout;
@@ -49,6 +52,7 @@ public class UseMessageIdAsCorrelationIdMessageSentCallback implements MessageSe
             newCorrelationID = message.getJMSMessageID();
         } catch (JMSException e) {
             // ignore
+            LOG.warn("Cannot get JMSMessageID from message: " + message, e);
         }
         if (newCorrelationID != null) {
             replyManager.updateCorrelationId(correlationId, newCorrelationID, requestTimeout);

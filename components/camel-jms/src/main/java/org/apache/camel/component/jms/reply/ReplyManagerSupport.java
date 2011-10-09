@@ -50,7 +50,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected AbstractMessageListenerContainer listenerContainer;
     protected final CountDownLatch replyToLatch = new CountDownLatch(1);
     protected final long replyToTimeout = 10000;
-    protected CorrelationMap correlation;
+    protected CorrelationTimeoutMap correlation;
 
     public void setScheduledExecutorService(ScheduledExecutorService executorService) {
         this.executorService = executorService;
@@ -108,38 +108,40 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     public void processReply(ReplyHolder holder) {
         if (holder != null && isRunAllowed()) {
-            Exchange exchange = holder.getExchange();
-            Message message = holder.getMessage();
+            try {
+                Exchange exchange = holder.getExchange();
+                Message message = holder.getMessage();
 
-            boolean timeout = holder.isTimeout();
-            if (timeout) {
-                // no response, so lets set a timed out exception
-                exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout()));
-            } else {
-                JmsMessage response = new JmsMessage(message, endpoint.getBinding());
-                Object body = response.getBody();
-
-                if (endpoint.isTransferException() && body instanceof Exception) {
-                    log.debug("Reply received. Setting reply as an Exception: {}", body);
-                    // we got an exception back and endpoint was configured to transfer exception
-                    // therefore set response as exception
-                    exchange.setException((Exception) body);
+                boolean timeout = holder.isTimeout();
+                if (timeout) {
+                    // no response, so lets set a timed out exception
+                    exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout()));
                 } else {
-                    log.debug("Reply received. Setting reply as OUT message: {}", body);
-                    // regular response
-                    exchange.setOut(response);
-                }
+                    JmsMessage response = new JmsMessage(message, endpoint.getBinding());
+                    Object body = response.getBody();
 
-                // restore correlation id in case the remote server messed with it
-                if (holder.getOriginalCorrelationId() != null) {
-                    JmsMessageHelper.setCorrelationId(message, holder.getOriginalCorrelationId());
-                    exchange.getOut().setHeader("JMSCorrelationID", holder.getOriginalCorrelationId());
+                    if (endpoint.isTransferException() && body instanceof Exception) {
+                        log.debug("Reply received. Setting reply as an Exception: {}", body);
+                        // we got an exception back and endpoint was configured to transfer exception
+                        // therefore set response as exception
+                        exchange.setException((Exception) body);
+                    } else {
+                        log.debug("Reply received. Setting reply as OUT message: {}", body);
+                        // regular response
+                        exchange.setOut(response);
+                    }
+
+                    // restore correlation id in case the remote server messed with it
+                    if (holder.getOriginalCorrelationId() != null) {
+                        JmsMessageHelper.setCorrelationId(message, holder.getOriginalCorrelationId());
+                        exchange.getOut().setHeader("JMSCorrelationID", holder.getOriginalCorrelationId());
+                    }
                 }
+            } finally {
+                // notify callback
+                AsyncCallback callback = holder.getCallback();
+                callback.done(false);
             }
-
-            // notify callback
-            AsyncCallback callback = holder.getCallback();
-            callback.done(false);
         }
     }
 
@@ -196,7 +198,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         ObjectHelper.notNull(endpoint, "endpoint", this);
 
         // purge for timeout every second
-        correlation = new CorrelationMap(executorService, 1000);
+        correlation = new CorrelationTimeoutMap(executorService, 1000);
         ServiceHelper.startService(correlation);
 
         // create JMS listener and start it
