@@ -42,7 +42,7 @@
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
             <artifactId>org.apache.servicemix.bundles.jsmpp</artifactId>
-            <version>${smpp-version}</version>
+            <version>${jsmpp-version}</version>
         </dependency>
 
         <!-- testing -->
