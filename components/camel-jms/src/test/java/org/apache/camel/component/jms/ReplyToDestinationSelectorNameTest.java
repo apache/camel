@@ -64,7 +64,7 @@ public class ReplyToDestinationSelectorNameTest extends CamelTestSupport {
                     .to("mock:result");
 
                 from("activemq:queue:foo")
-                    .log("Using header named replayId with value as correlation - ${header.replyId}")
+                    .log("Using header named replyId with value as correlation - ${header.replyId}")
                     .transform(body().prepend("Bye "));
             }
         };
