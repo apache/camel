@@ -62,7 +62,7 @@
     <derby-version>10.4.2.0</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
     <dozer-version>5.3.1</dozer-version>
-    <easymock-version>2.5.2</easymock-version>
+    <easymock-version>3.0</easymock-version>
     <ehcache-bundle-version>2.3.0_3</ehcache-bundle-version>
     <flatpack-version>3.2.0_1</flatpack-version>
     <ftpserver-version>1.0.5</ftpserver-version>
