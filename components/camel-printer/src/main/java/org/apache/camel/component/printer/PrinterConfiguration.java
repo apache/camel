@@ -27,7 +27,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 public class PrinterConfiguration {
-    private static final transient Logger LOG = LoggerFactory.getLogger(PrinterConfiguration.class);
     private URI uri;
     private String hostname;
     private int port;
