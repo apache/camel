@@ -18,7 +18,7 @@
 -->
 <features name='camel-${pom.version}'>
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
-  <repository>mvn:org.jclouds.karaf/feature/${jclouds-version}/xml/features</repository>
+  <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds-feature-version}/xml/features</repository>
   <feature name='camel' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-spring</feature>
@@ -54,6 +54,8 @@
     <feature version='${pom.version}'>camel-spring</feature>
     <feature>jetty</feature>
     <feature version='[2.4,2.6)'>cxf</feature>
+    <!-- Added cxf-specs feature to workaround the karaf feature validate issue -->
+    <feature version='[2.4,2.6)'>cxf-specs</feature>
     <bundle>mvn:org.apache.camel/camel-cxf-transport/${pom.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cxf/${pom.version}</bundle>
   </feature>
@@ -130,14 +132,15 @@
     <feature version='${pom.version}'>camel-jms</feature>
     <bundle>mvn:org.apache.camel/camel-amqp/${pom.version}</bundle>
   </feature>
-<!-- TODO: apns bundle does not work - SMX4-857
+  <!-- TODO: apns bundle does not work - SMX4-857
+       apn has the depenency of mina 2.0, we need to provide that bundle in servicemix
   <feature name='camel-apns' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mina/${mina-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.java-apns/${java-apns-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-apns/${pom.version}</bundle>
-  </feature> -->
+  </feature--> 
   <feature name='camel-atom' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:javax.mail/mail/${javax-mail-version}</bundle>
@@ -340,7 +343,9 @@
     <bundle>mvn:org.apache.camel/camel-jaxb/${pom.version}</bundle>
   </feature>
   <feature name='camel-jclouds' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <feature version="${jclouds-version}">jclouds</feature>
+    <!-- Added jclouds feature to workaround the karaf feature validate issue -->
+    <feature version="${jclouds-feature-version}">jclouds</feature>
+    <feature version="${jclouds-feature-version}">jclouds-compute</feature>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jclouds/${pom.version}</bundle>
   </feature>
@@ -377,6 +382,7 @@
     <bundle>mvn:org.apache.camel/camel-josql/${pom.version}</bundle>
   </feature>
   <feature name='camel-jpa' version='${pom.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${gernimo-annotation-spec-version}</bundle>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/${geronimo-jpa2-spec-version}</bundle>
     <feature version="[3,4)">spring-tx</feature>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-el_1.0_spec/${geronimo-el-version}</bundle>
@@ -537,6 +543,9 @@
     <bundle>mvn:com.google.code.scriptengines/scriptengines-groovy/${scriptengines.version}</bundle>
     <bundle>mvn:com.google.code.scriptengines/scriptengines-javascript/${scriptengines.version}</bundle>
     <bundle>mvn:com.google.code.scriptengines/scriptengines-jruby/${scriptengines.version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino.bundle.version}</bundle>
+    <bundle>mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jruby/${jruby-bundle-version}</bundle>
   </feature>
   <feature name='camel-script' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>

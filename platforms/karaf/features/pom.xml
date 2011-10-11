@@ -136,7 +136,7 @@
       <xmlsec-bundle-version>1.4.5_1</xmlsec-bundle-version>
       <xmlresolver-bundle-version>1.2_3</xmlresolver-bundle-version>
       <xpp3-bundle-version>1.1.4c_3</xpp3-bundle-version>
-      <xstream-bundle-version>1.4.1_1-SNAPSHOT</xstream-bundle-version>
+      <xstream-bundle-version>1.4.1_1</xstream-bundle-version>
       <werken-xpath-bundle-version>0.9.4_3</werken-xpath-bundle-version>
       <woodstox-core-bundle-version>${woodstox-version}</woodstox-core-bundle-version>
       <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
@@ -259,6 +259,20 @@
        </profile>
        <profile>
           <id>validate</id>
+          <!-- Added the repository for the google script -->
+          <repositories>
+            <repository>
+              <id>google.script.repo</id>
+              <name>Google Script Engine Deploy Repository </name>
+              <url>http://scriptengines.googlecode.com/svn/m2-repo/</url>
+              <releases>
+                <enabled>true</enabled>
+              </releases>
+              <snapshots>
+                <enabled>false</enabled>
+              </snapshots>
+            </repository>
+          </repositories>
           <build>
              <plugins>
                 <plugin>
@@ -279,13 +293,6 @@
                        </goals>
                      </execution>
                    </executions>
-                   <dependencies>
-                    <dependency>
-                     <groupId>org.slf4j</groupId>
-                     <artifactId>slf4j-jdk14</artifactId>
-                     <version>${slf4j-version}</version>
-                    </dependency>
-                 </dependencies>
                </plugin>
               </plugins>
            </build>
