@@ -21,10 +21,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.management.Notification;
+import javax.management.NotificationBroadcasterSupport;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.management.JmxNotificationBroadcasterAware;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Traceable;
 import org.apache.camel.processor.interceptor.DefaultTraceEventHandler;
@@ -32,13 +34,11 @@ import org.apache.camel.processor.interceptor.TraceEventHandler;
 import org.apache.camel.processor.interceptor.TraceInterceptor;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.util.MessageHelper;
-import org.springframework.jmx.export.notification.NotificationPublisher;
-import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
-public final class JMXNotificationTraceEventHandler implements TraceEventHandler, NotificationPublisherAware {
+public final class JMXNotificationTraceEventHandler implements TraceEventHandler, JmxNotificationBroadcasterAware {
     private static final int MAX_MESSAGE_LENGTH = 60;
     private long num;
-    private NotificationPublisher notificationSender;
+    private NotificationBroadcasterSupport notificationSender;
     private Tracer tracer;
     private DefaultTraceEventHandler defaultTracer;
 
@@ -112,8 +112,9 @@ public final class JMXNotificationTraceEventHandler implements TraceEventHandler
     }
 
     @Override
-    public void setNotificationPublisher(NotificationPublisher notificationPublisher) {
-        this.notificationSender = notificationPublisher;
+    public void setNotificationBroadcaster(
+            NotificationBroadcasterSupport notificationSender) {
+        this.notificationSender = notificationSender;
     }
 
 }

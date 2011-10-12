@@ -16,6 +16,8 @@
  */
 package org.apache.camel.management.mbean;
 
+import javax.management.NotificationBroadcasterSupport;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.processor.interceptor.Tracer;
@@ -25,8 +27,6 @@ import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedNotification;
 import org.springframework.jmx.export.annotation.ManagedNotifications;
 import org.springframework.jmx.export.annotation.ManagedResource;
-import org.springframework.jmx.export.notification.NotificationPublisher;
-import org.springframework.jmx.export.notification.NotificationPublisherAware;
 
 /**
  * @version 
@@ -35,7 +35,7 @@ import org.springframework.jmx.export.notification.NotificationPublisherAware;
 @ManagedNotifications(@ManagedNotification(name = "javax.management.Notification", 
 description = "Fine grained trace events", 
 notificationTypes = {"TraceNotification"}))
-public class ManagedTracer implements NotificationPublisherAware {
+public class ManagedTracer extends NotificationBroadcasterSupport implements ManagedTracerMXBean {
     private final CamelContext camelContext;
     private final Tracer tracer;
     private JMXNotificationTraceEventHandler jmxTraceHandler;
@@ -44,6 +44,7 @@ public class ManagedTracer implements NotificationPublisherAware {
         this.camelContext = camelContext;
         this.tracer = tracer;
         this.jmxTraceHandler = new JMXNotificationTraceEventHandler(tracer);
+        this.jmxTraceHandler.setNotificationBroadcaster(this);
         if (this.tracer.getTraceHandler() == null) {
             this.tracer.setTraceHandler(this.jmxTraceHandler);
         }
@@ -440,11 +441,6 @@ public class ManagedTracer implements NotificationPublisherAware {
     @ManagedAttribute
     public void setTraceBodySize(int traceBodySize) {
         this.tracer.setTraceBodySize(traceBodySize);
-    }
-
-    @Override
-    public void setNotificationPublisher(NotificationPublisher notificationPublisher) {
-        this.jmxTraceHandler.setNotificationPublisher(notificationPublisher);
     }
 
 }
