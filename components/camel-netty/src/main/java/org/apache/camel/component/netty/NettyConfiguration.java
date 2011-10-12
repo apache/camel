@@ -68,6 +68,7 @@ public class NettyConfiguration implements Cloneable {
     private long receiveBufferSize = 65536;
     private int corePoolSize = 10;
     private int maxPoolSize = 100;
+    private int workerCount;
     private String keyStoreFormat;
     private String securityProvider;
     private boolean disconnect;
@@ -482,6 +483,14 @@ public class NettyConfiguration implements Cloneable {
 
     public ServerPipelineFactory getServerPipelineFactory() {
         return serverPipelineFactory;
+    }
+    
+    public int getWorkerCount() {
+        return workerCount;
+    }
+
+    public void setWorkerCount(int workerCount) {
+        this.workerCount = workerCount;
     }
 
 }

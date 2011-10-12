@@ -148,7 +148,12 @@ public class NettyConsumer extends DefaultConsumer {
         ExecutorService workerExecutor = context.getExecutorServiceManager().newThreadPool(this, "NettyTCPWorker",
                 configuration.getCorePoolSize(), configuration.getMaxPoolSize());
 
-        channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
+        if (configuration.getWorkerCount() == 0) {
+            channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
+        } else {
+            channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor,
+                                                               configuration.getWorkerCount());
+        }
         serverBootstrap = new ServerBootstrap(channelFactory);
         if (configuration.getServerPipelineFactory() != null) {
             configuration.getServerPipelineFactory().setConsumer(this);
