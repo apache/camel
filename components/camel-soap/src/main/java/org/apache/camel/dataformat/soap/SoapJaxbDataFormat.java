@@ -336,7 +336,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
         WebFault webFault = exception.getClass().getAnnotation(WebFault.class);
         if (webFault == null || webFault.targetNamespace() == null) {
             throw new RuntimeException("The exception " + exception.getClass().getName()
-                    + " needs to have an WebFault annotation with name and targetNamespace");
+                    + " needs to have an WebFault annotation with name and targetNamespace", exception);
         }
         QName name = new QName(webFault.targetNamespace(), webFault.name());
         Object faultObject = null;
