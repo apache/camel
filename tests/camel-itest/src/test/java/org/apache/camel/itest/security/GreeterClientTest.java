@@ -91,8 +91,7 @@ public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
             fail("should fail");
         } catch (Exception ex) {
             assertTrue("Get a wrong type exception.", ex instanceof SOAPFaultException);
-            assertTrue("Get a wrong exception message", ex.getMessage().startsWith("The security token could not be authenticated or authorized;"));
-            assertTrue("Get a wrong exception message", ex.getMessage().endsWith("java.io.IOException: Wrong password!"));
+            assertTrue("Get a wrong exception message: " + ex.getMessage(), ex.getMessage().startsWith("The security token could not be authenticated or authorized"));
         }
 
     }
