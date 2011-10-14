@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * The default implementation of {@link org.apache.camel.spi.UnitOfWork}
  */
 public class DefaultUnitOfWork implements UnitOfWork, Service {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultUnitOfWork.class);
 
     // TODO: This implementation seems to have transformed itself into a to broad concern
     // where unit of work is doing a bit more work than the transactional aspect that ties
@@ -65,8 +65,13 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private Set<Object> transactedBy;
     private final Stack<RouteContext> routeContextStack = new Stack<RouteContext>();
     private Stack<DefaultSubUnitOfWork> subUnitOfWorks;
-
+    private final transient Logger log;
+    
     public DefaultUnitOfWork(Exchange exchange) {
+        this(exchange, LOG);
+    }
+    protected DefaultUnitOfWork(Exchange exchange, Logger l) {
+        log = l;
         log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
         tracedRouteNodes = new DefaultTracedRouteNodes();
         context = exchange.getContext();
