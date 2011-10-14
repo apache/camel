@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 /**
@@ -36,6 +38,8 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     public static final String MDC_ROUTE_ID = "routeId";
     public static final String MDC_TRANSACTION_KEY = "transactionKey";
 
+    private static final Logger LOG = LoggerFactory.getLogger(MDCUnitOfWork.class);
+
     private final String originalBreadcrumbId;
     private final String originalExchangeId;
     private final String originalCorrelationId;
@@ -43,7 +47,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     private final String originalTransactionKey;
 
     public MDCUnitOfWork(Exchange exchange) {
-        super(exchange);
+        super(exchange, LOG);
 
         // remember existing values
         this.originalExchangeId = MDC.get(MDC_EXCHANGE_ID);
