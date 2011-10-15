@@ -213,7 +213,18 @@ public class BeanInfo {
 
         LOG.trace("Introspecting class: {}", clazz);
 
-        Method[] methods = clazz.getDeclaredMethods();
+        // if the class is not public then fallback and use interface methods if possible
+        // this allow Camel to invoke private beans which implements interfaces
+        List<Method> methods = Arrays.asList(clazz.getDeclaredMethods());
+        if (!Modifier.isPublic(clazz.getModifiers())) {
+            LOG.trace("Preferring interface methods as class: {} is not public accessible", clazz);
+            List<Method> interfaceMethods = getInterfaceMethods(clazz);
+            
+            // still keep non-accessible class methods to provide more specific Exception if method is non-accessible
+            interfaceMethods.addAll(methods);
+            methods = interfaceMethods;
+        }
+        
         for (Method method : methods) {
             boolean valid = isValidMethod(clazz, method);
             LOG.trace("Method: {} is valid: {}", method, valid);
@@ -300,9 +311,8 @@ public class BeanInfo {
         return answer;
     }
 
-    @SuppressWarnings("unchecked")
-    protected MethodInfo createMethodInfo(Class clazz, Method method) {
-        Class[] parameterTypes = method.getParameterTypes();
+    protected MethodInfo createMethodInfo(Class<?> clazz, Method method) {
+        Class<?>[] parameterTypes = method.getParameterTypes();
         List<Annotation>[] parametersAnnotations = collectParameterAnnotations(clazz, method);
 
         List<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
@@ -317,7 +327,7 @@ public class BeanInfo {
         }
 
         for (int i = 0; i < size; i++) {
-            Class parameterType = parameterTypes[i];
+            Class<?> parameterType = parameterTypes[i];
             Annotation[] parameterAnnotations = parametersAnnotations[i].toArray(new Annotation[parametersAnnotations[i].size()]);
             Expression expression = createParameterUnmarshalExpression(clazz, method, parameterType, parameterAnnotations);
             hasCustomAnnotation |= expression != null;
@@ -457,7 +467,7 @@ public class BeanInfo {
         Message in = exchange.getIn();
         Object body = in.getBody();
         if (body != null) {
-            Class bodyType = body.getClass();
+            Class<?> bodyType = body.getClass();
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Matching for method with a single parameter that matches type: {}", bodyType.getCanonicalName());
             }
@@ -678,6 +688,17 @@ public class BeanInfo {
 
         return null;
     }
+    
+    private static List<Method> getInterfaceMethods(Class<?> clazz) {
+        final List<Method> answer = new ArrayList<Method>();
+        for (Class<?> interfaceClazz : clazz.getInterfaces()) {
+            for (Method interfaceMethod : interfaceClazz.getDeclaredMethods()) {
+                answer.add(interfaceMethod);
+            }
+        }
+
+        return answer;
+    }
 
     private static void removeAllSetterOrGetterMethods(List<MethodInfo> methods) {
         Iterator<MethodInfo> it = methods.iterator();
@@ -728,7 +749,7 @@ public class BeanInfo {
         String types = ObjectHelper.between(methodName, "(", ")");
         if (types != null) {
             // we must qualify based on types to match method
-            Iterator it = ObjectHelper.createIterator(types);
+            Iterator<?> it = ObjectHelper.createIterator(types);
             for (int i = 0; i < method.getParameterTypes().length; i++) {
                 if (it.hasNext()) {
                     Class<?> parameterType = method.getParameterTypes()[i];
@@ -825,10 +846,9 @@ public class BeanInfo {
      *
      * @return the methods.
      */
-    @SuppressWarnings("unchecked")
     public List<MethodInfo> getMethods() {
         if (operations.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
 
         List<MethodInfo> methods = new ArrayList<MethodInfo>();
