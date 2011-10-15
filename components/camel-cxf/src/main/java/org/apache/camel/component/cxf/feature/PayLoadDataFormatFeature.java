@@ -19,12 +19,18 @@ package org.apache.camel.component.cxf.feature;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.xml.transform.Source;
+
 import org.apache.camel.component.cxf.interceptors.ConfigureDocLitWrapperInterceptor;
-import org.apache.camel.component.cxf.interceptors.RemoveClassTypeInterceptor;
 import org.apache.cxf.Bus;
+import org.apache.cxf.binding.Binding;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.interceptor.ClientFaultConverter;
+import org.apache.cxf.service.model.BindingMessageInfo;
+import org.apache.cxf.service.model.BindingOperationInfo;
+import org.apache.cxf.service.model.MessageInfo;
+import org.apache.cxf.service.model.MessagePartInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,20 +51,58 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     public void initialize(Client client, Bus bus) {
         removeFaultInInterceptorFromClient(client);
         client.getEndpoint().getBinding().getInInterceptors().add(new ConfigureDocLitWrapperInterceptor(true));
-        client.getEndpoint().getBinding().getInInterceptors().add(new RemoveClassTypeInterceptor());
+        resetPartTypes(client.getEndpoint().getBinding());
     }
+
 
     @Override
     public void initialize(Server server, Bus bus) {
         server.getEndpoint().getBinding().getInInterceptors().add(new ConfigureDocLitWrapperInterceptor(true));
-        server.getEndpoint().getBinding().getInInterceptors().add(new RemoveClassTypeInterceptor());
+        resetPartTypes(server.getEndpoint().getBinding());
     }
 
     @Override
     protected Logger getLogger() {
         return LOG;
     }
+    
+    private void resetPartTypes(Binding bop2) {
+        for (BindingOperationInfo bop : bop2.getBindingInfo().getOperations()) {
+            resetPartTypes(bop);
+        }
+    }
 
+    private void resetPartTypes(BindingOperationInfo bop) {
+        if (bop.isUnwrapped()) {
+            bop = bop.getWrappedOperation();
+        }
+        if (bop.isUnwrappedCapable()) {
+            resetPartTypeClass(bop.getWrappedOperation().getOperationInfo().getInput());
+            resetPartTypeClass(bop.getWrappedOperation().getOperationInfo().getOutput());
+            resetPartTypeClass(bop.getWrappedOperation().getInput());
+            resetPartTypeClass(bop.getWrappedOperation().getOutput());
+        } else {
+            resetPartTypeClass(bop.getOperationInfo().getInput());
+            resetPartTypeClass(bop.getOperationInfo().getOutput());
+            resetPartTypeClass(bop.getInput());
+            resetPartTypeClass(bop.getOutput());
+        }
+    }
+    
+    protected void resetPartTypeClass(BindingMessageInfo bmi) {
+        if (bmi != null) {
+            for (MessagePartInfo part : bmi.getMessageParts()) {
+                part.setTypeClass(null);
+            }     
+        }
+    }
+    protected void resetPartTypeClass(MessageInfo msgInfo) {
+        if (msgInfo != null) {
+            for (MessagePartInfo part : msgInfo.getMessageParts()) {
+                part.setTypeClass(null);
+            }     
+        }
+    }
     private void removeFaultInInterceptorFromClient(Client client) {
         removeInterceptors(client.getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
         removeInterceptors(client.getEndpoint().getService().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
