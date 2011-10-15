@@ -252,6 +252,24 @@ public class JmsBinding {
             JmsMessage jmsMessage = (JmsMessage)camelMessage;
             if (!jmsMessage.shouldCreateNewMessage() || force) {
                 answer = jmsMessage.getJmsMessage();
+
+                if (!force) {
+                    // answer must match endpoint type
+                    JmsMessageType type = endpoint != null ? endpoint.getConfiguration().getJmsMessageType() : null;
+                    if (type != null && answer != null) {
+                        if (type == JmsMessageType.Text) {
+                            answer = answer instanceof TextMessage ? answer : null;
+                        } else if (type == JmsMessageType.Bytes) {
+                            answer = answer instanceof BytesMessage ? answer : null;
+                        } else if (type == JmsMessageType.Map) {
+                            answer = answer instanceof MapMessage ? answer : null;
+                        } else if (type == JmsMessageType.Object) {
+                            answer = answer instanceof ObjectMessage ? answer : null;
+                        } else if (type == JmsMessageType.Stream) {
+                            answer = answer instanceof StreamMessage ? answer : null;
+                        }
+                    }
+                }
             }
         }
 
