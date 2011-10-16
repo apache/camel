@@ -17,6 +17,7 @@
 package org.apache.camel.component.smpp;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,7 +28,9 @@ import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.aryEq;
@@ -39,10 +42,26 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 public class SmppReplaceSmCommandTest {
+    
+    private static TimeZone defaultTimeZone;
 
     private SMPPSession session;
     private SmppConfiguration config;
     private SmppReplaceSmCommand command;
+    
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        defaultTimeZone = TimeZone.getDefault();
+        
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+    }
+    
+    @AfterClass
+    public static void tearDownAfterClass() {
+        if (defaultTimeZone != null) {
+            TimeZone.setDefault(defaultTimeZone);            
+        }
+    }
     
     @Before
     public void setUp() {
@@ -82,7 +101,7 @@ public class SmppReplaceSmCommandTest {
         exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, new Date(2222222));
         exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
         exchange.getIn().setBody("new short message body");
-        session.replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101011831104+"), eq("-300101013702204+"),
+        session.replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100-"), eq("-300101003702200-"),
                 eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)), eq((byte) 0), aryEq("new short message body".getBytes()));
         
         replay(session);

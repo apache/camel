@@ -18,6 +18,7 @@ package org.apache.camel.component.smpp;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -34,7 +35,9 @@ import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -48,10 +51,26 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 public class SmppSubmitSmCommandTest {
+    
+    private static TimeZone defaultTimeZone;
 
     private SMPPSession session;
     private SmppConfiguration config;
     private SmppSubmitSmCommand command;
+    
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        defaultTimeZone = TimeZone.getDefault();
+        
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+    }
+    
+    @AfterClass
+    public static void tearDownAfterClass() {
+        if (defaultTimeZone != null) {
+            TimeZone.setDefault(defaultTimeZone);            
+        }
+    }
     
     @Before
     public void setUp() {
@@ -139,7 +158,7 @@ public class SmppSubmitSmCommandTest {
         exchange.getIn().setBody("short message body");
         expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
-                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101011831104+"), eq("-300101013702204+"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
+                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("-300101003702200-"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
                 eq(ReplaceIfPresentFlag.REPLACE.value()), eq(new GeneralDataCoding(false, true, MessageClass.CLASS1, Alphabet.ALPHA_DEFAULT)), eq((byte) 0), aryEq("short message body".getBytes()),
                 (OptionalParameter[]) isNull()))
                 .andReturn("1");

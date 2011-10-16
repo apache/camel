@@ -18,6 +18,7 @@ package org.apache.camel.component.smpp;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -37,7 +38,9 @@ import org.jsmpp.bean.SubmitMultiResult;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.bean.UnsuccessDelivery;
 import org.jsmpp.session.SMPPSession;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.aryEq;
@@ -52,10 +55,26 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class SmppSubmitMultiCommandTest {
+    
+    private static TimeZone defaultTimeZone;
 
     private SMPPSession session;
     private SmppConfiguration config;
     private SmppSubmitMultiCommand command;
+    
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        defaultTimeZone = TimeZone.getDefault();
+        
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+    }
+    
+    @AfterClass
+    public static void tearDownAfterClass() {
+        if (defaultTimeZone != null) {
+            TimeZone.setDefault(defaultTimeZone);            
+        }
+    }
     
     @Before
     public void setUp() {
@@ -109,7 +128,7 @@ public class SmppSubmitMultiCommandTest {
         exchange.getIn().setBody("short message body");
         expect(session.submitMultiple(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 aryEq(new Address[]{new Address(TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919")}),
-                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101011831104+"), eq("-300101013702204+"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
+                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("-300101003702200-"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
                 eq(ReplaceIfPresentFlag.REPLACE), eq(new GeneralDataCoding(false, true, MessageClass.CLASS1, Alphabet.ALPHA_DEFAULT)), eq((byte) 0), aryEq("short message body".getBytes()),
                 aryEq(new OptionalParameter[0])))
                 .andReturn(new SubmitMultiResult("1"));

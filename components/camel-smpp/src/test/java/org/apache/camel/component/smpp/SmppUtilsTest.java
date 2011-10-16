@@ -18,18 +18,37 @@ package org.apache.camel.component.smpp;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.jsmpp.bean.Alphabet;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class SmppUtilsTest {
+    
+    private static TimeZone defaultTimeZone;
+    
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        defaultTimeZone = TimeZone.getDefault();
+        
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+    }
+    
+    @AfterClass
+    public static void tearDownAfterClass() {
+        if (defaultTimeZone != null) {
+            TimeZone.setDefault(defaultTimeZone);            
+        }
+    }
 
     @Test
     public void formatTime() {
-        assertEquals("-300101010000004+", SmppUtils.formatTime(new Date(0L)));
-        assertEquals("-300101034640004+", SmppUtils.formatTime(new Date(10000000L)));
+        assertEquals("-300101000000000-", SmppUtils.formatTime(new Date(0L)));
+        assertEquals("-300101024640000-", SmppUtils.formatTime(new Date(10000000L)));
     }
     
     @Test
