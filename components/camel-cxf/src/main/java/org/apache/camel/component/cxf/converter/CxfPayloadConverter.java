@@ -32,6 +32,7 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -88,8 +89,7 @@ public final class CxfPayloadConverter {
                     Document doc = StaxUtils.read(src);
                     el = doc.getDocumentElement();
                 } catch (XMLStreamException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    throw new RuntimeCamelException("Could not convert from Source to Element.", e);
                 }
                 srcs.set(0, new DOMSource(el));
             }
