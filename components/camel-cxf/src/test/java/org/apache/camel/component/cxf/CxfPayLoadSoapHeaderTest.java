@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 
@@ -28,6 +30,7 @@ import org.w3c.dom.Element;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.pizza.Pizza;
 import org.apache.camel.pizza.PizzaService;
 import org.apache.camel.pizza.types.CallerIDHeaderType;
@@ -70,11 +73,14 @@ public class CxfPayLoadSoapHeaderTest extends CamelTestSupport {
                     @SuppressWarnings("unchecked")
                     public void process(Exchange exchange) throws Exception {
                         CxfPayload<SoapHeader> payload = exchange.getIn().getBody(CxfPayload.class);
-                        List<Element> elements = payload.getBody();
+                        List<Source> elements = payload.getBody();
                         assertNotNull("We should get the elements here", elements);
                         assertEquals("Get the wrong elements size", 1, elements.size());
+                        
+                        Element el = new XmlConverter().toDOMElement(elements.get(0));
+                        elements.set(0, new DOMSource(el));
                         assertEquals("Get the wrong namespace URI", "http://camel.apache.org/pizza/types", 
-                                elements.get(0).getNamespaceURI());
+                                el.getNamespaceURI());
                             
                         List<SoapHeader> headers = payload.getHeaders();
                         assertNotNull("We should get the headers here", headers);

@@ -24,6 +24,8 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -56,10 +58,10 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         document = documentBuilder.parse(file);
         document.getDocumentElement().normalize();
-        List<Element> body = new ArrayList<Element>();
-        body.add(document.getDocumentElement());
+        List<Source> body = new ArrayList<Source>();
+        body.add(new DOMSource(document.getDocumentElement()));
         payload = new CxfPayload<String[]>(new ArrayList<String[]>(), body);
-        emptyPayload = new CxfPayload<String[]>(new ArrayList<String[]>(), new ArrayList<Element>());
+        emptyPayload = new CxfPayload<String[]>(new ArrayList<String[]>(), new ArrayList<Source>());
         inputStream = new FileInputStream(file);
     }
 

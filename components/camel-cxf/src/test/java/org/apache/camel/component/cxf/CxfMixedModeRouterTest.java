@@ -20,6 +20,9 @@ package org.apache.camel.component.cxf;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+
 import org.w3c.dom.Element;
 
 import org.apache.camel.CamelContext;
@@ -27,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -92,7 +96,7 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
 
                         if (message != null) {
                             // convert CxfPayload to list of objects any way you like
-                            Element element = message.getBody().get(0);
+                            Element element = new XmlConverter().toDOMElement(message.getBody().get(0));
                             params.add(element.getFirstChild().getTextContent());
                         }
                             
@@ -119,8 +123,8 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
                                 + "<return xmlns=\"http://cxf.component.camel.apache.org/\">" 
                                 + list.get(0) 
                                 + "</return></ns1:echoResponse>";
-                            List<Element> body = new ArrayList<Element>();
-                            body.add(XMLUtils.parse(s).getDocumentElement());
+                            List<Source> body = new ArrayList<Source>();
+                            body.add(new DOMSource(XMLUtils.parse(s).getDocumentElement()));
 
                             message = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(), body);
                         }

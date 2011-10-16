@@ -75,4 +75,13 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
             }
         }
     }
+    
+    protected void removeInterceptor(List<Interceptor<? extends Message>> interceptors, 
+                                     Class<? extends Interceptor> cls) {
+        for (Interceptor interceptor : interceptors) {
+            if (interceptor.getClass().equals(cls)) {
+                interceptors.remove(interceptor);
+            }
+        }        
+    }
 }

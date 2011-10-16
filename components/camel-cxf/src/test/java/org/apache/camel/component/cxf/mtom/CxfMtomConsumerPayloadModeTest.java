@@ -24,6 +24,8 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.mail.util.ByteArrayDataSource;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPathConstants;
 
 import org.w3c.dom.Element;
@@ -36,6 +38,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfPayload;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.helpers.IOUtils;
@@ -67,8 +70,8 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 assertEquals("Get a wrong Content-Type header", "application/xop+xml", exchange.getIn().getHeader("Content-Type"));
-                List<Element> elements = new ArrayList<Element>();
-                elements.add(DOMUtils.readXml(new StringReader(getRequestMessage())).getDocumentElement());
+                List<Source> elements = new ArrayList<Source>();
+                elements.add(new DOMSource(DOMUtils.readXml(new StringReader(getRequestMessage())).getDocumentElement()));
                 CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
                     elements);
                 exchange.getIn().setBody(body);
@@ -96,12 +99,13 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
             ns.put("xop", MtomTestHelper.XOP_NS);
 
             XPathUtils xu = new XPathUtils(ns);
-            Element ele = (Element)xu.getValue("//ns:Detail/ns:photo/xop:Include", in.getBody().get(0),
+            Element body = new XmlConverter().toDOMElement(in.getBody().get(0));
+            Element ele = (Element)xu.getValue("//ns:Detail/ns:photo/xop:Include", body,
                                                XPathConstants.NODE);
             String photoId = ele.getAttribute("href").substring(4); // skip "cid:"
             Assert.assertEquals(MtomTestHelper.REQ_PHOTO_CID, photoId);
 
-            ele = (Element)xu.getValue("//ns:Detail/ns:image/xop:Include", in.getBody().get(0),
+            ele = (Element)xu.getValue("//ns:Detail/ns:image/xop:Include", body,
                                                XPathConstants.NODE);
             String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
             Assert.assertEquals(MtomTestHelper.REQ_IMAGE_CID, imageId);
@@ -115,11 +119,11 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
             MtomTestHelper.assertEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
 
             // create response
-            List<Element> elements = new ArrayList<Element>();
-            elements.add(DOMUtils.readXml(new StringReader(MtomTestHelper.RESP_MESSAGE)).getDocumentElement());
-            CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
+            List<Source> elements = new ArrayList<Source>();
+            elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.RESP_MESSAGE)).getDocumentElement()));
+            CxfPayload<SoapHeader> sbody = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
                 elements);
-            exchange.getOut().setBody(body);
+            exchange.getOut().setBody(sbody);
             exchange.getOut().addAttachment(MtomTestHelper.RESP_PHOTO_CID, 
                 new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
 

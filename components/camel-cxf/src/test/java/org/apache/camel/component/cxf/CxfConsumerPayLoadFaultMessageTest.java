@@ -20,6 +20,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+
 import org.w3c.dom.Element;
 
 import org.apache.camel.Exchange;
@@ -42,8 +45,8 @@ public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultT
                 from(fromURI).process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
                         Element details = DOMUtils.readXml(new StringReader(FAULTS)).getDocumentElement();
-                        List<Element> outElements = new ArrayList<Element>();
-                        outElements.add(details);
+                        List<Source> outElements = new ArrayList<Source>();
+                        outElements.add(new DOMSource(details));
                         CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements);
                         exchange.getOut().setBody(responsePayload);
                         exchange.getOut().setFault(true);

@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf;
 
 import java.util.List;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import org.w3c.dom.Element;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -30,15 +31,15 @@ import org.apache.camel.converter.jaxp.XmlConverter;
  */
 public class CxfPayload<T> {
     
-    private List<Element> body;
+    private List<Source> body;
     private List<T> headers;
 
-    public CxfPayload(List<T> headers, List<Element> body) {
+    public CxfPayload(List<T> headers, List<Source> body) {
         this.headers = headers;
         this.body = body;
     }
     
-    public List<Element> getBody() {
+    public List<Source> getBody() {
         return body;
     }
     
@@ -56,12 +57,12 @@ public class CxfPayload<T> {
             buf.append("body: " + body);
         } else {
             buf.append("body: [ ");
-            for (Element element : body) {
+            for (Source src : body) {
                 String elementString = "";
                 try {
-                    elementString = converter.toString(element, null);
+                    elementString = converter.toString(src, null);
                 } catch (TransformerException e) {
-                    elementString = element.toString();
+                    elementString = src.toString();
                 }
                 buf.append("[" + elementString + "]");
             }

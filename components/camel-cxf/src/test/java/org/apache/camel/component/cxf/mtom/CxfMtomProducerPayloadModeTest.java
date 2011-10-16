@@ -26,6 +26,8 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.imageio.ImageIO;
 import javax.mail.util.ByteArrayDataSource;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.xpath.XPathConstants;
@@ -38,6 +40,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfPayload;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.helpers.IOUtils;
@@ -94,8 +97,8 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
 
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
-                List<Element> elements = new ArrayList<Element>();
-                elements.add(DOMUtils.readXml(new StringReader(MtomTestHelper.REQ_MESSAGE)).getDocumentElement());
+                List<Source> elements = new ArrayList<Source>();
+                elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.REQ_MESSAGE)).getDocumentElement()));
                 CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
                     elements);
                 exchange.getIn().setBody(body);
@@ -119,11 +122,12 @@ public class CxfMtomProducerPayloadModeTest extends AbstractJUnit4SpringContextT
         ns.put("xop", MtomTestHelper.XOP_NS);
         
         XPathUtils xu = new XPathUtils(ns);
-        Element ele = (Element)xu.getValue("//ns:DetailResponse/ns:photo/xop:Include", out.getBody().get(0),
+        Element oute = new XmlConverter().toDOMElement(out.getBody().get(0));
+        Element ele = (Element)xu.getValue("//ns:DetailResponse/ns:photo/xop:Include", oute,
                                            XPathConstants.NODE);
         String photoId = ele.getAttribute("href").substring(4); // skip "cid:"
 
-        ele = (Element)xu.getValue("//ns:DetailResponse/ns:image/xop:Include", out.getBody().get(0),
+        ele = (Element)xu.getValue("//ns:DetailResponse/ns:image/xop:Include", oute,
                                            XPathConstants.NODE);
         String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
 

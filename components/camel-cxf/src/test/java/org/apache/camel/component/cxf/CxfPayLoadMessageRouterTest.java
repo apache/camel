@@ -18,11 +18,14 @@ package org.apache.camel.component.cxf;
 
 import java.util.List;
 
+import javax.xml.transform.Source;
+
 import org.w3c.dom.Element;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.converter.jaxp.XmlConverter;
 
 
 /**
@@ -40,10 +43,11 @@ public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
                 from(routerEndpointURI).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
-                        List<Element> elements = payload.getBody();
+                        List<Source> elements = payload.getBody();
                         assertNotNull("We should get the elements here" , elements);
                         assertEquals("Get the wrong elements size" , elements.size(), 1);
-                        assertEquals("Get the wrong namespace URI" , elements.get(0).getNamespaceURI(), "http://cxf.component.camel.apache.org/");
+                        Element el = new XmlConverter().toDOMElement(elements.get(0));
+                        assertEquals("Get the wrong namespace URI" , el.getNamespaceURI(), "http://cxf.component.camel.apache.org/");
                     }
                     
                 })

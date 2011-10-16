@@ -30,6 +30,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
@@ -415,8 +417,8 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
             +   "</message></ns2:SOAPHeaderInfo>";
         String requestBody = "<ns2:inoutHeader xmlns:ns2=\"http://apache.org/camel/component/cxf/soap/headers\">" 
             + "<requestType>CXF user</requestType></ns2:inoutHeader>";
-        List<Element> elements = new ArrayList<Element>();
-        elements.add(DOMUtils.readXml(new StringReader(requestBody)).getDocumentElement());
+        List<Source> elements = new ArrayList<Source>();
+        elements.add(new DOMSource(DOMUtils.readXml(new StringReader(requestBody)).getDocumentElement()));
         final List<SoapHeader> headers = new ArrayList<SoapHeader>();
         headers.add(new SoapHeader(qname,
                                    DOMUtils.readXml(new StringReader(requestHeader)).getDocumentElement()));
@@ -436,8 +438,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
 
         assertEquals(0, out.getHeaders().size());
         
-        String response = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" 
-            + "<ns2:inoutHeaderResponse xmlns:ns2=\"http://apache.org/camel/" 
+        String response = "<ns2:inoutHeaderResponse xmlns:ns2=\"http://apache.org/camel/" 
             + "component/cxf/soap/headers\"><responseType>pass</responseType>" 
             + "</ns2:inoutHeaderResponse>";
         assertEquals(response, XMLUtils.toString(out.getBody().get(0)));
