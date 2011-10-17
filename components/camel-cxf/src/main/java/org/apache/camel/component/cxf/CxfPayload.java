@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
@@ -62,19 +65,49 @@ public class CxfPayload<T> {
      * @return
      */
     public List<Element> getBody() {
-        List<Element> els = new ArrayList<Element>();
-        for (int x = 0; x < body.size(); x++) {
-            Source s = body.get(x);
-            try {
-                Element el = StaxUtils.read(s).getDocumentElement();
-                addNamespace(el, nsMap);
-                els.add(el);
-                body.set(x, new DOMSource(el));
-            } catch (Exception ex) {
-                throw new RuntimeCamelException("Problem converting content to Element", ex);
+        return new AbstractList<Element>() {
+            public boolean add(Element e) {
+                return body.add(new DOMSource(e));
             }
-        }
-        return els;
+
+            public Element set(int index, Element element) {
+                Source s = body.set(index, new DOMSource(element));
+                try {
+                    return StaxUtils.read(s).getDocumentElement();
+                } catch (XMLStreamException e) {
+                    throw new RuntimeCamelException("Problem converting content to Element", e);
+                }
+            }
+
+            public void add(int index, Element element) {
+                body.add(index, new DOMSource(element));
+            }
+
+            public Element remove(int index) {
+                Source s = body.remove(index);
+                try {
+                    return StaxUtils.read(s).getDocumentElement();
+                } catch (XMLStreamException e) {
+                    throw new RuntimeCamelException("Problem converting content to Element", e);
+                }
+            }
+
+            public Element get(int index) {
+                Source s = body.get(index);
+                try {
+                    Element el = StaxUtils.read(s).getDocumentElement();
+                    addNamespace(el, nsMap);
+                    body.set(index, new DOMSource(el));
+                    return el;
+                } catch (Exception ex) {
+                    throw new RuntimeCamelException("Problem converting content to Element", ex);
+                }
+            }
+
+            public int size() {
+                return body.size();
+            }
+        };
     }
     
     protected static void addNamespace(Element element, Map<String, String> nsMap) {
