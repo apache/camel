@@ -119,7 +119,10 @@ public class CxfPayload<T> {
     }
 
     /**
-     * Gets the body as a List of source objects
+     * Gets the body as a List of source objects.   If possible, the Source objects
+     * will likely be StaxSource or similar that allows streaming.   If you plan to 
+     * modify or use the Source, be careful that the result is still usable by
+     * the Camel runtime.
      * @return
      */
     public List<Source> getBodySources() {
@@ -130,6 +133,13 @@ public class CxfPayload<T> {
         return headers;
     }
     
+    /**
+     * Returns the contents as a String
+     * Important notes:
+     *   1) This requires the message to be fully loaded breaking the streaming
+     *   2) For large messages, the result can be a VERY large String and require
+     *   large amounts of memory.
+     */
     public String toString() {
         XmlConverter converter = new XmlConverter();
         StringBuilder buf = new StringBuilder();
