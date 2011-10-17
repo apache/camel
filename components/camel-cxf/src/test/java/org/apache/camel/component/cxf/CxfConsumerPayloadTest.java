@@ -18,6 +18,10 @@ package org.apache.camel.component.cxf;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.apache.camel.Exchange;
@@ -58,18 +62,19 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                     @SuppressWarnings("unchecked")
                     public void process(final Exchange exchange) throws Exception {
                         CxfPayload<SoapHeader> requestPayload = exchange.getIn().getBody(CxfPayload.class);
-                        List<Element> inElements = requestPayload.getBody();
-                        List<Element> outElements = new ArrayList<Element>();
+                        List<Source> inElements = requestPayload.getBodySources();
+                        List<Source> outElements = new ArrayList<Source>();
                         // You can use a customer toStringConverter to turn a CxfPayLoad message into String as you want                        
                         String request = exchange.getIn().getBody(String.class);
                         XmlConverter converter = new XmlConverter();
                         String documentString = ECHO_RESPONSE;
                         
+                        Element in = new XmlConverter().toDOMElement(inElements.get(0));
                         // Just check the element namespace
-                        if (!inElements.get(0).getNamespaceURI().equals(ELEMENT_NAMESPACE)) {
+                        if (!in.getNamespaceURI().equals(ELEMENT_NAMESPACE)) {
                             throw new IllegalArgumentException("Wrong element namespace");
                         }
-                        if (inElements.get(0).getLocalName().equals("echoBoolean")) {
+                        if (in.getLocalName().equals("echoBoolean")) {
                             documentString = ECHO_BOOLEAN_RESPONSE;
                             checkRequest("ECHO_BOOLEAN_REQUEST", request);
                         } else {
@@ -77,9 +82,9 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                             checkRequest("ECHO_REQUEST", request);
                         }
                         Document outDocument = converter.toDOMDocument(documentString);
-                        outElements.add(outDocument.getDocumentElement());
+                        outElements.add(new DOMSource(outDocument.getDocumentElement()));
                         // set the payload header with null
-                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements);
+                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements, null);
                         exchange.getOut().setBody(responsePayload); 
                     }
                 });

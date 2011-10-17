@@ -16,18 +16,30 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.logging.Logger;
+
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Source;
+import javax.xml.transform.stax.StAXSource;
 
 import org.w3c.dom.Node;
 
+import org.apache.cxf.common.i18n.Message;
+import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.databinding.DataReader;
 import org.apache.cxf.databinding.DataWriter;
 import org.apache.cxf.databinding.source.NodeDataReader;
 import org.apache.cxf.databinding.source.NodeDataWriter;
+import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.databinding.source.XMLStreamDataReader;
 import org.apache.cxf.databinding.source.XMLStreamDataWriter;
+import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxb.JAXBDataBinding;
+import org.apache.cxf.service.model.MessagePartInfo;
+import org.apache.cxf.staxutils.StaxSource;
+import org.apache.cxf.staxutils.StaxUtils;
 
 
 /**
@@ -40,6 +52,8 @@ import org.apache.cxf.jaxb.JAXBDataBinding;
  * @version @Revision: 789534 $
  */
 public class HybridSourceDataBinding extends JAXBDataBinding {
+    private static final Logger LOG = LogUtils.getL7dLogger(SourceDataBinding.class);
+    
     public HybridSourceDataBinding() {
         super();
     }
@@ -65,7 +79,27 @@ public class HybridSourceDataBinding extends JAXBDataBinding {
     @Override
     public <T> DataWriter<T> createWriter(Class<T> cls) {
         if (cls == XMLStreamWriter.class) {
-            return (DataWriter<T>) new XMLStreamDataWriter();
+            return (DataWriter<T>) new XMLStreamDataWriter() {
+
+                public void write(Object obj, MessagePartInfo part, XMLStreamWriter output) {
+                    if (obj == null) {
+                        return;
+                    }
+                    if (obj instanceof StaxSource
+                        || obj instanceof StAXSource) {
+                        XMLStreamReader reader = StaxUtils.createXMLStreamReader((Source)obj);
+                        try {
+                            StaxUtils.copy(reader, output);
+                            reader.close();
+                        } catch (XMLStreamException e) {
+                            throw new Fault(new Message("COULD_NOT_READ_XML_STREAM", LOG), e);
+                        }
+                        return;
+                    }
+                    super.write(obj, part, output);
+                }
+                
+            };
         } else if (cls == Node.class) {
             return (DataWriter<T>) new NodeDataWriter();
         } else {

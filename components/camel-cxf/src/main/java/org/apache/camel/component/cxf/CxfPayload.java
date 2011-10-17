@@ -16,11 +16,23 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import javax.xml.XMLConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMSource;
+
 import org.w3c.dom.Element;
+
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.cxf.staxutils.StaxUtils;
 
 
 /**
@@ -30,15 +42,87 @@ import org.apache.camel.converter.jaxp.XmlConverter;
  */
 public class CxfPayload<T> {
     
-    private List<Element> body;
+    private List<Source> body;
     private List<T> headers;
-
-    public CxfPayload(List<T> headers, List<Element> body) {
+    private Map<String, String> nsMap;
+    
+    public CxfPayload(List<T> headers, List<Source> body, Map<String, String> nsMap) {
         this.headers = headers;
         this.body = body;
+        this.nsMap = nsMap;
+    }
+    public CxfPayload(List<T> headers, List<Element> body) {
+        this.headers = headers;
+        this.body = new ArrayList<Source>(body.size());
+        for (Element el : body) {
+            this.body.add(new DOMSource(el));
+        }
+    } 
+    
+    /**
+     * Get the body as a List of DOM elements. 
+     * This will cause the Body to be fully read and parsed.
+     * @return
+     */
+    public List<Element> getBody() {
+        return new AbstractList<Element>() {
+            public boolean add(Element e) {
+                return body.add(new DOMSource(e));
+            }
+
+            public Element set(int index, Element element) {
+                Source s = body.set(index, new DOMSource(element));
+                try {
+                    return StaxUtils.read(s).getDocumentElement();
+                } catch (XMLStreamException e) {
+                    throw new RuntimeCamelException("Problem converting content to Element", e);
+                }
+            }
+
+            public void add(int index, Element element) {
+                body.add(index, new DOMSource(element));
+            }
+
+            public Element remove(int index) {
+                Source s = body.remove(index);
+                try {
+                    return StaxUtils.read(s).getDocumentElement();
+                } catch (XMLStreamException e) {
+                    throw new RuntimeCamelException("Problem converting content to Element", e);
+                }
+            }
+
+            public Element get(int index) {
+                Source s = body.get(index);
+                try {
+                    Element el = StaxUtils.read(s).getDocumentElement();
+                    addNamespace(el, nsMap);
+                    body.set(index, new DOMSource(el));
+                    return el;
+                } catch (Exception ex) {
+                    throw new RuntimeCamelException("Problem converting content to Element", ex);
+                }
+            }
+
+            public int size() {
+                return body.size();
+            }
+        };
     }
     
-    public List<Element> getBody() {
+    protected static void addNamespace(Element element, Map<String, String> nsMap) {
+        if (nsMap != null) {
+            for (String ns : nsMap.keySet()) {
+                element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, nsMap.get(ns));
+            }
+        }
+    }
+
+    /**
+     * Gets the body as a List of source objects
+     * @return
+     */
+    public List<Source> getBodySources() {
         return body;
     }
     
@@ -56,12 +140,12 @@ public class CxfPayload<T> {
             buf.append("body: " + body);
         } else {
             buf.append("body: [ ");
-            for (Element element : body) {
+            for (Element src : getBody()) {
                 String elementString = "";
                 try {
-                    elementString = converter.toString(element, null);
+                    elementString = converter.toString(src, null);
                 } catch (TransformerException e) {
-                    elementString = element.toString();
+                    elementString = src.toString();
                 }
                 buf.append("[" + elementString + "]");
             }

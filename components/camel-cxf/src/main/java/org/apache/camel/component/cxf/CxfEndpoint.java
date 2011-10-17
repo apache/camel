@@ -24,6 +24,11 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.Handler;
 
@@ -80,6 +85,7 @@ import org.apache.cxf.resource.ResourceResolver;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
+import org.apache.cxf.staxutils.StaxSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +111,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean isWrapped;
     // This is for marshal or unmarshal message with the document-literal wrapped or unwrapped style
     private Boolean wrappedStyle;
+    private Boolean allowStreaming;
     private DataFormat dataFormat = DataFormat.POJO;
     private String publishedEndpointUrl;
     private boolean inOut = true;
@@ -237,7 +244,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         // apply feature here
         if (!CxfEndpointUtils.hasAnnotation(cls, WebServiceProvider.class)) {
             if (getDataFormat() == DataFormat.PAYLOAD) {
-                sfb.getFeatures().add(new PayLoadDataFormatFeature());
+                sfb.getFeatures().add(new PayLoadDataFormatFeature(allowStreaming));
             } else if (getDataFormat() == DataFormat.MESSAGE) {
                 sfb.getFeatures().add(new MessageDataFormatFeature());
             }
@@ -391,7 +398,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (getDataFormat() == DataFormat.MESSAGE) {
             factoryBean.getFeatures().add(new MessageDataFormatFeature());
         } else if (getDataFormat() == DataFormat.PAYLOAD) {
-            factoryBean.getFeatures().add(new PayLoadDataFormatFeature());
+            factoryBean.getFeatures().add(new PayLoadDataFormatFeature(allowStreaming));
             factoryBean.setDataBinding(new HybridSourceDataBinding());
         }
 
@@ -593,6 +600,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public void setWrappedStyle(Boolean wrapped) {
         wrappedStyle = wrapped;
     }
+    
+    public void setAllowStreaming(Boolean b) {
+        allowStreaming = b;
+    }
+    public Boolean getAllowStreaming() {
+        return allowStreaming;
+    }
 
     public void setCxfBinding(CxfBinding cxfBinding) {
         this.cxfBinding = cxfBinding;
@@ -756,16 +770,22 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             if (DataFormat.PAYLOAD == message.get(DataFormat.class)) {
 
                 CxfPayload<?> payload = (CxfPayload<?>) params[0];
-                List<Element> elements = payload.getBody();
+                List<Source> elements = payload.getBodySources();
 
                 BindingOperationInfo boi = message.get(BindingOperationInfo.class);
                 MessageContentsList content = new MessageContentsList();
                 int i = 0;
 
                 for (MessagePartInfo partInfo : boi.getInput().getMessageParts()) {
-                    if (elements.size() > i && (isSkipPayloadMessagePartCheck() || partInfo.getConcreteName().getLocalPart().equals(elements.get(i)
-                                                                                                                                            .getLocalName()))) {
-                        content.put(partInfo, elements.get(i++));
+                    if (elements.size() > i) {
+                        if (isSkipPayloadMessagePartCheck()) {
+                            content.put(partInfo, elements.get(i++));
+                        } else {
+                            String name = findName(elements, i);
+                            if (partInfo.getConcreteName().getLocalPart().equals(name)) {
+                                content.put(partInfo, elements.get(i++));
+                            }
+                        }
                     }
                 }
 
@@ -782,6 +802,28 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             }
 
             message.remove(DataFormat.class);
+        }
+
+        private String findName(List<Source> sources, int i) {
+            Source source = sources.get(i);
+            if (source instanceof DOMSource) {
+                return ((Element)((DOMSource)source).getNode()).getLocalName();
+            } else if (source instanceof StaxSource) {
+                StaxSource s = (StaxSource)source;
+                return s.getXMLStreamReader().getLocalName();
+            } else if (source instanceof StAXSource) {
+                StAXSource s = (StAXSource)source;
+                XMLStreamReader r = s.getXMLStreamReader();
+                if (r.getEventType() != XMLStreamReader.START_ELEMENT) {
+                    try {
+                        r.nextTag();
+                    } catch (XMLStreamException e) {
+                        //ignore
+                    }
+                }
+                return r.getLocalName();
+            }
+            return null;
         }
     }
     

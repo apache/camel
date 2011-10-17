@@ -20,6 +20,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+
 import org.w3c.dom.Element;
 
 import org.apache.camel.Exchange;

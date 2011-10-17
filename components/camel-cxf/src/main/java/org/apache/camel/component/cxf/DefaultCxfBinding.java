@@ -315,7 +315,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (outBody != null) {
             if (dataFormat == DataFormat.PAYLOAD) {
                 CxfPayload<?> payload = (CxfPayload<?>)outBody;
-                outMessage.setContent(List.class, getResponsePayloadList(cxfExchange, payload.getBody()));
+                outMessage.setContent(List.class, getResponsePayloadList(cxfExchange, payload.getBodySources()));
                 outMessage.put(Header.HEADER_LIST, payload.getHeaders());
             } else {
                 if (responseContext.get(Header.HEADER_LIST) != null) {
@@ -379,7 +379,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     // -------------------------------------------------------------------------
     
     protected MessageContentsList getResponsePayloadList(org.apache.cxf.message.Exchange exchange, 
-                                                         List<Element> elements) {
+                                                         List<Source> elements) {
         BindingOperationInfo boi = exchange.getBindingOperationInfo();
 
         if (boi.isUnwrapped()) {
@@ -612,7 +612,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
             } else if (dataFormat == DataFormat.PAYLOAD) {
                 List<SoapHeader> headers = CastUtils.cast((List<?>)message.get(Header.HEADER_LIST));
-                answer = new CxfPayload<SoapHeader>(headers, getPayloadBodyElements(message));
+                Map<String, String> nsMap = new HashMap<String, String>();
+                answer = new CxfPayload<SoapHeader>(headers, getPayloadBodyElements(message, nsMap), nsMap);
                 
             } else if (dataFormat == DataFormat.MESSAGE) {
                 answer = message.getContent(InputStream.class);
@@ -630,10 +631,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                      
     }
 
-    protected static List<Element> getPayloadBodyElements(Message message) {
+    protected static List<Source> getPayloadBodyElements(Message message, Map<String, String> nsMap) {
         // take the namespace attribute from soap envelop
         Document soapEnv = (Document) message.getContent(Node.class);
-        Map<String, String> nsMap = new HashMap<String, String>();
         if (soapEnv != null) {
             NamedNodeMap attrs = soapEnv.getFirstChild().getAttributes();
             for (int i = 0; i < attrs.getLength(); i++) {
@@ -668,7 +668,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             partInfos = op.getInput().getMessageParts();            
         }
         
-        List<Element> answer = new ArrayList<Element>();
+        List<Source> answer = new ArrayList<Source>();
 
         for (MessagePartInfo partInfo : partInfos) {
             if (!inObjects.hasValue(partInfo)) {
@@ -682,16 +682,16 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             }
                         
             if (part instanceof Source) {
-                Element element;
+                Element element = null;
                 if (part instanceof DOMSource) {
                     element = getFirstElement(((DOMSource)part).getNode());
-                } else {
-                    element = getFirstElement((Source)part);
                 }
 
                 if (element != null) {
                     addNamespace(element, nsMap);
-                    answer.add(element);
+                    answer.add(new DOMSource(element));
+                } else {
+                    answer.add((Source)part);
                 }
                 
                 if (LOG.isTraceEnabled()) {
@@ -700,7 +700,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
             } else if (part instanceof Element) {
                 addNamespace((Element)part, nsMap);
-                answer.add((Element)part);
+                answer.add(new DOMSource((Element)part));
             } else {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Unhandled part type '{}'", part.getClass());
@@ -733,14 +733,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         return DOMUtils.getFirstElement(node);
     }
     
-    private static Element getFirstElement(Source source) {
-        try {
-            return ((Document)XMLUtils.fromSource(source)).getDocumentElement();
-        } catch (Exception e) {
-            // ignore
-        }
-        return null;
-    }
     
     public void copyJaxWsContext(org.apache.cxf.message.Exchange cxfExchange, Map<String, Object> context) {
         if (cxfExchange.getOutMessage() != null) {

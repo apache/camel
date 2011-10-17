@@ -30,6 +30,8 @@ import javax.activation.DataSource;
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.mail.util.ByteArrayDataSource;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
@@ -82,10 +84,10 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
 
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
-                List<Element> elements = new ArrayList<Element>();
-                elements.add(DOMUtils.readXml(new StringReader(MtomTestHelper.MTOM_DISABLED_REQ_MESSAGE)).getDocumentElement());
+                List<Source> elements = new ArrayList<Source>();
+                elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.MTOM_DISABLED_REQ_MESSAGE)).getDocumentElement()));
                 CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
-                    elements);
+                    elements, null);
                 exchange.getIn().setBody(body);
                 exchange.getIn().addAttachment(MtomTestHelper.REQ_PHOTO_CID, 
                     new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
