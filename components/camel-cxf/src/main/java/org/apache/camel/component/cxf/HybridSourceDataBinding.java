@@ -85,6 +85,8 @@ public class HybridSourceDataBinding extends JAXBDataBinding {
                     if (obj == null) {
                         return;
                     }
+                    // workaround issue in CXF that is causing these to go through 
+                    // sax instead of stax.  Fixed in 2.4.4/2.5.
                     if (obj instanceof StaxSource
                         || obj instanceof StAXSource) {
                         XMLStreamReader reader = StaxUtils.createXMLStreamReader((Source)obj);
