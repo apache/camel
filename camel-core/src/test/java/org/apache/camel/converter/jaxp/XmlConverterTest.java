@@ -26,6 +26,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
@@ -128,10 +129,19 @@ public class XmlConverterTest extends ContextTestSupport {
         assertEquals(new String(bytes), new String(out));
     }
 
-    public void testToDomSourceByStaxSource() throws Exception {
+    public void testToDomSourceBySaxSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
+        DOMSource out = conv.toDOMSource(source);
+        assertNotSame(source, out);
+
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
+    }
+    public void testToDomSourceByStAXSource() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        StAXSource source = conv.toStAXSource("<foo>bar</foo>", null);
         DOMSource out = conv.toDOMSource(source);
         assertNotSame(source, out);
 
@@ -163,6 +173,15 @@ public class XmlConverterTest extends ContextTestSupport {
         assertNotNull(out);
         assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
+    public void testToStAXSourceByInputStream() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<foo>bar</foo>");
+        StAXSource out = conv.toStAXSource(is, null);
+
+        assertNotNull(out);
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
+    }
 
     public void testToSaxSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
@@ -172,6 +191,17 @@ public class XmlConverterTest extends ContextTestSupport {
         File file = new File("target/xml/myxml.xml");
 
         SAXSource out = conv.toSAXSource(file, null);
+        assertNotNull(out);
+        assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
+    }
+    public void testToStAXSourceFromFile() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        deleteDirectory("target/xml");
+        template.sendBodyAndHeader("file:target/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
+        File file = new File("target/xml/myxml.xml");
+
+        StAXSource out = conv.toStAXSource(file, null);
         assertNotNull(out);
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, out));
     }
@@ -186,7 +216,7 @@ public class XmlConverterTest extends ContextTestSupport {
         assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
-    public void testToSaxSourceByStaxSource() throws Exception {
+    public void testToSaxSourceBySaxSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
@@ -238,10 +268,19 @@ public class XmlConverterTest extends ContextTestSupport {
         assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
-    public void testToStreamSourceByStaxSource() throws Exception {
+    public void testToStreamSourceBySaxSource() throws Exception {
         XmlConverter conv = new XmlConverter();
 
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
+        StreamSource out = conv.toStreamSource(source, null);
+        assertNotSame(source, out);
+
+        assertEquals("<foo>bar</foo>", conv.toString(out, null));
+    }
+    public void testToStreamSourceByStAXSource() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        StAXSource source = conv.toStAXSource("<foo>bar</foo>", null);
         StreamSource out = conv.toStreamSource(source, null);
         assertNotSame(source, out);
 
