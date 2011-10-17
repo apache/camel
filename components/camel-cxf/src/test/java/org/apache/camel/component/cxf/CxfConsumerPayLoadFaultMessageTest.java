@@ -45,8 +45,8 @@ public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultT
                 from(fromURI).process(new Processor() {
                     public void process(final Exchange exchange) throws Exception {
                         Element details = DOMUtils.readXml(new StringReader(FAULTS)).getDocumentElement();
-                        List<Source> outElements = new ArrayList<Source>();
-                        outElements.add(new DOMSource(details));
+                        List<Element> outElements = new ArrayList<Element>();
+                        outElements.add(details);
                         CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements);
                         exchange.getOut().setBody(responsePayload);
                         exchange.getOut().setFault(true);

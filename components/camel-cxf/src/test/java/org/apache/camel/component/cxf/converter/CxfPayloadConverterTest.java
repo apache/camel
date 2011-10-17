@@ -60,8 +60,8 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
         document.getDocumentElement().normalize();
         List<Source> body = new ArrayList<Source>();
         body.add(new DOMSource(document.getDocumentElement()));
-        payload = new CxfPayload<String[]>(new ArrayList<String[]>(), body);
-        emptyPayload = new CxfPayload<String[]>(new ArrayList<String[]>(), new ArrayList<Source>());
+        payload = new CxfPayload<String[]>(new ArrayList<String[]>(), body, null);
+        emptyPayload = new CxfPayload<String[]>(new ArrayList<String[]>(), new ArrayList<Source>(), null);
         inputStream = new FileInputStream(file);
     }
 

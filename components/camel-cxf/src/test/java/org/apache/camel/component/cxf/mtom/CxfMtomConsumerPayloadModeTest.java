@@ -73,7 +73,7 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
                 List<Source> elements = new ArrayList<Source>();
                 elements.add(new DOMSource(DOMUtils.readXml(new StringReader(getRequestMessage())).getDocumentElement()));
                 CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
-                    elements);
+                    elements, null);
                 exchange.getIn().setBody(body);
                 exchange.getIn().addAttachment(MtomTestHelper.REQ_PHOTO_CID, 
                     new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
@@ -122,7 +122,7 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
             List<Source> elements = new ArrayList<Source>();
             elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.RESP_MESSAGE)).getDocumentElement()));
             CxfPayload<SoapHeader> sbody = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
-                elements);
+                elements, null);
             exchange.getOut().setBody(sbody);
             exchange.getOut().addAttachment(MtomTestHelper.RESP_PHOTO_CID, 
                 new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));

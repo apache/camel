@@ -45,7 +45,7 @@ public class CxfPayLoadMessageRouterAddressOverrideTest extends CxfPayLoadMessag
                         exchange.getIn().setHeader(Exchange.DESTINATION_OVERRIDE_URL, getServiceAddress());
                         
                         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
-                        List<Source> elements = payload.getBody();
+                        List<Source> elements = payload.getBodySources();
                         assertNotNull("We should get the elements here" , elements);
                         assertEquals("Get the wrong elements size" , elements.size(), 1);
                         Element el = new XmlConverter().toDOMElement(elements.get(0));

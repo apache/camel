@@ -794,7 +794,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             if (DataFormat.PAYLOAD == message.get(DataFormat.class)) {
 
                 CxfPayload<?> payload = (CxfPayload<?>) params[0];
-                List<Source> elements = payload.getBody();
+                List<Source> elements = payload.getBodySources();
 
                 BindingOperationInfo boi = message.get(BindingOperationInfo.class);
                 MessageContentsList content = new MessageContentsList();

@@ -123,8 +123,8 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
                                 + "<return xmlns=\"http://cxf.component.camel.apache.org/\">" 
                                 + list.get(0) 
                                 + "</return></ns1:echoResponse>";
-                            List<Source> body = new ArrayList<Source>();
-                            body.add(new DOMSource(XMLUtils.parse(s).getDocumentElement()));
+                            List<Element> body = new ArrayList<Element>();
+                            body.add(XMLUtils.parse(s).getDocumentElement());
 
                             message = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(), body);
                         }

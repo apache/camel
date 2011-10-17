@@ -16,12 +16,20 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMSource;
+
 import org.w3c.dom.Element;
+
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.cxf.staxutils.StaxUtils;
 
 
 /**
@@ -33,13 +41,55 @@ public class CxfPayload<T> {
     
     private List<Source> body;
     private List<T> headers;
-
-    public CxfPayload(List<T> headers, List<Source> body) {
+    private Map<String, String> nsMap;
+    
+    public CxfPayload(List<T> headers, List<Source> body, Map<String, String> nsMap) {
         this.headers = headers;
         this.body = body;
+        this.nsMap = nsMap;
+    }
+    public CxfPayload(List<T> headers, List<Element> body) {
+        this.headers = headers;
+        this.body = new ArrayList<Source>(body.size());
+        for (Element el : body) {
+            this.body.add(new DOMSource(el));
+        }
+    } 
+    
+    /**
+     * Get the body as a List of DOM elements. 
+     * This will cause the Body to be fully read and parsed.
+     * @return
+     */
+    public List<Element> getBody() {
+        List<Element> els = new ArrayList<Element>();
+        for (int x = 0; x < body.size(); x++) {
+            Source s = body.get(x);
+            try {
+                Element el = StaxUtils.read(s).getDocumentElement();
+                addNamespace(el, nsMap);
+                els.add(el);
+                body.set(x, new DOMSource(el));
+            } catch (Exception ex) {
+                throw new RuntimeCamelException("Problem converting content to Element", ex);
+            }
+        }
+        return els;
     }
     
-    public List<Source> getBody() {
+    protected static void addNamespace(Element element, Map<String, String> nsMap) {
+        if (nsMap != null) {
+            for (String ns : nsMap.keySet()) {
+                element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, nsMap.get(ns));
+            }
+        }
+    }
+
+    /**
+     * Gets the body as a List of source objects
+     * @return
+     */
+    public List<Source> getBodySources() {
         return body;
     }
     
@@ -57,7 +107,7 @@ public class CxfPayload<T> {
             buf.append("body: " + body);
         } else {
             buf.append("body: [ ");
-            for (Source src : body) {
+            for (Element src : getBody()) {
                 String elementString = "";
                 try {
                     elementString = converter.toString(src, null);

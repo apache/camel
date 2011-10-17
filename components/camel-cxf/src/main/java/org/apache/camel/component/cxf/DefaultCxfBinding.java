@@ -315,7 +315,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (outBody != null) {
             if (dataFormat == DataFormat.PAYLOAD) {
                 CxfPayload<?> payload = (CxfPayload<?>)outBody;
-                outMessage.setContent(List.class, getResponsePayloadList(cxfExchange, payload.getBody()));
+                outMessage.setContent(List.class, getResponsePayloadList(cxfExchange, payload.getBodySources()));
                 outMessage.put(Header.HEADER_LIST, payload.getHeaders());
             } else {
                 if (responseContext.get(Header.HEADER_LIST) != null) {
@@ -612,7 +612,8 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 }
             } else if (dataFormat == DataFormat.PAYLOAD) {
                 List<SoapHeader> headers = CastUtils.cast((List<?>)message.get(Header.HEADER_LIST));
-                answer = new CxfPayload<SoapHeader>(headers, getPayloadBodyElements(message));
+                Map<String, String> nsMap = new HashMap<String, String>();
+                answer = new CxfPayload<SoapHeader>(headers, getPayloadBodyElements(message, nsMap), nsMap);
                 
             } else if (dataFormat == DataFormat.MESSAGE) {
                 answer = message.getContent(InputStream.class);
@@ -630,10 +631,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                      
     }
 
-    protected static List<Source> getPayloadBodyElements(Message message) {
+    protected static List<Source> getPayloadBodyElements(Message message, Map<String, String> nsMap) {
         // take the namespace attribute from soap envelop
         Document soapEnv = (Document) message.getContent(Node.class);
-        Map<String, String> nsMap = new HashMap<String, String>();
         if (soapEnv != null) {
             NamedNodeMap attrs = soapEnv.getFirstChild().getAttributes();
             for (int i = 0; i < attrs.getLength(); i++) {

@@ -62,7 +62,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                     @SuppressWarnings("unchecked")
                     public void process(final Exchange exchange) throws Exception {
                         CxfPayload<SoapHeader> requestPayload = exchange.getIn().getBody(CxfPayload.class);
-                        List<Source> inElements = requestPayload.getBody();
+                        List<Source> inElements = requestPayload.getBodySources();
                         List<Source> outElements = new ArrayList<Source>();
                         // You can use a customer toStringConverter to turn a CxfPayLoad message into String as you want                        
                         String request = exchange.getIn().getBody(String.class);
@@ -84,7 +84,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                         Document outDocument = converter.toDOMDocument(documentString);
                         outElements.add(new DOMSource(outDocument.getDocumentElement()));
                         // set the payload header with null
-                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements);
+                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements, null);
                         exchange.getOut().setBody(responsePayload); 
                     }
                 });

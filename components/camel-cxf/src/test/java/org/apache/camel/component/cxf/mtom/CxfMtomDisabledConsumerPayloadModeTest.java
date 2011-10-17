@@ -75,7 +75,7 @@ public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPaylo
             List<Source> elements = new ArrayList<Source>();
             elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.MTOM_DISABLED_RESP_MESSAGE)).getDocumentElement()));
             CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
-                elements);
+                elements, null);
             exchange.getOut().setBody(body);
             exchange.getOut().addAttachment(MtomTestHelper.RESP_PHOTO_CID, 
                 new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));

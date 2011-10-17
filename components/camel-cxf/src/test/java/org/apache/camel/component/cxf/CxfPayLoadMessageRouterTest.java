@@ -43,7 +43,7 @@ public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
                 from(routerEndpointURI).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
-                        List<Source> elements = payload.getBody();
+                        List<Source> elements = payload.getBodySources();
                         assertNotNull("We should get the elements here" , elements);
                         assertEquals("Get the wrong elements size" , elements.size(), 1);
                         Element el = new XmlConverter().toDOMElement(elements.get(0));

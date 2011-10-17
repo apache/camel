@@ -53,20 +53,20 @@ public final class CxfPayloadConverter {
     @Converter
     public static <T> CxfPayload<T> elementToCxfPayload(Element element, Exchange exchange) {
         List<T> headers = new ArrayList<T>();
-        List<Source> body = new ArrayList<Source>();
-        body.add(new DOMSource(element));
+        List<Element> body = new ArrayList<Element>();
+        body.add(element);
         return new CxfPayload<T>(headers, body);
     }
 
     @Converter
     public static <T> CxfPayload<T> nodeListToCxfPayload(NodeList nodeList, Exchange exchange) {
         List<T> headers = new ArrayList<T>();
-        List<Source> body = new ArrayList<Source>();
+        List<Element> body = new ArrayList<Element>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             // add all nodes to the body that are elements
             if (Element.class.isAssignableFrom(node.getClass())) {
-                body.add(new DOMSource((Element) node));
+                body.add((Element) node);
             }
         }
         return new CxfPayload<T>(headers, body);
@@ -74,33 +74,12 @@ public final class CxfPayloadConverter {
 
     @Converter
     public static <T> NodeList cxfPayloadToNodeList(CxfPayload<T> payload, Exchange exchange) {
-        return new NodeListWrapper(convertToElementList(payload.getBody()));
-    }
-    
-    private static List<Element> convertToElementList(List<Source> srcs) {
-        List<Element> ret = new ArrayList<Element>();
-        for (int x = 0; x < srcs.size(); x++) {
-            Source src = srcs.get(x);
-            Element el = null;
-            if (src instanceof DOMSource) {
-                el = (Element)((DOMSource)src).getNode();
-            } else {
-                try {
-                    Document doc = StaxUtils.read(src);
-                    el = doc.getDocumentElement();
-                } catch (XMLStreamException e) {
-                    throw new RuntimeCamelException("Could not convert from Source to Element.", e);
-                }
-                srcs.set(0, new DOMSource(el));
-            }
-            ret.add(el);
-        }
-        return ret;
+        return new NodeListWrapper(payload.getBody());
     }
     
     @Converter
     public static <T> Node cxfPayLoadToNode(CxfPayload<T> payload, Exchange exchange) {
-        List<Element> payloadBodyElements = convertToElementList(payload.getBody());
+        List<Element> payloadBodyElements = payload.getBody();
         
         if (payloadBodyElements.size() > 0) {
             return payloadBodyElements.get(0);

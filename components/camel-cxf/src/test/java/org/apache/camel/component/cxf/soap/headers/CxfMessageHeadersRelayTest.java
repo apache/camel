@@ -422,7 +422,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         final List<SoapHeader> headers = new ArrayList<SoapHeader>();
         headers.add(new SoapHeader(qname,
                                    DOMUtils.readXml(new StringReader(requestHeader)).getDocumentElement()));
-        final CxfPayload<SoapHeader> cxfPayload = new CxfPayload<SoapHeader>(headers, elements);
+        final CxfPayload<SoapHeader> cxfPayload = new CxfPayload<SoapHeader>(headers, elements, null);
         
         Exchange exchange = template.request(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -438,10 +438,11 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
 
         assertEquals(0, out.getHeaders().size());
         
-        String response = "<ns2:inoutHeaderResponse xmlns:ns2=\"http://apache.org/camel/" 
+        String responseExp = "<ns2:inoutHeaderResponse xmlns:ns2=\"http://apache.org/camel/" 
             + "component/cxf/soap/headers\"><responseType>pass</responseType>" 
             + "</ns2:inoutHeaderResponse>";
-        assertEquals(response, XMLUtils.toString(out.getBody().get(0)));
+        String response = XMLUtils.toString(out.getBody().get(0));
+        assertTrue(response, response.contains(responseExp));
     }
 
     @Test
