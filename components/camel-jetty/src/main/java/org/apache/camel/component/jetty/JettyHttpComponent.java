@@ -17,6 +17,8 @@
 package org.apache.camel.component.jetty;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -494,13 +496,18 @@ public class JettyHttpComponent extends HttpComponent {
                  * we short-circuit it here to just let things go when the context is already
                  * provided.
                  */
-                @Override
+                // This method is for Jetty 7.0.x ~ 7.4.x
+                @SuppressWarnings("unused")
                 public boolean checkConfig() {
                     if (getSslContext() == null) {
-                        return super.checkConfig();
+                        return checkSSLContextFactoryConfig(this);
                     } else {
                         return true;
                     }
+                }
+                // This method is for Jetty 7.5.x
+                public void checkKeyStore() {
+                    // here we don't check the SslContext as it is already created
                 }
                 
             };
@@ -552,6 +559,22 @@ public class JettyHttpComponent extends HttpComponent {
             }
         }
         return answer;
+    }
+    
+    protected boolean checkSSLContextFactoryConfig(SslContextFactory instance) {
+        try {
+            Method method = SslContextFactory.class.getMethod("checkConfig");
+            return (Boolean)method.invoke(instance);
+        } catch (NoSuchMethodException ex) {
+            // ignore
+        } catch (IllegalArgumentException e) {
+            // ignore
+        } catch (IllegalAccessException e) {
+            // ignore
+        } catch (InvocationTargetException e) {
+            // ignore
+        }
+        return false;
     }
 
     public Map<Integer, SslSelectChannelConnector> getSslSocketConnectors() {
