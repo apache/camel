@@ -434,7 +434,9 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
         });
 
         CxfPayload<?> out = exchange.getOut().getBody(CxfPayload.class);
-        assertEquals(1, out.getBody().size());
+        assertEquals(1, out.getBodySources().size());
+
+        assertTrue(out.getBodySources().get(0) instanceof DOMSource);
 
         assertEquals(0, out.getHeaders().size());
         

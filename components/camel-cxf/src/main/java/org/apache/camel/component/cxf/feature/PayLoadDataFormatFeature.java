@@ -47,12 +47,26 @@ import org.slf4j.LoggerFactory;
 public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     private static final Logger LOG = LoggerFactory.getLogger(PayLoadDataFormatFeature.class);
     private static final Collection<Class> REMOVING_FAULT_IN_INTERCEPTORS;
-
+    private static final boolean DEFAULT_ALLOW_STREAMING;
     static {
         REMOVING_FAULT_IN_INTERCEPTORS = new ArrayList<Class>();
         REMOVING_FAULT_IN_INTERCEPTORS.add(ClientFaultConverter.class);
+        
+        String s = System.getProperty("org.apache.camel.component.cxf.streaming");
+        DEFAULT_ALLOW_STREAMING = s == null || Boolean.parseBoolean(s);
     }
 
+    boolean allowStreaming = DEFAULT_ALLOW_STREAMING;
+    
+    public PayLoadDataFormatFeature() {
+    }
+    public PayLoadDataFormatFeature(Boolean streaming) {
+        if (streaming != null) {
+            allowStreaming = streaming;
+        }
+    }
+    
+    
     @Override
     public void initialize(Client client, Bus bus) {
         removeFaultInInterceptorFromClient(client);
@@ -112,9 +126,9 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
             for (int x = 0; x < size; x++) {
                 //last part can be streamed, others need DOM parsing 
                 if (x < (size - 1)) {
-                    bmi.getMessageParts().get(x).setTypeClass(DOMSource.class);
+                    bmi.getMessageParts().get(x).setTypeClass(allowStreaming ? DOMSource.class : null);
                 } else {
-                    bmi.getMessageParts().get(x).setTypeClass(Source.class);
+                    bmi.getMessageParts().get(x).setTypeClass(allowStreaming ? Source.class : null);
                 }
             }
         }
@@ -125,9 +139,9 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
             for (int x = 0; x < size; x++) {
                 //last part can be streamed, others need DOM parsing 
                 if (x < (size - 1)) {
-                    msgInfo.getMessageParts().get(x).setTypeClass(DOMSource.class);
+                    msgInfo.getMessageParts().get(x).setTypeClass(allowStreaming ? DOMSource.class : null);
                 } else {
-                    msgInfo.getMessageParts().get(x).setTypeClass(Source.class);
+                    msgInfo.getMessageParts().get(x).setTypeClass(allowStreaming ? Source.class : null);
                 }
             }
         }

@@ -72,6 +72,7 @@
                    xmlns:tns="http://apache.org/camel/component/cxf/soap/headers">              
       <cxf:properties>
           <entry key="dataFormat" value="PAYLOAD"/>
+          <entry key="allowStreaming" value="false"/>
       </cxf:properties>    
   </cxf:cxfEndpoint> 
 

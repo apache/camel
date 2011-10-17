@@ -112,6 +112,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean isWrapped;
     // This is for marshal or unmarshal message with the document-literal wrapped or unwrapped style
     private Boolean wrappedStyle;
+    private Boolean allowStreaming;
     private DataFormat dataFormat = DataFormat.POJO;
     private String publishedEndpointUrl;
     private boolean inOut = true;
@@ -245,7 +246,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         // apply feature here
         if (!CxfEndpointUtils.hasAnnotation(cls, WebServiceProvider.class)) {
             if (getDataFormat() == DataFormat.PAYLOAD) {
-                sfb.getFeatures().add(new PayLoadDataFormatFeature());
+                sfb.getFeatures().add(new PayLoadDataFormatFeature(allowStreaming));
             } else if (getDataFormat() == DataFormat.MESSAGE) {
                 sfb.getFeatures().add(new MessageDataFormatFeature());
             }
@@ -400,7 +401,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (getDataFormat() == DataFormat.MESSAGE) {
             factoryBean.getFeatures().add(new MessageDataFormatFeature());
         } else if (getDataFormat() == DataFormat.PAYLOAD) {
-            factoryBean.getFeatures().add(new PayLoadDataFormatFeature());
+            factoryBean.getFeatures().add(new PayLoadDataFormatFeature(allowStreaming));
             factoryBean.setDataBinding(new HybridSourceDataBinding());
         }
 
@@ -628,6 +629,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setWrappedStyle(Boolean wrapped) {
         wrappedStyle = wrapped;
+    }
+    
+    public void setAllowStreaming(Boolean b) {
+        allowStreaming = b;
+    }
+    public Boolean getAllowStreaming() {
+        return allowStreaming;
     }
 
     public void setCxfBinding(CxfBinding cxfBinding) {
