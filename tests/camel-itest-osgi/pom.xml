@@ -189,6 +189,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-sql</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-syslog</artifactId>
       <scope>test</scope>
     </dependency>
@@ -317,6 +322,11 @@
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-aws</artifactId>
           <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.derby</groupId>
+        <artifactId>derby</artifactId>
+        <scope>test</scope>
       </dependency>
   </dependencies>
 
