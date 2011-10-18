@@ -18,14 +18,16 @@ package org.apache.camel.blueprint;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
-import org.apache.aries.blueprint.ExtendedBeanMetadata;
-import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.NoSuchComponentException;
+import org.osgi.service.blueprint.reflect.BeanMetadata;
+import org.osgi.service.blueprint.reflect.ComponentMetadata;
+import org.osgi.service.blueprint.reflect.ReferenceMetadata;
 
 public class BlueprintContainerRegistry implements Registry {
 
@@ -66,32 +68,22 @@ public class BlueprintContainerRegistry implements Registry {
     }
 
     public static <T> Map<String, T> lookupByType(BlueprintContainer blueprintContainer, Class<T> type) {
+        Bundle bundle = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
         Map<String, T> objects = new LinkedHashMap<String, T>();
-        for (Object metadataObject : blueprintContainer.getMetadata(ExtendedBeanMetadata.class)) {
-            ExtendedBeanMetadata metadata = (ExtendedBeanMetadata) metadataObject;
+        @SuppressWarnings("unchecked")
+        Set<String> ids = blueprintContainer.getComponentIds();
+        for (String id : ids) {
             try {
-                Class cl = metadata.getRuntimeClass();
-                if (cl == null && metadata.getClassName() != null) {
-                    Bundle bundle = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
-                    cl = bundle.loadClass(metadata.getClassName());
+                ComponentMetadata metadata = blueprintContainer.getComponentMetadata(id);
+                Class cl = null;
+                if (metadata instanceof BeanMetadata) {
+                    BeanMetadata beanMetadata = (BeanMetadata)metadata;
+                    cl = bundle.loadClass(beanMetadata.getClassName());
+                } else if (metadata instanceof ReferenceMetadata) {
+                    ReferenceMetadata referenceMetadata = (ReferenceMetadata)metadata;
+                    cl = bundle.loadClass(referenceMetadata.getInterface());
                 }
-                if (cl == null || type.isAssignableFrom(cl)) {
-                    Object o = blueprintContainer.getComponentInstance(metadata.getId());
-                    objects.put(metadata.getId(), type.cast(o));
-                }
-            } catch (Throwable t) {
-                // ignore
-            }
-        }
-        for (Object metadataObject : blueprintContainer.getMetadata(MutableReferenceMetadata.class)) {
-            MutableReferenceMetadata metadata = (MutableReferenceMetadata) metadataObject;
-            try {
-                Class cl = metadata.getRuntimeInterface();
-                if (cl == null && metadata.getInterface() != null) {
-                    Bundle bundle = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
-                    cl = bundle.loadClass(metadata.getInterface());
-                }
-                if (cl == null || type.isAssignableFrom(cl)) {
+                if (cl != null && type.isAssignableFrom(cl)) {
                     Object o = blueprintContainer.getComponentInstance(metadata.getId());
                     objects.put(metadata.getId(), type.cast(o));
                 }
@@ -101,5 +93,4 @@ public class BlueprintContainerRegistry implements Registry {
         }
         return objects;
     }
-
 }
