@@ -16,11 +16,11 @@
  */
 package org.apache.camel;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * An Exchange is the message container holding the information during the entire routing of
@@ -159,6 +159,7 @@ public interface Exchange {
     String REDELIVERY_COUNTER      = "CamelRedeliveryCounter";
     String REDELIVERY_MAX_COUNTER  = "CamelRedeliveryMaxCounter";
     String REDELIVERY_EXHAUSTED    = "CamelRedeliveryExhausted";
+    String REDELIVERY_DELAY        = "CamelRedeliveryDelay";
     String ROLLBACK_ONLY           = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
     String ROUTE_STOP              = "CamelRouteStop";

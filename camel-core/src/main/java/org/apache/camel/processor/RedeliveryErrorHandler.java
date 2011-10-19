@@ -16,32 +16,18 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
-import org.apache.camel.Message;
-import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
+import org.apache.camel.*;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.*;
 import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Base redeliverable error handler that also supports a final dead letter queue in case
@@ -268,7 +254,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             if (data.redeliveryCounter > 0) {
                 // calculate delay
-                data.redeliveryDelay = data.currentRedeliveryPolicy.calculateRedeliveryDelay(data.redeliveryDelay, data.redeliveryCounter);
+                data.redeliveryDelay = determineRedeliveryDelay(exchange, data.currentRedeliveryPolicy, data.redeliveryDelay, data.redeliveryCounter);
 
                 if (data.redeliveryDelay > 0) {
                     // okay there is a delay so create a scheduled task to have it executed in the future
@@ -355,6 +341,32 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // error occurred so loop back around.....
         }
+    }
+
+    /**
+     * <p>Determines the redelivery delay time by first inspecting the Message header {@link Exchange#REDELIVERY_DELAY}
+     * and if not present, defaulting to {@link RedeliveryPolicy#calculateRedeliveryDelay(long, int)}</p>
+     *
+     * <p>In order to prevent manipulation of the RedeliveryData state, the values of {@link RedeliveryData#redeliveryDelay}
+     * and {@link RedeliveryData#redeliveryCounter} are copied in.</p>
+     *
+     * @param exchange The current exchange in question.
+     * @param redeliveryPolicy The RedeliveryPolicy to use in the calculation.
+     * @param redeliveryDelay The default redelivery delay from RedeliveryData
+     * @param redeliveryCounter The redeliveryCounter
+     * @return The time to wait before the next redelivery.
+     */
+    protected long determineRedeliveryDelay(Exchange exchange, RedeliveryPolicy redeliveryPolicy, long redeliveryDelay, int redeliveryCounter){
+        Message message = exchange.getIn();
+        Long delay = message.getHeader(Exchange.REDELIVERY_DELAY, Long.class);
+        if (delay == null) {
+            delay = redeliveryPolicy.calculateRedeliveryDelay(redeliveryDelay, redeliveryCounter);
+        }else{
+            if (log.isDebugEnabled()) {
+                log.debug("Redelivery delay is {} from Message.getHeader(Exchange.REDELIVERY_DELAY)", new Object[]{delay});
+            }
+        }
+        return delay;
     }
 
     /**
