@@ -18,7 +18,7 @@
 -->
 <features name='camel-${pom.version}'>
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
-  <!--repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds-feature-version}/xml/features</repository-->
+  <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds-feature-version}/xml/features</repository>
   <feature name='camel' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <feature version='${pom.version}'>camel-spring</feature>
