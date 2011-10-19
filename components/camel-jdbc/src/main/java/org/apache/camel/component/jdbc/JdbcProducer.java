@@ -98,8 +98,9 @@ public class JdbcProducer extends DefaultProducer {
             conn.commit();
         } catch (Exception e) {
             try {
-                if (conn != null)
+                if (conn != null) {
                     conn.rollback();
+                }
             } catch (SQLException sqle) {
                 LOG.warn("Error on jdbc component rollback: " + sqle, sqle);
             }
