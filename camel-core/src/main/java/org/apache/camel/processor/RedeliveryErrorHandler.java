@@ -265,7 +265,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             if (data.redeliveryCounter > 0) {
                 // calculate delay
-                data.redeliveryDelay = data.currentRedeliveryPolicy.calculateRedeliveryDelay(data.redeliveryDelay, data.redeliveryCounter);
+                data.redeliveryDelay = determineRedeliveryDelay(exchange, data.currentRedeliveryPolicy, data.redeliveryDelay, data.redeliveryCounter);
 
                 if (data.redeliveryDelay > 0) {
                     // okay there is a delay so create a scheduled task to have it executed in the future
@@ -352,6 +352,32 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // error occurred so loop back around.....
         }
+    }
+
+    /**
+     * <p>Determines the redelivery delay time by first inspecting the Message header {@link Exchange#REDELIVERY_DELAY}
+     * and if not present, defaulting to {@link RedeliveryPolicy#calculateRedeliveryDelay(long, int)}</p>
+     *
+     * <p>In order to prevent manipulation of the RedeliveryData state, the values of {@link RedeliveryData#redeliveryDelay}
+     * and {@link RedeliveryData#redeliveryCounter} are copied in.</p>
+     *
+     * @param exchange The current exchange in question.
+     * @param redeliveryPolicy The RedeliveryPolicy to use in the calculation.
+     * @param redeliveryDelay The default redelivery delay from RedeliveryData
+     * @param redeliveryCounter The redeliveryCounter
+     * @return The time to wait before the next redelivery.
+     */
+    protected long determineRedeliveryDelay(Exchange exchange, RedeliveryPolicy redeliveryPolicy, long redeliveryDelay, int redeliveryCounter){
+        Message message = exchange.getIn();
+        Long delay = message.getHeader(Exchange.REDELIVERY_DELAY, Long.class);
+        if (delay == null) {
+            delay = redeliveryPolicy.calculateRedeliveryDelay(redeliveryDelay, redeliveryCounter);
+        }else{
+            if (log.isDebugEnabled()) {
+                log.debug("Redelivery delay is {} from Message.getHeader(Exchange.REDELIVERY_DELAY)", new Object[]{delay});
+            }
+        }
+        return delay;
     }
 
     /**
