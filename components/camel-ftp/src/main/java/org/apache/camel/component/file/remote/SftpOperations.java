@@ -62,7 +62,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     /**
      * Extended user info which supports interactive keyboard mode, by entering the password.
      */
-    public static interface ExtendedUserInfo extends UserInfo, UIKeyboardInteractive {
+    public interface ExtendedUserInfo extends UserInfo, UIKeyboardInteractive {
     }
 
     public void setEndpoint(GenericFileEndpoint endpoint) {
