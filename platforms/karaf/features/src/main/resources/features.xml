@@ -344,10 +344,10 @@
   </feature>
   <feature name='camel-jclouds' version='${pom.version}' resolver='(obr)' start-level='50'>
     <!-- Added jclouds feature to workaround the karaf feature validate issue -->
-    <!--feature version="${jclouds-feature-version}">jclouds</feature>
+    <feature version="${jclouds-feature-version}">jclouds</feature>
     <feature version="${jclouds-feature-version}">jclouds-compute</feature>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.camel/camel-jclouds/${pom.version}</bundle-->
+    <bundle>mvn:org.apache.camel/camel-jclouds/${pom.version}</bundle>
   </feature>
   <feature name='camel-jcr' version='${pom.version}' resolver='(obr)' start-level='50'>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jcr-api/${jcr-bundle-version}</bundle>
