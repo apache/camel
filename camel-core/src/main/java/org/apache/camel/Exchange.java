@@ -16,11 +16,11 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.spi.Synchronization;
-import org.apache.camel.spi.UnitOfWork;
-
 import java.util.List;
 import java.util.Map;
+
+import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.UnitOfWork;
 
 /**
  * An Exchange is the message container holding the information during the entire routing of
