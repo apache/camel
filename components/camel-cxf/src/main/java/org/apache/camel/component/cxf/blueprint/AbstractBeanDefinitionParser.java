@@ -48,6 +48,8 @@ public class AbstractBeanDefinitionParser extends AbstractBPBeanDefinitionParser
         answer.setRuntimeClass(runtimeClass);
         answer.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
         answer.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
+        // set the Bean scope to be prototype, so we can get a new instance per looking up
+        answer.setScope(MutableBeanMetadata.SCOPE_PROTOTYPE);
         
         if (!StringUtils.isEmpty(getIdOrName(element))) {
             answer.setId(getIdOrName(element));

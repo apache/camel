@@ -23,6 +23,7 @@ import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -57,7 +58,9 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
         bean.setLazyInit(false);
         // put the bean id into the property map
         Map<String, Object> map = getPropertyMap(bean, true);
-        map.put("beanId", resolveId(element, bean.getBeanDefinition(), ctx));        
+        map.put("beanId", resolveId(element, bean.getBeanDefinition(), ctx));
+        // set the bean scope to be prototype, then we can get a new instance in each look up 
+        bean.setScope(BeanDefinition.SCOPE_PROTOTYPE);
     }
 
     @Override
