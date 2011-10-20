@@ -29,11 +29,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class RecipientListCxfTest extends CamelSpringTestSupport {
 
-    @Override
-    protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/itest/greeter/RecipientListCxfTest-context.xml");
-    }
-
     @EndpointInject(uri = "mock:reply")
     protected MockEndpoint replyEndpoint;
 
@@ -42,6 +37,11 @@ public class RecipientListCxfTest extends CamelSpringTestSupport {
 
     @EndpointInject(uri = "mock:output")
     protected MockEndpoint outputEndpoint;
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/itest/greeter/RecipientListCxfTest-context.xml");
+    }
 
     @Test
     public void testRecipientListCXF() throws Exception {

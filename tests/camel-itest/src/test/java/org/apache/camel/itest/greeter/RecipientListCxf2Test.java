@@ -29,11 +29,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class RecipientListCxf2Test extends CamelSpringTestSupport {
 
-    @Override
-    protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/itest/greeter/RecipientListCxf2Test-context.xml");
-    }
-
     @EndpointInject(uri = "mock:reply")
     protected MockEndpoint replyEndpoint;
 
@@ -43,6 +38,11 @@ public class RecipientListCxf2Test extends CamelSpringTestSupport {
     @EndpointInject(uri = "mock:output")
     protected MockEndpoint outputEndpoint;
 
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/itest/greeter/RecipientListCxf2Test-context.xml");
+    }
+    
     @Test
     public void testRecipientListCXF2() throws Exception {
         replyEndpoint.expectedBodiesReceived("Hello Willem", "Hello Jonathan", "Hello Freeman");
@@ -66,8 +66,8 @@ public class RecipientListCxf2Test extends CamelSpringTestSupport {
         assertEquals("Bye Claus", out2);
 
         // change foo headers again
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:9003/SoapContext/SoapPort"
-                + ",cxf:bean:clientEndpoint?address=http://localhost:9004/SoapContext/SoapPort");
+        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:9002/SoapContext/SoapPort"
+                + ",cxf:bean:clientEndpoint?address=http://localhost:9003/SoapContext/SoapPort");
 
         // and call again to ensure that it really works also
         // returns the last message from the recipient list
@@ -75,8 +75,8 @@ public class RecipientListCxf2Test extends CamelSpringTestSupport {
         assertEquals("Bye Jonathan", out3);
 
         // change foo headers again
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:9004/SoapContext/SoapPort"
-                + ",cxf:bean:clientEndpoint?address=http://localhost:9003/SoapContext/SoapPort");
+        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:9003/SoapContext/SoapPort"
+                + ",cxf:bean:clientEndpoint?address=http://localhost:9002/SoapContext/SoapPort");
 
         // and call again to ensure that it really works also
         // returns the last message from the recipient list
