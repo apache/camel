@@ -71,7 +71,12 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
             // need to set the CamelContext value 
             if (result.getCamelContext() == null) {
                 result.setCamelContext(getCamelContext());
+            } 
+            if (!result.getCamelContext().equals(getCamelContext()) || parameters.size() > 0) {
+                // need to clone a new endpoint to use
+                result = result.copy();
             }
+            
         } else {
             // endpoint URI does not specify a bean
             result = new CxfEndpoint(remaining, this);

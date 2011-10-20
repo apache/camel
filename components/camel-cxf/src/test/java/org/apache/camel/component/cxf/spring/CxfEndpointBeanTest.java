@@ -59,7 +59,5 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         assertEquals("We should get a right soap version", "1.2", String.valueOf(configuration.getVersion().getVersion()));
         
     }
-
-
-   
+      
 }
