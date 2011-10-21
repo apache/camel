@@ -30,9 +30,9 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
@@ -45,6 +45,7 @@ import org.apache.camel.converter.jaxp.XmlErrorListener;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -52,7 +53,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * Creates a <a href="http://camel.apache.org/processor.html">Processor</a>
  * which performs an XSLT transformation of the IN message body.
  * <p/>
- * Will by defult output the result as a String. You can chose which kind of output
+ * Will by default output the result as a String. You can chose which kind of output
  * you want using the <tt>outputXXX</tt> methods.
  *
  * @version 
@@ -91,7 +92,6 @@ public class XsltBuilder implements Processor {
         Transformer transformer = getTemplate().newTransformer();
         configureTransformer(transformer, exchange);
         transformer.setErrorListener(new DefaultTransformErrorHandler());
-        Source source = getSource(exchange);
         ResultHandler resultHandler = resultHandlerFactory.createResult(exchange);
         Result result = resultHandler.getResult();
 
@@ -99,8 +99,16 @@ public class XsltBuilder implements Processor {
         Message out = exchange.getOut();
         out.copyFrom(exchange.getIn());
 
-        transformer.transform(source, result);
-        resultHandler.setBody(out);
+        // the underlying input stream, which we need to close to avoid locking files or other resources
+        InputStream is = null;
+        try {
+            is = exchange.getIn().getBody(InputStream.class);
+            Source source = getSource(exchange, is);
+            transformer.transform(source, result);
+            resultHandler.setBody(out);
+        } finally {
+            IOHelper.close(is);
+        }
     }
 
     // Builder methods
@@ -323,11 +331,17 @@ public class XsltBuilder implements Processor {
     // -------------------------------------------------------------------------
 
     /**
-     * Converts the inbound body to a {@link Source}
+     * Converts the inbound stream to a {@link Source}.
+     * <p/>
+     * This implementation will prefer StAX first, and fallback to other kinds of Source types.
      */
-    protected Source getSource(Exchange exchange) {
-        Message in = exchange.getIn();
-        Source source = in.getBody(Source.class);
+    protected Source getSource(Exchange exchange, InputStream is) {
+        // try StAX first
+        Source source = exchange.getContext().getTypeConverter().convertTo(StAXSource.class, exchange, is);
+        if (source == null) {
+            // fallback and try other kind of source
+            source = exchange.getContext().getTypeConverter().convertTo(StAXSource.class, exchange, is);
+        }
         if (source == null) {
             if (isFailOnNullBody()) {
                 throw new ExpectedBodyTypeException(exchange, Source.class);
