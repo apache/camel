@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,18 +17,20 @@
 
 package org.apache.camel.itest.osgi.sql;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.sql.SqlComponent;
 import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.apache.karaf.testing.Helper;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -37,16 +39,8 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-import javax.sql.DataSource;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
@@ -58,11 +52,11 @@ import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory
 @RunWith(JUnit4TestRunner.class)
 public class SqlRouteTest extends OSGiIntegrationTestSupport {
 
-    protected String driverClass = "org.apache.derby.jdbc.EmbeddedDriver";
+    String driverClass = "org.apache.derby.jdbc.EmbeddedDriver";
+    OsgiBundleXmlApplicationContext applicationContext;
+
     private DataSource ds;
     private JdbcTemplate jdbcTemplate;
-
-    protected OsgiBundleXmlApplicationContext applicationContext;
 
     @After
     public void tearDown() throws Exception {
@@ -74,7 +68,7 @@ public class SqlRouteTest extends OSGiIntegrationTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         setThreadContextClassLoader();
         applicationContext = new OsgiBundleXmlApplicationContext(
-            new String[]{"org/apache/camel/itest/osgi/sql/springSqlRouteContext.xml"});
+                new String[]{"org/apache/camel/itest/osgi/sql/springSqlRouteContext.xml"});
         if (bundleContext != null) {
             applicationContext.setBundleContext(bundleContext);
             applicationContext.refresh();
@@ -116,16 +110,15 @@ public class SqlRouteTest extends OSGiIntegrationTestSupport {
     }
 
 
-
     @Test
     public void testInsert() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:insert", new Object[] {10, "test", "test"});
+        template.sendBody("direct:insert", new Object[]{10, "test", "test"});
         mock.assertIsSatisfied();
         try {
-            String projectName = (String)jdbcTemplate.queryForObject("select project from projects where id = 10", String.class);
+            String projectName = (String) jdbcTemplate.queryForObject("select project from projects where id = 10", String.class);
             assertEquals("test", projectName);
         } catch (EmptyResultDataAccessException e) {
             fail("no row inserted");
@@ -136,7 +129,7 @@ public class SqlRouteTest extends OSGiIntegrationTestSupport {
     }
 
 
-     private boolean isOrdered(Set<?> keySet) {
+    private boolean isOrdered(Set<?> keySet) {
         assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("id"));
         assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("project"));
         assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("license"));
@@ -144,8 +137,8 @@ public class SqlRouteTest extends OSGiIntegrationTestSupport {
         // the implementation uses a case insensitive Map
         final Iterator<?> it = keySet.iterator();
         return "id".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()))
-            && "project".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()))
-            && "license".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()));
+                && "project".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()))
+                && "license".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()));
     }
 
     @Configuration

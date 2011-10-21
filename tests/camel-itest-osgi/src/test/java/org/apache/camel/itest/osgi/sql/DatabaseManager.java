@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,13 +17,12 @@
 
 package org.apache.camel.itest.osgi.sql;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public class DatabaseManager {
 
-   private DataSource dataSource;
+    private DataSource dataSource;
 
     public DatabaseManager(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -32,7 +31,7 @@ public class DatabaseManager {
     public void init() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.execute("create table projects (id integer primary key,"
-                             + "project varchar(10), license varchar(5))");
+                + "project varchar(10), license varchar(5))");
         jdbcTemplate.execute("insert into projects values (1, 'Camel', 'ASF')");
         jdbcTemplate.execute("insert into projects values (2, 'AMQ', 'ASF')");
         jdbcTemplate.execute("insert into projects values (3, 'Linux', 'XXX')");

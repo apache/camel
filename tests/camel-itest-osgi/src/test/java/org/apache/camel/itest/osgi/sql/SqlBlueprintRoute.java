@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,13 @@
 
 package org.apache.camel.itest.osgi.sql;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
@@ -35,13 +42,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import javax.sql.DataSource;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
@@ -96,22 +96,21 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
     }
 
 
-
     @Test
     public void testInsert() throws Exception {
         getInstalledBundle("CamelBlueprintSqlTestBundle").start();
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
-        DataSource ds = getOsgiService(DataSource.class,10000);
+        DataSource ds = getOsgiService(DataSource.class, 10000);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
         ProducerTemplate template = ctx.createProducerTemplate();
         MockEndpoint mock = (MockEndpoint) ctx.getEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:insert", new Object[] {10, "test", "test"});
+        template.sendBody("direct:insert", new Object[]{10, "test", "test"});
         mock.assertIsSatisfied();
         try {
-            String projectName = (String)jdbcTemplate.queryForObject("select project from projects where id = 10", String.class);
+            String projectName = (String) jdbcTemplate.queryForObject("select project from projects where id = 10", String.class);
             assertEquals("test", projectName);
         } catch (EmptyResultDataAccessException e) {
             fail("no row inserted");
@@ -122,7 +121,7 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
     }
 
 
-     private boolean isOrdered(Set<?> keySet) {
+    private boolean isOrdered(Set<?> keySet) {
         assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("id"));
         assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("project"));
         assertTrue("isOrdered() requires the following keys: id, project, license", keySet.contains("license"));
@@ -130,9 +129,10 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
         // the implementation uses a case insensitive Map
         final Iterator<?> it = keySet.iterator();
         return "id".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()))
-            && "project".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()))
-            && "license".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()));
+                && "project".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()))
+                && "license".equalsIgnoreCase(assertIsInstanceOf(String.class, it.next()));
     }
+
     @Configuration
     public static Option[] configure() throws Exception {
 
