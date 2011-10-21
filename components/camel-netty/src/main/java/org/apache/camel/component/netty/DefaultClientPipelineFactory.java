@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.util.List;
 
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.AsyncCallback;
@@ -72,6 +73,11 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory {
 
         if (producer.getConfiguration().getSslHandler() != null) {
             return producer.getConfiguration().getSslHandler();
+        } else if (producer.getConfiguration().getSslContextParameters() != null) {
+            SSLContext context = producer.getConfiguration().getSslContextParameters().createSSLContext();
+            SSLEngine engine = context.createSSLEngine();
+            engine.setUseClientMode(true);
+            return new SslHandler(engine);
         } else {
             if (producer.getConfiguration().getKeyStoreFile() == null) {
                 LOG.debug("keystorefile is null");

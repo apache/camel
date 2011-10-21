@@ -18,6 +18,7 @@ package org.apache.camel.component.netty;
 
 import java.util.List;
 
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
@@ -70,6 +71,11 @@ public class DefaultServerPipelineFactory implements ChannelPipelineFactory {
 
         if (consumer.getConfiguration().getSslHandler() != null) {
             return consumer.getConfiguration().getSslHandler();
+        } else if (consumer.getConfiguration().getSslContextParameters() != null) {
+            SSLContext context = consumer.getConfiguration().getSslContextParameters().createSSLContext();
+            SSLEngine engine = context.createSSLEngine();
+            engine.setUseClientMode(false);
+            return new SslHandler(engine);
         } else {
             SSLEngineFactory sslEngineFactory = new SSLEngineFactory(
                 consumer.getConfiguration().getKeyStoreFormat(),
@@ -80,6 +86,5 @@ public class DefaultServerPipelineFactory implements ChannelPipelineFactory {
             SSLEngine sslEngine = sslEngineFactory.createServerSSLEngine();
             return new SslHandler(sslEngine);
         }
-    }   
-
+    }
 }
