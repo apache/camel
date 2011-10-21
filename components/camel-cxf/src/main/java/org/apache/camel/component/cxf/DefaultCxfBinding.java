@@ -548,18 +548,20 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
             
         for (Map.Entry<String, Object> entry : camelHeaders.entrySet()) {    
+            // put response code in request context so it will be copied to CXF message's property
+            if (Message.RESPONSE_CODE.equals(entry.getKey()) || Exchange.HTTP_RESPONSE_CODE.equals(entry.getKey())) {
+                LOG.debug("Propagate to CXF header: {} value: {}", Message.RESPONSE_CODE, entry.getValue());
+                cxfContext.put(Message.RESPONSE_CODE, entry.getValue());
+                continue;
+            }
+
             // this header should be filtered, continue to the next header
             if (headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), camelExchange)) {
                 continue;
             }
             
-            LOG.trace("Propagate to CXF header: {} value: {}", entry.getKey(), entry.getValue());
+            LOG.debug("Propagate to CXF header: {} value: {}", entry.getKey(), entry.getValue());
             
-            // put response code in request context so it will be copied to CXF message's property
-            if (Message.RESPONSE_CODE.equals(entry.getKey())) {
-                cxfContext.put(entry.getKey(), entry.getValue());
-                continue;
-            }
             
             // put SOAP/protocol header list in exchange
             if (Header.HEADER_LIST.equals(entry.getKey())) {
