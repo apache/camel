@@ -25,8 +25,6 @@
     ">
 
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
-    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
-    <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
 
     <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/SoapContext/SoapPort"
                      wsdlURL="wsdl/hello_world.wsdl"
@@ -34,9 +32,6 @@
                      endpointName="s:SoapOverHttp"
                      serviceName="s:SOAPService"
                      xmlns:s="http://apache.org/hello_world_soap_http">
-        <cxf:properties>
-            <entry key="setDefaultBus" value="false"/>
-        </cxf:properties>
     </cxf:cxfEndpoint>
 
     <bean id="prepareRequest" class="org.apache.camel.itest.greeter.PrepareRequest"/>
