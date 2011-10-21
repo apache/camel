@@ -71,17 +71,12 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
         return new LoadBalancerConsumer(this, processor, loadBalancer);
     }
 
-    public void processDataSet(DataSet dataSet, int counter) throws Exception {
-        Exchange exchange = createExchange(dataSet, counter);
-        loadBalancer.process(exchange);
-    }
-
-    public Exchange createExchange(DataSet dataSet, int counter) {
-        Exchange answer = createExchange();
-        Message in = answer.getIn();
+    public void processDataSet(Exchange originalExchange, DataSet dataSet, int counter) throws Exception {
+        Exchange exchange = originalExchange.copy();
+        Message in = exchange.getIn();
         in.setBody(dataSet);
         in.setHeader("CamelFlatpackCounter", counter);
-        return answer;
+        loadBalancer.process(exchange);
     }
 
     public Parser createParser(Exchange exchange) throws InvalidPayloadException, IOException {

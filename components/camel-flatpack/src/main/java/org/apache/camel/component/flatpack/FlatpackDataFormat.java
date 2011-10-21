@@ -34,7 +34,6 @@ import net.sf.flatpack.writer.DelimiterWriterFactory;
 import net.sf.flatpack.writer.FixedWriterFactory;
 import net.sf.flatpack.writer.Writer;
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;

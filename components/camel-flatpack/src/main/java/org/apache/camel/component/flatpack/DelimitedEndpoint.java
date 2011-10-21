@@ -25,7 +25,6 @@ import net.sf.flatpack.Parser;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
