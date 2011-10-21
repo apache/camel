@@ -28,11 +28,14 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpExchange;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.io.Buffer;
+import org.eclipse.jetty.io.ByteArrayBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,12 +68,34 @@ public class JettyContentExchange extends ContentExchange {
 
     @Override
     protected void onResponseHeader(Buffer name, Buffer value) throws IOException {
+        String k = name.toString();
+        String v = value.toString();
+        LOG.trace("onResponseHeader {} -> {}", k, v);
+
+        // need to remove quotes from charset which can be returned by some http servers
+        if (Exchange.CONTENT_TYPE.equalsIgnoreCase(k)) {
+            String charset = ObjectHelper.after(v, "charset=");
+            if (charset != null) {
+                charset = charset.trim();
+                String s = StringHelper.removeLeadingAndEndingQuotes(charset);
+                if (!charset.equals(s)) {
+                    v = ObjectHelper.before(v, "charset=") + "charset=" + s;
+                    LOG.debug("Removed quotes from charset in " + Exchange.CONTENT_TYPE + " from {} to {}", charset, s);
+
+                    // use a new buffer to adjust the value
+                    value = new ByteArrayBuffer.CaseInsensitive(v);
+                }
+            }
+        }
+
         super.onResponseHeader(name, value);
-        headers.put(name.toString(), value.toString());
+        headers.put(k, v);
     }
 
     @Override
     protected void onRequestComplete() throws IOException {
+        LOG.trace("onRequestComplete");
+
         // close the input stream when its not needed anymore
         InputStream is = getRequestContentSource();
         if (is != null) {
@@ -80,6 +105,8 @@ public class JettyContentExchange extends ContentExchange {
 
     @Override
     protected void onResponseComplete() throws IOException {
+        LOG.trace("onResponseComplete");
+
         try {
             super.onResponseComplete();
         } finally {
@@ -89,6 +116,8 @@ public class JettyContentExchange extends ContentExchange {
 
     @Override
     protected void onExpire() {
+        LOG.trace("onExpire");
+
         try {
             super.onExpire();
         } finally {
@@ -98,6 +127,8 @@ public class JettyContentExchange extends ContentExchange {
 
     @Override
     protected void onException(Throwable ex) {
+        LOG.trace("onException {}", ex);
+
         try {
             super.onException(ex);
         } finally {
@@ -107,6 +138,8 @@ public class JettyContentExchange extends ContentExchange {
 
     @Override
     protected void onConnectionFailed(Throwable ex) {
+        LOG.trace("onConnectionFailed {}", ex);
+
         try {
             super.onConnectionFailed(ex);
         } finally {
