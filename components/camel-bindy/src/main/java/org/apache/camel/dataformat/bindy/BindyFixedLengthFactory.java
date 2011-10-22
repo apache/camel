@@ -52,8 +52,6 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
     private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();
 
-    private Map<Integer, List<String>> results;
-
     private int numberOptionalFields;
     private int numberMandatoryFields;
     private int totalFields;
@@ -251,7 +249,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
-        results = new HashMap<Integer, List<String>>();
+        Map<Integer, List<String>> results = new HashMap<Integer, List<String>>();
 
         for (Class clazz : models) {
 
@@ -267,7 +265,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                     // Generate Fixed Length table
                     // containing the positions of the fields
-                    generateFixedLengthPositionMap(clazz, obj);
+                    generateFixedLengthPositionMap(clazz, obj, results);
 
                 }
             }
@@ -292,8 +290,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      * Generate a table containing the data formatted and sorted with their position/offset
      * The result is placed in the Map<Integer, List> results
      */
-
-    private void generateFixedLengthPositionMap(Class clazz, Object obj) throws Exception {
+    private void generateFixedLengthPositionMap(Class clazz, Object obj, Map<Integer, List<String>> results) throws Exception {
 
         String result = "";
 
