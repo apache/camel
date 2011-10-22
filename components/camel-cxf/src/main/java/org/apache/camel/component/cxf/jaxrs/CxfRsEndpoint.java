@@ -26,6 +26,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Service;
 import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -38,7 +39,7 @@ import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
 
     protected Bus bus;
@@ -52,7 +53,6 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private boolean throwExceptionOnFailure = true;
     private int maxClientCacheSize = 10;
     
-    private AtomicBoolean bindingInitialized = new AtomicBoolean(false);
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
     private boolean isSetDefaultBus;
@@ -94,18 +94,11 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
-        if (headerFilterStrategy == null) {
-            headerFilterStrategy = new CxfRsHeaderFilterStrategy();
-            LOG.debug("Create default header filter strategy {}", headerFilterStrategy);
-        }
         return headerFilterStrategy;
     }
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
-        if (binding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware) binding).setHeaderFilterStrategy(headerFilterStrategy);
-        }
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -122,19 +115,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     public void setBinding(CxfRsBinding binding) {
         this.binding = binding;
-        bindingInitialized.set(false);
     }
 
-    public synchronized CxfRsBinding getBinding() {
-        if (binding == null) {
-            binding = new DefaultCxfRsBinding();
-            LOG.debug("Create default CXF Binding {}", binding);
-        }
-
-        if (!bindingInitialized.getAndSet(true) && binding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware) binding).setHeaderFilterStrategy(getHeaderFilterStrategy());
-        }
-
+    public CxfRsBinding getBinding() {
         return binding;
     }
     
@@ -256,5 +239,23 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     public boolean isSetDefaultBus() {
         return isSetDefaultBus;
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new CxfRsHeaderFilterStrategy();
+        }
+        if (binding == null) {
+            binding = new DefaultCxfRsBinding();
+        }
+        if (binding instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware) binding).setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }
