@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.hdfs;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import javax.xml.ws.Holder;
 
 import org.apache.camel.Exchange;
@@ -27,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.PathFilter;
@@ -73,10 +76,16 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             Path pattern = info.getPath().suffix("/" + this.config.getPattern());
             fileStatuses = info.getFileSystem().globStatus(pattern, new ExcludePathFilter());
         }
+
         if (fileStatuses.length > 0) {
             this.idle.set(false);
         }
+
         for (int i = 0; i < fileStatuses.length; ++i) {
+            FileStatus status = fileStatuses[i];
+            if (normalFileIsDirectoryNoSuccessFile(status, info)) {
+                continue;
+            }
             try {
                 this.rwlock.writeLock().lock();
                 this.istream = HdfsInputStream.createInputStream(fileStatuses[i].getPath().toString(), this.config);
@@ -89,6 +98,8 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             while (this.istream.next(key, value) != 0) {
                 Exchange exchange = this.getEndpoint().createExchange();
                 Message message = new DefaultMessage();
+                message.setHeader(Exchange.FILE_NAME, StringUtils
+                        .substringAfterLast(status.getPath().toString(), "/"));
                 if (key.value != null) {
                     message.setHeader(HdfsHeader.KEY.name(), key.value);
                 }
@@ -101,6 +112,16 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         }
         this.idle.set(true);
         return numMessages;
+    }
+
+    private boolean normalFileIsDirectoryNoSuccessFile(FileStatus status, HdfsInfo info) throws IOException {
+        if (config.getFileType().equals(HdfsFileType.NORMAL_FILE) && status.isDir()) {
+            Path successPath = new Path(status.getPath().toString() + "/_SUCCESS");
+            if (!info.getFileSystem().exists(successPath)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public HdfsInputStream getIstream() {
