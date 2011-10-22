@@ -147,7 +147,7 @@
     <spring-version>3.0.6.RELEASE</spring-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.0.7.RELEASE</spring-security-version>
-    <spring-ws-version>2.0.2.RELEASE</spring-ws-version>
+    <spring-ws-version>2.0.3.RELEASE</spring-ws-version>
     <spymemcached-version>2.5</spymemcached-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stringtemplate-version>3.0</stringtemplate-version>
