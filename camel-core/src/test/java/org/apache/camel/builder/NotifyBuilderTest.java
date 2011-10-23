@@ -861,9 +861,20 @@ public class NotifyBuilderTest extends ContextTestSupport {
         assertEquals(true, notify.matches());
     }
 
+    public void testOneNonAbstractPredicate() throws Exception {
+        try {
+            NotifyBuilder notify = new NotifyBuilder(context)
+                    .wereSentTo("mock:foo")
+                    .create();
+            fail("Should throw exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("NotifyBuilder must contain at least one non-abstract predicate (such as whenDone)", e.getMessage());
+        }
+    }
+
     public void testWereSentTo() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context)
-                .wereSentTo("mock:foo")
+                .wereSentTo("mock:foo").whenDone(1)
                 .create();
 
         template.sendBody("direct:bar", "Hello World");
@@ -876,7 +887,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
     public void testTwoWereSentTo() throws Exception {
         // sent to both endpoints
         NotifyBuilder notify = new NotifyBuilder(context)
-                .wereSentTo("log:beer").wereSentTo("mock:beer")
+                .wereSentTo("log:beer").wereSentTo("mock:beer").whenDone(1)
                 .create();
 
         template.sendBody("direct:bar", "Hello World");
@@ -886,10 +897,41 @@ public class NotifyBuilderTest extends ContextTestSupport {
         assertEquals(true, notify.matches());
     }
 
+    public void testWhenDoneWereSentTo() throws Exception {
+        // only match when two are done and were sent to mock:beer
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .whenDone(2).wereSentTo("log:beer")
+                .create();
+
+        log.info("================ direct:bar =============");
+        template.sendBody("direct:bar", "A");
+        assertEquals(false, notify.matches());
+
+        log.info("================ direct:beer =============");
+        template.sendBody("direct:beer", "B");
+        assertEquals(false, notify.matches());
+
+        log.info("================ direct:bar =============");
+        template.sendBody("direct:bar", "C");
+        assertEquals(false, notify.matches());
+
+        log.info("================ direct:bar =============");
+        template.sendBody("direct:bar", "D");
+        assertEquals(false, notify.matches());
+
+        log.info("================ direct:cake =============");
+        template.sendBody("direct:cake", "E");
+        assertEquals(false, notify.matches());
+
+        log.info("================ direct:beer =============");
+        template.sendBody("direct:beer", "F");
+        assertEquals(true, notify.matches());
+    }
+
     public void testTwoWereSentToRegExp() throws Exception {
         // send to any endpoint with beer in the uri
         NotifyBuilder notify = new NotifyBuilder(context)
-                .wereSentTo(".*beer.*")
+                .wereSentTo(".*beer.*").whenDone(1)
                 .create();
 
         template.sendBody("direct:bar", "Hello World");
@@ -933,7 +975,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:foo").routeId("foo").to("mock:foo");
 
-                from("direct:bar").routeId("bar").to("mock:bar");
+                from("direct:bar").routeId("bar").to("log:bar").to("mock:bar");
 
                 from("direct:fail").routeId("fail").to("mock:fail").throwException(new IllegalArgumentException("Damn"));
 

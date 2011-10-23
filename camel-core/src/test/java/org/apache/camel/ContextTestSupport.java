@@ -102,7 +102,7 @@ public abstract class ContextTestSupport extends TestSupport {
         consumer = context.createConsumerTemplate();
         consumer.start();
 
-        // create a default notifier when 1 exchange is done which is the most common caase
+        // create a default notifier when 1 exchange is done which is the most common case
         oneExchangeDone = event().whenDone(1).create();
 
         if (isUseRouteBuilder()) {

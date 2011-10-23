@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.EventObject;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +42,9 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A builder to build an expression based on {@link org.apache.camel.spi.EventNotifier} notifications
  * about {@link Exchange} being routed.
@@ -54,6 +56,8 @@ import org.apache.camel.util.ServiceHelper;
  * @version 
  */
 public class NotifyBuilder {
+
+    private static final Logger LOG = LoggerFactory.getLogger(NotifyBuilder.class);
 
     private final CamelContext context;
 
@@ -67,9 +71,11 @@ public class NotifyBuilder {
     private CountDownLatch latch = new CountDownLatch(1);
 
     // the current state while building an event predicate where we use a stack and the operation
-    private final Stack<EventPredicate> stack = new Stack<EventPredicate>();
+    private final List<EventPredicate> stack = new ArrayList<EventPredicate>();
     private EventOperation operation;
     private boolean created;
+    // keep state of how many wereSentTo we have added
+    private int wereSentToIndex;
 
     // computed value whether all the predicates matched
     private boolean matches;
@@ -88,9 +94,6 @@ public class NotifyBuilder {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
         context.getManagementStrategy().addEventNotifier(eventNotifier);
-        // we only want to match from routes, so skip for example events
-        // which is triggered by producer templates etc.
-        this.fromRoutesOnly();
     }
 
     /**
@@ -102,7 +105,13 @@ public class NotifyBuilder {
      * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
      */
     public NotifyBuilder from(final String endpointUri) {
-        stack.push(new EventPredicateSupport() {
+        stack.add(new EventPredicateSupport() {
+
+            @Override
+            public boolean isAbstract() {
+                // is abstract as its a filter
+                return true;
+            }
 
             @Override
             public boolean onExchange(Exchange exchange) {
@@ -111,6 +120,7 @@ public class NotifyBuilder {
             }
 
             public boolean matches() {
+                // should be true as we use the onExchange to filter
                 return true;
             }
 
@@ -131,7 +141,13 @@ public class NotifyBuilder {
      * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
      */
     public NotifyBuilder fromRoute(final String routeId) {
-        stack.push(new EventPredicateSupport() {
+        stack.add(new EventPredicateSupport() {
+
+            @Override
+            public boolean isAbstract() {
+                // is abstract as its a filter
+                return true;
+            }
 
             @Override
             public boolean onExchange(Exchange exchange) {
@@ -141,6 +157,7 @@ public class NotifyBuilder {
             }
 
             public boolean matches() {
+                // should be true as we use the onExchange to filter
                 return true;
             }
 
@@ -153,7 +170,14 @@ public class NotifyBuilder {
     }
 
     private NotifyBuilder fromRoutesOnly() {
-        stack.push(new EventPredicateSupport() {
+        // internal and should always be in top of stack
+        stack.add(0, new EventPredicateSupport() {
+
+            @Override
+            public boolean isAbstract() {
+                // is abstract as its a filter
+                return true;
+            }
 
             @Override
             public boolean onExchange(Exchange exchange) {
@@ -168,6 +192,7 @@ public class NotifyBuilder {
             }
 
             public boolean matches() {
+                // should be true as we use the onExchange to filter
                 return true;
             }
 
@@ -187,7 +212,13 @@ public class NotifyBuilder {
      * @return the builder
      */
     public NotifyBuilder filter(final Predicate predicate) {
-        stack.push(new EventPredicateSupport() {
+        stack.add(new EventPredicateSupport() {
+
+            @Override
+            public boolean isAbstract() {
+                // is abstract as its a filter
+                return true;
+            }
 
             @Override
             public boolean onExchange(Exchange exchange) {
@@ -196,6 +227,7 @@ public class NotifyBuilder {
             }
 
             public boolean matches() {
+                // should be true as we use the onExchange to filter
                 return true;
             }
 
@@ -214,7 +246,13 @@ public class NotifyBuilder {
      */
     public ExpressionClauseSupport<NotifyBuilder> filter() {
         final ExpressionClauseSupport<NotifyBuilder> clause = new ExpressionClauseSupport<NotifyBuilder>(this);
-        stack.push(new EventPredicateSupport() {
+        stack.add(new EventPredicateSupport() {
+
+            @Override
+            public boolean isAbstract() {
+                // is abstract as its a filter
+                return true;
+            }
 
             @Override
             public boolean onExchange(Exchange exchange) {
@@ -224,6 +262,7 @@ public class NotifyBuilder {
             }
 
             public boolean matches() {
+                // should be true as we use the onExchange to filter
                 return true;
             }
 
@@ -247,25 +286,45 @@ public class NotifyBuilder {
      * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
      */
     public NotifyBuilder wereSentTo(final String endpointUri) {
-        stack.push(new EventPredicateSupport() {
-            private boolean matches;
+        // insert in start of stack but after the previous wereSentTo
+        stack.add(wereSentToIndex++, new EventPredicateSupport() {
+            private boolean sentTo;
+
+            @Override
+            public boolean isAbstract() {
+                // is abstract as its a filter
+                return true;
+            }
+
+            @Override
+            public boolean onExchangeCreated(Exchange exchange) {
+                // reset when a new exchange is created
+                sentTo = false;
+                return onExchange(exchange);
+            }
 
             @Override
             public boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken) {
                 if (EndpointHelper.matchEndpoint(endpoint.getEndpointUri(), endpointUri)) {
-                    // we should match if matching once
-                    matches = true;
+                    sentTo = true;
                 }
-                return true;
+                return onExchange(exchange);
+            }
+
+            @Override
+            public boolean onExchange(Exchange exchange) {
+                // filter only when sentTo
+                return sentTo;
             }
 
             public boolean matches() {
-                return matches;
+                // should be true as we use the onExchange to filter
+                return true;
             }
 
             @Override
             public void reset() {
-                matches = false;
+                sentTo = false;
             }
 
             @Override
@@ -286,7 +345,7 @@ public class NotifyBuilder {
      * @return the builder
      */
     public NotifyBuilder whenReceived(final int number) {
-        stack.push(new EventPredicateSupport() {
+        stack.add(new EventPredicateSupport() {
             private int current;
 
             @Override
@@ -622,7 +681,7 @@ public class NotifyBuilder {
     }
 
     private NotifyBuilder doWhenAnyMatches(final Predicate predicate, final boolean received) {
-        stack.push(new EventPredicateSupport() {
+        stack.add(new EventPredicateSupport() {
             private boolean matches;
 
             @Override
@@ -691,7 +750,7 @@ public class NotifyBuilder {
     }
 
     private NotifyBuilder doWhenAllMatches(final Predicate predicate, final boolean received) {
-        stack.push(new EventPredicateSupport() {
+        stack.add(new EventPredicateSupport() {
             private boolean matches = true;
 
             @Override
@@ -774,7 +833,7 @@ public class NotifyBuilder {
     }
 
     private NotifyBuilder doWhenSatisfied(final MockEndpoint mock, final boolean received) {
-        stack.push(new EventPredicateSupport() {
+        stack.add(new EventPredicateSupport() {
             private Producer producer;
 
             @Override
@@ -873,7 +932,7 @@ public class NotifyBuilder {
     }
 
     private NotifyBuilder doWhenNotSatisfied(final MockEndpoint mock, final boolean received) {
-        stack.push(new EventPredicateSupport() {
+        stack.add(new EventPredicateSupport() {
 
             private Producer producer;
 
@@ -1001,7 +1060,7 @@ public class NotifyBuilder {
     }
 
     private NotifyBuilder doWhenBodies(final List bodies, final boolean received, final boolean exact) {
-        stack.push(new EventPredicateSupport() {
+        stack.add(new EventPredicateSupport() {
             private boolean matches;
             private int current;
 
@@ -1215,14 +1274,32 @@ public class NotifyBuilder {
             operation = newOperation == EventOperation.or ? EventOperation.or : EventOperation.and;
         }
 
-        // we have some
+        // we have some predicates
         if (!stack.isEmpty()) {
+            // we only want to match from routes, so skip for example events
+            // which is triggered by producer templates etc.
+            fromRoutesOnly();
+
+            // the stack must have at least one non abstract
+            boolean found = false;
+            for (EventPredicate predicate : stack) {
+                if (!predicate.isAbstract()) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                throw new IllegalArgumentException("NotifyBuilder must contain at least one non-abstract predicate (such as whenDone)");
+            }
+
             CompoundEventPredicate compound = new CompoundEventPredicate(stack);
             stack.clear();
             predicates.add(new EventPredicateHolder(operation, compound));
         }
 
         operation = newOperation;
+        // reset wereSentTo index position as this its a new group
+        wereSentToIndex = 0;
     }
 
     /**
@@ -1344,6 +1421,11 @@ public class NotifyBuilder {
         void reset();
 
         /**
+         * Whether the predicate is abstract
+         */
+        boolean isAbstract();
+
+        /**
          * Callback for {@link Exchange} lifecycle
          *
          * @param exchange the exchange
@@ -1379,6 +1461,10 @@ public class NotifyBuilder {
     }
 
     private abstract class EventPredicateSupport implements EventPredicate {
+
+        public boolean isAbstract() {
+            return false;
+        }
 
         public void reset() {
             // noop
@@ -1444,13 +1530,20 @@ public class NotifyBuilder {
 
         private List<EventPredicate> predicates = new ArrayList<EventPredicate>();
 
-        private CompoundEventPredicate(Stack<EventPredicate> predicates) {
+        private CompoundEventPredicate(List<EventPredicate> predicates) {
             this.predicates.addAll(predicates);
+        }
+
+        public boolean isAbstract() {
+            return false;
         }
 
         public boolean matches() {
             for (EventPredicate predicate : predicates) {
-                if (!predicate.matches()) {
+                boolean answer = predicate.matches();
+                LOG.trace("matches() {} -> {}", predicate, answer);
+                if (!answer) {
+                    // break at first false
                     return false;
                 }
             }
@@ -1459,13 +1552,17 @@ public class NotifyBuilder {
 
         public void reset() {
             for (EventPredicate predicate : predicates) {
+                LOG.trace("reset() {}", predicate);
                 predicate.reset();
             }
         }
 
         public boolean onExchangeCreated(Exchange exchange) {
             for (EventPredicate predicate : predicates) {
-                if (!predicate.onExchangeCreated(exchange)) {
+                boolean answer = predicate.onExchangeCreated(exchange);
+                LOG.trace("onExchangeCreated() {} -> {}", predicate, answer);
+                if (!answer) {
+                    // break at first false
                     return false;
                 }
             }
@@ -1474,7 +1571,10 @@ public class NotifyBuilder {
 
         public boolean onExchangeCompleted(Exchange exchange) {
             for (EventPredicate predicate : predicates) {
-                if (!predicate.onExchangeCompleted(exchange)) {
+                boolean answer = predicate.onExchangeCompleted(exchange);
+                LOG.trace("onExchangeCompleted() {} -> {}", predicate, answer);
+                if (!answer) {
+                    // break at first false
                     return false;
                 }
             }
@@ -1483,7 +1583,10 @@ public class NotifyBuilder {
 
         public boolean onExchangeFailed(Exchange exchange) {
             for (EventPredicate predicate : predicates) {
-                if (!predicate.onExchangeFailed(exchange)) {
+                boolean answer = predicate.onExchangeFailed(exchange);
+                LOG.trace("onExchangeFailed() {} -> {}", predicate, answer);
+                if (!answer) {
+                    // break at first false
                     return false;
                 }
             }
@@ -1493,7 +1596,10 @@ public class NotifyBuilder {
         @Override
         public boolean onExchangeSent(Exchange exchange, Endpoint endpoint, long timeTaken) {
             for (EventPredicate predicate : predicates) {
-                if (!predicate.onExchangeSent(exchange, endpoint, timeTaken)) {
+                boolean answer = predicate.onExchangeSent(exchange, endpoint, timeTaken);
+                LOG.trace("onExchangeSent() {} {} -> {}", new Object[]{endpoint, predicate, answer});
+                if (!answer) {
+                    // break at first false
                     return false;
                 }
             }
