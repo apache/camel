@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.List;
+
 import org.apache.camel.Processor;
 import org.apache.camel.util.ServiceHelper;
 
@@ -35,6 +37,14 @@ public class WrapProcessor extends DelegateAsyncProcessor {
     @Override
     public String toString() {
         return "Wrap[" + wrapped + "] -> " + processor;
+    }
+
+    @Override
+    public List<Processor> next() {
+        // must include wrapped in navigate
+        List<Processor> list = super.next();
+        list.add(wrapped);
+        return list;
     }
 
     @Override
