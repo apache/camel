@@ -38,6 +38,8 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Camel
         // by default we get on big message
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(DataSetList.class);
+        mock.message(0).header("MyFirstHeader").isEqualTo("1");
+        mock.message(0).header("MySecondHeader").isEqualTo("2");
 
         String data = IOConverter.toString(new File("src/test/data/headerandtrailer/PEOPLE-HeaderAndTrailer.txt").getAbsoluteFile(), null);
 
@@ -74,7 +76,11 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Camel
                 df.setDefinition(new ClassPathResource("PEOPLE-HeaderAndTrailer.pzmap.xml"));
                 df.setFixed(true);
 
-                from("direct:unmarshal").unmarshal(df).to("mock:unmarshal");
+                from("direct:unmarshal")
+                    .setHeader("MyFirstHeader", constant("1"))
+                    .unmarshal(df)
+                    .setHeader("MySecondHeader", constant("2"))
+                    .to("mock:unmarshal");
 
                 // with the definition
                 from("direct:marshal").marshal(df).convertBodyTo(String.class).to("mock:marshal");

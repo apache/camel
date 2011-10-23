@@ -39,10 +39,10 @@ class FlatpackProducer extends DefaultProducer {
         if (endpoint.isSplitRows()) {
             int counter = 0;
             while (dataSet.next()) {
-                endpoint.processDataSet(dataSet, counter++);
+                endpoint.processDataSet(exchange, dataSet, counter++);
             }
         } else {
-            endpoint.processDataSet(dataSet, dataSet.getRowCount());
+            endpoint.processDataSet(exchange, dataSet, dataSet.getRowCount());
         }
     }
 }
