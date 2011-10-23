@@ -154,6 +154,9 @@ public class BeanExpression implements Expression, Predicate {
             try {
                 // copy the original exchange to avoid side effects on it
                 Exchange resultExchange = exchange.copy();
+                // remove any existing exception in case we do OGNL on the exception
+                resultExchange.setException(null);
+
                 // force to use InOut to retrieve the result on the OUT message
                 resultExchange.setPattern(ExchangePattern.InOut);
                 processor.process(resultExchange);
@@ -195,6 +198,8 @@ public class BeanExpression implements Expression, Predicate {
         public void process(Exchange exchange) throws Exception {
             // copy the original exchange to avoid side effects on it
             Exchange resultExchange = exchange.copy();
+            // remove any existing exception in case we do OGNL on the exception
+            resultExchange.setException(null);
             // force to use InOut to retrieve the result on the OUT message
             resultExchange.setPattern(ExchangePattern.InOut);
             // do not propagate any method name when using OGNL, as with OGNL we
