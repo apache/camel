@@ -900,30 +900,49 @@ public class NotifyBuilderTest extends ContextTestSupport {
     public void testWhenDoneWereSentTo() throws Exception {
         // only match when two are done and were sent to mock:beer
         NotifyBuilder notify = new NotifyBuilder(context)
-                .whenDone(2).wereSentTo("log:beer")
+                .whenDone(2).wereSentTo("mock:beer")
                 .create();
 
-        log.info("================ direct:bar =============");
         template.sendBody("direct:bar", "A");
         assertEquals(false, notify.matches());
 
-        log.info("================ direct:beer =============");
         template.sendBody("direct:beer", "B");
         assertEquals(false, notify.matches());
 
-        log.info("================ direct:bar =============");
         template.sendBody("direct:bar", "C");
         assertEquals(false, notify.matches());
 
-        log.info("================ direct:bar =============");
         template.sendBody("direct:bar", "D");
         assertEquals(false, notify.matches());
 
-        log.info("================ direct:cake =============");
         template.sendBody("direct:cake", "E");
         assertEquals(false, notify.matches());
 
-        log.info("================ direct:beer =============");
+        template.sendBody("direct:beer", "F");
+        assertEquals(true, notify.matches());
+    }
+
+    public void testWereSentToWhenDone() throws Exception {
+        // like the other test, but ordering of wereSentTo does not matter
+        NotifyBuilder notify = new NotifyBuilder(context)
+                .wereSentTo("mock:beer").whenDone(2)
+                .create();
+
+        template.sendBody("direct:bar", "A");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:beer", "B");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "C");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:bar", "D");
+        assertEquals(false, notify.matches());
+
+        template.sendBody("direct:cake", "E");
+        assertEquals(false, notify.matches());
+
         template.sendBody("direct:beer", "F");
         assertEquals(true, notify.matches());
     }
