@@ -326,7 +326,7 @@ public class QuickfixjEngine {
     }
 
     private void isJdbcLog(SessionSettings settings, Set<LogFactory> impliedLogFactories) {
-        if (settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER)) {
+        if (impliedLogFactories.size() == 0 && settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER)) {
             impliedLogFactories.add(new JdbcLogFactory(settings));
         }
     }

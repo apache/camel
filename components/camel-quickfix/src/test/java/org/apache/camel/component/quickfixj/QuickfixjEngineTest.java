@@ -247,7 +247,7 @@ public class QuickfixjEngineTest {
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
 
         writeSettings();
-
+      
         quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
 
         assertThat(quickfixjEngine.getInitiator(), notNullValue());
