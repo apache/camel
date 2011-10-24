@@ -295,8 +295,8 @@ public class QuickfixjEngine {
         Set<LogFactory> impliedLogFactories = new HashSet<LogFactory>();
         isFileLog(settings, impliedLogFactories);
         isScreenLog(settings, impliedLogFactories);
-        isJdbcLog(settings, impliedLogFactories);
         isSL4JLog(settings, impliedLogFactories);
+        isJdbcLog(settings, impliedLogFactories);
         if (impliedLogFactories.size() > 1) {
             throw new ConfigError("Ambiguous log factory implied in configuration");
         }
@@ -326,19 +326,17 @@ public class QuickfixjEngine {
     }
 
     private void isJdbcLog(SessionSettings settings, Set<LogFactory> impliedLogFactories) {
-        if (impliedLogFactories.size() == 0 && settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER)) {
+        if (settings.isSetting(JdbcSetting.SETTING_JDBC_DRIVER) && settings.isSetting(JdbcSetting.SETTING_LOG_EVENT_TABLE)) {
             impliedLogFactories.add(new JdbcLogFactory(settings));
         }
     }
 
     private void isSL4JLog(SessionSettings settings, Set<LogFactory> impliedLogFactories) {
-        if (impliedLogFactories.size() == 0) {
-            for (Object key : settings.getDefaultProperties().keySet()) {
-                if (key.toString().startsWith("SLF4J")) {
-                    impliedLogFactories.add(new SLF4JLogFactory(settings));
-                    return;
-                }
-            } 
+        for (Object key : settings.getDefaultProperties().keySet()) {
+            if (key.toString().startsWith("SLF4J")) {
+                impliedLogFactories.add(new SLF4JLogFactory(settings));
+                return;
+            }
         }
     }
 
