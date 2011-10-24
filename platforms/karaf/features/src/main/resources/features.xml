@@ -423,6 +423,10 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-kestrel/${pom.version}</bundle>
   </feature>
+    <feature name='camel-krati' version='${pom.version}' resolver='(obr)' start-level='50'>
+        <bundle dependency="true">mvn:com.sna-projects.krati/krati/${krati-version}</bundle>
+        <bundle>mvn:org.apache.camel/camel-krati/${pom.version}</bundle>
+    </feature>
   <feature name='camel-ldap' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-ldap/${pom.version}</bundle>

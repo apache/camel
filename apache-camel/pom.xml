@@ -258,7 +258,7 @@
       <exclusions>
          <exclusion>
             <groupId>net.sf.jt400</groupId>
-	    <artifactId>jt400-full</artifactId> 
+            <artifactId>jt400-full</artifactId> 
          </exclusion>
       </exclusions>
     </dependency>
@@ -269,6 +269,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-kestrel</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-krati</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

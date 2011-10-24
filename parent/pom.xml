@@ -114,6 +114,7 @@
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
     <karaf-version>2.2.4</karaf-version>
+    <krati-version>0.4.1</krati-version>
     <log4j-version>1.2.16</log4j-version>
     <lucene-version>3.0.3</lucene-version>
     <mina-version>1.1.7</mina-version>
@@ -514,6 +515,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-kestrel</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-krati</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1450,7 +1456,15 @@
         <artifactId>zookeeper</artifactId>
         <version>${zookeeper-version}</version>
       </dependency>
-      
+
+
+       <!-- optional krati dependency -->
+      <dependency>
+          <groupId>com.sna-projects.krati</groupId>
+          <artifactId>krati</artifactId>
+          <version>${krati-version}</version>
+      </dependency>
+
       <!-- blueprint -->
       <dependency>
         <groupId>org.apache.aries.blueprint</groupId>

@@ -89,6 +89,7 @@
         <include>org.apache.camel:camel-juel</include>
         <include>org.apache.camel:camel-jxpath</include>
         <include>org.apache.camel:camel-kestrel</include>
+        <include>org.apache.camel:camel-krati</include>
         <include>org.apache.camel:camel-ldap</include>
         <include>org.apache.camel:camel-lucene</include>
         <include>org.apache.camel:camel-mail</include>
