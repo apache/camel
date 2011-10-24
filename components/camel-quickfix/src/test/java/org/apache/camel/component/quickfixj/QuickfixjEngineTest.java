@@ -215,7 +215,10 @@ public class QuickfixjEngineTest {
 
     @Test
     public void inferJdbcStoreAndLog() throws Exception {
+        // If there is a setting of the LOG_EVENT_TABLE, we should create a jdbcLogFactory for it
         settings.setString(JdbcSetting.SETTING_JDBC_DRIVER, "driver");
+        settings.setString(JdbcSetting.SETTING_LOG_EVENT_TABLE, "table");
+        
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
 
         writeSettings();
