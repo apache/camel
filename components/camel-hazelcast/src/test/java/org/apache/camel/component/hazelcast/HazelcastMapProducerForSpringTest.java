@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
@@ -34,11 +35,12 @@ public class HazelcastMapProducerForSpringTest extends CamelSpringTestSupport im
     private IMap<String, Object> map;
 
     @Override
-    public void setUp() throws Exception {
-        this.map = Hazelcast.getMap("foo");
+    protected void doPostSetup() throws Exception {
+        super.doPostSetup();
+        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
+        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
+        this.map = hazelcastInstance.getMap("foo");
         this.map.clear();
-
-        super.setUp();
     }
 
     @Override

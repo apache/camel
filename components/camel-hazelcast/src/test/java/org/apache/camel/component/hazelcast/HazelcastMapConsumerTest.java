@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -32,11 +33,11 @@ public class HazelcastMapConsumerTest extends CamelTestSupport {
     private IMap<String, Object> map;
 
     @Override
-    public void setUp() throws Exception {
-        this.map = Hazelcast.getMap("foo");
-        this.map.clear();
-
-        super.setUp();
+    protected void doPostSetup() throws Exception {
+        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
+        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
+        map = hazelcastInstance.getMap("foo");
+        map.clear();
     }
 
     @Test

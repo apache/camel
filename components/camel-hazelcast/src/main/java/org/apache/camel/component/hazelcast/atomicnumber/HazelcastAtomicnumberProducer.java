@@ -19,8 +19,8 @@ package org.apache.camel.component.hazelcast.atomicnumber;
 import java.util.Map;
 
 import com.hazelcast.core.AtomicNumber;
-import com.hazelcast.core.Hazelcast;
 
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
@@ -32,9 +32,9 @@ public class HazelcastAtomicnumberProducer extends DefaultProducer {
     private final AtomicNumber atomicnumber;
     private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
 
-    public HazelcastAtomicnumberProducer(Endpoint endpoint, String cacheName) {
+    public HazelcastAtomicnumberProducer(HazelcastInstance hazelcastInstance, Endpoint endpoint, String cacheName) {
         super(endpoint);
-        this.atomicnumber = Hazelcast.getAtomicNumber(cacheName);
+        this.atomicnumber = hazelcastInstance.getAtomicNumber(cacheName);
     }
 
     public void process(Exchange exchange) throws Exception {

@@ -17,6 +17,7 @@
 package org.apache.camel.processor.idempotent.hazelcast;
 
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,14 +26,17 @@ import org.junit.Test;
 
 public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
 
-    private IMap<String, Boolean> cache = Hazelcast.getMap("myRepo");
+    private IMap<String, Boolean> cache;
     private HazelcastIdempotentRepository repo;
+    private HazelcastInstance hazelcastInstance;
 
     private String key01 = "123";
     private String key02 = "456";
 
     public void setUp() throws Exception {
-        repo = new HazelcastIdempotentRepository("myRepo");
+        hazelcastInstance = Hazelcast.newHazelcastInstance(null);
+        cache = hazelcastInstance.getMap("myRepo");
+        repo = new HazelcastIdempotentRepository(hazelcastInstance, "myRepo");
         super.setUp();
         cache.clear();
     }
@@ -40,6 +44,7 @@ public class HazelcastIdempotentRepositoryTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
         cache.clear();
+        hazelcastInstance.getLifecycleService().shutdown();
     }
 
     @Test

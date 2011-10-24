@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hazelcast.list;
 
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -28,18 +29,18 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
  */
 public class HazelcastListEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastListEndpoint(String endpointUri, Component component, String cacheName) {
-        super(endpointUri, component, cacheName);
+    public HazelcastListEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
+        super(hazelcastInstance, endpointUri, component, cacheName);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new HazelcastListConsumer(this, processor, cacheName);
+        return new HazelcastListConsumer(hazelcastInstance, this, processor, cacheName);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new HazelcastListProducer(this, cacheName);
+        return new HazelcastListProducer(hazelcastInstance, this, cacheName);
     }
 
 }

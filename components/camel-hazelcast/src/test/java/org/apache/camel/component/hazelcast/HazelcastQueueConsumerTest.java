@@ -21,9 +21,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 public class HazelcastQueueConsumerTest extends CamelTestSupport {
@@ -31,12 +33,19 @@ public class HazelcastQueueConsumerTest extends CamelTestSupport {
     private BlockingQueue<String> map;
 
     @Override
-    public void setUp() throws Exception {
-        this.map = Hazelcast.getQueue("mm");
+    protected void doPostSetup() throws Exception {
+        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
+        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
+        this.map = hazelcastInstance.getQueue("mm");
         this.map.clear();
-
-        super.setUp();
     }
+
+
+    @AfterClass
+    public static void tearDownClass() {
+        Hazelcast.shutdownAll();
+    }
+
 
     @Test
     public void add() throws InterruptedException {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hazelcast.map;
 
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -24,16 +25,16 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 
 public class HazelcastMapEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastMapEndpoint(String uri, String cacheName, HazelcastComponent component) {
-        super(uri, component, cacheName);
+    public HazelcastMapEndpoint(HazelcastInstance hazelcastInstance, String uri, String cacheName, HazelcastComponent component) {
+        super(hazelcastInstance, uri, component, cacheName);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new HazelcastMapConsumer(this, processor, cacheName);
+        return new HazelcastMapConsumer(hazelcastInstance, this, processor, cacheName);
     }
 
     public Producer createProducer() throws Exception {
-        return new HazelcastMapProducer(this, cacheName);
+        return new HazelcastMapProducer(hazelcastInstance, this, cacheName);
     }
 
 }

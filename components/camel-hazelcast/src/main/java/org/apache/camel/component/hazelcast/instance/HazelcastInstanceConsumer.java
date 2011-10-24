@@ -17,6 +17,7 @@
 package org.apache.camel.component.hazelcast.instance;
 
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MembershipEvent;
 import com.hazelcast.core.MembershipListener;
 
@@ -29,10 +30,10 @@ import org.apache.camel.impl.DefaultEndpoint;
 
 public class HazelcastInstanceConsumer extends DefaultConsumer {
 
-    public HazelcastInstanceConsumer(DefaultEndpoint endpoint, Processor processor) {
+    public HazelcastInstanceConsumer(HazelcastInstance hazelcastInstance, DefaultEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
 
-        Hazelcast.getCluster().addMembershipListener(new HazelcastMembershipListener());
+        hazelcastInstance.getCluster().addMembershipListener(new HazelcastMembershipListener());
     }
 
     class HazelcastMembershipListener implements MembershipListener {
@@ -58,7 +59,7 @@ public class HazelcastInstanceConsumer extends DefaultConsumer {
                 getProcessor().process(exchange);
             } catch (Exception e) {
                 if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange for hazelcast consumer on your Hazelcast cluster.", exchange, exchange.getException());
+                    getExceptionHandler().handleException("Error processing exchange for Hazelcast consumer on your Hazelcast cluster.", exchange, exchange.getException());
                 }
             }
         }

@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.hazelcast.core.Hazelcast;
 
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -29,10 +30,10 @@ public class HazelcastListProducerTest extends CamelTestSupport {
     private List<String> list;
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        
-        list = Hazelcast.getList("bar");
+    protected void doPostSetup() throws Exception {
+        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
+        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
+        list = hazelcastInstance.getList("bar");
         list.clear();
     }
 

@@ -18,27 +18,28 @@ package org.apache.camel.component.hazelcast.seda;
 
 import java.util.concurrent.BlockingQueue;
 
-import com.hazelcast.core.Hazelcast;
-
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastComponent;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Hazelcast SEDA {@link Endpoint} implementation.
  */
-public class HazelcastSedaEndpoint extends DefaultEndpoint {
+public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
 
     private final BlockingQueue queue;
     private final HazelcastSedaConfiguration configuration;
+    private HazelcastInstance hazelcastInstance;
 
-    public HazelcastSedaEndpoint(final String uri, final HazelcastComponent component, final HazelcastSedaConfiguration configuration) {
-        super(uri, component);
-        this.queue = Hazelcast.getQueue(configuration.getQueueName());
+    public HazelcastSedaEndpoint(final HazelcastInstance hazelcastInstance, final String uri, final HazelcastComponent component, final HazelcastSedaConfiguration configuration) {
+        super(component.getHazelcastInstance(), uri, component);
+        this.hazelcastInstance = hazelcastInstance;
+        this.queue = hazelcastInstance.getQueue(configuration.getQueueName());
         this.configuration = configuration;
         if (ObjectHelper.isEmpty(configuration.getQueueName())) {
             throw new IllegalArgumentException("Queue name is missing.");

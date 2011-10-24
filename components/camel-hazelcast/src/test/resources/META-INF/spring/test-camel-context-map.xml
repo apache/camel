@@ -67,4 +67,12 @@
 
 	</camelContext>
 
+    <bean id="hazelcast" class="org.apache.camel.component.hazelcast.HazelcastComponent">
+        <property name="hazelcastInstance" ref="hazelcastInstance"/>
+    </bean>
+
+    <bean id="hazelcastInstance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance" destroy-method="shutdown">
+        <constructor-arg><null/></constructor-arg>
+    </bean>
+
 </beans>

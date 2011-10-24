@@ -19,7 +19,7 @@ package org.apache.camel.component.hazelcast.map;
 import java.util.Collection;
 import java.util.Map;
 
-import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.query.SqlPredicate;
 
@@ -32,10 +32,12 @@ public class HazelcastMapProducer extends DefaultProducer {
 
     private final IMap<String, Object> cache;
     private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
+    private HazelcastInstance hazelcastInstance;
 
-    public HazelcastMapProducer(HazelcastMapEndpoint endpoint, String cacheName) {
+    public HazelcastMapProducer(HazelcastInstance hazelcastInstance, HazelcastMapEndpoint endpoint, String cacheName) {
         super(endpoint);
-        this.cache = Hazelcast.getMap(cacheName);
+        this.hazelcastInstance = hazelcastInstance;
+        this.cache = hazelcastInstance.getMap(cacheName);
     }
 
     public void process(Exchange exchange) throws Exception {

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.hazelcast.map;
 
-import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
 import org.apache.camel.Endpoint;
@@ -26,10 +26,10 @@ import org.apache.camel.component.hazelcast.listener.CamelEntryListener;
 
 public class HazelcastMapConsumer extends HazelcastDefaultConsumer {
 
-    public HazelcastMapConsumer(Endpoint endpoint, Processor processor, String cacheName) {
-        super(endpoint, processor, cacheName);
+    public HazelcastMapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
+        super(hazelcastInstance, endpoint, processor, cacheName);
 
-        IMap<String, Object> cache = Hazelcast.getMap(cacheName);
+        IMap<String, Object> cache = hazelcastInstance.getMap(cacheName);
         cache.addEntryListener(new CamelEntryListener(this, cacheName), true);
     }
 

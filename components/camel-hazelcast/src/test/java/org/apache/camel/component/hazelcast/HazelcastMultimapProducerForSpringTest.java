@@ -24,6 +24,7 @@ import com.hazelcast.core.MultiMap;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.camel.util.CastUtils;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -38,6 +39,11 @@ public class HazelcastMultimapProducerForSpringTest extends CamelSpringTestSuppo
         this.map.clear();
 
         super.setUp();
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+        Hazelcast.shutdownAll();
     }
 
     @Override

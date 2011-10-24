@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -25,14 +26,16 @@ import org.apache.camel.impl.DefaultEndpoint;
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
     protected final String cacheName;
+    protected HazelcastInstance hazelcastInstance;
 
-    public HazelcastDefaultEndpoint(String endpointUri, Component component) {
-        this(endpointUri, component, null);
+    public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
+        this(hazelcastInstance, endpointUri, component, null);
     }
 
-    public HazelcastDefaultEndpoint(String endpointUri, Component component, String cacheName) {
+    public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
         super(endpointUri, component);
         this.cacheName = cacheName;
+        this.hazelcastInstance = hazelcastInstance;
     }
 
     public abstract Consumer createConsumer(Processor processor) throws Exception;
@@ -42,5 +45,4 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return true;
     }
-
 }

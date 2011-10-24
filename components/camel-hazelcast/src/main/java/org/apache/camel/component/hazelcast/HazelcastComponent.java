@@ -18,6 +18,8 @@ package org.apache.camel.component.hazelcast;
 
 import java.util.Map;
 
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.hazelcast.atomicnumber.HazelcastAtomicnumberEndpoint;
@@ -34,6 +36,9 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
 public class HazelcastComponent extends DefaultComponent {
 
+    private HazelcastInstance hazelcastInstance;
+    private Boolean createOwnInstance;
+
     public HazelcastComponent() {
         super();
     }
@@ -45,37 +50,37 @@ public class HazelcastComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
-        Endpoint endpoint = null;
+        HazelcastDefaultEndpoint endpoint = null;
 
         // check type of endpoint
         if (remaining.startsWith(HazelcastConstants.MAP_PREFIX)) {
             // remaining is the cache name
             remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.MAP_PREFIX.length()), '/');
-            endpoint = new HazelcastMapEndpoint(uri, remaining, this);
+            endpoint = new HazelcastMapEndpoint(hazelcastInstance, uri, remaining, this);
         }
 
         if (remaining.startsWith(HazelcastConstants.MULTIMAP_PREFIX)) {
             // remaining is the cache name
             remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.MULTIMAP_PREFIX.length()), '/');
-            endpoint = new HazelcastMultimapEndpoint(uri, remaining, this);
+            endpoint = new HazelcastMultimapEndpoint(hazelcastInstance, uri, remaining, this);
         }
 
         if (remaining.startsWith(HazelcastConstants.ATOMICNUMBER_PREFIX)) {
             // remaining is the name of the atomic value
             remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.INSTANCE_PREFIX.length()), '/');
-            endpoint = new HazelcastAtomicnumberEndpoint(uri, this, remaining);
+            endpoint = new HazelcastAtomicnumberEndpoint(hazelcastInstance, uri, this, remaining);
         }
 
         if (remaining.startsWith(HazelcastConstants.INSTANCE_PREFIX)) {
             // remaining is anything (name it foo ;)
             remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.INSTANCE_PREFIX.length()), '/');
-            endpoint = new HazelcastInstanceEndpoint(uri, this);
+            endpoint = new HazelcastInstanceEndpoint(hazelcastInstance, uri, this);
         }
 
         if (remaining.startsWith(HazelcastConstants.QUEUE_PREFIX)) {
             // remaining is anything (name it foo ;)
             remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.QUEUE_PREFIX.length()), '/');
-            endpoint = new HazelcastQueueEndpoint(uri, this, remaining);
+            endpoint = new HazelcastQueueEndpoint(hazelcastInstance, uri, this, remaining);
         }
 
         if (remaining.startsWith(HazelcastConstants.SEDA_PREFIX)) {
@@ -83,13 +88,13 @@ public class HazelcastComponent extends DefaultComponent {
             setProperties(config, parameters);
             config.setQueueName(remaining.substring(remaining.indexOf(":") + 1, remaining.length()));
 
-            endpoint = new HazelcastSedaEndpoint(uri, this, config);
+            endpoint = new HazelcastSedaEndpoint(hazelcastInstance, uri, this, config);
         }
 
         if (remaining.startsWith(HazelcastConstants.LIST_PREFIX)) {
             // remaining is anything (name it foo ;)
             remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.LIST_PREFIX.length()), '/');
-            endpoint = new HazelcastListEndpoint(uri, this, remaining);
+            endpoint = new HazelcastListEndpoint(hazelcastInstance, uri, this, remaining);
         }
 
         if (endpoint == null) {
@@ -101,4 +106,28 @@ public class HazelcastComponent extends DefaultComponent {
         return endpoint;
     }
 
+    @Override
+    public void doStart() throws Exception {
+        super.doStart();
+        if (hazelcastInstance == null) {
+            createOwnInstance = true;
+            hazelcastInstance = Hazelcast.newHazelcastInstance(null);
+        }
+    }
+
+    @Override
+    public void doStop() throws Exception {
+        if (createOwnInstance && hazelcastInstance != null) {
+            hazelcastInstance.getLifecycleService().shutdown();
+        }
+        super.doStop();
+    }
+
+    public HazelcastInstance getHazelcastInstance() {
+        return hazelcastInstance;
+    }
+
+    public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        this.hazelcastInstance = hazelcastInstance;
+    }
 }

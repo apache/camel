@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor.idempotent.hazelcast;
 
-import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
@@ -25,18 +25,20 @@ public class HazelcastIdempotentRepository extends ServiceSupport implements Ide
 
     private String repositoryName;
     private IMap<String, Object> repo;
-
-    public HazelcastIdempotentRepository() {
-        this(HazelcastIdempotentRepository.class.getSimpleName());
+    private HazelcastInstance hazelcastInstance;
+    
+    public HazelcastIdempotentRepository(HazelcastInstance hazelcastInstance) {
+        this(hazelcastInstance, HazelcastIdempotentRepository.class.getSimpleName());
     }
 
-    public HazelcastIdempotentRepository(String repositoryName) {
+    public HazelcastIdempotentRepository(HazelcastInstance hazelcastInstance, String repositoryName) {
         this.repositoryName = repositoryName;
+        this.hazelcastInstance = hazelcastInstance;
     }
 
     @Override
     protected void doStart() throws Exception {
-        repo = Hazelcast.getMap(repositoryName);
+        repo = hazelcastInstance.getMap(repositoryName);
     }
 
     @Override

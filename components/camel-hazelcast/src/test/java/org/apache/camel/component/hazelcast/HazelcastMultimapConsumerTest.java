@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -32,13 +33,15 @@ public class HazelcastMultimapConsumerTest extends CamelTestSupport {
 
     private MultiMap<String, Object> map;
 
-    @Override
-    public void setUp() throws Exception {
-        this.map = Hazelcast.getMultiMap("mm");
-        this.map.clear();
 
-        super.setUp();
+    @Override
+    protected void doPostSetup() throws Exception {
+        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
+        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
+        this.map = hazelcastInstance.getMultiMap("mm");
+        this.map.clear();
     }
+
 
     @Test
     public void testAdd() throws InterruptedException {

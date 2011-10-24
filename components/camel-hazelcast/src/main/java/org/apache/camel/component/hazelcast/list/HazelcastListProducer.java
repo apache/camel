@@ -19,6 +19,7 @@ package org.apache.camel.component.hazelcast.list;
 import java.util.Map;
 
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
 
 import org.apache.camel.Endpoint;
@@ -35,10 +36,12 @@ public class HazelcastListProducer extends DefaultProducer {
 
     private final IList<Object> list;
     private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
+    private HazelcastInstance hazelcastInstance;
 
-    public HazelcastListProducer(Endpoint endpoint, String listName) {
+    public HazelcastListProducer(HazelcastInstance hazelcastInstance, Endpoint endpoint, String listName) {
         super(endpoint);
-        this.list = Hazelcast.getList(listName);
+        this.hazelcastInstance = hazelcastInstance;
+        this.list = hazelcastInstance.getList(listName);
     }
 
     public void process(Exchange exchange) throws Exception {

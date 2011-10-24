@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hazelcast.atomicnumber;
 
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -24,8 +25,8 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 
 public class HazelcastAtomicnumberEndpoint extends HazelcastDefaultEndpoint {
 
-    public HazelcastAtomicnumberEndpoint(String uri, Component component, final String cacheName) {
-        super(uri, component, cacheName);
+    public HazelcastAtomicnumberEndpoint(HazelcastInstance hazelcastInstance, String uri, Component component, final String cacheName) {
+        super(hazelcastInstance, uri, component, cacheName);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -33,7 +34,7 @@ public class HazelcastAtomicnumberEndpoint extends HazelcastDefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new HazelcastAtomicnumberProducer(this, cacheName);
+        return new HazelcastAtomicnumberProducer(hazelcastInstance, this, cacheName);
     }
 
 }

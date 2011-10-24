@@ -19,6 +19,7 @@ package org.apache.camel.component.hazelcast.multimap;
 import java.util.Map;
 
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
 import org.apache.camel.Endpoint;
@@ -31,9 +32,11 @@ public class HazelcastMultimapProducer extends DefaultProducer {
 
     private final MultiMap<Object, Object> cache;
     private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
+    private HazelcastInstance hazelcastInstance;
 
-    public HazelcastMultimapProducer(Endpoint endpoint, String cacheName) {
+    public HazelcastMultimapProducer(HazelcastInstance hazelcastInstance, Endpoint endpoint, String cacheName) {
         super(endpoint);
+        this.hazelcastInstance = hazelcastInstance;
         this.cache = Hazelcast.getMultiMap(cacheName);
     }
 

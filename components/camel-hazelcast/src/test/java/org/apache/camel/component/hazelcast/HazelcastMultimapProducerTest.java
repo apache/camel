@@ -19,10 +19,12 @@ package org.apache.camel.component.hazelcast;
 import java.util.Collection;
 
 import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 public class HazelcastMultimapProducerTest extends CamelTestSupport {
@@ -33,9 +35,15 @@ public class HazelcastMultimapProducerTest extends CamelTestSupport {
     public void setUp() throws Exception {
         this.map = Hazelcast.getMultiMap("bar");
         this.map.clear();
-
         super.setUp();
     }
+
+    @AfterClass
+    public static void tearDownClass() {
+        Hazelcast.shutdownAll();
+    }
+
+
 
     @Test
     public void testPut() throws InterruptedException {

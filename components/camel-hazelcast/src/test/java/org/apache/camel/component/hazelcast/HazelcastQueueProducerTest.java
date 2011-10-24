@@ -20,8 +20,10 @@ import java.util.concurrent.BlockingQueue;
 
 import com.hazelcast.core.Hazelcast;
 
+import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.AfterClass;
 import org.junit.Test;
 
 public class HazelcastQueueProducerTest extends CamelTestSupport {
@@ -29,11 +31,16 @@ public class HazelcastQueueProducerTest extends CamelTestSupport {
     private BlockingQueue<String> queue;
 
     @Override
-    public void setUp() throws Exception {
-        queue = Hazelcast.getQueue("bar");
+    protected void doPostSetup() throws Exception {
+        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
+        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
+        queue = hazelcastInstance.getQueue("bar");
         queue.clear();
+    }
 
-        super.setUp();
+    @AfterClass
+    public static void tearDownClass() {
+        Hazelcast.shutdownAll();
     }
 
     @Test
