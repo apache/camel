@@ -37,6 +37,8 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
@@ -108,13 +110,21 @@ public class XsltBuilder implements Processor {
         // the underlying input stream, which we need to close to avoid locking files or other resources
         InputStream is = null;
         try {
-            is = exchange.getIn().getBody(InputStream.class);
-            Source source = getSource(exchange, is);
+            Source source;
+            // only convert to input stream if really needed
+            if (isInputStreamNeeded(exchange)) {
+                is = exchange.getIn().getBody(InputStream.class);
+                source = getSource(exchange, is);
+            } else {
+                Object body = exchange.getIn().getBody();
+                source = getSource(exchange, body);
+            }
             LOG.trace("Using {} as source", source);
             transformer.transform(source, result);
             LOG.trace("Transform complete with result {}", result);
             resultHandler.setBody(out);
         } finally {
+            // IOHelper can handle if is is null
             IOHelper.close(is);
         }
     }
@@ -357,7 +367,34 @@ public class XsltBuilder implements Processor {
     // -------------------------------------------------------------------------
 
     /**
-     * Converts the inbound stream to a {@link Source}.
+     * Checks whether we need an {@link InputStream} to access the message body.
+     * <p/>
+     * Depending on the content in the message body, we may not need to convert
+     * to {@link InputStream}.
+     *
+     * @param exchange the current exchange
+     * @return <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source} afterwards.
+     */
+    protected boolean isInputStreamNeeded(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            return false;
+        }
+
+        if (body instanceof Source) {
+            return false;
+        } else if (body instanceof String) {
+            return false;
+        } else if (body instanceof Document) {
+            return false;
+        }
+
+        // yes an input stream is needed
+        return true;
+    }
+
+    /**
+     * Converts the inbound body to a {@link Source}, if the body is <b>not</b> already a {@link Source}.
      * <p/>
      * This implementation will prefer to source in the following order:
      * <ul>
@@ -367,22 +404,27 @@ public class XsltBuilder implements Processor {
      *   <li>DOM - DOM as 4th choice</li>
      * </ul>
      */
-    protected Source getSource(Exchange exchange, InputStream is) {
+    protected Source getSource(Exchange exchange, Object body) {
+        // body may already be a source
+        if (body instanceof Source) {
+            return (Source) body;
+        }
+
         Source source = null;
         if (isAllowStAX()) {
-            source = exchange.getContext().getTypeConverter().convertTo(StAXSource.class, exchange, is);
+            source = exchange.getContext().getTypeConverter().convertTo(StAXSource.class, exchange, body);
         }
         if (source == null) {
             // then try SAX
-            source = exchange.getContext().getTypeConverter().convertTo(SAXSource.class, exchange, is);
+            source = exchange.getContext().getTypeConverter().convertTo(SAXSource.class, exchange, body);
         }
         if (source == null) {
             // then try stream
-            source = exchange.getContext().getTypeConverter().convertTo(StreamSource.class, exchange, is);
+            source = exchange.getContext().getTypeConverter().convertTo(StreamSource.class, exchange, body);
         }
         if (source == null) {
             // and fallback to DOM
-            source = exchange.getContext().getTypeConverter().convertTo(DOMSource.class, exchange, is);
+            source = exchange.getContext().getTypeConverter().convertTo(DOMSource.class, exchange, body);
         }
         if (source == null) {
             if (isFailOnNullBody()) {
