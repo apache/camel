@@ -21,6 +21,12 @@
     xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <requiredProperties>
+    <requiredProperty key="name">
+      <defaultValue>HelloWorld</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="scheme">
+      <defaultValue>helloworld</defaultValue>
+    </requiredProperty>
     <requiredProperty key="camel-version">
       <defaultValue>${project.version}</defaultValue>
     </requiredProperty>

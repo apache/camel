@@ -21,10 +21,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class HelloWorldComponentTest extends CamelTestSupport {
+public class ${name}ComponentTest extends CamelTestSupport {
 
     @Test
-    public void testTimerInvokesBeanMethod() throws Exception {
+    public void test${name}() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);       
         
@@ -35,9 +35,9 @@ public class HelloWorldComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("helloworld://foo")    // will send a message every 500ms
-                  .to("helloworld://bar")   // prints message to stdout
-                  .to("mock:result");       // to actually test that a message arrives
+                from("${scheme}://foo")
+                  .to("${scheme}://bar")
+                  .to("mock:result");
             }
         };
     }

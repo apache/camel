@@ -16,19 +16,36 @@
  */
 package ${package};
 
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultEndpoint;
 
 /**
- * Represents the component that manages {@link HelloWorldEndpoint}.
+ * Represents a ${name} endpoint.
  */
-public class HelloWorldComponent extends DefaultComponent {
+public class ${name}Endpoint extends DefaultEndpoint {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new HelloWorldEndpoint(uri, this);
-        setProperties(endpoint, parameters);
-        return endpoint;
+    public ${name}Endpoint() {
+    }
+
+    public ${name}Endpoint(String uri, ${name}Component component) {
+        super(uri, component);
+    }
+
+    public ${name}Endpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
+    public Producer createProducer() throws Exception {
+        return new ${name}Producer(this);
+    }
+
+    public Consumer createConsumer(Processor processor) throws Exception {
+        return new ${name}Consumer(this, processor);
+    }
+
+    public boolean isSingleton() {
+        return true;
     }
 }

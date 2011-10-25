@@ -23,12 +23,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
- * The HelloWorld consumer.
+ * The ${name} consumer.
  */
-public class HelloWorldConsumer extends ScheduledPollConsumer {
-    private final HelloWorldEndpoint endpoint;
+public class ${name}Consumer extends ScheduledPollConsumer {
+    private final ${name}Endpoint endpoint;
 
-    public HelloWorldConsumer(HelloWorldEndpoint endpoint, Processor processor) {
+    public ${name}Consumer(${name}Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }
