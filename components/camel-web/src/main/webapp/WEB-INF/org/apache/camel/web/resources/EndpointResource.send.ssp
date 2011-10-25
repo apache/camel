@@ -6,7 +6,16 @@
 <h1>Endpoint: ${it.getUri}</h1>
 
 <form action='${uri(it.getHref)}' method="post" name="sendMessage">
-  <input type="submit" value="Send"> <input type="reset"> <br>
+  <input type="submit" value="Send"> <input type="reset"> <br/>
+
+  <br/>Headers(name : value)<br/>
+  <input type="text" name="header_1"> : <input type="text" name="value_header_1"><br/>
+  <input type="text" name="header_2"> : <input type="text" name="value_header_2"><br/>
+  <input type="text" name="header_3"> : <input type="text" name="value_header_3"><br/>
+  <input type="text" name="header_4"> : <input type="text" name="value_header_4"><br/>
+  <input type="text" name="header_5"> : <input type="text" name="value_header_5"><br/>
+
+  <br/>Body<br/>
   <textarea name="body" rows="30" cols="80"></textarea>
 </form>
 

@@ -18,9 +18,9 @@ package org.apache.camel.web.resources;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -32,6 +32,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import com.sun.jersey.api.representation.Form;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -42,8 +43,6 @@ import org.apache.camel.web.model.EndpointLink;
 
 /**
  * A Camel <a href="http://camel.apache.org/endpoint.html">Endpoint</a>
- *
- * @version 
  */
 public class EndpointResource extends CamelChildResourceSupport {
     private final String key;
@@ -102,7 +101,8 @@ public class EndpointResource extends CamelChildResourceSupport {
     @POST
     @Consumes({MediaType.TEXT_PLAIN, MediaType.TEXT_HTML, MediaType.TEXT_XML, MediaType.APPLICATION_XML})
     public Response postMessage(@Context HttpHeaders headers, final String body) throws URISyntaxException {
-        sendMessage(headers, body);
+        Map<String, Object> messageHeaders = multivalueMapToMap(headers.getRequestHeaders());
+        sendMessage(messageHeaders, body);
         return Response.ok().build();
     }
 
@@ -113,36 +113,58 @@ public class EndpointResource extends CamelChildResourceSupport {
     @POST
     @Consumes("application/x-www-form-urlencoded")
     public Response postMessageForm(@Context HttpHeaders headers, Form formData) throws URISyntaxException {
-        String body = formData.getFirst("body", String.class);
-        sendMessage(headers, body);
+        String body = getBodyData(formData);
+
+        Map<String, Object> messageHeaders = multivalueMapToMap(headers.getRequestHeaders());
+        messageHeaders.putAll(getHeadersData(formData));
+
+        sendMessage(messageHeaders, body);
         return Response.seeOther(new URI(getHref())).build();
     }
 
-    protected void sendMessage(final HttpHeaders headers, final String body) {
+    private Map<String, Object> getHeadersData(Form formData) {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> formMap = multivalueMapToMap(formData);
+        for (Map.Entry<String, Object> entry : formMap.entrySet()) {
+            if (entry.getKey().startsWith("header_")) {
+                headers.put((String) entry.getValue(), getHeaderValueForKey(entry.getKey(), formMap));
+            }
+        }
+        return headers;
+    }
+
+    private Object getHeaderValueForKey(String key, Map<String, Object> headers) {
+        return headers.get("value_" + key);
+    }
+
+    private String getBodyData(Form formData) {
+        return formData.getFirst("body", String.class);
+    }
+
+    private Map<String, Object> multivalueMapToMap(MultivaluedMap<String, String> multivaluedMap) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        if (multivaluedMap != null) {
+            for (Map.Entry<String, List<String>> entry : multivaluedMap.entrySet()) {
+                List<String> values = entry.getValue();
+                int size = values.size();
+                if (size == 1) {
+                    resultMap.put(entry.getKey(), entry.getValue().get(0));
+                } else if (size > 0) {
+                    resultMap.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        return resultMap;
+    }
+
+    protected void sendMessage(final Map<String, Object> headers, final String body) {
         getTemplate().send(endpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
                 in.setBody(body);
-
-                // lets pass in all the HTTP headers
-                if (headers != null) {
-                    MultivaluedMap<String, String> requestHeaders = headers.getRequestHeaders();
-
-                    Set<Map.Entry<String, List<String>>> entries = requestHeaders.entrySet();
-                    for (Map.Entry<String, List<String>> entry : entries) {
-                        String key = entry.getKey();
-                        List<String> values = entry.getValue();
-                        int size = values.size();
-                        if (size == 1) {
-                            in.setHeader(key, values.get(0));
-                        } else if (size > 0) {
-                            in.setHeader(key, values);
-                        }
-                    }
-                }
+                in.setHeaders(headers);
             }
         });
     }
-
 
 }
