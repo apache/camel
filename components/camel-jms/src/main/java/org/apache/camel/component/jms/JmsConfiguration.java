@@ -125,6 +125,7 @@ public class JmsConfiguration implements Cloneable {
     // to force disabling time to live (works in both in-only or in-out mode)
     private boolean disableTimeToLive;
     private ReplyToType replyToType;
+    private boolean asyncConsumer;
 
     public JmsConfiguration() {
     }
@@ -971,7 +972,7 @@ public class JmsConfiguration implements Cloneable {
         }
     }
 
-    public void configure(EndpointMessageListener listener) {
+    public void configureMessageListener(EndpointMessageListener listener) {
         if (isDisableReplyTo()) {
             listener.setDisableReplyTo(true);
         }
@@ -1192,4 +1193,19 @@ public class JmsConfiguration implements Cloneable {
     public void setReplyToType(ReplyToType replyToType) {
         this.replyToType = replyToType;
     }
+
+    public boolean isAsyncConsumer() {
+        return asyncConsumer;
+    }
+
+    /**
+     * Sets whether asynchronous routing is enabled on {@link JmsConsumer}.
+     * <p/>
+     * By default this is <tt>false</tt>. If configured as <tt>true</tt> then
+     * the {@link JmsConsumer} will process the {@link org.apache.camel.Exchange} asynchronous.
+     */
+    public void setAsyncConsumer(boolean asyncConsumer) {
+        this.asyncConsumer = asyncConsumer;
+    }
+
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.issues;
+package org.apache.camel.component.jms.async;
 
 import javax.jms.ConnectionFactory;
 
@@ -27,35 +27,37 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * Unit test using a fixed replyTo specified on the JMS endpoint
  *
- * @version 
  */
-public class JmsJMSReplyToConsumerEndpointUsingInOutTest extends CamelTestSupport {
+public class AsyncConsumerInOutTwoTest extends CamelTestSupport {
 
     @Test
-    public void testCustomJMSReplyToInOut() throws Exception {
-        template.sendBody("activemq:queue:hello", "What is your name?");
-
-        String reply = consumer.receiveBody("activemq:queue:namedReplyQueue", 5000, String.class);
-        assertEquals("My name is Camel", reply);
-    }
-
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:queue:hello?replyTo=queue:namedReplyQueue")
-                    .to("log:hello")
-                    .transform(constant("My name is Camel"));
-            }
-        };
+    public void testAsyncJmsConsumer() throws Exception {
+        String out = template.requestBody("activemq:queue:start", "Hello World", String.class);
+        assertEquals("Bye World", out);
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
+
+        camelContext.addComponent("async", new MyAsyncComponent());
+
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
+
         return camelContext;
     }
 
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // enable async in only mode on the consumer
+                from("activemq:queue:start?asyncConsumer=true")
+                    .to("async:camel?delay=2000")
+                    .transform(constant("Bye World"));
+            }
+        };
+    }
 }

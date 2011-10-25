@@ -31,8 +31,7 @@ import org.junit.Test;
  */
 public class JmsJettyAsyncTest extends CamelTestSupport {
 
-    // TODO: When async jms consumer is implemented we can bump this value to 1000
-    private int size = 10;
+    private int size = 100;
     private int port;
 
     @Test
@@ -54,7 +53,8 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("activemq:queue:inbox?synchronous=false")
+                // enable async consumer to process messages faster
+                from("activemq:queue:inbox?asyncConsumer=false")
                     .to("jetty:http://0.0.0.0:" + port + "/myapp")
                     .to("log:result?groupSize=10", "mock:result");
 

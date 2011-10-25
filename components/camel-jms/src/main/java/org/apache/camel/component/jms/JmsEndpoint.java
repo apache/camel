@@ -1014,6 +1014,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public void setAsyncConsumer(boolean asyncConsumer) {
+        configuration.setAsyncConsumer(asyncConsumer);
+    }
+
+    @ManagedAttribute
+    public boolean isAsyncConsumer() {
+        return configuration.isAsyncConsumer();
+    }
+
+    @ManagedAttribute
     public String getReplyToType() {
         if (configuration.getReplyToType() != null) {
             return configuration.getReplyToType().name();

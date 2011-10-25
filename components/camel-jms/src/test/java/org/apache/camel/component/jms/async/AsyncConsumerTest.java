@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.issues;
+package org.apache.camel.component.jms.async;
 
 import javax.jms.ConnectionFactory;
 
@@ -27,35 +27,49 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * Unit test using a fixed replyTo specified on the JMS endpoint
  *
- * @version 
  */
-public class JmsJMSReplyToConsumerEndpointUsingInOutTest extends CamelTestSupport {
+public class AsyncConsumerTest extends CamelTestSupport {
 
     @Test
-    public void testCustomJMSReplyToInOut() throws Exception {
-        template.sendBody("activemq:queue:hello", "What is your name?");
+    public void testAsyncJmsConsumer() throws Exception {
+        // Hello World is received first despite its send last
+        // the reason is that the first message is processed asynchronously
+        // and it takes 2 sec to complete, so in between we have time to
+        // process the 2nd message on the queue
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Camel");
 
-        String reply = consumer.receiveBody("activemq:queue:namedReplyQueue", 5000, String.class);
-        assertEquals("My name is Camel", reply);
-    }
+        template.sendBody("activemq:queue:start", "Hello Camel");
+        template.sendBody("activemq:queue:start", "Hello World");
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("activemq:queue:hello?replyTo=queue:namedReplyQueue")
-                    .to("log:hello")
-                    .transform(constant("My name is Camel"));
-            }
-        };
+        assertMockEndpointsSatisfied();
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
+
+        camelContext.addComponent("async", new MyAsyncComponent());
+
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
+
         return camelContext;
     }
 
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // enable async in only mode on the consumer
+                from("activemq:queue:start?asyncConsumer=true")
+                        .choice()
+                            .when(body().contains("Camel"))
+                            .to("async:camel?delay=2000")
+                            .to("mock:result")
+                        .otherwise()
+                            .to("mock:result");
+            }
+        };
+    }
 }

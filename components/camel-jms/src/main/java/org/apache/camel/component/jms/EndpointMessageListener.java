@@ -22,6 +22,8 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -29,6 +31,8 @@ import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,18 +52,18 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class EndpointMessageListener implements MessageListener {
     private static final transient Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
     private ExceptionHandler exceptionHandler;
-    private JmsEndpoint endpoint;
-    private Processor processor;
+    private final JmsEndpoint endpoint;
+    private final AsyncProcessor processor;
     private JmsBinding binding;
     private boolean eagerLoadingOfProperties;
     private Object replyToDestination;
     private JmsOperations template;
     private boolean disableReplyTo;
+    private boolean async;
 
     public EndpointMessageListener(JmsEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
-        this.processor = processor;
-        endpoint.getConfiguration().configure(this);
+        this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
     public void onMessage(final Message message) {
@@ -68,7 +72,7 @@ public class EndpointMessageListener implements MessageListener {
         LOG.debug("{} consumer received JMS message: {}", endpoint, message);
 
         boolean sendReply;
-        RuntimeCamelException rce = null;
+        RuntimeCamelException rce;
         try {
             Object replyDestination = getReplyToDestination(message);
             // we can only send back a reply if there was a reply destination configured
@@ -84,13 +88,74 @@ public class EndpointMessageListener implements MessageListener {
                 LOG.debug("Received Message has JMSCorrelationID [" + correlationId + "]");
             }
 
-            // process the exchange
+            // process the exchange either asynchronously or synchronous
             LOG.trace("onMessage.process START");
-            try {
-                processor.process(exchange);
-            } catch (Throwable e) {
-                exchange.setException(e);
+            AsyncCallback callback = new EndpointMessageListenerAsyncCallback(message, exchange, endpoint, sendReply, replyDestination);
+
+            // async is by default false, which mean we by default will process the exchange synchronously
+            // to keep backwards compatible, as well ensure this consumer will pickup messages in order
+            // (eg to not consume the next message before the previous has been fully processed)
+            // but if end user explicit configure consumerAsync=true, then we can process the message
+            // asynchronously (unless endpoint has been configured synchronous, or we use transaction)
+            boolean forceSync = endpoint.isSynchronous() || endpoint.isTransacted();
+            if (forceSync || !isAsync()) {
+                // must process synchronous if transacted or configured to do so
+                LOG.trace("Processing exchange {} synchronously", exchange.getExchangeId());
+                try {
+                    processor.process(exchange);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                } finally {
+                    callback.done(true);
+                }
+            } else {
+                // process asynchronous using the async routing engine
+                LOG.trace("Processing exchange {} asynchronously", exchange.getExchangeId());
+                boolean sync = AsyncProcessorHelper.process(processor, exchange, callback);
+                if (!sync) {
+                    // will be done async so return now
+                    return;
+                }
             }
+            // if we failed processed the exchange from the async callback task, then grab the exception
+            rce = exchange.getException(RuntimeCamelException.class);
+
+        } catch (Exception e) {
+            rce = wrapRuntimeCamelException(e);
+        }
+
+        // an exception occurred so rethrow to trigger rollback on JMS listener
+        if (rce != null) {
+            handleException(rce);
+            LOG.trace("onMessage END throwing exception: {}", rce.getMessage());
+            throw rce;
+        }
+
+        LOG.trace("onMessage END");
+    }
+
+    /**
+     * Callback task that is performed when the exchange has been processed
+     */
+    private final class EndpointMessageListenerAsyncCallback implements AsyncCallback {
+
+        private final Message message;
+        private final Exchange exchange;
+        private final JmsEndpoint endpoint;
+        private final boolean sendReply;
+        private final Object replyDestination;
+
+        private EndpointMessageListenerAsyncCallback(Message message, Exchange exchange, JmsEndpoint endpoint,
+                                                     boolean sendReply, Object replyDestination) {
+            this.message = message;
+            this.exchange = exchange;
+            this.endpoint = endpoint;
+            this.sendReply = sendReply;
+            this.replyDestination = replyDestination;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
             LOG.trace("onMessage.process END");
 
             // now we evaluate the processing of the exchange and determine if it was a success or failure
@@ -100,6 +165,7 @@ public class EndpointMessageListener implements MessageListener {
             // if we send back a reply it can either be the message body or transferring a caused exception
             org.apache.camel.Message body = null;
             Exception cause = null;
+            RuntimeCamelException rce = null;
 
             if (exchange.isFailed() || exchange.isRollbackOnly()) {
                 if (exchange.isRollbackOnly()) {
@@ -140,18 +206,18 @@ public class EndpointMessageListener implements MessageListener {
                 LOG.trace("onMessage.sendReply END");
             }
 
-        } catch (Exception e) {
-            rce = wrapRuntimeCamelException(e);
+            // if an exception occurred
+            if (rce != null) {
+                if (doneSync) {
+                    // we were done sync, so put exception on exchange, so we can grab it in the onMessage
+                    // method and rethrow it
+                    exchange.setException(rce);
+                } else {
+                    // we were done async, so use the Camel built in exception handler to deal with it
+                    handleException(rce);
+                }
+            }
         }
-
-        // an exception occurred so rethrow to trigger rollback on JMS listener
-        if (rce != null) {
-            handleException(rce);
-            LOG.trace("onMessage END throwing exception: {}", rce.getMessage());
-            throw rce;
-        }
-
-        LOG.trace("onMessage END");
     }
 
     public Exchange createExchange(Message message, Object replyDestination) {
@@ -245,6 +311,20 @@ public class EndpointMessageListener implements MessageListener {
         this.replyToDestination = replyToDestination;
     }
 
+    public boolean isAsync() {
+        return async;
+    }
+
+    /**
+     * Sets whether asynchronous routing is enabled.
+     * <p/>
+     * By default this is <tt>false</tt>. If configured as <tt>true</tt> then
+     * this listener will process the {@link org.apache.camel.Exchange} asynchronous.
+     */
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
@@ -327,4 +407,8 @@ public class EndpointMessageListener implements MessageListener {
         getExceptionHandler().handleException(t);
     }
 
+    @Override
+    public String toString() {
+        return "EndpointMessageListener[" + endpoint + "]";
+    }
 }
