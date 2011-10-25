@@ -477,13 +477,9 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                     source = getSource(exchange, body);
                 }
 
-                // there is a couple of special types we need to check
+                // special for bean invocation
                 if (source == null) {
-                    if (body instanceof WrappedFile) {
-                        // special for files so we can work with them out of the box
-                        is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
-                        source = converter.toDOMSource(is);
-                    } else if (body instanceof BeanInvocation) {
+                    if (body instanceof BeanInvocation) {
                         // if its a null bean invocation then handle that
                         BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, body);
                         if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
