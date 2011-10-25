@@ -32,6 +32,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
@@ -46,6 +48,8 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -59,6 +63,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version 
  */
 public class XsltBuilder implements Processor {
+    private final static Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private XmlConverter converter = new XmlConverter();
     private Templates template;
@@ -67,6 +72,7 @@ public class XsltBuilder implements Processor {
     private URIResolver uriResolver;
     private boolean deleteOutputFile;
     private ErrorListener errorListener = new XsltErrorListener();
+    private boolean allowStAX;
 
     public XsltBuilder() {
     }
@@ -104,7 +110,9 @@ public class XsltBuilder implements Processor {
         try {
             is = exchange.getIn().getBody(InputStream.class);
             Source source = getSource(exchange, is);
+            LOG.trace("Using {} as source", source);
             transformer.transform(source, result);
+            LOG.trace("Transform complete with result {}", result);
             resultHandler.setBody(out);
         } finally {
             IOHelper.close(is);
@@ -211,6 +219,16 @@ public class XsltBuilder implements Processor {
         return this;
     }
 
+    /**
+     * Enables to allow using StAX.
+     * <p/>
+     * When enabled StAX is preferred as the first choice as {@link Source}.
+     */
+    public XsltBuilder allowStAX() {
+        setAllowStAX(true);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -244,6 +262,14 @@ public class XsltBuilder implements Processor {
 
     public void setResultHandlerFactory(ResultHandlerFactory resultHandlerFactory) {
         this.resultHandlerFactory = resultHandlerFactory;
+    }
+
+    public boolean isAllowStAX() {
+        return allowStAX;
+    }
+
+    public void setAllowStAX(boolean allowStAX) {
+        this.allowStAX = allowStAX;
     }
 
     /**
@@ -333,14 +359,30 @@ public class XsltBuilder implements Processor {
     /**
      * Converts the inbound stream to a {@link Source}.
      * <p/>
-     * This implementation will prefer StAX first, and fallback to other kinds of Source types.
+     * This implementation will prefer to source in the following order:
+     * <ul>
+     *   <li>StAX - Is StAX is allowed</li>
+     *   <li>SAX - SAX as 2nd choice</li>
+     *   <li>Stream - Stream as 3rd choice</li>
+     *   <li>DOM - DOM as 4th choice</li>
+     * </ul>
      */
     protected Source getSource(Exchange exchange, InputStream is) {
-        // try StAX first
-        Source source = exchange.getContext().getTypeConverter().convertTo(StAXSource.class, exchange, is);
-        if (source == null) {
-            // fallback and try other kind of source
+        Source source = null;
+        if (isAllowStAX()) {
             source = exchange.getContext().getTypeConverter().convertTo(StAXSource.class, exchange, is);
+        }
+        if (source == null) {
+            // then try SAX
+            source = exchange.getContext().getTypeConverter().convertTo(SAXSource.class, exchange, is);
+        }
+        if (source == null) {
+            // then try stream
+            source = exchange.getContext().getTypeConverter().convertTo(StreamSource.class, exchange, is);
+        }
+        if (source == null) {
+            // and fallback to DOM
+            source = exchange.getContext().getTypeConverter().convertTo(DOMSource.class, exchange, is);
         }
         if (source == null) {
             if (isFailOnNullBody()) {
@@ -383,6 +425,7 @@ public class XsltBuilder implements Processor {
             String key = entry.getKey();
             Object value = entry.getValue();
             if (value != null) {
+                LOG.trace("Transformer set parameter {} -> {}", key, value);
                 transformer.setParameter(key, value);
             }
         }
