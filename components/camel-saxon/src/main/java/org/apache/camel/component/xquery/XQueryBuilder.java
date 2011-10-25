@@ -34,8 +34,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import net.sf.saxon.Configuration;
@@ -63,6 +68,7 @@ import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -89,6 +95,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private boolean stripsAllWhiteSpace = true;
     private ModuleURIResolver moduleURIResolver;
+    private boolean allowStAX;
 
     @Override
     public String toString() {
@@ -180,8 +187,10 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Result result = new StreamResult(buffer);
         getExpression().pull(createDynamicContext(exchange), result, properties);
-        byte[] bytes = buffer.toByteArray();
-        return bytes;
+
+        byte[] answer = buffer.toByteArray();
+        buffer.close();
+        return answer;
     }
 
     public String evaluateAsString(Exchange exchange) throws Exception {
@@ -192,7 +201,10 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         for (Item item = iter.next(); item != null; item = iter.next()) {
             buffer.append(item.getStringValueCS());
         }
-        return buffer.toString();
+
+        String answer = buffer.toString();
+        buffer.close();
+        return answer;
     }
 
     public boolean matches(Exchange exchange) {
@@ -327,6 +339,16 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return this;
     }
 
+    /**
+     * Enables to allow using StAX.
+     * <p/>
+     * When enabled StAX is preferred as the first choice as {@link Source}.
+     */
+    public XQueryBuilder allowStAX() {
+        setAllowStAX(true);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
 
@@ -411,6 +433,14 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         this.stripsAllWhiteSpace = stripsAllWhiteSpace;
     }
 
+    public boolean isAllowStAX() {
+        return allowStAX;
+    }
+
+    public void setAllowStAX(boolean allowStAX) {
+        this.allowStAX = allowStAX;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -433,35 +463,32 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         if (item != null) {
             dynamicQueryContext.setContextItem(item);
         } else {
-            Source source = in.getBody(Source.class);
-            if (source == null) {
-                Object body = in.getBody();
+            Object body = in.getBody();
 
-                // lets try coerce some common types into something JAXP can deal with
-                if (body instanceof WrappedFile) {
-                    // special for files so we can work with them out of the box
-                    InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
-                    source = converter.toDOMSource(is);
-                } else if (body instanceof BeanInvocation) {
-                    // if its a null bean invocation then handle that
-                    BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, body);
-                    if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
-                        // its a null argument from the bean invocation so use null as answer
-                        source = null;
-                    }
-                } else if (body instanceof String) {
-                    source = converter.toDOMSource(body.toString());
+            // the underlying input stream, which we need to close to avoid locking files or other resources
+            InputStream is = null;
+            try {
+                Source source;
+                // only convert to input stream if really needed
+                if (isInputStreamNeeded(exchange)) {
+                    is = exchange.getIn().getBody(InputStream.class);
+                    source = getSource(exchange, is);
                 } else {
-                    // try some of Camels type converters
-                    InputStream is = in.getBody(InputStream.class);
-                    if (is != null) {
+                    source = getSource(exchange, body);
+                }
+
+                // there is a couple of special types we need to check
+                if (source == null) {
+                    if (body instanceof WrappedFile) {
+                        // special for files so we can work with them out of the box
+                        is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
                         source = converter.toDOMSource(is);
-                    }
-                    // fallback and use String
-                    if (source == null) {
-                        String s = in.getBody(String.class);
-                        if (s != null) {
-                            source = converter.toDOMSource(s);
+                    } else if (body instanceof BeanInvocation) {
+                        // if its a null bean invocation then handle that
+                        BeanInvocation bi = exchange.getContext().getTypeConverter().convertTo(BeanInvocation.class, body);
+                        if (bi.getArgs() != null && bi.getArgs().length == 1 && bi.getArgs()[0] == null) {
+                            // its a null argument from the bean invocation so use null as answer
+                            source = null;
                         }
                     }
                 }
@@ -470,15 +497,82 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                     // indicate it was not possible to convert to a Source type
                     throw new NoTypeConversionAvailableException(body, Source.class);
                 }
+
+                DocumentInfo doc = getStaticQueryContext().buildDocument(source);
+                dynamicQueryContext.setContextItem(doc);
+            } finally {
+                // can deal if is is null
+                IOHelper.close(is);
             }
-            DocumentInfo doc = getStaticQueryContext().buildDocument(source);
-            dynamicQueryContext.setContextItem(doc);
         }
         
         configureQuery(dynamicQueryContext, exchange);
         // call the reset if the in message body is StreamCache
         MessageHelper.resetStreamCache(exchange.getIn());
         return dynamicQueryContext;
+    }
+
+    /**
+     * Checks whether we need an {@link InputStream} to access the message body.
+     * <p/>
+     * Depending on the content in the message body, we may not need to convert
+     * to {@link InputStream}.
+     *
+     * @param exchange the current exchange
+     * @return <tt>true</tt> to convert to {@link InputStream} beforehand converting to {@link Source} afterwards.
+     */
+    protected boolean isInputStreamNeeded(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            return false;
+        }
+
+        if (body instanceof Source) {
+            return false;
+        } else if (body instanceof String) {
+            return false;
+        } else if (body instanceof Document) {
+            return false;
+        }
+
+        // yes an input stream is needed
+        return true;
+    }
+
+    /**
+     * Converts the inbound body to a {@link Source}, if the body is <b>not</b> already a {@link Source}.
+     * <p/>
+     * This implementation will prefer to source in the following order:
+     * <ul>
+     *   <li>StAX - Is StAX is allowed</li>
+     *   <li>SAX - SAX as 2nd choice</li>
+     *   <li>Stream - Stream as 3rd choice</li>
+     *   <li>DOM - DOM as 4th choice</li>
+     * </ul>
+     */
+    protected Source getSource(Exchange exchange, Object body) {
+        // body may already be a source
+        if (body instanceof Source) {
+            return (Source) body;
+        }
+
+        Source source = null;
+        if (isAllowStAX()) {
+            source = exchange.getContext().getTypeConverter().convertTo(StAXSource.class, exchange, body);
+        }
+        if (source == null) {
+            // then try SAX
+            source = exchange.getContext().getTypeConverter().convertTo(SAXSource.class, exchange, body);
+        }
+        if (source == null) {
+            // then try stream
+            source = exchange.getContext().getTypeConverter().convertTo(StreamSource.class, exchange, body);
+        }
+        if (source == null) {
+            // and fallback to DOM
+            source = exchange.getContext().getTypeConverter().convertTo(DOMSource.class, exchange, body);
+        }
+        return source;
     }
 
     /**
