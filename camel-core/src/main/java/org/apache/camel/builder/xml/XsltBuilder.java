@@ -65,7 +65,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version 
  */
 public class XsltBuilder implements Processor {
-    private final static Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private XmlConverter converter = new XmlConverter();
     private Templates template;

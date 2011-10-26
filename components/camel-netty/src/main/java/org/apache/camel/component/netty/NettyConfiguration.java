@@ -80,7 +80,7 @@ public class NettyConfiguration implements Cloneable {
     private boolean allowDefaultCodec = true;
     private ClientPipelineFactory clientPipelineFactory;
     private ServerPipelineFactory serverPipelineFactory;
-    protected SSLContextParameters sslContextParameters;
+    private SSLContextParameters sslContextParameters;
     
     /**
      * Returns a copy of this configuration
