@@ -114,7 +114,7 @@
       <pax.web.version>0.7.2</pax.web.version>
       <quartz-bundle-version>1.8.5_1</quartz-bundle-version>
       <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
-      <quickfix-bundle-version>1.5.0_1</quickfix-bundle-version>
+      <quickfix-bundle-version>1.5.1_1-SNAPSHOT</quickfix-bundle-version>
       <regexp-bundle-version>1.3_1</regexp-bundle-version>      
       <rome-bundle-version>1.0_1</rome-bundle-version>
       <saxon-bundle-version>9.1.0.8_1</saxon-bundle-version>
