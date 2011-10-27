@@ -30,7 +30,7 @@ public final class PrivateClasses {
     /**
      * Public interface through which we can bean-bind a private impl
      */
-    public static interface HelloCamel {
+    public interface HelloCamel {
         String sayHello(String input);
     }
 

@@ -61,7 +61,6 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
 
     @Override
     protected int poll() throws Exception {
-        int messages = 0;
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
@@ -70,7 +69,6 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
         ListContainerOptions opt = new ListContainerOptions();
 
         for (StorageMetadata md : blobStore.list(container, opt.maxResults(maxMessagesPerPoll))) {
-            messages++;
             String blobName = md.getName();
             Object body = JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName, Thread.currentThread().getContextClassLoader());
             Exchange exchange = endpoint.createExchange();
