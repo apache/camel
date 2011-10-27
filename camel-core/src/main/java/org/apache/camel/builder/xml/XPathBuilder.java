@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.xml;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
@@ -54,6 +55,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -651,8 +653,18 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         // set exchange and variable resolver as thread locals for concurrency
         this.exchange.set(exchange);
 
+        // the underlying input stream, which we need to close to avoid locking files or other resources
+        InputStream is = null;
         try {
-            Object document = getDocument(exchange);
+            Object document;
+            // only convert to input stream if really needed
+            if (isInputStreamNeeded(exchange)) {
+                is = exchange.getIn().getBody(InputStream.class);
+                document = getDocument(exchange, is);
+            } else {
+                Object body = exchange.getIn().getBody();
+                document = getDocument(exchange, body);
+            }
             if (resultQName != null) {
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource) document;
@@ -676,6 +688,9 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             }
         } catch (XPathExpressionException e) {
             throw new InvalidXPathExpression(getText(), e);
+        } finally {
+            // IOHelper can handle if is is null
+            IOHelper.close(is);
         }
 
         if (LOG.isTraceEnabled()) {
@@ -761,21 +776,47 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     /**
+     * Checks whether we need an {@link InputStream} to access the message body.
+     * <p/>
+     * Depending on the content in the message body, we may not need to convert
+     * to {@link InputStream}.
+     *
+     * @param exchange the current exchange
+     * @return <tt>true</tt> to convert to {@link InputStream} beforehand converting afterwards.
+     */
+    protected boolean isInputStreamNeeded(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            return false;
+        }
+
+        if (body instanceof WrappedFile) {
+            body = ((WrappedFile) body).getFile();
+        }
+        if (body instanceof File) {
+            // input stream is needed for File to avoid locking the file in case of errors etc
+            return true;
+        }
+
+        // input stream is not needed otherwise
+        return false;
+    }
+
+    /**
      * Strategy method to extract the document from the exchange.
      */
     @SuppressWarnings("unchecked")
-    protected Object getDocument(Exchange exchange) {
+    protected Object getDocument(Exchange exchange, Object body) {
         Object answer = null;
-        Message in = exchange.getIn();
 
         Class type = getDocumentType();
         if (type != null) {
             // try to get the body as the desired type
-            answer = in.getBody(type);
+            answer = exchange.getContext().getTypeConverter().convertTo(type, exchange, body);
         }
         // fallback to get the body as is
         if (answer == null) {
-            answer = in.getBody();
+            answer = body;
         }
 
         // lets try coerce some common types into something JAXP can deal with
