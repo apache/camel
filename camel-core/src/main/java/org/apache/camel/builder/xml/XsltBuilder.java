@@ -37,7 +37,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
@@ -385,7 +385,9 @@ public class XsltBuilder implements Processor {
             return false;
         } else if (body instanceof String) {
             return false;
-        } else if (body instanceof Document) {
+        } else if (body instanceof byte[]) {
+            return false;
+        } else if (body instanceof Node) {
             return false;
         }
 

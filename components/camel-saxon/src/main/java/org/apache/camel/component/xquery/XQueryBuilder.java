@@ -527,7 +527,9 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             return false;
         } else if (body instanceof String) {
             return false;
-        } else if (body instanceof Document) {
+        } else if (body instanceof byte[]) {
+            return false;
+        } else if (body instanceof Node) {
             return false;
         }
 
