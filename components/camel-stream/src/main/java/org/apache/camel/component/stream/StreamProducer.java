@@ -45,8 +45,6 @@ public class StreamProducer extends DefaultProducer {
     private static final String TYPES = "out,err,file,header,url";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
-    private OutputStream outputStream = System.out;
-    private boolean isSystemStream;
     private StreamEndpoint endpoint;
     private String uri;
 
@@ -56,16 +54,10 @@ public class StreamProducer extends DefaultProducer {
         validateUri(uri);
     }
 
-    @Override
-    public void doStop() throws Exception {
-        closeStream();
-        super.doStop();
-    }
-
     public void process(Exchange exchange) throws Exception {
         delay(endpoint.getDelay());
-
-        isSystemStream = false;
+        OutputStream outputStream = System.out;         
+        boolean isSystemStream = false;
         if ("out".equals(uri)) {
             isSystemStream = true;
             outputStream = System.out;
@@ -80,8 +72,8 @@ public class StreamProducer extends DefaultProducer {
             outputStream = resolveStreamFromUrl();
         }
 
-        writeToStream(exchange);
-        closeStream();
+        writeToStream(outputStream, exchange);
+        closeStream(outputStream, isSystemStream);
     }
 
     private OutputStream resolveStreamFromUrl() throws IOException {
@@ -116,7 +108,7 @@ public class StreamProducer extends DefaultProducer {
         Thread.sleep(ms);
     }
 
-    private void writeToStream(Exchange exchange) throws IOException, CamelExchangeException {
+    private void writeToStream(OutputStream outputStream, Exchange exchange) throws IOException, CamelExchangeException {
         Object body = exchange.getIn().getBody();
 
         // if not a string then try as byte array first
@@ -142,12 +134,11 @@ public class StreamProducer extends DefaultProducer {
         bw.flush();
     }
 
-    private void closeStream() throws Exception {
+    private void closeStream(OutputStream outputStream, boolean isSystemStream) throws Exception {
         // important: do not close the writer on a standard system.out etc.
         if (outputStream != null && !isSystemStream) {
             outputStream.close();
         }
-        outputStream = null;
     }
 
     private void validateUri(String uri) throws Exception {
