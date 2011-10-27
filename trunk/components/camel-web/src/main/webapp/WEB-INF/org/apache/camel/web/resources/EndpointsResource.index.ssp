@@ -1,0 +1,39 @@
+<%@ import val it: EndpointsResource %>
+
+#{ attributes("title") = "Endpoints"}#
+
+
+<h2>Endpoints</h2>
+
+<ul>
+  #for(i <- it.getEndpoints)
+    <li><a class='endpoint' href='${uri(i.getHref)}'>${i.getUri}</a>
+  #end
+</ul>
+
+<h2>Create New Endpoint</h2>
+
+<form action="${uri("/endpoints")}" method="post" name="createEndpoint">
+  <table>
+    #if(!(it.getError isEmpty))
+      <tr>
+        <td colspan="2" align="center" class="error">
+           ${it.getError}
+        </td>
+      </tr>
+    #end
+    <tr>
+      <td>
+        Please enter the new endpoint URI
+      </td>
+      <td>
+        <input type="text" name="uri" value="${it.getNewUri}" width="80">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" align="center">
+         <input type="submit" value="Create"> <input type="reset">
+      </td>
+    </tr>
+  </table>
+</form>

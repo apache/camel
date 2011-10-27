@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+           xmlns:cxf="http://cxf.apache.org/blueprint/core"
+           xmlns:camel="http://camel.apache.org/schema/blueprint"
+           xmlns:camelcxf="http://camel.apache.org/schema/blueprint/cxf"
+           xsi:schemaLocation="
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+             http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd
+             http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
+             ">
+
+  <camelcxf:cxfEndpoint id="routeEndpoint"
+                        address="http://localhost:9000/incident"
+                        serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"/>
+  <camelcxf:cxfEndpoint id="serviceEndpoint"
+                        address="http://localhost:9002/cxf"
+                        wsdlURL="WSDL/report_incident.wsdl"
+                        endpointName="s:ReportIncidentPort"
+                        serviceName="s:ReportIncidentEndpointService"
+                        xmlns:s="http://reportincident.example.camel.apache.org"
+                        serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"/>
+
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/blueprint">
+    <route>
+        <from uri="cxf://bean://routeEndpoint"/>
+        <to uri="cxf://bean://serviceEndpoint"/>
+    </route>
+  </camelContext>
+
+</blueprint>

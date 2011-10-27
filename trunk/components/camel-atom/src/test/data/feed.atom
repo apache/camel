@@ -1,0 +1,314 @@
+<?xml version='1.0' encoding='UTF-8'?><?xml-stylesheet href="http://www.blogger.com/styles/atom.css" type="text/css"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<feed xmlns='http://www.w3.org/2005/Atom' xmlns:openSearch='http://a9.com/-/spec/opensearchrss/1.0/'>
+  <id>tag:blogger.com,1999:blog-637417304187784899</id>
+  <updated>2007-12-01T12:33:31.529Z</updated>
+  <title type='text'>James Strachan's Blog</title>
+  <link rel='alternate' type='text/html' href='http://macstrac.blogspot.com/'/>
+  <link rel='next' type='application/atom+xml'
+        href='http://macstrac.blogspot.com/feeds/posts/default?start-index=26&amp;max-results=25'/>
+  <link rel='http://schemas.google.com/g/2005#feed' type='application/atom+xml'
+        href='http://macstrac.blogspot.com/feeds/posts/default'/>
+  <link rel='self' type='application/atom+xml' href='http://macstrac.blogspot.com/feeds/posts/default'/>
+  <author>
+    <name>James Strachan</name>
+  </author>
+  <generator version='7.00' uri='http://www.blogger.com'>Blogger</generator>
+  <openSearch:totalResults>54</openSearch:totalResults>
+  <openSearch:startIndex>1</openSearch:startIndex>
+  <openSearch:itemsPerPage>25</openSearch:itemsPerPage>
+
+  <entry>
+    <id>tag:blogger.com,1999:blog-637417304187784899.post-597595982330434286</id>
+    <published>2007-11-26T08:46:00.000Z</published>
+    <updated>2007-11-26T08:49:10.354Z</updated>
+    <title type='text'>ActiveMQ webinar archive available</title>
+    <content type='html'>Our &lt;a href="http://macstrac.blogspot.com/2007/11/webcast-today-on-apache-activemq.html"&gt;previously
+      announced webinar on ActiveMQ&lt;/a&gt; is now available on &lt;a
+      href="http://open.iona.com/resources/video-archived-webinars/"&gt;IONA's webinar and screencast archive&lt;/a&gt;.
+      You can &lt;a href="https://cc.readytalk.com/play?id=go5pfj81"&gt;view it here&lt;/a&gt;.
+    </content>
+    <link rel='alternate' type='text/html'
+          href='http://macstrac.blogspot.com/2007/11/activemq-webinar-archive-available.html'
+          title='ActiveMQ webinar archive available'/>
+    <link rel='replies' type='text/html'
+          href='http://www.blogger.com/comment.g?blogID=637417304187784899&amp;postID=597595982330434286'
+          title='0 Comments'/>
+    <link rel='replies' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/597595982330434286/comments/default' title='Post Comments'/>
+    <link rel='self' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/posts/default/597595982330434286'/>
+    <link rel='edit' type='application/atom+xml'
+          href='http://www.blogger.com/feeds/637417304187784899/posts/default/597595982330434286'/>
+    <author>
+      <name>James Strachan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>tag:blogger.com,1999:blog-637417304187784899.post-6948835939296895803</id>
+    <published>2007-11-14T14:18:00.001Z</published>
+    <updated>2007-11-14T19:43:38.291Z</updated>
+    <title type='text'>More thoughts on RESTful Message Queues</title>
+    <content type='html'>Just a small follow up on my previous &lt;span style="font-size:100%;"&gt;&lt;a
+      style="font-weight: normal;" href="http://macstrac.blogspot.com/2007/08/pure-restful-api-to-activemq-via.html"&gt;Pure
+      RESTful API to ActiveMQ via AtomPub&lt;/a&gt;&lt;/span&gt;. AtomPub rocks and all - I was thinking whats the
+      easiest possible RESTful client to subscribe to a message queue.&lt;br /&gt;&lt;blockquote&gt;&lt;/blockquote&gt;&lt;blockquote&gt;GET
+      queues/foo.bar?user=myUniqueId&amp;amp;timeout=5000&lt;/blockquote&gt;This would activate my subscription to the
+      queue &lt;span style="font-style: italic;"&gt;foo.bar&lt;/span&gt; (or help to keep it alive) and return my own
+      list of messages as an Atom feed that I am allowed to view and DELETE when I have consumed them.&lt;br /&gt;&lt;br
+      /&gt;This operation is idempotent and would work great with proxies and caches (assuming the right HTTP headers /
+      ETags stuff) letting clients to keep GETing as often as they like. Though if you don't use the subscription for
+      period of time, your subscription can go stale and timeout; any messages in your message collection could be
+      removed.&lt;br /&gt;&lt;br /&gt;The slightly smelly thing here is we need to either use cookies (such as for HTTP
+      session handling with servlets) or use a custom session ID header in the URL to uniquely differentiate the
+      subscriptions. Anyone got a better idea?&lt;br /&gt;&lt;br /&gt;I guess we could demand that clients PUT/POST to
+      get a new Location URL on which to GET their subscriptions; but this would require a custom REST client.
+    </content>
+    <link rel='alternate' type='text/html'
+          href='http://macstrac.blogspot.com/2007/11/more-thoughts-on-restful-message-queues.html'
+          title='More thoughts on RESTful Message Queues'/>
+    <link rel='replies' type='text/html'
+          href='http://www.blogger.com/comment.g?blogID=637417304187784899&amp;postID=6948835939296895803'
+          title='3 Comments'/>
+    <link rel='replies' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/6948835939296895803/comments/default' title='Post Comments'/>
+    <link rel='self' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/posts/default/6948835939296895803'/>
+    <link rel='edit' type='application/atom+xml'
+          href='http://www.blogger.com/feeds/637417304187784899/posts/default/6948835939296895803'/>
+    <author>
+      <name>James Strachan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>tag:blogger.com,1999:blog-637417304187784899.post-8132857663967818867</id>
+    <published>2007-11-13T15:30:00.000Z</published>
+    <updated>2007-11-13T16:40:47.166Z</updated>
+    <category scheme='http://www.blogger.com/atom/ns#' term='camel'/>
+    <title type='text'>Feedback on my Camel talk at the IJTC conference</title>
+    <content type='html'>Thanks to &lt;a href="http://capedcrusading.blogspot.com/"&gt;John&lt;/a&gt; for the &lt;a
+      href="http://capedcrusading.blogspot.com/2007/11/ijtc-conference-spring-grails-camel.html"&gt;great feedback on my
+      Camel talk&lt;/a&gt; (and other talks too). I started to write a huge reply and figured I'd post it here instead
+      then link to it as its easier to reply to different parts.&lt;br /&gt;&lt;blockquote&gt;Camel itself is not an ESB
+      per-se, it is a component of an ESB &lt;/blockquote&gt;Agreed. The idea is Camel does the routing and &lt;a
+      href="http://activemq.apache.org/camel/enterprise-integration-patterns.html" title="Enterprise Integration
+      Patterns"&gt;Enterprise Integration Patterns&lt;/a&gt; - you can then use it inside a web service stack like &lt;span
+      class="nobr"&gt;&lt;/span&gt;&lt;a href="http://incubator.apache.org/cxf/" title="Visit page outside Confluence"
+      rel="nofollow"&gt;Apache CXF&lt;/a&gt;, a message broker like &lt;span style="text-decoration: underline;"&gt;&lt;/span&gt;&lt;span
+      class="nobr"&gt;&lt;a href="http://activemq.apache.org/" title="Visit page outside Confluence" rel="nofollow"&gt;Apache
+      ActiveMQ&lt;/a&gt;&lt;/span&gt; or an ESB like&lt;span class="nobr"&gt;&lt;a
+      href="http://incubator.apache.org/servicemix/" title="Visit page outside Confluence" rel="nofollow"&gt; Apache
+      ServiceMix&lt;/a&gt;&lt;/span&gt;&lt;br /&gt;&lt;blockquote&gt;1. One of the key messages that came out of the
+      session was how Java-centric the Camel solution is - Strachan went so far as to articulate the view that coding in
+      XML was a fundamentally bad idea.&lt;br /&gt;&lt;/blockquote&gt;Maybe being the author of &lt;a
+      href="http://commons.apache.org/jelly/"&gt;Jelly&lt;/a&gt; and hating writing XSLT has made me a bit too sensitive
+      to the idea of programming by XML. Quite a few customers I talk with report frustration of too much XML hacking
+      with Spring (which is being addressed in Guice and Spring 2.5). But heck if you like programming in XML be my
+      guest :)&lt;br /&gt;&lt;blockquote&gt;He went on to cast aspersions on graphical tools also. His clear preference
+      was that integration logic should be written in Java. Given that I have worked with highly skilled Java developers
+      for many years now I was not too surprised to hear this - many good developers shy away from tooling, seeing it as
+      compromising their style or the power of the underlying framework - hence the longevity of vi and emacs I suppose.&lt;br
+      /&gt;&lt;/blockquote&gt;I didn't mean to cast aspersions on graphical tools; more that pretty much all developers
+      understand Java these days, its pretty universal - whereas most complex graphical tools require a fair amount of
+      learning to get used to them.&lt;br /&gt;&lt;br /&gt;Personally I totally prefer writing in Java rather than XML
+      or using visual tooling but one of the main requirements of Camel is that you can configure and specify routes in
+      any way you like - via a graphical IDE (e.g. Cimero) or via XML or Java or Groovy or Ruby or one day hopefully a
+      real DSL. Using XML is quite useful as you can just drop your routing rules inside a spring XML file such as
+      inside the &lt;span style="text-decoration: underline;"&gt;&lt;/span&gt;&lt;span class="nobr"&gt;&lt;a
+      href="http://activemq.apache.org/" title="Visit page outside Confluence" rel="nofollow"&gt;Apache ActiveMQ&lt;/a&gt;&lt;/span&gt;.&lt;br
+      /&gt;&lt;br /&gt;So we're working hard to allow folks to specify routing rules however they like - despite what I
+      prefer :). Irrespective of how you write your routing rules, we can &lt;a
+      href="http://activemq.apache.org/camel/visualisation.html"&gt;visualise them&lt;/a&gt; so anyone can easily
+      understand them.&lt;br /&gt;&lt;blockquote&gt;However it is important to note that all developers are not
+      middleware experts and have no wish to be. Indeed the enterprises they work for want their developers to spend as
+      little time and effort as possible on middleware plumbing. They need and demand tools which will enable them to
+      get at least 80% of patterns done without having to understand the middleware architecture, it's threading model,&lt;br
+      /&gt;&lt;/blockquote&gt;Thats one of the main things we're trying to attempt with Camel - letting folks who are
+      not middleware experts easily use the &lt;a
+      href="http://activemq.apache.org/camel/enterprise-integration-patterns.html" title="Enterprise Integration
+      Patterns"&gt;Enterprise Integration Patterns&lt;/a&gt; using a single line of Java code - using &lt;a
+      href="http://activemq.apache.org/camel/components.html"&gt;any transport or component &lt;/a&gt;with minimal
+      configuration required.&lt;br /&gt;&lt;blockquote&gt;it's support for configurable expression languages etc.&lt;br
+      /&gt;&lt;/blockquote&gt;I find it hard to understand how any tool can be usable by folks without some kind of
+      expression language that they understand - whether its Java or SQL or XPath/XQuery or whatnot. Even a visual query
+      definer is a language that users need to know.&lt;br /&gt;&lt;blockquote&gt;Most people express their requirements
+      in a declarative way- I have data at A that needs to get to B, on it's way I need to perform transformation,
+      validation, logging etc. (indeed the EIP book itself does this) . However Camel has taken a very Java centric
+      approach and I think this increases it's complexity unnecessarily.&lt;br /&gt;&lt;/blockquote&gt;We are actually
+      trying to be as declarative as possible - don't let the fact that you can use Java as the DSL confuse you. e.g.
+      here's what you just described in Camel using a single line of Java code...&lt;br /&gt;&lt;blockquote&gt;from(a).&lt;br
+      /&gt;to("xsd:org/cheese/something.xsd").&lt;br /&gt;to("xslt:com/acme/mytransform.xsl").&lt;br /&gt;to("log:com.acme.MyLogger").&lt;br
+      /&gt;to(b);&lt;br /&gt;&lt;/blockquote&gt;Its hard to be more concise than that in Java code. But sure - you could
+      use some other language or XML or UI tool etc&lt;br /&gt;&lt;blockquote&gt;2. Camel presents transports as
+      nice-simple looking endpoint URIs in Java. However configuration of these transports may not be as simple as it
+      seems. There appears to me to be a potential disconnection between the Camel processors and the Camel Components
+      in terms of configuration.&lt;br /&gt;&lt;/blockquote&gt;You can always configure anything in Camel via Java or
+      Spring; a component, endpoint, processor etc. The URI is just a shorthand notation for configurating things; which
+      tends to work well with endpoints as usually all the smart configuration is in the component.&lt;br /&gt;&lt;blockquote&gt;In
+      the presentation processors use endpoints which can be configured using Spring within Camel. However it would
+      appear that many of the component implementations are inherited from ServiceMix and these properties will need to
+      be set presumably within the ServiceMix container configuration? &lt;/blockquote&gt;Not so - all the components
+      are configured in Spring via Camel. If you want to talk to ServiceMix components and endpoints you can use the NMR
+      and the &lt;a href="http://activemq.apache.org/camel/jbi.html"&gt;JBI endpoint&lt;/a&gt;.&lt;br /&gt;&lt;blockquote&gt;When
+      you have multiple XML configurations to use a transport then the pretty looking URI is hiding a lot of complexity
+      under the hood.&lt;br /&gt;&lt;/blockquote&gt;I hear you. We've tried very hard to make things as easy as is
+      possible with minimal configuration; for example most configuration tends to be on the Component rather than the
+      Endpoint. But you can configure things however you like in Java code or Guice or Spring.&lt;br /&gt;&lt;blockquote&gt;3.
+      Some of the pattern implementations look a little short on credibility - take the aggregator pattern for example
+      the "aggregator" pattern does not seem to have the concept of a store - so in essence one must have access to all
+      of the messages which require aggregation or must hold aggregations in memory for the configurable timeout period.
+      This will clearly not work in a scalable way. Likewise as regards clustering - if you are looking to aggregate 2
+      messages and they turn up on different servers you gotta problem.&lt;/blockquote&gt;You're right I purposely
+      missed out some of the detail on a few slides (such as specifying some kind of persistence store or strategy for
+      aggregator or for idempotent consumer) but that is easily done via a pluggable strategies Spring beans. However
+      just because I missed out some detail on some slides (its kinda hard in an hour to present all the detail in all
+      the patterns as well as the rest of Camel) please don't think that somehow Camel isn't short on capabilities.&lt;br
+      /&gt;&lt;blockquote&gt;To summarise Camel is clearly a worthy set of widgets and they will work for very simple
+      applications without Enterprise requirements.&lt;br /&gt;&lt;/blockquote&gt;Ouch :). We've actually lots of
+      customers using Camel today in production with very Enterprise requirements. &lt;span class="nobr"&gt;&lt;/span&gt;&lt;a
+      href="http://activemq.apache.org/" title="Visit page outside Confluence" rel="nofollow"&gt;Apache ActiveMQ&lt;/a&gt;
+      5.0 actually ships &lt;a href="http://activemq.apache.org/enterprise-integration-patterns.html"&gt;fully
+      integrated with Camel&lt;/a&gt; so we've tons of users in production using Camel today.&lt;br /&gt;&lt;br /&gt;I
+      hope I've managed to straighten out some misunderstandings on Camel; its definitely a great fit for enterprise
+      requirements. Thanks for your great feedback - I'll definitely take it on board on future presentations and try
+      and avoid confusing other folks :).
+    </content>
+    <link rel='alternate' type='text/html'
+          href='http://macstrac.blogspot.com/2007/11/feedback-on-my-camel-talk-at-ijtc.html'
+          title='Feedback on my Camel talk at the IJTC conference'/>
+    <link rel='replies' type='text/html'
+          href='http://www.blogger.com/comment.g?blogID=637417304187784899&amp;postID=8132857663967818867'
+          title='2 Comments'/>
+    <link rel='replies' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/8132857663967818867/comments/default' title='Post Comments'/>
+    <link rel='self' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/posts/default/8132857663967818867'/>
+    <link rel='edit' type='application/atom+xml'
+          href='http://www.blogger.com/feeds/637417304187784899/posts/default/8132857663967818867'/>
+    <author>
+      <name>James Strachan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>tag:blogger.com,1999:blog-637417304187784899.post-2980017428692756666</id>
+    <published>2007-11-13T13:33:00.000Z</published>
+    <updated>2007-11-13T13:35:25.014Z</updated>
+    <title type='text'>webcast today on Apache ActiveMQ</title>
+    <content type='html'>Sorry for the really late notice - bad James! - but I&lt;a
+      href="http://open.iona.com/resources/news/#webinar"&gt;'m doing a webinar today&lt;/a&gt; on &lt;a
+      href="http://activemq.apache.org/"&gt;Apache ActiveMQ&lt;/a&gt; with my fellow committer &lt;a
+      href="http://hiramchirino.com/index.html"&gt;Hiram Chirino&lt;/a&gt;. Feel free to pop by and join us - or if
+      you're snowed you can catch the recording later on.
+    </content>
+    <link rel='alternate' type='text/html'
+          href='http://macstrac.blogspot.com/2007/11/webcast-today-on-apache-activemq.html'
+          title='webcast today on Apache ActiveMQ'/>
+    <link rel='replies' type='text/html'
+          href='http://www.blogger.com/comment.g?blogID=637417304187784899&amp;postID=2980017428692756666'
+          title='0 Comments'/>
+    <link rel='replies' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/2980017428692756666/comments/default' title='Post Comments'/>
+    <link rel='self' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/posts/default/2980017428692756666'/>
+    <link rel='edit' type='application/atom+xml'
+          href='http://www.blogger.com/feeds/637417304187784899/posts/default/2980017428692756666'/>
+    <author>
+      <name>James Strachan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>tag:blogger.com,1999:blog-637417304187784899.post-8437027470203977326</id>
+    <published>2007-11-13T13:10:00.000Z</published>
+    <updated>2007-11-13T13:32:23.119Z</updated>
+    <title type='text'>my slides on ActiveMQ and Camel from last weeks Dublin Conference</title>
+    <content type='html'>They are not that useful if you missed me talk, as they are low on bullet points and high on
+      pictures :) But if you were there, here are the slides in PDF format...&lt;br /&gt;&lt;ul&gt;&lt;li&gt;&lt;pre&gt;&lt;a
+      href="http://people.apache.org/%7Ejstrachan/talks/ActiveMQ-Dublin07.pdf"&gt;ActiveMQ-Dublin07.pdf&lt;/a&gt;&lt;/pre&gt;&lt;/li&gt;&lt;li&gt;&lt;pre&gt;&lt;a
+      href="http://people.apache.org/%7Ejstrachan/talks/Camel-Dublin07.pdf"&gt;Camel-Dublin07.pdf&lt;/a&gt; &lt;br /&gt;&lt;/pre&gt;&lt;/li&gt;&lt;/ul&gt;</content>
+    <link rel='alternate' type='text/html'
+          href='http://macstrac.blogspot.com/2007/11/my-slides-on-activemq-and-camel-from.html'
+          title='my slides on ActiveMQ and Camel from last weeks Dublin Conference'/>
+    <link rel='replies' type='text/html'
+          href='http://www.blogger.com/comment.g?blogID=637417304187784899&amp;postID=8437027470203977326'
+          title='0 Comments'/>
+    <link rel='replies' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/8437027470203977326/comments/default' title='Post Comments'/>
+    <link rel='self' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/posts/default/8437027470203977326'/>
+    <link rel='edit' type='application/atom+xml'
+          href='http://www.blogger.com/feeds/637417304187784899/posts/default/8437027470203977326'/>
+    <author>
+      <name>James Strachan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>tag:blogger.com,1999:blog-637417304187784899.post-4574479486073739581</id>
+    <published>2007-11-13T13:09:00.000Z</published>
+    <updated>2007-11-13T13:10:23.292Z</updated>
+    <title type='text'>a great presentation on REST, JAX-WS and JSR 311</title>
+    <content type='html'>A great &lt;a
+      href="http://www.innoq.com/blog/st/presentations/2007/2007-11-06-JSR-311-W-JAX.pdf" class="jive-link-external"&gt;presentation&lt;/a&gt;
+      from &lt;a href="http://www.innoq.com/blog/st/" class="jive-link-external"&gt;Stefan Tilkov&lt;/a&gt; on REST,
+      JAX-WS and JSR 311; highly recommended.
+    </content>
+    <link rel='alternate' type='text/html'
+          href='http://macstrac.blogspot.com/2007/11/great-presentation-on-rest-jax-ws-and.html'
+          title='a great presentation on REST, JAX-WS and JSR 311'/>
+    <link rel='replies' type='text/html'
+          href='http://www.blogger.com/comment.g?blogID=637417304187784899&amp;postID=4574479486073739581'
+          title='0 Comments'/>
+    <link rel='replies' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/4574479486073739581/comments/default' title='Post Comments'/>
+    <link rel='self' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/posts/default/4574479486073739581'/>
+    <link rel='edit' type='application/atom+xml'
+          href='http://www.blogger.com/feeds/637417304187784899/posts/default/4574479486073739581'/>
+    <author>
+      <name>James Strachan</name>
+    </author>
+  </entry>
+  <entry>
+    <id>tag:blogger.com,1999:blog-637417304187784899.post-459928383168678386</id>
+    <published>2007-11-05T10:34:00.000Z</published>
+    <updated>2007-11-05T10:46:07.867Z</updated>
+    <title type='text'>Speaking at the Irish Java Technology Conference on Thursday and Friday</title>
+    <content type='html'>I'll be &lt;a href="http://ijtc.firstport.ie/bio.aspx?sid=33"&gt;speaking&lt;/a&gt; this week
+      at the &lt;a href="http://ijtc.firstport.ie/"&gt;&lt;span id="cmsContent"&gt;&lt;/span&gt;Irish Java Technology
+      Conference&lt;/a&gt; this week on Thursday and Friday. My talks are&lt;br /&gt;&lt;ul&gt;&lt;li&gt;&lt;a
+      href="http://ijtc.firstport.ie/lecture.aspx?lid=34"&gt;Enterprise Messaging With Apache ActiveMQ&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;a
+      href="http://ijtc.firstport.ie/lecture.aspx?lid=14"&gt;Easy Enterprise Integration Patterns with Apache Camel,
+      ActiveMQ and ServiceMix&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;Do pop along and say hi if you're gonna be in the Dublin
+      area this week.
+    </content>
+    <link rel='alternate' type='text/html'
+          href='http://macstrac.blogspot.com/2007/11/speaking-at-irish-java-technology.html'
+          title='Speaking at the Irish Java Technology Conference on Thursday and Friday'/>
+    <link rel='replies' type='text/html'
+          href='http://www.blogger.com/comment.g?blogID=637417304187784899&amp;postID=459928383168678386'
+          title='3 Comments'/>
+    <link rel='replies' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/459928383168678386/comments/default' title='Post Comments'/>
+    <link rel='self' type='application/atom+xml'
+          href='http://macstrac.blogspot.com/feeds/posts/default/459928383168678386'/>
+    <link rel='edit' type='application/atom+xml'
+          href='http://www.blogger.com/feeds/637417304187784899/posts/default/459928383168678386'/>
+    <author>
+      <name>James Strachan</name>
+    </author>
+  </entry>
+</feed>

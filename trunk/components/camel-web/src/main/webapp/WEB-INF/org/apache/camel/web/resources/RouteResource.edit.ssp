@@ -1,0 +1,32 @@
+<%@ import val it: RouteResource %>
+
+#{ attributes("title") = "Edit " + it.getRoute.getId}#
+
+<script type='text/javascript' src="${uri("/js/dojo/dojo.js")}"></script>
+<script type='text/javascript' src="${uri("/js/route.js")}"></script>
+
+
+<form id="routeForm" action="${uri("/routes/" + it.getRoute.getId)}"
+	method="post">
+<table>
+	<tr>
+		<td>
+		<h2>Edit ${it.getRoute.getId} in ${it.getLanguage}</h2>
+		</td>
+		<td><input type="submit" value="Save">&nbsp; as &nbsp;<select
+			id="language" name="language">
+			<option value="Xml"
+				#if(it.getLanguage == "Xml")selected#end>Xml</option>
+		</select></td>
+	</tr>
+	<tr>
+		<td colspan="2"><textarea id="route" name="route"
+			onchange="dojo.byId('edited').value = true;"
+			style="width: 800px; height: 300px; border: 10px solid #ddd; -moz-border-radius: 10px; -webkit-border-radius: 10px;">${it.getRouteDefinition}</textarea>
+		<input id="edited" name="edited" type="hidden" value="false" /></td>
+	</tr>
+</table>
+
+<div class="error">${it.getError}</div>
+
+</form>

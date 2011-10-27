@@ -1,0 +1,166 @@
+	
+	.dojoxExpandoPane {
+		overflow:hidden;
+		z-index:440 !important;
+	}
+	
+	.dojoxExpandoPane .dojoxExpandoWrapper {
+		overflow:hidden;
+	}
+	.dojoxExpandoClosed .dojoxExpandoTitleNode {
+		display:none;
+	}
+	
+	.dojoxExpandoClosed .dojoxExpandoWrapper * {
+		overflow:hidden !important;
+	}
+	.dojoxExpandoTitleNode {
+		padding-right:6px; 
+		padding-left:6px;
+	}
+	.dojoxExpandoIcon .a11yNode {
+		display:none;
+		visibility:hidden;
+	}
+	.dojoxExpandoBottom .dojoxExpandoIcon,
+	.dojoxExpandoTop .dojoxExpandoIcon,
+	.dojoxExpandoLeft .dojoxExpandoIcon {
+		float:right;
+		margin-right:2px;
+	}
+	.dojoxExpandoRight .dojoxExpandoIcon {
+		float:left;
+		margin-left:2px;
+	}
+	.dojoxExpandoIcon {
+		width:14px;
+		cursor:pointer;
+		background-position:-60px 0px;
+		height:14px;
+	}
+	.dojoxExpandoClosed .dojoxExpandoIcon {
+		background-position: 0px 0px;
+		margin:0 auto;
+	}
+	
+	.dijitBorderContainer-dijitExpandoPane {
+		border: none !important; 
+	}
+	
+	.soria .dojoxExpandoTitle {
+		height:16px;
+		font-size:0.9em;
+		font-weight:bold;
+		padding:3px;
+		padding-top:6px;
+		padding-bottom:5px;
+		background:#F0F4FC url("../../../dijit/themes/soria/images/tabContainerSprite.gif") repeat-x scroll 0pt -50px;
+		border-left: 1px solid #B1BADF;
+		border-right: 1px solid #B1BADF;
+	}
+	
+	.soria .dojoxExpandoClosed .dojoxExpandoTitle {
+		background: none;
+		background-color: #F0F4FC;
+		border: none;
+	}
+	
+	.soria .dojoxExpandoClosed {
+		background: none;
+		background-color: #F0F4FC;
+		border: 1px solid #B1BADF !important;
+	}
+	
+	.soria .dojoxExpandoIcon {
+		background: url('../../../dijit/themes/soria/images/spriteRoundedIconsSmall.png') no-repeat center center;
+		background-position:-60px 0px;
+	}
+	
+	.soria .dojoxExpandoClosed .dojoxExpandoIcon {
+		background-position:0px 0px;
+		margin-right:3px;
+	}
+	
+	
+	.tundra .dojoxExpandoTitle {
+		font-weight: bold;
+		padding: 5px;
+		padding-top: 6px;
+		padding-bottom: 6px;
+		background: #fafafa url("../../../dijit/themes/tundra/images/accordionItemActive.gif") repeat-x scroll left top;
+		border-top: 1px solid #ccc;
+		border-left: 1px solid #ccc;
+		border-right: 1px solid #ccc;
+	}
+		
+	.tundra .dojoxExpandoClosed .dojoxExpandoTitle {
+		background: none;
+		background-color: #fafafa;
+		border: none;
+		padding:3px;
+	}
+	
+	.tundra .dojoxExpandoClosed {
+		background: none;
+		background-color: #fafafa;
+		border: 1px solid #ccc !important;
+	}
+	.tundra .dojoxExpandoRight .dojoxExpandoTitle,
+	.tundra .dojoxExpandoLeft .dojoxExpandoTitle,
+	.tundra .dojoxExpandoClosed .dojoxExpandoTitle,
+	.tundra .dojoxExpandoClosed {
+		background-color: #fafafa;
+	}
+	
+	.tundra .dojoxExpandoIcon {
+		background: url('../../../dijit/themes/tundra/images/minusButton.gif') no-repeat center center;
+		
+	}
+	.tundra .dojoxExpandoClosed .dojoxExpandoIcon {
+		background: url('../../../dijit/themes/tundra/images/plusButton.gif') no-repeat;
+		margin:3px;
+	}
+	
+	
+	.nihilo .dojoxExpandoPane {
+		background: #fafafa;
+	}
+	
+	.nihilo .dojoxExpandoTitle {
+		height:16px;
+		font-size:0.9em;
+		font-weight:bold;
+		padding:3px;
+		padding-top:6px;
+		padding-bottom:5px;
+		background:#fafafa url("../../../dijit/themes/nihilo/images/tabContainerSprite.gif") repeat-x scroll 0pt -50px;
+		border-left: 1px solid #ccc;
+		border-right: 1px solid #ccc;
+	}
+	
+	.nihilo .dojoxExpandoClosed .dojoxExpandoTitle {
+		background: none;
+		background-color: #fafafa;
+		border: none;
+	}
+	
+	.nihilo .dojoxExpandoClosed {
+		background: none;
+		background-color: #fafafa;
+		border: 1px solid #ccc !important;
+	}
+	
+	.nihilo .dojoxExpandoIcon {
+		background: url('../../../dijit/themes/nihilo/images/spriteRoundedIconsSmall.png') no-repeat center center;
+		background-position:-60px 0px;
+	}
+	
+	.nihilo .dojoxExpandoClosed .dojoxExpandoIcon {
+		background-position:0px 0px;
+	}
+	
+	.nihilo .dojoxExpandoTop {
+		border-bottom:1px solid #ccc;
+		border-left:1px solid #ccc;
+		border-right:1px solid #ccc; 
+	}
