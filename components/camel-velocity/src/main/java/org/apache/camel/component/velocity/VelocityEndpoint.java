@@ -98,7 +98,15 @@ public class VelocityEndpoint extends ResourceEndpoint {
             properties.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
 
             log.debug("Initializing VelocityEngine with properties {}", properties);
-            velocityEngine.init(properties);
+            // help the velocityEngine to load the CamelVelocityClasspathResourceLoader 
+            ClassLoader old = Thread.currentThread().getContextClassLoader();
+            try {
+                ClassLoader delegate = new CamelVelocityDelegateClassLoader(old);
+                Thread.currentThread().setContextClassLoader(delegate);
+                velocityEngine.init(properties);
+            } finally {
+                Thread.currentThread().setContextClassLoader(old);
+            }
         }
         return velocityEngine;
     }
