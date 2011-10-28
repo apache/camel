@@ -523,7 +523,7 @@
   </feature>
   <feature name='camel-ruby' version='${pom.version}' start-level='50'>
     <feature version='${pom.version}'>camel-script</feature>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jruby/${jruby-bundle-version}</bundle>
+    <bundle>mvn:org.jruby/jruby/${jruby-version}</bundle>
   </feature>
   <feature name='camel-rss' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-atom</feature>
