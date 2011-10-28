@@ -52,7 +52,16 @@ public final class AtomUtils {
      */
     public static Document<Feed> parseDocument(String uri) throws IOException, ParseException {
         InputStream in = new URL(uri).openStream();
-        return getAtomParser().parse(in);
+        Parser parser = getAtomParser();
+        // set the thread context loader with the ParserClassLoader
+        ClassLoader old = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(parser.getClass().getClassLoader());
+            return parser.parse(in);
+        } finally {
+            Thread.currentThread().setContextClassLoader(old);
+        }
+            
     }
 
 }
