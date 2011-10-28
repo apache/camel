@@ -18,7 +18,6 @@ package org.apache.camel.builder.saxon;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -27,7 +26,6 @@ import org.junit.Test;
 public class SaxonXPathSplitTest extends CamelTestSupport {
 
     @Test
-    @Ignore("This test fails")
     public void testSaxonXPathSplit() throws Exception {
         getMockEndpoint("mock:london").expectedMessageCount(1);
         getMockEndpoint("mock:paris").expectedMessageCount(1);
