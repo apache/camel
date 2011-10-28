@@ -44,7 +44,6 @@ import org.xml.sax.InputSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.Service;
@@ -83,11 +82,12 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
  */
 public class XPathBuilder implements Expression, Predicate, NamespaceAware, Service {
     private static final transient Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
+    private static XPathFactory defaultXPathFactory;
+
     private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
     private final String text;
     private final ThreadLocal<MessageVariableResolver> variableResolver = new ThreadLocal<MessageVariableResolver>();
     private final ThreadLocal<Exchange> exchange = new ThreadLocal<Exchange>();
-
     private XPathFactory xpathFactory;
     private Class<?> documentType = Document.class;
     // For some reason the default expression of "a/b" on a document such as
@@ -373,32 +373,14 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     // Properties
     // -------------------------------------------------------------------------
     public XPathFactory getXPathFactory() throws XPathFactoryConfigurationException {
-        if (xpathFactory == null) {
-            if (objectModelUri != null) {
-                LOG.info("Using objectModelUri " + objectModelUri + " when creating XPathFactory");
-                xpathFactory = XPathFactory.newInstance(objectModelUri);
-                return xpathFactory;
-            }
-
-            // read system property and see if there is a factory set
-            Properties properties = System.getProperties();
-            for (Map.Entry prop : properties.entrySet()) {
-                String key = (String) prop.getKey();
-                if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
-                    String uri = ObjectHelper.after(key, ":");
-                    if (uri != null) {
-                        LOG.info("Using system property " + key + " with value: " + prop.getValue() + " when creating XPathFactory");
-                        xpathFactory = XPathFactory.newInstance(uri);
-                        return xpathFactory;
-                    }
-                }
-            }
-
-            LOG.debug("Creating default XPathFactory");
-            xpathFactory = XPathFactory.newInstance();
+        if (xpathFactory != null) {
+            return xpathFactory;
         }
-        
-        return xpathFactory;
+
+        if (defaultXPathFactory == null) {
+            initDefaultXPathFactory();
+        }
+        return defaultXPathFactory;
     }
 
     public void setXPathFactory(XPathFactory xpathFactory) {
@@ -699,7 +681,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         return answer;
     }
 
-    protected XPathExpression createXPathExpression() throws XPathExpressionException, XPathFactoryConfigurationException {
+    protected synchronized XPathExpression createXPathExpression() throws XPathExpressionException, XPathFactoryConfigurationException {
+        // XPathFactory is not thread safe
         XPath xPath = getXPathFactory().newXPath();
 
         xPath.setNamespaceContext(getNamespaceContext());
@@ -850,10 +833,40 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     public void start() throws Exception {
+        if (xpathFactory == null) {
+            initDefaultXPathFactory();
+        }
     }
 
     public void stop() throws Exception {
         pool.clear();
+    }
+
+    protected synchronized void initDefaultXPathFactory() throws XPathFactoryConfigurationException {
+        if (defaultXPathFactory == null) {
+            if (objectModelUri != null) {
+                defaultXPathFactory = XPathFactory.newInstance(objectModelUri);
+                LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", defaultXPathFactory);
+            }
+
+            if (defaultXPathFactory == null) {
+                // read system property and see if there is a factory set
+                Properties properties = System.getProperties();
+                for (Map.Entry prop : properties.entrySet()) {
+                    String key = (String) prop.getKey();
+                    if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
+                        String uri = ObjectHelper.after(key, ":");
+                        if (uri != null) {
+                            defaultXPathFactory = XPathFactory.newInstance(uri);
+                            LOG.info("Using system property {} with value {} when created XPathFactory {}", new Object[]{key, uri, defaultXPathFactory});
+                        }
+                    }
+                }
+            }
+
+            defaultXPathFactory = XPathFactory.newInstance();
+            LOG.info("Created default XPathFactory {}", defaultXPathFactory);
+        }
     }
 
     /**
