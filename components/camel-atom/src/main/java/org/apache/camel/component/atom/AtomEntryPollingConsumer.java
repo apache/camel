@@ -43,16 +43,7 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
     
     private Document<Feed> getDocument() throws IOException, ParseException {
         if (document == null) {
-            ClassLoader old = Thread.currentThread().getContextClassLoader();
-            try {
-                if (endpoint.getCamelContext().getApplicationContextClassLoader() != null) {
-                    Thread.currentThread().setContextClassLoader(endpoint.getCamelContext().getApplicationContextClassLoader());
-                    LOG.debug("set the TCCL to be " + endpoint.getCamelContext().getApplicationContextClassLoader());
-                }
-                document = AtomUtils.parseDocument(endpoint.getFeedUri());
-            } finally {
-                Thread.currentThread().setContextClassLoader(old);
-            }
+            document = AtomUtils.parseDocument(endpoint.getFeedUri());
             Feed root = document.getRoot();
             if (endpoint.isSortEntries()) {
                 sortEntries(root);
