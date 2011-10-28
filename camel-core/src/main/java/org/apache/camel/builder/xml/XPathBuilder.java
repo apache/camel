@@ -790,8 +790,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             return false;
         }
 
-        if (body instanceof WrappedFile) {
-            body = ((WrappedFile) body).getFile();
+        if (body instanceof GenericFile) {
+            body = ((GenericFile) body).getFile();
         }
         if (body instanceof File) {
             // input stream is needed for File to avoid locking the file in case of errors etc
