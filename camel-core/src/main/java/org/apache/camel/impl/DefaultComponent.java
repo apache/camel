@@ -111,7 +111,9 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     public EndpointConfiguration createConfiguration(String uri) throws Exception {
-        return null;
+        MappedEndpointConfiguration config = new MappedEndpointConfiguration(this);
+        config.setURI(new URI(uri));
+        return config;
     }
 
     /**
