@@ -434,6 +434,37 @@ public class PropertiesComponentTest extends ContextTestSupport {
         }
     }
 
+    public void testCache() throws Exception {
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        assertTrue(pc.isCache());
+        assertNotNull(pc);
+
+        for (int i = 0; i < 2000; i++) {
+            String uri = pc.parseUri("{{cool.mock}}:" + i);
+            assertEquals("mock:" + i, uri);
+        }
+    }
+
+    public void testCacheRoute() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .setBody(simple("${properties:cool.mock}${body}"))
+                    .to("mock:result");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedMessageCount(2000);
+
+        for (int i = 0; i < 2000; i++) {
+            template.sendBody("direct:start", i);
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();

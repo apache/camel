@@ -424,6 +424,17 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * Evaluates a token pair expression on the message body
+     *
+     * @param startToken the start token
+     * @param endToken   the end token
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenizePair(String startToken, String endToken) {
+        return delegate.tokenizePair(startToken, endToken);
+    }
+
+    /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a>
      * 

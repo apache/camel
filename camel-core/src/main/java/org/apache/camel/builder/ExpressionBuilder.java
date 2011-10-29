@@ -39,6 +39,7 @@ import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.model.language.MethodCallExpression;
+import org.apache.camel.processor.TokenPairExpressionIterator;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.ExchangeHelper;
@@ -1021,6 +1022,13 @@ public final class ExpressionBuilder {
                 return "tokenize(" + expression + ", " + token + ")";
             }
         };
+    }
+
+    /**
+     * Returns an {@link TokenPairExpressionIterator} expression
+     */
+    public static Expression tokenizePairExpression(final String startToken, final String endToken) {
+        return new TokenPairExpressionIterator(startToken, endToken);
     }
 
     /**

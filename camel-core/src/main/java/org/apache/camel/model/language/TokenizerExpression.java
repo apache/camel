@@ -26,15 +26,17 @@ import org.apache.camel.Expression;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
 
 /**
- * For expressions and predicates using a body or header tokenizer
+ * For expressions and predicates using a body or header tokenizer.
  *
- * @version 
+ * @see TokenizeLanguage
  */
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TokenizerExpression extends ExpressionDefinition {
     @XmlAttribute(required = true)
     private String token;
+    @XmlAttribute
+    private String endToken;
     @XmlAttribute
     private String headerName;
     @XmlAttribute
@@ -54,6 +56,14 @@ public class TokenizerExpression extends ExpressionDefinition {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getEndToken() {
+        return endToken;
+    }
+
+    public void setEndToken(String endToken) {
+        this.endToken = endToken;
     }
 
     public String getHeaderName() {
@@ -76,6 +86,7 @@ public class TokenizerExpression extends ExpressionDefinition {
     public Expression createExpression(CamelContext camelContext) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setToken(token);
+        language.setEndToken(endToken);
         language.setHeaderName(headerName);
         if (regex != null) {
             language.setRegex(regex);
@@ -85,6 +96,10 @@ public class TokenizerExpression extends ExpressionDefinition {
 
     @Override
     public String toString() {
-        return "tokenize{" + (headerName != null ? "header: " + headerName : "body()") + " using token: " + token + "}";
+        if (endToken != null) {
+            return "tokenize{body() using tokens: " + token + "..." + endToken + "}";
+        } else {
+            return "tokenize{" + (headerName != null ? "header: " + headerName : "body()") + " using token: " + token + "}";
+        }
     }
 }
