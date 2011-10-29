@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.support;
 
 import java.io.InputStream;
 import java.util.Iterator;
@@ -22,7 +22,6 @@ import java.util.Scanner;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
