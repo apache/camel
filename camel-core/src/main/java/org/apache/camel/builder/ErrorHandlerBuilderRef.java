@@ -18,7 +18,6 @@ package org.apache.camel.builder;
 
 import java.util.List;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ModelCamelContext;

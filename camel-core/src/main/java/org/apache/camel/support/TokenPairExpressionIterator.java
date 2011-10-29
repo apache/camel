@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Scanner;
@@ -64,7 +66,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     /**
      * Iterator to walk the input stream
      */
-    private static final class TokenPairIterator implements Iterator {
+    private static final class TokenPairIterator implements Iterator, Closeable {
 
         private final String startToken;
         private final String endToken;
@@ -79,24 +81,23 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             // this iterator will do look ahead as we may have data
             // after the last end token, which the scanner would find
             // so we need to be one step ahead of the scanner
-            this.image = hasNext() ? next() : null;
+            this.image = scanner.hasNext() ? next() : null;
         }
 
         @Override
         public boolean hasNext() {
-            // must look a head
-            boolean answer = scanner.hasNext();
-            if (!answer) {
-                scanner.close();
-            }
-            return answer;
+            return image != null;
         }
 
         @Override
         public Object next() {
             Object answer = image;
             // calculate next
-            image = hasNext() ? getNext() : null;
+            if (scanner.hasNext()) {
+                image = getNext();
+            } else {
+                image = null;
+            }
 
             if (answer == null) {
                 // first time the image may be null
@@ -111,19 +112,29 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             // only grab text after the start token
             if (next != null && next.contains(startToken)) {
                 next = ObjectHelper.after(next, startToken);
+
+                // include tokens in answer
+                if (next != null) {
+                    StringBuilder sb = new StringBuilder();
+                    next = sb.append(startToken).append(next).append(endToken).toString();
+                }
+            } else {
+                // must have start token, otherwise we have reached beyond last tokens
+                // and should not return more data
+                return null;
             }
 
-            // include tokens in answer
-            if (next != null) {
-                StringBuilder sb = new StringBuilder();
-                next = sb.append(startToken).append(next).append(endToken).toString();
-            }
             return next;
         }
 
         @Override
         public void remove() {
             // noop
+        }
+
+        @Override
+        public void close() throws IOException {
+            scanner.close();
         }
     }
 
