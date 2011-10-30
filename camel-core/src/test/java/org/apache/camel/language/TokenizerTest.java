@@ -143,6 +143,15 @@ public class TokenizerTest extends ExchangeTestSupport {
         exchange.getIn().setBody("");
 
         List names = exp.evaluate(exchange, List.class);
+        assertEquals(0, names.size());
+    }
+
+    public void testTokenizePairNullData() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizePair("<person>", "</person>");
+
+        exchange.getIn().setBody(null);
+
+        List names = exp.evaluate(exchange, List.class);
         assertNull(names);
     }
 

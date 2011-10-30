@@ -24,6 +24,7 @@ import java.util.Scanner;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -51,7 +52,9 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     public Object evaluate(Exchange exchange) {
         try {
             InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
-            return new TokenPairIterator(startToken, endToken, in);
+            // we may read from a file, and want to support custom charset defined on the exchange
+            String charset = IOHelper.getCharsetName(exchange);
+            return new TokenPairIterator(startToken, endToken, in, charset);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);
             return null;
@@ -73,11 +76,11 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
         private final Scanner scanner;
         private Object image;
 
-        private TokenPairIterator(String startToken, String endToken, InputStream in) {
+        private TokenPairIterator(String startToken, String endToken, InputStream in, String charset) {
             this.startToken = startToken;
             this.endToken = endToken;
             // use end token as delimiter
-            this.scanner = new Scanner(in).useDelimiter(endToken);
+            this.scanner = new Scanner(in, charset).useDelimiter(endToken);
             // this iterator will do look ahead as we may have data
             // after the last end token, which the scanner would find
             // so we need to be one step ahead of the scanner

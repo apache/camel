@@ -23,7 +23,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.language.tokenizer.TokenizeLanguage;
+import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * For expressions and predicates using a body or header tokenizer.
@@ -92,6 +94,12 @@ public class TokenizerExpression extends ExpressionDefinition {
             language.setRegex(regex);
         }
         return language.createExpression();
+    }
+
+    @Override
+    public Predicate createPredicate(CamelContext camelContext) {
+        Expression exp = createExpression(camelContext);
+        return ExpressionToPredicateAdapter.toPredicate(exp);
     }
 
     @Override
