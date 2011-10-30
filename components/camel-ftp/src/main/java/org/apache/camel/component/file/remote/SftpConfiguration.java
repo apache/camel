@@ -33,7 +33,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String chmod;
     // comma separated list of ciphers. 
     // null means default jsch list will be used
-    private String ciphers; 
+    private String ciphers;
+    private int compression;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -112,4 +113,11 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         return ciphers;
     }
 
+    public int getCompression() {
+        return compression;
+    }
+
+    public void setCompression(int compression) {
+        this.compression = compression;
+    }
 }
