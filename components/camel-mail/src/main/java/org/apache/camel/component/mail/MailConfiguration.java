@@ -62,6 +62,7 @@ public class MailConfiguration implements Cloneable {
     private String alternativeBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
     private boolean useInlineAttachments;
     private boolean ignoreUnsupportedCharset;
+    private boolean disconnect;
 
     public MailConfiguration() {
     }
@@ -461,5 +462,13 @@ public class MailConfiguration implements Cloneable {
 
     public void setIgnoreUnsupportedCharset(boolean ignoreUnsupportedCharset) {
         this.ignoreUnsupportedCharset = ignoreUnsupportedCharset;
+    }
+
+    public boolean isDisconnect() {
+        return disconnect;
+    }
+
+    public void setDisconnect(boolean disconnect) {
+        this.disconnect = disconnect;
     }
 }
