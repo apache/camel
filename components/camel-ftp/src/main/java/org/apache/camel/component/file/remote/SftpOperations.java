@@ -180,8 +180,8 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         // compression
         if (sftpConfig.getCompression() > 0) {
             LOG.debug("Using compression: {}", sftpConfig.getCompression());
-            session.setConfig("compression.s2c","zlib@openssh.com,zlib,none");
-            session.setConfig("compression.c2s","zlib@openssh.com,zlib,none");
+            session.setConfig("compression.s2c", "zlib@openssh.com, zlib, none");
+            session.setConfig("compression.c2s", "zlib@openssh.com, zlib, none");
             session.setConfig("compression_level", Integer.toString(sftpConfig.getCompression()));
         }
 
