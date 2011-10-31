@@ -137,6 +137,19 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
             }
         }
 
+        // should we disconnect, the header can override the configuration
+        boolean disconnect = getEndpoint().getConfiguration().isDisconnect();
+        if (disconnect) {
+            LOG.debug("Disconnecting from {}", getEndpoint().getConfiguration().getMailStoreLogInformation());
+            try {
+                store.close();
+            } catch (Exception e) {
+                LOG.debug("Could not disconnect from {}: " + getEndpoint().getConfiguration().getMailStoreLogInformation(), e);
+            }
+            store = null;
+            folder = null;
+        }
+
         return polledMessages;
     }
 
@@ -356,7 +369,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
                 buffer.append(header.getName()).append("=").append(header.getValue()).append("\n");
             }
             if (buffer.length() > 0) {
-                LOG.debug("Generating UID from the following:\n" + buffer);
+                LOG.trace("Generating UID from the following:\n {}", buffer);
                 uid = UUID.nameUUIDFromBytes(buffer.toString().getBytes()).toString();
             }
         } catch (MessagingException e) {

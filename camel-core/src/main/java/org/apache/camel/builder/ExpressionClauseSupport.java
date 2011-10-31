@@ -471,6 +471,21 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
+     * Evaluates a token pair expression on the message body
+     *
+     * @param startToken the start token
+     * @param endToken   the end token
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenizePair(String startToken, String endToken) {
+        TokenizerExpression expression = new TokenizerExpression();
+        expression.setToken(startToken);
+        expression.setEndToken(endToken);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a>
      *

@@ -52,6 +52,25 @@ public class SplitTokenizerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testSplitTokenizerD() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedBodiesReceived("[Claus]", "[James]", "[Willem]");
+
+        template.sendBody("direct:d", "[Claus][James][Willem]");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSplitTokenizerE() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        mock.expectedBodiesReceived("<person>Claus</person>", "<person>James</person>", "<person>Willem</person>");
+
+        String xml = "<persons><person>Claus</person><person>James</person><person>Willem</person></persons>";
+        template.sendBody("direct:e", xml);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -67,6 +86,14 @@ public class SplitTokenizerTest extends ContextTestSupport {
 
                 from("direct:c")
                     .split().tokenize("(\\W+)\\s*", null, true)
+                        .to("mock:split");
+
+                from("direct:d")
+                    .split().tokenizePair("[", "]")
+                        .to("mock:split");
+
+                from("direct:e")
+                    .split().tokenizePair("<person>", "</person>")
                         .to("mock:split");
             }
         };

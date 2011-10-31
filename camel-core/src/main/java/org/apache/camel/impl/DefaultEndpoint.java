@@ -311,13 +311,17 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
             config = null;
             return;
         }
-        MappedEndpointConfiguration cfg = new MappedEndpointConfiguration(component);
         try {
-            cfg.setURI(new URI(endpointUri));
-        } catch (URISyntaxException e) {
+            if (component != null) {
+                config = component.createConfiguration(endpointUri);
+            } else {
+                MappedEndpointConfiguration cfg = new MappedEndpointConfiguration(null);
+                cfg.setURI(new URI(endpointUri));
+                config = cfg;
+            }
+        } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
-        config = cfg;
     }
 
     public boolean isLenientProperties() {

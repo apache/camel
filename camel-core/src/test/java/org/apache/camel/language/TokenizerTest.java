@@ -99,4 +99,60 @@ public class TokenizerTest extends ExchangeTestSupport {
         assertEquals(false, lan.isSingleton());
     }
 
+    public void testTokenizePair() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizePair("<person>", "</person>");
+
+        exchange.getIn().setBody("<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person>James</person>", names.get(0));
+        assertEquals("<person>Claus</person>", names.get(1));
+        assertEquals("<person>Jonathan</person>", names.get(2));
+        assertEquals("<person>Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizePairWithNoise() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizePair("<person>", "</person>");
+
+        exchange.getIn().setBody("<?xml version=\"1.0\"?><!-- bla bla --><persons>\n<person>James</person>\n<person>Claus</person>\n"
+                + "<!-- more bla bla --><person>Jonathan</person>\n<person>Hadrian</person>\n</persons>   ");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person>James</person>", names.get(0));
+        assertEquals("<person>Claus</person>", names.get(1));
+        assertEquals("<person>Jonathan</person>", names.get(2));
+        assertEquals("<person>Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizePairEmpty() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizePair("<person>", "</person>");
+
+        exchange.getIn().setBody("<?xml version=\"1.0\"?><!-- bla bla --><persons></persons>   ");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(0, names.size());
+    }
+
+    public void testTokenizePairNoData() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizePair("<person>", "</person>");
+
+        exchange.getIn().setBody("");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(0, names.size());
+    }
+
+    public void testTokenizePairNullData() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizePair("<person>", "</person>");
+
+        exchange.getIn().setBody(null);
+
+        List names = exp.evaluate(exchange, List.class);
+        assertNull(names);
+    }
+
 }

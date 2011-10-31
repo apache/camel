@@ -207,17 +207,25 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
         listenerContainer.setPubSubDomain(pubSubDomain);
 
+        // include destination name as part of thread and transaction name
+        String consumerName = "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
+        
         if (configuration.getTaskExecutor() != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Using custom TaskExecutor: {} on listener container: {}", configuration.getTaskExecutor(), listenerContainer);
             }
             setContainerTaskExecutor(listenerContainer, configuration.getTaskExecutor());
         } else {
-            // include destination name as part of thread name
-            String name = "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
             // use a cached pool as DefaultMessageListenerContainer will throttle pool sizing
-            ExecutorService executor = getCamelContext().getExecutorServiceManager().newCachedThreadPool(consumer, name);
+            ExecutorService executor = getCamelContext().getExecutorServiceManager().newCachedThreadPool(consumer, consumerName);
             setContainerTaskExecutor(listenerContainer, executor);
+        }
+        
+        // set a default transaction name if none provided
+        if (configuration.getTransactionName() == null) {
+            if (listenerContainer instanceof DefaultMessageListenerContainer) {
+                ((DefaultMessageListenerContainer) listenerContainer).setTransactionName(consumerName);
+            }            
         }
     }
 

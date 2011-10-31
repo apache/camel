@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.xml;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.List;
@@ -43,7 +44,6 @@ import org.xml.sax.InputSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.Service;
@@ -54,6 +54,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -81,11 +82,12 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
  */
 public class XPathBuilder implements Expression, Predicate, NamespaceAware, Service {
     private static final transient Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
+    private static XPathFactory defaultXPathFactory;
+
     private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
     private final String text;
     private final ThreadLocal<MessageVariableResolver> variableResolver = new ThreadLocal<MessageVariableResolver>();
     private final ThreadLocal<Exchange> exchange = new ThreadLocal<Exchange>();
-
     private XPathFactory xpathFactory;
     private Class<?> documentType = Document.class;
     // For some reason the default expression of "a/b" on a document such as
@@ -371,32 +373,14 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     // Properties
     // -------------------------------------------------------------------------
     public XPathFactory getXPathFactory() throws XPathFactoryConfigurationException {
-        if (xpathFactory == null) {
-            if (objectModelUri != null) {
-                LOG.info("Using objectModelUri " + objectModelUri + " when creating XPathFactory");
-                xpathFactory = XPathFactory.newInstance(objectModelUri);
-                return xpathFactory;
-            }
-
-            // read system property and see if there is a factory set
-            Properties properties = System.getProperties();
-            for (Map.Entry prop : properties.entrySet()) {
-                String key = (String) prop.getKey();
-                if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
-                    String uri = ObjectHelper.after(key, ":");
-                    if (uri != null) {
-                        LOG.info("Using system property " + key + " with value: " + prop.getValue() + " when creating XPathFactory");
-                        xpathFactory = XPathFactory.newInstance(uri);
-                        return xpathFactory;
-                    }
-                }
-            }
-
-            LOG.debug("Creating default XPathFactory");
-            xpathFactory = XPathFactory.newInstance();
+        if (xpathFactory != null) {
+            return xpathFactory;
         }
-        
-        return xpathFactory;
+
+        if (defaultXPathFactory == null) {
+            initDefaultXPathFactory();
+        }
+        return defaultXPathFactory;
     }
 
     public void setXPathFactory(XPathFactory xpathFactory) {
@@ -651,8 +635,18 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         // set exchange and variable resolver as thread locals for concurrency
         this.exchange.set(exchange);
 
+        // the underlying input stream, which we need to close to avoid locking files or other resources
+        InputStream is = null;
         try {
-            Object document = getDocument(exchange);
+            Object document;
+            // only convert to input stream if really needed
+            if (isInputStreamNeeded(exchange)) {
+                is = exchange.getIn().getBody(InputStream.class);
+                document = getDocument(exchange, is);
+            } else {
+                Object body = exchange.getIn().getBody();
+                document = getDocument(exchange, body);
+            }
             if (resultQName != null) {
                 if (document instanceof InputSource) {
                     InputSource inputSource = (InputSource) document;
@@ -676,6 +670,9 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             }
         } catch (XPathExpressionException e) {
             throw new InvalidXPathExpression(getText(), e);
+        } finally {
+            // IOHelper can handle if is is null
+            IOHelper.close(is);
         }
 
         if (LOG.isTraceEnabled()) {
@@ -684,7 +681,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         return answer;
     }
 
-    protected XPathExpression createXPathExpression() throws XPathExpressionException, XPathFactoryConfigurationException {
+    protected synchronized XPathExpression createXPathExpression() throws XPathExpressionException, XPathFactoryConfigurationException {
+        // XPathFactory is not thread safe
         XPath xPath = getXPathFactory().newXPath();
 
         xPath.setNamespaceContext(getNamespaceContext());
@@ -761,21 +759,47 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     /**
+     * Checks whether we need an {@link InputStream} to access the message body.
+     * <p/>
+     * Depending on the content in the message body, we may not need to convert
+     * to {@link InputStream}.
+     *
+     * @param exchange the current exchange
+     * @return <tt>true</tt> to convert to {@link InputStream} beforehand converting afterwards.
+     */
+    protected boolean isInputStreamNeeded(Exchange exchange) {
+        Object body = exchange.getIn().getBody();
+        if (body == null) {
+            return false;
+        }
+
+        if (body instanceof WrappedFile) {
+            body = ((WrappedFile) body).getFile();
+        }
+        if (body instanceof File) {
+            // input stream is needed for File to avoid locking the file in case of errors etc
+            return true;
+        }
+
+        // input stream is not needed otherwise
+        return false;
+    }
+
+    /**
      * Strategy method to extract the document from the exchange.
      */
     @SuppressWarnings("unchecked")
-    protected Object getDocument(Exchange exchange) {
+    protected Object getDocument(Exchange exchange, Object body) {
         Object answer = null;
-        Message in = exchange.getIn();
 
         Class type = getDocumentType();
         if (type != null) {
             // try to get the body as the desired type
-            answer = in.getBody(type);
+            answer = exchange.getContext().getTypeConverter().convertTo(type, exchange, body);
         }
         // fallback to get the body as is
         if (answer == null) {
-            answer = in.getBody();
+            answer = body;
         }
 
         // lets try coerce some common types into something JAXP can deal with
@@ -809,10 +833,40 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     public void start() throws Exception {
+        if (xpathFactory == null) {
+            initDefaultXPathFactory();
+        }
     }
 
     public void stop() throws Exception {
         pool.clear();
+    }
+
+    protected synchronized void initDefaultXPathFactory() throws XPathFactoryConfigurationException {
+        if (defaultXPathFactory == null) {
+            if (objectModelUri != null) {
+                defaultXPathFactory = XPathFactory.newInstance(objectModelUri);
+                LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", defaultXPathFactory);
+            }
+
+            if (defaultXPathFactory == null) {
+                // read system property and see if there is a factory set
+                Properties properties = System.getProperties();
+                for (Map.Entry prop : properties.entrySet()) {
+                    String key = (String) prop.getKey();
+                    if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
+                        String uri = ObjectHelper.after(key, ":");
+                        if (uri != null) {
+                            defaultXPathFactory = XPathFactory.newInstance(uri);
+                            LOG.info("Using system property {} with value {} when created XPathFactory {}", new Object[]{key, uri, defaultXPathFactory});
+                        }
+                    }
+                }
+            }
+
+            defaultXPathFactory = XPathFactory.newInstance();
+            LOG.info("Created default XPathFactory {}", defaultXPathFactory);
+        }
     }
 
     /**

@@ -43,8 +43,8 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
 
     private final JcloudsBlobStoreEndpoint endpoint;
 
-    private String container;
-    private BlobStore blobStore;
+    private final String container;
+    private final BlobStore blobStore;
 
     private int maxMessagesPerPoll = 10;
 
@@ -56,11 +56,11 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
         super(endpoint, processor);
         this.blobStore = blobStore;
         this.endpoint = endpoint;
+        this.container = endpoint.getContainer();
     }
 
     @Override
     protected int poll() throws Exception {
-        int messages = 0;
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
@@ -68,10 +68,9 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
 
         ListContainerOptions opt = new ListContainerOptions();
 
-        for (StorageMetadata md : blobStore.list(endpoint.getContainer(), opt.maxResults(maxMessagesPerPoll))) {
-            messages++;
+        for (StorageMetadata md : blobStore.list(container, opt.maxResults(maxMessagesPerPoll))) {
             String blobName = md.getName();
-            Object body = JcloudsBlobStoreHelper.readBlob(blobStore, endpoint.getContainer(), blobName, Thread.currentThread().getContextClassLoader());
+            Object body = JcloudsBlobStoreHelper.readBlob(blobStore, container, blobName, Thread.currentThread().getContextClassLoader());
             Exchange exchange = endpoint.createExchange();
             exchange.getIn().setBody(body);
             exchange.setProperty(JcloudsConstants.BLOB_NAME, blobName);
@@ -107,7 +106,7 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
                 }
 
                 public void onFailure(Exchange exchange) {
-
+                 //empty method
                 }
             });
 
@@ -152,17 +151,6 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
 
     @Override
     public void prepareShutdown() {
-
+     //Empty method
     }
-
-
-    public String getContainer() {
-        return container;
-    }
-
-    public void setContainer(String container) {
-        this.container = container;
-    }
-
-
 }

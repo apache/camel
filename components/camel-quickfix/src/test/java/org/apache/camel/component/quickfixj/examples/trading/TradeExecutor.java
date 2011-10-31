@@ -199,7 +199,7 @@ public class TradeExecutor {
             if (provider != null) {
                 try {
                     ApplVerID applVerID = getApplVerID(session, message);
-                    DataDictionary appDataDictionary = provider.getApplicationDataDictionary(applVerID, null);
+                    DataDictionary appDataDictionary = provider.getApplicationDataDictionary(applVerID);
                     appDataDictionary.validate(message, true);
                 } catch (Exception e) {
                     LogUtil.logThrowable(sessionID, "Outgoing message failed validation: "

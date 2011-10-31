@@ -363,6 +363,7 @@ public class QuickfixjEngineTest {
     }
 
     @Test
+    @Ignore("The unit test works but we have a collision with the enableJmxForInitiator one")
     public void enableJmxForAcceptor() throws Exception {
         settings.setBool(QuickfixjEngine.SETTING_USE_JMX, true);
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.ACCEPTOR_CONNECTION_TYPE);
@@ -372,6 +373,7 @@ public class QuickfixjEngineTest {
 
         quickfixjEngine = new QuickfixjEngine("quickfix:test", settingsFile.getName(), false);
         quickfixjEngine.start();
+
         MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> n = mbeanServer.queryNames(new ObjectName("org.quickfixj:type=Connector,role=Acceptor,*"), null);
         assertFalse("QFJ mbean not registered", n.isEmpty());

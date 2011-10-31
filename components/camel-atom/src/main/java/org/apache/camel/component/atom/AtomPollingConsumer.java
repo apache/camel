@@ -39,16 +39,9 @@ public class AtomPollingConsumer extends FeedPollingConsumer {
 
     @Override
     protected Object createFeed() throws IOException {
-        ClassLoader old = Thread.currentThread().getContextClassLoader();
-        try {
-            if (endpoint.getCamelContext().getApplicationContextClassLoader() != null) {
-                Thread.currentThread().setContextClassLoader(endpoint.getCamelContext().getApplicationContextClassLoader());
-                LOG.debug("set the TCCL to be " + endpoint.getCamelContext().getApplicationContextClassLoader());
-            }
-            Document<Feed> document = AtomUtils.parseDocument(endpoint.getFeedUri());
-            return document.getRoot();
-        } finally {
-            Thread.currentThread().setContextClassLoader(old);
-        }
+
+        Document<Feed> document = AtomUtils.parseDocument(endpoint.getFeedUri());
+        return document.getRoot();
+
     }
 }

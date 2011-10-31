@@ -23,6 +23,9 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.util.IOHelper;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.slf4j.Logger;
@@ -57,19 +60,8 @@ public final class JcloudsBlobStoreHelper {
             } catch (IOException e) {
                 LOG.error("Error while writing blob", e);
             } finally {
-                if (oos != null) {
-                    try {
-                        oos.close();
-                    } catch (IOException e) {
-                    }
-                }
-
-                if (baos != null) {
-                    try {
-                        baos.close();
-                    } catch (IOException e) {
-                    }
-                }
+                IOHelper.close(oos);
+                IOHelper.close(baos);
             }
         }
 
@@ -108,18 +100,8 @@ public final class JcloudsBlobStoreHelper {
                 e) {
             e.printStackTrace();
         } finally {
-            if (ois != null) {
-                try {
-                    ois.close();
-                } catch (IOException e) {
-                }
-            }
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                }
-            }
+            IOHelper.close(ois);
+            IOHelper.close(is);
         }
         return result;
     }

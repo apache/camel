@@ -26,10 +26,19 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A language for tokenizer expressions.
+ * <p/>
+ * This tokenizer language can operator in two modes
+ * <ul>
+ *     <li>default - using a single tokenizer</li>
+ *     <li>pair - using both start and end tokens</li>
+ * </ul>
+ * The default mode supports the <tt>headerName</tt> and <tt>regex</tt> options.
+ * Where as the pair mode only supports <tt>token</tt> and <tt>endToken</tt>.
  */
 public class TokenizeLanguage implements Language, IsSingleton {
 
     private String token;
+    private String endToken;
     private String headerName;
     private boolean regex;
 
@@ -56,6 +65,13 @@ public class TokenizeLanguage implements Language, IsSingleton {
         return language.createExpression(null);
     }
 
+    public static Expression tokenizePair(String startToken, String endToken) {
+        TokenizeLanguage language = new TokenizeLanguage();
+        language.setToken(startToken);
+        language.setEndToken(endToken);
+        return language.createExpression(null);
+    }
+
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
@@ -65,6 +81,13 @@ public class TokenizeLanguage implements Language, IsSingleton {
      */
     public Expression createExpression() {
         ObjectHelper.notNull(token, "token");
+
+        // if end token is provided then use the tokenize pair expression
+        if (endToken != null) {
+            return ExpressionBuilder.tokenizePairExpression(token, endToken);
+        }
+
+        // use the regular tokenizer
         Expression exp = headerName == null ? ExpressionBuilder.bodyExpression() : ExpressionBuilder.headerExpression(headerName);
         if (regex) {
             return ExpressionBuilder.regexTokenizeExpression(exp, token);
@@ -86,6 +109,14 @@ public class TokenizeLanguage implements Language, IsSingleton {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getEndToken() {
+        return endToken;
+    }
+
+    public void setEndToken(String endToken) {
+        this.endToken = endToken;
     }
 
     public String getHeaderName() {

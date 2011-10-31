@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor.onexception;
 
+import java.io.IOException;
+import javax.xml.soap.SOAPException;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
@@ -102,6 +105,25 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
         }
     }
 
+    public void testOnExceptionMisconfigured5() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+
+                from("direct:start")
+                    .onException().end()
+                    .to("mock:result");
+            }
+        });
+        try {
+            context.start();
+            fail("Should have thrown exception");
+        } catch (FailedToCreateRouteException e) {
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertTrue(iae.getMessage().startsWith("At least one exception must be configured"));
+        }
+    }
+
     public void testOnExceptionNotMisconfigured() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -148,6 +170,22 @@ public class OnExceptionMisconfiguredTest extends ContextTestSupport {
                 onException(Exception.class).continued(true);
 
                 from("direct:start").to("mock:result");
+            }
+        });
+        context.start();
+        // okay
+    }
+
+    public void testOnExceptionNotMisconfigured5() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .onException(SOAPException.class)
+                    .onException(IOException.class)
+                        .to("mock:error")
+                    .end()
+                    .to("mock:result");
             }
         });
         context.start();

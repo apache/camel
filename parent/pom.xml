@@ -108,7 +108,7 @@
     <jettison-version>1.3</jettison-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jibx-version>1.2.2</jibx-version>
-    <jruby-version>1.5.6</jruby-version>
+    <jruby-version>1.6.5</jruby-version>
     <jsmpp-version>2.1.0_3</jsmpp-version>
     <jsch-version>0.1.44-1</jsch-version>
     <juel-version>2.1.2</juel-version>
@@ -132,7 +132,7 @@
     <protobuf-version>2.3.0</protobuf-version>
     <qpid-version>0.10</qpid-version>
     <quartz-version>1.8.5</quartz-version>
-    <quickfix-version>1.5.0</quickfix-version>
+    <quickfix-version>1.5.1</quickfix-version>
     <restlet-version>2.0.9</restlet-version>
     <rome-version>1.0</rome-version>
     <saxon-version>9.1.0.8</saxon-version>
