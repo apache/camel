@@ -41,7 +41,7 @@
       <aws-java-sdk-bundle-version>1.1.1_1</aws-java-sdk-bundle-version>
       <bcel-bundle-version>5.2_3</bcel-bundle-version>
       <cglib-version>2.1_3_6</cglib-version>
-      <cometd-java-server-bundle-version>2.3.1_1-SNAPSHOT</cometd-java-server-bundle-version>
+      <cometd-java-server-bundle-version>2.3.1_1</cometd-java-server-bundle-version>
       <commons-beanutils-bundle-version>1.7.0_3</commons-beanutils-bundle-version>
       <commons-csv-version>1.0-r706899_3</commons-csv-version>
       <commons-codec-version>${commons-code}</commons-codec-version>
@@ -113,7 +113,7 @@
       <pax.web.version>0.7.2</pax.web.version>
       <quartz-bundle-version>1.8.5_1</quartz-bundle-version>
       <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
-      <quickfix-bundle-version>1.5.1_1-SNAPSHOT</quickfix-bundle-version>
+      <quickfix-bundle-version>1.5.1_1</quickfix-bundle-version>
       <regexp-bundle-version>1.3_1</regexp-bundle-version>      
       <rome-bundle-version>1.0_1</rome-bundle-version>
       <saxon-bundle-version>9.1.0.8_1</saxon-bundle-version>
