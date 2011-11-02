@@ -73,9 +73,9 @@ public class AggregateTimeoutWithExecutorServiceTest extends ContextTestSupport 
                 ScheduledExecutorService threadPool = context.getExecutorServiceManager().newScheduledThreadPool(this, "MyThreadPool", 8);
                 for (int i = 0; i < NUM_AGGREGATORS; ++i) {
                     from("direct:start" + i)
-                    // aggregate timeout after 3th seconds
-                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(3000).timeoutCheckerExecutorService(threadPool)
-                    .to("mock:result" + i);
+                        // aggregate timeout after 3th seconds
+                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(3000).timeoutCheckerExecutorService(threadPool)
+                        .to("mock:result" + i);
                 }
             }
         };
