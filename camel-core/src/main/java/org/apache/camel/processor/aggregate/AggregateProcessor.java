@@ -76,6 +76,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AggregateProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
 
+    public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
+
     private static final Logger LOG = LoggerFactory.getLogger(AggregateProcessor.class);
 
     private final Lock lock = new ReentrantLock();
@@ -84,6 +86,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     private final AggregationStrategy aggregationStrategy;
     private final Expression correlationExpression;
     private final ExecutorService executorService;
+    private ScheduledExecutorService timeoutCheckerExecutorService;    
     private ScheduledExecutorService recoverService;
     // store correlation key -> exchange id in timeout map
     private TimeoutMap<String, String> timeoutMap;
@@ -572,6 +575,14 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         this.forceCompletionOnStop = forceCompletionOnStop;
     }
 
+    public void setTimeoutCheckerExecutorService(ScheduledExecutorService timeoutCheckerExecutorService) {
+        this.timeoutCheckerExecutorService = timeoutCheckerExecutorService;
+    }
+
+    public ScheduledExecutorService getTimeoutCheckerExecutorService() {
+        return timeoutCheckerExecutorService;
+    }
+    
     /**
      * On completion task which keeps the booking of the in progress up to date
      */
@@ -844,17 +855,21 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         }
         if (getCompletionInterval() > 0) {
             LOG.info("Using CompletionInterval to run every " + getCompletionInterval() + " millis.");
-            ScheduledExecutorService scheduler = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "AggregateTimeoutChecker", 1);
+            if (getTimeoutCheckerExecutorService() == null) {
+                setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_TIMEOUT_CHECKER, 1));
+            }
             // trigger completion based on interval
-            scheduler.scheduleAtFixedRate(new AggregationIntervalTask(), 1000L, getCompletionInterval(), TimeUnit.MILLISECONDS);
+            getTimeoutCheckerExecutorService().scheduleAtFixedRate(new AggregationIntervalTask(), 1000L, getCompletionInterval(), TimeUnit.MILLISECONDS);
         }
 
         // start timeout service if its in use
         if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
             LOG.info("Using CompletionTimeout to trigger after " + getCompletionTimeout() + " millis of inactivity.");
-            ScheduledExecutorService scheduler = camelContext.getExecutorServiceManager().newScheduledThreadPool(this, "AggregateTimeoutChecker", 1);
+            if (getTimeoutCheckerExecutorService() == null) {
+                setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_TIMEOUT_CHECKER, 1));
+            }
             // check for timed out aggregated messages once every second
-            timeoutMap = new AggregationTimeoutMap(scheduler, 1000L);
+            timeoutMap = new AggregationTimeoutMap(getTimeoutCheckerExecutorService(), 1000L);
             // fill in existing timeout values from the aggregation repository, for example if a restart occurred, then we
             // need to re-establish the timeout map so timeout can trigger
             restoreTimeoutMapFromAggregationRepository();

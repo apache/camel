@@ -219,7 +219,7 @@ public final class ProcessorDefinitionHelper {
      * The various {@link ExecutorServiceAwareDefinition} should use this helper method to ensure they support
      * configured executor services in the same coherent way.
      *
-     * @param routeContext   the rout context
+     * @param routeContext   the route context
      * @param name           name which is appended to the thread name, when the {@link java.util.concurrent.ExecutorService}
      *                       is created based on a {@link org.apache.camel.spi.ThreadPoolProfile}.
      * @param definition     the node definition which may leverage executor service.
