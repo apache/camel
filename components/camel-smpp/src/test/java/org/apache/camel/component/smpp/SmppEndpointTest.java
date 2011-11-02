@@ -57,6 +57,10 @@ public class SmppEndpointTest {
         component = createMock(Component.class);
         binding = createMock(SmppBinding.class);
         
+        expect(component.createConfiguration("smpp://smppclient@localhost:2775")).andReturn(null);
+        expect(component.getCamelContext()).andReturn(null);
+        replay(component);
+
         endpoint = new SmppEndpoint("smpp://smppclient@localhost:2775", component, configuration);
         endpoint.setBinding(binding);
     }
