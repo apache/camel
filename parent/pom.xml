@@ -94,7 +94,7 @@
     <httpclient-version>3.1</httpclient-version>
     <icu4j-version>4.0.1</icu4j-version>
     <jackson-version>1.8.6</jackson-version>
-    <jackrabbit-version>1.6.4</jackrabbit-version>
+    <jackrabbit-version>2.2.4</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_1</jain-sip-ri-bundle-version>
     <jasypt-version>1.7</jasypt-version>
     <java-apns-version>0.1.6</java-apns-version>

@@ -19,16 +19,18 @@ package org.apache.camel.component.jcr;
 import java.io.File;
 import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.security.AccessControlList;
+import javax.jcr.security.AccessControlManager;
+import javax.jcr.security.AccessControlPolicy;
+import javax.jcr.security.AccessControlPolicyIterator;
 import javax.naming.Context;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.jackrabbit.api.jsr283.security.AccessControlManager;
-import org.apache.jackrabbit.api.jsr283.security.AccessControlPolicyIterator;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.TransientRepository;
-import org.apache.jackrabbit.core.security.authorization.JackrabbitAccessControlList;
+
 import org.junit.Before;
 
 /**
@@ -76,10 +78,9 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
         AccessControlPolicyIterator acls = accessControlManager
                 .getApplicablePolicies(permissionsPath);
         if (acls.hasNext()) {
-            JackrabbitAccessControlList acl = (JackrabbitAccessControlList) acls
-                    .nextAccessControlPolicy();
-            acl.addEntry(user.getPrincipal(), accessControlManager
-                    .getSupportedPrivileges(permissionsPath), true);
+            AccessControlList acl = (AccessControlList) acls.nextAccessControlPolicy();
+            acl.addAccessControlEntry(user.getPrincipal(), accessControlManager
+                    .getSupportedPrivileges(permissionsPath));
             accessControlManager.setPolicy(permissionsPath, acl);
         } else {
             throw new Exception("could not set access control for path "

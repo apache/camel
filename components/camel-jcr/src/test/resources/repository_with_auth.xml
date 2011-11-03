@@ -15,7 +15,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<!DOCTYPE Repository PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 1.5//EN" "http://jackrabbit.apache.org/dtd/repository-1.5.dtd">
+
+<!DOCTYPE Repository
+  PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 2.0//EN"
+  "http://jackrabbit.apache.org/dtd/repository-2.0.dtd">
 
 <!-- Example Repository Configuration File
      Used by
@@ -24,92 +27,95 @@
 -->
 <Repository>
   <!--
-    virtual file system where the repository stores global state
-    (e.g. registered namespaces, custom node types, etc.)
+      virtual file system where the repository stores global state
+      (e.g. registered namespaces, custom node types, etc.)
   -->
   <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
     <param name="path" value="${rep.home}/repository"/>
   </FileSystem>
 
-  <!-- security configuration -->
+  <!--
+      data store configuration
+  -->
+  <DataStore class="org.apache.jackrabbit.core.data.FileDataStore"/>
+
+  <!--
+      security configuration
+  -->
   <Security appName="Jackrabbit">
-	<SecurityManager class="org.apache.jackrabbit.core.DefaultSecurityManager" workspaceName="security" />
-    <AccessManager class="org.apache.jackrabbit.core.security.DefaultAccessManager" />
+
+    <SecurityManager class="org.apache.jackrabbit.core.DefaultSecurityManager" workspaceName="security"/>
+    <AccessManager class="org.apache.jackrabbit.core.security.DefaultAccessManager"/>
     <LoginModule class="org.apache.jackrabbit.core.security.authentication.DefaultLoginModule">
-      <param name="adminId" value="admin" />
+      <param name="adminId" value="admin"/>
     </LoginModule>
+
   </Security>
 
-  <!-- location of workspaces root directory and name of default workspace -->
-  <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default" />
   <!--
-    workspace configuration template:
-    used to create the initial workspace if there's no workspace yet
+      location of workspaces root directory and name of default workspace
+  -->
+  <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/>
+  <!--
+      workspace configuration template:
+      used to create the initial workspace if there's no workspace yet
   -->
   <Workspace name="${wsp.name}">
     <!--
-      virtual file system of the workspace:
-      class: FQN of class implementing the FileSystem interface
+        virtual file system of the workspace:
+        class: FQN of class implementing the FileSystem interface
     -->
     <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
-      <param name="path" value="${wsp.home}" />
+      <param name="path" value="${wsp.home}"/>
     </FileSystem>
     <!--
-      persistence manager of the workspace:
-      class: FQN of class implementing the PersistenceManager interface
+        persistence manager of the workspace:
+        class: FQN of class implementing the PersistenceManager interface
     -->
-    <PersistenceManager class="org.apache.jackrabbit.core.persistence.bundle.DerbyPersistenceManager">
-      <param name="url" value="jdbc:derby:${wsp.home}/db;create=true" />
-      <param name="schemaObjectPrefix" value="${wsp.name}_" />
+    <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.DerbyPersistenceManager">
+      <param name="url" value="jdbc:derby:${wsp.home}/db;create=true"/>
+      <param name="schemaObjectPrefix" value="${wsp.name}_"/>
     </PersistenceManager>
     <!--
-      Search index and the file system it uses.
-      class: FQN of class implementing the QueryHandler interface
+        Search index and the file system it uses.
+        class: FQN of class implementing the QueryHandler interface
     -->
     <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
-      <param name="path" value="${wsp.home}/index" />
-      <param name="textFilterClasses" value="org.apache.jackrabbit.extractor.PlainTextExtractor,org.apache.jackrabbit.extractor.MsWordTextExtractor,org.apache.jackrabbit.extractor.MsExcelTextExtractor,org.apache.jackrabbit.extractor.MsPowerPointTextExtractor,org.apache.jackrabbit.extractor.PdfTextExtractor,org.apache.jackrabbit.extractor.OpenOfficeTextExtractor,org.apache.jackrabbit.extractor.RTFTextExtractor,org.apache.jackrabbit.extractor.HTMLTextExtractor,org.apache.jackrabbit.extractor.XMLTextExtractor" />
-      <param name="extractorPoolSize" value="2" />
-      <param name="supportHighlighting" value="true" />
+      <param name="path" value="${wsp.home}/index"/>
+      <param name="supportHighlighting" value="true"/>
     </SearchIndex>
-
-    <!-- 
-    <WorkspaceSecurity>
-      <AccessControlProvider class="org.apache.jackrabbit.core.security.user.UserAccessControlProvider"/>
-    </WorkspaceSecurity>
-    -->
   </Workspace>
 
-  <!-- Configures the versioning -->
+  <!--
+      Configures the versioning
+  -->
   <Versioning rootPath="${rep.home}/version">
     <!--
-      Configures the filesystem to use for versioning for the respective
-      persistence manager
+        Configures the filesystem to use for versioning for the respective
+        persistence manager
     -->
     <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
-      <param name="path" value="${rep.home}/version" />
+      <param name="path" value="${rep.home}/version"/>
     </FileSystem>
 
     <!--
-      Configures the persistence manager to be used for persisting version state.
-      Please note that the current versioning implementation is based on
-      a 'normal' persistence manager, but this could change in future
-      implementations.
+        Configures the persistence manager to be used for persisting version state.
+        Please note that the current versioning implementation is based on
+        a 'normal' persistence manager, but this could change in future
+        implementations.
     -->
-    <PersistenceManager class="org.apache.jackrabbit.core.persistence.bundle.DerbyPersistenceManager">
-      <param name="url" value="jdbc:derby:${rep.home}/version/db;create=true" />
-      <param name="schemaObjectPrefix" value="version_" />
+    <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.DerbyPersistenceManager">
+      <param name="url" value="jdbc:derby:${rep.home}/version/db;create=true"/>
+      <param name="schemaObjectPrefix" value="version_"/>
     </PersistenceManager>
   </Versioning>
 
   <!--
-    Search index for content that is shared repository wide
-    (/jcr:system tree, contains mainly versions)
+      Search index for content that is shared repository wide
+      (/jcr:system tree, contains mainly versions)
   -->
   <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
-    <param name="path" value="${rep.home}/repository/index" />
-    <param name="textFilterClasses" value="org.apache.jackrabbit.extractor.PlainTextExtractor,org.apache.jackrabbit.extractor.MsWordTextExtractor,org.apache.jackrabbit.extractor.MsExcelTextExtractor,org.apache.jackrabbit.extractor.MsPowerPointTextExtractor,org.apache.jackrabbit.extractor.PdfTextExtractor,org.apache.jackrabbit.extractor.OpenOfficeTextExtractor,org.apache.jackrabbit.extractor.RTFTextExtractor,org.apache.jackrabbit.extractor.HTMLTextExtractor,org.apache.jackrabbit.extractor.XMLTextExtractor" />
-    <param name="extractorPoolSize" value="2" />
-    <param name="supportHighlighting" value="true" />
+    <param name="path" value="${rep.home}/repository/index"/>
+    <param name="supportHighlighting" value="true"/>
   </SearchIndex>
 </Repository>

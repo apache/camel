@@ -350,7 +350,7 @@
     <bundle>mvn:org.apache.camel/camel-jclouds/${pom.version}</bundle>
   </feature>
   <feature name='camel-jcr' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jcr-api/${jcr-bundle-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jcr-api-2.0/1.9.0</bundle>
     <bundle dependency="true">mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/${jackrabbit-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jcr/${pom.version}</bundle>
