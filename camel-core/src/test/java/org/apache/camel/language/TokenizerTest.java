@@ -99,8 +99,8 @@ public class TokenizerTest extends ExchangeTestSupport {
         assertEquals(false, lan.isSingleton());
     }
 
-    public void testTokenizePair() throws Exception {
-        Expression exp = TokenizeLanguage.tokenizePair("<person>", "</person>");
+    public void testTokenizeXMLPair() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>",  null);
 
         exchange.getIn().setBody("<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
 
@@ -113,8 +113,22 @@ public class TokenizerTest extends ExchangeTestSupport {
         assertEquals("<person>Hadrian</person>", names.get(3));
     }
 
-    public void testTokenizePairWithNoise() throws Exception {
-        Expression exp = TokenizeLanguage.tokenizePair("<person>", "</person>");
+    public void testTokenizeXMLPairNoXMLTag() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("person",  null);
+
+        exchange.getIn().setBody("<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person>James</person>", names.get(0));
+        assertEquals("<person>Claus</person>", names.get(1));
+        assertEquals("<person>Jonathan</person>", names.get(2));
+        assertEquals("<person>Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizeXMLPairWithNoise() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
 
         exchange.getIn().setBody("<?xml version=\"1.0\"?><!-- bla bla --><persons>\n<person>James</person>\n<person>Claus</person>\n"
                 + "<!-- more bla bla --><person>Jonathan</person>\n<person>Hadrian</person>\n</persons>   ");
@@ -128,8 +142,8 @@ public class TokenizerTest extends ExchangeTestSupport {
         assertEquals("<person>Hadrian</person>", names.get(3));
     }
 
-    public void testTokenizePairEmpty() throws Exception {
-        Expression exp = TokenizeLanguage.tokenizePair("<person>", "</person>");
+    public void testTokenizeXMLPairEmpty() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
 
         exchange.getIn().setBody("<?xml version=\"1.0\"?><!-- bla bla --><persons></persons>   ");
 
@@ -137,8 +151,8 @@ public class TokenizerTest extends ExchangeTestSupport {
         assertEquals(0, names.size());
     }
 
-    public void testTokenizePairNoData() throws Exception {
-        Expression exp = TokenizeLanguage.tokenizePair("<person>", "</person>");
+    public void testTokenizeXMLPairNoData() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
 
         exchange.getIn().setBody("");
 
@@ -146,13 +160,148 @@ public class TokenizerTest extends ExchangeTestSupport {
         assertEquals(0, names.size());
     }
 
-    public void testTokenizePairNullData() throws Exception {
-        Expression exp = TokenizeLanguage.tokenizePair("<person>", "</person>");
+    public void testTokenizeXMLPairNullData() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
 
         exchange.getIn().setBody(null);
 
         List names = exp.evaluate(exchange, List.class);
         assertNull(names);
+    }
+
+    public void testTokenizeXMLPairWithDefaultNamespace() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", "<persons>");
+
+        exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person>James</person>\n<person>Claus</person>\n"
+                + "<person>Jonathan</person>\n<person>Hadrian</person>\n</persons>\n");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person xmlns=\"http:acme.com/persons\">James</person>", names.get(0));
+        assertEquals("<person xmlns=\"http:acme.com/persons\">Claus</person>", names.get(1));
+        assertEquals("<person xmlns=\"http:acme.com/persons\">Jonathan</person>", names.get(2));
+        assertEquals("<person xmlns=\"http:acme.com/persons\">Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizeXMLPairWithDefaultNamespaceNotInherit() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
+
+        exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person>James</person>\n<person>Claus</person>\n"
+                + "<person>Jonathan</person>\n<person>Hadrian</person>\n</persons>\n");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person>James</person>", names.get(0));
+        assertEquals("<person>Claus</person>", names.get(1));
+        assertEquals("<person>Jonathan</person>", names.get(2));
+        assertEquals("<person>Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizeXMLPairWithDefaultAndFooNamespace() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", "<persons>");
+
+        exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\" xmlns:foo=\"http:foo.com\">\n<person>James</person>\n<person>Claus</person>\n"
+                + "<person>Jonathan</person>\n<person>Hadrian</person>\n</persons>\n");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person xmlns=\"http:acme.com/persons\" xmlns:foo=\"http:foo.com\">James</person>", names.get(0));
+        assertEquals("<person xmlns=\"http:acme.com/persons\" xmlns:foo=\"http:foo.com\">Claus</person>", names.get(1));
+        assertEquals("<person xmlns=\"http:acme.com/persons\" xmlns:foo=\"http:foo.com\">Jonathan</person>", names.get(2));
+        assertEquals("<person xmlns=\"http:acme.com/persons\" xmlns:foo=\"http:foo.com\">Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizeXMLPairWithLocalNamespace() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
+
+        exchange.getIn().setBody("<?xml version=\"1.0\"?><persons>\n<person xmlns=\"http:acme.com/persons\">James</person>\n<person xmlns=\"http:acme.com/persons\">Claus</person>\n"
+                + "<person xmlns=\"http:acme.com/persons\">Jonathan</person>\n<person xmlns=\"http:acme.com/persons\">Hadrian</person>\n</persons>\n");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person xmlns=\"http:acme.com/persons\">James</person>", names.get(0));
+        assertEquals("<person xmlns=\"http:acme.com/persons\">Claus</person>", names.get(1));
+        assertEquals("<person xmlns=\"http:acme.com/persons\">Jonathan</person>", names.get(2));
+        assertEquals("<person xmlns=\"http:acme.com/persons\">Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizeXMLPairWithLocalAndInheritedNamespace() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", "<persons>");
+
+        exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person xmlns:foo=\"http:foo.com\">James</person>\n<person>Claus</person>\n"
+                + "<person>Jonathan</person>\n<person xmlns:bar=\"http:bar.com\">Hadrian</person>\n</persons>\n");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person xmlns:foo=\"http:foo.com\" xmlns=\"http:acme.com/persons\">James</person>", names.get(0));
+        assertEquals("<person xmlns=\"http:acme.com/persons\">Claus</person>", names.get(1));
+        assertEquals("<person xmlns=\"http:acme.com/persons\">Jonathan</person>", names.get(2));
+        assertEquals("<person xmlns:bar=\"http:bar.com\" xmlns=\"http:acme.com/persons\">Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizeXMLPairWithLocalAndNotInheritedNamespace() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
+
+        exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person xmlns:foo=\"http:foo.com\">James</person>\n"
+                + "<person>Claus</person>\n<person>Jonathan</person>\n<person xmlns:bar=\"http:bar.com\">Hadrian</person>\n</persons>\n");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person xmlns:foo=\"http:foo.com\">James</person>", names.get(0));
+        assertEquals("<person>Claus</person>", names.get(1));
+        assertEquals("<person>Jonathan</person>", names.get(2));
+        assertEquals("<person xmlns:bar=\"http:bar.com\">Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizeXMLPairWithAttributes() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", null);
+
+        exchange.getIn().setBody("<persons><person id=\"1\">James</person><person id=\"2\">Claus</person><person id=\"3\">Jonathan</person>"
+                + "<person id=\"4\">Hadrian</person></persons>");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person id=\"1\">James</person>", names.get(0));
+        assertEquals("<person id=\"2\">Claus</person>", names.get(1));
+        assertEquals("<person id=\"3\">Jonathan</person>", names.get(2));
+        assertEquals("<person id=\"4\">Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizeXMLPairWithAttributesInheritNamespace() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", "<persons>");
+
+        exchange.getIn().setBody("<persons xmlns=\"http:acme.com/persons\"><person id=\"1\">James</person><person id=\"2\">Claus</person>"
+                + "<person id=\"3\">Jonathan</person><person id=\"4\">Hadrian</person></persons>");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person id=\"1\" xmlns=\"http:acme.com/persons\">James</person>", names.get(0));
+        assertEquals("<person id=\"2\" xmlns=\"http:acme.com/persons\">Claus</person>", names.get(1));
+        assertEquals("<person id=\"3\" xmlns=\"http:acme.com/persons\">Jonathan</person>", names.get(2));
+        assertEquals("<person id=\"4\" xmlns=\"http:acme.com/persons\">Hadrian</person>", names.get(3));
+    }
+
+    public void testTokenizeXMLPairWithAttributes2InheritNamespace() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("<person>", "<persons>");
+
+        exchange.getIn().setBody("<persons riders=\"true\" xmlns=\"http:acme.com/persons\"><person id=\"1\">James</person><person id=\"2\">Claus</person>"
+                + "<person id=\"3\">Jonathan</person><person id=\"4\">Hadrian</person></persons>");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(4, names.size());
+
+        assertEquals("<person id=\"1\" xmlns=\"http:acme.com/persons\">James</person>", names.get(0));
+        assertEquals("<person id=\"2\" xmlns=\"http:acme.com/persons\">Claus</person>", names.get(1));
+        assertEquals("<person id=\"3\" xmlns=\"http:acme.com/persons\">Jonathan</person>", names.get(2));
+        assertEquals("<person id=\"4\" xmlns=\"http:acme.com/persons\">Hadrian</person>", names.get(3));
     }
 
 }

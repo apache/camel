@@ -42,6 +42,7 @@ import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.TokenPairExpressionIterator;
+import org.apache.camel.support.TokenXMLPairExpressionIterator;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -1027,8 +1028,36 @@ public final class ExpressionBuilder {
     /**
      * Returns an {@link TokenPairExpressionIterator} expression
      */
-    public static Expression tokenizePairExpression(final String startToken, final String endToken) {
+    public static Expression tokenizePairExpression(String startToken, String endToken) {
         return new TokenPairExpressionIterator(startToken, endToken);
+    }
+
+    /**
+     * Returns an {@link TokenXMLPairExpressionIterator} expression
+     */
+    public static Expression tokenizeXMLExpression(String tagName, String inheritNamespaceTagName) {
+        ObjectHelper.notEmpty(tagName, "tagName");
+
+        // must be XML tokens
+        if (!tagName.startsWith("<")) {
+            tagName = "<" + tagName;
+        }
+        if (!tagName.endsWith(">")) {
+            tagName = tagName + ">";
+        }
+
+        String endToken = "</" + tagName.substring(1);
+
+        if (inheritNamespaceTagName != null) {
+            if (!inheritNamespaceTagName.startsWith("<")) {
+                inheritNamespaceTagName = "<" + inheritNamespaceTagName;
+            }
+            if (!inheritNamespaceTagName.endsWith(">")) {
+                inheritNamespaceTagName = inheritNamespaceTagName + ">";
+            }
+        }
+
+        return new TokenXMLPairExpressionIterator(tagName, endToken, inheritNamespaceTagName);
     }
 
     /**

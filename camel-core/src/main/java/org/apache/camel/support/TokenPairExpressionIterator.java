@@ -34,12 +34,12 @@ import org.apache.camel.util.ObjectHelper;
  * The message body must be able to convert to {@link InputStream} type which is used as stream
  * to access the message body.
  * <p/>
- * Can be used to split big XML files
+ * For splitting XML files use {@link TokenXMLPairExpressionIterator} instead.
  */
 public class TokenPairExpressionIterator extends ExpressionAdapter {
 
-    private final String startToken;
-    private final String endToken;
+    protected final String startToken;
+    protected final String endToken;
 
     public TokenPairExpressionIterator(String startToken, String endToken) {
         this.startToken = startToken;
@@ -54,11 +54,24 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
             // we may read from a file, and want to support custom charset defined on the exchange
             String charset = IOHelper.getCharsetName(exchange);
-            return new TokenPairIterator(startToken, endToken, in, charset);
+            return createIterator(in, charset);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);
             return null;
         }
+    }
+
+    /**
+     * Strategy to create the iterator
+     *
+     * @param in input stream to iterate
+     * @param charset charset
+     * @return the iterator
+     */
+    protected Iterator createIterator(InputStream in, String charset) {
+        TokenPairIterator iterator = new TokenPairIterator(startToken, endToken, in, charset);
+        iterator.init();
+        return iterator;
     }
 
     @Override
@@ -69,22 +82,29 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     /**
      * Iterator to walk the input stream
      */
-    private static final class TokenPairIterator implements Iterator, Closeable {
+    static class TokenPairIterator implements Iterator, Closeable {
 
-        private final String startToken;
-        private final String endToken;
-        private final Scanner scanner;
-        private Object image;
+        final String startToken;
+        final String endToken;
+        final InputStream in;
+        final String charset;
+        Scanner scanner;
+        Object image;
 
-        private TokenPairIterator(String startToken, String endToken, InputStream in, String charset) {
+        TokenPairIterator(String startToken, String endToken, InputStream in, String charset) {
             this.startToken = startToken;
             this.endToken = endToken;
+            this.in = in;
+            this.charset = charset;
+        }
+
+        void init() {
             // use end token as delimiter
             this.scanner = new Scanner(in, charset).useDelimiter(endToken);
             // this iterator will do look ahead as we may have data
             // after the last end token, which the scanner would find
             // so we need to be one step ahead of the scanner
-            this.image = scanner.hasNext() ? next() : null;
+            this.image = scanner.hasNext() ? next(true) : null;
         }
 
         @Override
@@ -94,10 +114,14 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
 
         @Override
         public Object next() {
+            return next(false);
+        }
+
+        Object next(boolean first) {
             Object answer = image;
             // calculate next
             if (scanner.hasNext()) {
-                image = getNext();
+                image = getNext(first);
             } else {
                 image = null;
             }
@@ -109,7 +133,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             return answer;
         }
 
-        private Object getNext() {
+        Object getNext(boolean first) {
             String next = scanner.next();
 
             // only grab text after the start token

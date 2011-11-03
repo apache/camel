@@ -40,9 +40,13 @@ public class TokenizerExpression extends ExpressionDefinition {
     @XmlAttribute
     private String endToken;
     @XmlAttribute
+    private String inheritNamespaceTagName;
+    @XmlAttribute
     private String headerName;
     @XmlAttribute
     private Boolean regex;
+    @XmlAttribute
+    private Boolean xml;
 
     public TokenizerExpression() {
     }
@@ -84,14 +88,34 @@ public class TokenizerExpression extends ExpressionDefinition {
         return regex;
     }
 
+    public String getInheritNamespaceTagName() {
+        return inheritNamespaceTagName;
+    }
+
+    public void setInheritNamespaceTagName(String inheritNamespaceTagName) {
+        this.inheritNamespaceTagName = inheritNamespaceTagName;
+    }
+
+    public Boolean getXml() {
+        return xml;
+    }
+
+    public void setXml(Boolean xml) {
+        this.xml = xml;
+    }
+
     @Override
     public Expression createExpression(CamelContext camelContext) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setToken(token);
         language.setEndToken(endToken);
+        language.setInheritNamespaceTagName(inheritNamespaceTagName);
         language.setHeaderName(headerName);
         if (regex != null) {
             language.setRegex(regex);
+        }
+        if (xml != null) {
+            language.setXml(xml);
         }
         return language.createExpression();
     }

@@ -435,6 +435,27 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * Evaluates a XML token expression on the message body with XML content
+     *
+     * @param tagName the the tag name of the child nodes to tokenize
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenizeXML(String tagName) {
+        return tokenizeXML(tagName, null);
+    }
+
+    /**
+     * Evaluates a token pair expression on the message body with XML content
+     *
+     * @param tagName the the tag name of the child nodes to tokenize
+     * @param inheritNamespaceTagName  parent or root tag name that contains namespace(s) to inherit
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenizeXML(String tagName, String inheritNamespaceTagName) {
+        return delegate.tokenizeXMLPair(tagName, inheritNamespaceTagName);
+    }
+
+    /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a>
      * 

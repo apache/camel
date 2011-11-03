@@ -486,6 +486,22 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
+     * Evaluates a token pair expression on the message body with XML content
+     *
+     * @param tagName the the tag name of the child nodes to tokenize
+     * @param inheritNamespaceTagName  optional parent or root tag name that contains namespace(s) to inherit
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenizeXMLPair(String tagName, String inheritNamespaceTagName) {
+        TokenizerExpression expression = new TokenizerExpression();
+        expression.setToken(tagName);
+        expression.setInheritNamespaceTagName(inheritNamespaceTagName);
+        expression.setXml(true);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath
      * expression</a>
      *

@@ -27,20 +27,24 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A language for tokenizer expressions.
  * <p/>
- * This tokenizer language can operator in two modes
+ * This tokenizer language can operator in the following modes:
  * <ul>
  *     <li>default - using a single tokenizer</li>
  *     <li>pair - using both start and end tokens</li>
+ *     <li>xml - using both start and end tokens in XML mode, support inheriting namespaces</li>
  * </ul>
  * The default mode supports the <tt>headerName</tt> and <tt>regex</tt> options.
  * Where as the pair mode only supports <tt>token</tt> and <tt>endToken</tt>.
+ * And the <tt>xml</tt> mode supports the <tt>inheritNamespaceTagName</tt> option.
  */
 public class TokenizeLanguage implements Language, IsSingleton {
 
     private String token;
     private String endToken;
+    private String inheritNamespaceTagName;
     private String headerName;
     private boolean regex;
+    private boolean xml;
 
     public static Expression tokenize(String token) {
         return tokenize(token, false);
@@ -72,6 +76,14 @@ public class TokenizeLanguage implements Language, IsSingleton {
         return language.createExpression(null);
     }
 
+    public static Expression tokenizeXML(String tagName, String inheritNamespaceTagName) {
+        TokenizeLanguage language = new TokenizeLanguage();
+        language.setToken(tagName);
+        language.setInheritNamespaceTagName(inheritNamespaceTagName);
+        language.setXml(true);
+        return language.createExpression(null);
+    }
+
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
@@ -82,8 +94,9 @@ public class TokenizeLanguage implements Language, IsSingleton {
     public Expression createExpression() {
         ObjectHelper.notNull(token, "token");
 
-        // if end token is provided then use the tokenize pair expression
-        if (endToken != null) {
+        if (isXml()) {
+            return ExpressionBuilder.tokenizeXMLExpression(token, inheritNamespaceTagName);
+        } else if (endToken != null) {
             return ExpressionBuilder.tokenizePairExpression(token, endToken);
         }
 
@@ -133,6 +146,22 @@ public class TokenizeLanguage implements Language, IsSingleton {
 
     public void setRegex(boolean regex) {
         this.regex = regex;
+    }
+
+    public String getInheritNamespaceTagName() {
+        return inheritNamespaceTagName;
+    }
+
+    public void setInheritNamespaceTagName(String inheritNamespaceTagName) {
+        this.inheritNamespaceTagName = inheritNamespaceTagName;
+    }
+
+    public boolean isXml() {
+        return xml;
+    }
+
+    public void setXml(boolean xml) {
+        this.xml = xml;
     }
 
     public boolean isSingleton() {
