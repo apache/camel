@@ -41,6 +41,11 @@ public final class URISupport {
     // First capture group is the key, second is the value.
     private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=([^&]*)",
             Pattern.CASE_INSENSITIVE);
+    
+    // Match the user password in the URI as second capture group
+    // (applies to URI with authority component and userinfo token in the form "user:password").
+    private static final Pattern USERINFO_PASSWORD = Pattern.compile("(.*://.*:)(.*)(@)");
+    
     private static final String CHARSET = "UTF-8";
 
     private URISupport() {
@@ -55,7 +60,12 @@ public final class URISupport {
      * @return Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey sanitized.
      */
     public static String sanitizeUri(String uri) {
-        return uri == null ? null : SECRETS.matcher(uri).replaceAll("$1=******");
+        String sanitized = uri;
+        if (uri != null) {
+            sanitized = SECRETS.matcher(sanitized).replaceAll("$1=******");
+            sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1******$3");
+        }
+        return sanitized;
     }
 
     public static Map<String, Object> parseQuery(String uri) throws URISyntaxException {

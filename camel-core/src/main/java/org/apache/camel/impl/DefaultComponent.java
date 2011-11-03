@@ -86,7 +86,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         validateURI(encodedUri, path, parameters);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", new Object[]{encodedUri, path, parameters});
+            LOG.debug("Creating endpoint uri=[{}], path=[{}], parameters=[{}]", new Object[]{URISupport.sanitizeUri(encodedUri), path, parameters});
         }
         Endpoint endpoint = createEndpoint(encodedUri, path, parameters);
         if (endpoint == null) {

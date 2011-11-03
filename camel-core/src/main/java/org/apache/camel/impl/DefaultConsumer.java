@@ -24,6 +24,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
 
     @Override
     public String toString() {
-        return "Consumer[" + endpoint.getEndpointUri() + "]";
+        return "Consumer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
     }
 
     public Endpoint getEndpoint() {

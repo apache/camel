@@ -40,6 +40,7 @@ import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
@@ -153,16 +154,17 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     public ExecutorService newThreadPool(Object source, String name, ThreadPoolProfile profile) {
+        String sanitizedName = URISupport.sanitizeUri(name);
         ObjectHelper.notNull(profile, "ThreadPoolProfile");
 
         ThreadPoolProfile defaultProfile = getDefaultThreadPoolProfile();
         profile.addDefaults(defaultProfile);
 
-        ThreadFactory threadFactory = createThreadFactory(name, true);
+        ThreadFactory threadFactory = createThreadFactory(sanitizedName, true);
         ExecutorService executorService = threadPoolFactory.newThreadPool(profile, threadFactory);
         onThreadPoolCreated(executorService, source, profile.getId());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new ThreadPool for source: {} with name: {}. -> {}", new Object[]{source, name, executorService});
+            LOG.debug("Created new ThreadPool for source: {} with name: {}. -> {}", new Object[]{source, sanitizedName, executorService});
         }
 
         return executorService;
@@ -183,11 +185,12 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     public ExecutorService newCachedThreadPool(Object source, String name) {
-        ExecutorService answer = threadPoolFactory.newCachedThreadPool(createThreadFactory(name, true));
+        String sanitizedName = URISupport.sanitizeUri(name);
+        ExecutorService answer = threadPoolFactory.newCachedThreadPool(createThreadFactory(sanitizedName, true));
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new CachedThreadPool for source: {} with name: {}. -> {}", new Object[]{source, name, answer});
+            LOG.debug("Created new CachedThreadPool for source: {} with name: {}. -> {}", new Object[]{source, sanitizedName, answer});
         }
         return answer;
     }
@@ -208,12 +211,13 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     
     @Override
     public ScheduledExecutorService newScheduledThreadPool(Object source, String name, ThreadPoolProfile profile) {
+        String sanitizedName = URISupport.sanitizeUri(name);
         profile.addDefaults(getDefaultThreadPoolProfile());
-        ScheduledExecutorService answer = threadPoolFactory.newScheduledThreadPool(profile, createThreadFactory(name, true));
+        ScheduledExecutorService answer = threadPoolFactory.newScheduledThreadPool(profile, createThreadFactory(sanitizedName, true));
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new ScheduledThreadPool for source: {} with name: {}. -> {}", new Object[]{source, name, answer});
+            LOG.debug("Created new ScheduledThreadPool for source: {} with name: {}. -> {}", new Object[]{source, sanitizedName, answer});
         }
         return answer;
 
