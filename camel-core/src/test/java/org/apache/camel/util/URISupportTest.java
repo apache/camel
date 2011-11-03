@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version 
+ * @version
  */
 public class URISupportTest extends ContextTestSupport {
 
@@ -150,11 +150,11 @@ public class URISupportTest extends ContextTestSupport {
         String out2 = URISupport.normalizeUri("smtp://localhost?to=foo&to=bar&from=me&from=you");
         assertEquals("smtp://localhost?from=me&from=you&to=foo&to=bar", out2);
     }
-    
+
     public void testSanitizeUriWithUserInfo() {
-    	String uri      = "jt400://GEORGE:HARRISON@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
-    	String expected = "jt400://GEORGE:******@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
-    	assertEquals(expected, URISupport.sanitizeUri(uri));
+        String uri = "jt400://GEORGE:HARRISON@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
+        String expected = "jt400://GEORGE:******@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
+        assertEquals(expected, URISupport.sanitizeUri(uri));
     }
 
 }
