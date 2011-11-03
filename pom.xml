@@ -47,7 +47,7 @@
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.1.13</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
-    <maven-bundle-version>2.3.5</maven-bundle-version>
+    <maven-bundle-version>2.3.4</maven-bundle-version>
 
     <openjpa-version>2.1.1</openjpa-version>
   </properties>
