@@ -40,12 +40,14 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
 
     protected final String startToken;
     protected final String endToken;
+    protected final boolean includeTokens;
 
-    public TokenPairExpressionIterator(String startToken, String endToken) {
-        this.startToken = startToken;
-        this.endToken = endToken;
+    public TokenPairExpressionIterator(String startToken, String endToken, boolean includeTokens) {
         ObjectHelper.notEmpty(startToken, "startToken");
         ObjectHelper.notEmpty(endToken, "endToken");
+        this.startToken = startToken;
+        this.endToken = endToken;
+        this.includeTokens = includeTokens;
     }
 
     @Override
@@ -69,7 +71,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
      * @return the iterator
      */
     protected Iterator createIterator(InputStream in, String charset) {
-        TokenPairIterator iterator = new TokenPairIterator(startToken, endToken, in, charset);
+        TokenPairIterator iterator = new TokenPairIterator(startToken, endToken, includeTokens, in, charset);
         iterator.init();
         return iterator;
     }
@@ -85,22 +87,43 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     static class TokenPairIterator implements Iterator, Closeable {
 
         final String startToken;
+        String scanStartToken;
         final String endToken;
+        String scanEndToken;
+        final boolean includeTokens;
         final InputStream in;
         final String charset;
         Scanner scanner;
         Object image;
 
-        TokenPairIterator(String startToken, String endToken, InputStream in, String charset) {
+        TokenPairIterator(String startToken, String endToken, boolean includeTokens, InputStream in, String charset) {
             this.startToken = startToken;
             this.endToken = endToken;
+            this.includeTokens = includeTokens;
             this.in = in;
             this.charset = charset;
+
+            // make sure [ and ] is escaped as we use scanner which is reg exp based
+            // where [ and ] have special meaning
+            scanStartToken = startToken;
+            if (scanStartToken.startsWith("[")) {
+                scanStartToken = "\\" + scanStartToken;
+            }
+            if (scanStartToken.endsWith("]")) {
+                scanStartToken = scanStartToken.substring(0, startToken.length() - 1)  + "\\]";
+            }
+            scanEndToken = endToken;
+            if (scanEndToken.startsWith("[")) {
+                scanEndToken = "\\" + scanEndToken;
+            }
+            if (scanEndToken.endsWith("]")) {
+                scanEndToken = scanEndToken.substring(0, scanEndToken.length() - 1)  + "\\]";
+            }
         }
 
         void init() {
             // use end token as delimiter
-            this.scanner = new Scanner(in, charset).useDelimiter(endToken);
+            this.scanner = new Scanner(in, charset).useDelimiter(scanEndToken);
             // this iterator will do look ahead as we may have data
             // after the last end token, which the scanner would find
             // so we need to be one step ahead of the scanner
@@ -141,7 +164,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
                 next = ObjectHelper.after(next, startToken);
 
                 // include tokens in answer
-                if (next != null) {
+                if (next != null && includeTokens) {
                     StringBuilder sb = new StringBuilder();
                     next = sb.append(startToken).append(next).append(endToken).toString();
                 }

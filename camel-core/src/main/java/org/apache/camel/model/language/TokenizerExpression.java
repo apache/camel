@@ -47,6 +47,8 @@ public class TokenizerExpression extends ExpressionDefinition {
     private Boolean regex;
     @XmlAttribute
     private Boolean xml;
+    @XmlAttribute
+    private Boolean includeTokens;
 
     public TokenizerExpression() {
     }
@@ -104,6 +106,14 @@ public class TokenizerExpression extends ExpressionDefinition {
         this.xml = xml;
     }
 
+    public Boolean getIncludeTokens() {
+        return includeTokens;
+    }
+
+    public void setIncludeTokens(Boolean includeTokens) {
+        this.includeTokens = includeTokens;
+    }
+
     @Override
     public Expression createExpression(CamelContext camelContext) {
         TokenizeLanguage language = new TokenizeLanguage();
@@ -116,6 +126,9 @@ public class TokenizerExpression extends ExpressionDefinition {
         }
         if (xml != null) {
             language.setXml(xml);
+        }
+        if (includeTokens != null) {
+            language.setIncludeTokens(includeTokens);
         }
         return language.createExpression();
     }

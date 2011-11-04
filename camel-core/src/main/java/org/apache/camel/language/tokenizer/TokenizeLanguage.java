@@ -45,6 +45,7 @@ public class TokenizeLanguage implements Language, IsSingleton {
     private String headerName;
     private boolean regex;
     private boolean xml;
+    private boolean includeTokens;
 
     public static Expression tokenize(String token) {
         return tokenize(token, false);
@@ -69,10 +70,11 @@ public class TokenizeLanguage implements Language, IsSingleton {
         return language.createExpression(null);
     }
 
-    public static Expression tokenizePair(String startToken, String endToken) {
+    public static Expression tokenizePair(String startToken, String endToken, boolean includeTokens) {
         TokenizeLanguage language = new TokenizeLanguage();
         language.setToken(startToken);
         language.setEndToken(endToken);
+        language.setIncludeTokens(includeTokens);
         return language.createExpression(null);
     }
 
@@ -81,6 +83,7 @@ public class TokenizeLanguage implements Language, IsSingleton {
         language.setToken(tagName);
         language.setInheritNamespaceTagName(inheritNamespaceTagName);
         language.setXml(true);
+        language.setIncludeTokens(true);
         return language.createExpression(null);
     }
 
@@ -97,7 +100,7 @@ public class TokenizeLanguage implements Language, IsSingleton {
         if (isXml()) {
             return ExpressionBuilder.tokenizeXMLExpression(token, inheritNamespaceTagName);
         } else if (endToken != null) {
-            return ExpressionBuilder.tokenizePairExpression(token, endToken);
+            return ExpressionBuilder.tokenizePairExpression(token, endToken, includeTokens);
         }
 
         // use the regular tokenizer
@@ -162,6 +165,14 @@ public class TokenizeLanguage implements Language, IsSingleton {
 
     public void setXml(boolean xml) {
         this.xml = xml;
+    }
+
+    public boolean isIncludeTokens() {
+        return includeTokens;
+    }
+
+    public void setIncludeTokens(boolean includeTokens) {
+        this.includeTokens = includeTokens;
     }
 
     public boolean isSingleton() {

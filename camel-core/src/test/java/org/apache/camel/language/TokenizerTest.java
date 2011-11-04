@@ -99,6 +99,42 @@ public class TokenizerTest extends ExchangeTestSupport {
         assertEquals(false, lan.isSingleton());
     }
 
+    public void testTokenizePairSpecial() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizePair("!", "@", false);
+
+        exchange.getIn().setBody("2011-11-11\n!James@!Claus@\n2 records");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(2, names.size());
+
+        assertEquals("James", names.get(0));
+        assertEquals("Claus", names.get(1));
+    }
+
+    public void testTokenizePair() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizePair("[START]", "[END]", false);
+
+        exchange.getIn().setBody("2011-11-11\n[START]James[END]\n[START]Claus[END]\n2 records");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(2, names.size());
+
+        assertEquals("James", names.get(0));
+        assertEquals("Claus", names.get(1));
+    }
+
+    public void testTokenizePairIncludeTokens() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizePair("[START]", "[END]", true);
+
+        exchange.getIn().setBody("2011-11-11\n[START]James[END]\n[START]Claus[END]\n2 records");
+
+        List names = exp.evaluate(exchange, List.class);
+        assertEquals(2, names.size());
+
+        assertEquals("[START]James[END]", names.get(0));
+        assertEquals("[START]Claus[END]", names.get(1));
+    }
+
     public void testTokenizeXMLPair() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>",  null);
 

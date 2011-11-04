@@ -44,7 +44,7 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
     protected final String inheritNamespaceToken;
 
     public TokenXMLPairExpressionIterator(String startToken, String endToken, String inheritNamespaceToken) {
-        super(startToken, endToken);
+        super(startToken, endToken, true);
         // namespace token is optional
         this.inheritNamespaceToken = inheritNamespaceToken;
 
@@ -79,7 +79,7 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
         private String rootTokenNamespaces;
 
         XMLTokenPairIterator(String startToken, String endToken, String inheritNamespaceToken, InputStream in, String charset) {
-            super(startToken, endToken, in, charset);
+            super(startToken, endToken, true, in, charset);
 
             // remove any ending > as we need to support attributes on the tags, so we need to use a reg exp pattern
             String token = startToken.substring(0, startToken.length() - 1) + SCAN_TOKEN_REGEX;

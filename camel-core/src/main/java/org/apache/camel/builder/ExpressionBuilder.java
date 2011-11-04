@@ -1028,8 +1028,8 @@ public final class ExpressionBuilder {
     /**
      * Returns an {@link TokenPairExpressionIterator} expression
      */
-    public static Expression tokenizePairExpression(String startToken, String endToken) {
-        return new TokenPairExpressionIterator(startToken, endToken);
+    public static Expression tokenizePairExpression(String startToken, String endToken, boolean includeTokens) {
+        return new TokenPairExpressionIterator(startToken, endToken, includeTokens);
     }
 
     /**
