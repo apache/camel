@@ -28,7 +28,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * <code>DigitalSignatureComponent</code>
  */
-@SuppressWarnings("unchecked")
 public class DigitalSignatureComponent extends DefaultComponent {
 
     private DigitalSignatureConfiguration configuration;
@@ -40,10 +39,11 @@ public class DigitalSignatureComponent extends DefaultComponent {
         super(context);
     }
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "CamelContext");
 
         DigitalSignatureConfiguration config = getConfiguration().copy();
+
         setProperties(config, parameters);
         config.setCamelContext(getCamelContext());
         try {

@@ -17,73 +17,77 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-parent</artifactId>
-        <version>2.9-SNAPSHOT</version>
-        <relativePath>../../parent</relativePath>
-    </parent>
+	<parent>
+		<groupId>org.apache.camel</groupId>
+		<artifactId>camel-parent</artifactId>
+		<version>2.9-SNAPSHOT</version>
+		<relativePath>../../parent</relativePath>
+	</parent>
 
-    <artifactId>camel-crypto</artifactId>
-    <packaging>bundle</packaging>
-    <name>Camel :: Crypto</name>
-    <description>Camel Cryptographic Support</description>
+	<artifactId>camel-crypto</artifactId>
+	<packaging>bundle</packaging>
+	<name>Camel :: Crypto</name>
+	<description>Camel Cryptographic Support</description>
 
-    <properties>
-        <camel.osgi.export.pkg>
-            org.apache.camel.component.crypto.*;${camel.osgi.version},
-            org.apache.camel.converter.crypto.*
-        </camel.osgi.export.pkg>
-        <camel.osgi.import.pkg>
-            !org.apache.camel.component.crypto.*,
-            !org.apache.camel.converter.crypto.*,
-            ${camel.osgi.import.defaults},
-            *
-        </camel.osgi.import.pkg>    
-    </properties>
+	<properties>
+		<camel.osgi.export.pkg>
+			org.apache.camel.component.crypto.*;${camel.osgi.version},
+			org.apache.camel.converter.crypto.*
+		</camel.osgi.export.pkg>
+		<camel.osgi.import.pkg>
+			!org.apache.camel.component.crypto.*,
+			!org.apache.camel.converter.crypto.*,
+			${camel.osgi.import.defaults},
+			*
+		</camel.osgi.import.pkg>
+	</properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>${commons-codec}</version>
-        </dependency>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commons-codec}</version>
+		</dependency>
+ 		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpg-jdk16</artifactId>
+			<version>${bouncycastle-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk16</artifactId>
+			<version>${bouncycastle-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io-version}</version>
+		</dependency> 
 
-        <!-- for testing -->
-        <dependency>
-            <groupId>bouncycastle</groupId>
-            <artifactId>bcprov-jdk15</artifactId>
-            <version>${bouncycastle-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-log4j12</artifactId>
-          <scope>test</scope>
-        </dependency>
+		<!-- for testing -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
+		</dependency>
 
-    </dependencies>
+	</dependencies>
 
 </project>
 

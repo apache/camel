@@ -75,6 +75,7 @@
   <feature name='camel-crypto' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:commons-codec/commons-codec/${commons-codec}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcpg-jdk16/${bcpg-jdk16-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-crypto/${pom.version}</bundle>
   </feature>
   <feature name='camel-http' version='${pom.version}' resolver='(obr)' start-level='50'>
