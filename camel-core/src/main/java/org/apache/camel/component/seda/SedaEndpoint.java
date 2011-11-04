@@ -32,6 +32,9 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.WaitForTaskToComplete;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -42,6 +45,7 @@ import org.apache.camel.util.ServiceHelper;
  * href="http://camel.apache.org/queue.html">Queue components</a> for
  * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  */
+@ManagedResource(description = "Managed SedaEndpoint")
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
     private volatile BlockingQueue<Exchange> queue;
     private int size;
@@ -133,6 +137,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.size = queue.remainingCapacity();
     }
 
+    @ManagedAttribute(description = "Queue max capacity")
     public int getSize() {
         return size;
     }
@@ -141,10 +146,16 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.size = size;
     }
 
+    @ManagedAttribute(description = "Current queue size")
+    public int getCurrentQueueSize() {
+        return queue.size();
+    }
+
     public void setBlockWhenFull(boolean blockWhenFull) {
         this.blockWhenFull = blockWhenFull;
     }
 
+    @ManagedAttribute(description = "Whether the caller will block sending to a full queue")
     public boolean isBlockWhenFull() {
         return blockWhenFull;
     }
@@ -153,10 +164,12 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.concurrentConsumers = concurrentConsumers;
     }
 
+    @ManagedAttribute(description = "Number of concurrent consumers")
     public int getConcurrentConsumers() {
         return concurrentConsumers;
     }
 
+    @ManagedAttribute
     public WaitForTaskToComplete getWaitForTaskToComplete() {
         return waitForTaskToComplete;
     }
@@ -165,6 +178,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.waitForTaskToComplete = waitForTaskToComplete;
     }
 
+    @ManagedAttribute
     public long getTimeout() {
         return timeout;
     }
@@ -173,6 +187,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.timeout = timeout;
     }
 
+    @ManagedAttribute
     public boolean isMultipleConsumers() {
         return multipleConsumers;
     }
@@ -192,8 +207,17 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return new ArrayList<Exchange>(getQueue());
     }
 
+    @ManagedAttribute
     public boolean isMultipleConsumersSupported() {
         return isMultipleConsumers();
+    }
+
+    /**
+     * Purges the queue
+     */
+    @ManagedOperation(description = "Purges the seda queue")
+    public void purgeQueue() {
+        queue.clear();
     }
 
     /**
