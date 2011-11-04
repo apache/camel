@@ -83,7 +83,7 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
                             watch.restart();
                         }
                     })
-                    .split().tokenizeXML("<order>", "</order>").streaming()
+                    .split().tokenizeXML("order").streaming()
                         .choice()
                             .when().xpath("/order/amount < 10")
                                 .process(new Processor() {
