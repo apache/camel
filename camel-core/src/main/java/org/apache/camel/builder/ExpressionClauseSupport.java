@@ -475,12 +475,14 @@ public class ExpressionClauseSupport<T> {
      *
      * @param startToken the start token
      * @param endToken   the end token
+     * @param includeTokens whether to include tokens
      * @return the builder to continue processing the DSL
      */
-    public T tokenizePair(String startToken, String endToken) {
+    public T tokenizePair(String startToken, String endToken, boolean includeTokens) {
         TokenizerExpression expression = new TokenizerExpression();
         expression.setToken(startToken);
         expression.setEndToken(endToken);
+        expression.setIncludeTokens(includeTokens);
         setExpressionType(expression);
         return result;
     }

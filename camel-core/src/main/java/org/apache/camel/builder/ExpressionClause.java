@@ -424,14 +424,28 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
-     * Evaluates a token pair expression on the message body
+     * Evaluates a token pair expression on the message body.
+     * <p/>
+     * Tokens is not included.
      *
      * @param startToken the start token
      * @param endToken   the end token
      * @return the builder to continue processing the DSL
      */
     public T tokenizePair(String startToken, String endToken) {
-        return delegate.tokenizePair(startToken, endToken);
+        return tokenizePair(startToken, endToken, false);
+    }
+
+    /**
+     * Evaluates a token pair expression on the message body
+     *
+     * @param startToken the start token
+     * @param endToken   the end token
+     * @param includeTokens whether to include tokens
+     * @return the builder to continue processing the DSL
+     */
+    public T tokenizePair(String startToken, String endToken, boolean includeTokens) {
+        return delegate.tokenizePair(startToken, endToken, includeTokens);
     }
 
     /**

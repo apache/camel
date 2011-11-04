@@ -89,11 +89,11 @@ public class SplitTokenizerTest extends ContextTestSupport {
                         .to("mock:split");
 
                 from("direct:d")
-                    .split().tokenizePair("[", "]")
+                    .split().tokenizePair("[", "]", true)
                         .to("mock:split");
 
                 from("direct:e")
-                    .split().tokenizePair("<person>", "</person>")
+                    .split().tokenizeXML("person")
                         .to("mock:split");
             }
         };
