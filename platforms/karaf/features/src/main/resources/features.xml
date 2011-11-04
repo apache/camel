@@ -418,8 +418,7 @@
     <bundle>mvn:org.apache.camel/camel-lucene/${pom.version}</bundle>
   </feature>
   <feature name='camel-mail' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency="true">mvn:org.springframework/spring-context/${spring-version}</bundle>
-    <bundle dependency="true">mvn:org.springframework/spring-context-support/${spring-version}</bundle>
+    <feature version="[3,4)">spring</feature>
     <bundle dependency="true">mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mail/${pom.version}</bundle>
