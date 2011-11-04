@@ -195,13 +195,13 @@ public class QuickfixjEngine {
         if (acceptor != null) {
             acceptor.start();
             if (jmxExporter != null) {
-                jmxExporter.export(acceptor);
+                jmxExporter.register(acceptor);
             }
         }
         if (initiator != null) {
             initiator.start();
             if (jmxExporter != null) {
-                jmxExporter.export(initiator);
+                jmxExporter.register(initiator);
             }
         }
         started = true;
