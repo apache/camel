@@ -79,7 +79,7 @@
     <geronimo-servlet-spec-version>1.1.1</geronimo-servlet-spec-version>
     <groovy-version>1.8.2</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
-    <h2-version>1.2.144</h2-version>
+    <h2-version>1.3.161</h2-version>
     <hadoop-version>0.20.203.0</hadoop-version>
     <hamcrest-version>1.1</hamcrest-version>
     <hawtbuf-version>1.6</hawtbuf-version>
