@@ -50,6 +50,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private boolean useFixedDelay = true;
     private PollingConsumerPollStrategy pollStrategy = new DefaultPollingConsumerPollStrategy();
     private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
+    private volatile boolean polling;
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -128,13 +129,20 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                         LOG.debug("Retrying attempt {} to poll: {}", retryCounter, this.getEndpoint());
                     }
 
-                    boolean begin = pollStrategy.begin(this, getEndpoint());
-                    if (begin) {
-                        retryCounter++;
-                        int polledMessages = poll();
-                        pollStrategy.commit(this, getEndpoint(), polledMessages);
-                    } else {
-                        LOG.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
+                    // mark we are polling which should also include the begin/poll/commit
+                    polling = true;
+                    try {
+                        boolean begin = pollStrategy.begin(this, getEndpoint());
+                        if (begin) {
+                            retryCounter++;
+                            int polledMessages = poll();
+
+                            pollStrategy.commit(this, getEndpoint(), polledMessages);
+                        } else {
+                            LOG.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
+                        }
+                    } finally {
+                        polling = false;
                     }
                 }
 
@@ -169,6 +177,13 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     protected boolean isPollAllowed() {
         return isRunAllowed() && !isSuspended();
+    }
+
+    /**
+     * Whether polling is currently in progress
+     */
+    protected boolean isPolling() {
+        return polling;
     }
 
     public long getInitialDelay() {
