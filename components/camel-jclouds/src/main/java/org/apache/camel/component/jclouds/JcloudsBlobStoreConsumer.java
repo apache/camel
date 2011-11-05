@@ -141,12 +141,24 @@ public class JcloudsBlobStoreConsumer extends JcloudsConsumer implements BatchCo
     }
 
     public int getPendingExchangesSize() {
+        int answer;
         // only return the real pending size in case we are configured to complete all tasks
         if (ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask) {
-            return pendingExchanges;
+            answer = pendingExchanges;
         } else {
-            return 0;
+            answer = 0;
         }
+
+        if (answer == 0 && isPolling()) {
+            // force at least one pending exchange if we are polling as there is a little gap
+            // in the processBatch method and until an exchange gets enlisted as in-flight
+            // which happens later, so we need to signal back to the shutdown strategy that
+            // there is a pending exchange. When we are no longer polling, then we will return 0
+            log.trace("Currently polling so returning 1 as pending exchanges");
+            answer = 1;
+        }
+
+        return answer;
     }
 
     @Override
