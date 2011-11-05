@@ -39,15 +39,6 @@
     <camel.osgi.export.pkg>org.apache.camel.component.file.remote.*</camel.osgi.export.pkg>
   </properties>
 
-  <!-- needed for jsch -->
-  <repositories>
-	<repository>
-      <id>servicemix</id>
-	  <name>Apache ServiceMix Repository</name>
-	  <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-	</repository>
-  </repositories>
-
   <dependencies>
 
     <dependency>
@@ -110,9 +101,9 @@
       </dependency>
       <!-- needed for sftp server -->
       <dependency>
-          <groupId>bouncycastle</groupId>
-          <artifactId>bcprov-jdk15</artifactId>
-          <version>${bouncycastle-version}</version>
+          <groupId>org.apache.servicemix.bundles</groupId>
+          <artifactId>org.apache.servicemix.bundles.bcpg-jdk16</artifactId>
+          <version>1.46_1</version>
           <scope>test</scope>
       </dependency>
 
