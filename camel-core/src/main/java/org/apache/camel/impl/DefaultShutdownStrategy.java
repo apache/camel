@@ -124,7 +124,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
 
         // use another thread to perform the shutdowns so we can support timeout
-        Future future = getExecutorService().submit(new ShutdownTask(context, routesOrdered, suspendOnly, abortAfterTimeout));
+        Future future = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout));
         try {
             if (timeout > 0) {
                 future.get(timeout, timeUnit);
@@ -239,7 +239,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
      *
      * @param consumer the consumer to shutdown
      */
-    protected void shutdownNow(Consumer consumer) {
+    protected static void shutdownNow(Consumer consumer) {
         LOG.trace("Shutting down: {}", consumer);
 
         // allow us to do custom work before delegating to service helper
@@ -259,7 +259,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
      *
      * @param consumer the consumer to suspend
      */
-    protected void suspendNow(Consumer consumer) {
+    protected static void suspendNow(Consumer consumer) {
         LOG.trace("Suspending: {}", consumer);
 
         // allow us to do custom work before delegating to service helper
@@ -300,7 +300,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
     }
 
-    class ShutdownDeferredConsumer {
+    static class ShutdownDeferredConsumer {
         private final Route route;
         private final Consumer consumer;
 
@@ -321,18 +321,23 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     /**
      * Shutdown task which shutdown all the routes in a graceful manner.
      */
-    class ShutdownTask implements Runnable {
+    static class ShutdownTask implements Runnable {
 
         private final CamelContext context;
         private final List<RouteStartupOrder> routes;
         private final boolean suspendOnly;
         private final boolean abortAfterTimeout;
+        private final long timeout;
+        private final TimeUnit timeUnit;
 
-        public ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, boolean suspendOnly, boolean abortAfterTimeout) {
+        public ShutdownTask(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
+                            boolean suspendOnly, boolean abortAfterTimeout) {
             this.context = context;
             this.routes = routes;
             this.suspendOnly = suspendOnly;
             this.abortAfterTimeout = abortAfterTimeout;
+            this.timeout = timeout;
+            this.timeUnit = timeUnit;
         }
 
         public void run() {
@@ -424,7 +429,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 if (size > 0) {
                     try {
                         LOG.info("Waiting as there are still " + size + " inflight and pending exchanges to complete, timeout in "
-                                 + (TimeUnit.SECONDS.convert(getTimeout(), getTimeUnit()) - (loopCount++ * loopDelaySeconds)) + " seconds.");
+                                 + (TimeUnit.SECONDS.convert(timeout, timeUnit) - (loopCount++ * loopDelaySeconds)) + " seconds.");
                         Thread.sleep(loopDelaySeconds * 1000);
                     } catch (InterruptedException e) {
                         if (abortAfterTimeout) {
