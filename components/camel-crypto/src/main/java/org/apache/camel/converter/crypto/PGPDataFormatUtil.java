@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.security.NoSuchProviderException;
 import java.util.Iterator;
 
+import org.apache.camel.util.IOHelper;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -33,42 +34,40 @@ import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.PGPUtil;
 
 public final class PGPDataFormatUtil {
-    
+
     private PGPDataFormatUtil() {
-        
     }
-    
+
     public static PGPPublicKey findPublicKey(String filename, String userid) throws IOException, PGPException,
-        NoSuchProviderException {
+            NoSuchProviderException {
         FileInputStream fis = new FileInputStream(filename);
         PGPPublicKey privKey;
         try {
             privKey = findPublicKey(fis, userid);
         } finally {
-            fis.close();
+            IOHelper.close(fis);
         }
         return privKey;
     }
 
+    @SuppressWarnings("unchecked")
     public static PGPPublicKey findPublicKey(InputStream input, String userid) throws IOException, PGPException,
-        NoSuchProviderException {
+            NoSuchProviderException {
         PGPPublicKeyRingCollection pgpSec = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(input));
 
-        @SuppressWarnings("unchecked")
-        Iterator<PGPPublicKeyRing> keyRingIter = (Iterator<PGPPublicKeyRing>)pgpSec.getKeyRings();
+        Iterator<PGPPublicKeyRing> keyRingIter = (Iterator<PGPPublicKeyRing>) pgpSec.getKeyRings();
         while (keyRingIter.hasNext()) {
             PGPPublicKeyRing keyRing = keyRingIter.next();
 
-            @SuppressWarnings("unchecked")
-            Iterator<PGPPublicKey> keyIter = (Iterator<PGPPublicKey>)keyRing.getPublicKeys();
+            Iterator<PGPPublicKey> keyIter = (Iterator<PGPPublicKey>) keyRing.getPublicKeys();
+            String keyUserId = null;
             while (keyIter.hasNext()) {
-                PGPPublicKey key = (PGPPublicKey)keyIter.next();
-                for (@SuppressWarnings("unchecked")
-                Iterator<String> iterator = (Iterator<String>)key.getUserIDs(); iterator.hasNext();) {
-                    String userId = iterator.next();
-                    if (key.isEncryptionKey() && userId.contains(userid)) {
-                        return key;
-                    }
+                PGPPublicKey key = keyIter.next();
+                for (Iterator<String> iterator = (Iterator<String>) key.getUserIDs(); iterator.hasNext();) {
+                    keyUserId = iterator.next();
+                }
+                if (key.isEncryptionKey() && keyUserId != null && keyUserId.contains(userid)) {
+                    return key;
                 }
             }
         }
@@ -76,33 +75,31 @@ public final class PGPDataFormatUtil {
         return null;
     }
 
-    public static PGPPrivateKey findPrivateKey(String filename, String userid, String passphrase)
-        throws IOException, PGPException, NoSuchProviderException {
+    public static PGPPrivateKey findPrivateKey(String filename, String userid, String passphrase) throws IOException,
+            PGPException, NoSuchProviderException {
         FileInputStream fis = new FileInputStream(filename);
         PGPPrivateKey privKey;
         try {
             privKey = findPrivateKey(fis, userid, passphrase);
         } finally {
-            fis.close();
+            IOHelper.close(fis);
         }
         return privKey;
     }
 
-    public static PGPPrivateKey findPrivateKey(InputStream input, String userid, String passphrase)
-        throws IOException, PGPException, NoSuchProviderException {
+    @SuppressWarnings("unchecked")
+    public static PGPPrivateKey findPrivateKey(InputStream input, String userid, String passphrase) throws IOException,
+            PGPException, NoSuchProviderException {
         PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(input));
 
-        @SuppressWarnings("unchecked")
-        Iterator<PGPSecretKeyRing> keyRingIter = (Iterator<PGPSecretKeyRing>)pgpSec.getKeyRings();
+        Iterator<PGPSecretKeyRing> keyRingIter = (Iterator<PGPSecretKeyRing>) pgpSec.getKeyRings();
         while (keyRingIter.hasNext()) {
             PGPSecretKeyRing keyRing = keyRingIter.next();
 
-            @SuppressWarnings("unchecked")
-            Iterator<PGPSecretKey> keyIter = (Iterator<PGPSecretKey>)keyRing.getSecretKeys();
+            Iterator<PGPSecretKey> keyIter = (Iterator<PGPSecretKey>) keyRing.getSecretKeys();
             while (keyIter.hasNext()) {
-                PGPSecretKey key = (PGPSecretKey)keyIter.next();
-                for (@SuppressWarnings("unchecked")
-                Iterator<String> iterator = (Iterator<String>)key.getUserIDs(); iterator.hasNext();) {
+                PGPSecretKey key = keyIter.next();
+                for (Iterator<String> iterator = (Iterator<String>) key.getUserIDs(); iterator.hasNext();) {
                     String userId = iterator.next();
                     if (key.isSigningKey() && userId.contains(userid)) {
                         return key.extractPrivateKey(passphrase.toCharArray(), "BC");

@@ -22,13 +22,12 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.bouncycastle.openpgp.PGPPrivateKey;
-import org.bouncycastle.openpgp.PGPPublicKey;  
+import org.bouncycastle.openpgp.PGPPublicKey;
 import org.junit.Test;
 
 public class PGPDataFormatTest extends CamelTestSupport {
@@ -60,8 +59,7 @@ public class PGPDataFormatTest extends CamelTestSupport {
         assertMocksSatisfied(encrypted, unencrypted, payload);
     }
 
-    private void assertMocksSatisfied(MockEndpoint encrypted, MockEndpoint unencrypted, String payload)
-        throws InterruptedException, InvalidPayloadException {
+    private void assertMocksSatisfied(MockEndpoint encrypted, MockEndpoint unencrypted, String payload) throws Exception {
         awaitAndAssert(unencrypted);
         awaitAndAssert(encrypted);
         for (Exchange e : unencrypted.getReceivedExchanges()) {
@@ -73,26 +71,36 @@ public class PGPDataFormatTest extends CamelTestSupport {
         }
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                PGPDataFormat cryptoFormat = new PGPDataFormat();
+                // START SNIPPET: pgp-format
+                PGPDataFormat pgpDataFormat = new PGPDataFormat();
                 PGPPublicKey pKey = PGPDataFormatUtil.findPublicKey(keyFileName, keyUserid);
                 PGPPrivateKey sKey = PGPDataFormatUtil.findPrivateKey(keyFileNameSec, keyUserid, keyPassword);
-                cryptoFormat.setPublicKey(pKey);
-                cryptoFormat.setPrivateKey(sKey);
+                pgpDataFormat.setPublicKey(pKey);
+                pgpDataFormat.setPrivateKey(sKey);
 
-                from("direct:inline").marshal(cryptoFormat).to("mock:encrypted").unmarshal(cryptoFormat)
+                from("direct:inline")
+                    .marshal(pgpDataFormat)
+                    .to("mock:encrypted")
+                    .unmarshal(pgpDataFormat)
                     .to("mock:unencrypted");
+                // END SNIPPET: pgp-format
 
-                PGPDataFormat cryptoFormatNoKey = new PGPDataFormat();
-                cryptoFormat.setPublicKey(pKey);
-                cryptoFormat.setPrivateKey(sKey);
+                // START SNIPPET: pgp-format-header
+                PGPDataFormat pgpDataFormatNoKey = new PGPDataFormat();
+                pgpDataFormat.setPublicKey(pKey);
+                pgpDataFormat.setPrivateKey(sKey);
 
-                from("direct:inlineHeaders").setHeader(PGPDataFormat.KEY_PUB).constant(pKey)
-                    .setHeader(PGPDataFormat.KEY_PRI).constant(sKey).marshal(cryptoFormatNoKey)
-                    .to("mock:encrypted").unmarshal(cryptoFormatNoKey).to("mock:unencrypted");
+                from("direct:inlineHeaders")
+                    .setHeader(PGPDataFormat.KEY_PUB).constant(pKey)
+                    .setHeader(PGPDataFormat.KEY_PRI).constant(sKey)
+                    .marshal(pgpDataFormatNoKey)
+                    .to("mock:encrypted")
+                    .unmarshal(pgpDataFormatNoKey)
+                    .to("mock:unencrypted");
+                // END SNIPPET: pgp-format-header
             }
         };
     }
