@@ -17,6 +17,7 @@
 package org.apache.camel.component.jclouds;
 
 import java.util.Set;
+import com.google.common.base.Predicate;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.jclouds.compute.ComputeService;
@@ -26,9 +27,12 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.domain.Credentials;
+
 
 public class JcloudsComputeProducer extends JcloudsProducer {
 
@@ -148,11 +152,8 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      * @throws CamelException
      */
     protected void destroyNode(Exchange exchange) throws CamelException {
-        String nodeId = getNodeId(exchange);
-        if (nodeId == null) {
-            throw new CamelException("Node id must be specific in the URI or as exchange property for the destroy node operation.");
-        }
-        computeService.destroyNode(nodeId);
+        Predicate<NodeMetadata> predicate = getNodePredicate(exchange);
+        computeService.destroyNodesMatching(predicate);
     }
 
     /**
@@ -162,7 +163,8 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      * @throws CamelException
      */
     protected void listNodes(Exchange exchange) throws CamelException {
-        Set<? extends ComputeMetadata> computeMetadatas = computeService.listNodes();
+        Predicate<ComputeMetadata> predicate = getComputePredicate(exchange);
+        Set<? extends ComputeMetadata> computeMetadatas = computeService.listNodesDetailsMatching(predicate);
         exchange.getOut().setBody(computeMetadatas);
     }
 
@@ -188,6 +190,73 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         exchange.getOut().setBody(hardwareProfiles);
     }
 
+
+    /**
+     * Returns the required {@ComputeMetadata} {@link Predicate} for the Exhcnage.
+     * The predicate can be used for filtering.
+     *
+     * @param exchange
+     * @return
+     */
+    public Predicate<ComputeMetadata> getComputePredicate(final Exchange exchange) {
+        final String nodeId = getNodeId(exchange);
+        final String imageId = getImageId(exchange);
+        final String group = getGroup(exchange);
+        final NodeState queryState = getNodeState(exchange);
+
+        Predicate<ComputeMetadata> predicate = new Predicate<ComputeMetadata>() {
+            public boolean apply(ComputeMetadata metadata) {
+                if (nodeId != null && !nodeId.equals(metadata.getId())) {
+                    return false;
+                }
+
+                //If NodeMetadata also delegate to Node predicate.
+                if (metadata instanceof NodeMetadataImpl) {
+                    Predicate<NodeMetadata> nodeMetadataPredicate = getNodePredicate(exchange);
+                    if (!nodeMetadataPredicate.apply((NodeMetadataImpl) metadata)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        };
+
+        return predicate;
+    }
+
+    /**
+     * Returns the required {@ComputeMetadata} {@link Predicate} for the Exhcnage.
+     * The predicate can be used for filtering.
+     *
+     * @param exchange
+     * @return
+     */
+    public Predicate<NodeMetadata> getNodePredicate(Exchange exchange) {
+        final String nodeId = getNodeId(exchange);
+        final String imageId = getImageId(exchange);
+        final String group = getGroup(exchange);
+        final NodeState queryState = getNodeState(exchange);
+
+        Predicate<NodeMetadata> predicate = new Predicate<NodeMetadata>() {
+            public boolean apply(NodeMetadata metadata) {
+                if (nodeId != null && !nodeId.equals(metadata.getId())) {
+                    return false;
+                }
+                if (imageId != null && !imageId.equals(metadata.getImageId())) {
+                    return false;
+                }
+                if (queryState != null && !queryState.equals(metadata.getState())) {
+                    return false;
+                }
+                if (group != null && !group.equals(metadata.getGroup())) {
+                    return false;
+                }
+                return true;
+            }
+        };
+        return predicate;
+    }
+
     /**
      * Retrieves the operation from the URI or from the exchange headers. The header will take precedence over the URI.
      *
@@ -202,6 +271,33 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         }
         return operation;
     }
+
+    /**
+     * Retrieves the node state from the URI or from the exchange headers. The header will take precedence over the URI.
+     *
+     * @param exchange
+     * @return
+     */
+    public NodeState getNodeState(Exchange exchange) {
+        NodeState nodeState = null;
+        String state = ((JcloudsComputeEndpoint) getEndpoint()).getNodeState();
+        if (state != null) {
+            nodeState = NodeState.valueOf(state);
+        }
+
+        if (exchange.getIn().getHeader(JcloudsConstants.NODE_STATE) != null) {
+            Object stateHeader = exchange.getIn().getHeader(JcloudsConstants.NODE_STATE);
+            if (stateHeader == null) {
+                nodeState = null;
+            } else if (stateHeader instanceof NodeState) {
+                nodeState = (NodeState) stateHeader;
+            } else {
+                nodeState = NodeState.valueOf(String.valueOf(stateHeader));
+            }
+        }
+        return nodeState;
+    }
+
 
     /**
      * Retrieves the image id from the URI or from the exchange properties. The property will take precedence over the URI.

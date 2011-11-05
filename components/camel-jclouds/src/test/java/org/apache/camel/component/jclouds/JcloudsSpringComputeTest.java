@@ -27,7 +27,7 @@ import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.junit.BeforeClass;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -38,8 +38,9 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+    @After
+    public void tearDown() throws Exception {
+        template.sendBodyAndHeaders("direct:start", null, destroyHeaders(null, null));
     }
 
     @Override
@@ -49,7 +50,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @Test
     public void testListImages() throws InterruptedException {
-        template.sendBodyAndHeader("direct:start", "Some message", JcloudsConstants.OPERATION, JcloudsConstants.LIST_IMAGES);
+        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_IMAGES);
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
         List<Exchange> exchanges = result.getExchanges();
@@ -66,7 +67,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @Test
     public void testListHardware() throws InterruptedException {
-        template.sendBodyAndHeader("direct:start", "Some message", JcloudsConstants.OPERATION, JcloudsConstants.LIST_HARDWARE);
+        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_HARDWARE);
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
         List<Exchange> exchanges = result.getExchanges();
@@ -83,7 +84,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
     @Test
     public void testListNodes() throws InterruptedException {
-        template.sendBodyAndHeader("direct:start", "Some message", JcloudsConstants.OPERATION, JcloudsConstants.LIST_NODES);
+        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_NODES);
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
         List<Exchange> exchanges = result.getExchanges();
@@ -95,18 +96,64 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         }
     }
 
+    @Test
+    public void testCreateAndListNodes() throws InterruptedException {
+        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
+
+        template.sendBodyAndHeader("direct:start", null, JcloudsConstants.OPERATION, JcloudsConstants.LIST_NODES);
+        result.expectedMessageCount(2);
+        result.assertIsSatisfied();
+        List<Exchange> exchanges = result.getExchanges();
+        if (exchanges != null && !exchanges.isEmpty()) {
+            for (Exchange exchange : exchanges) {
+                Set nodeMetadatas = (Set) exchange.getIn().getBody();
+                assertEquals("Nodes should be 1", 1, nodeMetadatas.size());
+            }
+        }
+    }
+
+
+    @Test
+    public void testCreateAndListWithPredicates() throws InterruptedException {
+        //Create a node for the default group
+        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
+
+        //Create a node for the group 'other'
+        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "other"));
+        template.sendBodyAndHeaders("direct:start", null, createHeaders("2", "other"));
+
+        template.sendBodyAndHeaders("direct:start", null, listNodeHeaders(null, "other", null));
+        template.sendBodyAndHeaders("direct:start", null, listNodeHeaders("3", "other", null));
+        template.sendBodyAndHeaders("direct:start", null, listNodeHeaders("3", "other", "RUNNING"));
+
+        result.expectedMessageCount(6);
+        result.assertIsSatisfied();
+        List<Exchange> exchanges = result.getExchanges();
+
+        Exchange exchange = exchanges.get(3);
+        Set<NodeMetadata> nodeMetadatas = (Set<NodeMetadata>) exchange.getIn().getBody();
+        assertEquals("Nodes should be 2", 2, nodeMetadatas.size());
+        NodeMetadata nodeMetadata = nodeMetadatas.toArray(new NodeMetadata[0])[0];
+        assertEquals("other", nodeMetadata.getGroup());
+
+        exchange = exchanges.get(4);
+        nodeMetadatas = (Set<NodeMetadata>) exchange.getIn().getBody();
+        assertEquals("Nodes should be 1", 1, nodeMetadatas.size());
+        nodeMetadata = nodeMetadatas.toArray(new NodeMetadata[0])[0];
+        assertEquals("other", nodeMetadata.getGroup());
+        assertEquals("3", nodeMetadata.getId());
+
+        exchange = exchanges.get(5);
+        nodeMetadatas = (Set<NodeMetadata>) exchange.getIn().getBody();
+        assertEquals("Nodes should be 1", 1, nodeMetadatas.size());
+        nodeMetadata = nodeMetadatas.toArray(new NodeMetadata[0])[0];
+        assertEquals("other", nodeMetadata.getGroup());
+        assertEquals("3", nodeMetadata.getId());
+    }
 
     @Test
     public void testCreateAndDestroyNode() throws InterruptedException {
-        Map<String, Object> createHeaders = new HashMap<String, Object>();
-        createHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.CREATE_NODE);
-        createHeaders.put(JcloudsConstants.IMAGE_ID, "1");
-        createHeaders.put(JcloudsConstants.GROUP, "default");
-
-        Map<String, Object> destroyHeaders = new HashMap<String, Object>();
-        destroyHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.DESTROY_NODE);
-
-        template.sendBodyAndHeaders("direct:start", "Some message", createHeaders);
+        template.sendBodyAndHeaders("direct:start", null, createHeaders("1", "default"));
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
         List<Exchange> exchanges = result.getExchanges();
@@ -117,8 +164,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
 
                 for (Object obj : nodeMetadatas) {
                     NodeMetadata nodeMetadata = (NodeMetadata) obj;
-                    destroyHeaders.put(JcloudsConstants.NODE_ID, nodeMetadata.getId());
-                    template.sendBodyAndHeaders("direct:start", "Some message", destroyHeaders);
+                    template.sendBodyAndHeaders("direct:start", null, destroyHeaders(nodeMetadata.getId(), null));
                 }
             }
         }
@@ -128,24 +174,76 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
     @Ignore("For now not possible to combine stub provider with ssh module, requird for runScript")
     @Test
     public void testRunScript() throws InterruptedException {
-        Map<String, Object> createHeaders = new HashMap<String, Object>();
-        createHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.CREATE_NODE);
-        createHeaders.put(JcloudsConstants.IMAGE_ID, "1");
-        createHeaders.put(JcloudsConstants.GROUP, "default");
-
         Map<String, Object> runScriptHeaders = new HashMap<String, Object>();
         runScriptHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.RUN_SCRIPT);
 
-        Map<String, Object> destroyHeaders = new HashMap<String, Object>();
-        destroyHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.DESTROY_NODE);
-
-        Set<? extends NodeMetadata> nodeMetadatas = (Set<? extends NodeMetadata>) template.requestBodyAndHeaders("direct:in-out", "Some message", createHeaders);
+        Set<? extends NodeMetadata> nodeMetadatas = (Set<? extends NodeMetadata>) template.requestBodyAndHeaders("direct:in-out", null, createHeaders("1", "default"));
         assertEquals("There should be a node running", 1, nodeMetadatas.size());
         for (NodeMetadata nodeMetadata : nodeMetadatas) {
             runScriptHeaders.put(JcloudsConstants.NODE_ID, nodeMetadata.getId());
-            destroyHeaders.put(JcloudsConstants.NODE_ID, nodeMetadata.getId());
-            template.requestBodyAndHeaders("direct:in-out", "Some message", runScriptHeaders);
-            template.sendBodyAndHeaders("direct:in-out", "Some message", destroyHeaders);
+            template.requestBodyAndHeaders("direct:in-out", null, runScriptHeaders);
+            template.sendBodyAndHeaders("direct:in-out", null, destroyHeaders(nodeMetadata.getId(), null));
         }
+    }
+
+
+    /**
+     * Returns a {@Map} with the create headers.
+     *
+     * @param imageId The imageId to use for creating the node.
+     * @param group   The group to be assigned to the node.
+     * @return
+     */
+    protected Map<String, Object> createHeaders(String imageId, String group) {
+        Map<String, Object> createHeaders = new HashMap<String, Object>();
+        createHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.CREATE_NODE);
+        createHeaders.put(JcloudsConstants.IMAGE_ID, imageId);
+        createHeaders.put(JcloudsConstants.GROUP, group);
+        return createHeaders;
+    }
+
+
+    /**
+     * Returns a {@Map} with the destroy headers.
+     *
+     * @param nodeId The id of the node to destroy.
+     * @param group  The group of the node to destroy.
+     * @return
+     */
+    protected Map<String, Object> destroyHeaders(String nodeId, String group) {
+        Map<String, Object> destroyHeaders = new HashMap<String, Object>();
+        destroyHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.DESTROY_NODE);
+        if (nodeId != null) {
+            destroyHeaders.put(JcloudsConstants.NODE_ID, nodeId);
+        }
+        if (group != null) {
+            destroyHeaders.put(JcloudsConstants.GROUP, group);
+        }
+        return destroyHeaders;
+    }
+
+    /**
+     * Returns a {@Map} with the destroy headers.
+     *
+     * @param nodeId The id of the node to destroy.
+     * @param group  The group of the node to destroy.
+     * @return
+     */
+    protected Map<String, Object> listNodeHeaders(String nodeId, String group, Object state) {
+        Map<String, Object> listHeaders = new HashMap<String, Object>();
+        listHeaders.put(JcloudsConstants.OPERATION, JcloudsConstants.LIST_NODES);
+        if (nodeId != null) {
+            listHeaders.put(JcloudsConstants.NODE_ID, nodeId);
+        }
+
+        if (group != null) {
+            listHeaders.put(JcloudsConstants.GROUP, group);
+        }
+
+        if (state != null) {
+            listHeaders.put(JcloudsConstants.NODE_STATE, state);
+        }
+
+        return listHeaders;
     }
 }

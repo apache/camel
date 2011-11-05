@@ -23,6 +23,8 @@ public final class JcloudsConstants {
     public static final String BLOB_NAME = "CamelJcloudsBlobName";
     public static final String CONTAINER_NAME = "CamelJcloudsContainerName";
 
+    public static final String NODE_STATE = "CamelJcloudsNodeState";
+
     public static final String OPERATION = "CamelJcloudsOperation";
     public static final String PUT = "CamelJcloudsPut";
     public static final String GET = "CamelJcloudsGet";

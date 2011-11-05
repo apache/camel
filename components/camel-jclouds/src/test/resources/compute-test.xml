@@ -25,13 +25,13 @@
 
         <route>
             <from uri="direct:start"/>
-            <to uri="jclouds:compute:stub?operation=CamelJcloudsListImages"/>
+            <to uri="jclouds:compute:stub?operation=CamelJcloudsListImages&amp;nodeState=RUNNING"/>
             <to uri="mock:result"/>
         </route>
 
         <route>
             <from uri="direct:in-out"/>
-            <to uri="jclouds:compute:stub?operation=CamelJcloudsListImages"/>
+            <to uri="jclouds:compute:stub?operation=CamelJcloudsListImages&amp;nodeState=RUNNING"/>
         </route>
 
     </camelContext>

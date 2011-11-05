@@ -31,6 +31,7 @@ public class JcloudsComputeEndpoint extends JcloudsEndpoint {
     private String hardwareId;
 
     private String operation;
+    private String nodeState;
     private String nodeId;
     private String group;
     private String user;
@@ -81,6 +82,14 @@ public class JcloudsComputeEndpoint extends JcloudsEndpoint {
 
     public void setOperation(String operation) {
         this.operation = operation;
+    }
+
+    public String getNodeState() {
+        return nodeState;
+    }
+
+    public void setNodeState(String nodeState) {
+        this.nodeState = nodeState;
     }
 
     public String getNodeId() {
