@@ -52,8 +52,8 @@ public class LanguageLoadScriptFromFileUpdateTest extends ContextTestSupport {
 
                 // START SNIPPET: e1
                 from("direct:start")
-                    // disable cache so the file is re-read
-                    .to("language:simple:file:target/script/myscript.txt?contentCache=false")
+                    // the script will be loaded on each message
+                    .to("language:simple:file:target/script/myscript.txt")
                     .to("mock:result");
                 // END SNIPPET: e1
             }

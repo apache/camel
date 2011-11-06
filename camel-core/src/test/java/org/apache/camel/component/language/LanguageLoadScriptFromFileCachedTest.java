@@ -51,9 +51,12 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
                 // create script to start with
                 template.sendBodyAndHeader("file:target/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
 
+                // START SNIPPET: e1
                 from("direct:start")
+                    // use content cache to load the script once and cache it
                     .to("language:simple:file:target/script/myscript.txt?contentCache=true")
                     .to("mock:result");
+                // END SNIPPET: e1
             }
         };
     }
