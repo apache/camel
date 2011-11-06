@@ -366,7 +366,7 @@
   <feature name='camel-jibx' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jibx/${pom.version}</bundle>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jibx/${jibx-bundle-version}</bundle>
+    <bundle dependency="true">mvn:org.jibx/jibx-run/${jibx-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.joda-time/${jodatime-bundle-version}</bundle>

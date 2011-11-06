@@ -79,7 +79,7 @@
                     <plugin>
                         <groupId>org.jibx</groupId>
                         <artifactId>maven-jibx-plugin</artifactId>
-                        <version>1.2.3</version>
+                        <version>${jibx-version}</version>
                         <configuration>
                             <bindingDirectory>src/test/resources</bindingDirectory>
                             <includeSchemaBindings>
