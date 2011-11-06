@@ -24,6 +24,7 @@ import org.apache.camel.impl.DefaultUnitOfWork;
 import org.apache.camel.impl.MDCUnitOfWork;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,39 +98,70 @@ public class UnitOfWorkProcessor extends DelegateAsyncProcessor {
                 return true;
             }
 
-            // process the exchange
-            try {
-                return processor.process(exchange, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        // Order here matters. We need to complete the callbacks
-                        // since they will likely update the exchange with some final results.
-                        try {
-                            callback.done(doneSync);
-                        } finally {
-                            doneUow(uow, exchange);
-                        }
-                    }
-                });
-            } catch (Throwable e) {
-                LOG.warn("Caught unhandled exception while processing ExchangeId: " + exchange.getExchangeId(), e);
-
-                // fallback and catch any exceptions the process may not have caught
-                // we must ensure to done the UoW in all cases and issue done on the callback
-                exchange.setException(e);
-
-                // Order here matters. We need to complete the callbacks
-                // since they will likely update the exchange with some final results.
-                try {
-                    callback.done(true);
-                } finally {
-                    doneUow(uow, exchange);
-                }
-                return true;
+            Object synchronous = exchange.removeProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC);
+            if (synchronous != null) {
+                // the exchange signalled to process synchronously
+                return processSync(exchange, callback, uow);
+            } else {
+                return processAsync(exchange, callback, uow);
             }
         } else {
             // There was an existing UoW, so we should just pass through..
             // so that the guy the initiated the UoW can terminate it.
             return processor.process(exchange, callback);
+        }
+    }
+
+    protected boolean processSync(final Exchange exchange, final AsyncCallback callback, final UnitOfWork uow) {
+        LOG.trace("Exchange marked UnitOfWork to be processed synchronously: {}", exchange);
+
+        // process the exchange synchronously
+        try {
+            AsyncProcessorHelper.process(processor, exchange);
+        } catch (Throwable e) {
+            exchange.setException(e);
+        }
+
+        try {
+            callback.done(true);
+        } finally {
+            doneUow(uow, exchange);
+        }
+
+        return true;
+    }
+
+    protected boolean processAsync(final Exchange exchange, final AsyncCallback callback, final UnitOfWork uow) {
+        LOG.trace("Processing exchange asynchronously: {}", exchange);
+
+        // process the exchange asynchronously
+        try {
+            return processor.process(exchange, new AsyncCallback() {
+                public void done(boolean doneSync) {
+                    // Order here matters. We need to complete the callbacks
+                    // since they will likely update the exchange with some final results.
+                    try {
+                        callback.done(doneSync);
+                    } finally {
+                        doneUow(uow, exchange);
+                    }
+                }
+            });
+        } catch (Throwable e) {
+            LOG.warn("Caught unhandled exception while processing ExchangeId: " + exchange.getExchangeId(), e);
+
+            // fallback and catch any exceptions the process may not have caught
+            // we must ensure to done the UoW in all cases and issue done on the callback
+            exchange.setException(e);
+
+            // Order here matters. We need to complete the callbacks
+            // since they will likely update the exchange with some final results.
+            try {
+                callback.done(true);
+            } finally {
+                doneUow(uow, exchange);
+            }
+            return true;
         }
     }
 
