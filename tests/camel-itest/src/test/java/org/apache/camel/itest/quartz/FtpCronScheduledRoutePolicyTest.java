@@ -22,9 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy;
-import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
@@ -62,11 +60,6 @@ public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
                 policy.setRouteStopTime("* 1/2 * * * ?");
                 policy.setRouteStopGracePeriod(250);
                 policy.setTimeUnit(TimeUnit.SECONDS);
-
-                ThreadPoolProfile profile = new ThreadPoolProfileBuilder("foo")
-                    .poolSize(2).maxPoolSize(2).maxPoolSize(-1).build();
-
-                context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
                 from(ftp)
                     .noAutoStartup().routePolicy(policy).shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
