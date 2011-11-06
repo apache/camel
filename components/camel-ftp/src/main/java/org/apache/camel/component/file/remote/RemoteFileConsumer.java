@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import java.io.IOException;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileConsumer;
@@ -83,6 +84,14 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             log.trace("postPollCheck disconnect from: {}", getEndpoint());
             disconnect();
         }
+    }
+
+    @Override
+    protected void processExchange(Exchange exchange) {
+        // mark the exchange to be processed synchronously as the ftp client is not thread safe
+        // and we must execute the callbacks in the same thread as this consumer
+        exchange.setProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC, Boolean.TRUE);
+        super.processExchange(exchange);
     }
 
     @Override
