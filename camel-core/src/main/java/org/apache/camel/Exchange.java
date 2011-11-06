@@ -183,7 +183,8 @@ public interface Exchange {
     String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
     String TRANSFER_ENCODING     = "Transfer-Encoding";
 
-    String UNIT_OF_WORK_EXHAUSTED = "CamelUnitOfWorkExhausted";
+    String UNIT_OF_WORK_EXHAUSTED    = "CamelUnitOfWorkExhausted";
+    String UNIT_OF_WORK_PROCESS_SYNC = "CamelUnitOfWorkProcessSync";
 
     String XSLT_FILE_NAME = "CamelXsltFileName";
 
