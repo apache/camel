@@ -24,6 +24,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * The <a href="http://camel.apache.org/language-component.html">language component</a> to send
@@ -47,10 +48,17 @@ public class LanguageComponent extends DefaultComponent {
         Language language = getCamelContext().resolveLanguage(name);
 
         Expression expression = null;
-        if (ObjectHelper.isNotEmpty(script)) {
-            expression = language.createExpression(URLDecoder.decode(script, "UTF-8"));
+        String resourceUri = null;
+        if (script != null) {
+            if (ResourceHelper.hasScheme(script)) {
+                // the script is a uri for a resource
+                resourceUri = script;
+            } else {
+                // the script is provided as text in the uri, so decode to utf-8
+                expression = language.createExpression(URLDecoder.decode(script, "UTF-8"));
+            }
         }
 
-        return new LanguageEndpoint(uri, this, language, expression);
+        return new LanguageEndpoint(uri, this, language, expression, resourceUri);
     }
 }

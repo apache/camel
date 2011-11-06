@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.language;
 
+import java.io.InputStream;
+
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -38,12 +42,37 @@ public class LanguageProducer extends DefaultProducer {
         if (exp == null) {
             String script = exchange.getIn().getHeader(Exchange.LANGUAGE_SCRIPT, String.class);
             if (script != null) {
+                // the script may be a file: so resolve it before using
+                script = getEndpoint().resolveScript(script);
                 exp = getEndpoint().getLanguage().createExpression(script);
             }
         }
         // if not fallback to use expression from endpoint
         if (exp == null) {
             exp = getEndpoint().getExpression();
+        }
+
+        // fallback and use resource uri from endpoint
+        if (exp == null) {
+            if (getEndpoint().getResourceUri() != null) {
+                // load the resource
+                String script;
+                InputStream is = getEndpoint().getResourceAsInputStream();
+                try {
+                    script = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, is);
+                } finally {
+                    IOHelper.close(is);
+                }
+                // create the expression from the script
+                exp = getEndpoint().getLanguage().createExpression(script);
+                // if we cache then set this as expression on endpoint so we don't re-create it again
+                if (getEndpoint().isContentCache()) {
+                    getEndpoint().setExpression(exp);
+                }
+            } else {
+                // no script to execute
+                throw new CamelExchangeException("No script to evaluate", exchange);
+            }
         }
 
         ObjectHelper.notNull(exp, "expression");

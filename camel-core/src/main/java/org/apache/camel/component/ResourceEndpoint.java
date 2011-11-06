@@ -75,7 +75,18 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint {
     }
 
     protected InputStream getResourceAsInputStreamWithoutCache() throws IOException {
-        return ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
+        return loadResource(resourceUri);
+    }
+
+    /**
+     * Loads the given resource.
+     *
+     * @param uri uri of the resource.
+     * @return the loaded resource
+     * @throws IOException is thrown if resource is not found or cannot be loaded
+     */
+    protected InputStream loadResource(String uri) throws IOException {
+        return ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), uri);
     }
 
     public boolean isContentCache() {

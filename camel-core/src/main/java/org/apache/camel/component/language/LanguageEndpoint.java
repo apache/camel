@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.language;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import org.apache.camel.Component;
@@ -25,16 +28,18 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 
 /**
  * Language endpoint.
  *
  * @version 
  */
-public class LanguageEndpoint extends DefaultEndpoint {
+public class LanguageEndpoint extends ResourceEndpoint {
     private Language language;
     private Expression expression;
     private String languageName;
@@ -44,8 +49,8 @@ public class LanguageEndpoint extends DefaultEndpoint {
     public LanguageEndpoint() {
     }
 
-    public LanguageEndpoint(String endpointUri, Component component, Language language, Expression expression) {
-        super(endpointUri, component);
+    public LanguageEndpoint(String endpointUri, Component component, Language language, Expression expression, String resourceUri) {
+        super(endpointUri, component, resourceUri);
         this.language = language;
         this.expression = expression;
     }
@@ -59,6 +64,7 @@ public class LanguageEndpoint extends DefaultEndpoint {
 
         ObjectHelper.notNull(language, "language", this);
         if (expression == null && script != null) {
+            script = resolveScript(script);
             expression = language.createExpression(script);
         }
 
@@ -67,6 +73,26 @@ public class LanguageEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new RuntimeCamelException("Cannot consume to a LanguageEndpoint: " + getEndpointUri());
+    }
+
+    /**
+     * Resolves the script.
+     *
+     * @param script script or uri for a script to load
+     * @return the script
+     * @throws IOException is thrown if error loading the script
+     */
+    protected String resolveScript(String script) throws IOException {
+        String answer;
+        if (ResourceHelper.hasScheme(script)) {
+            InputStream is = loadResource(script);
+            answer = getCamelContext().getTypeConverter().convertTo(String.class, is);
+            IOHelper.close(is);
+        } else {
+            answer = script;
+        }
+
+        return answer;
     }
 
     public boolean isSingleton() {
@@ -90,6 +116,10 @@ public class LanguageEndpoint extends DefaultEndpoint {
 
     public Expression getExpression() {
         return expression;
+    }
+
+    public void setExpression(Expression expression) {
+        this.expression = expression;
     }
 
     public boolean isTransform() {

@@ -38,6 +38,20 @@ public final class ResourceHelper {
     }
 
     /**
+     * Determines whether the uri has a scheme (eg file:, classpath: or http:)
+     *
+     * @param uri the uri
+     * @return <tt>true</tt> if the uri starts with a scheme
+     */
+    public static boolean hasScheme(String uri) {
+        if (uri == null) {
+            return false;
+        }
+
+        return uri.startsWith("file:") || uri.startsWith("classpath:") || uri.startsWith("http:");
+    }
+
+    /**
      * Resolves the mandatory resource.
      * <p/>
      * If possible prefer to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
