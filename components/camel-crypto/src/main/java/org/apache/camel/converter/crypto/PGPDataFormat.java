@@ -17,13 +17,10 @@
 package org.apache.camel.converter.crypto;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -34,12 +31,10 @@ import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPCompressedData;
-import org.bouncycastle.openpgp.PGPCompressedDataGenerator;
 import org.bouncycastle.openpgp.PGPEncryptedData;
 import org.bouncycastle.openpgp.PGPEncryptedDataGenerator;
 import org.bouncycastle.openpgp.PGPEncryptedDataList;
 import org.bouncycastle.openpgp.PGPLiteralData;
-import org.bouncycastle.openpgp.PGPLiteralDataGenerator;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -48,22 +43,15 @@ import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.util.io.Streams;
 
 /**
- * <code>PGPDataFormat</code> uses the bouncy castle libraries to enable
- * encryption and decryption in the PGP format I have also tested decrypting the
- * files produced using GnuPG Linux command line program gpg (GnuPG) 1.4.11
- * <ul>
- *   <li>http://www.bouncycastle.org/java.html</li>
- * <ul>
- * <p/>
+ * <code>PGPDataFormat</code> uses the <a href="http://www.bouncycastle.org/java.htm">bouncy castle</a>
+ * libraries to enable encryption and decryption in the PGP format.
  */
 public class PGPDataFormat implements DataFormat {
 
-    public static final String KEY_PUB = "CamelCryptoKeyPub";
-    public static final String KEY_PRI = "CamelCryptoKeyPri";
-
-    private PGPPublicKey configuredKey;
-    private PGPPrivateKey configuredPrivateKey;
-    private boolean armor;
+    private String keyUserid;
+    private String password;
+    private String keyFileName;
+    private boolean armored;
     private boolean integrity = true;
 
     public PGPDataFormat() {
@@ -72,42 +60,22 @@ public class PGPDataFormat implements DataFormat {
         }
     }
 
-    public void setArmored(boolean armor) {
-        this.armor = armor;
-    }
-
-    public void setIntegrity(boolean integrity) {
-        this.integrity = integrity;
-    }
-
-    /**
-     * Set the key that should be used to encrypt or decrypt incoming encrypted exchanges.
-     */
-    public void setPublicKey(PGPPublicKey key) {
-        this.configuredKey = key;
-    }
-
-    public void setPrivateKey(PGPPrivateKey key) {
-        this.configuredPrivateKey = key;
-    }
-
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
-        PGPPublicKey key = getPublicKey(exchange);
+        PGPPublicKey key = PGPDataFormatUtil.findPublicKey(exchange.getContext(), this.keyFileName, this.keyUserid);
         if (key == null) {
             throw new IllegalArgumentException("Public key is null, cannot proceed");
         }
 
         InputStream plaintextStream = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, graph);
 
-        byte[] compressedData = compress(IOUtils.toByteArray(plaintextStream),
+        byte[] compressedData = PGPDataFormatUtil.compress(IOUtils.toByteArray(plaintextStream),
                 PGPLiteralData.CONSOLE, CompressionAlgorithmTags.ZIP);
 
-        if (armor) {
+        if (armored) {
             outputStream = new ArmoredOutputStream(outputStream);
         }
 
-        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(
-                PGPEncryptedData.CAST5, integrity, new SecureRandom(), "BC");
+        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(PGPEncryptedData.CAST5, integrity, new SecureRandom(), "BC");
         encGen.addMethod(key);
 
         OutputStream encOut = encGen.open(outputStream, compressedData.length);
@@ -115,9 +83,7 @@ public class PGPDataFormat implements DataFormat {
             encOut.write(compressedData);
         } finally {
             IOHelper.close(encOut);
-            if (armor) {
-                IOHelper.close(outputStream);
-            }
+            IOHelper.close(outputStream);
         }
     }
 
@@ -126,7 +92,7 @@ public class PGPDataFormat implements DataFormat {
             return null;
         }
 
-        PGPPrivateKey key = getPrivateKey(exchange);
+        PGPPrivateKey key = PGPDataFormatUtil.findPrivateKey(exchange.getContext(), keyFileName, keyUserid, password);
         if (key == null) {
             throw new IllegalArgumentException("Private key is null, cannot proceed");
         }
@@ -155,42 +121,58 @@ public class PGPDataFormat implements DataFormat {
         return Streams.readAll(ld.getInputStream());
     }
 
-    private static byte[] compress(byte[] clearData, String fileName, int algorithm) throws IOException {
-        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
-        PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(algorithm);
-        OutputStream cos = comData.open(bOut); // open it with the final destination
-
-        PGPLiteralDataGenerator lData = new PGPLiteralDataGenerator();
-
-        OutputStream pOut = lData.open(cos, // the compressed output stream
-                PGPLiteralData.BINARY, fileName, // "filename" to store
-                clearData.length, // length of clear data
-                new Date() // current time
-        );
-
-        try {
-            pOut.write(clearData);
-        } finally {
-            IOHelper.close(pOut);
-            comData.close();
-        }
-        return bOut.toByteArray();
+    /**
+     * Sets if the encrypted file should be written in ascii visible text
+     */
+    public void setArmored(boolean armored) {
+        this.armored = armored;
     }
 
-    private PGPPublicKey getPublicKey(Exchange exchange) {
-        PGPPublicKey key = exchange.getIn().getHeader(KEY_PUB, PGPPublicKey.class);
-        if (key == null) {
-            key = configuredKey;
-        }
-        return key;
+    public boolean getArmored() {
+        return this.armored;
     }
 
-    private PGPPrivateKey getPrivateKey(Exchange exchange) {
-        PGPPrivateKey key = exchange.getIn().getHeader(KEY_PRI, PGPPrivateKey.class);
-        if (key == null) {
-            key = configuredPrivateKey;
-        }
-        return key;
+    /**
+     * Whether or not to add a integrity check/sign to the encrypted file
+     */
+    public void setIntegrity(boolean integrity) {
+        this.integrity = integrity;
     }
 
+    public boolean getIntegrity() {
+        return this.integrity;
+    }
+
+    /**
+     * Userid of the key used to encrypt/decrypt
+     */
+    public void setKeyUserid(String keyUserid) {
+        this.keyUserid = keyUserid;
+    }
+
+    public String getKeyUserid() {
+        return keyUserid;
+    }
+
+    /**
+     * filename of the keyring that will be used, classpathResource
+     */
+    public void setKeyFileName(String keyFileName) {
+        this.keyFileName = keyFileName;
+    }
+
+    public String getKeyFileName() {
+        return keyFileName;
+    }
+
+    /**
+     * Password used to open the private keyring
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }

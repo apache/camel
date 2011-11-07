@@ -58,6 +58,7 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),
         @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
         @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
+        @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
         @XmlElement(required = false, name = "zip", type = ZipDataFormat.class)}
         )
     private List<DataFormatDefinition> dataFormats;

@@ -34,6 +34,7 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
@@ -150,6 +151,40 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         HL7DataFormat hl7 = new HL7DataFormat();
         hl7.setValidate(validate);
         return dataFormat(hl7);
+    }
+
+    /**
+     * Uses the PGP data format
+     */
+    public T pgp(String keyFileName, String keyUserid) {
+        PGPDataFormat pgp = new PGPDataFormat();
+        pgp.setKeyFileName(keyFileName);
+        pgp.setKeyUserid(keyUserid);
+        return dataFormat(pgp);
+    }
+
+    /**
+     * Uses the PGP data format
+     */
+    public T pgp(String keyFileName, String keyUserid, String password) {
+        PGPDataFormat pgp = new PGPDataFormat();
+        pgp.setKeyFileName(keyFileName);
+        pgp.setKeyUserid(keyUserid);
+        pgp.setPassword(password);
+        return dataFormat(pgp);
+    }
+
+    /**
+     * Uses the PGP data format
+     */
+    public T pgp(String keyFileName, String keyUserid, String password, boolean armored, boolean integrity) {
+        PGPDataFormat pgp = new PGPDataFormat();
+        pgp.setKeyFileName(keyFileName);
+        pgp.setKeyUserid(keyUserid);
+        pgp.setPassword(password);
+        pgp.setArmored(armored);
+        pgp.setIntegrity(integrity);
+        return dataFormat(pgp);
     }
 
     /**

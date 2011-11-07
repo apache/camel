@@ -16,14 +16,22 @@
  */
 package org.apache.camel.converter.crypto;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.NoSuchProviderException;
+import java.util.Date;
 import java.util.Iterator;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ResourceHelper;
+import org.bouncycastle.openpgp.PGPCompressedDataGenerator;
 import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPLiteralData;
+import org.bouncycastle.openpgp.PGPLiteralDataGenerator;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyRing;
@@ -38,20 +46,21 @@ public final class PGPDataFormatUtil {
     private PGPDataFormatUtil() {
     }
 
-    public static PGPPublicKey findPublicKey(String filename, String userid) throws IOException, PGPException,
+    public static PGPPublicKey findPublicKey(CamelContext context, String filename, String userid) throws IOException, PGPException,
             NoSuchProviderException {
-        FileInputStream fis = new FileInputStream(filename);
+
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), filename);
         PGPPublicKey privKey;
         try {
-            privKey = findPublicKey(fis, userid);
+            privKey = findPublicKey(context, is, userid);
         } finally {
-            IOHelper.close(fis);
+            IOHelper.close(is);
         }
         return privKey;
     }
 
     @SuppressWarnings("unchecked")
-    public static PGPPublicKey findPublicKey(InputStream input, String userid) throws IOException, PGPException,
+    public static PGPPublicKey findPublicKey(CamelContext context, InputStream input, String userid) throws IOException, PGPException,
             NoSuchProviderException {
         PGPPublicKeyRingCollection pgpSec = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(input));
 
@@ -75,20 +84,22 @@ public final class PGPDataFormatUtil {
         return null;
     }
 
-    public static PGPPrivateKey findPrivateKey(String filename, String userid, String passphrase) throws IOException,
+    public static PGPPrivateKey findPrivateKey(CamelContext context, String filename, String userid, String passphrase) throws IOException,
             PGPException, NoSuchProviderException {
-        FileInputStream fis = new FileInputStream(filename);
+
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), filename);
+
         PGPPrivateKey privKey;
         try {
-            privKey = findPrivateKey(fis, userid, passphrase);
+            privKey = findPrivateKey(context, is, userid, passphrase);
         } finally {
-            IOHelper.close(fis);
+            IOHelper.close(is);
         }
         return privKey;
     }
 
     @SuppressWarnings("unchecked")
-    public static PGPPrivateKey findPrivateKey(InputStream input, String userid, String passphrase) throws IOException,
+    public static PGPPrivateKey findPrivateKey(CamelContext context, InputStream input, String userid, String passphrase) throws IOException,
             PGPException, NoSuchProviderException {
         PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(input));
 
@@ -109,6 +120,28 @@ public final class PGPDataFormatUtil {
         }
 
         return null;
+    }
+
+    public static byte[] compress(byte[] clearData, String fileName, int algorithm) throws IOException {
+        ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+        PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(algorithm);
+        OutputStream cos = comData.open(bOut); // open it with the final destination
+
+        PGPLiteralDataGenerator lData = new PGPLiteralDataGenerator();
+
+        OutputStream pOut = lData.open(cos, // the compressed output stream
+                PGPLiteralData.BINARY, fileName, // "filename" to store
+                clearData.length, // length of clear data
+                new Date() // current time
+        );
+
+        try {
+            pOut.write(clearData);
+        } finally {
+            IOHelper.close(pOut);
+            comData.close();
+        }
+        return bOut.toByteArray();
     }
 
 }

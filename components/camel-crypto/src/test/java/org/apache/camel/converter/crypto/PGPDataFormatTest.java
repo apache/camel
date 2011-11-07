@@ -16,26 +16,12 @@
  */
 package org.apache.camel.converter.crypto;
 
-import java.io.ByteArrayInputStream;
 import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ExchangeHelper;
-import org.bouncycastle.openpgp.PGPPrivateKey;
-import org.bouncycastle.openpgp.PGPPublicKey;
 import org.junit.Test;
 
-public class PGPDataFormatTest extends CamelTestSupport {
-
-    static String keyFileName = "src/test/resources/org/apache/camel/component/crypto/pubring.gpg";
-    static String keyFileNameSec = "src/test/resources/org/apache/camel/component/crypto/secring.gpg";
-    static String keyUserid = "sdude@nowhere.net";
-    static String keyPassword = "sdude";
+public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     @Test
     public void testEncryption() throws Exception {
@@ -43,76 +29,59 @@ public class PGPDataFormatTest extends CamelTestSupport {
     }
 
     @Test
-    public void testEncryptionHeaders() throws Exception {
-        doRoundTripEncryptionTests("direct:inlineHeaders", new HashMap<String, Object>());
+    public void testEncryption2() throws Exception {
+        doRoundTripEncryptionTests("direct:inline2", new HashMap<String, Object>());
     }
 
-    private void doRoundTripEncryptionTests(String endpoint, Map<String, Object> headers) throws Exception {
-        MockEndpoint encrypted = setupExpectations(context, 3, "mock:encrypted");
-        MockEndpoint unencrypted = setupExpectations(context, 3, "mock:unencrypted");
-
-        String payload = "Hi Alice, Be careful Eve is listening, signed Bob";
-        template.sendBodyAndHeaders(endpoint, payload, headers);
-        template.sendBodyAndHeaders(endpoint, payload.getBytes(), headers);
-        template.sendBodyAndHeaders(endpoint, new ByteArrayInputStream(payload.getBytes()), headers);
-
-        assertMocksSatisfied(encrypted, unencrypted, payload);
-    }
-
-    private void assertMocksSatisfied(MockEndpoint encrypted, MockEndpoint unencrypted, String payload) throws Exception {
-        awaitAndAssert(unencrypted);
-        awaitAndAssert(encrypted);
-        for (Exchange e : unencrypted.getReceivedExchanges()) {
-            assertEquals(payload, ExchangeHelper.getMandatoryInBody(e, String.class));
-        }
-        for (Exchange e : encrypted.getReceivedExchanges()) {
-            byte[] ciphertext = ExchangeHelper.getMandatoryInBody(e, byte[].class);
-            assertNotSame(payload, new String(ciphertext));
-        }
+    @Test
+    public void testEncryptionArmor() throws Exception {
+        doRoundTripEncryptionTests("direct:inline-armor", new HashMap<String, Object>());
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: pgp-format
-                PGPDataFormat pgpDataFormat = new PGPDataFormat();
-                PGPPublicKey pKey = PGPDataFormatUtil.findPublicKey(keyFileName, keyUserid);
-                PGPPrivateKey sKey = PGPDataFormatUtil.findPrivateKey(keyFileNameSec, keyUserid, keyPassword);
-                pgpDataFormat.setPublicKey(pKey);
-                pgpDataFormat.setPrivateKey(sKey);
+                // Public Key FileName
+                String keyFileName = "org/apache/camel/component/crypto/pubring.gpg";
+                // Private Key FileName
+                String keyFileNameSec = "org/apache/camel/component/crypto/secring.gpg";
+                // Keyring Userid Used to Encrypt
+                String keyUserid = "sdude@nowhere.net";
+                // Private key password
+                String keyPassword = "sdude";
 
                 from("direct:inline")
-                    .marshal(pgpDataFormat)
-                    .to("mock:encrypted")
-                    .unmarshal(pgpDataFormat)
-                    .to("mock:unencrypted");
+                        .marshal().pgp(keyFileName, keyUserid)
+                        .to("mock:encrypted")
+                        .unmarshal().pgp(keyFileNameSec, keyUserid, keyPassword)
+                        .to("mock:unencrypted");
                 // END SNIPPET: pgp-format
 
                 // START SNIPPET: pgp-format-header
-                PGPDataFormat pgpDataFormatNoKey = new PGPDataFormat();
-                pgpDataFormat.setPublicKey(pKey);
-                pgpDataFormat.setPrivateKey(sKey);
+                PGPDataFormat pgpEncrypt = new PGPDataFormat();
+                pgpEncrypt.setKeyFileName(keyFileName);
+                pgpEncrypt.setKeyUserid(keyUserid);
 
-                from("direct:inlineHeaders")
-                    .setHeader(PGPDataFormat.KEY_PUB).constant(pKey)
-                    .setHeader(PGPDataFormat.KEY_PRI).constant(sKey)
-                    .marshal(pgpDataFormatNoKey)
-                    .to("mock:encrypted")
-                    .unmarshal(pgpDataFormatNoKey)
-                    .to("mock:unencrypted");
+                PGPDataFormat pgpDecrypt = new PGPDataFormat();
+                pgpDecrypt.setKeyFileName(keyFileNameSec);
+                pgpDecrypt.setKeyUserid(keyUserid);
+                pgpDecrypt.setPassword(keyPassword);
+
+                from("direct:inline2")
+                        .marshal(pgpEncrypt)
+                        .to("mock:encrypted")
+                        .unmarshal(pgpDecrypt)
+                        .to("mock:unencrypted");
+
+                from("direct:inline-armor")
+                        .marshal().pgp(keyFileName, keyUserid, null, true, true)
+                        .to("mock:encrypted")
+                        .unmarshal().pgp(keyFileNameSec, keyUserid, keyPassword, true, true)
+                        .to("mock:unencrypted");
                 // END SNIPPET: pgp-format-header
             }
         };
-    }
-
-    private void awaitAndAssert(MockEndpoint mock) throws InterruptedException {
-        mock.assertIsSatisfied();
-    }
-
-    public MockEndpoint setupExpectations(CamelContext context, int expected, String mock) {
-        MockEndpoint mockEp = context.getEndpoint(mock, MockEndpoint.class);
-        mockEp.expectedMessageCount(expected);
-        return mockEp;
     }
 
 }
