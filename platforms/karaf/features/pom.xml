@@ -37,7 +37,6 @@
       <ant-bundle-version>1.7.0_4</ant-bundle-version>
       <antlr-bundle-version>2.7.7_2</antlr-bundle-version>
       <aopalliance-bundle-version>1.0_3</aopalliance-bundle-version>
-      <asm-bundle-version>3.3_2</asm-bundle-version>
       <aws-java-sdk-bundle-version>1.1.1_1</aws-java-sdk-bundle-version>
       <bcel-bundle-version>5.2_3</bcel-bundle-version>
       <bcpg-jdk16-bundle-version>1.46_1</bcpg-jdk16-bundle-version>
