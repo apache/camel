@@ -19,7 +19,6 @@ package org.apache.camel.component.language;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import org.apache.camel.Component;
@@ -47,12 +46,16 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private boolean transform = true;
 
     public LanguageEndpoint() {
+        // enable cache by default
+        setContentCache(true);
     }
 
     public LanguageEndpoint(String endpointUri, Component component, Language language, Expression expression, String resourceUri) {
         super(endpointUri, component, resourceUri);
         this.language = language;
         this.expression = expression;
+        // enable cache by default
+        setContentCache(true);
     }
 
     public Producer createProducer() throws Exception {

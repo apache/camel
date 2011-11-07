@@ -53,7 +53,7 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
 
                 // START SNIPPET: e1
                 from("direct:start")
-                    // use content cache to load the script once and cache it
+                    // use content cache to load the script once and cache it (content cache is default enabled)
                     .to("language:simple:file:target/script/myscript.txt?contentCache=true")
                     .to("mock:result");
                 // END SNIPPET: e1
