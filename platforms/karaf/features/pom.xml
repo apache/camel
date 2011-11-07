@@ -37,6 +37,7 @@
       <ant-bundle-version>1.7.0_4</ant-bundle-version>
       <antlr-bundle-version>2.7.7_2</antlr-bundle-version>
       <aopalliance-bundle-version>1.0_3</aopalliance-bundle-version>
+      <asm2-bundle-version>2.2.3_4</asm2-bundle-version>
       <aws-java-sdk-bundle-version>1.1.1_1</aws-java-sdk-bundle-version>
       <bcel-bundle-version>5.2_3</bcel-bundle-version>
       <bcpg-jdk16-bundle-version>1.46_1</bcpg-jdk16-bundle-version>
@@ -61,8 +62,8 @@
       <fastinfoset-version>1.2.7_3</fastinfoset-version>
       <features.file>features.xml</features.file>
       <flatpack-bundle-version>3.2.0_1</flatpack-bundle-version>
-      <felix.configadmin.version>1.2.4</felix.configadmin.version>
-      <felix.framework.version>2.0.5</felix.framework.version>
+      <felix-configadmin-version>1.2.4</felix-configadmin-version>
+      <felix-framework-version>2.0.5</felix-framework-version>
       <freemarker-bundle-version>2.3.18_1</freemarker-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
       <geronimo-jsp-version>1.0.1</geronimo-jsp-version>
@@ -105,16 +106,17 @@
       <opensaml-version>2.4.1_1</opensaml-version>
       <joda-time-version>1.6.2</joda-time-version>
       <oscache-bundle-version>2.4_3</oscache-bundle-version>
-      <osgi.compendium.version>4.2.0</osgi.compendium.version>
       <protobuf-java-bundle-version>2.3.0_1</protobuf-java-bundle-version>
-      <pax.web.version>0.7.2</pax.web.version>
+      <pax-web-version>0.7.2</pax-web-version>
       <quartz-bundle-version>1.8.5_1</quartz-bundle-version>
       <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
       <quickfix-bundle-version>1.5.1_1</quickfix-bundle-version>
-      <regexp-bundle-version>1.3_1</regexp-bundle-version>      
+      <regexp-bundle-version>1.3_1</regexp-bundle-version>
+      <rhino-bundle-version>1.7R1_3</rhino-bundle-version>
       <rome-bundle-version>1.0_1</rome-bundle-version>
       <saxon-bundle-version>9.1.0.8_1</saxon-bundle-version>
       <scala-bundle-version>2.9.1_1</scala-bundle-version>
+      <scriptengines-version>1.1</scriptengines-version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_2</serp-bundle-version>
       <smack-bundle-version>3.2.0_1</smack-bundle-version>
@@ -138,9 +140,6 @@
       <saaj-impl-version>1.3.2_2</saaj-impl-version>
       <wsdl4j-bundle-version>1.6.2_3</wsdl4j-bundle-version>
       <wss4j-version>1.6.1</wss4j-version>
-      <rhino.bundle.version>1.7R1_3</rhino.bundle.version>
-      <scriptengines.version>1.1</scriptengines.version>
-      <asm2.bundle.version>2.2.3_4</asm2.bundle.version>
     </properties>
     
     <!-- The validate plugin will export these provided dependencies bundles' export packages first -->  
@@ -166,13 +165,13 @@
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.framework</artifactId>
-            <version>${felix.framework.version}</version>
+            <version>${felix-framework-version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.configadmin</artifactId>
-            <version>${felix.configadmin.version}</version>
+            <version>${felix-configadmin-version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
