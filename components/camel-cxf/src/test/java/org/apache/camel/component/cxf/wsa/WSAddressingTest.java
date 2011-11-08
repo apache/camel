@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.wsa;
 
 import java.net.URL;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -41,6 +42,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 /**
  *
  * @version 
@@ -49,7 +51,8 @@ import static org.junit.Assert.assertEquals;
 public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
     protected static int port0 = CXFTestSupport.getPort1(); 
     protected static int port1 = CXFTestSupport.getPort2(); 
-    protected static int port2 = CXFTestSupport.getPort3(); 
+    protected static int port2 = CXFTestSupport.getPort3();
+
     
     
     @Autowired
@@ -58,12 +61,20 @@ public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
     
     private Server serviceEndpoint;
     
+    protected String getServerAddress() {
+        return "http://localhost:" + port1 + "/" + this.getClass().getSimpleName() + "/SoapContext/SoapPort";
+    }
+    
+    protected String getClientAddress() {
+        return "http://localhost:" + port0 + "/" + this.getClass().getSimpleName() + "/SoapContext/SoapPort";
+    }
+    
     @Before
     public void setUp() throws Exception {      
         
         template = context.createProducerTemplate();
         JaxWsServerFactoryBean svrBean = new JaxWsServerFactoryBean();
-        svrBean.setAddress("http://localhost:" + port1 + "/WSAddressingTest/SoapContext/SoapPort");
+        svrBean.setAddress(getServerAddress());
         svrBean.setServiceClass(Greeter.class);
         svrBean.setServiceBean(new GreeterImpl());
         SpringBusFactory bf = new SpringBusFactory();
@@ -88,7 +99,7 @@ public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
     public void testWSAddressing() throws Exception {
         JaxWsProxyFactoryBean proxyFactory = new  JaxWsProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress("http://localhost:" + port0 + "/WSAddressingTest/SoapContext/SoapPort");
+        clientBean.setAddress(getClientAddress());
         clientBean.setServiceClass(Greeter.class);
         SpringBusFactory bf = new SpringBusFactory();
         URL cxfConfig = null;
@@ -96,7 +107,7 @@ public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
         if (getCxfClientConfig() != null) {
             cxfConfig = ClassLoaderUtils.getResource(getCxfClientConfig(), this.getClass());
         }
-        clientBean.setBus(bf.createBus(cxfConfig));
+        proxyFactory.setBus(bf.createBus(cxfConfig));
         Greeter client = (Greeter) proxyFactory.create();
         String result = client.greetMe("world!");
         assertEquals("Get a wrong response", "Hello world!", result);
@@ -119,6 +130,10 @@ public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
     public static class RemoveRequestOutHeaderProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
+            List headerList = (List) exchange.getIn().getHeader(Header.HEADER_LIST);
+            assertNotNull("We should get the header list.", headerList);
+            assertEquals("Get a wrong size of header list.", 4, headerList.size());
+            // we don't need send the soap headers to the client
             exchange.getIn().removeHeader(Header.HEADER_LIST);
         }
         

@@ -25,7 +25,7 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
   
 	<cxf:cxfEndpoint id="routerEndpoint"
-		address="http://localhost:${CXFTestSupport.port1}/WSAddressingTest/SoapContext/SoapPort" endpointName="tns:SoapPort"
+		address="http://localhost:${CXFTestSupport.port1}/WSAddressingPAYLOADTest/SoapContext/SoapPort" endpointName="tns:SoapPort"
 		serviceName="tns:SOAPService" wsdlURL="/wsdl/hello_world.wsdl"
 		serviceClass="org.apache.hello_world_soap_http.Greeter"
 		xmlns:tns="http://apache.org/hello_world_soap_http">
@@ -40,7 +40,7 @@
 		</cxf:features>
 	</cxf:cxfEndpoint>
 	<cxf:cxfEndpoint id="serviceEndpoint"
-		address="http://localhost:${CXFTestSupport.port2}/WSAddressingTest/SoapContext/SoapPort" endpointName="tns:SoapPort"
+		address="http://localhost:${CXFTestSupport.port2}/WSAddressingPAYLOADTest/SoapContext/SoapPort" endpointName="tns:SoapPort"
 		serviceName="tns:SOAPService" wsdlURL="/wsdl/hello_world.wsdl"
 		serviceClass="org.apache.hello_world_soap_http.Greeter"		
 		xmlns:tns="http://apache.org/hello_world_soap_http">
@@ -60,13 +60,13 @@
 		
 	<bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
-	
+    
 	<camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="cxf:bean:routerEndpoint" />
+			<from uri="cxf:bean:routerEndpoint?dataFormat=PAYLOAD" />
 			<!-- need to remove the addressing header, since the back end service doesn't support addressing -->
 			<process ref="removeRequestOutHeaderProcessor" />			
-			<to uri="cxf:bean:serviceEndpoint" />			
+			<to uri="cxf:bean:serviceEndpoint?dataFormat=PAYLOAD" />			
 		</route>
 	</camelContext>	
 </beans>
