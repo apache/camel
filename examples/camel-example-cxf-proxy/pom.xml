@@ -67,11 +67,6 @@
         </dependency>
 
         <!-- cxf -->
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-core</artifactId>
-            <version>${cxf-version}</version>
-        </dependency>
         <!-- used by the real web service -->
         <dependency>
             <groupId>org.apache.cxf</groupId>
