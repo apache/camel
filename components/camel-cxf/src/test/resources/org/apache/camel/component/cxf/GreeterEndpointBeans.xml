@@ -32,13 +32,21 @@
 
 
    <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfGreeterMessageRouterTest/CamelContext/RouterPort"
-    		serviceClass="org.apache.hello_world_soap_http.GreeterImpl"/>
+    		serviceClass="org.apache.hello_world_soap_http.GreeterImpl">
+        <cxf:features>
+			<bean class="org.apache.cxf.feature.LoggingFeature"/>
+		</cxf:features>
+   </cxf:cxfEndpoint>
 
    <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfGreeterMessageRouterTest/SoapContext/SoapPort"
     		wsdlURL="testutils/hello_world.wsdl"
     		serviceClass="org.apache.hello_world_soap_http.Greeter"
     		endpointName="s:SoapPort"
     		serviceName="s:SOAPService"
-    	xmlns:s="http://apache.org/hello_world_soap_http" />
+    	xmlns:s="http://apache.org/hello_world_soap_http" >
+    	<cxf:features>
+			<bean class="org.apache.cxf.feature.LoggingFeature"/>
+		</cxf:features>
+   </cxf:cxfEndpoint>
 
 </beans>
