@@ -54,6 +54,7 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         CxfEndpoint myEndpoint = (CxfEndpoint)ctx.getBean("myEndpoint");
         assertEquals("Got the wrong endpointName", endpointName, myEndpoint.getPortName());
         assertEquals("Got the wrong serviceName", serviceName, myEndpoint.getServiceName());
+        assertEquals("loggingFeatureEnabled should be true", true, myEndpoint.isLoggingFeatureEnabled());
         assertTrue("We should get a soap binding", myEndpoint.getBindingConfig() instanceof SoapBindingConfiguration);
         SoapBindingConfiguration configuration = (SoapBindingConfiguration)myEndpoint.getBindingConfig();
         assertEquals("We should get a right soap version", "1.2", String.valueOf(configuration.getVersion().getVersion()));

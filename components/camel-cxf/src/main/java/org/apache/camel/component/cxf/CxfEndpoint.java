@@ -263,7 +263,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             LOG.debug("Ignore DataFormat mode {} since SEI class is annotated with WebServiceProvider", getDataFormat());
         }
 
-        if (loggingFeatureEnabled) {
+        if (isLoggingFeatureEnabled()) {
             sfb.getFeatures().add(new LoggingFeature());
         }
 
@@ -414,7 +414,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             factoryBean.setDataBinding(new HybridSourceDataBinding());
         }
 
-        if (loggingFeatureEnabled) {
+        if (isLoggingFeatureEnabled()) {
             factoryBean.getFeatures().add(new LoggingFeature());
         }
 
