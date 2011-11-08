@@ -2,13 +2,14 @@ CXF OSGI Example
 ================
 
 A simple example which receives web service calls (via a CXF consumer, using bean binding)
-and writes these requests to the file system. It's not a very useful use case, but the goal
+and writes these requests into the file system. It's not a very useful use case, but the goal
 of this example is to show you how you can use the CXF consumer component in an OSGI
 environment with the OSGI HTTP service. If your target container is Apache Karaf or Apache
 ServiceMix, you can use PAX Web to setup and start an OSGI HTTP service. All Camel
-bundles using a Camel CXF consumer can use this HTTP service without needing to start 
+bundles using a Camel CXF consumer can use this HTTP service without needing to start
 individual Jetty instances. Another advantage is that all provided services can now share
 the same port.
+
 
 You will need to compile the example first:
   mvn install
@@ -52,9 +53,9 @@ osgi:install -s mvn:org.apache.camel/camel-example-cxf-osgi/2.9.0
   
 
 4) Verify that your service is available using the following url in the browser. 
-We assume assuming the OOTB Karaf defaults you use the default PAX Web configuration which use the port 8181
-for http. If you would like to use another port or https, change the configuration in 
-${KARAF_HOME}/etc/org.ops4j.pax.web.cfg. The immediate extension after the hostname and port ("services" in
+We assume you're using Karaf's default PAX Web configuration which uses 
+port 8181 for http. If you would like to use another port or https, change the configuration in 
+${KARAF_HOME}/etc/org.ops4j.pax.web.cfg. The immediate extension after the hostname and port ("cxf" in
 the below URL) is configured via the org.apache.cxf.osgi.cfg file (Please see 
 http://team.ops4j.org/wiki//display/paxweb/Pax+Web for more information on PAX Web).
   
