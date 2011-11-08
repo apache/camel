@@ -27,6 +27,7 @@ import javax.jms.Topic;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,11 +48,15 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     public String toString() {
+        // do not print jmsMessage as there could be sensitive details
         if (jmsMessage != null) {
-            return "JmsMessage: " + jmsMessage;
-        } else {
-            return "JmsMessage: " + getBody();
+            try {
+                return "JmsMessage[JmsMessageID: " + jmsMessage.getJMSMessageID() + "]";
+            } catch (Throwable e) {
+                // ignore
+            }
         }
+        return "JmsMessage@" + ObjectHelper.getIdentityHashCode(this);
     }
 
     @Override
