@@ -61,7 +61,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             }
         }
 
-        FileConsumer result = new FileConsumer(this, processor, operations);
+        FileConsumer result = newFileConsumer(processor, operations);
 
         if (isDelete() && getMove() != null) {
             throw new IllegalArgumentException("You cannot set both delete=true and move options");
@@ -103,6 +103,17 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
             file.bindToExchange(exchange);
         }
         return exchange;
+    }
+
+    /**
+     * Strategy to create a new {@link FileConsumer}
+     *
+     * @param processor  the given processor
+     * @param operations file operations
+     * @return the created consumer
+     */
+    protected FileConsumer newFileConsumer(Processor processor, GenericFileOperations<File> operations) {
+        return new FileConsumer(this, processor, operations);
     }
 
     public File getFile() {

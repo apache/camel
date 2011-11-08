@@ -630,13 +630,7 @@ public final class ExchangeHelper {
     }
 
     /**
-     * @deprecated use
-     *             org.apache.camel.CamelExchangeException.createExceptionMessage
-     *             instead
-     * @param message
-     * @param exchange
-     * @param cause
-     * @return
+     * @deprecated use org.apache.camel.CamelExchangeException.createExceptionMessage instead
      */
     @Deprecated
     public static String createExceptionMessage(String message, Exchange exchange, Throwable cause) {
