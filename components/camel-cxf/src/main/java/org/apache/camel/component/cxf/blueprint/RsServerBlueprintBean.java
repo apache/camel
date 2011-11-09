@@ -42,12 +42,4 @@ public class RsServerBlueprintBean extends JAXRSServerFactoryBean implements Blu
         this.bundleContext = bundleContext;
     }
     
-    public RsServerBlueprintBean copy() {
-        try {
-            return (RsServerBlueprintBean) clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeCamelException(e);
-        }
-    }
-
 }

@@ -30,9 +30,8 @@ import org.springframework.context.support.AbstractApplicationContext;
 
 public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     private AbstractJAXRSFactoryBean bean;
-    private ApplicationContext applicationContext;
     private String beanId;
-    private ConfigurerImpl configurer;
+    
     
     public CxfRsSpringEndpoint(CamelContext context, AbstractJAXRSFactoryBean bean) throws Exception {
         super(bean.getAddress(), context);        
@@ -44,35 +43,15 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
         if (bean instanceof BeanIdAware) {
             setBeanId(((BeanIdAware)bean).getBeanId());
         }
-        applicationContext = ((SpringCamelContext)getCamelContext()).getApplicationContext();
-        // create configurer
-        configurer = new ConfigurerImpl(applicationContext);
     }
-    
-    void configure(Object beanInstance) {
-        // check the ApplicationContext states first , and call the refresh if necessary
-        if (applicationContext instanceof AbstractApplicationContext) {
-            AbstractApplicationContext context = (AbstractApplicationContext) applicationContext;
-            if (!context.isActive()) {
-                context.refresh();
-            }
-        }
-        configurer.configureBean(beanId, beanInstance);
-    }
-    
-    
     
     @Override
     protected void setupJAXRSServerFactoryBean(JAXRSServerFactoryBean sfb) {
-        checkBeanType(bean, JAXRSServerFactoryBean.class);
-        configure(sfb);
-        
+        // Do nothing here
     }
     
     @Override
     protected void setupJAXRSClientFactoryBean(JAXRSClientFactoryBean cfb, String address) {
-        checkBeanType(bean, JAXRSClientFactoryBean.class);
-        configure(cfb);      
         cfb.setAddress(address);
         // Need to enable the option of ThreadSafe
         cfb.setThreadSafe(true);
@@ -80,12 +59,14 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     
     @Override
     protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
-        return new SpringJAXRSServerFactoryBean();
+        checkBeanType(bean, JAXRSServerFactoryBean.class);
+        return (JAXRSServerFactoryBean)bean;
     }
     
     @Override
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
-        return new SpringJAXRSClientFactoryBean();
+        checkBeanType(bean, JAXRSClientFactoryBean.class);
+        return (JAXRSClientFactoryBean)bean;
     }
     
     public String getBeanId() {
