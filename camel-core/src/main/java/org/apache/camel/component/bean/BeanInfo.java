@@ -80,6 +80,13 @@ public class BeanInfo {
         EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
         // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
         EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getMethods()));
+        try {
+            // but keep toString as this method is okay
+            EXCLUDED_METHODS.remove(Object.class.getMethod("toString"));
+            EXCLUDED_METHODS.remove(Proxy.class.getMethod("toString"));
+        } catch (Throwable e) {
+            // ignore
+        }
     }
 
     public BeanInfo(CamelContext camelContext, Class<?> type) {

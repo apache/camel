@@ -57,10 +57,6 @@ public class BeanExcludedMethodTest extends ContextTestSupport {
             return super.hashCode();
         }
 
-        @Override
-        public String toString() {
-            return "dummy";
-        }
     }
 
     public static class MyOtherDummyBean {
