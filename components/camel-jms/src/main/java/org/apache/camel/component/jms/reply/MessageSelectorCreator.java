@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.jms.reply;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * A creator which can build the JMS message selector query string to use
@@ -25,7 +24,7 @@ import java.util.Set;
  */
 public class MessageSelectorCreator implements CorrelationListener {
     protected final CorrelationMap timeoutMap;
-    protected final Set<String> correlationIds;
+    protected final ConcurrentSkipListSet<String> correlationIds;
     protected boolean dirty = true;
     protected StringBuilder expression;
 
@@ -34,7 +33,8 @@ public class MessageSelectorCreator implements CorrelationListener {
         this.timeoutMap.setListener(this);
         // create local set of correlation ids, as its easier to keep track
         // using the listener so we can flag the dirty flag upon changes
-        this.correlationIds = new LinkedHashSet<String>();
+        // must support concurrent access
+        this.correlationIds = new ConcurrentSkipListSet<String>();
     }
 
     public synchronized String get() {
@@ -60,8 +60,10 @@ public class MessageSelectorCreator implements CorrelationListener {
             }
         }
 
+        String answer = expression.toString();
+
         dirty = false;
-        return expression.toString();
+        return answer;
     }
 
     public void onPut(String key) {
