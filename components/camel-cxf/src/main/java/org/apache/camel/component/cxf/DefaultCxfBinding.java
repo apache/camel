@@ -392,7 +392,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         int i = 0;
         if (boi.getOutput() != null) {
             for (MessagePartInfo partInfo : boi.getOutput().getMessageParts()) {
-                if (elements.size() > i) {
+                if (elements != null && elements.size() > i) {
                     answer.put(partInfo, elements.get(i++));
                 }
             }
