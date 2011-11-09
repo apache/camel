@@ -33,6 +33,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -52,6 +53,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private String address;
     private boolean throwExceptionOnFailure = true;
     private int maxClientCacheSize = 10;
+    private boolean loggingFeatureEnabled;
+    private int loggingSizeLimit;
     
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
@@ -146,6 +149,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getResourceClasses() != null) {
             cfb.setResourceClass(getResourceClasses().get(0));
         }
+        if (isLoggingFeatureEnabled()) {
+            if (getLoggingSizeLimit() > 0) {
+                cfb.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
+            } else {
+                cfb.getFeatures().add(new LoggingFeature());
+            }
+        }
         cfb.setThreadSafe(true);
     }
     
@@ -160,6 +170,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public JAXRSServerFactoryBean createJAXRSServerFactoryBean() {
         JAXRSServerFactoryBean answer = newJAXRSServerFactoryBean();
         setupJAXRSServerFactoryBean(answer);
+        if (isLoggingFeatureEnabled()) {
+            if (getLoggingSizeLimit() > 0) {
+                answer.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
+            } else {
+                answer.getFeatures().add(new LoggingFeature());
+            }
+        }
         return answer;
     }
     
@@ -171,6 +188,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public JAXRSClientFactoryBean createJAXRSClientFactoryBean(String address) {
         JAXRSClientFactoryBean answer = newJAXRSClientFactoryBean();
         setupJAXRSClientFactoryBean(answer, address);
+        if (isLoggingFeatureEnabled()) {
+            if (getLoggingSizeLimit() > 0) {
+                answer.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
+            } else {
+                answer.getFeatures().add(new LoggingFeature());
+            }
+        }
         return answer;
     }
 
@@ -192,6 +216,22 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     public String getAddress() {
         return address;
+    }
+
+    public boolean isLoggingFeatureEnabled() {
+        return loggingFeatureEnabled;
+    }
+
+    public void setLoggingFeatureEnabled(boolean loggingFeatureEnabled) {
+        this.loggingFeatureEnabled = loggingFeatureEnabled;
+    }
+
+    public int getLoggingSizeLimit() {
+        return loggingSizeLimit;
+    }
+
+    public void setLoggingSizeLimit(int loggingSizeLimit) {
+        this.loggingSizeLimit = loggingSizeLimit;
     }
 
     public boolean isThrowExceptionOnFailure() {

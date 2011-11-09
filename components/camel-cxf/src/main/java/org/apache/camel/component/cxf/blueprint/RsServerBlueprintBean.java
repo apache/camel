@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.cxf.blueprint;
 
+import java.util.List;
+
 import org.apache.camel.RuntimeCamelException;
+import org.apache.cxf.feature.AbstractFeature;
+import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
@@ -25,6 +29,8 @@ public class RsServerBlueprintBean extends JAXRSServerFactoryBean implements Blu
     
     private BlueprintContainer blueprintContainer;
     private BundleContext bundleContext;
+    private boolean loggingFeatureEnabled;
+    private int loggingSizeLimit;
     
     public BlueprintContainer getBlueprintContainer() {
         return blueprintContainer;
@@ -40,6 +46,34 @@ public class RsServerBlueprintBean extends JAXRSServerFactoryBean implements Blu
 
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
+    }
+    
+    public boolean isLoggingFeatureEnabled() {
+        return loggingFeatureEnabled;
+    }
+
+    public void setLoggingFeatureEnabled(boolean loggingFeatureEnabled) {
+        this.loggingFeatureEnabled = loggingFeatureEnabled;
+    }
+
+    public int getLoggingSizeLimit() {
+        return loggingSizeLimit;
+    }
+
+    public void setLoggingSizeLimit(int loggingSizeLimit) {
+        this.loggingSizeLimit = loggingSizeLimit;
+    }
+    
+    public List<AbstractFeature> getFeatures() {
+        List<AbstractFeature> answer = super.getFeatures();
+        if (isLoggingFeatureEnabled()) {
+            if (getLoggingSizeLimit() > 0) {
+                answer.add(new LoggingFeature(getLoggingSizeLimit()));
+            } else {
+                answer.add(new LoggingFeature());
+            }
+        }
+        return answer;
     }
     
 }

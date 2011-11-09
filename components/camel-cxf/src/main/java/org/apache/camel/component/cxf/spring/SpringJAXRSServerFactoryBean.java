@@ -22,6 +22,8 @@ import org.apache.camel.component.cxf.jaxrs.BeanIdAware;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.bus.spring.SpringBusFactory;
+import org.apache.cxf.feature.AbstractFeature;
+import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.version.Version;
@@ -32,6 +34,8 @@ import org.springframework.context.ApplicationContextAware;
 public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean implements
     ApplicationContextAware, BeanIdAware {
     private String beanId;
+    private boolean loggingFeatureEnabled;
+    private int loggingSizeLimit;
     
     public SpringJAXRSServerFactoryBean() {
         super();
@@ -72,5 +76,33 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean impleme
     // add this mothod for testing
     List<String> getSchemaLocations() {
         return schemaLocations;
+    }
+    
+    public boolean isLoggingFeatureEnabled() {
+        return loggingFeatureEnabled;
+    }
+
+    public void setLoggingFeatureEnabled(boolean loggingFeatureEnabled) {
+        this.loggingFeatureEnabled = loggingFeatureEnabled;
+    }
+
+    public int getLoggingSizeLimit() {
+        return loggingSizeLimit;
+    }
+
+    public void setLoggingSizeLimit(int loggingSizeLimit) {
+        this.loggingSizeLimit = loggingSizeLimit;
+    }
+    
+    public List<AbstractFeature> getFeatures() {
+        List<AbstractFeature> answer = super.getFeatures();
+        if (isLoggingFeatureEnabled()) {
+            if (getLoggingSizeLimit() > 0) {
+                answer.add(new LoggingFeature(getLoggingSizeLimit()));
+            } else {
+                answer.add(new LoggingFeature());
+            }
+        }
+        return answer;
     }
 }

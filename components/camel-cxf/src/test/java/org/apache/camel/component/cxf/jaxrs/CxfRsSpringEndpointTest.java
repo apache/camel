@@ -35,6 +35,8 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong address", sfb.getAddress(), "http://localhost:9000/router");
         assertEquals("Get a wrong size of resource classess", sfb.getResourceClasses().size(), 1);
         assertEquals("Get a wrong resource class", sfb.getResourceClasses().get(0), CustomerService.class);
+        assertEquals("Got the wrong loggingFeatureEnabled", true, sfb.isLoggingFeatureEnabled());
+        assertEquals("Got the wrong loggingSizeLimit", 200, sfb.getLoggingSizeLimit());
     }
     
     @Test
@@ -44,6 +46,8 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong beanId", cfb.getBeanId(), "rsClient");
         assertEquals("Get a wrong address", cfb.getAddress(), "http://localhost:9002/helloworld");        
         assertTrue("Get a wrong resource class instance", cfb.create() instanceof CustomerService);
+        assertEquals("Got the wrong loggingFeatureEnabled", false, cfb.isLoggingFeatureEnabled());
+        assertEquals("Got the wrong loggingSizeLimit", 0, cfb.getLoggingSizeLimit());
     }
     
     @Override

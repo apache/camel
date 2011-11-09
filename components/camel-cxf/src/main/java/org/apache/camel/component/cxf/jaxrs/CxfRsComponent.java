@@ -72,6 +72,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
             // endpoint URI does not specify a bean
             answer = new CxfRsEndpoint(remaining, this);
         }
+        setProperties(answer, parameters);
         Map<String, String> params = CastUtils.cast(parameters);
         answer.setParameters(params);
         setEndpointHeaderFilterStrategy(answer);

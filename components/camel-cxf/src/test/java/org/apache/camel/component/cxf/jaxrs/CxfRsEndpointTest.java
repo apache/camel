@@ -27,8 +27,10 @@ public class CxfRsEndpointTest extends CamelTestSupport {
     @Test
     public void testCreateCxfRsEndpoint() throws Exception {
         String endpointUri = "cxfrs://http://localhost:" + CTX + ""
-            + "?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService,"
+            + "?loggingFeatureEnabled=true&loggingSizeLimit=200"
+            + "&resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService,"
             + "java.lang.String;org.apache.camel.component.cxf.jaxrs.testbean.Order";
+            
         CxfRsComponent component = new CxfRsComponent(context);
         CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint(endpointUri);
         
@@ -36,15 +38,18 @@ public class CxfRsEndpointTest extends CamelTestSupport {
         assertEquals("Get a wrong address ", endpointUri, endpoint.getEndpointUri());
         assertEquals("Get a wrong size of resouces classes", 3, endpoint.getResourceClasses().size());
         assertEquals("Get a wrong resources class", CustomerService.class, endpoint.getResourceClasses().get(0));
+        assertEquals("Get a wrong loggingFeatureEnabled setting", true, endpoint.isLoggingFeatureEnabled());
+        assertEquals("Get a wrong loggingSizeLimit setting", 200, endpoint.getLoggingSizeLimit());
     }
     
     @Test
     public void testCxfRsEndpointParameters() throws Exception {
         CxfRsComponent component = new CxfRsComponent(context);
-        CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint("cxfrs://http://localhost:" + CTX + "/templatetest/TID/ranges/start=0;end=1?"
-            + "httpClientAPI=true&q1=11&q2=12");
+        String endpointUri = "cxfrs://http://localhost:" + CTX + "/templatetest/TID/ranges/start=0;end=1?"
+            + "httpClientAPI=true&loggingFeatureEnabled=true&loggingSizeLimit=200&q1=11&q2=12";
+        CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint(endpointUri);
         
-        assertEquals("Get a wrong URI ", "cxfrs://http://localhost:" + CTX + "/templatetest/TID/ranges/start=0;end=1?httpClientAPI=true&q1=11&q2=12", endpoint.getEndpointUri());
+        assertEquals("Get a wrong URI ", endpointUri, endpoint.getEndpointUri());
         assertEquals("Get a wrong usingClientAPI option", true, endpoint.isHttpClientAPI());
         assertNotNull("The Parameter should not be null" + endpoint.getParameters());
         assertEquals("Get a wrong parameter map", "{q1=11, q2=12}", endpoint.getParameters().toString());

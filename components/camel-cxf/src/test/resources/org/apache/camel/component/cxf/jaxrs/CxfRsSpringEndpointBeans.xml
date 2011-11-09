@@ -26,7 +26,8 @@
 
 
   <cxf:rsServer id="rsServer" address="http://localhost:9000/router"
-    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService">
+    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
+    loggingFeatureEnabled="true" loggingSizeLimit="200">
     <cxf:providers>
        <ref bean="jsonProvider"/>
     </cxf:providers>

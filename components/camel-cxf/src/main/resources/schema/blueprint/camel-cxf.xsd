@@ -57,7 +57,7 @@
           <xsd:attribute name="wsdlURL" type="xsd:string"/>
           <xsd:attribute name="endpointName" type="xsd:QName"/>
           <xsd:attribute name="serviceName" type="xsd:QName"/>
-          <xsd:attribute name="loggingFeatureEnabled" type="xsd:boolean" default="false"/>
+          <xsd:attribute name="loggingFeatureEnabled" type="xsd:boolean"/>
           <xsd:attribute name="loggingSizeLimit" type="xsd:integer" />
         </xsd:extension>
       </xsd:complexContent>
@@ -94,6 +94,8 @@
           <xsd:attribute name="modelRef" type="xsd:string"/>
           <xsd:attribute name="bindingId" type="xsd:string"/>
           <xsd:attribute name="staticSubresourceResolution" type="xsd:boolean"/>
+          <xsd:attribute name="loggingFeatureEnabled" type="xsd:boolean"/>
+          <xsd:attribute name="loggingSizeLimit" type="xsd:integer" />
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>
@@ -128,6 +130,8 @@
           <xsd:attribute name="modelRef" type="xsd:string"/>
           <xsd:attribute name="username" type="xsd:string"/>
           <xsd:attribute name="password" type="xsd:string"/>
+          <xsd:attribute name="loggingFeatureEnabled" type="xsd:boolean"/>
+          <xsd:attribute name="loggingSizeLimit" type="xsd:integer" />
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>

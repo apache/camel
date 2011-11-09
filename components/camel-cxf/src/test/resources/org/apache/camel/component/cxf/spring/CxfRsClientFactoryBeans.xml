@@ -27,7 +27,8 @@
 
   <cxf:rsClient id="rsClient1" address="http://localhost:${CXFTestSupport.port1}/CxfRsClientFactoryBeanTest/router"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
-    username="username" password="passwd" >
+    username="username" password="passwd"
+    loggingFeatureEnabled="true" loggingSizeLimit="200">
     <cxf:schemaLocations>
     	 <cxf:schemaLocation>classpath:wsdl/Message.xsd</cxf:schemaLocation>
     </cxf:schemaLocations>

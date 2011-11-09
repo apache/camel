@@ -39,6 +39,8 @@ public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
         assertNotNull("The customer service should not be null", customerService);
         assertEquals("Got the wrong schemalocations size", 1, cfb.getSchemaLocations().size());
         assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", cfb.getSchemaLocations().get(0));
+        assertEquals("Got the wrong loggingFeatureEnabled", true, cfb.isLoggingFeatureEnabled());
+        assertEquals("Got the wrong loggingSizeLimit", 200, cfb.getLoggingSizeLimit());
     }
 
 }
