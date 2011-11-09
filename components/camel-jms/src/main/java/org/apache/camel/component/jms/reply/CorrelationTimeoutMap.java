@@ -29,11 +29,26 @@ import org.apache.camel.support.DefaultTimeoutMap;
  */
 public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
+    private CorrelationListener listener;
+
     public CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
         super(executor, requestMapPollTimeMillis);
     }
 
+    public void setListener(CorrelationListener listener) {
+        // there is only one listener needed
+        this.listener = listener;
+    }
+
     public boolean onEviction(String key, ReplyHandler value) {
+        try {
+            if (listener != null) {
+                listener.onEviction(key);
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+
         // trigger timeout
         value.onTimeout(key);
         // return true to remove the element
@@ -43,6 +58,14 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
 
     @Override
     public void put(String key, ReplyHandler value, long timeoutMillis) {
+        try {
+            if (listener != null) {
+                listener.onPut(key);
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+
         if (timeoutMillis <= 0) {
             // no timeout (must use Integer.MAX_VALUE)
             super.put(key, value, Integer.MAX_VALUE);
@@ -53,9 +76,17 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
     }
 
     @Override
-    public ReplyHandler remove(String id) {
-        ReplyHandler answer = super.remove(id);
-        log.trace("Removed correlationID: {} -> {}", id, answer != null);
+    public ReplyHandler remove(String key) {
+        try {
+            if (listener != null) {
+                listener.onRemove(key);
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+
+        ReplyHandler answer = super.remove(key);
+        log.trace("Removed correlationID: {} -> {}", key, answer != null);
         return answer;
     }
 

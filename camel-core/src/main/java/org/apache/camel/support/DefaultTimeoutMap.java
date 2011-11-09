@@ -106,14 +106,14 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
     }
 
-    public V remove(K id) {
+    public V remove(K key) {
         TimeoutMapEntry<K, V> entry;
 
         if (useLock) {
             lock.lock();
         }
         try {
-            entry = map.remove(id);
+            entry = map.remove(key);
         } finally {
             if (useLock) {
                 lock.unlock();

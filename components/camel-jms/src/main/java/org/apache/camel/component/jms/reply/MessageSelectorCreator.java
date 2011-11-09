@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jms.reply;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,26 +26,19 @@ import org.slf4j.LoggerFactory;
  * A creator which can build the JMS message selector query string to use
  * with a shared persistent reply-to queue, so we can select the correct messages we expect as replies.
  */
-public class MessageSelectorCreator {
+public class MessageSelectorCreator implements CorrelationListener {
     protected static final Logger LOG = LoggerFactory.getLogger(MessageSelectorCreator.class);
-    protected Map<String, String> correlationIds;
+    protected final CorrelationTimeoutMap timeoutMap;
+    protected final Set<String> correlationIds;
     protected boolean dirty = true;
     protected StringBuilder expression;
 
-    public MessageSelectorCreator() {
-        correlationIds = new HashMap<String, String>();
-    }
-
-    public synchronized void addCorrelationID(String id) {
-        correlationIds.put(id, id);
-        LOG.trace("Added correlationID: {}", id);
-        dirty = true;
-    }
-
-    public synchronized void removeCorrelationID(String id) {
-        boolean answer = correlationIds.remove(id) != null;
-        LOG.trace("Removed correlationID: {} -> {}", id, answer);
-        dirty = true;
+    public MessageSelectorCreator(CorrelationTimeoutMap timeoutMap) {
+        this.timeoutMap = timeoutMap;
+        this.timeoutMap.setListener(this);
+        // create local set of correlation ids, as its easier to keep track
+        // using the listener so we can flag the dirty flag upon changes
+        this.correlationIds = new LinkedHashSet<String>();
     }
 
     public synchronized String get() {
@@ -55,16 +48,16 @@ public class MessageSelectorCreator {
 
         expression = new StringBuilder("JMSCorrelationID='");
 
-        if (correlationIds.isEmpty()) {
+        if (correlationIds.size() == 0) {
             // no id's so use a dummy to select nothing
             expression.append("CamelDummyJmsMessageSelector'");
         } else {
             boolean first = true;
-            for (Map.Entry<String, String> entry : correlationIds.entrySet()) {
+            for (String value : correlationIds) {
                 if (!first) {
                     expression.append(" OR JMSCorrelationID='");
                 }
-                expression.append(entry.getValue()).append("'");
+                expression.append(value).append("'");
                 if (first) {
                     first = false;
                 }
@@ -75,4 +68,18 @@ public class MessageSelectorCreator {
         return expression.toString();
     }
 
+    public void onPut(String key) {
+        dirty = true;
+        correlationIds.add(key);
+    }
+
+    public void onRemove(String key) {
+        dirty = true;
+        correlationIds.remove(key);
+    }
+
+    public void onEviction(String key) {
+        dirty = true;
+        correlationIds.remove(key);
+    }
 }

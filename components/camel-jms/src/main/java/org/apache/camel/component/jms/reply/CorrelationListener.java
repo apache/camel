@@ -16,22 +16,29 @@
  */
 package org.apache.camel.component.jms.reply;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
-
 /**
- * {@link ReplyHandler} to handle processing replies when using persistent queues.
- *
- * @version 
+ * Listener for events when correlation id's changes.
  */
-public class PersistentQueueReplyHandler extends TemporaryQueueReplyHandler {
+public interface CorrelationListener {
 
-    private MessageSelectorCreator dynamicMessageSelector;
+    /**
+     * Callback when a new correlation id is added
+     *
+     * @param key the correlation id
+     */
+    void onPut(String key);
 
-    public PersistentQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                       String originalCorrelationId, long timeout, MessageSelectorCreator dynamicMessageSelector) {
-        super(replyManager, exchange, callback, originalCorrelationId, timeout);
-        this.dynamicMessageSelector = dynamicMessageSelector;
-    }
+    /**
+     * Callback when a correlation id is removed
+     *
+     * @param key the correlation id
+     */
+    void onRemove(String key);
 
+    /**
+     * Callback when a correlation id is evicted due timeout
+     *
+     * @param key the correlation id
+     */
+    void onEviction(String key);
 }
