@@ -45,10 +45,6 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         PersistentQueueReplyHandler handler = new PersistentQueueReplyHandler(replyManager, exchange, callback,
                 originalCorrelationId, requestTimeout, dynamicMessageSelector);
         correlation.put(correlationId, handler, requestTimeout);
-        if (dynamicMessageSelector != null) {
-            // also remember to keep the dynamic selector updated with the new correlation id
-            dynamicMessageSelector.addCorrelationID(correlationId);
-        }
         return correlationId;
     }
 
@@ -64,14 +60,6 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         }
 
         correlation.put(newCorrelationId, handler, requestTimeout);
-
-        // no not arrived early
-        if (dynamicMessageSelector != null) {
-            // also remember to keep the dynamic selector updated with the new correlation id
-            // at first removing the old correlationID and then add the new correlationID
-            dynamicMessageSelector.removeCorrelationID(correlationId);
-            dynamicMessageSelector.addCorrelationID(newCorrelationId);
-        }
     }
 
     protected void handleReplyMessage(String correlationID, Message message) {
@@ -84,10 +72,6 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
             try {
                 handler.onReply(correlationID, message);
             } finally {
-                if (dynamicMessageSelector != null) {
-                    // also remember to keep the dynamic selector updated with the new correlation id
-                    dynamicMessageSelector.removeCorrelationID(correlationID);
-                }
                 correlation.remove(correlationID);
             }
         } else {
@@ -167,7 +151,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
             answer = new PersistentQueueMessageListenerContainer(fixedMessageSelector);
         } else {
             // use a dynamic message selector which will select the message we want to receive as reply
-            dynamicMessageSelector = new MessageSelectorCreator();
+            dynamicMessageSelector = new MessageSelectorCreator(correlation);
             answer = new PersistentQueueMessageListenerContainer(dynamicMessageSelector);
         }
 
