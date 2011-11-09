@@ -68,13 +68,13 @@ public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
     @Override
     protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
         checkBeanType(bean, JAXRSServerFactoryBean.class);
-        return ((RsServerBlueprintBean)bean).copy();
+        return (RsServerBlueprintBean)bean;
     }
     
     @Override
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
         checkBeanType(bean, JAXRSClientFactoryBean.class);
-        return ((RsClientBlueprintBean)bean).copy();
+        return (RsClientBlueprintBean)bean;
     }
     
 

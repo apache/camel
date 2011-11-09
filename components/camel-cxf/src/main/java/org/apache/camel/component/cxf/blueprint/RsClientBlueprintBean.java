@@ -40,13 +40,5 @@ public class RsClientBlueprintBean extends JAXRSClientFactoryBean implements Blu
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
-   
-    public RsClientBlueprintBean copy() {
-        try {
-            return (RsClientBlueprintBean) clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeCamelException(e);
-        }
-    }
 
 }
