@@ -21,15 +21,30 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.util.DefaultTimeoutMap;
 
 /**
- * @version 
+ * @version
  */
 public class CorrelationMap extends DefaultTimeoutMap<String, ReplyHandler> {
+
+    private CorrelationListener listener;
 
     public CorrelationMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
         super(executor, requestMapPollTimeMillis);
     }
 
+    public void setListener(CorrelationListener listener) {
+        // there is only one listener needed
+        this.listener = listener;
+    }
+
     public boolean onEviction(String key, ReplyHandler value) {
+        try {
+            if (listener != null) {
+                listener.onEviction(key);
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+
         // trigger timeout
         value.onTimeout(key);
         // return true to remove the element
@@ -38,6 +53,14 @@ public class CorrelationMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
     @Override
     public void put(String key, ReplyHandler value, long timeoutMillis) {
+        try {
+            if (listener != null) {
+                listener.onPut(key);
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+
         if (timeoutMillis <= 0) {
             // no timeout (must use Integer.MAX_VALUE)
             super.put(key, value, Integer.MAX_VALUE);
@@ -45,4 +68,19 @@ public class CorrelationMap extends DefaultTimeoutMap<String, ReplyHandler> {
             super.put(key, value, timeoutMillis);
         }
     }
+
+    @Override
+    public ReplyHandler remove(String key) {
+        try {
+            if (listener != null) {
+                listener.onRemove(key);
+            }
+        } catch (Throwable e) {
+            // ignore
+        }
+
+        ReplyHandler answer = super.remove(key);
+        return answer;
+    }
+
 }
