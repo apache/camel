@@ -154,6 +154,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         answer.setPubSubDomain(false);
         answer.setSubscriptionDurable(false);
         answer.setConcurrentConsumers(1);
+        answer.setMaxConcurrentConsumers(1);
         answer.setConnectionFactory(endpoint.getConnectionFactory());
         String clientId = endpoint.getClientId();
         if (clientId != null) {
@@ -180,6 +181,11 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
             answer.setRecoveryInterval(endpoint.getRecoveryInterval());
         }
         // do not use a task executor for reply as we are are always a single threaded task
+
+        // setup a bean name which is used ny Spring JMS as the thread name
+        String name = "PersistentQueueReplyManager[" + answer.getDestinationName() + "]";
+        name = endpoint.getCamelContext().getExecutorServiceManager().resolveThreadName(name);
+        answer.setBeanName(name);
 
         return answer;
     }
