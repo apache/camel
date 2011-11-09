@@ -57,7 +57,8 @@
           <xsd:attribute name="wsdlURL" type="xsd:string"/>
           <xsd:attribute name="endpointName" type="xsd:QName"/>
           <xsd:attribute name="serviceName" type="xsd:QName"/>
-          <xsd:attribute name="loggingFeatureEnabled" type="xsd:boolean" default="true"/>
+          <xsd:attribute name="loggingFeatureEnabled" type="xsd:boolean" default="false"/>
+          <xsd:attribute name="loggingSizeLimit" type="xsd:integer" />
         </xsd:extension>
       </xsd:complexContent>
     </xsd:complexType>

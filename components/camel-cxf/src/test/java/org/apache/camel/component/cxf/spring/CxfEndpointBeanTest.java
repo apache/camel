@@ -47,6 +47,8 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
                      + "/CxfEndpointBeanTest/router", routerEndpoint.getAddress());
         assertEquals("Got the wrong endpont service class", "org.apache.camel.component.cxf.HelloService",
                          routerEndpoint.getServiceClass().getName());
+        assertEquals("loggingFeatureEnabled should be false", false, routerEndpoint.isLoggingFeatureEnabled());
+        assertEquals("loggingSizeLimit should not be set", 0, routerEndpoint.getLoggingSizeLimit());
         assertEquals("Got the wrong handlers size", 1, routerEndpoint.getHandlers().size());
         assertEquals("Got the wrong schemalocations size", 1, routerEndpoint.getSchemaLocations().size());
         assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", routerEndpoint.getSchemaLocations().get(0));
@@ -55,6 +57,7 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         assertEquals("Got the wrong endpointName", endpointName, myEndpoint.getPortName());
         assertEquals("Got the wrong serviceName", serviceName, myEndpoint.getServiceName());
         assertEquals("loggingFeatureEnabled should be true", true, myEndpoint.isLoggingFeatureEnabled());
+        assertEquals("loggingSizeLimit should be set", 200, myEndpoint.getLoggingSizeLimit());
         assertTrue("We should get a soap binding", myEndpoint.getBindingConfig() instanceof SoapBindingConfiguration);
         SoapBindingConfiguration configuration = (SoapBindingConfiguration)myEndpoint.getBindingConfig();
         assertEquals("We should get a right soap version", "1.2", String.valueOf(configuration.getVersion().getVersion()));

@@ -44,7 +44,7 @@
 
   <cxf:cxfEndpoint id="myEndpoint" address="http://localhost:${CXFTestSupport.port3}/test"
     serviceClass="org.apache.camel.wsdl_first.Person" serviceName="${CxfEndpointBeans.serviceName}" endpointName="${CxfEndpointBeans.endpointName}"
-    wsdlURL="person.wsdl" loggingFeatureEnabled="true">
+    wsdlURL="person.wsdl" loggingFeatureEnabled="true" loggingSizeLimit="200">
     <cxf:binding>
          <soap:soapBinding version="1.2"/>
     </cxf:binding>

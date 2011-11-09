@@ -122,6 +122,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
     private boolean isSetDefaultBus;
     private boolean loggingFeatureEnabled;
+    private int loggingSizeLimit;
     private String address;
     private boolean mtomEnabled;
     private boolean skipPayloadMessagePartCheck;
@@ -264,7 +265,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         if (isLoggingFeatureEnabled()) {
-            sfb.getFeatures().add(new LoggingFeature());
+            if (getLoggingSizeLimit() > 0) {
+                sfb.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
+            } else {
+                sfb.getFeatures().add(new LoggingFeature());
+            }
         }
 
         if (getDataFormat() == DataFormat.PAYLOAD) {
@@ -415,7 +420,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
 
         if (isLoggingFeatureEnabled()) {
-            factoryBean.getFeatures().add(new LoggingFeature());
+            if (getLoggingSizeLimit() > 0) {
+                factoryBean.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
+            } else {
+                factoryBean.getFeatures().add(new LoggingFeature());
+            }
         }
 
         // set the document-literal wrapped style
@@ -697,6 +706,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public boolean isLoggingFeatureEnabled() {
         return loggingFeatureEnabled;
+    }
+
+    public int getLoggingSizeLimit() {
+        return loggingSizeLimit;
+    }
+
+    public void setLoggingSizeLimit(int loggingSizeLimit) {
+        this.loggingSizeLimit = loggingSizeLimit;
     }
 
     protected boolean isSkipPayloadMessagePartCheck() {
