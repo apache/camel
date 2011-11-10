@@ -95,7 +95,7 @@
     <icu4j-version>4.0.1</icu4j-version>
     <jackson-version>1.8.6</jackson-version>
     <jackrabbit-version>2.2.4</jackrabbit-version>
-    <jain-sip-ri-bundle-version>1.2.154_1</jain-sip-ri-bundle-version>
+    <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasypt-version>1.7</jasypt-version>
     <java-apns-version>0.1.6</java-apns-version>
     <javassist-bundle-version>3.9.0.GA_1</javassist-bundle-version>
@@ -139,7 +139,7 @@
     <scala-version>2.9.1</scala-version>
     <scala-plugin-version>2.15.1</scala-plugin-version>
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
-    <shiro-bundle-version>1.1.0_1</shiro-bundle-version>
+    <shiro-bundle-version>1.1.0_2</shiro-bundle-version>
     <slf4j-version>1.6.1</slf4j-version>
     <smack-version>3.2.0</smack-version>
     <snmp4j-version>1.8.1_5</snmp4j-version>
