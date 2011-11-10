@@ -209,7 +209,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
         // include destination name as part of thread and transaction name
         String consumerName = "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
-        
+
         if (configuration.getTaskExecutor() != null) {
             if (log.isDebugEnabled()) {
                 log.debug("Using custom TaskExecutor: {} on listener container: {}", configuration.getTaskExecutor(), listenerContainer);
@@ -244,6 +244,10 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      */
     public String getEndpointConfiguredDestinationName() {
         String remainder = ObjectHelper.after(getEndpointKey(), "//");
+        if (remainder != null && remainder.contains("?")) {
+            // remove parameters
+            remainder = ObjectHelper.before(remainder, "?");
+        }
         return JmsMessageHelper.normalizeDestinationName(remainder);
     }
 

@@ -237,6 +237,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:queue:Foo?idleConsumerLimit=51");
         assertEquals(51, endpoint.getIdleConsumerLimit());
         assertEquals(true, endpoint.isAutoStartup());
+        assertEquals("Foo", endpoint.getEndpointConfiguredDestinationName());
     }
 
     @Test
@@ -294,6 +295,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getTaskExecutor());
         assertNotNull(endpoint.getTemplateConnectionFactory());
         assertNull(endpoint.getTransactionManager());
+        assertEquals("Foo", endpoint.getEndpointConfiguredDestinationName());
 
         assertEquals(false, endpoint.isAcceptMessagesWhileStopping());
         assertEquals(false, endpoint.isAlwaysCopyMessage());
