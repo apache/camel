@@ -258,7 +258,10 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             if (getDataFormat() == DataFormat.PAYLOAD) {
                 sfb.getFeatures().add(new PayLoadDataFormatFeature(allowStreaming));
             } else if (getDataFormat() == DataFormat.MESSAGE) {
-                sfb.getFeatures().add(new MessageDataFormatFeature());
+                MessageDataFormatFeature feature = new MessageDataFormatFeature();
+                feature.addInIntercepters(getInInterceptors());
+                feature.addOutInterceptors(getOutInterceptors());
+                sfb.getFeatures().add(feature);
             }
         } else {
             LOG.debug("Ignore DataFormat mode {} since SEI class is annotated with WebServiceProvider", getDataFormat());
@@ -413,7 +416,10 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
         // apply feature here
         if (getDataFormat() == DataFormat.MESSAGE) {
-            factoryBean.getFeatures().add(new MessageDataFormatFeature());
+            MessageDataFormatFeature feature = new MessageDataFormatFeature();
+            feature.addInIntercepters(getInInterceptors());
+            feature.addOutInterceptors(getOutInterceptors());
+            factoryBean.getFeatures().add(feature);
         } else if (getDataFormat() == DataFormat.PAYLOAD) {
             factoryBean.getFeatures().add(new PayLoadDataFormatFeature(allowStreaming));
             factoryBean.setDataBinding(new HybridSourceDataBinding());

@@ -23,6 +23,7 @@ import org.apache.camel.component.cxf.interceptors.RawMessageContentRedirectInte
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.frontend.WSDLGetInterceptor;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.message.Message;
@@ -56,20 +57,16 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
     @Override
     public void initialize(Client client, Bus bus) {
         //check if there is logging interceptor
-        
-        removeInterceptorWhichIsOutThePhases(client.getInInterceptors(), REMAINING_IN_PHASES);
-        removeInterceptorWhichIsOutThePhases(client.getEndpoint().getInInterceptors(), REMAINING_IN_PHASES);
+        removeInterceptorWhichIsOutThePhases(client.getInInterceptors(), REMAINING_IN_PHASES, getInInterceptorNames());
+        removeInterceptorWhichIsOutThePhases(client.getEndpoint().getInInterceptors(), REMAINING_IN_PHASES, getInInterceptorNames());
         client.getEndpoint().getBinding().getInInterceptors().clear();
 
         //we need to keep the LoggingOutputInterceptor
-        Interceptor<? extends Message> loggingOutputInterceptor =  getLoggingOutInterceptor(client);
-        removeInterceptorWhichIsOutThePhases(client.getOutInterceptors(), REMAINING_OUT_PHASES);
-        removeInterceptorWhichIsOutThePhases(client.getEndpoint().getOutInterceptors(), REMAINING_OUT_PHASES);
+        getOutInterceptorNames().add(LoggingOutInterceptor.class.getName());
+        removeInterceptorWhichIsOutThePhases(client.getOutInterceptors(), REMAINING_OUT_PHASES, getOutInterceptorNames());
+        removeInterceptorWhichIsOutThePhases(client.getEndpoint().getOutInterceptors(), REMAINING_OUT_PHASES, getOutInterceptorNames());
         client.getEndpoint().getBinding().getOutInterceptors().clear();
         client.getEndpoint().getOutInterceptors().add(new RawMessageContentRedirectInterceptor());
-        if (loggingOutputInterceptor != null) {
-            client.getEndpoint().getOutInterceptors().add(loggingOutputInterceptor);
-        }
     }
 
     @Override
@@ -77,63 +74,32 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
         // currently we do not filter the bus
         // remove the interceptors
         
-        // Find the WSDLGetInterceptor
-        Interceptor<? extends Message> wsdlGetInterceptor = getInterceptorByName(server.getEndpoint().getInInterceptors(), "org.apache.cxf.frontend.WSDLGetInterceptor");
+        // keep the WSDLGetInterceptor
+        getInInterceptorNames().add(WSDLGetInterceptor.class.getName());
         
-        removeInterceptorWhichIsOutThePhases(server.getEndpoint().getService().getInInterceptors(), REMAINING_IN_PHASES);
-        removeInterceptorWhichIsOutThePhases(server.getEndpoint().getInInterceptors(), REMAINING_IN_PHASES);
+        removeInterceptorWhichIsOutThePhases(server.getEndpoint().getService().getInInterceptors(), REMAINING_IN_PHASES, getInInterceptorNames());
+        removeInterceptorWhichIsOutThePhases(server.getEndpoint().getInInterceptors(), REMAINING_IN_PHASES, getInInterceptorNames());
 
-        // For CXF 2.4.x we need to add the WSDLGetInterceptor back
-        if (wsdlGetInterceptor != null) {
-            server.getEndpoint().getInInterceptors().add(wsdlGetInterceptor);
-        }
         
         //we need to keep the LoggingOutputInterceptor
-        Interceptor<? extends Message> loggingOutputInterceptor =  getLoggingOutInterceptor(server);
+        getOutInterceptorNames().add(LoggingOutInterceptor.class.getName());
         
         // Do not using the binding interceptor any more
         server.getEndpoint().getBinding().getInInterceptors().clear();
 
-        removeInterceptorWhichIsOutThePhases(server.getEndpoint().getService().getOutInterceptors(), REMAINING_OUT_PHASES);
-        removeInterceptorWhichIsOutThePhases(server.getEndpoint().getOutInterceptors(), REMAINING_OUT_PHASES);
+        removeInterceptorWhichIsOutThePhases(server.getEndpoint().getService().getOutInterceptors(), REMAINING_OUT_PHASES, getOutInterceptorNames());
+        removeInterceptorWhichIsOutThePhases(server.getEndpoint().getOutInterceptors(), REMAINING_OUT_PHASES, getOutInterceptorNames());
 
         // Do not use the binding interceptor any more
         server.getEndpoint().getBinding().getOutInterceptors().clear();
         server.getEndpoint().getOutInterceptors().add(new RawMessageContentRedirectInterceptor());
         
-        if (loggingOutputInterceptor != null) {
-            server.getEndpoint().getOutInterceptors().add(loggingOutputInterceptor);
-        }
     }
 
     @Override
     protected Logger getLogger() {
         return LOG;
     }
-    
-    private Interceptor<? extends Message> getInterceptorByName(List<Interceptor<? extends Message>> interceptors, String name) {
-        for (Interceptor<? extends Message> interceptor : interceptors) {
-            if (name.equals(interceptor.getClass().getName())) {
-                return interceptor;
-            }
-        } 
-        return null;
-    }
-    
-    protected Interceptor<? extends Message> getLoggingOutInterceptor(Client client) {
-        Interceptor<? extends Message> result = getInterceptorByName(client.getOutInterceptors(), LoggingOutInterceptor.class.getName());
-        if (result == null) {
-            result = getInterceptorByName(client.getEndpoint().getOutInterceptors(), LoggingOutInterceptor.class.getName());
-        }
-        return result;
-    }
-    
-    protected Interceptor<? extends Message> getLoggingOutInterceptor(Server server) {
-        Interceptor<? extends Message> result = getInterceptorByName(server.getEndpoint().getOutInterceptors(), LoggingOutInterceptor.class.getName());
-        if (result == null) {
-            result = getInterceptorByName(server.getEndpoint().getService().getOutInterceptors(), LoggingOutInterceptor.class.getName());
-        }
-        return result;
-    }
+   
 
 }
