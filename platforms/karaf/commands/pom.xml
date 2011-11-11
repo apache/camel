@@ -70,8 +70,8 @@
         <configuration>
           <instructions>
             <Import-Package>
-              org.apache.felix.service.command,
-              org.apache.felix.gogo.commands,
+              org.apache.felix.service.command;version="[0.6,1)",
+              org.apache.felix.gogo.commands;version="[0.6,1)",
               org.apache.karaf.shell.console,
               *
             </Import-Package>
