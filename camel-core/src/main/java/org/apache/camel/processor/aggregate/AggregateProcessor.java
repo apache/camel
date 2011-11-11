@@ -844,7 +844,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
             LOG.info("Using CompletionInterval to run every " + getCompletionInterval() + " millis.");
             ScheduledExecutorService scheduler = camelContext.getExecutorServiceStrategy().newScheduledThreadPool(this, "AggregateTimeoutChecker", 1);
             // trigger completion based on interval
-            scheduler.scheduleAtFixedRate(new AggregationIntervalTask(), 1000L, getCompletionInterval(), TimeUnit.MILLISECONDS);
+            scheduler.scheduleAtFixedRate(new AggregationIntervalTask(), getCompletionInterval(), getCompletionInterval(), TimeUnit.MILLISECONDS);
         }
 
         // start timeout service if its in use
