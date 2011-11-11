@@ -32,6 +32,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.w3c.dom.ls.LSResourceResolver;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -42,7 +44,7 @@ import org.apache.camel.Processor;
  * A processor which validates the XML version of the inbound message body
  * against some schema either in XSD or RelaxNG
  * 
- * @version 
+ * @version
  */
 public class ValidatingProcessor implements Processor {
     // for lazy creation of the Schema
@@ -55,6 +57,7 @@ public class ValidatingProcessor implements Processor {
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
     private boolean useDom;
     private boolean useSharedSchema = true;
+    private LSResourceResolver resourceResolver;
 
     public void process(Exchange exchange) throws Exception {
         Schema schema;
@@ -80,7 +83,8 @@ public class ValidatingProcessor implements Processor {
         }
 
         // create a new errorHandler and set it on the validator
-        // must be a local instance to avoid problems with concurrency (to be thread safe)
+        // must be a local instance to avoid problems with concurrency (to be
+        // thread safe)
         ValidatorErrorHandler handler = errorHandler.getClass().newInstance();
         validator.setErrorHandler(handler);
 
@@ -88,10 +92,9 @@ public class ValidatingProcessor implements Processor {
             validator.validate(source, result);
         } catch (SAXParseException e) {
             // can be thrown for non well formed XML
-            throw new SchemaValidationException(exchange, schema, 
-                                                Collections.singletonList(e), 
-                                                Collections.<SAXParseException>emptyList(), 
-                                                Collections.<SAXParseException>emptyList());
+            throw new SchemaValidationException(exchange, schema, Collections.singletonList(e),
+                    Collections.<SAXParseException> emptyList(),
+                    Collections.<SAXParseException> emptyList());
         }
 
         handler.handleErrors(exchange, schema, result);
@@ -175,10 +178,11 @@ public class ValidatingProcessor implements Processor {
     }
 
     /**
-     * Sets whether DOMSource and DOMResult should be used, or
-     * SaxSource and SaxResult.
-     *
-     * @param useDom true to use DOM otherwise Sax is used
+     * Sets whether DOMSource and DOMResult should be used, or SaxSource and
+     * SaxResult.
+     * 
+     * @param useDom
+     *            true to use DOM otherwise Sax is used
      */
     public void setUseDom(boolean useDom) {
         this.useDom = useDom;
@@ -192,11 +196,21 @@ public class ValidatingProcessor implements Processor {
         this.useSharedSchema = useSharedSchema;
     }
 
+    public LSResourceResolver getResourceResolver() {
+        return resourceResolver;
+    }
+
+    public void setResourceResolver(LSResourceResolver resourceResolver) {
+        this.resourceResolver = resourceResolver;
+    }
+
     // Implementation methods
     // -----------------------------------------------------------------------
 
     protected SchemaFactory createSchemaFactory() {
-        return SchemaFactory.newInstance(schemaLanguage);
+        SchemaFactory factory = SchemaFactory.newInstance(schemaLanguage);
+        factory.setResourceResolver(getResourceResolver());
+        return factory;
     }
 
     protected Source createSchemaSource() throws IOException {
@@ -216,5 +230,4 @@ public class ValidatingProcessor implements Processor {
         }
         return factory.newSchema(getSchemaSource());
     }
-
 }

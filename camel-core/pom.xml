@@ -96,6 +96,14 @@
       <artifactId>easymock</artifactId>
       <scope>test</scope>
     </dependency>
+    
+    <!-- validator -->
+	<dependency>
+		<groupId>xml-resolver</groupId>
+		<artifactId>xml-resolver</artifactId>
+		<version>${xml-resolver-version}</version>
+		<scope>test</scope>
+	</dependency>
   </dependencies>
 
 

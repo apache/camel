@@ -157,6 +157,7 @@
     <velocity-version>1.7</velocity-version>
     <woodstox-version>4.1.1</woodstox-version>
     <xbean-spring-version>3.5</xbean-spring-version>
+    <xml-resolver-version>1.2</xml-resolver-version>
     <xstream-version>1.4.1</xstream-version>
     <xmlsec-version>1.4.5</xmlsec-version>
     <xerces-version>2.9.1</xerces-version>

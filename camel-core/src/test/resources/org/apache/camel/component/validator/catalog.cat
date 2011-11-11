@@ -1,0 +1,2 @@
+PUBLIC "http://foo.com/report" "report.xsd"
+PUBLIC "http://foo.com/report-base" "report-base.xsd"

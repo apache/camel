@@ -18,7 +18,10 @@ package org.apache.camel.component.validator;
 
 import java.io.InputStream;
 import java.util.Map;
+
 import javax.xml.transform.stream.StreamSource;
+
+import org.w3c.dom.ls.LSResourceResolver;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -46,7 +49,8 @@ public class ValidatorComponent extends DefaultComponent {
         LOG.debug("{} using schema resource: {}", this, resourceUri);
         configureValidator(validator, uri, remaining, parameters);
 
-        // force loading of schema at create time otherwise concurrent processing could
+        // force loading of schema at create time otherwise concurrent
+        // processing could
         // cause thread safe issues for the javax.xml.validation.SchemaFactory
         validator.loadSchema();
 
@@ -54,6 +58,11 @@ public class ValidatorComponent extends DefaultComponent {
     }
 
     protected void configureValidator(ValidatingProcessor validator, String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        LSResourceResolver resourceResolver = resolveAndRemoveReferenceParameter(parameters, "resourceResolver", LSResourceResolver.class);
+        if (resourceResolver != null) {
+            validator.setResourceResolver(resourceResolver);
+        }
+
         setProperties(validator, parameters);
     }
 }
