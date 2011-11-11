@@ -54,6 +54,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean flushOnSend = true;
     private int maxMessagesPerPoll;
     private boolean usePersist;
+    private boolean transacted;
 
     public JpaEndpoint() {
     }
@@ -248,6 +249,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     public void setUsePersist(boolean usePersist) {
         this.usePersist = usePersist;
+    }
+
+    public boolean isTransacted() {
+        return transacted;
+    }
+
+    public void setTransacted(boolean transacted) {
+        this.transacted = transacted;
     }
 
     // Implementation methods
