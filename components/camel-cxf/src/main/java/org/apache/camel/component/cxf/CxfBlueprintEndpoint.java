@@ -73,38 +73,6 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
         }
     }
 
-    /**
-     * Create a CXF server factory bean
-     */
-    ServerFactoryBean createServerFactoryBean() throws Exception {
-
-        Class<?> cls = null;
-        if (getDataFormat() == DataFormat.POJO || getServiceClass() != null) {
-            // get service class
-            ObjectHelper.notNull(getServiceClass(), CxfConstants.SERVICE_CLASS);
-            cls = getServiceClass();
-        }
-
-        // create server factory bean
-        // Shouldn't use CxfEndpointUtils.getServerFactoryBean(cls) as it is for
-        // CxfSoapComponent
-        ServerFactoryBean answer = null;
-
-        if (cls == null) {
-            checkName(getPortName(), " endpoint/port name");
-            checkName(getServiceName(), " service name");
-            answer = new ServerFactoryBean(new WSDLServiceFactoryBean());
-        } else if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
-            answer = new JaxWsServerFactoryBean();
-        } else {
-            answer = new ServerFactoryBean();
-        }
-        // setup server factory bean
-        setupServerFactoryBean(answer, cls);
-
-        return answer;
-    }
-
     public BlueprintContainer getBlueprintContainer() {
         return blueprintContainer;
     }
