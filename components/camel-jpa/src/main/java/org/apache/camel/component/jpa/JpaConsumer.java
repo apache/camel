@@ -83,7 +83,11 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
 
                 Query query = getQueryFactory().createQuery(entityManager);
                 configureParameters(query);
+                LOG.trace("Created query {}", query);
+
                 List<Object> results = CastUtils.cast(query.getResultList());
+                LOG.trace("Got result list from query {}", results);
+
                 for (Object result : results) {
                     DataHolder holder = new DataHolder();
                     holder.manager = entityManager;
@@ -96,9 +100,14 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
                 try {
                     messagePolled = processBatch(CastUtils.cast(answer));
                 } catch (Exception e) {
-                    throw new PersistenceException(e);
+                    if (e instanceof PersistenceException) {
+                        throw (PersistenceException) e;
+                    } else {
+                        throw new PersistenceException(e);
+                    }
                 }
 
+                LOG.debug("Flushing EntityManager");
                 entityManager.flush();
                 return messagePolled;
             }
@@ -138,11 +147,12 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
             if (lockEntity(result, entityManager)) {
                 // process the current exchange
                 LOG.debug("Processing exchange: {}", exchange);
-                try {
-                    getProcessor().process(exchange);
-                } catch (Exception e) {
-                    throw new PersistenceException(e);
+                getProcessor().process(exchange);
+                if (exchange.getException() != null) {
+                    // if we failed then throw exception
+                    throw exchange.getException();
                 }
+
                 getDeleteHandler().deleteObject(entityManager, result);
             }
         }
