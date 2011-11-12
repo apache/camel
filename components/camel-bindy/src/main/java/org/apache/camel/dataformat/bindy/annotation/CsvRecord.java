@@ -39,47 +39,40 @@ public @interface CsvRecord {
 
     /**
      * Name describing the record (optional)
-     * 
-     * @return String
      */
     String name() default "";
 
     /**
      * Separator used to split a record in tokens (mandatory)
-     * 
-     * @return String
      */
     String separator();
 
     /**
      * The skipFirstLine parameter will allow to skip or not the first line of a
      * CSV file. This line often contains columns definition
-     * 
-     * @return boolean
      */
     boolean skipFirstLine() default false;
 
     /**
      * Character to be used to add a carriage return after each record
-     * (optional) Three values can be used : WINDOWS, UNIX or MAC
-     * 
-     * @return String
+     * (optional) Three values can be used : WINDOWS, UNIX or MAC.
      */
     String crlf() default "WINDOWS";
 
     /**
      * The generateHeaderColumns parameter allow to add in the CSV generated the
      * header containing names of the columns
-     * 
-     * @return boolean
      */
     boolean generateHeaderColumns() default false;
 
     /**
      * Indicates if the message must be ordered in output
-     * 
-     * @return boolean
      */
     boolean isOrdered() default false;
+
+    /**
+     * Whether to marshal columns with the given quote character (optional)
+     */
+    String quote() default "";
 
 }
