@@ -44,7 +44,7 @@ public class BindySingleQuotesCsvUnmarshallTest extends AbstractJUnit4SpringCont
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
 
-        expected = "'10','A9','Pauline','M','ISIN','XD12345678','BUY,Share','2500.45','USD','08-01-2009";
+        expected = "'10','A9','Pauline','M','ISIN','XD12345678','BUY','Share','2500.45','USD','08-01-2009";
 
         template.sendBody(expected);
 
