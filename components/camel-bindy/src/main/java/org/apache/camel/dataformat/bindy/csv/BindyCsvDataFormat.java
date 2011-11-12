@@ -153,7 +153,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 String[] tokens = line.split(separator, -1);
                 List<String> result = Arrays.asList(tokens);
                 // must unquote tokens before use
-                result = unquoteTokens(result);
+                result = unquoteTokens(result, separator);
 
                 if (result.size() == 0 || result.isEmpty()) {
                     throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
@@ -193,19 +193,64 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     /**
-     * Unquote the tokens, by removing leading and trailing quote chars
+     * Unquote the tokens, by removing leading and trailing quote chars,
+     * as will handling fixing broken tokens which may have been split
+     * by a separator inside a quote.
      */
-    private List<String> unquoteTokens(List<String> result) {
-        List<String> answer = new ArrayList<String>(result.size());
+    private List<String> unquoteTokens(List<String> result, String separator) {
+        // a current quoted token which we assemble from the broken pieces
+        // we need to do this as we use the split method on the String class
+        // to split the line using regular expression, and it does not handle
+        // if the separator char is also inside a quoted token, therefore we need
+        // to fix this afterwards
+        StringBuilder current = new StringBuilder();
+
+        List<String> answer = new ArrayList<String>();
         for (String s : result) {
+            boolean startQuote = false;
+            boolean endQuote = false;
             if (s.startsWith("\"") || s.startsWith("'")) {
                 s = s.substring(1);
+                startQuote = true;
             }
             if (s.endsWith("\"") || s.endsWith("'")) {
                 s = s.substring(0, s.length() - 1);
+                endQuote = true;
             }
-            answer.add(s);
+
+            // are we in progress of rebuilding a broken token
+            boolean currentInProgress = current.length() > 0;
+
+            // if we hit a start token then rebuild a broken token
+            if (currentInProgress || startQuote) {
+                // append to current if we are in the middle of a start quote
+                if (currentInProgress) {
+                    // must append separator back as this is a quoted token that was broken
+                    // but a separator inside the quotes
+                    current.append(separator);
+                }
+                current.append(s);
+            }
+
+            // are we in progress of rebuilding a broken token
+            currentInProgress = current.length() > 0;
+
+            if (endQuote) {
+                // we hit end quote so append current and reset it
+                answer.add(current.toString());
+                current.setLength(0);
+            } else if (!currentInProgress) {
+                // not rebuilding so add directly as is
+                answer.add(s);
+            }
         }
+
+        // any left over from current?
+        if (current.length() > 0) {
+            answer.add(current.toString());
+            current.setLength(0);
+        }
+
         return answer;
     }
 
