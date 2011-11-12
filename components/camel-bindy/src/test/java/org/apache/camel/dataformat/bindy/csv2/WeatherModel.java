@@ -22,7 +22,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 /**
  *
  */
-@CsvRecord(separator = ",")
+@CsvRecord(separator = ",", quote = "\"")
 public class WeatherModel {
 
     @DataField(pos = 1)
