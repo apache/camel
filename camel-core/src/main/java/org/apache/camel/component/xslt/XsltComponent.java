@@ -16,24 +16,17 @@
  */
 package org.apache.camel.component.xslt;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Map;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.xml.ResultHandlerFactory;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,30 +124,11 @@ public class XsltComponent extends DefaultComponent {
         configureOutput(xslt, output);
 
         configureXslt(xslt, uri, remaining, parameters);
-        loadResource(xslt, resourceUri);
 
         // default to use the cache option from the component if the endpoint did not have the contentCache parameter
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
-        if (!cache) {
-            return new ProcessorEndpoint(uri, this, xslt) {
-                @Override
-                protected void onExchange(Exchange exchange) throws Exception {
-                    // force to load the resource on each exchange as we are not cached
-                    loadResource(xslt, resourceUri);
-                    super.onExchange(exchange);
-                }
-            };
-        } else {
-            // we have already loaded xslt so we are cached
-            return new ProcessorEndpoint(uri, this, xslt);
-        }
-    }
 
-    private void loadResource(XsltBuilder xslt, String resourceUri) throws TransformerConfigurationException, IOException {
-        LOG.trace("{} loading schema resource: {}", this, resourceUri);
-        // prefer to use URL over InputStream as it loads better with http
-        URL url = ResourceHelper.resolveMandatoryResourceAsUrl(getCamelContext().getClassResolver(), resourceUri);
-        xslt.setTransformerURL(url);
+        return new XsltEndpoint(uri, this, xslt, resourceUri, cache);
     }
 
     protected void configureXslt(XsltBuilder xslt, String uri, String remaining, Map<String, Object> parameters) throws Exception {

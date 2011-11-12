@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.util.ArrayList;
+import java.util.Set;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -45,6 +50,11 @@ public class XsltContentCacheTest extends ContextTestSupport {
 
         // start the context AFTER we've created the hello.xsl file, otherwise the xslt routes will fail
         super.startCamelContext();
+    }
+
+    @Override
+    public boolean useJmx() {
+        return true;
     }
 
     @Override
@@ -103,6 +113,40 @@ public class XsltContentCacheTest extends ContextTestSupport {
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
 
         template.sendBody("direct:c", "<hello>world!</hello>");
+        mock.assertIsSatisfied();
+    }
+    
+    public void testClearCachedStylesheetViaJmx() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
+
+        template.sendBody("direct:b", "<hello>world!</hello>");
+        mock.assertIsSatisfied();
+
+        // now replace the file with a new XSL transformation
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL, Exchange.FILE_NAME, "hello.xsl");
+
+        mock.reset();
+        // we expect the original output as the cache is enabled, so it's "goodbye" and not "goodnight"
+        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
+
+        template.sendBody("direct:b", "<hello>world!</hello>");
+        mock.assertIsSatisfied();
+        
+        // clear the cache via the mbean server
+        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        Set<ObjectName> objNameSet = mbeanServer.queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"xslt:*contentCache=true*\",*"), null);
+        ObjectName managedObjName = new ArrayList<ObjectName>(objNameSet).get(0);        
+        mbeanServer.invoke(managedObjName, "clearCachedStylesheet", null, null);
+        
+        // now replace the file with a new XSL transformation
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/xslt?fileExist=Override", NEW_XSL, Exchange.FILE_NAME, "hello.xsl");
+        
+        mock.reset();
+        // we've cleared the cache so we expect "goodnight" and not "goodbye"
+        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodnight>world!</goodnight>");
+
+        template.sendBody("direct:b", "<hello>world!</hello>");
         mock.assertIsSatisfied();
     }
 
