@@ -75,7 +75,6 @@
       <hamcrest-bundle-version>1.2-dev2_4</hamcrest-bundle-version>
       <hapi-bundle-version>0.5.1_5</hapi-bundle-version>
       <hibernate-validator-bundle-version>4.1.0.Final_2</hibernate-validator-bundle-version>
-      <httpcore-bundle-version>4.0-alpha6_1</httpcore-bundle-version>
       <ibatis-bundle-version>2.3.4.726_2</ibatis-bundle-version>
       <irclib-bundle-version>1.10_4</irclib-bundle-version>
       <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
