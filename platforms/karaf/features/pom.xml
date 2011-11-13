@@ -103,7 +103,6 @@
       <oro-bundle-version>2.0.8_5</oro-bundle-version>
       <openjpa-bundle-version>1.2.1_2</openjpa-bundle-version>
       <opensaml-version>2.4.1_1</opensaml-version>
-      <joda-time-version>1.6.2</joda-time-version>
       <oscache-bundle-version>2.4_5</oscache-bundle-version>
       <protobuf-java-bundle-version>2.3.0_1</protobuf-java-bundle-version>
       <pax-web-version>0.7.2</pax-web-version>
