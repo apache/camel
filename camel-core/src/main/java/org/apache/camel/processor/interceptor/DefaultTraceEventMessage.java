@@ -80,11 +80,24 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
             this.outBody = MessageHelper.extractBodyAsString(out);
             this.outBodyType = MessageHelper.getBodyTypeName(out);
         }
-        this.causedByException = exchange.getException() != null ? exchange.getException().toString() : null;
+        this.causedByException = extractCausedByException(exchange);
     }
 
     // Implementation
     //---------------------------------------------------------------
+
+    private static String extractCausedByException(Exchange exchange) {
+        Throwable cause = exchange.getException();
+        if (cause == null) {
+            cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+        }
+
+        if (cause != null) {
+            return cause.toString();
+        } else {
+            return null;
+        }
+    }
 
     private static String extractShortExchangeId(Exchange exchange) {
         return exchange.getExchangeId().substring(exchange.getExchangeId().indexOf("/") + 1);
