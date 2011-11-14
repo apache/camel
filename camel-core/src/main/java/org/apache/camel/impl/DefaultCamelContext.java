@@ -1356,7 +1356,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         firstStartDone = true;
 
         // super will invoke doStart which will prepare internal services and start routes etc.
-        super.start();
+        try {
+            super.start();
+        } catch (VetoCamelContextStartException e) {
+            if (e.isRethrowException()) {
+                throw e;
+            } else {
+                log.info("CamelContext ({}) vetoed to not start due {}", getName(), e.getMessage());
+                // swallow exception and change state of this camel context to stopped
+                stop();
+                return;
+            }
+        }
 
         stopWatch.stop();
         if (log.isInfoEnabled()) {
@@ -1444,10 +1455,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 strategy.onContextStart(this);
             } catch (VetoCamelContextStartException e) {
                 // okay we should not start Camel since it was vetoed
-                log.warn("Lifecycle strategy vetoed starting CamelContext (" + getName() + ")", e);
+                log.warn("Lifecycle strategy vetoed starting CamelContext ({}) due {}", getName(), e.getMessage());
                 throw e;
             } catch (Exception e) {
-                log.warn("Lifecycle strategy " + strategy + " failed starting CamelContext (" + getName() + ")", e);
+                log.warn("Lifecycle strategy " + strategy + " failed starting CamelContext ({}) due {}", getName(), e.getMessage());
                 throw e;
             }
         }

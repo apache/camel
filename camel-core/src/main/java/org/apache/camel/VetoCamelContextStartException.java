@@ -18,24 +18,49 @@ package org.apache.camel;
 
 /**
  * An exception to veto starting {@link CamelContext}.
+ * <p/>
+ * The option rethrowException can be used to control whether to rethrow this exception
+ * when starting CamelContext or not.
  *
- * @version 
+ * @see org.apache.camel.spi.LifecycleStrategy
  */
 public class VetoCamelContextStartException extends Exception {
-    private static final long serialVersionUID = 8046489554418284256L;
+    private static final long serialVersionUID = 8046489554418284257L;
     private final CamelContext context;
+    private final boolean rethrowException;
 
     public VetoCamelContextStartException(String message, CamelContext context) {
+        this(message, context, true);
+    }
+
+    public VetoCamelContextStartException(String message, CamelContext context, boolean rethrowException) {
         super(message);
         this.context = context;
+        this.rethrowException = rethrowException;
     }
 
     public VetoCamelContextStartException(String message, Throwable cause, CamelContext context) {
+        this(message, cause, context, true);
+    }
+
+    public VetoCamelContextStartException(String message, Throwable cause, CamelContext context, boolean rethrowException) {
         super(message, cause);
         this.context = context;
+        this.rethrowException = rethrowException;
     }
 
     public CamelContext getContext() {
         return context;
     }
+
+    /**
+     * Whether to rethrow this exception when starting CamelContext, to cause an exception
+     * to be thrown from the start method.
+     * <p/>
+     * This option is default <tt>true</tt>.
+     */
+    public boolean isRethrowException() {
+        return rethrowException;
+    }
+
 }
