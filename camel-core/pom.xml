@@ -44,6 +44,7 @@
         javax.xml.bind.annotation;resolution:=optional,
         javax.xml.bind.annotation.adapters;resolution:=optional,
         javax.xml.stream;resolution:=optional,
+        javax.xml.transform.stax;resolution:=optional,
         *
     </camel.osgi.import>
     <camel.osgi.dynamic>
