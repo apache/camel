@@ -21,7 +21,6 @@ import ca.uhn.hl7v2.model.v24.segment.MSH;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -33,7 +32,6 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("HAPI bundle is wrong")
 public class HL7MLLPCodec2Test extends OSGiIntegrationSpringTestSupport implements Processor {
 
     @Override
