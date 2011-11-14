@@ -75,6 +75,7 @@
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <h2-version>1.2.144</h2-version>
     <hamcrest-version>1.2-dev1</hamcrest-version>
+    <hapi-version>1.2</hapi-version>
     <hawtbuf-version>1.2</hawtbuf-version>
     <hawtdb-version>1.5</hawtdb-version>
     <hazelcast-version>1.9.2</hazelcast-version>

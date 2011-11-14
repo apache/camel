@@ -33,16 +33,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.hl7.*</camel.osgi.export.pkg>
-        <hapi-version>1.0.1</hapi-version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>hapi</id>
-            <name>HAPI Maven Repository</name>
-            <url>http://hl7api.sourceforge.net/m2/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
 
