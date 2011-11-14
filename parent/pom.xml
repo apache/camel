@@ -82,6 +82,7 @@
     <h2-version>1.3.161</h2-version>
     <hadoop-version>0.20.203.0</hadoop-version>
     <hamcrest-version>1.1</hamcrest-version>
+    <hapi-version>1.2</hapi-version>
     <hawtbuf-version>1.6</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hazelcast-version>1.9.3</hazelcast-version>
