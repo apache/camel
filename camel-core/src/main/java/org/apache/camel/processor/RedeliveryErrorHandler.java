@@ -367,12 +367,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
      * @param redeliveryCounter The redeliveryCounter
      * @return The time to wait before the next redelivery.
      */
-    protected long determineRedeliveryDelay(Exchange exchange, RedeliveryPolicy redeliveryPolicy, long redeliveryDelay, int redeliveryCounter){
+    protected long determineRedeliveryDelay(Exchange exchange, RedeliveryPolicy redeliveryPolicy, long redeliveryDelay, int redeliveryCounter) {
         Message message = exchange.getIn();
         Long delay = message.getHeader(Exchange.REDELIVERY_DELAY, Long.class);
         if (delay == null) {
             delay = redeliveryPolicy.calculateRedeliveryDelay(redeliveryDelay, redeliveryCounter);
-        }else{
+        } else {
             if (log.isDebugEnabled()) {
                 log.debug("Redelivery delay is {} from Message.getHeader(Exchange.REDELIVERY_DELAY)", new Object[]{delay});
             }
