@@ -107,7 +107,6 @@
       <oro-bundle-version>2.0.8_5</oro-bundle-version>
       <openjpa-bundle-version>1.2.1_2</openjpa-bundle-version>
       <opensaml-version>2.4.1_1</opensaml-version>
-      <joda-time-version>1.6.2</joda-time-version>
       <osgi.compendium.version>4.2.0</osgi.compendium.version>
       <oscache-bundle-version>2.4_5</oscache-bundle-version>
       <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
