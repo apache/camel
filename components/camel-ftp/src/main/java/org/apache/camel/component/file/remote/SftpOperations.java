@@ -146,17 +146,15 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         SftpConfiguration sftpConfig = (SftpConfiguration) configuration;
 
         if (isNotEmpty(sftpConfig.getCiphers())) {
-            LOG.debug("Using ciphers: " + sftpConfig.getCiphers());
+            LOG.debug("Using ciphers: {}", sftpConfig.getCiphers());
             Hashtable<String, String> ciphers = new Hashtable<String, String>();
-            
             ciphers.put("cipher.s2c", sftpConfig.getCiphers());
             ciphers.put("cipher.c2s", sftpConfig.getCiphers());
-
             JSch.setConfig(ciphers);
         }
         
         if (isNotEmpty(sftpConfig.getPrivateKeyFile())) {
-            LOG.debug("Using private keyfile: " + sftpConfig.getPrivateKeyFile());
+            LOG.debug("Using private keyfile: {}", sftpConfig.getPrivateKeyFile());
             if (isNotEmpty(sftpConfig.getPrivateKeyFilePassphrase())) {
                 jsch.addIdentity(sftpConfig.getPrivateKeyFile(), sftpConfig.getPrivateKeyFilePassphrase());
             } else {
@@ -165,19 +163,27 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
 
         if (isNotEmpty(sftpConfig.getKnownHostsFile())) {
-            LOG.debug("Using knownhosts file: " + sftpConfig.getKnownHostsFile());
+            LOG.debug("Using knownhosts file: {}", sftpConfig.getKnownHostsFile());
             jsch.setKnownHosts(sftpConfig.getKnownHostsFile());
         }
 
         final Session session = jsch.getSession(configuration.getUsername(), configuration.getHost(), configuration.getPort());
 
         if (isNotEmpty(sftpConfig.getStrictHostKeyChecking())) {
-            LOG.debug("Using StrickHostKeyChecking: " + sftpConfig.getStrictHostKeyChecking());
+            LOG.debug("Using StrickHostKeyChecking: {}", sftpConfig.getStrictHostKeyChecking());
             session.setConfig("StrictHostKeyChecking", sftpConfig.getStrictHostKeyChecking());
         }
         
         session.setServerAliveInterval(sftpConfig.getServerAliveInterval());
         session.setServerAliveCountMax(sftpConfig.getServerAliveCountMax());
+
+        // compression
+        if (sftpConfig.getCompression() > 0) {
+            LOG.debug("Using compression: {}", sftpConfig.getCompression());
+            session.setConfig("compression.s2c","zlib@openssh.com,zlib,none");
+            session.setConfig("compression.c2s","zlib@openssh.com,zlib,none");
+            session.setConfig("compression_level", Integer.toString(sftpConfig.getCompression()));
+        }
 
         // set user information
         session.setUserInfo(new ExtendedUserInfo() {
