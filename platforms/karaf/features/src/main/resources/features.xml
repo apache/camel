@@ -27,7 +27,7 @@
     <feature version="[3,4)">spring</feature>
     <bundle>mvn:org.apache.camel/camel-core/${pom.version}</bundle>
     <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${pom.version}</bundle>
-§  </feature>
+  </feature>
   <feature name='camel-spring' version='${pom.version}' resolver='(obr)' start-level='50'>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
     <feature version="[3,4)">spring</feature>
