@@ -542,15 +542,17 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-scala/${pom.version}</bundle>
   </feature>
-  <feature name='camel-script-optional' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <!-- Not available in Maven Central.  To use these, you will need to configure an additional -->
-    <!-- maven repo into your Karaf etc/org.ops4j.pax.url.mvn.cfg file -->
-    <bundle>mvn:com.google.code.scriptengines/scriptengines-groovy/${scriptengines-version}</bundle>
-    <bundle>mvn:com.google.code.scriptengines/scriptengines-javascript/${scriptengines-version}</bundle>
-    <bundle>mvn:com.google.code.scriptengines/scriptengines-jruby/${scriptengines-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
-    <bundle>mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
+  <feature name='camel-script-jruby' version='${pom.version}' resolver='(obr)' start-level='50'>
+    <bundle>mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-jruby/${scriptengines-version}</bundle>
     <bundle dependency="true">mvn:org.jruby/jruby/${jruby-version}</bundle>
+  </feature>
+  <feature name='camel-script-javascript' version='${pom.version}' resolver='(obr)' start-level='50'>
+    <bundle>mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-javascript/${scriptengines-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
+  </feature>
+  <feature name='camel-script-groovy' version='${pom.version}' resolver='(obr)' start-level='50'>
+    <bundle>mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-groovy/${scriptengines-version}</bundle>
+    <bundle>mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
   </feature>
   <feature name='camel-script' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
