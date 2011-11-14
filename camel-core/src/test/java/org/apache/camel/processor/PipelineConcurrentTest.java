@@ -17,6 +17,11 @@
 package org.apache.camel.processor;
 
 import java.util.Random;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -38,9 +43,8 @@ public class PipelineConcurrentTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(total);
 
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(20);
-        executor.afterPropertiesSet();
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(20, 20, 1000, TimeUnit.MILLISECONDS,
+                                                             new ArrayBlockingQueue<Runnable>(10));
         for (int i = 0; i < 20; i++) {
             final int threadCount = i;
             executor.execute(new Runnable() {
