@@ -24,6 +24,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.slf4j.Logger;
@@ -54,15 +55,21 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
 
     @Override
     public void initialize(Client client, Bus bus) {
-
+        //check if there is logging interceptor
+        
         removeInterceptorWhichIsOutThePhases(client.getInInterceptors(), REMAINING_IN_PHASES);
         removeInterceptorWhichIsOutThePhases(client.getEndpoint().getInInterceptors(), REMAINING_IN_PHASES);
         client.getEndpoint().getBinding().getInInterceptors().clear();
 
+        //we need to keep the LoggingOutputInterceptor
+        Interceptor<? extends Message> loggingOutputInterceptor =  getLoggingOutInterceptor(client);
         removeInterceptorWhichIsOutThePhases(client.getOutInterceptors(), REMAINING_OUT_PHASES);
         removeInterceptorWhichIsOutThePhases(client.getEndpoint().getOutInterceptors(), REMAINING_OUT_PHASES);
         client.getEndpoint().getBinding().getOutInterceptors().clear();
         client.getEndpoint().getOutInterceptors().add(new RawMessageContentRedirectInterceptor());
+        if (loggingOutputInterceptor != null) {
+            client.getEndpoint().getOutInterceptors().add(loggingOutputInterceptor);
+        }
     }
 
     @Override
@@ -81,6 +88,9 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
             server.getEndpoint().getInInterceptors().add(wsdlGetInterceptor);
         }
         
+        //we need to keep the LoggingOutputInterceptor
+        Interceptor<? extends Message> loggingOutputInterceptor =  getLoggingOutInterceptor(server);
+        
         // Do not using the binding interceptor any more
         server.getEndpoint().getBinding().getInInterceptors().clear();
 
@@ -90,6 +100,10 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
         // Do not use the binding interceptor any more
         server.getEndpoint().getBinding().getOutInterceptors().clear();
         server.getEndpoint().getOutInterceptors().add(new RawMessageContentRedirectInterceptor());
+        
+        if (loggingOutputInterceptor != null) {
+            server.getEndpoint().getOutInterceptors().add(loggingOutputInterceptor);
+        }
     }
 
     @Override
@@ -104,6 +118,22 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
             }
         } 
         return null;
+    }
+    
+    protected Interceptor<? extends Message> getLoggingOutInterceptor(Client client) {
+        Interceptor<? extends Message> result = getInterceptorByName(client.getOutInterceptors(), LoggingOutInterceptor.class.getName());
+        if (result == null) {
+            result = getInterceptorByName(client.getEndpoint().getOutInterceptors(), LoggingOutInterceptor.class.getName());
+        }
+        return result;
+    }
+    
+    protected Interceptor<? extends Message> getLoggingOutInterceptor(Server server) {
+        Interceptor<? extends Message> result = getInterceptorByName(server.getEndpoint().getOutInterceptors(), LoggingOutInterceptor.class.getName());
+        if (result == null) {
+            result = getInterceptorByName(server.getEndpoint().getService().getOutInterceptors(), LoggingOutInterceptor.class.getName());
+        }
+        return result;
     }
 
 }
