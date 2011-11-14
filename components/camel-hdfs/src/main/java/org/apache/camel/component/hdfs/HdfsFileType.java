@@ -18,6 +18,8 @@ package org.apache.camel.component.hdfs;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,6 +27,7 @@ import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.ws.Holder;
 
 import org.apache.camel.RuntimeCamelException;
@@ -32,6 +35,9 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.FileUtil;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.ArrayFile;
 import org.apache.hadoop.io.BloomMapFile;
 import org.apache.hadoop.io.BooleanWritable;
@@ -63,13 +69,7 @@ public enum HdfsFileType {
             } catch (IOException ex) {
                 throw new RuntimeCamelException(ex);
             } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        throw new RuntimeException("Error closing stream", e);
-                    }
-                }
+                IOHelper.close(is);
             }
         }
 
@@ -123,9 +123,42 @@ public enum HdfsFileType {
         public Closeable createInputStream(String hdfsPath, HdfsConfiguration configuration) {
             try {
                 Closeable rin;
-                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
-                rin = hdfsInfo.getFileSystem().open(hdfsInfo.getPath());
+                if (configuration.getFileSystemType().equals(HdfsFileSystemType.LOCAL)) {
+                    HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                    rin = hdfsInfo.getFileSystem().open(hdfsInfo.getPath());
+                } else {
+                    rin = new FileInputStream(getHfdsFileToTmpFile(hdfsPath, configuration));
+                }
                 return rin;
+            } catch (IOException ex) {
+                throw new RuntimeCamelException(ex);
+            }
+        }
+
+        private File getHfdsFileToTmpFile(String hdfsPath, HdfsConfiguration configuration) {
+            try {
+                String fname = hdfsPath.substring(hdfsPath.lastIndexOf('/'));
+
+                File outputDest = File.createTempFile(fname, ".hdfs");
+                if (outputDest.exists()) {
+                    outputDest.delete();
+                }
+
+                HdfsInfo hdfsInfo = new HdfsInfo(hdfsPath);
+                FileSystem fileSystem = hdfsInfo.getFileSystem();
+                FileUtil.copy(fileSystem, new Path(hdfsPath), outputDest, false, fileSystem.getConf());
+                try {
+                    FileUtil.copyMerge(
+                            fileSystem, // src
+                            new Path(hdfsPath),
+                            FileSystem.getLocal(new Configuration()), // dest
+                            new Path(outputDest.toURI()),
+                            false, fileSystem.getConf(), null);
+                } catch (IOException e) {
+                    return outputDest;
+                }
+
+                return new File(outputDest, fname);
             } catch (IOException ex) {
                 throw new RuntimeCamelException(ex);
             }
