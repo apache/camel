@@ -112,7 +112,6 @@
     <dependency>
         <groupId>org.apache.ws.commons.axiom</groupId>
         <artifactId>axiom-api</artifactId>
-        <version>${axiom-version}</version>
         <exclusions>
             <exclusion>
                 <groupId>javax.mail</groupId>
@@ -155,7 +154,6 @@
     <dependency>
         <groupId>org.apache.ws.commons.axiom</groupId>
         <artifactId>axiom-impl</artifactId>
-        <version>${axiom-version}</version>
         <exclusions>
             <exclusion>
                 <groupId>javax.mail</groupId>
