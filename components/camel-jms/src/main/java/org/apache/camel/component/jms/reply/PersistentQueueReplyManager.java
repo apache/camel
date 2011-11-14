@@ -184,7 +184,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
 
         // setup a bean name which is used ny Spring JMS as the thread name
         String name = "PersistentQueueReplyManager[" + answer.getDestinationName() + "]";
-        name = endpoint.getCamelContext().getExecutorServiceManager().resolveThreadName(name);
+        name = endpoint.getCamelContext().getExecutorServiceStrategy().getThreadName(name);
         answer.setBeanName(name);
 
         return answer;
