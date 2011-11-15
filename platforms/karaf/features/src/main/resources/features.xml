@@ -19,7 +19,7 @@
 <features name='camel-${pom.version}'>
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
   <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds-feature-version}/xml/features</repository>
-  <feature name="xml-specs-api" version='${servicemix-specs-version}' resolver='(obr)' start-level='50'>
+  <feature name="xml-specs-api" version='${servicemix-specs-version}' resolver='(obr)' start-level='10'>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxb-api-2.2/${servicemix-specs-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
