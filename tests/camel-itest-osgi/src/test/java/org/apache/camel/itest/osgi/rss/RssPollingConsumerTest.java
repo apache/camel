@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rss.RssConstants;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -36,6 +37,7 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 @RunWith(JUnit4TestRunner.class)
+@Ignore("abdera-core bundle has a wrong stax api dependency")
 public class RssPollingConsumerTest extends OSGiIntegrationTestSupport {
 
     @Test
