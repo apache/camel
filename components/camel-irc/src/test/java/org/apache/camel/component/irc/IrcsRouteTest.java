@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.irc;
 
+import org.junit.Ignore;
+
+@Ignore
 public class IrcsRouteTest extends IrcRouteTest {
 
     // TODO This test is disabled until we can find a public SSL enabled IRC 

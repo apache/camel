@@ -22,19 +22,14 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.schwering.irc.lib.ssl.SSLDefaultTrustManager;
 import org.schwering.irc.lib.ssl.SSLTrustManager;
 import org.slf4j.Logger;
@@ -64,6 +59,7 @@ public class IrcConfiguration implements Cloneable {
     private boolean onPrivmsg = true;
     private boolean autoRejoin = true;
     private int[] ports = {6667, 6668, 6669};
+    private SSLContextParameters sslContextParameters;
 
     public IrcConfiguration() {
     }
@@ -121,9 +117,30 @@ public class IrcConfiguration implements Cloneable {
 
         URI uri = new URI(uriStr);
 
-        setNickname(uri.getUserInfo());
-        setUsername(uri.getUserInfo());
-        setRealname(uri.getUserInfo());
+        // Because we can get a "sanitized" URI, we need to deal with the situation where the
+        // user info includes the username and password together or else we get a mangled username
+        // that includes the user's secret being sent to the server.
+        String userInfo = uri.getUserInfo();
+        String username = null;
+        String password = null;
+        if (userInfo != null) {
+            int colonIndex = userInfo.indexOf(":");
+            if (colonIndex != -1) {
+                username = userInfo.substring(0, colonIndex);
+                password = userInfo.substring(colonIndex + 1);
+            } else {
+                username = userInfo;
+            }
+        }
+        
+        if (uri.getPort() != -1) {
+            setPorts(new int[] {uri.getPort()});
+        }
+        
+        setNickname(username);
+        setUsername(username);
+        setRealname(username);
+        setPassword(password);
         setHostname(uri.getHost());
 
         String path = uri.getPath();
@@ -313,6 +330,14 @@ public class IrcConfiguration implements Cloneable {
 
     public void setAutoRejoin(boolean autoRejoin) {
         this.autoRejoin = autoRejoin;
+    }
+    
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public String toString() {

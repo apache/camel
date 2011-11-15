@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.irc;
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;

@@ -23,7 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -35,7 +34,7 @@ public class IrcRouteTest extends CamelTestSupport {
     protected String body2 = "Message Two";
     private boolean sentMessages;    
 
-    @Ignore("test manual")
+    
     @Test
     public void testIrcMessages() throws Exception {
         resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
@@ -67,11 +66,11 @@ public class IrcRouteTest extends CamelTestSupport {
     }
 
     protected String sendUri() {
-        return "irc://camel-prd@irc.codehaus.org:6667/#camel-test?nickname=camel-prd";
+        return "irc://camel-prd-user@irc.codehaus.org:6667/#camel-test?nickname=camel-prd";
     }
 
     protected String fromUri() {
-        return "irc://camel-con@irc.codehaus.org:6667/#camel-test?nickname=camel-con";
+        return "irc://camel-con-user@irc.codehaus.org:6667/#camel-test?nickname=camel-con";
     }    
     
     /**

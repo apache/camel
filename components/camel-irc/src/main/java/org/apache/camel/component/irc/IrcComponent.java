@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
 import org.schwering.irc.lib.ssl.SSLIRCConnection;
@@ -66,16 +65,23 @@ public class IrcComponent extends DefaultComponent {
         IRCEventListener ircLogger;
 
         if (configuration.getUsingSSL()) {
+            
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating SSL Connection to {} destination(s): {} nick: {} user: {}",
                     new Object[]{configuration.getHostname(), configuration.getListOfChannels(), configuration.getNickname(), configuration.getUsername()});
             }
-            SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
-                    configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
+            
+            if (configuration.getSslContextParameters() != null) {
+                conn = new CamelSSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
+                                                 configuration.getNickname(), configuration.getUsername(), configuration.getRealname(),
+                                                 configuration.getSslContextParameters());
+            } else {
+                SSLIRCConnection sconn = new SSLIRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
+                        configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
 
-            sconn.addTrustManager(configuration.getTrustManager());
-            conn = sconn;
-
+                sconn.addTrustManager(configuration.getTrustManager());
+                conn = sconn;
+            }
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Creating Connection to {} destination(s): {} nick: {} user: {}",
