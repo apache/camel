@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -40,34 +39,38 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * @version 
  */
-public class JpaTXRollbackTest extends CamelTestSupport {
+public class JpaNonTXRollbackTest extends CamelTestSupport {
 
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
     private static AtomicInteger foo = new AtomicInteger();
     private static AtomicInteger bar = new AtomicInteger();
+    private static AtomicInteger kaboom = new AtomicInteger();
 
     protected ApplicationContext applicationContext;
     protected JpaTemplate jpaTemplate;
 
     @Test
-    public void testTXRollback() throws Exception {
+    public void testNonTXRollback() throws Exception {
         // first create three records
         template.sendBody("jpa://" + SendEmail.class.getName(), new SendEmail("foo@beer.org"));
         template.sendBody("jpa://" + SendEmail.class.getName(), new SendEmail("bar@beer.org"));
         template.sendBody("jpa://" + SendEmail.class.getName(), new SendEmail("kaboom@beer.org"));
 
-        // should rollback the entire
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        // we should retry and try again
-        mock.expectedMinimumMessageCount(4);
+        // should only rollback the failed
+        getMockEndpoint("mock:start").expectedMinimumMessageCount(4);
+        // and only the 2 good messages goes here
+        getMockEndpoint("mock:result").expectedMessageCount(2);
 
         // start route
         context.startRoute("foo");
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should be >= 2, was: " + foo.intValue(), foo.intValue() >= 2);
-        assertTrue("Should be >= 2, was: " + bar.intValue(), bar.intValue() >= 2);
+        assertEquals(1, foo.intValue());
+        assertEquals(1, bar.intValue());
+
+        // kaboom fails and we retry it again
+        assertTrue("Should be >= 2, was: " + kaboom.intValue(), kaboom.intValue() >= 2);
     }
 
     @Override
@@ -75,12 +78,14 @@ public class JpaTXRollbackTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jpa://" + SendEmail.class.getName() + "?consumer.transacted=true&delay=1000").routeId("foo").noAutoStartup()
+                from("jpa://" + SendEmail.class.getName() + "?consumer.transacted=false&delay=1000").routeId("foo").noAutoStartup()
+                        .to("mock:start")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 SendEmail send = exchange.getIn().getBody(SendEmail.class);
                                 if ("kaboom@beer.org".equals(send.getAddress())) {
+                                    kaboom.incrementAndGet();
                                     throw new IllegalArgumentException("Forced");
                                 }
 
