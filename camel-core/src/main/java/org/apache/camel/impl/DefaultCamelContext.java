@@ -1560,7 +1560,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // shutdown management as the last one
         shutdownServices(managementStrategy);
         shutdownServices(lifecycleStrategies);
-        lifecycleStrategies.clear();
+        // do not clear lifecycleStrategies as we can start Camel again and get the route back as before
 
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
