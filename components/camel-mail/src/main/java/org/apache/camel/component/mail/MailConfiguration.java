@@ -24,10 +24,8 @@ import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
-import javax.net.ssl.SSLContext;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -65,7 +63,6 @@ public class MailConfiguration implements Cloneable {
     private boolean useInlineAttachments;
     private boolean ignoreUnsupportedCharset;
     private boolean disconnect;
-    private SSLContextParameters sslContextParameters;
 
     public MailConfiguration() {
     }
@@ -179,16 +176,8 @@ public class MailConfiguration implements Cloneable {
             // add more debug for the SSL communication as well
             properties.put("javax.net.debug", "all");
         }
-        
-        if (sslContextParameters != null && isSecureProtocol()) {
-            SSLContext sslContext;
-            try {
-                sslContext = sslContextParameters.createSSLContext();
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Error initializing SSLContext.", e);
-            }
-            properties.put("mail." + protocol + ".socketFactory", sslContext.getSocketFactory());
-        } else if (dummyTrustManager && isSecureProtocol()) {
+
+        if (dummyTrustManager && isSecureProtocol()) {
             // set the custom SSL properties
             properties.put("mail." + protocol + ".socketFactory.class", "org.apache.camel.component.mail.security.DummySSLSocketFactory");
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
@@ -474,20 +463,12 @@ public class MailConfiguration implements Cloneable {
     public void setIgnoreUnsupportedCharset(boolean ignoreUnsupportedCharset) {
         this.ignoreUnsupportedCharset = ignoreUnsupportedCharset;
     }
-    
+
     public boolean isDisconnect() {
         return disconnect;
     }
 
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
-    }
-
-    public SSLContextParameters getSslContextParameters() {
-        return sslContextParameters;
-    }
-
-    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
-        this.sslContextParameters = sslContextParameters;
     }
 }
