@@ -49,14 +49,6 @@ public class JmsSelectorInTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        
-        // When using asyncSend, the producers (calls to template.sendBodyAndHeader) will not 
-        // be guaranteed to be in the order we have in the test so we need this set to false.
-        // Another way of guaranteeing order is to use persistent messages or transactions.
-        if (connectionFactory instanceof PooledConnectionFactory) {
-            ActiveMQConnectionFactory amqConnectionFactory = (ActiveMQConnectionFactory) ((PooledConnectionFactory)connectionFactory).getConnectionFactory();
-            amqConnectionFactory.setUseAsyncSend(false);            
-        }
         JmsComponent component = jmsComponentAutoAcknowledge(connectionFactory);
         camelContext.addComponent("activemq", component);
         return camelContext;
