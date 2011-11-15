@@ -246,6 +246,12 @@
               <artifacts>
                 <artifact>
                   <file>./src/main/resources/schema/cxfEndpoint.xsd</file>
+                  <classifier>spring</classifier>
+                  <type>xsd</type>
+                </artifact>
+                <artifact>
+                  <file>./src/main/resources/schema/blueprint/camel-cxf.xsd</file>
+                  <classifier>blueprint</classifier>
                   <type>xsd</type>
                 </artifact>
               </artifacts>
