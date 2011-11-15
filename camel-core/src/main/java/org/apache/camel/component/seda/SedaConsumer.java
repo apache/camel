@@ -37,6 +37,7 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -199,12 +200,18 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         // if there are multiple consumers then multicast to them
         if (size > 1) {
 
+            // validate multiple consumers has been enabled
+            if (!endpoint.isMultipleConsumersSupported()) {
+                throw new IllegalStateException("Multiple consumers for the same endpoint is not allowed: " + endpoint);
+            }
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Multicasting to {} consumers for Exchange: {}", endpoint.getConsumers().size(), exchange);
             }
            
             // use a multicast processor to process it
             MulticastProcessor mp = endpoint.getConsumerMulticastProcessor();
+            ObjectHelper.notNull(mp, "ConsumerMulticastProcessor", this);
 
             // and use the asynchronous routing engine to support it
             AsyncProcessorHelper.process(mp, exchange, new AsyncCallback() {
