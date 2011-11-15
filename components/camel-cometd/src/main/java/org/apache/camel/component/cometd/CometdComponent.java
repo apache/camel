@@ -22,12 +22,17 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.SecurityPolicy;
 import org.cometd.server.BayeuxServerImpl;
 import org.cometd.server.CometdServlet;
+import org.eclipse.jetty.http.ssl.SslContextFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -56,6 +61,7 @@ public class CometdComponent extends DefaultComponent {
     private SslSocketConnector sslSocketConnector;
     private SecurityPolicy securityPolicy;
     private List<BayeuxServer.Extension> extensions;
+    private SSLContextParameters sslContextParameters;
 
     class ConnectorRef {
         Connector connector;
@@ -197,16 +203,28 @@ public class CometdComponent extends DefaultComponent {
     }
 
     public synchronized SslSocketConnector getSslSocketConnector() {
-        if (sslSocketConnector == null) {
-            sslSocketConnector = new SslSocketConnector();
-            // with default null values, jetty ssl system properties
-            // and console will be read by jetty implementation
-            sslSocketConnector.getSslContextFactory().setKeyManagerPassword(sslPassword);
-            sslSocketConnector.getSslContextFactory().setKeyStorePassword(sslKeyPassword);
-            if (sslKeystore != null) {
-                sslSocketConnector.getSslContextFactory().setKeyStore(sslKeystore);
+        if (sslContextParameters != null && sslSocketConnector == null) {
+            SslContextFactory sslContextFactory = new CometdComponentSslContextFactory();
+            try {
+                sslContextFactory.setSslContext(sslContextParameters.createSSLContext());
+            } catch (Exception e) {
+               throw new RuntimeCamelException("Error initiating SSLContext.", e);
+            }
+            sslSocketConnector = new SslSocketConnector(sslContextFactory);
+        }
+        else {
+            if (sslSocketConnector == null) {
+                sslSocketConnector = new SslSocketConnector();
+                // with default null values, jetty ssl system properties
+                // and console will be read by jetty implementation
+                sslSocketConnector.getSslContextFactory().setKeyManagerPassword(sslPassword);
+                sslSocketConnector.getSslContextFactory().setKeyStorePassword(sslKeyPassword);
+                if (sslKeystore != null) {
+                    sslSocketConnector.getSslContextFactory().setKeyStore(sslKeystore);
+                }
             }
         }
+        
         return sslSocketConnector;
     }
 
@@ -267,6 +285,14 @@ public class CometdComponent extends DefaultComponent {
         }
         extensions.add(extension);
     }
+    
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
 
     protected Server createServer() throws Exception {
         Server server = new Server();
@@ -291,5 +317,15 @@ public class CometdComponent extends DefaultComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+    }
+    
+    /**
+     * Override the key/trust store check method as it does not account for a factory that has
+     * a pre-configured {@link SSLContext}.
+     */
+    private static final class CometdComponentSslContextFactory extends SslContextFactory {
+        @Override
+        public void checkKeyStore() {
+        }
     }
 }
