@@ -526,7 +526,7 @@
   </feature>
   <feature name='camel-script-jruby' version='${pom.version}' resolver='(obr)' start-level='50'>
     <bundle>mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-jruby/${scriptengines.version}</bundle>
-    <bundle dependency="true">mvn:org.jruby/jruby/${jruby-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jruby/${jruby-bundle-version}</bundle>
   </feature>
   <feature name='camel-script-javascript' version='${pom.version}' resolver='(obr)' start-level='50'>
     <bundle>mvn:http://scriptengines.googlecode.com/svn/m2-repo/!com.google.code.scriptengines/scriptengines-javascript/${scriptengines.version}</bundle>
