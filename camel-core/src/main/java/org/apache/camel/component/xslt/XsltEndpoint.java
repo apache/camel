@@ -48,7 +48,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.xslt = xslt;
         this.resourceUri = resourceUri;
         this.cacheStylesheet = cacheStylesheet;
-        loadResource(xslt, resourceUri);
+        
+        // load stylesheet on first exchange
+        clearCachedStylesheet();
     }
 
     @ManagedOperation(description = "Clears the cached XSLT stylesheet, forcing to re-load the stylesheet on next request")
@@ -70,12 +72,28 @@ public class XsltEndpoint extends ProcessorEndpoint {
         cacheCleared = false;
     }
 
+    public XsltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
+        String newUri = uri.replace(resourceUri, newResourceUri);
+        LOG.trace("Getting endpoint with URI: {}", newUri);
+        return (XsltEndpoint) getCamelContext().getEndpoint(newUri);
+    }
+    
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
-        if (!cacheStylesheet || cacheCleared) {
-            loadResource(xslt, resourceUri);
-        }    
-        super.onExchange(exchange);
+        String newResourceUri = exchange.getIn().getHeader(XsltConstants.XSLT_RESOURCE_URI, String.class);
+        if (newResourceUri != null) {
+            exchange.getIn().removeHeader(XsltConstants.XSLT_RESOURCE_URI);
+
+            LOG.trace("{} set to {} creating new endpoint to handle exchange", XsltConstants.XSLT_RESOURCE_URI, newResourceUri);
+            XsltEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
+            newEndpoint.onExchange(exchange);
+            return;
+        } else {
+            if (!cacheStylesheet || cacheCleared) {
+                loadResource(xslt, resourceUri);
+            }    
+            super.onExchange(exchange);
+        }
     }
 
 }

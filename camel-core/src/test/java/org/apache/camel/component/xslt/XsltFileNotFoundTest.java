@@ -17,39 +17,30 @@
 package org.apache.camel.component.xslt;
 
 import java.io.FileNotFoundException;
-import javax.xml.transform.TransformerConfigurationException;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.TestSupport;
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  *
  */
-public class XsltFileNotFoundTest extends TestSupport {
+public class XsltFileNotFoundTest extends ContextTestSupport {
 
     public void testNoXsltFile() throws Exception {
         try {
-            RouteBuilder builder = createRouteBuilder();
-            CamelContext context = new DefaultCamelContext();
-            context.addRoutes(builder);
-            context.start();
-
+            template.sendBody("direct:a", "foo");
             fail("Should have thrown an exception due XSLT file not found");
-        } catch (FailedToCreateRouteException e) {
+        } catch (CamelExecutionException e) {
             // expected
-            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
-            assertIsInstanceOf(FileNotFoundException.class, e.getCause().getCause());
+            assertIsInstanceOf(FileNotFoundException.class, e.getCause());
         }
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("seda:a").to("xslt:org/apache/camel/component/xslt/notfound.xsl");
+                from("direct:a").to("xslt:org/apache/camel/component/xslt/notfound.xsl");
             }
         };
     }
