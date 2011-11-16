@@ -208,11 +208,10 @@ public class CometdComponent extends DefaultComponent {
             try {
                 sslContextFactory.setSslContext(sslContextParameters.createSSLContext());
             } catch (Exception e) {
-               throw new RuntimeCamelException("Error initiating SSLContext.", e);
+                throw new RuntimeCamelException("Error initiating SSLContext.", e);
             }
             sslSocketConnector = new SslSocketConnector(sslContextFactory);
-        }
-        else {
+        } else {
             if (sslSocketConnector == null) {
                 sslSocketConnector = new SslSocketConnector();
                 // with default null values, jetty ssl system properties
