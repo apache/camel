@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter.stream;
 
+import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +35,7 @@ public class FileInputStreamCache extends InputStream implements StreamCache, Cl
 
     public FileInputStreamCache(File file) throws FileNotFoundException {
         this.file = file;
-        this.stream = new FileInputStream(file);
+        this.stream = new BufferedInputStream(new FileInputStream(file));
     }
     
     @Override
@@ -50,7 +51,7 @@ public class FileInputStreamCache extends InputStream implements StreamCache, Cl
             // reset by closing and creating a new stream based on the file
             close();
             // reset by creating a new stream based on the file
-            stream = new FileInputStream(file);
+            stream = new BufferedInputStream(new FileInputStream(file));
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot reset stream from file " + file, e);
         }            
