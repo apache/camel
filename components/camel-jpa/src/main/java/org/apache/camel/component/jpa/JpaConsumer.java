@@ -112,7 +112,6 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
                 if (cause != null) {
                     if (!isTransacted()) {
                         LOG.warn("Error processing last message due: {}. Will commit all previous successful processed message, and ignore this last failure.", cause.getMessage(), cause);
-                        entityManager.flush();
                     } else {
                         // rollback all by throwning exception
                         throw cause;
