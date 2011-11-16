@@ -131,7 +131,7 @@ public abstract class AbstractFeatureTest {
         return sb.toString();
     }
 
-     private static URL getResource(String location) {
+    private static URL getResource(String location) {
         URL url = null;
         if (Thread.currentThread().getContextClassLoader() != null) {
             url = Thread.currentThread().getContextClassLoader().getResource(location);
@@ -175,7 +175,7 @@ public abstract class AbstractFeatureTest {
 
             // using the features to install the camel components
             scanFeatures(getCamelKarafFeatureUrl(),
-                "camel-core", "camel-spring", "camel-" + feature),
+                "xml-specs-api", "camel-core", "camel-spring", "camel-" + feature),
 
             workingDirectory("target/paxrunner/"));
 

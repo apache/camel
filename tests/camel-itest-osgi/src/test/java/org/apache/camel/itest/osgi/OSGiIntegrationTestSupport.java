@@ -131,7 +131,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
 
             // using the features to install the camel components             
             scanFeatures(getCamelKarafFeatureUrl(),                         
-                "camel-core", "camel-spring", "camel-test"),
+                "xml-specs-api", "camel-core", "camel-spring", "camel-test"),
                                    
             workingDirectory("target/paxrunner/"));
 
