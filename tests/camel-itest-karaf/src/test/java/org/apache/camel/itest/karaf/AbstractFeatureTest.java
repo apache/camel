@@ -163,7 +163,7 @@ public abstract class AbstractFeatureTest {
 
             // and the camel feature to be tested
             scanFeatures(getCamelKarafFeatureUrl(),
-                          "camel-spring", "camel-" + feature),
+                "xml-specs-api", "camel-spring", "camel-" + feature),
             workingDirectory("target/paxrunner/"),            
 
             useFelix ? felix() : null,

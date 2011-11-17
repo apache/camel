@@ -54,6 +54,7 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
     private String nativeQuery;
     private Class resultClass;
     private int maxMessagesPerPoll;
+    private boolean transacted;
     private volatile ShutdownRunningTask shutdownRunningTask;
     private volatile int pendingExchanges;
 
@@ -96,17 +97,29 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
                     answer.add(holder);
                 }
 
-                int messagePolled;
+                PersistenceException cause = null;
+                int messagePolled = 0;
                 try {
                     messagePolled = processBatch(CastUtils.cast(answer));
                 } catch (Exception e) {
                     if (e instanceof PersistenceException) {
-                        throw (PersistenceException) e;
+                        cause = (PersistenceException) e;
                     } else {
-                        throw new PersistenceException(e);
+                        cause = new PersistenceException(e);
                     }
                 }
 
+                if (cause != null) {
+                    if (!isTransacted()) {
+                        LOG.warn("Error processing last message due: {}. Will commit all previous successful processed message, and ignore this last failure.", cause.getMessage(), cause);
+                        entityManager.flush();
+                    } else {
+                        // rollback all by throwning exception
+                        throw cause;
+                    }
+                }
+
+                // commit
                 LOG.debug("Flushing EntityManager");
                 entityManager.flush();
                 return messagePolled;
@@ -270,7 +283,22 @@ public class JpaConsumer extends ScheduledPollConsumer implements BatchConsumer,
 
     public void setResultClass(Class resultClass) {
         this.resultClass = resultClass;
-    }    
+    }
+
+    public boolean isTransacted() {
+        return transacted;
+    }
+
+    /**
+     * Sets whether to run in transacted mode or not.
+     * <p/>
+     * This option is default <tt>false</tt>. When <tt>false</tt> then all the good messages
+     * will commit, and the first failed message will rollback.
+     * However when <tt>true</tt>, then all messages will rollback, if just one message failed.
+     */
+    public void setTransacted(boolean transacted) {
+        this.transacted = transacted;
+    }
 
     // Implementation methods
     // -------------------------------------------------------------------------
