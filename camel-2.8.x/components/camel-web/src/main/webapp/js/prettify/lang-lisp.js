@@ -1,0 +1,3 @@
+(function(){var a=null;
+PR.registerLangHandler(PR.createSimpleLexer([["opn",/^\(/,a,"("],["clo",/^\)/,a,")"],["com",/^;[^\r\n]*/,a,";"],["pln",/^[\t\n\r \xA0]+/,a,"\t\n\r \u00a0"],["str",/^\"(?:[^\"\\]|\\[\s\S])*(?:\"|$)/,a,'"']],[["kwd",/^(?:block|c[ad]+r|catch|cons|defun|do|eq|eql|equal|equalp|eval-when|flet|format|go|if|labels|lambda|let|load-time-value|locally|macrolet|multiple-value-call|nil|progn|progv|quote|require|return-from|setq|symbol-macrolet|t|tagbody|the|throw|unwind)\b/,a],["lit",/^[+\-]?(?:\d+\/\d+|(?:\.\d+|\d+(?:\.\d*)?)(?:[eEdD][+\-]?\d+)?)/],["lit",
+/^\'(?:-*(?:\w|\\[\x21-\x7e])(?:[\w-]*|\\[\x21-\x7e])[=!?]?)?/],["pln",/^-*(?:[a-z_]|\\[\x21-\x7e])(?:[\w-]*|\\[\x21-\x7e])[=!?]?/i],["pun",/^[^\w\t\n\r \xA0()\"\\\';]+/]]),["cl","el","lisp","scm"])})()

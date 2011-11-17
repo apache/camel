@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+    <!-- global configuration -->
+	<globalConfiguration>
+		<parameter name="sendXsiTypes" value="true"/>
+		<parameter name="sendMultiRefs" value="true"/>
+		<parameter name="sendXMLDeclaration" value="true"/>
+		<parameter name="axis.sendMinimizedElements" value="true"/>
+	</globalConfiguration>
+
+    <handler name="URLMapper" type="java:org.apache.axis.handlers.http.URLMapper"/>
+
+  <!-- this service is from deploy.wsdd -->
+  <service name="ReportIncidentPort" provider="java:RPC" style="document" use="literal">
+      <wsdlFile>/WEB-INF/wsdl/report_incident.wsdl</wsdlFile>
+      <parameter name="wsdlTargetNamespace" value="http://reportincident.example.camel.apache.org"/>
+      <parameter name="wsdlServiceElement" value="ReportIncidentService"/>
+      <parameter name="schemaUnqualified" value="http://reportincident.example.camel.apache.org"/>
+      <parameter name="wsdlServicePort" value="ReportIncidentPort"/>
+      <parameter name="className" value="org.apache.camel.example.axis.AxisReportIncidentService"/>
+      <parameter name="wsdlPortType" value="ReportIncidentService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+      <operation name="reportIncident" qname="ReportIncident" returnQName="retNS:outputReportIncident" xmlns:retNS="http://reportincident.example.camel.apache.org" returnType="rtns:>outputReportIncident" xmlns:rtns="http://reportincident.example.camel.apache.org" soapAction="http://reportincident.example.camel.apache.org/ReportIncident" >
+        <parameter qname="pns:inputReportIncident" xmlns:pns="http://reportincident.example.camel.apache.org" type="tns:>inputReportIncident" xmlns:tns="http://reportincident.example.camel.apache.org"/>
+      </operation>
+      <parameter name="allowedMethods" value="reportIncident"/>
+
+      <typeMapping
+        xmlns:ns="http://reportincident.example.camel.apache.org"
+        qname="ns:>outputReportIncident"
+        type="java:org.apache.camel.example.reportincident.OutputReportIncident"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      <typeMapping
+        xmlns:ns="http://reportincident.example.camel.apache.org"
+        qname="ns:>inputReportIncident"
+        type="java:org.apache.camel.example.reportincident.InputReportIncident"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+  </service>
+
+  <!-- part of Axis configuration -->
+	<transport name="http">
+		<requestFlow>
+			<handler type="URLMapper"/>
+			<handler type="java:org.apache.axis.handlers.http.HTTPAuthHandler"/>
+		</requestFlow>
+	</transport>
+</deployment>

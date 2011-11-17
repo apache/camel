@@ -1,0 +1,211 @@
+.nihilo .dojoxGrid {
+	position: relative;
+	background-color: #e9e9e9;
+	font-size: 0.85em; 
+	-moz-outline-style: none;
+	outline: none;
+	overflow: hidden;
+	height: 0;
+}
+.nihilo .dojoxGrid table {
+	padding: 0;
+}
+.nihilo .dojoxGrid td {
+	-moz-outline: none;
+}
+.nihilo .dojoxGrid-master-header {
+	position: relative;
+}
+.nihilo .dojoxGrid-master-view  {
+	position: relative;
+}
+.nihilo .dojoxGrid-view {
+	position: absolute;
+	overflow: hidden;
+}
+.nihilo .dojoxGrid-header {
+	position: absolute;
+	overflow: hidden;
+}
+.nihilo .dojoxGrid-header {
+	background-color:  #e9e9e9;
+}
+.nihilo .dojoxGrid-header table {
+	text-align: center;
+}
+.nihilo .dojoxGrid-header .dojoxGrid-cell-content {
+	text-align: center;
+}
+.nihilo .dojoxGrid-header .dojoxGrid-cell { 
+	border: 1px solid transparent;
+	
+	border-color: white #ACA899 #919191 white;
+	background: url(../../../../dijit/themes/nihilo/images/titleBar.png) #e9e9e9 repeat-x top;
+	padding-bottom: 2px;
+	color: #000 !important;
+}
+.nihilo .dojoxGrid-header .dojoxGrid-cell-over {
+	background: url(../../../../dijit/themes/nihilo/images/titleBarActive.png) #e9e9e9 repeat-x top;
+}
+.nihilo .dojoxGrid-sort-down {
+	background: url(images/grid_sort_down.gif) right no-repeat;
+	padding-left: 0px;
+	margin-left: 0px;
+}
+.nihilo .dojoxGrid-sort-up {
+	background: url(images/grid_sort_up.gif) right no-repeat;
+	padding-left: 0px;
+	margin-left: 0px;
+}
+.nihilo .gridArrowButtonChar {
+	display:none !important;
+}
+.dijit_a11y .gridArrowButtonChar {
+	display:inline !important;
+}
+.nihilo .dojoxGrid-scrollbox {
+	position: relative;
+	overflow: scroll;
+	background-color: #fefefe;
+	width: 100%;
+}
+.nihilo .dojoxGrid-content {
+	position: relative;
+	overflow: hidden;
+	 -moz-outline-style: none;
+	outline: none;
+}
+.nihilo .dojoxGrid-rowbar { 
+	border: none;
+	
+	background: url(images/titleBar.png) #e9e9e9 repeat-y right;
+	border-right: 1px solid #cccccc;
+	padding: 0px;
+}
+.nihilo .dojoxGrid-rowbar-inner {
+	border: none;
+	border-bottom: 1px solid #cccccc;
+}
+.nihilo .dojoxGrid-rowbar-over {
+	background: url(images/titleBarActive.png) #e9e9e9 repeat-y right;
+}
+.nihilo .dojoxGrid-rowbar-selected {
+	background-color: #D9E8F9;
+	background-image: none;
+	background: url(../../../../dijit/themes/nihilo/images/titleBar.png) #dddddd repeat-x top;
+	border-right: 1px solid #cccccc;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+.nihilo .dojoxGrid-row {
+	position: relative;
+	width: 9000em;
+}
+.nihilo .dojoxGrid-row {
+	border: none;
+	border-left: none;
+	border-right: none;
+	background-color: white;
+	border-top: none;
+}
+.nihilo .dojoxGrid-row-over {
+	border-top-color: #cccccc;
+	border-bottom-color: #cccccc;
+}
+.nihilo .dojoxGrid-row-over .dojoxGrid-cell {
+	background-color: #ffe284; 
+}
+.nihilo .dojoxGrid-row-odd {
+	background-color: #f2f5f9;
+	
+}
+.nihilo .dojoxGrid-row-selected {
+	background-color: #aec7e3;
+}
+.nihilo .dojoxGrid-row-table {
+	table-layout: fixed;
+	width: 0;
+	border-collapse: collapse;
+}
+.nihilo .dojoxGrid-invisible {
+	visibility: hidden;
+}		
+.nihilo .Xdojo-ie .dojoxGrid-invisible {
+	display: none;
+}		
+.nihilo .dojoxGrid-invisible td, .dojoxGrid-header .dojoxGrid-invisible td {
+	border-top-width: 0;
+	border-bottom-width: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	height: 0;
+	overflow: hidden;
+}
+.nihilo .dojoxGrid-cell {
+	border: 1px dotted #D5CDB5;
+	padding: 3px 3px 3px 3px;
+	text-align: left;
+	overflow: hidden;
+}
+.dj_ie6 .nihilo .dojoxGrid-cell {
+	border: 1px solid white;
+	border-right: 1px solid #D5CDB5;
+}
+.nihilo .dojoxGrid-cell-focus {
+	border: 1px dotted #a6a6a6;
+}
+.nihilo .dojoxGrid-cell-over {
+	border: 1px dotted #a6a6a6;
+}
+.nihilo .dojoxGrid-cell-focus.dojoxGrid-cell-over {
+	border: 1px dotted #595959;
+}
+.nihilo .dojoxGrid-cell-clip {
+	width: 100%;
+	overflow: hidden;
+	white-space:nowrap;
+	text-overflow: ellipsis;
+}
+.nihilo .dojoxGrid-row-editing td {
+	
+	background-color: #ffe284; 
+	
+}
+.nihilo .dojoxGrid-row-inserting td {
+	background-color: #F4FFF4;
+}
+.nihilo .dojoxGrid-row-inflight td {
+	background-color: #F2F7B7;
+}
+.nihilo .dojoxGrid-row-error td {
+	background-color: #F8B8B6;
+}
+.nihilo .dojoxGrid-input,
+.nihilo .dojoxGrid-select,
+.nihilo .dojoxGrid-textarea {
+	margin: 0;
+	padding: 0px;
+	border-style: none;
+	width: 100%;
+	font-size: 100%;
+	font-family: inherit;
+}
+.dojoxGrid-hidden-focus {
+	position: absolute;
+	left: -1000px;
+	top: -1000px;
+	height: 0px, width: 0px;
+}
+.dijit_a11y .dojoxGrid-rowbar-selected { 
+	border-top: 1px solid white;
+	border-bottom: 1px dashed black;
+	border-top: 0;
+	background: none;
+}
+.dijit_a11y .dojoxGrid-rowbar-selected .dojoxGrid-rowbar-inner {
+	border: 0;
+	border-top: 1px solid white;
+}
+.dijit_a11y .dojoxGrid-row-selected {
+	border-bottom: 1px dashed black;
+}

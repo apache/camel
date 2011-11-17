@@ -1,0 +1,649 @@
+/*
+
+Copyright (c) 2005 Hakon Wium Lie and Bert Bos
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+*/
+html { 
+  margin: 0; padding: 0;
+  font: 10pt/1.26 "Gill Sans", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 { 
+  font-family: "Gill Sans", sans-serif;
+  margin: 2em 0 0.5em 0;
+  page-break-after: avoid;
+} 
+
+h1 { 
+  font-size: 2.0em;
+  font-weight: 900;
+
+  margin: 0;
+  margin-left:-2cm;
+  margin-top:-2cm;
+  margin-bottom:1.5cm;
+  top: 0cm;
+  left: 0cm;
+  padding: 2cm;
+  padding-top: 1cm;
+  padding-bottom: 1cm;
+  background: #888;
+  border-bottom-right-radius: 2cm;
+  page-break-inside: avoid;
+}
+
+@media screen, handheld {
+h1 { 
+  margin-top:1cm;
+  background-image: url("chapter-rounded-bottom.png");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+}
+div.page-reset > h1 {
+  margin-top:0cm;
+}
+}
+
+
+h2 { 
+  font-size: 1.2em;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+h3 { 
+  font-size: 1em;
+  font-weight: bold;
+}
+
+q::before {
+  content: "\201C";
+}
+
+q::after {
+  content: "\201D";
+}
+
+p { margin: 0 }
+p + p { text-indent: 1.3em ; margin-top: 0.2em; }
+p.sidenote + p, p.caption, p.art { text-indent: 0 }
+
+p.author {
+  margin-top: 2em;
+  text-indent: 0;
+  text-align: right;
+}
+
+a { text-decoration: none; color: black }
+
+/* cross-references */
+
+a.pageref::after { content: " on page " target-counter(attr(href), page); }
+a.chapref::before { content: " Chapter " target-counter(attr(href), chapter) ", "; }
+a.figref { content: " Figure " target-counter(attr(href), figure); }
+a.tableref { content: " Table " target-counter(attr(href), figure); }
+a.listingref { content: " Listing " target-counter(attr(href), listing); }
+
+/* sidenotes */
+
+.sidenote {
+  float: left;
+  clear: left;
+  margin: 0 0 1em -41%;
+  width: 37%;
+  font-size: 0.9em;
+  font-style: normal;
+  text-indent: 0;
+  text-align: right;
+  page-break-inside: avoid;
+}
+
+/* sidebars */
+
+div.sidebar {
+  float: top-next;
+  margin: 1.2em 0 1.2em 0;
+  border: thin solid;
+  background: #CCC;
+  padding: 0.5em 1em;
+  page-break-inside: avoid;
+  column-count: 2;
+  column-gap: 1.5em;
+}
+
+div.sidebar h2 {
+  margin-top: 0;
+}
+
+/* figures, tables, and listings */
+
+div.confluenceTableSmall th.confluenceTh { 
+  font-size: 11px;  	
+}
+
+div.confluenceTableSmall td.confluenceTd { 
+  font-size: 7px;  	
+}
+
+div.figure {
+  margin: 1em 0;
+  counter-increment: figure;
+}
+
+div.figure .caption, div.table .caption {
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+div.figure .caption::before {
+  content: "Figure " counter(figure) ". ";
+  font-weight: bold;
+  font-style: normal;
+}
+
+div.table .caption::before {
+  content: "Table " counter(table) ". ";
+  font-weight: bold;
+  font-style: normal;
+}
+
+div.table {
+  margin: 1em 0;
+  counter-increment: table;
+}
+
+div.table th {
+  text-align: left;
+}
+
+table th, table td {
+  text-align: left;
+  padding-right: 1em;
+  page-break-inside: avoid;
+}
+
+table th {
+  border-top: thin solid;
+  border-bottom: thin solid;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+table td {
+  border-top: none;
+  border-bottom: thin dotted;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+
+/* Weird div.codeHeader a b::before would be a better selection
+   but prince does not properly match it.. Firefox does. */
+div.codeHeader::before {
+  content: "Listing " counter(listing) ". ";
+  font-weight: bold;
+  font-style: normal;
+}
+div.codeHeader a b {
+  font-style: italic;
+  font-weight: normal;
+}
+div.codeHeader {
+  font-size: 0.9em;
+  counter-increment: listing;
+}
+div.code {
+	border: 1px dashed #c0c0c0;
+    font-size: 12px;
+	font-family: Courier;
+    margin: 5px;
+	line-height: 13px;
+	padding: 3px;	
+	background-color: #f8f8f8;
+	
+}
+
+
+@page {
+  margin: 2cm;
+  size: 7in 9.25in;
+
+  @footnotes {
+    border-top: thin solid black;
+    padding-top: 0.3em;
+    margin-top: 0.6em;
+  }
+}
+
+
+/* define default page and names pages: cover, blank, frontmatter */
+div.page-reset {
+    counter-reset: page 1;
+}
+
+@page :left {
+  @top-left-corner {
+    font-weight: 900; font: 9pt "Gill Sans", serif; 
+    content: counter(page);
+    text-align: left;
+    margin-left: 1cm;
+    visibility: hidden;
+  }
+  @top-left {
+    font-weight: 900;
+    font: 9pt "Gill Sans", serif; white-space: pre; text-transform: uppercase; letter-spacing: 0.1em;
+    content: string(header, first); 
+    visibility: hidden;
+  }
+  @bottom-left-corner {
+    font-weight: 900; font: 9pt "Gill Sans", serif; 
+    content: counter(page);
+    text-align: left;
+    margin-left: 1cm;
+  }
+  @bottom-left {
+    font-weight: 900;
+    font: 9pt "Gill Sans", serif; white-space: pre; text-transform: uppercase; letter-spacing: 0.1em;
+    content: string(header, first); 
+  }
+}
+
+@page :right {
+  @top-right-corner {
+    font-weight: 900; font: 9pt "Gill Sans", serif; 
+    content: counter(page);
+    text-align: left;
+    margin-left: 1cm;
+    visibility: hidden;
+  }
+  @top-right {
+    font-weight: 900;
+    font: 9pt "Gill Sans", serif; white-space: pre; text-transform: uppercase; letter-spacing: 0.1em;
+    content: string(header, first)
+    visibility: hidden;
+  }
+  @bottom-right-corner {
+    font-weight: 900; font: 9pt "Gill Sans", serif; 
+    content: counter(page);
+    text-align: right;
+    margin-right: 1cm;
+  }
+  @bottom-right {
+    font-weight: 900; font: 9pt "Gill Sans", serif; 
+    white-space: pre; text-transform: uppercase; letter-spacing: 0.1em;
+    content: string(header, first)
+  }
+}
+
+/* 
+  In theory we should be able to use the :first selector so taht 
+  we can put the page numbering on the bottom of the first page of the chapter
+  but have the rest of the pages number at the top.  But this does not seem
+  to work.  See http://www.princexml.com/doc/6.0/page-selectors/
+
+  So for now just always number at the bottom :(
+*/
+/*
+div.chapter { page: bottom-number; }
+@page bottom-number :first {
+  @top-left {
+    visibility: hidden;
+  }
+  @bottom-left {
+    visibility: visible;
+  }
+  @top-right {
+    visibility: hidden;
+  }
+  @bottom-right {
+    visibility: visible;
+  }
+}
+*/
+
+@page cover { margin: 0; }
+
+@page frontmatter :left {
+  @bottom-left-corner {
+    content: counter(page, lower-roman);
+  }
+  @bottom-left-corner {
+    content: counter(page, lower-roman);
+  }
+}
+
+@page frontmatter :right {
+  @bottom-right-corner {
+    content: counter(page, lower-roman);
+  }
+  @bottom-right-corner {
+    content: counter(page, lower-roman);
+  }
+}
+
+@page blank :left {
+  @top-left { visibility: hidden; }
+  @bottom-left { visibility: hidden; }
+  @top-left-corner { visibility: hidden; }
+  @bottom-left-corner { visibility: hidden; }
+}
+
+@page blank :right {
+  @top-right { visibility: hidden; }
+  @bottom-right { visibility: hidden; }
+  @top-right-corner { visibility: hidden; }
+  @bottom-right-corner { visibility: hidden; }
+}
+
+/* footnotes */
+.footnote {
+  display: none;                   /* default rule */
+
+  display: prince-footnote;        /* prince-specific rules */
+  position: footnote;
+  footnote-style-position: inside;
+
+  counter-increment: footnote;
+  margin-left: 1.4em;
+  font-size: 90%;
+  line-height: 1.4;
+}
+
+.footnote::footnote-call {
+  vertical-align: super;
+  font-size: 80%;
+}
+
+.footnote::footnote-marker {
+  vertical-align: super;
+  color: green;
+  padding-right: 0.4em;
+}
+
+
+/*
+   A book consists of different types of sections. We propose to use
+   DIV elements with these class names:
+
+    frontcover
+    halftitlepage: contains the title of the book
+    titlepage: contains the title of the book, name of author(s) and publisher
+    imprint: left page with copyright, publisher, library printing information
+    dedication: right page with short dedication
+    foreword: written by someone other than the author(s)
+    toc: table of contents
+    preface: preface, including acknowledgements
+    chapter: each chapter is given its own DIV element
+    references: contains list of references
+    appendix: each appendix is given its own 
+    bibliography
+    glossary
+    index
+    colophon: describes how the book was produced
+    backcover
+
+   A book will use several of the types listed above, but few books
+   will use all of them.
+*/
+
+/* which section uses which named page */
+
+div.halftitlepage, div.titlepage, div.imprint, div.dedication { page: blank }
+div.foreword, div.toc, div.preface { page: frontmatter }
+
+
+/* page breaks */
+div.frontcover, div.halftitlepage, div.titlepage { page-break-before: right }
+div.imprint { page-break-before: always; }
+div.chapter { page-break-before: always; }
+div.dedication, div.foreword, div.toc, div.preface, div.reference, 
+div.appendix, div.bibliography, div.glossary, div.index, div.colophon { 
+  page-break-before: always 
+}
+div.backcover { page-break-before: left }
+
+
+/* the front cover; this code is probably not very reusable by other books */
+
+div.frontcover { page: cover; }
+
+div.frontcover img {
+  position: absolute;
+  width: 7in; height: 9.25in;
+  left: 0; top: 0;
+  z-index: -1;
+}
+
+div.frontcover h1 {
+  position: absolute;
+  left: 2cm; top: 1cm;
+  color: white;
+  font-size: 44pt;
+  font-weight: normal;
+}
+
+div.frontcover h2 {
+  position: absolute;
+  right: 0; top: 5cm;
+  color: black;
+  background: white;
+  font-size: 16pt;
+  font-weight: normal;
+  padding: 0.2em 5em 0.2em 1em;
+  letter-spacing: 0.15em;
+}
+
+div.frontcover h3 {
+  position: absolute;
+  right: 0; top: 6.5cm;
+  color: black;
+  font-size: 16pt;
+  font-weight: normal;
+  padding: 0.2em 5em 0.2em 1em;  
+}
+
+div.frontcover p {
+  position: absolute;
+  left: 2cm; bottom: 1.5cm;
+  font-size: 13pt;
+  color: black;
+  font-weight: bold;
+}
+
+
+/* titlepage, halftitlepage */
+
+div.titlepage h1, div.halftitlepage h1 { margin-bottom: 2em; }
+div.titlepage h2, div.halftitlepage h2 { font-size: 1.2em; margin-bottom: 3em; }
+div.titlepage h3, div.halftitlepage h3 { font-size: 1em; margin-bottom: 3em; }
+div.titlepage p, div.halftitlepage p { 
+  font-size: 1.4em;
+  font-weight: bold;
+  margin: 0; padding: 0;
+}
+
+
+/* TOC */
+
+ul.toc, ul.toc ul { 
+  list-style-type: none;
+  margin: 0; padding: 0;
+  margin-left: 3cm;
+}
+ul.toc ul {
+  margin-left: 1em;
+  font-weight: normal;
+}
+ul.toc > li { 
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+ul.toc a::after {
+  content: leader('.') target-counter(attr(href), page);
+  font-style: normal;
+}
+ul.toc > li.frontmatter a::after {
+  content: leader('.') target-counter(attr(href), page, lower-roman);
+  font-style: normal;
+}
+ul.toc > li.endmatter a::after {
+  content: leader('.') target-counter(attr(href), page);
+  font-style: normal;
+}
+ul.toc > li.chapter::before {
+  content: "Chapter " counter(toc-chapter, decimal);
+  display: block;
+  margin: 1em 0 0.1em -2.5cm;
+  font-weight: normal;
+  counter-increment: toc-chapter;
+  page-break-after: avoid;
+}
+
+/* chapter numbers */
+
+div.chapter { counter-increment: chapter; }
+div.chapter h1::before { 
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  content: "Chapter  " counter(chapter) " \A\B0 \B0 \B0 \B0\A"; 
+  white-space: pre;
+  font-size: 50%;
+}
+
+div.frontcover h1::before, div.titlepage h1::before, div.halftitlepage h1::before {
+  content: normal; /* that is, none */
+}
+
+h1 { string-set: header content();}
+div.chapter h1 { string-set: header "Chapter " counter(chapter) " - " content(); }
+
+/* index */
+
+ul.index { 
+  list-style-type: none;
+  margin: 0; padding: 0;
+  column-count: 2;
+  column-gap: 1em;
+}
+
+ul.index a::after { content: ", " target-counter(attr(href), page); }
+
+
+span.element, span.attribute {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 80%;
+}
+span.property { font-weight: bold }
+code, span.css, span.value, span.declaration {
+  font: 90% "Lucida Console", "Lucida Sans Typewriter", monospace;
+}
+
+
+@media screen, handheld {
+  html {font: 14px "Gill Sans", sans-serif; }
+  h1 { margin-bottom: 0.5em }
+  div.frontcover, div.halftitlepage, div.titlepage, div.imprint, 
+  div.dedication, div.foreword, div.toc, div.index { display: none }
+  body { 
+      margin: 0cm; 
+      margin-left: 2cm; 
+      margin-right: 2cm; 
+  }
+}
+
+/*
+ * Enhancements to the take advantage of some of the style markup that
+ * Confluence generates 
+ */
+a sup img { visibility: hidden; position: absolute;}
+
+img { 
+  prince-image-resolution:150dpi;
+}
+
+table {
+  font: "Lucida Console", "Lucida Sans Typewriter", monospace;
+}
+
+table td {
+  font-size: 10pt;
+}
+
+pre {  
+   white-space: pre-wrap;
+}
+
+.codeContent {
+  font-size: 80%;
+}
+.code {
+}
+.code-keyword {
+  color: #000091;
+  background-color: inherit;
+}
+
+.code-object {
+  color: #910091;
+  background-color: inherit;
+}
+
+.code-quote {
+  color: #009100;
+  background-color: inherit;
+}
+
+.code-comment {
+  color: #808080;
+  background-color: inherit;
+}
+
+
+.code-xml .code-keyword {
+  color: inherit;
+  font-weight: bold;
+}
+
+.code-tag {
+  color: #000091;
+  background-color: inherit;
+}
+
+.noteMacro { border-color: #F0C000; background-color: #FFFFCE;}
+.warningMacro { border-color: #CC0000; background-color: #FFCCCC }
+.infoMacro { border-color: #3c78b5; background-color: #D8E4F1; }
+.tipMacro { border-color: #090; background-color: #dfd;}
+.noteMacro, .warningMacro, .infoMacro, .tipMacro, .informationMacroPadding { 
+  border: thin solid;
+  float: top-next;
+  margin: 1em 0 1.2em 0;
+  padding: 0.5em;
+  column-count: 2;
+  column-gap: 1.5em;
+  width: 100%;
+}
+table.infoMacro td, table.warningMacro td, table.tipMacro td, table.noteMacro td, table.sectionMacro td {
+    border: none;
+}
+table.infoMacro p, table.warningMacro p, table.tipMacro p, table.noteMacro p, table.sectionMacro p {
+    font-size:x-small;
+    margin-top: 1em; 
+}
+

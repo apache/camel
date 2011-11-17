@@ -1,0 +1,13 @@
+<%@ import val it: CamelContextResource %>
+
+#{ attributes("title") = "Apache Camel " + it.getVersion }#
+
+
+<h1>Welcome to Apache Camel ${it.getVersion}</h1>
+
+<p>Welcome to the Web Console for instance <b>${it.getName}</b>.</p>
+<p>We hope you find the following links helpful</p>
+
+#{ include("/WEB-INF/snippets/camelContextLinks.ssp") }#
+
+<p>Lets take it for a ride!</p>
