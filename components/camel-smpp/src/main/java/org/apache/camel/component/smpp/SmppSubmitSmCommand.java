@@ -31,6 +31,7 @@ import org.jsmpp.bean.MessageClass;
 import org.jsmpp.bean.MessageMode;
 import org.jsmpp.bean.MessageType;
 import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.OptionalParameter;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.SubmitSm;
 import org.jsmpp.bean.TypeOfNumber;
@@ -195,6 +196,8 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         }
         
         submitSm.setEsmClass(new ESMClass().value());
+        
+        submitSm.setOptionalParametes(new OptionalParameter[0]);
 
         return submitSm;
     }
