@@ -28,19 +28,19 @@
 
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
   
-  <!-- use a bean to start and stop the real web service (is not Camel specific) -->
-  <!-- in a real use-case the real web service would be located on another server
+  <!-- Use a bean to start and stop the real web service (is not Camel specific) -->
+  <!-- In a real use-case the real web service would be probably located on another server
        but we simulate this in the same JVM -->
   <bean id="realWebService" class="org.apache.camel.example.cxf.proxy.RealWebServiceBean"
         init-method="start" destroy-method="stop">
-    <!-- this is the url of the real web service we have proxied -->
+    <!-- url of the real web service we have proxied -->
     <property name="url" value="http://localhost:9081/real-webservice"/>
   </bean>
 
-  <!-- a bean to enrich the input -->
+  <!-- bean that enriches the SOAP request -->
   <bean id="enrichBean" class="org.apache.camel.example.cxf.proxy.EnrichBean"/>
 
-  <!-- this is the CXF webservice we use as front end -->
+  <!-- this is the CXF web service we use as the front end -->
   <cxf:cxfEndpoint id="reportIncident"
                    address="http://localhost:9080/camel-example-cxf-proxy/webservices/incident"
                    endpointName="s:ReportIncidentEndpoint"
@@ -48,11 +48,11 @@
                    wsdlURL="etc/report_incident.wsdl"
                    xmlns:s="http://reportincident.example.camel.apache.org"/>
 
-  <!-- this is the camel route which proxy the web service and forward it to the real web service -->
+  <!-- this is the Camel route which proxies the real web service and forwards SOAP requests to it -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
     <route>
-      <!-- cxf consumer using MESSAGE format -->
+      <!-- CXF consumer using MESSAGE format -->
       <from uri="cxf:bean:reportIncident?dataFormat=MESSAGE"/>
       <!-- log input received -->
       <to uri="log:input"/>
