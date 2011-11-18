@@ -32,8 +32,8 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
+//import static org.ops4j.pax.exam.CoreOptions.equinox;
+//import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.modifyBundle;
@@ -45,7 +45,7 @@ public class JpaBlueprintRouteTest extends OSGiBlueprintTestSupport {
     @Test
     public void testBlueprintRouteJpa() throws Exception {
         getInstalledBundle("CamelBlueprintJpaTestBundle").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintJpaTestBundle)", 20000);
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintJpaTestBundle)", 30000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintJpaTestBundle)", 20000);
 
         MockEndpoint mock = (MockEndpoint) ctx.getEndpoint("mock:result");
@@ -76,13 +76,12 @@ public class JpaBlueprintRouteTest extends OSGiBlueprintTestSupport {
                                 .build();
                     }
                 },
-                scanFeatures(getKarafFeatureUrl(), "spring"),
                 scanFeatures(getKarafEnterpriseFeatureUrl(), "jndi", "jpa", "transaction"),
                 mavenBundle("org.apache.derby", "derby", "10.4.2.0"),
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-blueprint", "camel-jpa"),
-                felix(), equinox());
+                        "camel-blueprint", "camel-jpa"));
+                //felix(), equinox());
 
         return options;
     }

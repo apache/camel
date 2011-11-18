@@ -30,8 +30,10 @@ import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
 
+import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.vmOption;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
@@ -39,7 +41,7 @@ public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
 
     protected void doPostSetup() throws Exception {
         getInstalledBundle("CxfBeanBlueprintRouterTest").start();
-        getOsgiService(CamelContext.class, "(camel.context.symbolicname=CxfBeanBlueprintRouterTest)", 10000);
+        getOsgiService(CamelContext.class, "(camel.context.symbolicname=CxfBeanBlueprintRouterTest)", 20000);
     }
 
     @Test
@@ -93,7 +95,8 @@ public class CxfBeanBlueprintRouterTest extends OSGiBlueprintTestSupport {
                 .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Product.class)
                 .set(Constants.BUNDLE_SYMBOLICNAME, "CxfBeanBlueprintRouterTest")
                 .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                .build()).noStart()//,
+                .build()).noStart()
+            //equinox()//,
             //vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006")
 
         );

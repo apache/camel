@@ -61,7 +61,7 @@ public class CxfBlueprintRouterTest extends OSGiBlueprintTestSupport {
 
     protected void doPostSetup() throws Exception {
         getInstalledBundle("CxfBlueprintRouterTest").start();
-        getOsgiService(CamelContext.class, "(camel.context.symbolicname=CxfBlueprintRouterTest)", 10000);
+        getOsgiService(CamelContext.class, "(camel.context.symbolicname=CxfBlueprintRouterTest)", 20000);
     }
 
     protected static ReportIncidentEndpoint createCXFClient() {

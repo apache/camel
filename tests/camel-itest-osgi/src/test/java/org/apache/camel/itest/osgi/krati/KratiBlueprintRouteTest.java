@@ -55,8 +55,8 @@ public class KratiBlueprintRouteTest extends OSGiBlueprintTestSupport {
     @Test
     public void testProducerConsumerAndIdempotent() throws Exception {
         getInstalledBundle("CamelBlueprintKratiTestBundle").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintKratiTestBundle)", 10000);
-        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintKratiTestBundle)", 10000);
+        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintKratiTestBundle)", 20000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintKratiTestBundle)", 20000);
         MockEndpoint mock = (MockEndpoint) ctx.getEndpoint("mock:results");
         ProducerTemplate template = ctx.createProducerTemplate();
         mock.expectedMessageCount(2);
@@ -72,7 +72,7 @@ public class KratiBlueprintRouteTest extends OSGiBlueprintTestSupport {
                 // Default karaf environment
                 Helper.getDefaultOptions(
                         // this is how you set the default log level when using pax logging (logProfile)
-                        Helper.setLogLevel("INFO")),
+                        Helper.setLogLevel("WARN")),
                 new Customizer() {
                     @Override
                     public InputStream customizeTestProbe(InputStream testProbe) {
@@ -89,7 +89,7 @@ public class KratiBlueprintRouteTest extends OSGiBlueprintTestSupport {
                 scanFeatures(getKarafFeatureUrl(), "spring"),
                 // using the features to install the camel components
                 scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-core", "camel-blueprint", "camel-test", "camel-krati"),
+                         "camel-core", "camel-blueprint", "camel-test", "camel-krati"),
 
                 workingDirectory("target/paxrunner/"),
                 //vmOption("-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
