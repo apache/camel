@@ -76,7 +76,7 @@
     <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
     <geronimo-jsp-spec-version>1.0.1</geronimo-jsp-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
-    <geronimo-servlet-spec-version>1.1.1</geronimo-servlet-spec-version>
+    <geronimo-servlet-spec-version>1.1.2</geronimo-servlet-spec-version>
     <groovy-version>1.8.4</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <h2-version>1.3.161</h2-version>
@@ -1055,7 +1055,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-servlet_2.4_spec</artifactId>
+        <artifactId>geronimo-servlet_2.5_spec</artifactId>
         <version>${geronimo-servlet-spec-version}</version>
       </dependency>
 

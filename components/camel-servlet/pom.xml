@@ -49,14 +49,14 @@
       <exclusions>
          <exclusion>
       	   <groupId>org.apache.geronimo.specs</groupId>
-           <artifactId>geronimo-servlet_2.4_spec</artifactId>
+           <artifactId>geronimo-servlet_2.5_spec</artifactId>
          </exclusion>
       </exclusions>
     </dependency>
     
     <dependency>
       <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-servlet_2.4_spec</artifactId>
+      <artifactId>geronimo-servlet_2.5_spec</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -78,6 +78,12 @@
     <dependency>
       <groupId>httpunit</groupId>
       <artifactId>httpunit</artifactId>
+      <exclusions>
+         <exclusion>
+      	   <groupId>javax.servlet</groupId>
+           <artifactId>servlet-api</artifactId>
+         </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
     <dependency>
