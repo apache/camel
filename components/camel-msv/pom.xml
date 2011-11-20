@@ -35,16 +35,7 @@
     <camel.osgi.export.pkg>org.apache.camel.component.validator.msv.*</camel.osgi.export.pkg>
   </properties>
 
-  <repositories>
-      <repository>
-          <id>fusesource.m2</id>
-          <name>Fusesource Dependency Repository</name>
-          <url>http://repo.fusesource.com/maven2-all</url>
-      </repository>
-  </repositories>
-
   <dependencies>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -75,7 +66,6 @@
       <version>20020414</version>
     </dependency>
 
-
     <!-- for testing -->
     <dependency>
       <groupId>junit</groupId>
@@ -93,5 +83,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
 </project>

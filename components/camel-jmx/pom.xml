@@ -35,14 +35,6 @@
         <camel.osgi.export.pkg>org.apache.camel.component.jmx.*</camel.osgi.export.pkg>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>fusesource.m2</id>
-            <name>Fusesource Dependency Repository</name>
-            <url>http://repo.fusesource.com/maven2-all</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
