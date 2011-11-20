@@ -21,6 +21,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.CreateTopicRequest;
 import com.amazonaws.services.sns.model.CreateTopicResult;
+import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -71,6 +72,14 @@ public class SnsEndpoint extends DefaultEndpoint {
         configuration.setTopicArn(result.getTopicArn());
         
         LOG.trace("Topic created with Amazon resource name: {}", configuration.getTopicArn());
+        
+        if (configuration.getPolicy() != null) {
+            LOG.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
+            
+            getSNSClient().setTopicAttributes(new SetTopicAttributesRequest(configuration.getTopicArn(), "Policy", configuration.getPolicy()));
+            
+            LOG.trace("Topic policy updated");
+        }
     }
 
     public SnsConfiguration getConfiguration() {

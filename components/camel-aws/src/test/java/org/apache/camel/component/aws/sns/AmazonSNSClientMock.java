@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.sns;
 
+import junit.framework.Assert;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
@@ -45,6 +47,8 @@ import com.amazonaws.services.sns.model.UnsubscribeRequest;
 
 public class AmazonSNSClientMock extends AmazonSNSClient {
     
+    private static final String DEFAULT_TOPIC_ARN = "arn:aws:sns:us-east-1:541925086079:MyTopic";
+    
     public AmazonSNSClientMock() {
         super(null);
     }
@@ -66,7 +70,9 @@ public class AmazonSNSClientMock extends AmazonSNSClient {
 
     @Override
     public void setTopicAttributes(SetTopicAttributesRequest setTopicAttributesRequest) throws AmazonServiceException, AmazonClientException {
-        throw new UnsupportedOperationException();
+        Assert.assertEquals(DEFAULT_TOPIC_ARN, setTopicAttributesRequest.getTopicArn());
+        Assert.assertEquals("Policy", setTopicAttributesRequest.getAttributeName());
+        Assert.assertEquals("XXX", setTopicAttributesRequest.getAttributeValue());
     }
 
     @Override
@@ -92,7 +98,7 @@ public class AmazonSNSClientMock extends AmazonSNSClient {
     @Override
     public CreateTopicResult createTopic(CreateTopicRequest createTopicRequest) throws AmazonServiceException, AmazonClientException {
         CreateTopicResult createTopicResult = new CreateTopicResult();
-        createTopicResult.setTopicArn("arn:aws:sns:us-east-1:541925086079:MyTopic");
+        createTopicResult.setTopicArn(DEFAULT_TOPIC_ARN);
         return createTopicResult;
     }
 

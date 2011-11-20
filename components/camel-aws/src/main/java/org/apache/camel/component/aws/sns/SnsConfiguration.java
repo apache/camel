@@ -34,6 +34,7 @@ public class SnsConfiguration implements Cloneable {
     // Producer only properties
     private String subject;
     private String topicArn;
+    private String policy;
 
     public void setAmazonSNSEndpoint(String awsSNSEndpoint) {
         this.amazonSNSEndpoint = awsSNSEndpoint;
@@ -91,6 +92,14 @@ public class SnsConfiguration implements Cloneable {
         this.topicName = topicName;
     }
     
+    public String getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(String policy) {
+        this.policy = policy;
+    }
+    
     @Override
     public String toString() {
         return "SnsConfiguration[topicName=" + topicName
@@ -99,6 +108,7 @@ public class SnsConfiguration implements Cloneable {
             + ", secretKey=xxxxxxxxxxxxxxx" 
             + ", subject=" + subject
             + ", topicArn=" + topicArn
+            + ", policy=" + policy
             + "]";
     }
 }

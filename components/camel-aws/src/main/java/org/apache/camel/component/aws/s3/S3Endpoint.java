@@ -99,6 +99,14 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         getS3Client().createBucket(createBucketRequest);
         
         LOG.trace("Bucket created");
+        
+        if (configuration.getPolicy() != null) {
+            LOG.trace("Updating bucket [{}] with policy [{}]", bucketName, configuration.getPolicy());
+            
+            getS3Client().setBucketPolicy(bucketName, configuration.getPolicy());
+            
+            LOG.trace("Bucket policy updated");
+        }
     }
 
     public Exchange createExchange(S3Object s3Object) {

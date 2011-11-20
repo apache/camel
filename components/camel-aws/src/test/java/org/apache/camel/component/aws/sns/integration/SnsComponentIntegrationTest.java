@@ -25,10 +25,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SnsComponentIntegrationTest extends CamelTestSupport {
     
     @Test
-    @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
     public void sendInOnly() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -41,7 +41,6 @@ public class SnsComponentIntegrationTest extends CamelTestSupport {
     }
     
     @Test
-    @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
     public void sendInOut() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -58,7 +57,8 @@ public class SnsComponentIntegrationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("aws-sns://MyTopic?accessKey=xxx&secretKey=yyy");
+                    .to("aws-sns://MyNewTopic?accessKey=xxx&secretKey=yyy&policy=%7B%22Version%22%3A%222008-10-17%22,%22Statement%22%3A%5B%7B%22Sid%22%3A%221%22,%22Effect%22%3A%22Allow%22,"
+                            + "%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D,%22Action%22%3A%5B%22sns%3ASubscribe%22%5D%7D%5D%7D&subject=The+subject+message");
             }
         };
     }
