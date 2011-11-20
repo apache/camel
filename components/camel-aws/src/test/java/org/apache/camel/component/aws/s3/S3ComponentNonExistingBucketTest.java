@@ -30,7 +30,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class S3ComponentTest extends CamelTestSupport {
+public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
     
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
@@ -77,7 +77,7 @@ public class S3ComponentTest extends CamelTestSupport {
     private void assertResultExchange(Exchange resultExchange) {
         assertIsInstanceOf(InputStream.class, resultExchange.getIn().getBody());
         assertEquals("This is my bucket content.", resultExchange.getIn().getBody(String.class));
-        assertEquals("mycamelbucket", resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
+        assertEquals("nonExistingBucket", resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
         assertEquals("CamelUnitTest", resultExchange.getIn().getHeader(S3Constants.KEY));
         assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not enabled on this bucket
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
@@ -108,10 +108,12 @@ public class S3ComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1");
+                String awsEndpoint = "aws-s3://nonExistingBucket?amazonS3Client=#amazonS3Client&region=us-west-1&policy=xxx";
                 
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&maxMessagesPerPoll=5")
+                from("direct:start")
+                    .to(awsEndpoint);
+                
+                from(awsEndpoint + "&maxMessagesPerPoll=5")
                     .to("mock:result");
             }
         };

@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
@@ -76,7 +78,9 @@ import com.amazonaws.services.s3.model.VersionListing;
 
 public class AmazonS3ClientMock extends AmazonS3Client {
     
-    List<S3Object> objects = new ArrayList<S3Object>();    
+    List<S3Object> objects = new ArrayList<S3Object>();
+    
+    private boolean nonExistingBucketCreated;
     
     public AmazonS3ClientMock() {
         super(null);
@@ -115,6 +119,12 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public ObjectListing listObjects(ListObjectsRequest listObjectsRequest) throws AmazonClientException, AmazonServiceException {
+        if ("nonExistingBucket".equals(listObjectsRequest.getBucketName()) && !nonExistingBucketCreated) {
+            AmazonServiceException ex = new AmazonServiceException("Unknow bucket");
+            ex.setStatusCode(404);
+            throw ex; 
+        }
+        
         ObjectListing objectListing = new ObjectListing();
         int capacity = listObjectsRequest.getMaxKeys();
         
@@ -171,6 +181,10 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public Bucket createBucket(CreateBucketRequest createBucketRequest) throws AmazonClientException, AmazonServiceException {
+        if ("nonExistingBucket".equals(createBucketRequest.getBucketName())) {
+            nonExistingBucketCreated = true; 
+        }
+        
         Bucket bucket = new Bucket();
         bucket.setName(createBucketRequest.getBucketName());
         bucket.setCreationDate(new Date());
@@ -364,7 +378,8 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public void setBucketPolicy(String bucketName, String policyText) throws AmazonClientException, AmazonServiceException {
-        throw new UnsupportedOperationException();
+        Assert.assertEquals("nonExistingBucket", bucketName);
+        Assert.assertEquals("xxx", policyText);
     }
 
     @Override

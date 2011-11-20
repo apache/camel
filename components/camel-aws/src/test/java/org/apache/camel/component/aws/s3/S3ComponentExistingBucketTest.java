@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.s3.integration;
+package org.apache.camel.component.aws.s3;
 
 import java.io.InputStream;
 
@@ -25,14 +25,12 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.aws.s3.S3Constants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
-public class S3ComponentIntegrationTest extends CamelTestSupport {
+public class S3ComponentExistingBucketTest extends CamelTestSupport {
     
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
@@ -41,7 +39,7 @@ public class S3ComponentIntegrationTest extends CamelTestSupport {
     private MockEndpoint result;
     
     @Test
-    public void sendInOnly() throws Exception {
+    public void sendIn() throws Exception {
         result.expectedMessageCount(1);
         
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
@@ -79,14 +77,14 @@ public class S3ComponentIntegrationTest extends CamelTestSupport {
     private void assertResultExchange(Exchange resultExchange) {
         assertIsInstanceOf(InputStream.class, resultExchange.getIn().getBody());
         assertEquals("This is my bucket content.", resultExchange.getIn().getBody(String.class));
-        assertEquals("mynewcamelbucket", resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
+        assertEquals("mycamelbucket", resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
         assertEquals("CamelUnitTest", resultExchange.getIn().getHeader(S3Constants.KEY));
         assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not enabled on this bucket
-        assertNotNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
-        assertEquals("3a5c8b1ad448bca04584ecb55b836264", resultExchange.getIn().getHeader(S3Constants.E_TAG));
-        assertEquals("application/octet-stream", resultExchange.getIn().getHeader(S3Constants.CONTENT_TYPE));
+        assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
+        assertNull(resultExchange.getIn().getHeader(S3Constants.E_TAG));
+        assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_TYPE));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_ENCODING));
-        assertEquals(26L, resultExchange.getIn().getHeader(S3Constants.CONTENT_LENGTH));
+        assertEquals(0L, resultExchange.getIn().getHeader(S3Constants.CONTENT_LENGTH));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_DISPOSITION));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_MD5));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CACHE_CONTROL));
@@ -97,18 +95,25 @@ public class S3ComponentIntegrationTest extends CamelTestSupport {
         assertNull(message.getHeader(S3Constants.VERSION_ID));
     }
     
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("amazonS3Client", new AmazonS3ClientMock());
+        
+        return registry;
+    }
+
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String s3EndpointUri = "aws-s3://mynewcamelbucket?accessKey=xxx&secretKey=yyy&region=us-west-1&policy=%7B%22Version%22%3A%222008-10-17%22,%22Id%22%3A%22Policy4324355464%22,"
-                    + "%22Statement%22%3A%5B%7B%22Sid%22%3A%22Stmt456464646477%22,%22Action%22%3A%5B%22s3%3AGetObject%22%5D,%22Effect%22%3A%22Allow%22,%22Resource%22%3A%5B%22arn%3A"
-                    + "aws%3As3%3A%3A%3Amynewcamelbucket/*%22%5D,%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D%7D%5D%7D";
+                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1";
                 
                 from("direct:start")
-                    .to(s3EndpointUri);
+                    .to(awsEndpoint);
                 
-                from(s3EndpointUri)
+                from(awsEndpoint + "&maxMessagesPerPoll=5")
                     .to("mock:result");
             }
         };
