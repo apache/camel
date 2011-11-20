@@ -35,27 +35,16 @@
     <camel.osgi.export.pkg>org.apache.camel.component.amqp.*</camel.osgi.export.pkg>
   </properties>
 
-  <repositories>
-      <repository>
-          <id>fusesource.m2</id>
-          <name>Fusesource Dependency Repository</name>
-          <url>http://repo.fusesource.com/maven2-all</url>
-      </repository>     
-  </repositories>
-
   <dependencies>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
     </dependency>
-
     <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jms_1.1_spec</artifactId>
         <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.qpid</groupId>
       <artifactId>qpid-client</artifactId>
@@ -83,12 +72,6 @@
       <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!--dependency>
-      <groupId>org.apache.qpid</groupId>
-      <artifactId>qpid-broker</artifactId>
-      <version>${qpid-version}</version>
-      <scope>test</scope>
-    </dependency-->
     <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
@@ -125,7 +108,6 @@
     </plugins>
   </build>
 
-
   <!--
     It's necessary to explicitly include the mina-filter-ssl dependency
     when using the ibm jdk as well.
@@ -149,5 +131,4 @@
       </dependencies>
     </profile>
   </profiles>
-
 </project>
