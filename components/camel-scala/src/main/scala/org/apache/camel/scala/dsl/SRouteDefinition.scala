@@ -18,6 +18,7 @@ package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.RouteDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.apache.camel.builder.ErrorHandlerBuilder
 
 case class SRouteDefinition(override val target: RouteDefinition, val builder: RouteBuilder) extends SAbstractDefinition[RouteDefinition] {
  
@@ -28,4 +29,8 @@ case class SRouteDefinition(override val target: RouteDefinition, val builder: R
     this
   }
 
+  def errorHandler(handler: ErrorHandlerBuilder): SRouteDefinition = {
+    target.errorHandler(handler)
+    this
+  }
 }
