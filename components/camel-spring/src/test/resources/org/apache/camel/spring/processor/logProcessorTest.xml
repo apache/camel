@@ -42,6 +42,12 @@
             <to uri="mock:baz"/>
         </route>
 
+        <route id="wombat">
+            <from uri="direct:wombat"/>
+            <log message="Me Got ${body}" loggingLevel="INFO" logName="cool" marker="myMarker"/>
+            <to uri="mock:wombat"/>
+        </route>
+
     </camelContext>
 
 </beans>
