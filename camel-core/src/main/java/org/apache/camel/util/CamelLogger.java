@@ -21,6 +21,8 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 /**
  * A {@link Processor} which just logs to a {@link CamelLogger} object which can be used
@@ -34,6 +36,7 @@ import org.slf4j.LoggerFactory;
 public class CamelLogger {
     private Logger log;
     private LoggingLevel level;
+    private Marker marker;
 
     public CamelLogger() {
         this(LoggerFactory.getLogger(CamelLogger.class));
@@ -44,8 +47,13 @@ public class CamelLogger {
     }
 
     public CamelLogger(Logger log, LoggingLevel level) {
+        this(log, level, null);
+    }
+
+    public CamelLogger(Logger log, LoggingLevel level, String marker) {
         this.log = log;
         setLevel(level);
+        setMarker(marker);
     }
 
     public CamelLogger(String logName) {
@@ -53,7 +61,11 @@ public class CamelLogger {
     }
 
     public CamelLogger(String logName, LoggingLevel level) {
-        this(LoggerFactory.getLogger(logName), level);
+        this(logName, level, null);
+    }
+
+    public CamelLogger(String logName, LoggingLevel level, String marker) {
+        this(LoggerFactory.getLogger(logName), level, marker);
     }
 
     @Override
@@ -70,17 +82,17 @@ public class CamelLogger {
     
     public void log(String message) {
         if (shouldLog(log, level)) {
-            log(log, level, message);
+            log(log, level, marker, message);
         }
     }
 
     public void log(String message, Throwable exception, LoggingLevel loggingLevel) {
-        log(log, loggingLevel, message, exception);
+        log(log, loggingLevel, marker, message, exception);
     }   
     
     public void log(String message, Throwable exception) {
         if (shouldLog(log, level)) {
-            log(log, level, message, exception);
+            log(log, level, marker, message, exception);
         }
     }
 
@@ -108,6 +120,18 @@ public class CamelLogger {
         this.log = LoggerFactory.getLogger(logName);
     }
 
+    public void setMarker(Marker marker) {
+        this.marker = marker;
+    }
+
+    public void setMarker(String marker) {
+        if (ObjectHelper.isNotEmpty(marker)) {
+            this.marker = MarkerFactory.getMarker(marker);
+        } else {
+            this.marker = null;
+        }
+    }
+
     public static void log(Logger log, LoggingLevel level, String message) {
         switch (level) {
         case DEBUG:
@@ -128,7 +152,28 @@ public class CamelLogger {
         default:
         }
     }
-    
+
+    public static void log(Logger log, LoggingLevel level, Marker marker, String message) {
+        switch (level) {
+        case DEBUG:
+            log.debug(marker, message);
+            break;
+        case ERROR:
+            log.error(marker, message);
+            break;
+        case INFO:
+            log.info(marker, message);
+            break;
+        case TRACE:
+            log.trace(marker, message);
+            break;
+        case WARN:
+            log.warn(marker, message);
+            break;
+        default:
+        }
+    }
+
     public static void log(Logger log, LoggingLevel level, String message, Throwable th) {
         switch (level) {
         case DEBUG:
@@ -145,6 +190,27 @@ public class CamelLogger {
             break;
         case WARN:
             log.warn(message, th);
+            break;
+        default:
+        }
+    }
+
+    public static void log(Logger log, LoggingLevel level, Marker marker, String message, Throwable th) {
+        switch (level) {
+        case DEBUG:
+            log.debug(marker, message, th);
+            break;
+        case ERROR:
+            log.error(marker, message, th);
+            break;
+        case INFO:
+            log.info(marker, message, th);
+            break;
+        case TRACE:
+            log.trace(marker, message, th);
+            break;
+        case WARN:
+            log.warn(marker, message, th);
             break;
         default:
         }

@@ -43,6 +43,8 @@ public class LogDefinition extends NoOutputDefinition {
     private LoggingLevel loggingLevel;
     @XmlAttribute
     private String logName;
+    @XmlAttribute
+    private String marker;
 
     public LogDefinition() {
     }
@@ -79,7 +81,7 @@ public class LogDefinition extends NoOutputDefinition {
         }
         // should be INFO by default
         LoggingLevel level = getLoggingLevel() != null ? getLoggingLevel() : LoggingLevel.INFO;
-        CamelLogger logger = new CamelLogger(name, level);
+        CamelLogger logger = new CamelLogger(name, level, getMarker());
 
         return new LogProcessor(exp, logger);
     }
@@ -114,4 +116,11 @@ public class LogDefinition extends NoOutputDefinition {
         this.logName = logName;
     }
 
+    public String getMarker() {
+        return marker;
+    }
+
+    public void setMarker(String marker) {
+        this.marker = marker;
+    }
 }

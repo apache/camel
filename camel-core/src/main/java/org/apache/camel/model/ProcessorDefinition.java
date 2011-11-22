@@ -1422,6 +1422,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Creates a log message to be logged at the given level and name.
+     *
+     *
+     * @param loggingLevel the logging level to use
+     * @param logName the log name to use
+     * @param marker  log marker name
+     * @param message the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage} syntax)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type log(LoggingLevel loggingLevel, String logName, String marker, String message) {
+        LogDefinition answer = new LogDefinition(message);
+        answer.setLoggingLevel(loggingLevel);
+        answer.setLogName(logName);
+        answer.setMarker(marker);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
      * <a href="http://camel.apache.org/content-based-router.html">Content Based Router EIP:</a>
      * Creates a choice of one or more predicates with an otherwise clause
      *

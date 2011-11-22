@@ -84,6 +84,10 @@ public class CamelLogProcessor implements Processor {
         log.setLevel(level);
     }
 
+    public void setMarker(String marker) {
+        log.setMarker(marker);
+    }
+
     static class DefaultExchangeFormatter implements ExchangeFormatter {
         public String format(Exchange exchange) {
             return exchange.toString();
