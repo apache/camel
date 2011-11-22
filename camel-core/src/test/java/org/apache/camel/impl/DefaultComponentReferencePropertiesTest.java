@@ -96,6 +96,22 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         return jndi;
     }
 
+    public void testEmptyPath() throws Exception {
+        DefaultComponent component = new DefaultComponent(context) {
+            @Override
+            protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+                assertEquals("foo://?name=Christian", uri);
+                assertEquals("", remaining);
+                assertEquals(1, parameters.size());
+                assertEquals("Christian", parameters.get("name"));
+                
+                return null;
+            }
+            
+        };
+        component.createEndpoint("foo://?name=Christian");
+    }
+    
     public void testOnlyStringSetter() throws Exception {
         MyComponent component = new MyComponent(context);
         MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?name=Claus");

@@ -38,6 +38,7 @@ public class JpaComponentTest extends CamelTestSupport {
 
         JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
         assertNotNull(jpa);
+        assertNotNull(jpa.getEntityType());
     }
 
     @Test
@@ -59,6 +60,30 @@ public class JpaComponentTest extends CamelTestSupport {
 
         JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName());
         assertNotNull(jpa);
+        assertNotNull(jpa.getEntityType());
+    }
+    
+    @Test
+    public void testJpaComponentWithPath() throws Exception {
+        JpaComponent comp = new JpaComponent();
+        comp.setCamelContext(context);
+        assertNull(comp.getEntityManagerFactory());
+        assertNull(comp.getTransactionManager());
+
+        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName() + "?persistenceUnit=journalPersistenceUnit&usePersist=true");
+        assertNotNull(jpa);
+        assertNotNull(jpa.getEntityType());
     }
 
+    @Test
+    public void testJpaComponentEmptyPath() throws Exception {
+        JpaComponent comp = new JpaComponent();
+        comp.setCamelContext(context);
+        assertNull(comp.getEntityManagerFactory());
+        assertNull(comp.getTransactionManager());
+
+        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa:?persistenceUnit=journalPersistenceUnit&usePersist=true");
+        assertNotNull(jpa);
+        assertNull(jpa.getEntityType());
+    }
 }
