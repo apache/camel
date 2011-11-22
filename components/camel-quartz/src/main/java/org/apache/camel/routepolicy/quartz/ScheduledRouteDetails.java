@@ -29,7 +29,6 @@ public class ScheduledRouteDetails {
     private Trigger stopTrigger;
     private Trigger suspendTrigger;
     private Trigger resumeTrigger;
-    private Route route;
 
     public JobDetail getStartJobDetail() {
         return startJobDetail;
@@ -77,14 +76,6 @@ public class ScheduledRouteDetails {
 
     public void setSuspendTrigger(Trigger suspendTrigger) {
         this.suspendTrigger = suspendTrigger;
-    }
-
-    public Route getRoute() {
-        return route;
-    }
-    
-    public void setRoute(Route route) {
-        this.route = route;
     }
 
     public void setResumeJobDetail(JobDetail resumeJobDetail) {

@@ -41,6 +41,88 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
     }
 
     @Test
+    public void testScheduledStartRoutePolicyWithTwoRoutes() throws Exception {
+        MockEndpoint success1 = (MockEndpoint) context.getEndpoint("mock:success1");
+        MockEndpoint success2 = (MockEndpoint) context.getEndpoint("mock:success2");
+        success1.expectedMessageCount(1);
+        success2.expectedMessageCount(1);
+
+        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
+                policy.setRouteStartTime("*/3 * * * * ?");
+
+                from("direct:start1")
+                    .routeId("test1")
+                    .routePolicy(policy)
+                    .to("mock:success1");
+
+                from("direct:start2")
+                    .routeId("test2")
+                    .routePolicy(policy)
+                    .to("mock:success2");
+            }
+        });
+        context.start();
+        context.stopRoute("test1", 0, TimeUnit.MILLISECONDS);
+        context.stopRoute("test2", 0, TimeUnit.MILLISECONDS);
+
+        Thread.sleep(4000);
+        assertTrue(context.getRouteStatus("test1") == ServiceStatus.Started);
+        assertTrue(context.getRouteStatus("test2") == ServiceStatus.Started);
+        template.sendBody("direct:start1", "Ready or not, Here, I come");
+        template.sendBody("direct:start2", "Ready or not, Here, I come");
+
+        success1.assertIsSatisfied();
+        success2.assertIsSatisfied();
+
+        context.getComponent("quartz", QuartzComponent.class).stop();
+    }
+
+
+    @Test
+    public void testScheduledStopRoutePolicyWithTwoRoutes() throws Exception {
+        boolean consumerStopped = false;
+
+        context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                CronScheduledRoutePolicy policy = new CronScheduledRoutePolicy();
+                policy.setRouteStopTime("*/3 * * * * ?");
+                policy.setRouteStopGracePeriod(0);
+                policy.setTimeUnit(TimeUnit.MILLISECONDS);
+
+                from("direct:start1")
+                    .routeId("test1")
+                    .routePolicy(policy)
+                    .to("mock:unreachable");
+
+                from("direct:start2")
+                    .routeId("test2")
+                    .routePolicy(policy)
+                    .to("mock:unreachable");
+            }
+        });
+        context.start();
+
+        Thread.sleep(4000);
+
+        assertTrue(context.getRouteStatus("test1") == ServiceStatus.Stopped);
+        assertTrue(context.getRouteStatus("test2") == ServiceStatus.Stopped);
+
+        try {
+            template.sendBody("direct:start1", "Ready or not, Here, I come");
+            template.sendBody("direct:start2", "Ready or not, Here, I come");
+        } catch (CamelExecutionException e) {
+            consumerStopped = true;
+        }
+        assertTrue(consumerStopped);
+        context.getComponent("quartz", QuartzComponent.class).stop();
+    }
+
+    @Test
     public void testScheduledStartRoutePolicy() throws Exception {
         MockEndpoint success = (MockEndpoint) context.getEndpoint("mock:success");
         success.expectedMessageCount(1);

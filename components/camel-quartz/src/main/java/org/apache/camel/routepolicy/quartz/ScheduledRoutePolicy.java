@@ -16,6 +16,8 @@
  */
 package org.apache.camel.routepolicy.quartz;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
@@ -30,10 +32,10 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledRoutePolicy.class);
-    protected ScheduledRouteDetails scheduledRouteDetails;
+    protected Map<String, ScheduledRouteDetails> scheduledRouteDetailsMap = new LinkedHashMap<String, ScheduledRouteDetails>();
     private Scheduler scheduler;
     private int routeStopGracePeriod;
-    private TimeUnit timeUnit; 
+    private TimeUnit timeUnit;
 
     protected abstract Trigger createTrigger(Action action, Route route) throws Exception;
 
@@ -66,12 +68,10 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         }       
     }
 
-    public void scheduleRoute(Action action) throws Exception {
-        Route route = scheduledRouteDetails.getRoute();
-        
+    public void scheduleRoute(Action action, Route route) throws Exception {
         JobDetail jobDetail = createJobDetail(action, route);
         Trigger trigger = createTrigger(action, route);
-        updateScheduledRouteDetails(action, jobDetail, trigger);
+        updateScheduledRouteDetails(action, jobDetail, trigger, route);
         
         loadCallbackDataIntoSchedulerContext(jobDetail, action, route);
         getScheduler().scheduleJob(jobDetail, trigger);
@@ -81,27 +81,45 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         }
     }
 
-    public void pauseRouteTrigger(Action action) throws SchedulerException {
-        String triggerName = retrieveTriggerName(action);
-        String triggerGroup = retrieveTriggerGroup(action);
+    public void pauseRouteTrigger(Action action, String routeId) throws SchedulerException {
+        String triggerName = retrieveTriggerName(action, routeId);
+        String triggerGroup = retrieveTriggerGroup(action, routeId);
         
         getScheduler().pauseTrigger(triggerName, triggerGroup);
 
         LOG.debug("Scheduled trigger: {}.{} is paused", triggerGroup, triggerName);
     }
     
-    public void resumeRouteTrigger(Action action) throws SchedulerException {
-        String triggerName = retrieveTriggerName(action);
-        String triggerGroup = retrieveTriggerGroup(action);
+    public void resumeRouteTrigger(Action action, String routeId) throws SchedulerException {
+        String triggerName = retrieveTriggerName(action, routeId);
+        String triggerGroup = retrieveTriggerGroup(action, routeId);
         
         getScheduler().resumeTrigger(triggerName, triggerGroup);
 
         LOG.debug("Scheduled trigger: {}.{} is resumed", triggerGroup, triggerName);
     }
 
-    public void deleteRouteJob(Action action) throws SchedulerException {
-        String jobDetailName = retrieveJobDetailName(action);
-        String jobDetailGroup = retrieveJobDetailGroup(action);
+    @Override
+    protected void doStop() throws Exception {
+        for (ScheduledRouteDetails scheduledRouteDetails : scheduledRouteDetailsMap.values()) {
+            if (scheduledRouteDetails.getStartJobDetail() != null) {
+                deleteRouteJob(Action.START, scheduledRouteDetails);
+            }
+            if (scheduledRouteDetails.getStopJobDetail() != null) {
+                deleteRouteJob(Action.STOP, scheduledRouteDetails);
+            }
+            if (scheduledRouteDetails.getSuspendJobDetail() != null) {
+                deleteRouteJob(Action.SUSPEND, scheduledRouteDetails);
+            }
+            if (scheduledRouteDetails.getResumeJobDetail() != null) {
+                deleteRouteJob(Action.RESUME, scheduledRouteDetails);
+            }
+        }
+    }
+
+    public void deleteRouteJob(Action action, ScheduledRouteDetails scheduledRouteDetails) throws SchedulerException {
+        String jobDetailName = retrieveJobDetailName(action, scheduledRouteDetails);
+        String jobDetailGroup = retrieveJobDetailGroup(action, scheduledRouteDetails);
         
         if (!getScheduler().isShutdown()) {
             getScheduler().deleteJob(jobDetailName, jobDetailGroup);
@@ -126,7 +144,8 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         return jobDetail;
     }
         
-    protected void updateScheduledRouteDetails(Action action, JobDetail jobDetail, Trigger trigger) throws Exception {
+    protected void updateScheduledRouteDetails(Action action, JobDetail jobDetail, Trigger trigger, Route route) throws Exception {
+        ScheduledRouteDetails scheduledRouteDetails = getScheduledRouteDetails(route.getId());
         if (action == Action.START) {
             scheduledRouteDetails.setStartJobDetail(jobDetail);
             scheduledRouteDetails.setStartTrigger(trigger);
@@ -141,12 +160,13 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
             scheduledRouteDetails.setResumeTrigger(trigger);
         }
     }
-    
+
     protected void loadCallbackDataIntoSchedulerContext(JobDetail jobDetail, Action action, Route route) throws SchedulerException {
         getScheduler().getContext().put(jobDetail.getName(), new ScheduledJobState(action, route));
     }    
         
-    public String retrieveTriggerName(Action action) {
+    public String retrieveTriggerName(Action action, String routeId) {
+        ScheduledRouteDetails scheduledRouteDetails = getScheduledRouteDetails(routeId);
         String triggerName = null;
 
         if (action == Action.START) {
@@ -162,7 +182,8 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         return triggerName;
     }
 
-    public String retrieveTriggerGroup(Action action) {
+    public String retrieveTriggerGroup(Action action, String routeId) {
+        ScheduledRouteDetails scheduledRouteDetails = getScheduledRouteDetails(routeId);
         String triggerGroup = null;
 
         if (action == Action.START) {
@@ -178,7 +199,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         return triggerGroup;
     }
     
-    public String retrieveJobDetailName(Action action) {
+    public String retrieveJobDetailName(Action action, ScheduledRouteDetails scheduledRouteDetails) {
         String jobDetailName = null;
 
         if (action == Action.START) {
@@ -194,7 +215,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         return jobDetailName;
     }
 
-    public String retrieveJobDetailGroup(Action action) {
+    public String retrieveJobDetailGroup(Action action, ScheduledRouteDetails scheduledRouteDetails) {
         String jobDetailGroup = null;
 
         if (action == Action.START) {
@@ -210,12 +231,13 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         return jobDetailGroup;
     } 
     
-    public ScheduledRouteDetails getScheduledRouteDetails() {
-        return scheduledRouteDetails;
+    protected void registerRouteToScheduledRouteDetails(Route route) {
+        ScheduledRouteDetails scheduledRouteDetails = new ScheduledRouteDetails();
+        scheduledRouteDetailsMap.put(route.getId(), scheduledRouteDetails);
     }
 
-    public void setScheduledRouteDetails(ScheduledRouteDetails scheduledRouteDetails) {
-        this.scheduledRouteDetails = scheduledRouteDetails;
+    protected ScheduledRouteDetails getScheduledRouteDetails(String routeId) {
+        return scheduledRouteDetailsMap.get(routeId);
     }
 
     public void setScheduler(Scheduler scheduler) {
