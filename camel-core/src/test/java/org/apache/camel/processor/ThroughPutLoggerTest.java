@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.camel.util.CamelLogger;
 import org.easymock.EasyMock;
 import org.slf4j.Logger;
+import org.slf4j.Marker;
 
 public class ThroughPutLoggerTest extends TestCase {
 
@@ -27,9 +28,9 @@ public class ThroughPutLoggerTest extends TestCase {
         Logger logger = EasyMock.createMock(Logger.class);
         logger.isInfoEnabled();
         EasyMock.expectLastCall().andReturn(true).atLeastOnce();
-        logger.info(EasyMock.startsWith("Received: 10"));
+        logger.info(EasyMock.<Marker>isNull(), EasyMock.startsWith("Received: 10"));
         EasyMock.expectLastCall().once();
-        logger.info(EasyMock.startsWith("Received: 20"));
+        logger.info(EasyMock.<Marker>isNull(), EasyMock.startsWith("Received: 20"));
         EasyMock.expectLastCall().once();
         EasyMock.replay(logger);
         ThroughputLogger underTest = new ThroughputLogger(new CamelLogger(logger));
