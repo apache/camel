@@ -37,10 +37,11 @@ public class LogComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         LoggingLevel level = getLoggingLevel(parameters);
+        String marker = getAndRemoveParameter(parameters, "marker", String.class);
         Integer groupSize = getAndRemoveParameter(parameters, "groupSize", Integer.class);
         Long groupInterval = getAndRemoveParameter(parameters, "groupInterval", Long.class);
 
-        CamelLogger camelLogger = new CamelLogger(remaining, level);
+        CamelLogger camelLogger = new CamelLogger(remaining, level, marker);
         Processor logger;
         if (groupSize != null) {
             logger = new ThroughputLogger(camelLogger, groupSize);

@@ -22,20 +22,10 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="log" class="org.apache.camel.component.log.LogEndpoint">
-        <property name="logger" ref="myLogger"/>
-    </bean>
-
-    <bean id="myLogger" class="org.apache.camel.processor.CamelLogProcessor">
-        <property name="level" value="WARN"/>
-        <property name="logName" value="cool"/>
-        <property name="marker" value="testMarker"/>
-    </bean>
-
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <to ref="log"/>
+            <to uri="log:cool?level=WARN&amp;marker=testMarker"/>
             <log message="Another log message" logName="org.apache.camel" marker="myMarker" loggingLevel="DEBUG"/>
             <to uri="mock:result"/>
         </route>
