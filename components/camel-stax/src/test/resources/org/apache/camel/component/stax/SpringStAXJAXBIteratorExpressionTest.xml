@@ -34,8 +34,9 @@
     <route>
       <!-- pickup XML files -->
       <from uri="file:target/in"/>
-      <split>
+      <split streaming="true">
         <!-- split the file using StAX (ref to bean above) -->
+        <!-- and use streaming mode in the splitter -->
         <ref>staxRecord</ref>
         <!-- and send each splitted to a mock endpoint, which will be a Record POJO instance -->
         <to uri="mock:records"/>

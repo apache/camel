@@ -43,8 +43,9 @@ public class StAXJAXBIteratorExpressionTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("file:target/in")
-                    // split the file using StAX (the stax method is from StAXBuilder) -->
-                    .split(stax(Record.class))
+                    // split the file using StAX (the stax method is from StAXBuilder)
+                    // and use streaming mode in the splitter
+                    .split(stax(Record.class)).streaming()
                         .to("mock:records");
                 // END SNIPPET: e1
             }
