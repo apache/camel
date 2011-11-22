@@ -18,13 +18,30 @@ package org.apache.camel.component.stax;
 
 import org.apache.camel.Expression;
 
+/**
+ * Builder for StAX support.
+ */
 public final class StAXBuilder {
 
     private StAXBuilder() {
         // no-op
     }
 
+    /**
+     * Creates a {@link StAXJAXBIteratorExpression}.
+     *
+     * @param clazz the class which has JAXB annotations to bind POJO.
+     */
     public static <T> Expression stax(Class<T> clazz) {
         return new StAXJAXBIteratorExpression<T>(clazz);
+    }
+
+    /**
+     * Creates a {@link StAXJAXBIteratorExpression}.
+     *
+     * @param clazzName the FQN name of the class which has JAXB annotations to bind POJO.
+     */
+    public static <T> Expression stax(String clazzName) {
+        return new StAXJAXBIteratorExpression<T>(clazzName);
     }
 }

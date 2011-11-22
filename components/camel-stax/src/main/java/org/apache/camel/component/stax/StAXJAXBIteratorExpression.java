@@ -49,6 +49,7 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
     private static final Map<Class<?>, JAXBContext> JAX_CONTEXTS = new LRUSoftCache<Class<?>, JAXBContext>(1000);
 
     private final Class<T> handled;
+    private final String handledName;
 
     /**
      * Creates this expression.
@@ -58,6 +59,18 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
     public StAXJAXBIteratorExpression(Class<T> handled) {
         ObjectHelper.notNull(handled, "handled");
         this.handled = handled;
+        this.handledName = null;
+    }
+
+    /**
+     * Creates this expression.
+     *
+     * @param handledName the FQN name of the class which has JAXB annotations to bind POJO.
+     */
+    public StAXJAXBIteratorExpression(String handledName) {
+        ObjectHelper.notNull(handledName, "handledName");
+        this.handledName = handledName;
+        this.handled = null;
     }
 
     private static JAXBContext jaxbContext(Class<?> handled) throws JAXBException {
@@ -74,14 +87,22 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Object evaluate(Exchange exchange) {
         try {
             XMLEventReader reader = exchange.getIn().getMandatoryBody(XMLEventReader.class);
-            return createIterator(reader, handled);
+            Class<T> clazz = handled;
+            if (clazz == null && handledName != null) {
+                clazz = (Class<T>) exchange.getContext().getClassResolver().resolveMandatoryClass(handledName);
+            }
+            return createIterator(reader, clazz);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);
             return null;
         } catch (JAXBException e) {
+            exchange.setException(e);
+            return null;
+        } catch (ClassNotFoundException e) {
             exchange.setException(e);
             return null;
         }
