@@ -16,6 +16,10 @@
  */
 package org.apache.camel.converter.jaxp;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -89,6 +93,12 @@ public class StaxConverter {
     }
 
     @Converter
+    public XMLStreamReader createXMLStreamReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
+        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        return getInputFactory().createXMLStreamReader(is, IOHelper.getCharsetName(exchange));
+    }
+
+    @Converter
     public XMLStreamReader createXMLStreamReader(Reader in) throws XMLStreamException {
         return getInputFactory().createXMLStreamReader(in);
     }
@@ -109,6 +119,12 @@ public class StaxConverter {
     @Converter
     public XMLEventReader createXMLEventReader(InputStream in, Exchange exchange) throws XMLStreamException {
         return getInputFactory().createXMLEventReader(in, IOHelper.getCharsetName(exchange));
+    }
+
+    @Converter
+    public XMLEventReader createXMLEventReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
+        InputStream is = new BufferedInputStream(new FileInputStream(file));
+        return getInputFactory().createXMLEventReader(is, IOHelper.getCharsetName(exchange));
     }
 
     @Converter

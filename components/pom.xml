@@ -131,6 +131,7 @@
     <module>camel-spring-security</module>
     <module>camel-spring-ws</module>
     <module>camel-sql</module>
+    <module>camel-stax</module>
     <module>camel-stream</module>
     <module>camel-stringtemplate</module>
     <module>camel-syslog</module>

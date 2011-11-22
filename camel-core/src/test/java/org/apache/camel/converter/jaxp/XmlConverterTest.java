@@ -474,11 +474,20 @@ public class XmlConverterTest extends ContextTestSupport {
         XmlConverter conv = new XmlConverter();
 
         InputStream is = context.getTypeConverter().convertTo(InputStream.class, "<foo>bar</foo>");
-        InputSource out = conv.toInputSource(is);
+        InputSource out = conv.toInputSource(is, null);
         assertNotNull(out);
         assertNotNull(out.getByteStream());
     }
     
+    public void testToInputSourceFromFile() throws Exception {
+        XmlConverter conv = new XmlConverter();
+        File file = new File("./src/test/resources/org/apache/camel/converter/stream/test.xml").getAbsoluteFile();
+
+        InputSource out = conv.toInputSource(file, null);
+        assertNotNull(out);
+        assertNotNull(out.getByteStream());
+    }
+
     public void testOutOptionsFromCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();        
         Exchange exchange =  new DefaultExchange(context);

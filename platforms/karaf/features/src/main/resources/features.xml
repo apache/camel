@@ -633,6 +633,10 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-sql/${pom.version}</bundle>
   </feature>
+  <feature name='camel-stax' version='${pom.version}' resolver='(obr)' start-level='50'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-stax/${pom.version}</bundle>
+  </feature>
   <feature name='camel-stream' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-stream/${pom.version}</bundle>

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter.jaxp;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +28,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Properties;
 
@@ -860,7 +862,13 @@ public class XmlConverter {
     }
 
     @Converter
-    public InputSource toInputSource(InputStream is) {
+    public InputSource toInputSource(InputStream is, Exchange exchange) {
+        return new InputSource(is);
+    }
+
+    @Converter
+    public InputSource toInputSource(File file, Exchange exchange) throws FileNotFoundException {
+        InputStream is = new BufferedInputStream(new FileInputStream(file));
         return new InputSource(is);
     }
 
