@@ -16,31 +16,36 @@
  */
 package org.apache.camel.component.xslt;
 
-import javax.xml.transform.TransformerConfigurationException;
-
-import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 
 /**
  *
  */
-public class InvalidXsltFileTest extends ContextTestSupport {
+public class InvalidXsltFileTest extends TestSupport {
 
     public void testInvalidStylesheet() throws Exception {
         try {
-            template.sendBody("direct:a", "foo");
+            RouteBuilder builder = createRouteBuilder();
+            CamelContext context = new DefaultCamelContext();
+            context.addRoutes(builder);
+            context.start();
+
             fail("Should have thrown an exception due XSL compilation error");
-        } catch (CamelExecutionException e) {
+        } catch (FailedToCreateRouteException e) {
             // expected
-            assertIsInstanceOf(TransformerConfigurationException.class, e.getCause());            
-        }        
+            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+        }
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to("xslt:org/apache/camel/component/xslt/invalid.xsl");
+                from("seda:a").to("xslt:org/apache/camel/component/xslt/invalid.xsl");
             }
         };
     }

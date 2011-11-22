@@ -48,9 +48,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.xslt = xslt;
         this.resourceUri = resourceUri;
         this.cacheStylesheet = cacheStylesheet;
-        
-        // load stylesheet on first exchange
-        clearCachedStylesheet();
+        loadResource(xslt, resourceUri);
     }
 
     @ManagedOperation(description = "Clears the cached XSLT stylesheet, forcing to re-load the stylesheet on next request")
@@ -88,7 +86,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
             XsltEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
             newEndpoint.onExchange(exchange);
             return;
-        } else {
+        } else {            
             if (!cacheStylesheet || cacheCleared) {
                 loadResource(xslt, resourceUri);
             }    

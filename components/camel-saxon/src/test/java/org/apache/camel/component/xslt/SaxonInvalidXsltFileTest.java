@@ -16,30 +16,31 @@
  */
 package org.apache.camel.component.xslt;
 
-import java.io.FileNotFoundException;
-
-import javax.xml.transform.TransformerConfigurationException;
-
-import org.apache.camel.CamelExecutionException;
+import org.apache.camel.CamelContext;
+import org.apache.camel.FailedToCreateRouteException;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 
-public class SaxonInvalidXsltFileTest extends CamelTestSupport {
+public class SaxonInvalidXsltFileTest extends TestSupport {
 
     @Test
     public void testInvalidStylesheet() throws Exception {
         try {
-            template.requestBody("seda:a", "foo");
+            RouteBuilder builder = createRouteBuilder();
+            CamelContext context = new DefaultCamelContext();
+            context.addRoutes(builder);
+            context.start();
+
             fail("Should have thrown an exception due XSL compilation error");
-        } catch (CamelExecutionException e) {
+        } catch (FailedToCreateRouteException e) {
             // expected
-            Class<?> clazz = e.getCause().getClass();
-            assertTrue("Not an expected exception type", clazz == TransformerConfigurationException.class || clazz == FileNotFoundException.class);
+            assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
         }
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -47,4 +48,5 @@ public class SaxonInvalidXsltFileTest extends CamelTestSupport {
             }
         };
     }
+
 }
