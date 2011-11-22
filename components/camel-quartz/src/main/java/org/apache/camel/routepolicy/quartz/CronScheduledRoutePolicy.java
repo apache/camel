@@ -58,46 +58,26 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
             throw new IllegalArgumentException("Scheduled Route Policy for route {} has no stop/stop/suspend/resume times specified");
         }
 
-        if (scheduledRouteDetails == null) {
-            scheduledRouteDetails = new ScheduledRouteDetails();
-            scheduledRouteDetails.setRoute(route);
+        registerRouteToScheduledRouteDetails(route);
+        if (getRouteStartTime() != null) {
+            scheduleRoute(Action.START, route);
+        }
+        if (getRouteStopTime() != null) {
+            scheduleRoute(Action.STOP, route);
+        }
 
-            if (getRouteStartTime() != null) {
-                scheduleRoute(Action.START);
-            }
-            if (getRouteStopTime() != null) {
-                scheduleRoute(Action.STOP);
-            }
-
-            if (getRouteSuspendTime() != null) {
-                scheduleRoute(Action.SUSPEND);
-            }
-            if (getRouteResumeTime() != null) {
-                scheduleRoute(Action.RESUME);
-            }
+        if (getRouteSuspendTime() != null) {
+            scheduleRoute(Action.SUSPEND, route);
         }
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        if (scheduledRouteDetails.getStartJobDetail() != null) {
-            deleteRouteJob(Action.START);
-        }
-        if (scheduledRouteDetails.getStopJobDetail() != null) {
-            deleteRouteJob(Action.STOP);
-        }
-        if (scheduledRouteDetails.getSuspendJobDetail() != null) {
-            deleteRouteJob(Action.SUSPEND);
-        }
-        if (scheduledRouteDetails.getResumeJobDetail() != null) {
-            deleteRouteJob(Action.RESUME);
+        if (getRouteResumeTime() != null) {
+            scheduleRoute(Action.RESUME, route);
         }
     }
 
     @Override
     protected Trigger createTrigger(Action action, Route route) throws Exception {
         CronTrigger trigger = null;
-        
+
         if (action == Action.START) {
             trigger = new CronTrigger(TRIGGER_START + route.getId(), TRIGGER_GROUP + route.getId(), getRouteStartTime());
         } else if (action == Action.STOP) {
