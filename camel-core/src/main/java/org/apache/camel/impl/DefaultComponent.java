@@ -78,7 +78,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             path = path.substring(2);
         }
         int idx = path.indexOf('?');
-        if (idx > 0) {
+        if (idx > -1) {
             path = path.substring(0, idx);
         }
         Map<String, Object> parameters = URISupport.parseParameters(u);
