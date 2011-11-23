@@ -57,7 +57,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
                 boolean absolute = FileUtil.isAbsolute(file);
                 boolean created = operations.buildDirectory(file.getPath(), absolute);
                 if (!created) {
-                    throw new FileNotFoundException("Cannot auto create starting directory: " + file);
+                    log.warn("Cannot auto create starting directory: {}", file);
                 }
             } else if (isStartingDirectoryMustExist()) {
                 throw new FileNotFoundException("Starting directory does not exist: " + file);
