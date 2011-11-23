@@ -26,7 +26,6 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 
 public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CronScheduledRoutePolicy.class);
     private Date routeStartDate;
     private int routeStartRepeatCount;
     private long routeStartRepeatInterval;
