@@ -42,6 +42,7 @@ public class JmsHttpJmsTest extends CamelTestSupport {
     public void testJmsHttpJms() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Bye World");
 
         template.sendBody("jms:in", "Hello World");
 
@@ -52,7 +53,21 @@ public class JmsHttpJmsTest extends CamelTestSupport {
             }
         });
 
-        assertMockEndpointsSatisfied();
+        mock.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testResultReplyJms() throws Exception {
+        Exchange exchange = template.request("jms:reply?replyTo=bar", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+            }
+        });
+        assertEquals("Bye World", exchange.getOut().getBody(String.class));
+        assertTrue("Should have headers", exchange.getOut().hasHeaders());
+        assertEquals("queue://bar", exchange.getOut().getHeader("JMSReplyTo", String.class));
+        
+      
     }
 
     @Override
@@ -63,6 +78,8 @@ public class JmsHttpJmsTest extends CamelTestSupport {
             public void configure() {
                 from("jms:in").to("http://localhost:" + port + "/myservice").convertBodyTo(String.class).to("jms:out", "mock:result");
 
+                from("jms:reply").to("http://localhost:" + port + "/myservice");
+                
                 from("jetty:http://0.0.0.0:" + port + "/myservice").transform().constant("Bye World");
             }
         };
