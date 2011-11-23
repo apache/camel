@@ -56,6 +56,7 @@ trait DSL {
   def log(message: String) : DSL
   def log(level: LoggingLevel, message: String) : DSL
   def log(level: LoggingLevel, logName: String, message: String) : DSL
+  def log(level: LoggingLevel, logName: String, marker: String, message: String) : DSL
   def loop(expression: Exchange => Any) : SLoopDefinition
 
   def marshal(format : DataFormatDefinition) : DSL

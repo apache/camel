@@ -85,6 +85,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def log(message: String) = wrap(target.log(message))
   def log(level: LoggingLevel, message: String) = wrap(target.log(level, message))
   def log(level: LoggingLevel, logName: String, message: String) = wrap(target.log(level, logName, message))
+  def log(level: LoggingLevel, logName: String, marker: String, message: String) = wrap(target.log(level, logName, marker, message))
   def loop(expression: Exchange => Any) = SLoopDefinition(target.loop(expression))
 
   def marshal(format: DataFormatDefinition) = wrap(target.marshal(format))

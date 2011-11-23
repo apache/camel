@@ -139,6 +139,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def log(message: String) = stack.top.log(message)
   def log(level: LoggingLevel, message: String) = stack.top.log(level, message)
   def log(level: LoggingLevel, logName: String, message: String) = stack.top.log(level, logName, message)
+  def log(level: LoggingLevel, logName: String, marker: String, message: String) = stack.top.log(level, logName, marker, message)
   def loop(expression: Exchange => Any) = stack.top.loop(expression)
 
   def marshal(format: DataFormatDefinition) = stack.top.marshal(format)
