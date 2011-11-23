@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -709,6 +710,27 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.body.lines[last-1].name}", "Camel in Action");
 
         assertExpression("${in.body.lines.size}", 2);
+    }
+
+    public void testBodyOGNLListMap() throws Exception {
+        List<Map<String, String>> grid = new ArrayList<Map<String, String>>();
+        Map<String, String> cells = new LinkedHashMap<String, String>();
+        cells.put("ABC", "123");
+        cells.put("DEF", "456");
+        grid.add(cells);
+
+        Map<String, String> cells2 = new LinkedHashMap<String, String>();
+        cells2.put("HIJ", "789");
+        grid.add(cells2);
+
+        exchange.getIn().setBody(grid);
+
+        assertExpression("${in.body[0][ABC]}", "123");
+        assertExpression("${in.body[0][DEF]}", "456");
+        assertExpression("${in.body[0]['ABC']}", "123");
+        assertExpression("${in.body[0]['DEF']}", "456");
+        assertExpression("${in.body[1][HIJ]}", "789");
+        assertExpression("${in.body[1]['HIJ']}", "789");
     }
 
     public void testBodyOGNLList() throws Exception {
