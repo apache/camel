@@ -243,7 +243,8 @@ public class HtmlToPdfMojo extends AbstractMojo {
     private void storeDummyFile() throws FileNotFoundException {
         PrintWriter out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(getHTMLFileName())));
         out.println("<html>");
-        out.println("<body>Download of " + page + " failed</body>");
+        out.println("<body>Generation of the offline PDF version of the manual failed, however you could try <a href=\"http://camel.apache.org/book-in-one-page.html\">the online HTML version</a>.</body>");
+        out.println("</html>");
         out.close();
         getLog().info("Stored dummy file: " + getHTMLFileName() + " since download of " + page + " failed.");
     }
