@@ -16,13 +16,12 @@
  */
 package org.apache.camel.builder.script;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.Map;
-
 import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
@@ -35,12 +34,11 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 
 /**
  * A builder class for creating {@link Processor}, {@link Expression} and
@@ -59,23 +57,29 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScriptBuilder.class);
 
     private String scriptEngineName;
-    private Resource scriptResource;
+    private String scriptResource;
     private String scriptText;
     private ScriptEngine engine;
     private CompiledScript compiledScript;
 
+    /**
+     * Constructor.
+     *
+     * @param scriptEngineName the name of the scripting language
+     */
     public ScriptBuilder(String scriptEngineName) {
         this.scriptEngineName = scriptEngineName;
     }
 
+    /**
+     * Constructor.
+     *
+     * @param scriptEngineName the name of the scripting language
+     * @param scriptText the script text to be evaluated, or a reference to a script resource
+     */
     public ScriptBuilder(String scriptEngineName, String scriptText) {
         this(scriptEngineName);
-        this.scriptText = scriptText;
-    }
-
-    public ScriptBuilder(String scriptEngineName, Resource scriptResource) {
-        this(scriptEngineName);
-        this.scriptResource = scriptResource;
+        setScriptText(scriptText);
     }
 
     @Override
@@ -124,14 +128,11 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         return this;
     }
 
-    // Create any scripting language builder recognised by JSR 223
-    // -------------------------------------------------------------------------
-
     /**
      * Creates a script builder for the named language and script contents
      *
      * @param language the language to use for the script
-     * @param scriptText the script text to be evaluated
+     * @param scriptText the script text to be evaluated, or a reference to a script resource
      * @return the builder
      */
     public static ScriptBuilder script(String language, String scriptText) {
@@ -139,45 +140,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     /**
-     * Creates a script builder for the named language and script {@link Resource}
-     *
-     * @param language the language to use for the script
-     * @param scriptResource the resource used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder script(String language, Resource scriptResource) {
-        return new ScriptBuilder(language, scriptResource);
-    }
-
-    /**
-     * Creates a script builder for the named language and script {@link File}
-     *
-     * @param language the language to use for the script
-     * @param scriptFile the file used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder script(String language, File scriptFile) {
-        return new ScriptBuilder(language, new FileSystemResource(scriptFile));
-    }
-
-    /**
-     * Creates a script builder for the named language and script {@link URL}
-     *
-     * @param language the language to use for the script
-     * @param scriptURL the URL used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder script(String language, URL scriptURL) {
-        return new ScriptBuilder(language, new UrlResource(scriptURL));
-    }
-
-    // Groovy
-    // -------------------------------------------------------------------------
-
-    /**
      * Creates a script builder for the groovy script contents
      *
-     * @param scriptText the script text to be evaluated
+     * @param scriptText the script text to be evaluated, or a reference to a script resource
      * @return the builder
      */
     public static ScriptBuilder groovy(String scriptText) {
@@ -185,42 +150,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     /**
-     * Creates a script builder for the groovy script {@link Resource}
-     *
-     * @param scriptResource the resource used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder groovy(Resource scriptResource) {
-        return new ScriptBuilder("groovy", scriptResource);
-    }
-
-    /**
-     * Creates a script builder for the groovy script {@link File}
-     *
-     * @param scriptFile the file used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder groovy(File scriptFile) {
-        return new ScriptBuilder("groovy", new FileSystemResource(scriptFile));
-    }
-
-    /**
-     * Creates a script builder for the groovy script {@link URL}
-     *
-     * @param scriptURL the URL used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder groovy(URL scriptURL) {
-        return new ScriptBuilder("groovy", new UrlResource(scriptURL));
-    }
-
-    // JavaScript
-    // -------------------------------------------------------------------------
-
-    /**
      * Creates a script builder for the JavaScript/ECMAScript script contents
      *
-     * @param scriptText the script text to be evaluated
+     * @param scriptText the script text to be evaluated, or a reference to a script resource
      * @return the builder
      */
     public static ScriptBuilder javaScript(String scriptText) {
@@ -228,43 +160,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     /**
-     * Creates a script builder for the JavaScript/ECMAScript script
-     *
-     * @{link Resource}
-     * @param scriptResource the resource used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder javaScript(Resource scriptResource) {
-        return new ScriptBuilder("js", scriptResource);
-    }
-
-    /**
-     * Creates a script builder for the JavaScript/ECMAScript script {@link File}
-     *
-     * @param scriptFile the file used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder javaScript(File scriptFile) {
-        return new ScriptBuilder("js", new FileSystemResource(scriptFile));
-    }
-
-    /**
-     * Creates a script builder for the JavaScript/ECMAScript script {@link URL}
-     *
-     * @param scriptURL the URL used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder javaScript(URL scriptURL) {
-        return new ScriptBuilder("js", new UrlResource(scriptURL));
-    }
-
-    // PHP
-    // -------------------------------------------------------------------------
-
-    /**
      * Creates a script builder for the PHP script contents
      *
-     * @param scriptText the script text to be evaluated
+     * @param scriptText the script text to be evaluated, or a reference to a script resource
      * @return the builder
      */
     public static ScriptBuilder php(String scriptText) {
@@ -272,42 +170,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     /**
-     * Creates a script builder for the PHP script {@link Resource}
-     *
-     * @param scriptResource the resource used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder php(Resource scriptResource) {
-        return new ScriptBuilder("php", scriptResource);
-    }
-
-    /**
-     * Creates a script builder for the PHP script {@link File}
-     *
-     * @param scriptFile the file used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder php(File scriptFile) {
-        return new ScriptBuilder("php", new FileSystemResource(scriptFile));
-    }
-
-    /**
-     * Creates a script builder for the PHP script {@link URL}
-     *
-     * @param scriptURL the URL used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder php(URL scriptURL) {
-        return new ScriptBuilder("php", new UrlResource(scriptURL));
-    }
-
-    // Python
-    // -------------------------------------------------------------------------
-
-    /**
      * Creates a script builder for the Python script contents
      *
-     * @param scriptText the script text to be evaluated
+     * @param scriptText the script text to be evaluated, or a reference to a script resource
      * @return the builder
      */
     public static ScriptBuilder python(String scriptText) {
@@ -315,82 +180,22 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     /**
-     * Creates a script builder for the Python script {@link Resource}
-     *
-     * @param scriptResource the resource used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder python(Resource scriptResource) {
-        return new ScriptBuilder("python", scriptResource);
-    }
-
-    /**
-     * Creates a script builder for the Python script {@link File}
-     *
-     * @param scriptFile the file used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder python(File scriptFile) {
-        return new ScriptBuilder("python", new FileSystemResource(scriptFile));
-    }
-
-    /**
-     * Creates a script builder for the Python script {@link URL}
-     *
-     * @param scriptURL the URL used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder python(URL scriptURL) {
-        return new ScriptBuilder("python", new UrlResource(scriptURL));
-    }
-
-    // Ruby/JRuby
-    // -------------------------------------------------------------------------
-
-    /**
      * Creates a script builder for the Ruby/JRuby script contents
      *
-     * @param scriptText the script text to be evaluated
+     * @param scriptText the script text to be evaluated, or a reference to a script resource
      * @return the builder
      */
     public static ScriptBuilder ruby(String scriptText) {
         return new ScriptBuilder("jruby", scriptText);
     }
 
-    /**
-     * Creates a script builder for the Ruby/JRuby script {@link Resource}
-     *
-     * @param scriptResource the resource used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder ruby(Resource scriptResource) {
-        return new ScriptBuilder("jruby", scriptResource);
-    }
-
-    /**
-     * Creates a script builder for the Ruby/JRuby script {@link File}
-     *
-     * @param scriptFile the file used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder ruby(File scriptFile) {
-        return new ScriptBuilder("jruby", new FileSystemResource(scriptFile));
-    }
-
-    /**
-     * Creates a script builder for the Ruby/JRuby script {@link URL}
-     *
-     * @param scriptURL the URL used to load the script
-     * @return the builder
-     */
-    public static ScriptBuilder ruby(URL scriptURL) {
-        return new ScriptBuilder("jruby", new UrlResource(scriptURL));
-    }
-
     // Properties
     // -------------------------------------------------------------------------
+
     public ScriptEngine getEngine() {
-        checkInitialised();
+        if (engine == null) {
+            engine = createScriptEngine();
+        }
         if (engine == null) {
             throw new IllegalArgumentException("No script engine could be created for: " + getScriptEngineName());
         }
@@ -406,7 +211,11 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     }
 
     public void setScriptText(String scriptText) {
-        this.scriptText = scriptText;
+        if (ResourceHelper.hasScheme(scriptText)) {
+            this.scriptResource = scriptText;
+        } else {
+            this.scriptText = scriptText;
+        }
     }
 
     public String getScriptEngineName() {
@@ -422,15 +231,14 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         if (scriptText != null) {
             return scriptEngineName + ": " + scriptText;
         } else if (scriptResource != null) {
-            return scriptEngineName + ": " + scriptResource.getDescription();
+            return scriptEngineName + ": " + scriptResource;
         } else {
             return scriptEngineName + ": null script";
         }
     }
 
     /**
-     * Access the script context so that it can be configured such as adding
-     * attributes
+     * Access the script context so that it can be configured such as adding attributes
      */
     public ScriptContext getScriptContext() {
         return getEngine().getContext();
@@ -443,17 +251,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         getEngine().setContext(scriptContext);
     }
 
-    public Resource getScriptResource() {
-        return scriptResource;
-    }
-
-    public void setScriptResource(Resource scriptResource) {
-        this.scriptResource = scriptResource;
-    }
-
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected void checkInitialised() {
+    protected void checkInitialised(Exchange exchange) {
         if (scriptText == null && scriptResource == null) {
             throw new IllegalArgumentException("Neither scriptText or scriptResource are specified");
         }
@@ -463,7 +263,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         if (compiledScript == null) {
             // BeanShell implements Compilable but throws an exception if you call compile
             if (engine instanceof Compilable && !isBeanShell()) { 
-                compileScript((Compilable)engine);
+                compileScript((Compilable)engine, exchange);
             }
         }
     }
@@ -511,12 +311,14 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         return null;
     }
 
-    protected void compileScript(Compilable compilable) {
+    protected void compileScript(Compilable compilable, Exchange exchange) {
+        Reader reader = null;
         try {
             if (scriptText != null) {
                 compiledScript = compilable.compile(scriptText);
             } else if (scriptResource != null) {
-                compiledScript = compilable.compile(createScriptReader());
+                reader = createScriptReader(exchange);
+                compiledScript = compilable.compile(reader);
             }
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {
@@ -525,6 +327,8 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             throw createScriptCompileException(e);
         } catch (IOException e) {
             throw createScriptCompileException(e);
+        } finally {
+            IOHelper.close(reader);
         }
     }
 
@@ -533,7 +337,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             getScriptContext();
             populateBindings(getEngine(), exchange);
             addScriptEngineArguments(getEngine(), exchange);
-            Object result = runScript();
+            Object result = runScript(exchange);
             LOG.debug("The script evaluation result is: {}", result);
             return result;
         } catch (ScriptException e) {
@@ -546,8 +350,8 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         }
     }
 
-    protected Object runScript() throws ScriptException, IOException {
-        checkInitialised();
+    protected Object runScript(Exchange exchange) throws ScriptException, IOException {
+        checkInitialised(exchange);
         Object result;
         if (compiledScript != null) {
             result = compiledScript.eval();
@@ -555,7 +359,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
             if (scriptText != null) {
                 result = getEngine().eval(scriptText);
             } else {
-                result = getEngine().eval(createScriptReader());
+                result = getEngine().eval(createScriptReader(exchange));
             }
         }
         return result;
@@ -593,9 +397,10 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         }
     }
 
-    protected InputStreamReader createScriptReader() throws IOException {
-        // TODO consider character sets?
-        return new InputStreamReader(scriptResource.getInputStream());
+    protected InputStreamReader createScriptReader(Exchange exchange) throws IOException {
+        ObjectHelper.notNull(scriptResource, "scriptResource", this);
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), scriptResource);
+        return new InputStreamReader(is);
     }
 
     protected ScriptEvaluationException createScriptCompileException(Exception e) {
