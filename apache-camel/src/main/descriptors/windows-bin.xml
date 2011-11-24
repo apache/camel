@@ -46,6 +46,12 @@
         <exclude>**/target/*</exclude>
         <exclude>**/*.ser</exclude>
         <exclude>**/*.log</exclude>
+        <!-- exclude README.txt which need get filtered -->
+        <exclude>**/camel-example-reportincident-wssecurity/README.txt</exclude>
+        <exclude>**/camel-example-osgi/README.txt</exclude>
+        <exclude>**/camel-example-cxf-osgi/README.txt</exclude>
+        <exclude>**/camel-example-cxf-blueprint/README.txt</exclude>
+        <exclude>**/camel-example-cxf-tomcat/README.txt</exclude>
       </excludes>
       <lineEnding>dos</lineEnding>
     </fileSet>
@@ -69,6 +75,45 @@
       </includes>
    </fileSet>
   </fileSets>
+
+  <files>
+    <!--filtering README.txt-->
+    <file>
+      <source>../examples/camel-example-reportincident-wssecurity/README.txt</source>
+      <outputDirectory>/examples/camel-example-reportincident-wssecurity</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0644</fileMode>
+      <lineEnding>dos</lineEnding>
+    </file>
+    <file>
+      <source>../examples/camel-example-osgi/README.txt</source>
+      <outputDirectory>/examples/camel-example-osgi</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0644</fileMode>
+      <lineEnding>dos</lineEnding>
+    </file>
+    <file>
+      <source>../examples/camel-example-cxf-osgi/README.txt</source>
+      <outputDirectory>/examples/camel-example-cxf-osgi</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0644</fileMode>
+      <lineEnding>dos</lineEnding>
+    </file>
+    <file>
+      <source>../examples/camel-example-cxf-blueprint/README.txt</source>
+      <outputDirectory>/examples/camel-example-cxf-blueprint</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0644</fileMode>
+      <lineEnding>dos</lineEnding>
+    </file>
+    <file>
+      <source>../examples/camel-example-cxf-tomcat/README.txt</source>
+      <outputDirectory>/examples/camel-example-cxf-tomcat</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0644</fileMode>
+      <lineEnding>dos</lineEnding>
+    </file>
+  </files>
 
   <componentDescriptors>
     <componentDescriptor>src/main/descriptors/common-bin.xml</componentDescriptor>
