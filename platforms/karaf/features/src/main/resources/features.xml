@@ -16,7 +16,7 @@
       See the License for the specific language governing permissions and
       limitations under the License.
 -->
-<features name='camel-${pom.version}' xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+<features name='camel-${pom.version}' xmlns='http://karaf.apache.org/xmlns/features/v1.0.0'>
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
   <repository>mvn:org.jclouds.karaf/jclouds-karaf/${jclouds-feature-version}/xml/features</repository>
   <feature name="xml-specs-api" version='${servicemix-specs-version}' resolver='(obr)' start-level='10'>
