@@ -32,5 +32,6 @@ public interface S3Constants {
     String E_TAG = "CamelAwsS3ETag";
     String KEY = "CamelAwsS3Key";
     String LAST_MODIFIED = "CamelAwsS3LastModified";
+    String STORAGE_CLASS = "CamelAwsS3StorageClass";
     String VERSION_ID = "CamelAwsS3VersionId";
 }
