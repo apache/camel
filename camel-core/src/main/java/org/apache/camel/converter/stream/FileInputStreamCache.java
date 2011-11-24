@@ -29,7 +29,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
-public class FileInputStreamCache extends InputStream implements StreamCache, Closeable {
+public class FileInputStreamCache extends InputStream implements StreamCache {
     private InputStream stream;
     private File file;
 
