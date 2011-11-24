@@ -382,6 +382,7 @@
               <excludes>
                   <exclude>**/FIXMETest.*</exclude>
                   <exclude>**/FtpConsumeTest.*</exclude>
+                  <exclude>**/HawtDBAggregateRouteTest.*</exclude>
               </excludes>
               <systemPropertyVariables>
                   <karafVersion>${karaf-version}</karafVersion>
