@@ -17,6 +17,9 @@
 package org.apache.camel.component.aws.s3;
 
 import java.io.InputStream;
+import java.util.Date;
+
+import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -38,6 +41,8 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
     
+    private AmazonS3ClientMock client;
+    
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
@@ -52,6 +57,10 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         
         assertResultExchange(result.getExchanges().get(0));
+        
+        PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
+        assertEquals("REDUCED_REDUNDANCY", putObjectRequest.getStorageClass());
+        assertEquals("mycamelbucket", putObjectRequest.getBucketName());
         
         assertResponseMessage(exchange.getIn());
     }
@@ -71,7 +80,50 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         
         assertResultExchange(result.getExchanges().get(0));
         
+        PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
+        assertEquals("REDUCED_REDUNDANCY", putObjectRequest.getStorageClass());
+        assertEquals("mycamelbucket", putObjectRequest.getBucketName());
+        
         assertResponseMessage(exchange.getOut());
+    }
+    
+    @Test
+    public void sendCustomHeaderValues() throws Exception {
+        result.expectedMessageCount(1);
+        final Date now = new Date();
+        
+        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(S3Constants.STORAGE_CLASS, "STANDARD");
+                exchange.getIn().setHeader(S3Constants.KEY, "CamelUnitTest");
+                exchange.getIn().setHeader(S3Constants.CONTENT_LENGTH, 2L);
+                exchange.getIn().setHeader(S3Constants.CONTENT_TYPE, "text/html");
+                exchange.getIn().setHeader(S3Constants.CACHE_CONTROL, "no-cache");
+                exchange.getIn().setHeader(S3Constants.CONTENT_DISPOSITION, "attachment;");
+                exchange.getIn().setHeader(S3Constants.CONTENT_ENCODING, "gzip");
+                exchange.getIn().setHeader(S3Constants.CONTENT_MD5, "TWF");
+                exchange.getIn().setHeader(S3Constants.LAST_MODIFIED, now);
+                
+                exchange.getIn().setBody("This is my bucket content.");
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        
+        assertResultExchange(result.getExchanges().get(0));
+        
+        PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
+        assertEquals("STANDARD", putObjectRequest.getStorageClass());
+        assertEquals("mycamelbucket", putObjectRequest.getBucketName());
+        assertEquals(2L, putObjectRequest.getMetadata().getContentLength());
+        assertEquals("text/html", putObjectRequest.getMetadata().getContentType());
+        assertEquals("no-cache", putObjectRequest.getMetadata().getCacheControl());
+        assertEquals("attachment;", putObjectRequest.getMetadata().getContentDisposition());
+        assertEquals("gzip", putObjectRequest.getMetadata().getContentEncoding());
+        assertEquals("TWF", putObjectRequest.getMetadata().getContentMD5());
+        assertEquals(now, putObjectRequest.getMetadata().getLastModified());
+        
+        assertResponseMessage(exchange.getIn());
     }
     
     private void assertResultExchange(Exchange resultExchange) {
@@ -98,7 +150,9 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind("amazonS3Client", new AmazonS3ClientMock());
+        
+        client = new AmazonS3ClientMock();
+        registry.bind("amazonS3Client", client);
         
         return registry;
     }
@@ -111,7 +165,7 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
                 String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1";
                 
                 from("direct:start")
-                    .to(awsEndpoint);
+                    .to(awsEndpoint + "&storageClass=REDUCED_REDUNDANCY");
                 
                 from(awsEndpoint + "&maxMessagesPerPoll=5")
                     .to("mock:result");

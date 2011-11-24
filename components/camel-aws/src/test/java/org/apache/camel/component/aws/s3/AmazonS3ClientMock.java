@@ -79,6 +79,7 @@ import com.amazonaws.services.s3.model.VersionListing;
 public class AmazonS3ClientMock extends AmazonS3Client {
     
     List<S3Object> objects = new ArrayList<S3Object>();
+    List<PutObjectRequest> putObjectRequests = new ArrayList<PutObjectRequest>();
     
     private boolean nonExistingBucketCreated;
     
@@ -300,6 +301,8 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public PutObjectResult putObject(PutObjectRequest putObjectRequest) throws AmazonClientException, AmazonServiceException {
+        putObjectRequests.add(putObjectRequest);
+        
         S3Object s3Object = new S3Object();
         s3Object.setBucketName(putObjectRequest.getBucketName());
         s3Object.setKey(putObjectRequest.getKey());

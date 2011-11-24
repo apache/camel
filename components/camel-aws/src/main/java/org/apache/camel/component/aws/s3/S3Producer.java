@@ -86,7 +86,12 @@ public class S3Producer extends DefaultProducer {
                 determineKey(exchange),
                 exchange.getIn().getMandatoryBody(InputStream.class),
                 objectMetadata);
-        
+
+        String storageClass = determineStorageClass(exchange);
+        if (storageClass != null) {
+            putObjectRequest.setStorageClass(storageClass);
+        }
+
         LOG.trace("Put object [{}] from exchange [{}]...", putObjectRequest, exchange);
         
         PutObjectResult putObjectResult = getEndpoint().getS3Client().putObject(putObjectRequest);
@@ -106,6 +111,15 @@ public class S3Producer extends DefaultProducer {
             throw new IllegalArgumentException("AWS S3 Key header missing.");
         }
         return key;
+    }
+    
+    private String determineStorageClass(Exchange exchange) {
+        String storageClass = exchange.getIn().getHeader(S3Constants.STORAGE_CLASS, String.class);
+        if (storageClass == null) {
+            storageClass = getConfiguration().getStorageClass();
+        }
+        
+        return storageClass;
     }
 
     private Message getMessageForResponse(Exchange exchange) {
