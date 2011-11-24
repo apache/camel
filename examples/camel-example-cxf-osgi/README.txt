@@ -37,19 +37,16 @@ Note for Karaf 2.2.x:
 
 
 2) Add features required
-features:addUrl mvn:org.apache.camel.karaf/apache-camel/2.9.0/xml/features
+features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
 features:install war
 features:install cxf
 features:install camel-spring
 features:install camel-jaxb
 features:install camel-cxf
   
-Note: Apache Camel 2.9.0 is being used above, but you should of course change the
-      version number to the exact version of Camel being used.
-
 
 3) Deploy the example
-osgi:install -s mvn:org.apache.camel/camel-example-cxf-osgi/2.9.0
+osgi:install -s mvn:org.apache.camel/camel-example-cxf-osgi/${version}
   
 
 4) Verify that your service is available using the following url in the browser. 

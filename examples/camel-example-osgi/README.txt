@@ -25,9 +25,8 @@ You will need to compile and install this example first:
 If using Apache Karaf / Apache ServiceMix you can install this example
 from the shell
 
-  osgi:install mvn:org.apache.camel/camel-example-osgi/2.5.0
+  osgi:install mvn:org.apache.camel/camel-example-osgi/${version}
 
-      (substitute 2.5.0 with the Camel version number)
 
 Then start the bundle by starting the id it was assigned during installation
 
