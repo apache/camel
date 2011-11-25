@@ -18,6 +18,9 @@ package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.component.cxf.CxfProducer;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.transport.http.HTTPConduit;
 import org.junit.Test;
 
 public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
@@ -44,4 +47,14 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         assertEquals("Got the wrong schemalocations size", 1, routerEndpoint.getSchemaLocations().size());
         assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", routerEndpoint.getSchemaLocations().get(0));
     }
+    
+    @Test
+    public void testPropertiesSettingOnCxfClient() throws Exception {
+        CxfEndpoint clientEndpoint = (CxfEndpoint)ctx.getBean("clientEndpoint");
+        CxfProducer producer = (CxfProducer) clientEndpoint.createProducer();
+        Client client = producer.getClient();
+        HTTPConduit conduit = (HTTPConduit)client.getConduit();
+        assertEquals("Got the wrong user name", "test", conduit.getAuthorization().getUserName());
+    }
+      
 }
