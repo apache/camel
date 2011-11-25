@@ -292,7 +292,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             } else {
                 sfb.setProperties(getProperties());
             }
-            LOG.debug("ServerFactoryBean: {} added properties: {}", sfb, properties);
+            LOG.debug("ServerFactoryBean: {} added properties: {}", sfb, getProperties());
         }
 
         sfb.setBus(getBus());
@@ -436,6 +436,17 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         // set the document-literal wrapped style
         if (getWrappedStyle() != null) {
             factoryBean.getServiceFactory().setWrapped(getWrappedStyle());
+        }
+        
+        // any optional properties
+        if (getProperties() != null) {
+            if (factoryBean.getProperties() != null) {
+                // add to existing properties
+                factoryBean.getProperties().putAll(getProperties());
+            } else {
+                factoryBean.setProperties(getProperties());
+            }
+            LOG.debug("ClientFactoryBean: {} added properties: {}", factoryBean, getProperties());
         }
 
         factoryBean.setBus(getBus());

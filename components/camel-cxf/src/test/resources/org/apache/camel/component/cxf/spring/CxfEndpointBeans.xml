@@ -41,6 +41,17 @@
 
   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointBeanTest/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
+    
+  <cxf:cxfEndpoint id="clientEndpoint" address="http://localhost:${CXFTestSupport.port2}/CxfEndpointBeanTest/helloworld"
+    serviceClass="org.apache.camel.component.cxf.HelloService">
+    <cxf:properties>
+       <entry key="org.apache.cxf.configuration.security.AuthorizationPolicy" value-ref="myPolicy"/>
+    </cxf:properties>
+  </cxf:cxfEndpoint>
+  
+  <bean id="myPolicy" class="org.apache.cxf.configuration.security.AuthorizationPolicy" >
+     <property name="UserName" value="test" />
+  </bean>
 
   <cxf:cxfEndpoint id="myEndpoint" address="http://localhost:${CXFTestSupport.port3}/test"
     serviceClass="org.apache.camel.wsdl_first.Person" serviceName="${CxfEndpointBeans.serviceName}" endpointName="${CxfEndpointBeans.endpointName}"
