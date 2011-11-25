@@ -32,7 +32,7 @@
     <!-- START SNIPPET: enableLoggingOutInterceptor -->
     <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor">
          <!--  it really should have been user-prestream but CXF does have such phase! -->
-         <constructor-arg value="write"/> 
+         <constructor-arg value="target/write"/> 
     </bean>
     		
 	<cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CXFTestSupport.port2}/LoggingInterceptorInMessageModeTest/helloworld"
