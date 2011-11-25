@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * @version 
  */
-public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
+public class FtpProducerTempFileExistIssueTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/tempprefix/?password=admin";
@@ -56,7 +56,7 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "tempprefix/hello.txt").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt").getAbsoluteFile();
         assertEquals(true, file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -72,7 +72,7 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "tempprefix/hello.txt").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt").getAbsoluteFile();
         assertEquals(true, file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -87,7 +87,7 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "tempprefix/hello.txt").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt").getAbsoluteFile();
         assertEquals(true, file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -102,7 +102,7 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "tempprefix/hello.txt").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt").getAbsoluteFile();
         // should not write new file as we should ignore
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
@@ -123,7 +123,7 @@ public class FtpProdcerTempFileExistIssueTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
 
-        File file = new File(FTP_ROOT_DIR + "tempprefix/hello.txt").getAbsoluteFile();
+        File file = new File(FTP_ROOT_DIR + "/tempprefix/hello.txt").getAbsoluteFile();
         // should not write new file as we should ignore
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }

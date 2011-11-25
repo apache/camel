@@ -55,7 +55,7 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
         Thread.sleep(200);
 
         // assert the file is deleted
-        File file = new File("./res/home/deletefile/hello.txt");
+        File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
         file = file.getAbsoluteFile();
         assertTrue("The file should NOT have been deleted", file.exists());
     }
@@ -73,7 +73,7 @@ public class FromFtpDoNotDeleteFileIfProcessFailsTest extends FtpServerTestSuppo
         producer.stop();
 
         // assert file is created
-        File file = new File("./res/home/deletefile/hello.txt");
+        File file = new File(FTP_ROOT_DIR + "/deletefile/hello.txt");
         file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }

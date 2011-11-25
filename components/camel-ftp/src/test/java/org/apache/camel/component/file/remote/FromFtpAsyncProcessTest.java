@@ -37,8 +37,8 @@ public class FromFtpAsyncProcessTest extends FtpServerTestSupport {
 
     @Test
     public void testFtpAsyncProcess() throws Exception {
-        template.sendBodyAndHeader("file:res/home/async", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:res/home/async", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file:" + FTP_ROOT_DIR + "/async", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:" + FTP_ROOT_DIR + "/async", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", 123);
@@ -53,10 +53,10 @@ public class FromFtpAsyncProcessTest extends FtpServerTestSupport {
         // give time for files to be deleted on ftp server
         Thread.sleep(1000);
 
-        File hello = new File("res/home/async/hello.txt");
+        File hello = new File(FTP_ROOT_DIR + "/async/hello.txt");
         assertFalse("File should not exist " + hello, hello.exists());
 
-        File bye = new File("res/home/async/bye.txt");
+        File bye = new File(FTP_ROOT_DIR + "/async/bye.txt");
         assertFalse("File should not exist " + bye, bye.exists());
     }
 
@@ -98,6 +98,4 @@ public class FromFtpAsyncProcessTest extends FtpServerTestSupport {
             // noop
         }
     }
-
-
 }

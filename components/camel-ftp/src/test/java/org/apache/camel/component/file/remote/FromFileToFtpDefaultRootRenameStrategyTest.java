@@ -54,7 +54,7 @@ public class FromFileToFtpDefaultRootRenameStrategyTest extends FtpServerTestSup
 
     @Test
     public void testFromFileToFtp() throws Exception {
-        File expectedOnFtpServer = new File(FTP_ROOT_DIR + "logo.jpeg");
+        File expectedOnFtpServer = new File(FTP_ROOT_DIR + "/logo.jpeg");
         // the poller won't start for 1.5 seconds, so we check to make sure the file
         // is there first check 1 - is the file there (default root location)
         assertTrue(expectedOnFtpServer.exists());

@@ -46,7 +46,7 @@ public class FtpProducerFileExistFailTest extends FtpServerTestSupport {
     public void testFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists(FTP_ROOT_DIR + "exist/hello.txt", "Hello World");
+        mock.expectedFileExists(FTP_ROOT_DIR + "/exist/hello.txt", "Hello World");
 
         try {
             template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");

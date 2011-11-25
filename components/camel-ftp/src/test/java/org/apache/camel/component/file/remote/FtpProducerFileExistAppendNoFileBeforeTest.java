@@ -42,7 +42,7 @@ public class FtpProducerFileExistAppendNoFileBeforeTest extends FtpServerTestSup
     public void testAppend() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
-        mock.expectedFileExists(FTP_ROOT_DIR + "exist/hello.txt", "Bye World");
+        mock.expectedFileExists(FTP_ROOT_DIR + "/exist/hello.txt", "Bye World");
 
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", Exchange.FILE_NAME, "hello.txt");
 

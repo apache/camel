@@ -26,12 +26,12 @@ import org.junit.Test;
  */
 public class FtpAnonymousTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
-        return "ftp://localhost:" + getPort();
-    }
-
-    private String getAdminFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin";
+    private String getFtpUrl(String user, String password) {
+        StringBuilder url = new StringBuilder("ftp://");
+        url.append(user == null ? "" : user + "@");
+        url.append("localhost:" + getPort() + "/");
+        url.append(password == null ? "" : "?password=" + password);
+        return url.toString();
     }
 
     @Override
@@ -50,13 +50,13 @@ public class FtpAnonymousTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        sendFile(getAdminFtpUrl(), "Hello World", "hello.xml");
+        sendFile(getFtpUrl("admin", "admin"), "Hello World", "hello.xml");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl()).to("mock:result");
+                from(getFtpUrl(null, null)).to("mock:result");
             }
         };
     }

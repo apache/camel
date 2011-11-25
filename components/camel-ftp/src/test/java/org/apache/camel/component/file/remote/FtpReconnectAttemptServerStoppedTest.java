@@ -36,7 +36,7 @@ public class FtpReconnectAttemptServerStoppedTest extends FtpServerTestSupport {
         ftpServer.suspend();
 
         // put a file in the folder (do not use ftp as we then will connect)
-        template.sendBodyAndHeader("file://./res/home/reconnect", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:" + FTP_ROOT_DIR + "/reconnect", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

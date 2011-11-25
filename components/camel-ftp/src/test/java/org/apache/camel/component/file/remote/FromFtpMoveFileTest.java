@@ -48,7 +48,7 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World this file will be moved");
-        mock.expectedFileExists(FTP_ROOT_DIR + "movefile/done/sub2/hello.txt.old");
+        mock.expectedFileExists(FTP_ROOT_DIR + "/movefile/done/sub2/hello.txt.old");
 
         mock.assertIsSatisfied();
     }
@@ -66,7 +66,7 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File(FTP_ROOT_DIR + "movefile/hello.txt");
+        File file = new File(FTP_ROOT_DIR + "/movefile/hello.txt");
         file = file.getAbsoluteFile();        
         assertTrue("The file should exists", file.exists());
     }

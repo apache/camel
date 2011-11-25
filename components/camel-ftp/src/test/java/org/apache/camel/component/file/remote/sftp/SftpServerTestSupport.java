@@ -38,7 +38,7 @@ import org.junit.Before;
  */
 public class SftpServerTestSupport extends BaseServerTestSupport {
 
-    protected static final String FTP_ROOT_DIR = "res/home";
+    protected static final String FTP_ROOT_DIR = "target/res/home";
     protected SshServer sshd;
     protected boolean canTest;
 
@@ -60,8 +60,7 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
         }
         if (!canTest) {
             String name = System.getProperty("java.vendor");
-            System.out.println("SunX509 is not avail on this jdk [" 
-                + name + "] Testing is skipped!");
+            System.out.println("SunX509 is not avail on this jdk [" + name + "] Testing is skipped!");
             return;
         }
         canTest = false;
@@ -113,5 +112,4 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     protected boolean canTest() {
         return canTest;
     }
-
 }

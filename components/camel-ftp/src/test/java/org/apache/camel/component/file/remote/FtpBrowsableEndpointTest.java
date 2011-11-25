@@ -41,7 +41,7 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
     @Test
     public void testBrowsableNoFiles() throws Exception {
         // make sure starting directory exists
-        createDirectory(FTP_ROOT_DIR + "browse");
+        createDirectory(FTP_ROOT_DIR + "/browse");
 
         BrowsableEndpoint browse = context.getEndpoint(getFtpUrl(), BrowsableEndpoint.class);
         assertNotNull(browse);
@@ -72,7 +72,7 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         assertEquals(0, repo.getCacheSize());
 
         // and the file is still there
-        File file = new File(FTP_ROOT_DIR + "browse/a.txt");
+        File file = new File(FTP_ROOT_DIR + "/browse/a.txt");
         assertTrue("File should exist " + file, file.exists());
     }
 
@@ -99,9 +99,9 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         assertEquals(0, repo.getCacheSize());
 
         // and the files is still there
-        File fileA = new File(FTP_ROOT_DIR + "browse/a.txt");
+        File fileA = new File(FTP_ROOT_DIR + "/browse/a.txt");
         assertTrue("File should exist " + fileA, fileA.exists());
-        File fileB = new File(FTP_ROOT_DIR + "browse/b.txt");
+        File fileB = new File(FTP_ROOT_DIR + "/browse/b.txt");
         assertTrue("File should exist " + fileB, fileB.exists());
     }
 
@@ -130,12 +130,11 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         assertEquals(0, repo.getCacheSize());
 
         // and the files is still there
-        File fileA = new File(FTP_ROOT_DIR + "browse/a.txt");
+        File fileA = new File(FTP_ROOT_DIR + "/browse/a.txt");
         assertTrue("File should exist " + fileA, fileA.exists());
-        File fileB = new File(FTP_ROOT_DIR + "browse/foo/b.txt");
+        File fileB = new File(FTP_ROOT_DIR + "/browse/foo/b.txt");
         assertTrue("File should exist " + fileB, fileB.exists());
-        File fileC = new File(FTP_ROOT_DIR + "browse/bar/c.txt");
+        File fileC = new File(FTP_ROOT_DIR + "/browse/bar/c.txt");
         assertTrue("File should exist " + fileC, fileC.exists());
     }
-
 }

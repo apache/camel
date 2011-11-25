@@ -31,7 +31,7 @@ public class FtpProducerFileWithPathTest extends FtpServerTestSupport {
     public void testProducerFileWithPath() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "hello/claus.txt");
 
-        File file = new File(FTP_ROOT_DIR + "upload/hello/claus.txt");
+        File file = new File(FTP_ROOT_DIR + "/upload/hello/claus.txt");
         file = file.getAbsoluteFile();
         assertTrue("The uploaded file should exists", file.exists());
         assertEquals("Hello World", IOConverter.toString(file, null));

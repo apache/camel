@@ -54,9 +54,7 @@ public class SftpSimpleConsumeAbsoluteTest extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // notice we use an absolute starting path: /res/home/tmp/mytemp
-                // - we must remember to use // slash because of the url separator
-                from("sftp://localhost:" + getPort() + "//" + FTP_ROOT_DIR + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true")
+                from("sftp://localhost:" + getPort() + "/tmp/mytemp?username=admin&password=admin&delay=10s&disconnect=true")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }

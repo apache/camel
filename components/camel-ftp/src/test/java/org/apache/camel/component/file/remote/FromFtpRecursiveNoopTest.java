@@ -70,5 +70,4 @@ public class FromFtpRecursiveNoopTest extends FtpServerTestSupport {
             }
         };
     }
-
 }

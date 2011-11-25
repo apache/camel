@@ -62,7 +62,7 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
         Thread.sleep(1000);
 
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        File file = new File(FTP_ROOT_DIR + "filelanguage/backup/" + now + "/123-report2.bak");
+        File file = new File(FTP_ROOT_DIR + "/filelanguage/backup/" + now + "/123-report2.bak");
         file = file.getAbsoluteFile();
         assertTrue("File should have been renamed", file.exists());
     }
