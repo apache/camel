@@ -33,6 +33,7 @@ import org.apache.camel.Service;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.ChildServiceSupport;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -212,6 +213,12 @@ public class RouteService extends ChildServiceSupport {
             // endpoints should only be stopped when Camel is shutting down
             // see more details in the warmUp method
             ServiceHelper.stopAndShutdownServices(route.getEndpoint());
+            // invoke callbacks on route policy
+            if (routeDefinition.getRoutePolicies() != null) {
+                for (RoutePolicy routePolicy : routeDefinition.getRoutePolicies()) {
+                    routePolicy.onRemove(route);
+                }
+            }
         }
 
         // need to call onRoutesRemove when the CamelContext is shutting down or Route is shutdown

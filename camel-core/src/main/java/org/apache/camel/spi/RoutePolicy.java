@@ -37,6 +37,13 @@ public interface RoutePolicy {
     void onInit(Route route);
 
     /**
+     * Callback invoked when the {@link Route} is being removed from {@link org.apache.camel.CamelContext}
+     *
+     * @param route     the route being removed
+     */
+    void onRemove(Route route);
+
+    /**
      * Callback invoked when an {@link Exchange} is started being routed on the given {@link Route}
      *
      * @param route     the route where the exchange started from
