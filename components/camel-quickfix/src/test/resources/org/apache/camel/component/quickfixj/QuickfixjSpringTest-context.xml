@@ -38,9 +38,9 @@
 
     <!-- quickfix component -->
     <bean id="quickfix" class="org.apache.camel.component.quickfixj.QuickfixjComponent">
-        <property name="engineSettings">
+        <property name="configurations">
             <util:map>
-                <entry key="quickfix:example" value-ref="quickfixjSettings"/>
+                <entry key="example" value-ref="quickfixjConfiguration"/>
             </util:map>
         </property>
         <property name="messageFactory">
@@ -49,8 +49,7 @@
     </bean>
 
     <!-- quickfix settings -->
-    <bean id="quickfixjSettings"
-          class="org.apache.camel.component.quickfixj.QuickfixjSettingsFactory">
+    <bean id="quickfixjConfiguration" class="org.apache.camel.component.quickfixj.QuickfixjConfiguration">
         <property name="defaultSettings">
             <util:map>
                 <entry key="SocketConnectProtocol" value="VM_PIPE"/>

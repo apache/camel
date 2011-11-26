@@ -16,23 +16,17 @@
  */
 package org.apache.camel.component.quickfixj;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.management.JMException;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import quickfix.ConfigError;
-import quickfix.FieldConvertError;
 import quickfix.LogFactory;
 import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
@@ -49,7 +43,7 @@ public class QuickfixjComponent extends DefaultComponent {
     private LogFactory logFactory;
     private MessageFactory messageFactory;
     private boolean forcedShutdown;
-    private Map<String, SessionSettings> engineSettings = new HashMap<String, SessionSettings>();
+    private Map<String, QuickfixjConfiguration> configurations = new HashMap<String, QuickfixjConfiguration>();
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -61,9 +55,9 @@ public class QuickfixjComponent extends DefaultComponent {
             if (endpoint == null) {
                 engine = engines.get(remaining);
                 if (engine == null) {
-                    LOG.info("Creating QuickFIX/J engine using settings: " + remaining);
-                    SessionSettings settings = engineSettings.get(remaining);
-                    if (settings != null) {
+                    QuickfixjConfiguration configuration = configurations.get(remaining);
+                    if (configuration != null) {
+                        SessionSettings settings = configuration.createSessionSettings();
                         engine = new QuickfixjEngine(uri, settings, forcedShutdown, messageStoreFactory, logFactory, messageFactory);
                     } else {
                         engine = new QuickfixjEngine(uri, remaining, forcedShutdown, messageStoreFactory, logFactory, messageFactory);
@@ -86,7 +80,6 @@ public class QuickfixjComponent extends DefaultComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.info("QuickFIX/J component started");
         synchronized (engineInstancesLock) {
             for (QuickfixjEngine engine : engines.values()) {
                 startQuickfixjEngine(engine);
@@ -95,7 +88,7 @@ public class QuickfixjComponent extends DefaultComponent {
     }
 
     private void startQuickfixjEngine(QuickfixjEngine engine) throws Exception {
-        LOG.info("Starting QuickFIX/J engine: uri=" + engine.getUri());
+        LOG.info("Starting QuickFIX/J engine: uri=", engine.getUri());
         engine.start();
     }
 
@@ -107,7 +100,6 @@ public class QuickfixjComponent extends DefaultComponent {
                 engine.stop();
             }
         }
-        LOG.info("QuickFIX/J component stopped");
     }
 
     // Test Support
@@ -131,13 +123,12 @@ public class QuickfixjComponent extends DefaultComponent {
         this.forcedShutdown = forcedShutdown;
     }
 
-    public void setEngineSettings(Map<String, SessionSettings> engineSettings)
-        throws ConfigError, FieldConvertError, IOException, JMException, URISyntaxException {
-        for (Map.Entry<String, SessionSettings> s : engineSettings.entrySet()) {
-            // QuickfixjEngine engine = new QuickfixjEngine(s.getKey(), s.getValue(),
-            // forcedShutdown, messageStoreFactory, logFactory, messageFactory);
-            this.engineSettings.put(getPath(s.getKey()), s.getValue());
-        }
+    public Map<String, QuickfixjConfiguration> getConfigurations() {
+        return configurations;
+    }
+
+    public void setConfigurations(Map<String, QuickfixjConfiguration> configurations) {
+        this.configurations = configurations;
     }
 
     private static String getPath(String uri) throws URISyntaxException {

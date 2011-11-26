@@ -26,11 +26,11 @@ import org.junit.Test;
 import quickfix.SessionID;
 import quickfix.SessionSettings;
 
-public class QuickfixjSettingsFactoryTest {
+public class QuickfixjConfigurationTest {
 
     @Test
-    public void createSessionSettings() throws Exception {
-        QuickfixjSettingsFactory factory = new QuickfixjSettingsFactory();
+    public void testConfiguration() throws Exception {
+        QuickfixjConfiguration factory = new QuickfixjConfiguration();
 
         Map<Object, Object> defaultSettings = new HashMap<Object, Object>();
         defaultSettings.put("value1", 1);
@@ -49,7 +49,7 @@ public class QuickfixjSettingsFactoryTest {
 
         factory.setSessionSettings(sessionSettings);
 
-        SessionSettings settings = factory.getObject();
+        SessionSettings settings = factory.createSessionSettings();
         Properties sessionProperties = settings.getSessionProperties(sessionID, true);
 
         Assert.assertThat(sessionProperties.get("value1").toString(), CoreMatchers.is("10"));

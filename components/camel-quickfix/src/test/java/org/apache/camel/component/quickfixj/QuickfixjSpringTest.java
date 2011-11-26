@@ -45,8 +45,11 @@ public class QuickfixjSpringTest extends CamelSpringTestSupport {
     @Test
     public void configureInSpring() throws Exception {
         SessionID sessionID = new SessionID("FIX.4.2:INITIATOR->ACCEPTOR");
-        SessionSettings springSessionSettings = context.getRegistry().lookup("quickfixjSettings", SessionSettings.class);
+        QuickfixjConfiguration configuration = context.getRegistry().lookup("quickfixjConfiguration", QuickfixjConfiguration.class);
+
+        SessionSettings springSessionSettings = configuration.createSessionSettings();
         Properties sessionProperties = springSessionSettings.getSessionProperties(sessionID, true);
+
         Assert.assertThat(sessionProperties.get("ConnectionType").toString(), CoreMatchers.is("initiator"));
         Assert.assertThat(sessionProperties.get("SocketConnectProtocol").toString(), CoreMatchers.is("VM_PIPE"));
 
