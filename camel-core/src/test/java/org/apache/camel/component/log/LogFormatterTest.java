@@ -174,7 +174,7 @@ public class LogFormatterTest extends ContextTestSupport {
         assertFalse(formatter.isShowStackTrace());
         assertFalse(formatter.isShowAll());
         assertFalse(formatter.isMultiline());
-        assertEquals(0, formatter.getMaxChars());
+        assertEquals(10000, formatter.getMaxChars());
     }
 
     private static class MyFuture extends FutureTask<String> {

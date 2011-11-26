@@ -48,7 +48,7 @@ public class LogFormatter implements ExchangeFormatter {
     private boolean showFuture;
     private boolean showStreams;
     private boolean showFiles;
-    private int maxChars;
+    private int maxChars = 10000;
 
     public String format(Exchange exchange) {
         Message in = exchange.getIn();

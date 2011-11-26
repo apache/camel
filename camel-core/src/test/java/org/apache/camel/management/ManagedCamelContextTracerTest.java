@@ -120,7 +120,7 @@ public class ManagedCamelContextTracerTest extends ManagementTestSupport {
         assertEquals(0, formatterNodeLength.intValue());
 
         Integer formatterMaxChars = (Integer) mbeanServer.getAttribute(on, "FormatterMaxChars");
-        assertEquals(0, formatterMaxChars.intValue());
+        assertEquals(10000, formatterMaxChars.intValue());
 
         // now disable tracing
         mbeanServer.setAttribute(camel, new Attribute("Tracing", Boolean.FALSE));

@@ -45,7 +45,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
     private boolean showOutBodyType;
     private boolean showException = true;
     private boolean showRouteId = true;
-    private int maxChars;
+    private int maxChars = 10000;
 
     public Object format(final TraceInterceptor interceptor, final ProcessorDefinition<?> node, final Exchange exchange) {
         Message in = exchange.getIn();
@@ -248,7 +248,6 @@ public class DefaultTraceFormatter implements TraceFormatter {
             return null;
         }
     }
-
 
     protected Object getBreadCrumbID(Exchange exchange) {
         return exchange.getExchangeId();
