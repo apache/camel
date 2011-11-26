@@ -15,83 +15,81 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
 
-        <parent>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-parent</artifactId>
-            <version>2.9-SNAPSHOT</version>
-            <relativePath>../../parent</relativePath>
-	</parent>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-parent</artifactId>
+    <version>2.9-SNAPSHOT</version>
+    <relativePath>../../parent</relativePath>
+  </parent>
 
-	<artifactId>camel-quickfix</artifactId>
-	<packaging>bundle</packaging>
-	<name>Camel :: QuickFIX/J</name>
-	<description>Camel QuickFIX/J support</description>
+  <artifactId>camel-quickfix</artifactId>
+  <packaging>bundle</packaging>
+  <name>Camel :: QuickFIX/J</name>
+  <description>Camel QuickFIX/J support</description>
 
-        <properties>
-	    <camel.osgi.export.pkg>org.apache.camel.component.quickfixj.*</camel.osgi.export.pkg>
-            <camel.osgi.import.additional>org.slf4j*;resolution:=optional</camel.osgi.import.additional>
-        </properties>
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.component.quickfixj.*</camel.osgi.export.pkg>
+    <camel.osgi.import.additional>org.slf4j*;resolution:=optional</camel.osgi.import.additional>
+  </properties>
 
-    <repositories>
-        <repository>
-            <id>smx.m2</id>
-            <name>ServiceMix M2 Repository</name>
-            <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-        </repository>
-    </repositories>
+  <repositories>
+    <repository>
+      <id>smx.m2</id>
+      <name>ServiceMix M2 Repository</name>
+      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+    </repository>
+  </repositories>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.quickfixj</groupId>
-			<artifactId>quickfixj-all</artifactId>
-			<version>${quickfix-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.mina</groupId>
-			<artifactId>mina-core</artifactId>
-		</dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.quickfixj</groupId>
+      <artifactId>quickfixj-all</artifactId>
+      <version>${quickfix-version}</version>
+    </dependency>
 
-        <dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jetty</artifactId>
-            <scope>test</scope>
-        </dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<scope>test</scope>
-		</dependency>
-	    <dependency>
-	      <groupId>org.springframework</groupId>
-	      <artifactId>spring-test</artifactId>
-	      <scope>test</scope>
-	    </dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.mina</groupId>
+      <artifactId>mina-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-	</dependencies>
+  </dependencies>
 </project>

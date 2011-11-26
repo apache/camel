@@ -19,7 +19,6 @@ package org.apache.camel.component.quickfixj;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.management.JMException;
 
 import org.apache.camel.Exchange;
@@ -30,7 +29,6 @@ import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-
 import quickfix.ConfigError;
 import quickfix.FieldConvertError;
 import quickfix.FixVersions;
@@ -131,8 +129,7 @@ public class QuickfixjProducerTest {
                         try {
                             quickfixjEngine.getMessageCorrelator().onEvent(QuickfixjEventCategory.AppMessageReceived, sessionID, outboundFixMessage);
                         } catch (Exception e) {
-                            // TODO: probably not the best thing... use a LOG
-                            e.printStackTrace();
+                            throw new RuntimeException(e);
                         }
                     }
                 }, 10);

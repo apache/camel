@@ -18,13 +18,12 @@ package org.apache.camel.component.quickfixj;
 
 import java.util.Properties;
 
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import quickfix.DefaultMessageFactory;
 import quickfix.FixVersions;
 import quickfix.Message;
@@ -36,22 +35,22 @@ import quickfix.fix42.NewOrderSingle;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration
-public class QuickfixjSpringTest {
-    @Autowired(required = true)
-    private QuickfixjComponent component;
+public class QuickfixjSpringTest extends CamelSpringTestSupport {
 
-    @Autowired(required = true)
-    private SessionSettings springSessionSettings;
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/quickfixj/QuickfixjSpringTest-context.xml");
+    }
 
     @Test
     public void configureInSpring() throws Exception {
         SessionID sessionID = new SessionID("FIX.4.2:INITIATOR->ACCEPTOR");
+        SessionSettings springSessionSettings = context.getRegistry().lookup("quickfixjSettings", SessionSettings.class);
         Properties sessionProperties = springSessionSettings.getSessionProperties(sessionID, true);
         Assert.assertThat(sessionProperties.get("ConnectionType").toString(), CoreMatchers.is("initiator"));
         Assert.assertThat(sessionProperties.get("SocketConnectProtocol").toString(), CoreMatchers.is("VM_PIPE"));
 
+        QuickfixjComponent component = context.getComponent("quickfix", QuickfixjComponent.class);
         QuickfixjEngine engine = component.getEngines().values().iterator().next();
 
         Assert.assertThat(engine.getMessageFactory(), is(instanceOf(CustomMessageFactory.class)));
