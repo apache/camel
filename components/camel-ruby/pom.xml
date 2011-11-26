@@ -42,10 +42,6 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby</artifactId>
     </dependency>
