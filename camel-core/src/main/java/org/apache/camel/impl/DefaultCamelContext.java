@@ -809,7 +809,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 routeService.setRemovingRoutes(true);
                 shutdownRouteService(routeService);
                 removeRouteDefinition(routeId);
-                ServiceHelper.stopAndShutdownServices(routeService);
                 routeServices.remove(routeId);
                 // remove route from startup order as well, as it was removed
                 Iterator<RouteStartupOrder> it = routeStartupOrder.iterator();
