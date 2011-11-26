@@ -19,6 +19,9 @@ package org.apache.camel.itest.jms;
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.util.jndi.JndiContext;
@@ -28,6 +31,8 @@ import org.junit.Test;
  * @version 
  */
 public class JmsMediumQueuePerformanceTest extends JmsPerformanceTest {
+    private static final Logger LOG = LoggerFactory.getLogger(JmsMediumQueuePerformanceTest.class);
+    
     protected int mediumQueueCount = 1000;
 
     @Override
@@ -54,13 +59,13 @@ public class JmsMediumQueuePerformanceTest extends JmsPerformanceTest {
         int expected = mediumQueueCount + messageCount;
         setExpectedMessageCount(expected);
 
-        System.out.println("Sending " + mediumQueueCount + " messages first");
+        LOG.info("Sending {} messages first", mediumQueueCount);
         sendLoop(0, mediumQueueCount);
-        System.out.println("Sent!");
+        LOG.info("Sent...");
 
-        Thread.sleep(2000);
+        Thread.sleep(1000);
 
-        System.out.println("Now testing!");
+        LOG.info("Now testing");
         timedSendLoop(mediumQueueCount, expected);
 
         assertExpectedMessagesReceived();

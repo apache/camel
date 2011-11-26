@@ -18,10 +18,15 @@ package org.apache.camel.itest.jms;
 
 import java.text.NumberFormat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @version 
  */
 public class StopWatch {
+    private static final Logger LOG = LoggerFactory.getLogger(StopWatch.class);
+    
     private final String id;
     private int loopCount;
     private int totalLoops;
@@ -55,7 +60,7 @@ public class StopWatch {
             minTime = elapsedTime;
         }
         if (logFrequency > 0 && loopCount % logFrequency == 0) {
-            System.out.println(toString());
+            LOG.info(toString());
             reset();
         }
     }
