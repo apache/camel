@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
-import org.springframework.mail.MailPreparationException;
 
 /**
  * @version 
@@ -97,8 +96,7 @@ public class MailProducerUnsupportedCharsetTest extends CamelTestSupport {
             template.sendBodyAndHeaders("smtp://localhost?ignoreUnsupportedCharset=false", "Bye World", headers);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
-            assertIsInstanceOf(MailPreparationException.class, e.getCause());
-            assertIsInstanceOf(UnsupportedEncodingException.class, e.getCause().getCause());
+            assertIsInstanceOf(UnsupportedEncodingException.class, e.getCause());
         }
 
         mock.assertIsSatisfied();

@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Unit test for rollback option.
@@ -58,7 +57,7 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
         // connect to mailbox
         Mailbox.clearAll();
 
-        JavaMailSenderImpl sender = new JavaMailSenderImpl();
+        JavaMailSender sender = new DefaultJavaMailSender();
         Store store = sender.getSession().getStore("imap");
         store.connect("localhost", 25, "claus", "secret");
         Folder folder = store.getFolder("INBOX");

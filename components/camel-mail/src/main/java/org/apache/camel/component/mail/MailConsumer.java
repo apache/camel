@@ -40,7 +40,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which consumes messages from JavaMail using a
@@ -51,14 +50,14 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
     private static final transient Logger LOG = LoggerFactory.getLogger(MailConsumer.class);
 
-    private final JavaMailSenderImpl sender;
+    private final JavaMailSender sender;
     private Folder folder;
     private Store store;
     private int maxMessagesPerPoll;
     private volatile ShutdownRunningTask shutdownRunningTask;
     private volatile int pendingExchanges;
 
-    public MailConsumer(MailEndpoint endpoint, Processor processor, JavaMailSenderImpl sender) {
+    public MailConsumer(MailEndpoint endpoint, Processor processor, JavaMailSender sender) {
         super(endpoint, processor);
         this.sender = sender;
     }

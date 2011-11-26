@@ -16,15 +16,14 @@
  */
 package org.apache.camel.component.mail;
 
+import java.io.IOException;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 
 /**
  * A Producer to send messages using JavaMail.
@@ -41,14 +40,18 @@ public class MailProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) {
-        sender.send(new MimeMessagePreparator() {
-            public void prepare(MimeMessage mimeMessage) throws Exception {
-                getEndpoint().getBinding().populateMailMessage(getEndpoint(), mimeMessage, exchange);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
-                }
+        MimeMessage mimeMessage = new MimeMessage(sender.getSession());
+        try {
+            getEndpoint().getBinding().populateMailMessage(getEndpoint(), mimeMessage, exchange);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending MimeMessage: {}", MailUtils.dumpMessage(mimeMessage));
             }
-        });
+            sender.send(mimeMessage);
+        } catch (MessagingException e) {
+            exchange.setException(e);
+        } catch (IOException e) {
+            exchange.setException(e);
+        }
     }
     
     @Override

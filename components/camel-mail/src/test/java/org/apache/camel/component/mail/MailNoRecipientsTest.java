@@ -20,7 +20,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.springframework.mail.MailPreparationException;
 
 /**
  * Unit test for no recipients
@@ -33,8 +32,7 @@ public class MailNoRecipientsTest extends CamelTestSupport {
             template.sendBody("direct:a", "Hello World");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            MailPreparationException mpe = assertIsInstanceOf(MailPreparationException.class, e.getCause());
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, mpe.getCause());
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertEquals("The mail message does not have any recipients set.", iae.getMessage());
         }
     }

@@ -27,7 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Unit test for shutdown.
@@ -61,7 +60,7 @@ public class MailShutdownCompleteCurrentTaskOnlyTest extends CamelTestSupport {
     private void prepareMailbox() throws Exception {
         // connect to mailbox
         Mailbox.clearAll();
-        JavaMailSenderImpl sender = new JavaMailSenderImpl();
+        JavaMailSender sender = new DefaultJavaMailSender();
         Store store = sender.getSession().getStore("pop3");
         store.connect("localhost", 25, "jones", "secret");
         Folder folder = store.getFolder("INBOX");

@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.mail;
 
-import java.io.InputStream;
+import java.util.Properties;
+import javax.mail.MessagingException;
+import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 
 /**
  * @version 
@@ -50,36 +48,72 @@ public class MailCustomMailSenderTest extends CamelTestSupport {
 
     private static class MySender implements JavaMailSender {
 
-        public void send(SimpleMailMessage simpleMessage) throws MailException {
-            // noop
-        }
-
-        public void send(SimpleMailMessage[] simpleMessages) throws MailException {
-            // noop
-        }
-
-        public MimeMessage createMimeMessage() {
-            return null;
-        }
-
-        public MimeMessage createMimeMessage(InputStream contentStream) throws MailException {
-            return null;
-        }
-
-        public void send(MimeMessage mimeMessage) throws MailException {
-            // noop
-        }
-
-        public void send(MimeMessage[] mimeMessages) throws MailException {
-            // noop
-        }
-
-        public void send(MimeMessagePreparator mimeMessagePreparator) throws MailException {
+        @Override
+        public void send(MimeMessage mimeMessage) throws MessagingException {
             sent = true;
         }
 
-        public void send(MimeMessagePreparator[] mimeMessagePreparators) throws MailException {
-            // noop
+        @Override
+        public Properties getJavaMailProperties() {
+            return null;
+        }
+
+        @Override
+        public void setJavaMailProperties(Properties javaMailProperties) {
+        }
+
+        @Override
+        public void setHost(String host) {
+        }
+
+        @Override
+        public String getHost() {
+            return null;
+        }
+
+        @Override
+        public void setPort(int port) {
+        }
+
+        @Override
+        public int getPort() {
+            return 0;
+        }
+
+        @Override
+        public void setUsername(String username) {
+        }
+
+        @Override
+        public String getUsername() {
+            return null;
+        }
+
+        @Override
+        public void setPassword(String password) {
+        }
+
+        @Override
+        public String getPassword() {
+            return null;
+        }
+
+        @Override
+        public void setProtocol(String protocol) {
+        }
+
+        @Override
+        public String getProtocol() {
+            return null;
+        }
+
+        @Override
+        public void setSession(Session session) {
+        }
+
+        @Override
+        public Session getSession() {
+            return null;
         }
     }
 

@@ -76,7 +76,6 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
-        assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
         assertEquals(false, config.isDelete());
@@ -100,7 +99,6 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
-        assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
         assertEquals(false, config.isDelete());
@@ -155,7 +153,6 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
-        assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
         assertEquals(false, config.isDelete());
@@ -176,7 +173,6 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
-        assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
         assertEquals(false, config.isDelete());
@@ -190,7 +186,7 @@ public class MailComponentTest extends CamelTestSupport {
     @Test
     public void testManyConfigurations() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:30/subject?password=secret"
-            + "&from=me@camelriders.org&delete=true&defaultEncoding=iso-8859-1&folderName=riders"
+            + "&from=me@camelriders.org&delete=true&folderName=riders"
             + "&contentType=text/html&unseen=false");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("getProtocol()", "smtp", config.getProtocol());
@@ -199,7 +195,6 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "riders", config.getFolderName());
-        assertEquals("encoding", "iso-8859-1", config.getDefaultEncoding());
         assertEquals("from", "me@camelriders.org", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
         assertEquals(true, config.isDelete());
@@ -220,7 +215,6 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getRecipients().get(Message.RecipientType.TO)", "someone@outthere.com", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "XXX", config.getFolderName());
-        assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
         assertEquals(false, config.isDelete());
@@ -239,7 +233,6 @@ public class MailComponentTest extends CamelTestSupport {
         assertEquals("getUsername()", "james", config.getUsername());
         assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
-        assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
         assertEquals(false, config.isDelete());

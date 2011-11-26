@@ -31,7 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Unit test for Mail using camel headers to set recipient subject.
@@ -125,7 +124,7 @@ public class RawMailMessageTest extends CamelTestSupport {
 
     private void prepareMailbox(String user, String type) throws Exception {
         // connect to mailbox
-        JavaMailSenderImpl sender = new JavaMailSenderImpl();
+        JavaMailSender sender = new DefaultJavaMailSender();
         Store store = sender.getSession().getStore(type);
         store.connect("localhost", 25, user, "secret");
         Folder folder = store.getFolder("INBOX");

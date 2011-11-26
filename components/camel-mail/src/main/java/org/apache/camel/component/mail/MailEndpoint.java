@@ -27,8 +27,6 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Endpoint for Camel Mail.
@@ -82,14 +80,14 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         }
 
         // must use java mail sender impl as we need to get hold of a mail session
-        JavaMailSenderImpl sender = configuration.createJavaMailSender();
+        JavaMailSender sender = configuration.createJavaMailSender();
         return createConsumer(processor, sender);
     }
 
     /**
      * Creates a consumer using the given processor and sender
      */
-    public Consumer createConsumer(Processor processor, JavaMailSenderImpl sender) throws Exception {
+    public Consumer createConsumer(Processor processor, JavaMailSender sender) throws Exception {
         MailConsumer answer = new MailConsumer(this, processor, sender);
 
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,

@@ -20,14 +20,10 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import javax.mail.Authenticator;
 import javax.mail.Message;
-import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 
 import org.apache.camel.RuntimeCamelException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  * Represents the configuration data for communicating over email
@@ -47,7 +43,6 @@ public class MailConfiguration implements Cloneable {
     private String subject;
     private Session session;
     private boolean mapMailMessage = true;
-    private String defaultEncoding;
     private String from = MailConstants.MAIL_DEFAULT_FROM;
     private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
     private boolean delete;
@@ -109,8 +104,8 @@ public class MailConfiguration implements Cloneable {
         }
     }
 
-    protected JavaMailSenderImpl createJavaMailSender() {
-        JavaMailSenderImpl answer = new JavaMailSenderImpl();
+    protected JavaMailSender createJavaMailSender() {
+        JavaMailSender answer = new DefaultJavaMailSender();
 
         if (javaMailProperties != null) {
             answer.setJavaMailProperties(javaMailProperties);
@@ -123,9 +118,6 @@ public class MailConfiguration implements Cloneable {
             }
         }
 
-        if (defaultEncoding != null) {
-            answer.setDefaultEncoding(defaultEncoding);
-        }
         if (host != null) {
             answer.setHost(host);
         }
@@ -145,7 +137,7 @@ public class MailConfiguration implements Cloneable {
             answer.setSession(session);
         } else {
             // use our authenticator that does no live user interaction but returns the already configured username and password
-            Session session = Session.getInstance(answer.getJavaMailProperties(), getAuthenticator());
+            Session session = Session.getInstance(answer.getJavaMailProperties(), new DefaultAuthenticator(getUsername(), getPassword()));
             // sets the debug mode of the underlying mail framework
             session.setDebug(debugMode);
             answer.setSession(session);
@@ -195,17 +187,6 @@ public class MailConfiguration implements Cloneable {
                || this.protocol.equalsIgnoreCase("imaps");
     }
 
-    /**
-     * Returns an authenticator object for use in sessions
-     */
-    public Authenticator getAuthenticator() {
-        return new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(getUsername(), getPassword());
-            }
-        };
-    }
-
     public String getMailStoreLogInformation() {
         String ssl = "";
         if (isSecureProtocol()) {
@@ -224,14 +205,6 @@ public class MailConfiguration implements Cloneable {
 
     public void setJavaMailSender(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
-    }
-
-    public String getDefaultEncoding() {
-        return defaultEncoding;
-    }
-
-    public void setDefaultEncoding(String defaultEncoding) {
-        this.defaultEncoding = defaultEncoding;
     }
 
     public String getHost() {
