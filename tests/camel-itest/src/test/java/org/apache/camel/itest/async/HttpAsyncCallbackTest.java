@@ -49,7 +49,7 @@ public class HttpAsyncCallbackTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // give on completion time to complete properly before we do assertions on its size
-        Thread.sleep(2000);
+        Thread.sleep(1000);
 
         // assert that we got all the correct data in our callback
         assertEquals(3, callback.getData().size());
@@ -89,12 +89,11 @@ public class HttpAsyncCallbackTest extends CamelTestSupport {
                 // The mocks are here for unit test
                 // Simulate a slow http service (delaying 1 sec) we want to invoke async
                 from("jetty:http://0.0.0.0:9080/myservice")
-                    .delay(1000)
+                    .delay(300)
                     .transform(body().prepend("Hello "))
                     .to("mock:result");
                 // END SNIPPET: e1
             }
         };
     }
-
 }
