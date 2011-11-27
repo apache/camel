@@ -152,7 +152,7 @@ public final class URISupport {
         if (query != null) {
             s = s + "?" + query;
         }
-        if (uri.getFragment() != null) {
+        if ((!s.contains("#")) && (uri.getFragment() != null)) {
             s = s + "#" + uri.getFragment();
         }
 
