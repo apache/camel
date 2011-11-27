@@ -336,11 +336,15 @@
                       <exclude>**/FromJmsToJdbcIdempotentConsumerToJmsXaTest.*</exclude>
                     </excludes>
                     <systemProperties>
-               			<property>
-                    		<name>java.util.logging.config.file</name>
-                    		<value>${basedir}/target/test-classes/logging.properties</value>
-               			</property>
-          			</systemProperties>
+               	      <property>
+                        <name>java.util.logging.config.file</name>
+                        <value>${basedir}/target/test-classes/logging.properties</value>
+               	      </property>
+               	      <property>
+                        <name>org.apache.activemq.default.directory.prefix</name>
+                        <value>target/</value>
+               	      </property>
+                  </systemProperties>
                 </configuration>
             </plugin>
             <plugin>
