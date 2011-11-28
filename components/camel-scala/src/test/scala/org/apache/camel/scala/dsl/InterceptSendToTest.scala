@@ -16,6 +16,7 @@
  */
 package org.apache.camel.scala.dsl
 
+import org.junit.Test
 import builder.{RouteBuilderSupport, RouteBuilder}
 import org.apache.camel.processor.intercept.InterceptSendToFaultTest
 
@@ -24,6 +25,7 @@ import org.apache.camel.processor.intercept.InterceptSendToFaultTest
  */
 class InterceptSendToTest extends ScalaTestSupport {
 
+  @Test
   def testSimpleSendTo = {
     "mock:bar" expect {_.received("Hello World")}
     "mock:detour" expect {_.received("Hello World")}

@@ -18,16 +18,21 @@ package org.apache.camel.scala.dsl;
  
 import builder.RouteBuilder
 import org.apache.camel.scala.test.Cat
+import org.junit.Test
 
 /**
  * Test for setting the message body from the Scala DSL
  */
 class SetBodyTest extends ScalaTestSupport {
 
+  @Test
   def testSimpleSetBody() = doTestConstant("direct:a", "mock:a")
+  @Test
   def testBlockSetBody() = doTestConstant("direct:b", "mock:b")
   
+  @Test
   def testSimpleExpression() = doTestExpression("direct:c", "mock:c")
+  @Test
   def testBodyExpression() = doTestExpression("direct:d", "mock:d")
   
   

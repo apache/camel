@@ -17,12 +17,14 @@
 package org.apache.camel.scala.dsl
 
 import builder.RouteBuilder
+import org.junit.Test
 
 /**
  * Content Based Router test with XPath expressions
  */
 class XPathContentBasedRouterTest extends ScalaTestSupport {
 
+  @Test
   def testXPathContentBasedRouter = {
     "mock:english" expect {_.expectedBodiesReceived("<hello/>")}
     "mock:dutch" expect {_.expectedBodiesReceived("<hallo/>")}

@@ -17,6 +17,7 @@
 package org.apache.camel
 package scala.dsl;
 
+import org.junit.Test
 import builder.RouteBuilder
 import junit.framework.Assert._
 
@@ -27,6 +28,7 @@ class ExceptionHandlerTest extends ScalaTestSupport {
 
   var handled = false;
 
+  @Test
   def testTryCatchFinally = {
     "mock:a" expect { _.count = 1 }
     "mock:b" expect { _.count = 1 }

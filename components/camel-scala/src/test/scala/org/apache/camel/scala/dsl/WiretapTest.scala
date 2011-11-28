@@ -19,16 +19,21 @@ package scala.dsl
  
 import org.apache.camel.scala.test.Adult
 import builder.RouteBuilder
+import org.junit.Test
 
 /**
  * Test case for wiretap
  */
 class WiretapTest extends ScalaTestSupport {
   
+  @Test
   def testSimpleTap = doTestWiretap("direct:a", "mock:a")
+  @Test
   def testBlockTap = doTestWiretap("direct:b", "mock:b")
   
+  @Test
   def testSimpleTapWithBody = doTestWiretapWithBody("direct:c", "mock:c")
+  @Test
   def testBlockTapWithBody = doTestWiretapWithBody("direct:d", "mock:d")
   
   def doTestWiretap(from: String, to: String) = {

@@ -17,6 +17,7 @@
 package org.apache.camel
 package scala.dsl
 
+import org.junit.Test
 import builder.{RouteBuilderSupport, RouteBuilder}
 import org.apache.camel.processor.MulticastParallelTest
 

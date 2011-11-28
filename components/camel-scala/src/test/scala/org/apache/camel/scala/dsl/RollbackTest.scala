@@ -16,7 +16,8 @@
  */
 package org.apache.camel
 package scala.dsl
- 
+
+import org.junit.Test
 import builder.RouteBuilder
 import junit.framework.Assert._
 
@@ -27,6 +28,7 @@ class RollbackTest extends ScalaTestSupport {
   
   var handled = false;
   
+  @Test
   def testSimple = {
     test {
       try {
@@ -40,6 +42,7 @@ class RollbackTest extends ScalaTestSupport {
     }
   }
   
+  @Test
   def testBlock = {
     "mock:b" expect { _.count = 2 }
     "mock:ok" expect { _.count = 1 }

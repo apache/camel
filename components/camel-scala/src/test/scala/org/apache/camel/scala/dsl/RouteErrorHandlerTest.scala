@@ -16,12 +16,14 @@
  */
 package org.apache.camel.scala.dsl
 
+import org.junit.Test
 import builder.RouteBuilder
 import org.apache.camel.Exchange
 import org.junit.Assert._
 
 class RouteErrorHandlerTest extends ScalaTestSupport {
 
+  @Test
   def testRouteHandlerActive {
     "mock:deadLetter" expect {
       _.expectedMessageCount(1)
@@ -33,6 +35,7 @@ class RouteErrorHandlerTest extends ScalaTestSupport {
 
   }
 
+  @Test
   def testContextHandlerStillActive {
     try {
       test {

@@ -17,11 +17,13 @@
 package org.apache.camel
 package scala.dsl
 
+import org.junit.Test
 import builder.RouteBuilder
 import junit.framework.Assert.assertEquals
 
 class IdTest extends ScalaTestSupport {
 
+  @Test
   def testRouteA = {
     "mock:a" expect { _.expectedMessageCount(1)}
     "mock:result" expect { _.expectedMessageCount(1)}
@@ -35,6 +37,7 @@ class IdTest extends ScalaTestSupport {
     assertEquals("foo", context.getRouteDefinition("route-a").getOutputs.get(0).getId())
   }
 
+  @Test
   def testRouteB = {
     "mock:b" expect { _.expectedMessageCount(1)}
     "mock:result" expect { _.expectedMessageCount(1)}

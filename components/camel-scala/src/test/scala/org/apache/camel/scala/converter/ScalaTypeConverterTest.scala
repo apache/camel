@@ -16,19 +16,22 @@
  */
 package org.apache.camel.scala.converter;
 
-import org.junit.Assert._
+import javax.xml.parsers.DocumentBuilderFactory
+import org.apache.camel.test.junit4.CamelTestSupport
 
-import org.apache.camel.ContextTestSupport
+import org.junit.Assert._
+import org.junit.Test
+import org.w3c.dom.Document
+
 import scala.xml.Elem
 
-import javax.xml.parsers.DocumentBuilderFactory
-import org.w3c.dom.Document
 
 /**
  * Test case for ScalaTypeConverter
  */
-class ScalaTypeConverterTest extends ContextTestSupport {
+class ScalaTypeConverterTest extends CamelTestSupport {
   
+  @Test
   def testDocumentConverter = {
     val exchange = context.getEndpoint("direct:start").createExchange
 
@@ -45,6 +48,7 @@ class ScalaTypeConverterTest extends ContextTestSupport {
     assertEquals(<persons/>, result)
   }
 
+  @Test
   def testDomDocumentToElemConverter = {
     val exchange = context.getEndpoint("direct:start").createExchange
 
@@ -59,6 +63,7 @@ class ScalaTypeConverterTest extends ContextTestSupport {
     assertEquals(<persons/>, result)
   }
 
+  @Test
   def testDomNodeToElemConverter = {
     val exchange = context.getEndpoint("direct:start").createExchange
 

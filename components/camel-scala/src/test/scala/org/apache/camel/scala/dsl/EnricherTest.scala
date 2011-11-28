@@ -16,7 +16,8 @@
  */
 package org.apache.camel
 package scala.dsl
- 
+
+import org.junit.Test
 import builder.RouteBuilder
 
 /**
@@ -24,7 +25,9 @@ import builder.RouteBuilder
  */
 class EnricherTest extends ScalaTestSupport {
   
+  @Test
   def testSimpleEnricher = testEnricher("direct:a", "mock:a")
+  @Test
   def testBlockEnricher = testEnricher("direct:b", "mock:b")
   
   def testEnricher(direct: String, mock: String) = {

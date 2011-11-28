@@ -18,10 +18,11 @@ package org.apache.camel.scala.dsl.builder;
  
 import org.apache.camel.scala.Wrapper
 import org.apache.camel.scala.test.{Person,Adult}
-import junit.framework.TestCase
-import junit.framework.Assert._
+import org.junit.Assert
+import org.junit.Assert._
+import org.junit.Test
 
-class RouteBuilderUnwrapTest extends TestCase {
+class RouteBuilderUnwrapTest extends Assert {
 
   def builder = new RouteBuilder {
     
@@ -37,7 +38,7 @@ class RouteBuilderUnwrapTest extends TestCase {
     
   }
 
-  
+  @Test
   def testUnwrapWhenNecessary() = builder.testUnwrap
   
   class PersonWrapper extends Wrapper[Person] {

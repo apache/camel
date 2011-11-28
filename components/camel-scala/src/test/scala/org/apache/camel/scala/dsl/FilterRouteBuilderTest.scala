@@ -15,17 +15,20 @@
  * limitations under the License.
  */
 package org.apache.camel.scala.dsl;
- 
+
+import org.junit.Test
 import builder.RouteBuilder
 
 class FilterRouteBuilderTest extends ScalaTestSupport {
 
+  @Test
   def testSimpleFilter() = {
     "mock:a" expect {_.expectedMessageCount(1)}
     "direct:a" ! ("<hello/>", "<hellos/>")
     "mock:a" assert
   }
 
+  @Test
   def testFilterWithAlternatives() = {
     "mock:b" expect {_.expectedMessageCount(1)}
     "mock:c" expect {_.expectedMessageCount(1)}

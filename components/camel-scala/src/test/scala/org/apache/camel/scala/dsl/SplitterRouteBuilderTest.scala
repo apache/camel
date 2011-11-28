@@ -19,18 +19,21 @@ package scala.dsl
  
 import builder.RouteBuilder
 import org.w3c.dom.Document
+import org.junit.Test
 
 /**
  * Test case for Splitter
  */
 class SplitterRouteBuilderTest extends ScalaTestSupport {
 
+  @Test
   def testSimpleSplitter = {
     "mock:a" expect { _.count = 3}
     "direct:a" ! <persons><person id="1"/><person id="2"/><person id="3"/></persons>
     "mock:a" assert()
   }
   
+  @Test
   def testBlockSplitter = {
     "mock:b" expect { _.count = 3}
     "mock:c" expect { _.count = 3}

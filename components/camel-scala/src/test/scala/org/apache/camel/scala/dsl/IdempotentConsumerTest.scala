@@ -16,6 +16,7 @@
  */
 package org.apache.camel.scala.dsl;
 
+import org.junit.Test
 import builder.RouteBuilder
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository
 import org.apache.camel.spi.IdempotentRepository
@@ -26,7 +27,9 @@ import org.apache.camel.{Processor, Exchange};
  */
 class IdempotentConsumerTest extends ScalaTestSupport {
 
+  @Test
   def testSimple() = doTest("direct:a", "mock:a")
+  @Test
   def testBlock() = doTest("direct:b", "mock:b")
   
   

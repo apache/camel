@@ -17,23 +17,27 @@
 package org.apache.camel.scala
 package dsl
 
+import org.junit.Test
 import builder.RouteBuilder
 import test.{Adult, Toddler, Envelope}
  
 class RecipientListRouteTest extends ScalaTestSupport {
   
+  @Test
   def testRecipientList = {
     "mock:a" expect {_.count = 1}
     "direct:a" ! ("send this message to mock:a", "send this message to mock:z")
     "mock:a" assert()
   }
   
+  @Test
   def testRecipientListWithPatternMatching = {
     "mock:playgarden" expect {_.count = 1}
     "direct:b" ! (new Adult("Gert"), new Toddler("Ewan"))
     "mock:playgarden" assert()    
   }
   
+  @Test
   def testRecipientListWithJXPath = {
     "mock:c" expect {_.count = 2}
     "mock:d" expect {_.count = 1}

@@ -16,19 +16,25 @@
  */
 package org.apache.camel
 package scala.dsl
- 
-import builder.RouteBuilder
-import junit.framework.Assert.assertEquals
+
 import org.apache.camel.ExchangePattern._
+import builder.RouteBuilder
+import org.junit.Test
+import org.junit.Assert.assertEquals
+
 
 /**
  * Test for setting the ExchangePattern 
  */
 class SetExchangePatternTest extends ScalaTestSupport {
 
+  @Test
   def testSimpleInOnly() = doTest("direct:a", "mock:a", InOnly)
+  @Test
   def testBlockInOnly() = doTest("direct:b", "mock:b", InOnly)
+  @Test
   def testSimpleInOut() = doTest("direct:c", "mock:c", InOut)
+  @Test
   def testBlockInOut() = doTest("direct:d", "mock:d", InOut)
   
   

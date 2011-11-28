@@ -16,6 +16,7 @@
  */
 package org.apache.camel.scala.dsl;
 
+import org.junit.Test
 import builder.RouteBuilder
 
 /**
@@ -23,6 +24,7 @@ import builder.RouteBuilder
  */
 class LoadBalancerTest extends ScalaTestSupport {
   
+  @Test
   def testSimpleTrottler = {
     "mock:a" expect { _.received("message 1", "message 4") } 
     "mock:b" expect { _.received("message 2", "message 5") }

@@ -17,6 +17,7 @@
 package org.apache.camel.scala.dsl;
  
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test
 import builder.RouteBuilder
 
 /**
@@ -26,6 +27,7 @@ class AggregatorTest extends ScalaTestSupport {
   
   val count = 100
   
+  @Test
   def testSimpleAggregator = {
     "mock:a" expect { _.received("message " + count) } 
     test {
@@ -35,6 +37,7 @@ class AggregatorTest extends ScalaTestSupport {
     }
   }
 
+ @Test
  def testBlockAggregator = {
     "mock:b" expect { _.received("message " + count) } 
     test {

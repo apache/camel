@@ -17,12 +17,17 @@
 package org.apache.camel.scala.dsl;
  
 import builder.RouteBuilder
+import org.junit.Test
 
 class PipelineAndMulticastTest extends ScalaTestSupport {
 
+  @Test
   def testArrowRoute = testRoute("direct:a", "mock:c", "mock:a", "mock:b")
+  @Test
   def testToRoute = testRoute("direct:d", "mock:f", "mock:d", "mock:e")
+  @Test
   def testArrowBlockRoute = testRoute("direct:g", "mock:i", "mock:g", "mock:h")
+  @Test
   def testToBlockRoute = testRoute("direct:j", "mock:l", "mock:j", "mock:k")
 
   def testRoute(from: String, end: String, multis: String*) = {

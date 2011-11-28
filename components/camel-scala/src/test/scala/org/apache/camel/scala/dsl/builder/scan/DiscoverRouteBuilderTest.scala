@@ -19,14 +19,16 @@ package org.apache.camel.scala.dsl.builder.scan
 import org.apache.camel.CamelContext
 import org.apache.camel.component.mock.MockEndpoint
 import org.springframework.context.support.ClassPathXmlApplicationContext
-import junit.framework.TestCase
-import junit.framework.Assert._
+import org.junit.Assert
+import org.junit.Assert._
+import org.junit.Test
 
 /**
  * Test to make sure that Scala DSL RouteBuilders can be discovered from the classpath
  */
-class DiscoverRouteBuilderTest extends TestCase {
+class DiscoverRouteBuilderTest extends Assert {
   
+  @Test
   def testDiscovery = {
     val spring = new ClassPathXmlApplicationContext("org/apache/camel/scala/dsl/builder/scan/scan-camel-context.xml")
     val camel = spring.getBean("myCamel").asInstanceOf[CamelContext]

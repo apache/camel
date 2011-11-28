@@ -17,11 +17,13 @@
 package org.apache.camel
 package scala.dsl
 
+import org.junit.Test
 import builder.RouteBuilder
 import ExchangePattern.{InOnly, InOut}
 
 class ExchangePatternTest extends ScalaTestSupport {
 
+  @Test
   def testInOnly() = {
     getMockEndpoint("mock:a").expectedMessageCount(1)
     getMockEndpoint("mock:a").expectedExchangePattern(InOnly)
@@ -33,6 +35,7 @@ class ExchangePatternTest extends ScalaTestSupport {
     assertMockEndpointsSatisfied
   }
 
+  @Test
   def testRequestInOnly() = {
     getMockEndpoint("mock:a").expectedMessageCount(1)
     getMockEndpoint("mock:a").expectedExchangePattern(InOnly)
@@ -44,6 +47,7 @@ class ExchangePatternTest extends ScalaTestSupport {
     assertMockEndpointsSatisfied
   }
 
+  @Test
   def testInOut() = {
     getMockEndpoint("mock:b").expectedMessageCount(1)
     getMockEndpoint("mock:b").expectedExchangePattern(InOut)
@@ -55,17 +59,19 @@ class ExchangePatternTest extends ScalaTestSupport {
     assertMockEndpointsSatisfied
   }
 
+  @Test
   def testRequestInOut() = {
     getMockEndpoint("mock:b").expectedMessageCount(1)
     getMockEndpoint("mock:b").expectedExchangePattern(InOut)
     getMockEndpoint("mock:result").expectedMessageCount(1)
     getMockEndpoint("mock:result").expectedExchangePattern(InOut)
 
-    template.requestBody("direct:b", "Hello World")
+    template.requestBody("direct:b", "Hello World");
 
     assertMockEndpointsSatisfied
   }
 
+  @Test
   def testMixed() = {
     getMockEndpoint("mock:c").expectedMessageCount(1)
     getMockEndpoint("mock:c").expectedExchangePattern(InOut)

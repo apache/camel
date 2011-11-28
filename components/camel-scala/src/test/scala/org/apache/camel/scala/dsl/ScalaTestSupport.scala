@@ -18,12 +18,12 @@ package org.apache.camel
 package scala
 package dsl
 
-import org.apache.camel.ContextTestSupport
 import org.apache.camel.component.mock.MockEndpoint
+import org.apache.camel.test.junit4.CamelTestSupport
 import builder.{RouteBuilder,RouteBuilderSupport}
 import _root_.scala.collection.mutable.ArrayBuffer
 
-abstract class ScalaTestSupport extends ContextTestSupport with RouteBuilderSupport with Preamble {
+abstract class ScalaTestSupport extends CamelTestSupport with RouteBuilderSupport with Preamble {
   
   implicit def stringToUri(uri:String) = new RichTestUri(uri, this)
   implicit def mockWrapper(endpoint: MockEndpoint) = new RichMockEndpoint(endpoint)

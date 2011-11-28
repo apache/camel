@@ -19,16 +19,21 @@ package dsl;
  
 import builder.RouteBuilder
 import org.apache.camel.scala.test.Cat
+import org.junit.Test
 
 /**
  * Test for setting the message header from the Scala DSL
  */
 class SetHeaderTest extends ScalaTestSupport {
 
+  @Test
   def testSimpleSetBody() = doTestConstant("direct:a", "mock:a")
+  @Test
   def testBlockSetBody() = doTestConstant("direct:b", "mock:b")
   
+  @Test
   def testSimpleExpression() = doTestExpression("direct:c", "mock:c")
+  @Test
   def testBodyExpression() = doTestExpression("direct:d", "mock:d")
   
   

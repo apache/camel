@@ -18,7 +18,8 @@ package org.apache.camel
 package scala.dsl;
  
 import builder.RouteBuilder
-import junit.framework.Assert._
+import org.junit.Test
+import org.junit.Assert._
 
 /**
  * Test case for try (attempt) - catch (handle) - finally (ensure)
@@ -27,6 +28,7 @@ class TryCatchFinallyTest extends ScalaTestSupport {
   
   var handled = false;
   
+  @Test
   def testTryCatchFinally = {
     "mock:a" expect { _.count = 1 }
     "mock:b" expect { _.count = 1 }

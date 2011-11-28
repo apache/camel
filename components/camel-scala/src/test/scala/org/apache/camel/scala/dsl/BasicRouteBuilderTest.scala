@@ -17,11 +17,14 @@
 package org.apache.camel
 package scala.dsl
 
+import org.junit.Test
 import builder.RouteBuilder
 
 class BasicRouteBuilderTest extends ScalaTestSupport {
 
+  @Test
   def testBasicRouteArrowSyntax() = assertBasicRoute("direct:a", "mock:a")
+  @Test
   def testBasicRouteTextSyntax() = assertBasicRoute("direct:b", "mock:b")
 
   def assertBasicRoute(from: String, to: String) = {

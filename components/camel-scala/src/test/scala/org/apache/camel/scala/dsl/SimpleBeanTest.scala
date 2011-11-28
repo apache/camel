@@ -19,12 +19,14 @@ package scala.dsl
  
 import builder.RouteBuilder
 import org.apache.camel.scala.test.CartoonService
+import org.junit.Test
 
 /**
  * Test for bean support in simple Scala DSL expressions
  */
 class SimpleBeanTest extends ScalaTestSupport {
 
+  @Test
   def testSimpleObject() = {
     "mock:a" expect {_.received("Lucky Luke rides Jolly Jumper")}
     test {
@@ -32,6 +34,7 @@ class SimpleBeanTest extends ScalaTestSupport {
     }
   }
   
+  @Test
   def testSimpleClass() = {
     "mock:b" expect {_.received("Batman drives the batmobile")}
     test {
@@ -39,6 +42,7 @@ class SimpleBeanTest extends ScalaTestSupport {
     }
   }
   
+  @Test
   def testSimpleRef() = {
     "mock:c" expect {_.received("Aladin flies a carpet")}
     test {

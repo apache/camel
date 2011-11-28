@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.scala.dsl;
- 
+
+import org.junit.Test
 import builder.RouteBuilder
 
 /**
@@ -23,6 +24,7 @@ import builder.RouteBuilder
  */
 class DelayerTest extends ScalaTestSupport {
   
+  @Test
   def testSimpleDelayer = {
     "mock:a" expect { _.count = 0 }      
     "seda:a" ! "any given message"   

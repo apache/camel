@@ -16,6 +16,7 @@
  */
 package org.apache.camel.scala.dsl
 
+import org.junit.Test
 import builder.RouteBuilder
 
 /**
@@ -23,6 +24,7 @@ import builder.RouteBuilder
  */
 class HeaderContentBasedRouterTest extends ScalaTestSupport {
 
+  @Test
   def testXPathContentBasedRouter = {
     "mock:foo" expect {_.expectedBodiesReceived("Hello Foo")}
     "mock:bar" expect {_.expectedBodiesReceived("Hello Bar")}

@@ -1,5 +1,3 @@
-package org.apache.camel.scala.dsl
-
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -16,6 +14,9 @@ package org.apache.camel.scala.dsl
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.scala.dsl
+
+import org.junit.Test
 import builder.RouteBuilder
 
 /**
@@ -23,6 +24,7 @@ import builder.RouteBuilder
  */
 class LoopCopyTest extends ScalaTestSupport {
 
+  @Test
   def testLoopCopy() {
       getMockEndpoint("mock:loop").expectedBodiesReceived("AB", "AB", "AB")
       getMockEndpoint("mock:result").expectedBodiesReceived("AB")

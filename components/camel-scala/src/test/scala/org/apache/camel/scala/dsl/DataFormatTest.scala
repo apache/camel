@@ -16,7 +16,8 @@
  */
 package org.apache.camel.scala
 package dsl;
- 
+
+import org.junit.Test
 import builder.RouteBuilder
 import test.Adult
 
@@ -24,7 +25,8 @@ import test.Adult
  * Test case for working with data formats
  */
 class DataFormatTest extends ScalaTestSupport {
-  
+ 
+  @Test
   def testSimpleTrottler = {
     val person = new Adult("Captain Nemo")
     "mock:a" expect { _.received(person) } 

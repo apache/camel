@@ -19,7 +19,8 @@ package org.apache.camel.scala.dsl
 import builder.{RouteBuilderSupport, RouteBuilder}
 import org.apache.camel.Exchange
 
-import junit.framework.Assert.{assertEquals, assertTrue}
+import org.junit.Assert.{assertEquals, assertTrue}
+import org.junit.Test
 import org.apache.camel.processor.onexception._
 
 /**
@@ -73,6 +74,7 @@ class SOnExceptionRetryUntilWithDefaultErrorHandlerTest extends ScalaTestSupport
 
   var invoked = 0
 
+  @Test
   def testRetryUntil = {
     val out = template.requestBody("direct:start", "Hello World");
     assertEquals("Sorry", out);

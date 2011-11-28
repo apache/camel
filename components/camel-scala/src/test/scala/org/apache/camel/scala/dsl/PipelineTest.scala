@@ -19,7 +19,8 @@ package org.apache.camel.scala.dsl
 import builder.RouteBuilder
 import org.apache.camel.Exchange
 import javax.activation.{FileDataSource, DataHandler}
-import junit.framework.Assert.assertNotNull
+import org.junit.Test
+import org.junit.Assert.assertNotNull
 
 /**
  * Unit tests for the explicit 'pipeline' DSL keyword 
@@ -49,6 +50,7 @@ class SPipelineTest extends ScalaTestSupport {
     out.removeHeader("test") : Unit
   }  
 
+  @Test
   def testIncrementSimple = {
     "mock:result" expect { _.received(new java.lang.Integer(4))}
     test {
@@ -56,6 +58,7 @@ class SPipelineTest extends ScalaTestSupport {
     }
   }
 
+  @Test
   def testIncrementBlock = {
     "mock:result" expect { _.received(new java.lang.Integer(4))}
     test {
@@ -63,6 +66,7 @@ class SPipelineTest extends ScalaTestSupport {
     }
   }
 
+  @Test
   def testExplicitPipeline = {
     test {
       "direct:start" ! "Hello world"

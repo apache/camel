@@ -16,11 +16,12 @@
  */
 package org.apache.camel
 package scala.dsl;
- 
+
+import org.junit.Test
 import builder.RouteBuilder
 
 class ContentEnricherTest extends ScalaTestSupport {
-  
+  @Test
   def testContentEnricherBySimpleProcessor = {
     "mock:a" expect { _.received ("James says hello", 
                                   "Hadrian says hello",
@@ -29,6 +30,7 @@ class ContentEnricherTest extends ScalaTestSupport {
     "mock:a" assert()
   }
   
+  @Test
   def testContentEnricherByProcessorDef = {
     "mock:b" expect { _.received ("hello from the UK", 
                                   "hallo vanuit Belgie",
@@ -37,6 +39,7 @@ class ContentEnricherTest extends ScalaTestSupport {
     "mock:b" assert()
   }
   
+  @Test
   def testContentEnricherWithVelocity = {
     "mock:c" expect { _.received ("<hello>James</hello>", 
                                   "<hello>Hadrian</hello>",
