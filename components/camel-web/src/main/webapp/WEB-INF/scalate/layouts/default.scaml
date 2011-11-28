@@ -20,16 +20,22 @@
 -@ var body: String
 -@ var title : String = "Camel Web Console"
 - response.setContentType("text/html") 
+
+-# Only include the console if it's available and the engine is in dev mode.
+- val include_console = engine.isDevelopmentMode && engine.resourceLoader.exists("/org/fusesource/scalate/console/console_head.scaml")
+
 %html(lang="en")
   %head
     %meta(http-equiv="Content-Type" content="text/html; charset=utf-8")
     %meta(name="description" content="Apache Camel Console")
     %meta(name="keywords" content="camel,eip,web")
 
-    = include("/org/fusesource/scalate/console/console_head.scaml")
+    - if (include_console)
+      = include("/org/fusesource/scalate/console/console_head.scaml")
 
     %link(href={uri("/css/site.css")} rel="stylesheet" type="text/css")
-    %link(href={uri("/css/scalate/console.css")} rel="stylesheet" type="text/css")
+    - if (include_console)
+      %link(href={uri("/css/scalate/console.css")} rel="stylesheet" type="text/css")
     %link(href={uri("/css/sorttable.css")} rel="stylesheet" type="text/css")
     %link(href={uri("/css/type-settings.css")} rel="stylesheet" type="text/css")
 
@@ -104,7 +110,8 @@
                 (
                 %a{:href => "?printable=true"}> printable version
                 )
-                = include("/org/fusesource/scalate/console/console.scaml")
+                - if (include_console)
+                  = include("/org/fusesource/scalate/console/console.scaml")
 
     .design_attribution
       %a{:href => "http://hiramchirino.com/"} Graphic Design By Hiram      
