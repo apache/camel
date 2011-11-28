@@ -55,7 +55,6 @@
       <commons-jxpath-version>1.3</commons-jxpath-version>
       <commons-net-version>2.2</commons-net-version>
       <commons-math-version>2.2</commons-math-version>
-      <commons-pool-bundle-version>1.5.4_3</commons-pool-bundle-version>
       <commons-dbcp-bundle-version>1.4_1</commons-dbcp-bundle-version>
       <dom4j-bundle-version>1.6.1_4</dom4j-bundle-version>
       <el-api-1.0-version>1.0.1</el-api-1.0-version>
