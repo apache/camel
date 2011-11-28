@@ -58,8 +58,6 @@
                 </configuration>
             </plugin>
         </plugins>
-        <!-- Name of the generated WAR file -->
-        <finalName>camel-example-cxf-tomcat</finalName>
     </build>
 
     <dependencies>

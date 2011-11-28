@@ -51,6 +51,7 @@
         <exclude>**/camel-example-osgi/README.txt</exclude>
         <exclude>**/camel-example-cxf-osgi/README.txt</exclude>
         <exclude>**/camel-example-cxf-blueprint/README.txt</exclude>
+        <exclude>**/camel-example-cxf-tomcat/README.txt</exclude>
       </excludes>
       <lineEnding>dos</lineEnding>
     </fileSet>
@@ -101,6 +102,13 @@
     <file>
       <source>../examples/camel-example-cxf-blueprint/README.txt</source>
       <outputDirectory>/examples/camel-example-cxf-blueprint</outputDirectory>
+      <filtered>true</filtered>
+      <fileMode>0644</fileMode>
+      <lineEnding>dos</lineEnding>
+    </file>
+    <file>
+      <source>../examples/camel-example-cxf-tomcat/README.txt</source>
+      <outputDirectory>/examples/camel-example-cxf-tomcat</outputDirectory>
       <filtered>true</filtered>
       <fileMode>0644</fileMode>
       <lineEnding>dos</lineEnding>
