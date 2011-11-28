@@ -54,7 +54,7 @@
     <commons-lang-version>2.6</commons-lang-version>
     <commons-logging-version>1.1.1</commons-logging-version>
     <commons-net-version>2.2</commons-net-version>
-    <commons-pool-version>1.5.4</commons-pool-version>
+    <commons-pool-version>1.5.6</commons-pool-version>
     <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
     <!-- When updating cxf-version, may need to change CXF version range in 
          platforms/karaf/features/src/main/resources/features.xml -->
