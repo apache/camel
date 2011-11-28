@@ -226,7 +226,6 @@
 							org.apache.cxf.transport.http,
 							org.apache.cxf.transport.http.policy,
 							org.apache.cxf.transport.http_jetty,
-							org.apache.cxf.transport.http_osgi,
 							org.apache.cxf.transport.jms,
 							org.apache.cxf.transports.http,
 							org.apache.cxf.workqueue,
