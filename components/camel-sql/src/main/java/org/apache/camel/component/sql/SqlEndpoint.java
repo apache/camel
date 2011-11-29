@@ -31,6 +31,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class SqlEndpoint extends DefaultEndpoint {
     private JdbcTemplate jdbcTemplate;
     private String query;
+    private boolean batch;
 
     public SqlEndpoint() {
     }
@@ -46,7 +47,7 @@ public class SqlEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new SqlProducer(this, query, jdbcTemplate);
+        return new SqlProducer(this, query, jdbcTemplate, batch);
     }
 
     public boolean isSingleton() {
@@ -67,6 +68,14 @@ public class SqlEndpoint extends DefaultEndpoint {
 
     public void setQuery(String query) {
         this.query = query;
+    }
+
+    public boolean isBatch() {
+        return batch;
+    }
+
+    public void setBatch(boolean batch) {
+        this.batch = batch;
     }
 
     @Override
