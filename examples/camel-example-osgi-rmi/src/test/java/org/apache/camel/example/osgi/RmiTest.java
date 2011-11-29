@@ -16,6 +16,9 @@
  */
 package org.apache.camel.example.osgi;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -35,8 +38,20 @@ public class RmiTest extends CamelSpringTestSupport {
 
     @Test
     public void testRmi() throws Exception {
-        String out = template.requestBody("rmi://localhost:37541/helloServiceBean", "Camel", String.class);
-        assertEquals("Hello Camel", out);
+        // Create a new camel context to send the request so we can test the service which is deployed into a container
+        CamelContext camelContext = new DefaultCamelContext();
+        ProducerTemplate myTemplate = camelContext.createProducerTemplate();
+        myTemplate.start();
+        try {
+            String out = myTemplate.requestBody("rmi://localhost:37541/helloServiceBean", "Camel", String.class);
+            assertEquals("Hello Camel", out);
+        } finally {
+            if (myTemplate != null) {
+                template.stop();
+            }
+            camelContext.stop();
+        }
+        
     }
 
 }
