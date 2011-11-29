@@ -88,7 +88,7 @@
     <hazelcast-version>1.9.3</hazelcast-version>
     <hibernate-version>3.2.6.ga</hibernate-version>
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
-    <hsqldb-version>1.8.0.10</hsqldb-version>
+    <hsqldb-version>2.2.6</hsqldb-version>
     <httpunit-version>1.6.2</httpunit-version>
     <httpcore4-version>4.1.2</httpcore4-version>
     <httpclient4-version>4.1.2</httpclient4-version>
@@ -1368,7 +1368,7 @@
         <version>${derby-version}</version>
       </dependency>
       <dependency>
-        <groupId>hsqldb</groupId>
+        <groupId>org.hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
         <version>${hsqldb-version}</version>
       </dependency>
