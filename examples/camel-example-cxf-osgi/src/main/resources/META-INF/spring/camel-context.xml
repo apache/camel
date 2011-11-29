@@ -26,8 +26,6 @@
            http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
     <!--Create a new SpringBus -->
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
-    <!--Make sure the OSGi servlet transport is regirsted with the bus -->
-    <import resource="classpath:META-INF/cxf/osgi/cxf-extension-osgi.xml" />
 
     <cxf:cxfEndpoint id="reportIncident"
                      address="/camel-example-cxf-osgi/webservices/incident"
