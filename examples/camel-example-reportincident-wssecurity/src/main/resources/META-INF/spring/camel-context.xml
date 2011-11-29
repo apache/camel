@@ -27,14 +27,9 @@
 
   <!-- Needed Apache CXF imports -->
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
-  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
-  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
 
-  <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor">
-    <!--  it really should have been user-prestream but CXF does have such phase! -->
-    <constructor-arg value="write"/>
-  </bean>
-
+  <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+    
   <bean id="loggingInInterceptor" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
 
   <bean id="wss4jInInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">

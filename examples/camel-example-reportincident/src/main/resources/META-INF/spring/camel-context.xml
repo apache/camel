@@ -27,9 +27,7 @@
 
   <!-- Needed Apache CXF imports -->
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
-  <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
-  <import resource="classpath:META-INF/cxf/cxf-extension-http-jetty.xml"/>
-
+  
   <cxf:cxfEndpoint id="reportIncident"
                    address="http://localhost:9080/camel-example-reportincident/webservices/incident"
                    wsdlURL="etc/report_incident.wsdl"

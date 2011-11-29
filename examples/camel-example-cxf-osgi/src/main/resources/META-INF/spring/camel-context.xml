@@ -26,8 +26,7 @@
            http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
 
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
-  <import resource="classpath:META-INF/cxf/osgi/cxf-extension-osgi.xml"/>
-
+  
   <cxf:cxfEndpoint id="reportIncident"
                    address="/camel-example-cxf-osgi/webservices/incident"
                    wsdlURL="META-INF/wsdl/report_incident.wsdl"
