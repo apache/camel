@@ -28,11 +28,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *
  * @version 
  */
-public class CxfEndpointBeanWithBusTest extends CxfEndpointBeanTest {
+public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
     
-    @Before
-    public void setUp() throws Exception {
-        ctx = new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml"});
+    protected String[] getApplicationContextFiles() {
+        return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouterWithBus.xml"};
     }
     
     @Test
