@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
@@ -33,47 +32,59 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 public class SqlProducer extends DefaultProducer {
     private String query;
     private JdbcTemplate jdbcTemplate;
+    private boolean batch;
 
-    public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate) {
+    public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate, boolean batch) {
         super(endpoint);
         this.jdbcTemplate = jdbcTemplate;
         this.query = query;
+        this.batch = batch;
     }
 
     public void process(final Exchange exchange) throws Exception {
         String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
-        jdbcTemplate.execute(queryHeader != null ? queryHeader : query, new PreparedStatementCallback<Map<?, ?>>() {
-            public Map<?, ?> doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
-                int argNumber = 1;
+        String sql = queryHeader != null ? queryHeader : query;
 
-                // number of parameters must match
+        jdbcTemplate.execute(sql, new PreparedStatementCallback<Map<?, ?>>() {
+            public Map<?, ?> doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 int expected = ps.getParameterMetaData().getParameterCount();
 
-                if (expected > 0 && exchange.getIn().getBody() != null) {
+                // transfer incoming message body data to prepared statement parameters, if necessary
+                if (exchange.getIn().getBody() != null) {
                     Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
-                    while (iterator != null && iterator.hasNext()) {
-                        Object value = iterator.next();
-                        log.trace("Setting parameter #{} with value: {}", argNumber, value);
-                        ps.setObject(argNumber, value);
-                        argNumber++;
+                    
+                    if (batch) {
+                        while (iterator != null && iterator.hasNext()) {
+                            Object value = iterator.next();
+                            Iterator<?> i = exchange.getContext().getTypeConverter().convertTo(Iterator.class, value);
+                            populateStatement(ps, i, expected);
+                            ps.addBatch();
+                        }
+                    } else {
+                        populateStatement(ps, iterator, expected);
                     }
                 }
 
-                if (argNumber - 1 != expected) {
-                    throw new SQLException("Number of parameters mismatch. Expected: " + expected + ", was:" + (argNumber - 1));
-                }
-                
-                boolean isResultSet = ps.execute();
-                
-                if (isResultSet) {
-                    RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(new ColumnMapRowMapper());
-                    List<Map<String, Object>> result = mapper.extractData(ps.getResultSet());
-                    exchange.getOut().setBody(result);
-                    exchange.getIn().setHeader(SqlConstants.SQL_ROW_COUNT, result.size());
-                    // preserve headers
-                    exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                // execute the prepared statement and populate the outgoing message
+                if (batch) {
+                    int[] updateCounts = ps.executeBatch();
+                    int total = 0;
+                    for (int count : updateCounts) {
+                        total += count;
+                    }
+                    exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, total);
                 } else {
-                    exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
+                    boolean isResultSet = ps.execute();
+                    if (isResultSet) {
+                        RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(new ColumnMapRowMapper());
+                        List<Map<String, Object>> result = mapper.extractData(ps.getResultSet());
+                        exchange.getOut().setBody(result);
+                        exchange.getIn().setHeader(SqlConstants.SQL_ROW_COUNT, result.size());
+                        // preserve headers
+                        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                    } else {
+                        exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
+                    }
                 }
 
                 // data is set on exchange so return null
@@ -82,4 +93,19 @@ public class SqlProducer extends DefaultProducer {
         });
     }
 
+    private void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams) throws SQLException {
+        int argNumber = 1;
+        if (expectedParams > 0) {
+            while (iterator != null && iterator.hasNext()) {
+                Object value = iterator.next();
+                log.trace("Setting parameter #{} with value: {}", argNumber, value);
+                ps.setObject(argNumber, value);
+                argNumber++;
+            }
+        }
+        
+        if (argNumber - 1 != expectedParams) {
+            throw new SQLException("Number of parameters mismatch. Expected: " + expectedParams + ", was:" + (argNumber - 1));
+        }
+    }
 }
