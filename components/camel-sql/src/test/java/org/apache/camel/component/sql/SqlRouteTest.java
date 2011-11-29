@@ -17,6 +17,7 @@
 package org.apache.camel.component.sql;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +34,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-
 
 /**
  * @version 
@@ -207,33 +208,78 @@ public class SqlRouteTest extends CamelTestSupport {
         assertEquals("Camel", row.get("PROJECT"));
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testBatch() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        List<?> data = Arrays.asList(Arrays.asList(6, "abc", "def"), Arrays.asList(7, "ghi", "jkl"), Arrays.asList(8, "mno", "pqr"));
+        template.sendBody("direct:batch", data);
+        mock.assertIsSatisfied();
+        Number received = assertIsInstanceOf(Number.class, mock.getReceivedExchanges().get(0).getIn().getHeader(SqlConstants.SQL_UPDATE_COUNT));
+        assertEquals(3, received.intValue());
+        assertEquals("abc", jdbcTemplate.queryForObject("select project from projects where id = 6", String.class));
+        assertEquals("def", jdbcTemplate.queryForObject("select license from projects where id = 6", String.class));
+        assertEquals("ghi", jdbcTemplate.queryForObject("select project from projects where id = 7", String.class));
+        assertEquals("jkl", jdbcTemplate.queryForObject("select license from projects where id = 7", String.class));
+        assertEquals("mno", jdbcTemplate.queryForObject("select project from projects where id = 8", String.class));
+        assertEquals("pqr", jdbcTemplate.queryForObject("select license from projects where id = 8", String.class));
+    }
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testBatchMissingParamAtEnd() throws Exception {
+        try {
+            List<?> data = Arrays.asList(Arrays.asList(9, "stu", "vwx"), Arrays.asList(10, "yza"));
+            template.sendBody("direct:batch", data);
+            fail();
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof UncategorizedSQLException);
+        }
+        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from projects where id = 9"));
+        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from projects where id = 10"));
+    }
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testBatchMissingParamAtBeginning() throws Exception {
+        try {
+            List<?> data = Arrays.asList(Arrays.asList(9, "stu"), Arrays.asList(10, "vwx", "yza"));
+            template.sendBody("direct:batch", data);
+            fail();
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof UncategorizedSQLException);
+        }
+        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from projects where id = 9"));
+        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from projects where id = 10"));
+    }
     
     @Before
     public void setUp() throws Exception {
         Class.forName(driverClass);
-        super.setUp();
-
+        ds = new SingleConnectionDataSource(url, user, password, true);
+        
         jdbcTemplate = new JdbcTemplate(ds);
-        jdbcTemplate.execute("create table projects (id integer primary key,"
-                             + "project varchar(10), license varchar(5))");
+        jdbcTemplate.execute("create table projects (id integer primary key, project varchar(10), license varchar(5))");
         jdbcTemplate.execute("insert into projects values (1, 'Camel', 'ASF')");
         jdbcTemplate.execute("insert into projects values (2, 'AMQ', 'ASF')");
         jdbcTemplate.execute("insert into projects values (3, 'Linux', 'XXX')");
+        
+        super.setUp();
     }
 
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
+        
         jdbcTemplate.execute("drop table projects");
+        ((SingleConnectionDataSource) ds).destroy();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                ds = new SingleConnectionDataSource(url, user, password, true);
-
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(ds);
 
                 errorHandler(noErrorHandler());
@@ -254,6 +300,10 @@ public class SqlRouteTest extends CamelTestSupport {
                 from("direct:no-param").to("sql:select * from projects order by id").to("mock:result");
                 
                 from("direct:no-param-insert").to("sql:insert into projects values (5, '#', param)?placeholder=param").to("mock:result");
+                
+                from("direct:batch")
+                    .to("sql:insert into projects values (#, #, #)?batch=true")
+                    .to("mock:result");
             }
         };
     }
