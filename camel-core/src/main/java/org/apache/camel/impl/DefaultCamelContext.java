@@ -1508,7 +1508,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     protected synchronized void doStop() throws Exception {
         stopWatch.restart();
-        log.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is shutting down");
+        log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutting down");
         EventHelper.notifyCamelContextStopping(this);
 
         // stop route inputs in the same order as they was started so we stop the very first inputs first
