@@ -23,7 +23,11 @@ public class SpringJmsAOPClientServerTest extends SpringJmsClientServerTest {
     
     @BeforeClass
     public static void setUpServer() {
-        serverContext = new ClassPathXmlApplicationContext("/META-INF/spring/camel-server-aop.xml");
+        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
+            serverContext = new ClassPathXmlApplicationContext("/META-INF/spring/camel-server-aop.xml");
+        } else {
+            System.out.println("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+        }
     }
 
 }
