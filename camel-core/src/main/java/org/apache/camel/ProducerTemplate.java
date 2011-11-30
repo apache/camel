@@ -79,6 +79,27 @@ public interface ProducerTemplate extends Service {
      * @return the size of current cached resources
      */
     int getCurrentCacheSize();
+    
+    /**
+     * Get the default endpoint to use if none is specified
+     * 
+     * @return the default endpoint instance
+     */
+    Endpoint getDefaultEndpoint();
+    
+    /**
+     * Sets the default endpoint to use if none is specified
+     * 
+     * @param defaultEndpoint the default endpoint instance
+     */
+    void setDefaultEndpoint(Endpoint defaultEndpoint);
+
+    /**
+     * Sets the default endpoint uri to use if none is specified
+     * 
+     *  @param endpointUri the default endpoint uri
+     */
+    void setDefaultEndpointUri(String endpointUri);
 
     // Synchronous methods
     // -----------------------------------------------------------------------
