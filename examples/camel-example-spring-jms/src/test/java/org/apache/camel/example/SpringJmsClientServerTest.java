@@ -35,7 +35,12 @@ public class SpringJmsClientServerTest extends Assert {
     
     @BeforeClass
     public static void setUpServer() {
-        serverContext = new ClassPathXmlApplicationContext("/META-INF/spring/camel-server.xml");
+        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
+            serverContext = new ClassPathXmlApplicationContext("/META-INF/spring/camel-server.xml");
+        } else {
+            System.out.println("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
+        }
+        
     }
     
     @AfterClass
