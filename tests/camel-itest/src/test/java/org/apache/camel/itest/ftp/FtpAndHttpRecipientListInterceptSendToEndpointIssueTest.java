@@ -99,5 +99,4 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
 
         ftpServer = serverFactory.createServer();
     }
-
 }

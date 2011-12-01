@@ -38,7 +38,7 @@ public class JmsToHawtDBAggregateTest extends CamelSpringTestSupport {
     @Override
     public void setUp() throws Exception {
         // you can disable this to keep the data file on next test
-        deleteDirectory("data");
+        deleteDirectory("target/data");
         super.setUp();
     }
 

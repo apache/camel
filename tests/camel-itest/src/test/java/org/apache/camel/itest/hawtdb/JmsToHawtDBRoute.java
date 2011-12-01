@@ -31,7 +31,7 @@ public class JmsToHawtDBRoute extends RouteBuilder {
                 .to("mock:input")
                 //.log("Incoming ${header.group} with body ${body}")
                 .aggregate(header("group"), new MyConcatAggregatationStrategy())
-                    .aggregationRepository(new HawtDBAggregationRepository("events", "data/hawtdb.dat"))
+                    .aggregationRepository(new HawtDBAggregationRepository("events", "target/data/hawtdb.dat"))
                     .completionSize(10)
                     .log("Aggregated #${header.counter} ${header.group} with body ${body}")
                     .to("activemq:queue:out")

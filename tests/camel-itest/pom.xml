@@ -378,19 +378,7 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-clean-plugin</artifactId>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>${basedir}/res</directory>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-		</plugins>
+        </plugins>
     </build>
 
 </project>

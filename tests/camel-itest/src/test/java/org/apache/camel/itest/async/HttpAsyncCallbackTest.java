@@ -22,7 +22,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.SynchronizationAdapter;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -34,6 +34,7 @@ public class HttpAsyncCallbackTest extends CamelTestSupport {
     @Test
     public void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(3);
         mock.expectedBodiesReceivedInAnyOrder("Hello Claus", "Hello Hadrian", "Hello Willem");
 
         // START SNIPPET: e3
@@ -45,11 +46,12 @@ public class HttpAsyncCallbackTest extends CamelTestSupport {
         template.asyncCallbackRequestBody("http://localhost:9080/myservice", "Hadrian", callback);
         template.asyncCallbackRequestBody("http://localhost:9080/myservice", "Willem", callback);
 
+        // give on completion time to complete properly before we do assertions on its size
+        // TODO: improve MockEndpoint.assertIsSatisfied(long) to make this sleep unnecessary
+        Thread.sleep(1200);
+
         // END SNIPPET: e3
         assertMockEndpointsSatisfied();
-
-        // give on completion time to complete properly before we do assertions on its size
-        Thread.sleep(1000);
 
         // assert that we got all the correct data in our callback
         assertEquals(3, callback.getData().size());
