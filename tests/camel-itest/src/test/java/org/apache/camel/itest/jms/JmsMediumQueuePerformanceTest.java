@@ -19,13 +19,12 @@ package org.apache.camel.itest.jms;
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version 
