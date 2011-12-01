@@ -77,7 +77,6 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
                     .onException(Exception.class)
                         .to("mock:error")
                     .end()
-                    .convertBodyTo(String.class)
                     .to("xslt:org/apache/camel/component/xslt/example.xsl")
                     .to("mock:result");
             }
