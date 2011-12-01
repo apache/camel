@@ -51,7 +51,11 @@ public class VmComponent extends SedaComponent {
         if (size != null && size > 0) {
             queue = new LinkedBlockingQueue<Exchange>(size);
         } else {
-            queue = new LinkedBlockingQueue<Exchange>();
+            if (getQueueSize() > 0) {
+                queue = new LinkedBlockingQueue<Exchange>(getQueueSize());
+            } else {
+                queue = new LinkedBlockingQueue<Exchange>();
+            }
         }
 
         QUEUES.put(key, queue);
