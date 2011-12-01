@@ -22,10 +22,13 @@ import java.security.KeyStore;
 import java.util.Map;
 
 import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
@@ -40,6 +43,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     
     protected Map<String, Object> ftpClientKeyStoreParameters;
     protected Map<String, Object> ftpClientTrustStoreParameters;
+    protected SSLContextParameters sslContextParameters;
 
     public FtpsEndpoint() {
         super();
@@ -58,54 +62,75 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
      * Create the FTPS client.
      */
     protected FTPClient createFtpClient() throws Exception {
-        FTPSClient client = new FTPSClient(getFtpsConfiguration().getSecurityProtocol(),
-                                           getFtpsConfiguration().isImplicit());
+        FTPSClient client = null;
         
-        if (ftpClientKeyStoreParameters != null) {
-            String type = (ftpClientKeyStoreParameters.containsKey("type"))
-                    ? (String) ftpClientKeyStoreParameters.get("type") : KeyStore.getDefaultType();
-            String file = (String) ftpClientKeyStoreParameters.get("file");
-            String password = (String) ftpClientKeyStoreParameters.get("password");
-            String algorithm = (ftpClientKeyStoreParameters.containsKey("algorithm"))
-                    ? (String) ftpClientKeyStoreParameters.get("algorithm")
-                    : KeyManagerFactory.getDefaultAlgorithm();
-            String keyPassword = (String) ftpClientKeyStoreParameters.get("keyPassword");
+        if (sslContextParameters != null) {
+            SSLContext context = sslContextParameters.createSSLContext();
+
+            client = new FTPSClient(getFtpsConfiguration().isImplicit(), context);
             
-            KeyStore keyStore = KeyStore.getInstance(type);
-            FileInputStream keyStoreFileInputStream = new FileInputStream(new File(file));
-            try {
-                keyStore.load(keyStoreFileInputStream, password.toCharArray());
-            } finally {
-                IOHelper.close(keyStoreFileInputStream, "keyStore", log);
-            }
-
-            KeyManagerFactory keyMgrFactory = KeyManagerFactory.getInstance(algorithm);
-            keyMgrFactory.init(keyStore, keyPassword.toCharArray());
-            client.setNeedClientAuth(true);
-            client.setKeyManager(keyMgrFactory.getKeyManagers()[0]);
-        }
-
-        if (ftpClientTrustStoreParameters != null) {
-            String type = (ftpClientTrustStoreParameters.containsKey("type"))
-                    ? (String) ftpClientTrustStoreParameters.get("type") : KeyStore.getDefaultType();
-            String file = (String) ftpClientTrustStoreParameters.get("file");
-            String password = (String) ftpClientTrustStoreParameters.get("password");
-            String algorithm = (ftpClientTrustStoreParameters.containsKey("algorithm"))
-                    ? (String) ftpClientTrustStoreParameters.get("algorithm")
-                    : TrustManagerFactory.getDefaultAlgorithm();
-                    
-            KeyStore trustStore = KeyStore.getInstance(type);
-            FileInputStream trustStoreFileInputStream = new FileInputStream(new File(file));
-            try {
-                trustStore.load(trustStoreFileInputStream, password.toCharArray());
-            } finally {
-                IOHelper.close(trustStoreFileInputStream, "trustStore", log);
-            }
-
-            TrustManagerFactory trustMgrFactory = TrustManagerFactory.getInstance(algorithm);
-            trustMgrFactory.init(trustStore);
+            // The FTPSClient tries to manage the following SSLSocket related configuration options
+            // on its own based on internal configuration options.  FTPSClient does not lend itself
+            // to subclassing for the purpose of overriding this behavior (private methods, fields, etc.).
+            // As such, we create a socket (preconfigured by SSLContextParameters) from the context
+            // we gave to FTPSClient and then setup FTPSClient to reuse the already configured configuration
+            // from the socket for all future sockets it creates.  Not sexy and a little brittle, but it works.
+            SSLSocket socket = (SSLSocket)context.getSocketFactory().createSocket();
+            client.setEnabledCipherSuites(socket.getEnabledCipherSuites());
+            client.setEnabledProtocols(socket.getEnabledProtocols());
+            client.setNeedClientAuth(socket.getNeedClientAuth());
+            client.setWantClientAuth(socket.getWantClientAuth());
+            client.setEnabledSessionCreation(socket.getEnableSessionCreation());
+        } else {
+            client = new FTPSClient(getFtpsConfiguration().getSecurityProtocol(),
+                                               getFtpsConfiguration().isImplicit());
             
-            client.setTrustManager(trustMgrFactory.getTrustManagers()[0]);
+            if (ftpClientKeyStoreParameters != null) {
+                String type = (ftpClientKeyStoreParameters.containsKey("type"))
+                        ? (String) ftpClientKeyStoreParameters.get("type") : KeyStore.getDefaultType();
+                String file = (String) ftpClientKeyStoreParameters.get("file");
+                String password = (String) ftpClientKeyStoreParameters.get("password");
+                String algorithm = (ftpClientKeyStoreParameters.containsKey("algorithm"))
+                        ? (String) ftpClientKeyStoreParameters.get("algorithm")
+                        : KeyManagerFactory.getDefaultAlgorithm();
+                String keyPassword = (String) ftpClientKeyStoreParameters.get("keyPassword");
+                
+                KeyStore keyStore = KeyStore.getInstance(type);
+                FileInputStream keyStoreFileInputStream = new FileInputStream(new File(file));
+                try {
+                    keyStore.load(keyStoreFileInputStream, password.toCharArray());
+                } finally {
+                    IOHelper.close(keyStoreFileInputStream, "keyStore", log);
+                }
+    
+                KeyManagerFactory keyMgrFactory = KeyManagerFactory.getInstance(algorithm);
+                keyMgrFactory.init(keyStore, keyPassword.toCharArray());
+                client.setNeedClientAuth(true);
+                client.setKeyManager(keyMgrFactory.getKeyManagers()[0]);
+            }
+    
+            if (ftpClientTrustStoreParameters != null) {
+                String type = (ftpClientTrustStoreParameters.containsKey("type"))
+                        ? (String) ftpClientTrustStoreParameters.get("type") : KeyStore.getDefaultType();
+                String file = (String) ftpClientTrustStoreParameters.get("file");
+                String password = (String) ftpClientTrustStoreParameters.get("password");
+                String algorithm = (ftpClientTrustStoreParameters.containsKey("algorithm"))
+                        ? (String) ftpClientTrustStoreParameters.get("algorithm")
+                        : TrustManagerFactory.getDefaultAlgorithm();
+                        
+                KeyStore trustStore = KeyStore.getInstance(type);
+                FileInputStream trustStoreFileInputStream = new FileInputStream(new File(file));
+                try {
+                    trustStore.load(trustStoreFileInputStream, password.toCharArray());
+                } finally {
+                    IOHelper.close(trustStoreFileInputStream, "trustStore", log);
+                }
+    
+                TrustManagerFactory trustMgrFactory = TrustManagerFactory.getInstance(algorithm);
+                trustMgrFactory.init(trustStore);
+                
+                client.setTrustManager(trustMgrFactory.getTrustManagers()[0]);
+            }
         }
         
         return client;
@@ -196,6 +221,22 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
      */
     public void setFtpClientTrustStoreParameters(Map<String, Object> param) {
         this.ftpClientTrustStoreParameters = param;
+    }
+
+    /**
+     * Gets the JSSE configuration that overrides any settings in {@link FtpsEndpoint#ftpClientKeyStoreParameters},
+     * {@link #ftpClientTrustStoreParameters}, and {@link FtpsConfiguration#getSecurityProtocol()}.
+     */
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * Gets the JSSE configuration that overrides any settings in {@link FtpsEndpoint#ftpClientKeyStoreParameters},
+     * {@link #ftpClientTrustStoreParameters}, and {@link FtpsConfiguration#getSecurityProtocol()}.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
 }

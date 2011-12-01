@@ -27,7 +27,7 @@ import org.junit.Test;
  */
 public class FileToFtpsExplicitSSLWithoutClientAuthTest extends FtpsServerExplicitSSLWithoutClientAuthTestSupport {
     
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=2000&disableSecureDataChannelDefaults=true&delete=true"
                 + "&securityProtocol=SSL&isImplicit=false";
     }
