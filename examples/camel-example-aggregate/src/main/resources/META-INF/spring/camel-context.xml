@@ -24,10 +24,10 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <!-- this is our aggregation strategy which can aggregate the numbers received as input -->
+  <!-- This is our aggregation strategy for the numbers received as input -->
   <bean id="myStrategy" class="org.apache.camel.example.NumberAggregationStrategy"/>
 
-  <!-- this is the persistent repository to store aggregated messages -->
+  <!-- This is the persistent repository to store aggregated messages -->
   <bean id="myRepo" class="org.apache.camel.component.hawtdb.HawtDBAggregationRepository">
     <!-- use data/hawtdb.dat as the persistent store -->
     <property name="persistentFileName" value="data/hawtdb.dat"/>
@@ -37,11 +37,11 @@
     <property name="bufferSize" value="602400"/>
   </bean>
 
-  <!-- this is the camel route which asks for input and aggregates the number -->
+  <!-- This is the Camel route which asks for input and aggregates incoming numbers -->
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <!-- ask user to enter a number -->
-      <from uri="stream:in?promptMessage=Enter a number to be added (use STOP to end, and ctrl+c to shutdown Camel): &amp;promptDelay=1000"/>
+      <from uri="stream:in?promptMessage=Enter a number to be added (enter STOP to end, and Ctrl-C to shutdown Camel): &amp;promptDelay=1000"/>
       <!-- aggregate the input, use eagerCheckCompletion to let the completionPredicate easily detect the STOP command -->
       <aggregate strategyRef="myStrategy" aggregationRepositoryRef="myRepo" eagerCheckCompletion="true">
         <!-- aggregate all messages into the same group -->

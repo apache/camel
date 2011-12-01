@@ -1,24 +1,26 @@
 Camel Persistent Aggregate
 ==========================
 
-This example shows how to use the new feature in Camel 2.3 which is an overhauled
-Aggregator EIP which also support persistent store.
+This example shows how to use Camel Aggregator EIP which offers (since Camel 2.3)
+database persistence.
 
-The example can be run using Maven.
+It's an interactive example where you can type in some numbers which then are aggregated
+(summed, per this sample's aggregation strategy) whenever the user types STOP.  
+The user can then enter more numbers to do another aggregation.
 
-Its an interactive example where you can type in some numbers which then are aggregated.
+The example is run using Maven.
 
-You will need to compile this example first:
+First compile the example by entering:
   mvn compile
 
-The example should run if you type:
+To run the example type:
   mvn camel:run
 
-To stop the example hit ctrl + c
-If you restart the example you should notice how it remember the aggregated values, as it
+To stop the example hit Ctrl-C.  If you restart it and resume entering numbers
+you should see that it remembered previously entered values, as it
 uses a persistent store.
 
-If you hit an problems please let us know on the Camel Forums
+If you hit any problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
 
 This example is documented at
@@ -28,7 +30,7 @@ Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
 
 ------------------------
-The Camel riders!
+The Camel Riders!
 
 
 
