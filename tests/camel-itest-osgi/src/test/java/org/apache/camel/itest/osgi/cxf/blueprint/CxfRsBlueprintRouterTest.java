@@ -114,8 +114,9 @@ public class CxfRsBlueprintRouterTest extends OSGiBlueprintTestSupport {
             assertEquals(200, response.getStatusLine().getStatusCode());
             // order returned can differ on OS so match for both orders
             String s = EntityUtils.toString(response.getEntity());
-            boolean m1 = "<Customers><Customer><id>123</id><name>John</name></Customer><Customer><id>113</id><name>Dan</name></Customer></Customers>".equals(s);
-            boolean m2 = "<Customers><Customer><id>113</id><name>Dan</name></Customer><Customer><id>123</id><name>John</name></Customer></Customers>".equals(s);
+            assertNotNull(s);
+            boolean m1 = s.endsWith("<Customers><Customer><id>123</id><name>John</name></Customer><Customer><id>113</id><name>Dan</name></Customer></Customers>");
+            boolean m2 = s.endsWith("<Customers><Customer><id>113</id><name>Dan</name></Customer><Customer><id>123</id><name>John</name></Customer></Customers>");
 
             if (!m1 && !m2) {
                 fail("Not expected body returned: " + s);
