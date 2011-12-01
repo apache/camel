@@ -28,13 +28,11 @@
       <from uri="direct:start"/>
       <to uri="xslt:org/apache/camel/component/xslt/transform.xsl?transformerFactory=factory"/>
       <multicast>
-        <bean ref="testBean"/>        
         <to uri="mock:result"/>
       </multicast>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->
   
-  <bean id="testBean" class="org.apache.camel.component.xslt.TestBean" scope="singleton"/>
   <bean id="factory" class="net.sf.saxon.TransformerFactoryImpl"/>
 </beans>
