@@ -143,5 +143,16 @@ public class SedaEndpointTest extends ContextTestSupport {
         assertSame(seda, consumer.getEndpoint());
         assertNotNull(consumer.toString());
     }
+    
+    public void testSedaDefaultValue() throws Exception {
+        SedaComponent sedaComponent = new SedaComponent();
+        sedaComponent.setQueueSize(300);
+        sedaComponent.setConcurrentConsumers(3);
+        context.addComponent("seda", sedaComponent);
+        SedaEndpoint seda = context.getEndpoint("seda://foo", SedaEndpoint.class);
+        
+        assertEquals(300, seda.getSize());
+        assertEquals(3, seda.getConcurrentConsumers());
+    }
 
 }
