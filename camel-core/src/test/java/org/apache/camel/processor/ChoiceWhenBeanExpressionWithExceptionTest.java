@@ -36,7 +36,7 @@ public class ChoiceWhenBeanExpressionWithExceptionTest extends ContextTestSuppor
             template.sendBody(endpointUri, new Student(95));
             fail();
         } catch (CamelExecutionException e) {
-            e.printStackTrace();
+            // expected
         }
         assertMockEndpointsSatisfied();
     }
