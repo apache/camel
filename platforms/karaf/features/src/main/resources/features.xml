@@ -595,6 +595,13 @@
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.saaj-api-1.3/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-soap/${pom.version}</bundle>
   </feature>  
+  <feature name='camel-solr' version='${pom.version}' resolver='(obr)' start-level='50'>
+    <feature version='${pom.version}'>camel-core</feature>
+    <bundle dependency="true">wrap:mvn:org.apache.solr/solr-solrj/${solr-version}</bundle>
+    <bundle dependency="true">mvn:commons-codec/commons-codec/${commons-codec}</bundle>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-solr/${pom.version}</bundle>
+  </feature>
   <feature name='camel-spring-integration' version='${pom.version}' resolver='(obr)' start-level='50'>
     <bundle dependency="true">mvn:org.springframework.integration/spring-integration-core/${spring-integration-version}</bundle>
     <feature version='${pom.version}'>camel-spring</feature>
