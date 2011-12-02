@@ -149,11 +149,9 @@ public class EventNotifierEventsTest extends ContextTestSupport {
 
         context.resume();
 
-        assertEquals(10, events.size());
+        assertEquals(8, events.size());
         assertIsInstanceOf(CamelContextResumingEvent.class, events.get(6));
-        assertIsInstanceOf(RouteStartedEvent.class, events.get(7));
-        assertIsInstanceOf(RouteStartedEvent.class, events.get(8));
-        assertIsInstanceOf(CamelContextResumedEvent.class, events.get(9));
+        assertIsInstanceOf(CamelContextResumedEvent.class, events.get(7));
     }
 
     @Override

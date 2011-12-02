@@ -162,6 +162,13 @@ public class RouteService extends ChildServiceSupport {
             // start the route itself
             ServiceHelper.startService(route);
 
+            // invoke callbacks on route policy
+            if (routeDefinition.getRoutePolicies() != null) {
+                for (RoutePolicy routePolicy : routeDefinition.getRoutePolicies()) {
+                    routePolicy.onStart(route);
+                }
+            }
+
             // fire event
             EventHelper.notifyRouteStarted(camelContext, route);
         }
@@ -198,6 +205,12 @@ public class RouteService extends ChildServiceSupport {
                 ServiceHelper.stopServices(route);
             }
 
+            // invoke callbacks on route policy
+            if (routeDefinition.getRoutePolicies() != null) {
+                for (RoutePolicy routePolicy : routeDefinition.getRoutePolicies()) {
+                    routePolicy.onStop(route);
+                }
+            }
             // fire event
             EventHelper.notifyRouteStopped(camelContext, route);
         }
@@ -236,12 +249,27 @@ public class RouteService extends ChildServiceSupport {
     protected void doSuspend() throws Exception {
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
+        for (Route route : routes) {
+            if (routeDefinition.getRoutePolicies() != null) {
+                for (RoutePolicy routePolicy : routeDefinition.getRoutePolicies()) {
+                    routePolicy.onSuspend(route);
+                }
+            }
+        }
     }
 
     @Override
     protected void doResume() throws Exception {
+
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
+        for (Route route : routes) {
+            if (routeDefinition.getRoutePolicies() != null) {
+                for (RoutePolicy routePolicy : routeDefinition.getRoutePolicies()) {
+                    routePolicy.onResume(route);
+                }
+            }
+        }
     }
 
     protected void startChildService(Route route, List<Service> services) throws Exception {

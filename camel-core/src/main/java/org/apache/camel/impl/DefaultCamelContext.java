@@ -1964,8 +1964,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
             }
 
-            // and start the route service (no need to start children as they are already warmed up)
-            routeService.start(false);
+            if (resumeOnly) {
+                routeService.resume();
+            } else {
+                // and start the route service (no need to start children as they are already warmed up)
+                routeService.start(false);
+            }
         }
     }
 
