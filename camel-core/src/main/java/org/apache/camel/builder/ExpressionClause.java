@@ -636,22 +636,6 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     // Properties
     // -------------------------------------------------------------------------
 
-
-    @Override
-    public String getLanguage() {
-        return delegate.getLanguage();
-    }
-
-    @Override
-    public String getExpression() {
-        return delegate.getExpression();
-    }
-
-    @Override
-    public void setExpression(String expression) {
-        delegate.setExpression(expression);
-    }
-
     @Override
     public Expression getExpressionValue() {
         return delegate.getExpressionValue();

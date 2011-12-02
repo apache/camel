@@ -48,7 +48,6 @@ import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
@@ -425,6 +424,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // resolve constant fields (eg Exchange.FILE_NAME)
         resolveKnownConstantFields(this);
 
+        // allow any custom logic before we create the processor
+        preCreateProcessor();
+
         // at first use custom factory
         if (routeContext.getCamelContext().getProcessorFactory() != null) {
             processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, this);
@@ -560,6 +562,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 }
             }
         }
+    }
+
+    /**
+     * Strategy to execute any custom logic before the {@link Processor} is created.
+     */
+    protected void preCreateProcessor() {
+        // noop
     }
 
     /**
