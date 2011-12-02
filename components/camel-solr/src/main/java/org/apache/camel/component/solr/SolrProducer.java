@@ -58,6 +58,8 @@ public class SolrProducer extends DefaultProducer {
             solrServer.addBean(exchange.getIn().getBody());
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_COMMIT)) {
             solrServer.commit();
+        } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ROLLBACK)) {
+            solrServer.rollback();
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_OPTIMIZE)) {
             solrServer.optimize();
         } else {

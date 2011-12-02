@@ -20,7 +20,7 @@ import java.util.HashMap;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.junit.Test;
 
-public class SolrCommitAndOptimizeTest extends SolrComponentTestSupport {
+public class SolrTransactionsTest extends SolrComponentTestSupport {
 
     @Test
     public void testCommit() throws Exception {
@@ -34,6 +34,26 @@ public class SolrCommitAndOptimizeTest extends SolrComponentTestSupport {
 
         //verify exists after commit
         assertEquals("wrong number of entries found", 1, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound());
+    }
+
+    @Test
+    public void testRollback() throws Exception {
+
+        //insert and verify
+        solrInsertTestEntry();
+        assertEquals("wrong number of entries found", 0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound());
+
+        //rollback
+        template.sendBodyAndHeader("direct:start", null, SolrConstants.OPERATION, SolrConstants.OPERATION_ROLLBACK);
+
+        //verify after rollback
+        assertEquals("wrong number of entries found", 0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound());
+
+        //commit
+        template.sendBodyAndHeader("direct:start", null, SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);
+
+        //verify after commit (again)
+        assertEquals("wrong number of entries found", 0, executeSolrQuery("id:" + TEST_ID).getResults().getNumFound());
     }
 
     @Test

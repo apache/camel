@@ -22,6 +22,7 @@ public final class SolrConstants {
     public static final String OPERATION = "SolrOperation";
     public static final String PARAM = "SolrParam.";
     public static final String OPERATION_COMMIT = "COMMIT";
+    public static final String OPERATION_ROLLBACK = "ROLLBACK";
     public static final String OPERATION_OPTIMIZE = "OPTIMIZE";
     public static final String OPERATION_INSERT = "INSERT";
     public static final String OPERATION_ADD_BEAN = "ADD_BEAN";
