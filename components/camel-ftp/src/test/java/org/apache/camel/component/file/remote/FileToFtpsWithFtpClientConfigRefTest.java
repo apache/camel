@@ -29,17 +29,18 @@ import org.junit.Test;
  */
 public class FileToFtpsWithFtpClientConfigRefTest extends FtpsServerExplicitSSLWithoutClientAuthTestSupport {
     
-    private String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=2000&ftpClient=#ftpsClient&disableSecureDataChannelDefaults=true&delete=true";
+    private String getFtpUrl(boolean in) {
+        return "ftps://admin@localhost:" + getPort() 
+            + "/tmp2/camel?password=admin&consumer.initialDelay=2000&ftpClient=#ftpsClient"
+            + (in ? "In" : "") + "&disableSecureDataChannelDefaults=true&delete=true";
     }
     
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
-        FTPSClient ftpsClient = new FTPSClient("SSL");
-
-        jndi.bind("ftpsClient", ftpsClient);
+        jndi.bind("ftpsClient", new FTPSClient("SSL"));
+        jndi.bind("ftpsClientIn", new FTPSClient("SSL"));
         return jndi;
     }
     
@@ -59,9 +60,9 @@ public class FileToFtpsWithFtpClientConfigRefTest extends FtpsServerExplicitSSLW
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:src/main/data?noop=true").log("Got ${file:name}").to(getFtpUrl());
+                from("file:src/main/data?noop=true").log("Putting ${file:name}").to(getFtpUrl(false));
 
-                from(getFtpUrl()).to("mock:result");
+                from(getFtpUrl(true)).to("mock:result");
             }
         };
     }
