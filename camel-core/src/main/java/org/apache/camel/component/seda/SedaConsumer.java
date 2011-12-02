@@ -37,6 +37,7 @@ import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -153,10 +154,20 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
                 exchange = queue.poll(1000, TimeUnit.MILLISECONDS);
                 if (exchange != null) {
                     try {
-                        sendToConsumers(exchange);
-
+                        // send a new copied exchange with new camel context
+                        Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext());
+                        // set the fromEndpoint 
+                        newExchange.setFromEndpoint(endpoint);
+                        sendToConsumers(newExchange);
+                        // copy the message back
+                        if (newExchange.hasOut()) {
+                            exchange.setOut(newExchange.getOut().copy());
+                        } else {
+                            exchange.setIn(newExchange.getIn());
+                        }
                         // log exception if an exception occurred and was not handled
-                        if (exchange.getException() != null) {
+                        if (newExchange.getException() != null) {
+                            exchange.setException(newExchange.getException());
                             getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                         }
                     } catch (Exception e) {

@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +38,7 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.UnitOfWork;
 
 /**
@@ -650,5 +652,28 @@ public final class ExchangeHelper {
             exchange.getIn().copyFrom(exchange.getOut());
             exchange.setOut(null);
         }
+    }
+    
+    public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context) {
+        DefaultExchange answer = new DefaultExchange(context, exchange.getPattern());
+        if (exchange.hasProperties()) {
+            answer.setProperties(safeCopy(exchange.getProperties()));
+        }
+        // Need to hand over the completion for async invocation
+        exchange.handoverCompletions(answer);        
+        answer.setIn(exchange.getIn().copy());
+        if (exchange.hasOut()) {
+            answer.setOut(exchange.getOut().copy());
+        }
+        answer.setException(exchange.getException());
+        return answer;
+        
+    }
+    
+    private static Map<String, Object> safeCopy(Map<String, Object> properties) {
+        if (properties == null) {
+            return null;
+        }
+        return new ConcurrentHashMap<String, Object>(properties);
     }
 }
