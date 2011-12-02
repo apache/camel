@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
 import org.junit.After;
@@ -63,11 +64,16 @@ public class VmDifferentOptionsOnConsumerAndProducerTest extends ContextTestSupp
 
     @Test
     public void testSendToVm() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived("Hello World");
+        
 
         template2.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+        
+        // check the camel context of the exchange
+        assertEquals("Get a wrong context. ", context, result.getExchanges().get(0).getContext());
     }
 
     @Override
