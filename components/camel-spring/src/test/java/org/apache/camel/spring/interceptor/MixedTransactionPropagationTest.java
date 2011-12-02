@@ -22,6 +22,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Ignore;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -81,6 +82,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         assertEquals("Number of books", 1, count);
     }
 
+    /* FIXME: CAMEL-3371
     public void testMixedRollbackOnlyLast() throws Exception {
         template.sendBody("direct:mixed", "Hello World");
 
@@ -108,6 +110,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Lion in Action'"));
         assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Crocodile in Action'"));
     }
+    */
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
