@@ -32,7 +32,7 @@
 		   address="http://localhost:${CXFTestSupport.port1}/CxfDispatchMessageTest/SoapContext/GreeterPort"
 		   endpointName="s:GreeterPort" 
 		   serviceName="s:GreeterService"
-		   bus="#bus">
+		   bus="#cxf">
 
       <cxf:properties>
          <entry key="dataFormat" value="MESSAGE"/>

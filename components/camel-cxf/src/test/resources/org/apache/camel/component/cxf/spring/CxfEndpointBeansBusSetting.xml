@@ -29,20 +29,16 @@
     ">
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-    <bean id="cxf1" class="org.apache.cxf.bus.extension.ExtensionManagerBus"/>
-    <bean id="cxf2" class="org.apache.cxf.bus.extension.ExtensionManagerBus"/>
-
-    <!-- The bus configure doesn't create the CXF bus instance -->
     <cxfcore:bus bus="cxf1">
-        <cxfcore:outInterceptors>
-        <bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
-        </cxfcore:outInterceptors>
+        <cxfcore:properties>
+            <entry key="foo" value="barf"/>
+        </cxfcore:properties>
     </cxfcore:bus>
 
     <cxfcore:bus bus="cxf2">
-        <cxfcore:inInterceptors>
-        <bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
-        </cxfcore:inInterceptors>
+        <cxfcore:properties>
+            <entry key="foo" value="snarf"/>
+        </cxfcore:properties>
     </cxfcore:bus>
    
   

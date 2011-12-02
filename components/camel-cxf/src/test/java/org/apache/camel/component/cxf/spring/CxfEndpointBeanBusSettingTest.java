@@ -46,20 +46,17 @@ public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport
         Bus cxf1 = endpoint.getBus();
         
         assertEquals(cxf1, ctx.getBean("cxf1"));
-        assertTrue(cxf1.getOutInterceptors().size() >= 1);
-        assertTrue(cxf1.getInInterceptors().size() == 0);
-        LoggingOutInterceptor log1 = getInterceptor(cxf1.getOutInterceptors(), LoggingOutInterceptor.class);
-        assertNotNull(log1);
+        assertEquals(cxf1, endpoint.getBus());
+        assertEquals("barf", endpoint.getBus().getProperty("foo"));
         
         endpoint = (CxfEndpoint)camelContext.getEndpoint("cxf:bean:serviceEndpoint");
         assertEquals("Get a wrong endpoint uri", "cxf://bean:serviceEndpoint", endpoint.getEndpointUri());
         Bus cxf2 = endpoint.getBus();
         
         assertEquals(cxf2, ctx.getBean("cxf2"));
-        assertTrue(cxf2.getInInterceptors().size() >= 1);
-        assertTrue(cxf2.getOutInterceptors().size() == 0);
-        LoggingInInterceptor log2 = getInterceptor(cxf2.getInInterceptors(), LoggingInInterceptor.class);
-        assertNotNull(log2);
+        assertEquals(cxf2, endpoint.getBus());
+        assertEquals("snarf", endpoint.getBus().getProperty("foo"));
+        
     }
     
     

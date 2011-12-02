@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
 
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
+import org.apache.cxf.common.util.StringUtils;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 
@@ -40,6 +41,17 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected boolean parseAttributes(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
+        boolean addedBus = super.parseAttributes(element, ctx, bean);
+        final String bus = element.getAttribute("bus");
+        if (!addedBus && !StringUtils.isEmpty(bus)) {
+            bean.addPropertyReference("bus", bus.startsWith("#") ? bus.substring(1) : bus);
+            addedBus = true;
+        }
+        return addedBus;
     }
 
     @Override
