@@ -71,7 +71,6 @@
       <gernimo-jaxws22-spec-version>1.1</gernimo-jaxws22-spec-version>
       <guice-bundle-version>2.0_2</guice-bundle-version>
       <hadoop-bundle-version>0.20.203.0_1</hadoop-bundle-version>
-      <hamcrest-bundle-version>1.2-dev2_4</hamcrest-bundle-version>
       <hapi-bundle-version>0.5.1_5</hapi-bundle-version>
       <hibernate-validator-bundle-version>4.1.0.Final_2</hibernate-validator-bundle-version>
       <ibatis-bundle-version>2.3.4.726_2</ibatis-bundle-version>
