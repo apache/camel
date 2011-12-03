@@ -51,6 +51,10 @@ public class SimpleBuilder implements Predicate, Expression {
         return answer;
     }
 
+    public String getText() {
+        return text;
+    }
+
     public Class<?> getResultType() {
         return resultType;
     }

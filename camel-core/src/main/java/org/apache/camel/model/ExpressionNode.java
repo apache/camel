@@ -52,13 +52,13 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
 
     public ExpressionNode(Expression expression) {
         if (expression != null) {
-            setExpression(new ExpressionDefinition(expression));
+            setExpression(ExpressionNodeHelper.toExpressionDefinition(expression));
         }
     }
 
     public ExpressionNode(Predicate predicate) {
         if (predicate != null) {
-            setExpression(new ExpressionDefinition(predicate));
+            setExpression(ExpressionNodeHelper.toExpressionDefinition(predicate));
         }
     }
 

@@ -26,6 +26,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.xml.XPathBuilder;
+import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.model.language.MethodCallExpression;
+import org.apache.camel.model.language.PropertyExpression;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,15 +54,17 @@ public abstract class BuilderSupport {
      * Returns a value builder for the given header
      */
     public ValueBuilder header(String name) {
-        return Builder.header(name);
+        HeaderExpression expression = new HeaderExpression(name);
+        return new ValueBuilder(expression);
     }
 
     /**
      * Returns a value builder for the given property
      */
     public ValueBuilder property(String name) {
-        return Builder.property(name);
-    }   
+        PropertyExpression expression = new PropertyExpression(name);
+        return new ValueBuilder(expression);
+    }
     
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
@@ -174,7 +179,13 @@ public abstract class BuilderSupport {
      * @return the builder
      */
     public ValueBuilder bean(Object beanOrBeanRef, String method) {
-        return Builder.bean(beanOrBeanRef, method);
+        MethodCallExpression expression;
+        if (beanOrBeanRef instanceof String) {
+            expression = new MethodCallExpression((String) beanOrBeanRef, method);
+        } else {
+            expression = new MethodCallExpression((Object) beanOrBeanRef, method);
+        }
+        return new ValueBuilder(expression);
     }
 
     /**
@@ -185,7 +196,8 @@ public abstract class BuilderSupport {
      * @return the builder
      */
     public ValueBuilder bean(Class<?> beanType) {
-        return Builder.bean(beanType, null);
+        MethodCallExpression expression = new MethodCallExpression(beanType);
+        return new ValueBuilder(expression);
     }
     
     /**
@@ -197,7 +209,8 @@ public abstract class BuilderSupport {
      * @return the builder
      */
     public ValueBuilder bean(Class<?> beanType, String method) {
-        return Builder.bean(beanType, method);
+        MethodCallExpression expression = new MethodCallExpression(beanType, method);
+        return new ValueBuilder(expression);
     }
 
     /**
