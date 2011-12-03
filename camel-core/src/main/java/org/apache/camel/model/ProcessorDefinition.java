@@ -428,6 +428,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // resolve constant fields (eg Exchange.FILE_NAME)
         resolveKnownConstantFields(this);
 
+        // allow any custom logic before we create the processor
+        preCreateProcessor();
+
         // at first use custom factory
         if (routeContext.getCamelContext().getProcessorFactory() != null) {
             processor = routeContext.getCamelContext().getProcessorFactory().createProcessor(routeContext, this);
@@ -566,6 +569,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         // return a reference to the default error handler
         return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
+    }
+
+    /**
+     * Strategy to execute any custom logic before the {@link Processor} is created.
+     */
+    protected void preCreateProcessor() {
+        // noop
     }
 
     /**

@@ -19,9 +19,9 @@ package org.apache.camel.language;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.MethodNotFoundException;
@@ -33,10 +33,16 @@ import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
 
     public void testBeanLanguageInvalidOGNL() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .transform().method(MyReallyCoolBean.class, "getOther[xx");
+            }
+        });
         try {
-            template.requestBody("direct:start", "World", String.class);
-            fail("Should have thrown exception");
-        } catch (CamelExecutionException e) {
+            context.start();
+        } catch (FailedToCreateRouteException e) {
             RuntimeCamelException rce = assertIsInstanceOf(RuntimeCamelException.class, e.getCause());
             MethodNotFoundException mnfe = assertIsInstanceOf(MethodNotFoundException.class, rce.getCause());
             assertEquals("getOther[xx", mnfe.getMethodName());
@@ -47,14 +53,8 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                    .transform().method(MyReallyCoolBean.class, "getOther[xx");
-            }
-        };
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
     public static class MyReallyCoolBean {

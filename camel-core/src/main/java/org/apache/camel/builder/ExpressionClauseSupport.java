@@ -28,6 +28,7 @@ import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.JXPathExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
+import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
@@ -42,8 +43,6 @@ import org.apache.camel.model.language.SqlExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
-import org.apache.camel.spi.Language;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A support class for building expression clauses.
@@ -53,8 +52,6 @@ import org.apache.camel.util.ObjectHelper;
 public class ExpressionClauseSupport<T> {
 
     private T result;
-    private String language;
-    private String expression;
     private Expression expressionValue;
     private ExpressionDefinition expressionType;
 
@@ -651,28 +648,13 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T language(String language, String expression) {
-        setLanguage(language);
-        setExpression(expression);
+        LanguageExpression exp = new LanguageExpression(language, expression);
+        setExpressionType(exp);
         return result;
     }
 
     // Properties
     // -------------------------------------------------------------------------
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getExpression() {
-        return expression;
-    }
-
-    public void setExpression(String expression) {
-        this.expression = expression;
-    }
 
     public Expression getExpressionValue() {
         return expressionValue;
@@ -694,11 +676,8 @@ public class ExpressionClauseSupport<T> {
         if (getExpressionValue() == null) {
             if (getExpressionType() != null) {
                 setExpressionValue(getExpressionType().createExpression(camelContext));
-            } else if (getExpression() != null) {
-                ObjectHelper.notNull("language", getLanguage());
-                Language language = camelContext.resolveLanguage(getLanguage());
-                setExpressionValue(language.createExpression(getExpression()));
-                configureExpression(camelContext, getExpressionValue());
+            } else {
+                throw new IllegalStateException("No expression value configured");
             }
         }
         return getExpressionValue();
