@@ -49,6 +49,10 @@ public class SimpleExpression extends ExpressionDefinition {
         super(expression);
     }
 
+    public SimpleExpression(Expression expression) {
+        super(expression);
+    }
+
     public String getLanguage() {
         return "simple";
     }

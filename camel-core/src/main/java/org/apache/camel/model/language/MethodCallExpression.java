@@ -75,7 +75,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
     
     public MethodCallExpression(Object instance, String method) {
-        super(instance.getClass().getName());
+        super(ObjectHelper.className(instance));
         this.instance = instance;
         this.method = method;
     }
@@ -85,7 +85,7 @@ public class MethodCallExpression extends ExpressionDefinition {
     }
     
     public MethodCallExpression(Class<?> type, String method) {
-        super(type.toString());
+        super(type.getName());
         this.beanType = type;
         this.method = method;
     }
