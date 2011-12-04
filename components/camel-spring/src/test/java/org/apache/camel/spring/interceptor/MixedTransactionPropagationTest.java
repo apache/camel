@@ -50,15 +50,6 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
 
         final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");
         jdbc = new JdbcTemplate(ds);
-        jdbc.execute("create table books (title varchar(50))");
-        jdbc.update("insert into books (title) values (?)", new Object[] {"Camel in Action"});
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        jdbc.execute("drop table books");
-        this.enableJMX();
     }
 
     public void testOkay() throws Exception {
@@ -82,7 +73,6 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         assertEquals("Number of books", 1, count);
     }
 
-    /* FIXME: CAMEL-3371
     public void testMixedRollbackOnlyLast() throws Exception {
         template.sendBody("direct:mixed", "Hello World");
 
@@ -110,7 +100,6 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
         assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Lion in Action'"));
         assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Crocodile in Action'"));
     }
-    */
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {

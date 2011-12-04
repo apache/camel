@@ -37,13 +37,6 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
         // create database and insert dummy data
         final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");
         jdbc = new JdbcTemplate(ds);
-        jdbc.execute("create table books (title varchar(50))");
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        jdbc.execute("drop table books");
-        super.tearDown();
     }
 
     @Override
@@ -53,24 +46,24 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
 
     public void testSpringTXOnExceptionIssueCommit() throws Exception {
         int count = jdbc.queryForInt("select count(*) from books");
-        assertEquals("Number of books", 0, count);
+        assertEquals("Number of books", 1, count);
 
         // we succeeded so no message to on exception
         getMockEndpoint("mock:onException").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Camel in Action");
+        template.sendBody("direct:start", "Lion in Action");
 
         assertMockEndpointsSatisfied();
 
-        // we did commit so there should be 1 books
+        // we did commit so there should be 2 books
         count = jdbc.queryForInt("select count(*) from books");
-        assertEquals("Number of books", 1, count);
+        assertEquals("Number of books", 2, count);
     }
 
     public void testSpringTXOnExceptionIssueRollback() throws Exception {
         int count = jdbc.queryForInt("select count(*) from books");
-        assertEquals("Number of books", 0, count);
+        assertEquals("Number of books", 1, count);
 
         getMockEndpoint("mock:onException").expectedMessageCount(1);
         // we failed so no message to result
@@ -87,9 +80,9 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
 
         assertMockEndpointsSatisfied();
 
-        // we did rollback so there should be 0 books
+        // we did rollback so there should be 1 books
         count = jdbc.queryForInt("select count(*) from books");
-        assertEquals("Number of books", 0, count);
+        assertEquals("Number of books", 1, count);
     }
 
 }

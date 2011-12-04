@@ -50,14 +50,6 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         // create database and insert dummy data
         final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");
         jdbc = new SimpleJdbcTemplate(ds);
-        jdbc.getJdbcOperations().execute("create table books (title varchar(50))");
-        jdbc.update("insert into books (title) values (?)", "Camel in Action");
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        jdbc.getJdbcOperations().execute("drop table books");
     }
 
     public void testRequiredOnly() throws Exception {

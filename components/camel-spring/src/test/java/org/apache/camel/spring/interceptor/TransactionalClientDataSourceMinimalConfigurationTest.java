@@ -43,14 +43,6 @@ public class TransactionalClientDataSourceMinimalConfigurationTest extends Sprin
         // create database and insert dummy data
         final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");
         jdbc = new JdbcTemplate(ds);
-        jdbc.execute("create table books (title varchar(50))");
-        jdbc.update("insert into books (title) values (?)", new Object[] {"Camel in Action"});
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        jdbc.execute("drop table books");
     }
 
     public void testTransactionSuccess() throws Exception {

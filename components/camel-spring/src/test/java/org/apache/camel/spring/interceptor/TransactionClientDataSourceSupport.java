@@ -38,19 +38,10 @@ public class TransactionClientDataSourceSupport extends SpringTestSupport {
         super.setUp();
 
         // START SNIPPET: e5
-        // create database and insert dummy data
+        // create database (dummy data already inserted by Spring)
         final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");
         jdbc = new JdbcTemplate(ds);
-        jdbc.execute("create table books (title varchar(50))");
-        jdbc.update("insert into books (title) values (?)", new Object[]{"Camel in Action"});
         // END SNIPPET: e5
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        jdbc.execute("drop table books");
-        enableJMX();
     }
 
     public boolean isUseTransactionErrorHandler() {
