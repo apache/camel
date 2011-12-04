@@ -82,7 +82,7 @@
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <h2-version>1.2.144</h2-version>
     <hadoop-version>0.20.203.0</hadoop-version>
-    <hamcrest-version>1.2-dev1</hamcrest-version>
+    <hamcrest-version>1.1</hamcrest-version>
     <hapi-version>1.2</hapi-version>
     <hawtbuf-version>1.2</hawtbuf-version>
     <hawtdb-version>1.5</hawtdb-version>
