@@ -19,14 +19,11 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:spring-security="http://www.springframework.org/schema/security"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans.xsd
-          http://camel.apache.org/schema/spring
-          http://camel.apache.org/schema/spring/camel-spring.xsd
-          http://camel.apache.org/schema/spring-security
-          http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
-          http://www.springframework.org/schema/security
-		  http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
+       xsi:schemaLocation="
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+          http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
+          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
     <!-- import the spring security configuration  -->
     <import resource="classpath:org/apache/camel/component/spring/security/commonSecurity.xml"/>
