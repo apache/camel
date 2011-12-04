@@ -67,6 +67,7 @@ public class NettyConfiguration implements Cloneable {
     private boolean ssl;
     private long sendBufferSize = 65536;
     private long receiveBufferSize = 65536;
+    private int receiveBufferSizePredictor;
     private int corePoolSize = 10;
     private int maxPoolSize = 100;
     private int workerCount;
@@ -350,6 +351,14 @@ public class NettyConfiguration implements Cloneable {
 
     public void setReceiveBufferSize(long receiveBufferSize) {
         this.receiveBufferSize = receiveBufferSize;
+    }
+    
+    public int getReceiveBufferSizePredictor() {
+        return receiveBufferSizePredictor;
+    }
+
+    public void setReceiveBufferSizePredictor(int receiveBufferSizePredictor) {
+        this.receiveBufferSizePredictor = receiveBufferSizePredictor;
     }
 
     public String getPassphrase() {

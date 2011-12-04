@@ -39,6 +39,10 @@ public class NettyComponentWithConfigurationTest extends CamelTestSupport {
         // should not be same
         assertNotSame(e1, e2);
         assertNotSame(e1.getConfiguration(), e2.getConfiguration());
+        
+        assertEquals(0, e2.getConfiguration().getReceiveBufferSizePredictor());
+        e2.getConfiguration().setReceiveBufferSizePredictor(1024);
+        assertEquals(1024, e2.getConfiguration().getReceiveBufferSizePredictor());
 
         e2.getConfiguration().setPort(5566);
 

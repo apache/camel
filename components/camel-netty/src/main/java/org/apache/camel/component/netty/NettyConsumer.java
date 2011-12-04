@@ -26,6 +26,7 @@ import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
+import org.jboss.netty.channel.FixedReceiveBufferSizePredictorFactory;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
@@ -190,6 +191,11 @@ public class NettyConsumer extends DefaultConsumer {
         connectionlessServerBootstrap.setOption("child.broadcast", configuration.isBroadcast());
         connectionlessServerBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
         connectionlessServerBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
+        // only set this if user has specified
+        if (configuration.getReceiveBufferSizePredictor() > 0) {
+            connectionlessServerBootstrap.setOption("receiveBufferSizePredictorFactory",
+                new FixedReceiveBufferSizePredictorFactory(configuration.getReceiveBufferSizePredictor()));
+        }
 
         channel = connectionlessServerBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         // to keep track of all channels in use
