@@ -18,37 +18,35 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
-
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-    ">
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+         ">
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-   <cxf:cxfEndpoint id="consumerEndpoint" address="http://localhost:${CXFTestSupport.port1}/CxfMtomDisabledConsumerPayloadModeTest/jaxws-mtom/hello"
-            wsdlURL="mtom.wsdl"
-            serviceName="ns:HelloService"
-            endpointName="ns:HelloPort"
-            xmlns:ns="http://apache.org/camel/cxf/mtom_feature">
+    <cxf:cxfEndpoint id="consumerEndpoint"
+        address="http://localhost:${CXFTestSupport.port1}/CxfMtomDisabledConsumerPayloadModeTest/jaxws-mtom/hello"
+        wsdlURL="mtom.wsdl"
+        serviceName="ns:HelloService"
+        endpointName="ns:HelloPort"
+        xmlns:ns="http://apache.org/camel/cxf/mtom_feature">
 
         <cxf:properties>
             <entry key="mtom-enabled" value="false"/>
             <entry key="dataFormat" value="PAYLOAD"/>
             <entry key="loggingFeatureEnabled" value="false"/>
         </cxf:properties>      
-
-   </cxf:cxfEndpoint>            
+    </cxf:cxfEndpoint>            
    
-   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-      <route>
-          <from uri="cxf:bean:consumerEndpoint" />
-          <process ref="myProcessor" />
-      </route>
-   </camelContext>
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="cxf:bean:consumerEndpoint" />
+            <process ref="myProcessor" />
+        </route>
+    </camelContext>
    
-   <bean id="myProcessor" 
-   	          class="org.apache.camel.component.cxf.mtom.CxfMtomDisabledConsumerPayloadModeTest$MyProcessor" />
+    <bean id="myProcessor" class="org.apache.camel.component.cxf.mtom.CxfMtomDisabledConsumerPayloadModeTest$MyProcessor" />
 
 </beans>

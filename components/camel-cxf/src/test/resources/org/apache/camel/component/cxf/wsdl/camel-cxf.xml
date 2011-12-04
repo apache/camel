@@ -19,7 +19,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:jaxws="http://cxf.apache.org/jaxws"
 	xsi:schemaLocation="
-         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
          http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
@@ -31,6 +31,5 @@
 
 	<!-- JAX-WS endpoint of the same class -->
 	<jaxws:endpoint id="orderEndpointCXF" address="http://localhost:${CXFTestSupport.port1}/cxf-order/" implementor="org.apache.camel.component.cxf.wsdl.OrderEndpoint" />
-	
 
 </beans>

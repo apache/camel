@@ -21,12 +21,8 @@ under the License.
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
-         http://www.springframework.org/schema/beans
-         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-         http://camel.apache.org/schema/spring
-         http://camel.apache.org/schema/spring/camel-spring.xsd">
-
-
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
         <route id="IPCheck">
