@@ -29,13 +29,17 @@ import org.apache.camel.Processor;
 public class NewFileProduceTest extends ContextTestSupport {
 
     @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/producefile");
+        super.setUp();
+    }
+
+    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
     public void testNewFileProducer() throws Exception {
-        deleteDirectory("target/producefile");
-
         FileComponent comp = new FileComponent();
         comp.setCamelContext(context);
 

@@ -26,21 +26,25 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
 
-    public void testExcludeZeroLengthFiles() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("./target/exclude");
-        
+        super.setUp();
+    }
+
+    public void testExcludeZeroLengthFiles() throws Exception {
         MockEndpoint mock1 = getMockEndpoint("mock:result");
         mock1.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
         MockEndpoint mock2 = getMockEndpoint("mock:skip");
         mock2.expectedMessageCount(2);
         
-        prepareFiles();
+        sendFiles();
 
         assertMockEndpointsSatisfied();
     }
 
-    private void prepareFiles() throws Exception {
+    private void sendFiles() throws Exception {
         String url = "file://target/exclude";
         template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
         template.sendBodyAndHeader(url, "", Exchange.FILE_NAME, "empty1.txt");

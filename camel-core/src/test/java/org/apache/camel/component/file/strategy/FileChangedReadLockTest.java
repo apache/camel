@@ -32,10 +32,14 @@ public class FileChangedReadLockTest extends ContextTestSupport {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(FileChangedReadLockTest.class);
 
-    public void testChangedReadLock() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/changed/");
         createDirectory("target/changed/in");
+        super.setUp();
+    }
 
+    public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/changed/out/slowfile.dat");

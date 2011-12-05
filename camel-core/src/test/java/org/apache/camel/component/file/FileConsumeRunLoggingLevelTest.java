@@ -25,9 +25,13 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
 
-    public void testRunLoggingLevel() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/files");
+        super.setUp();
+    }
 
+    public void testRunLoggingLevel() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBodyAndHeader("file:target/files", "Hello World", Exchange.FILE_NAME, "hello.txt");

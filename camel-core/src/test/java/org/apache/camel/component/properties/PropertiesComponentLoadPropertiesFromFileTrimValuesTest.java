@@ -28,13 +28,17 @@ import org.apache.camel.ContextTestSupport;
 public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends ContextTestSupport {
 
     @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/space");
+        createDirectory("target/space");
+        super.setUp();
+    }
+
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
         // create space.properties file
-        deleteDirectory("target/space");
-        createDirectory("target/space");
-
         File file = new File("target/space/space.properties");
         file.createNewFile();
         FileOutputStream fos = new FileOutputStream(file);

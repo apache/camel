@@ -40,6 +40,13 @@ import org.apache.camel.util.UnitOfWorkHelper;
  */
 public class XsltBuilderTest extends ContextTestSupport {
 
+    @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/xslt");
+        createDirectory("target/xslt");
+        super.setUp();
+    }
+
     public void testXsltUrl() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 
@@ -195,10 +202,6 @@ public class XsltBuilderTest extends ContextTestSupport {
     }
 
     public void testXsltOutputFile() throws Exception {
-        // directory must exists
-        deleteDirectory("target/xslt");
-        createDirectory("target/xslt");
-
         URL styleSheet = getClass().getResource("example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet).outputFile();
@@ -218,10 +221,6 @@ public class XsltBuilderTest extends ContextTestSupport {
     }
 
     public void testXsltOutputFileDelete() throws Exception {
-        // directory must exists
-        deleteDirectory("target/xslt");
-        createDirectory("target/xslt");
-
         URL styleSheet = getClass().getResource("example.xsl");
 
         XsltBuilder builder = XsltBuilder.xslt(styleSheet).outputFile().deleteOutputFile();

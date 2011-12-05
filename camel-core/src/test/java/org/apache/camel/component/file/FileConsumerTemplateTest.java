@@ -27,12 +27,17 @@ import org.apache.camel.Exchange;
 public class FileConsumerTemplateTest extends ContextTestSupport {
 
     @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/consumer");
+        super.setUp();
+    }
+
+    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
     public void testFileConsumerTemplate() throws Exception {
-        deleteDirectory("target/consumer");
         template.sendBodyAndHeader("file:target/consumer", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         String body = consumer.receiveBody("file:target/consumer?delete=true", 5000, String.class);

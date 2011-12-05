@@ -26,17 +26,23 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerIncludeNameTest extends ContextTestSupport {
 
-    public void testIncludePreAndPostfixes() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("./target/include");
-        prepareFiles();
+        super.setUp();
+    }
 
+    public void testIncludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.expectedBodiesReceived("Reports", "Reports");
+
+        sendFiles();
+
         mock.assertIsSatisfied();
     }
 
-    private void prepareFiles() throws Exception {
+    private void sendFiles() throws Exception {
         String url = "file://target/include";
         template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
         template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report1.txt");

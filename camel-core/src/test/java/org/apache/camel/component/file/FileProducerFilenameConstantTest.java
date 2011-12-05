@@ -25,9 +25,13 @@ import org.apache.camel.ContextTestSupport;
  */
 public class FileProducerFilenameConstantTest extends ContextTestSupport {
 
-    public void testFileProducerFilenameConstant() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/constant");
+        super.setUp();
+    }
 
+    public void testFileProducerFilenameConstant() throws Exception {
         template.sendBody("file://target/constant?fileName=header.txt", "Hello World");
 
         File file = new File("./target/constant/header.txt").getAbsoluteFile();

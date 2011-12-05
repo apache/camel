@@ -35,13 +35,17 @@ public class NewFileConsumeTest extends ContextTestSupport {
     private CountDownLatch latch = new CountDownLatch(1);
 
     @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/consumefile");
+        super.setUp();
+    }
+
+    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
     public void testNewFileConsumer() throws Exception {
-        deleteDirectory("target/consumefile");
-
         FileComponent comp = new FileComponent();
         comp.setCamelContext(context);
 

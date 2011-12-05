@@ -29,12 +29,17 @@ import org.apache.camel.PollingConsumer;
 public class FilePollingConsumerTest extends ContextTestSupport {
 
     @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/enrich");
+        super.setUp();
+    }
+
+    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
     public void testPollingConsumer() throws Exception {
-        deleteDirectory("target/enrich");
         template.sendBodyAndHeader("file:target/enrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         PollingConsumer consumer = context.getEndpoint("file:target/enrich").createPollingConsumer();

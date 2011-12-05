@@ -46,6 +46,12 @@ import org.apache.camel.impl.DefaultExchange;
  */
 public class XmlConverterTest extends ContextTestSupport {
 
+    @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/xml");
+        super.setUp();
+    }
+
     public void testToResultNoSource() throws Exception {
         XmlConverter conv = new XmlConverter();
         conv.toResult(null, null);
@@ -186,7 +192,6 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToSaxSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        deleteDirectory("target/xml");
         template.sendBodyAndHeader("file:target/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
         File file = new File("target/xml/myxml.xml");
 
@@ -197,7 +202,6 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToStAXSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        deleteDirectory("target/xml");
         template.sendBodyAndHeader("file:target/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
         File file = new File("target/xml/myxml.xml");
 
@@ -386,7 +390,6 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToDomSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        deleteDirectory("target/xml");
         template.sendBodyAndHeader("file:target/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
         File file = new File("target/xml/myxml.xml");
 

@@ -27,9 +27,13 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
 
-    public void testShutdownCompleteAllTasks() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/seda");
+        super.setUp();
+    }
 
+    public void testShutdownCompleteAllTasks() throws Exception {
         final String url = "file:target/seda";
         template.sendBodyAndHeader(url, "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(url, "B", Exchange.FILE_NAME, "b.txt");

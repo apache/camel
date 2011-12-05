@@ -37,10 +37,14 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
     private static final int NUMBER_OF_THREADS = 5;
     private AtomicInteger numberOfFilesProcessed = new AtomicInteger(0);
 
-    public void testMultithreadedLocking() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/marker/");
         createDirectory("target/marker/in");
+        super.setUp();
+    }
 
+    public void testMultithreadedLocking() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.expectedFileExists("target/marker/out/file1.dat");

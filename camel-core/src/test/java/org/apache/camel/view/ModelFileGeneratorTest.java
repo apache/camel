@@ -28,9 +28,13 @@ import org.apache.camel.builder.RouteBuilder;
 public class ModelFileGeneratorTest extends ContextTestSupport {
     protected String outputDirectory = "target/site/model";
 
-    public void testGenerateModel() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory(outputDirectory);
+        super.setUp();
+    }
 
+    public void testGenerateModel() throws Exception {
         try {
             ModelFileGenerator generator = new ModelFileGenerator(JAXBContext.newInstance("org.apache.camel.model"));
             generator.marshalRoutesUsingJaxb(outputDirectory + "/route.xml", context.getRouteDefinitions());

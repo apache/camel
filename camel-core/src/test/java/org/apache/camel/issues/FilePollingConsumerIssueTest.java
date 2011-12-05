@@ -26,8 +26,13 @@ import org.apache.camel.PollingConsumer;
  */
 public class FilePollingConsumerIssueTest extends ContextTestSupport {
 
-    public void testFilePollingConsumer() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/fpc");
+        super.setUp();
+    }
+
+    public void testFilePollingConsumer() throws Exception {
         template.sendBodyAndHeader("file://target/fpc", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         Endpoint endpoint = context.getEndpoint("file://target/fpc?fileName=hello.txt");

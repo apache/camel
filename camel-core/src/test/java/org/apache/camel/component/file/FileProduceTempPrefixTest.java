@@ -30,6 +30,12 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
 
     private String fileUrl = "file://target/tempandrename/?tempPrefix=inprogress.";
 
+    @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/tempandrename");
+        super.setUp();
+    }
+
     public void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
         GenericFileProducer producer = (GenericFileProducer) endpoint.createProducer();
@@ -61,8 +67,6 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     }
 
     public void testTempPrefix() throws Exception {
-        deleteDirectory("target/tempandrename");
-
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("target/tempandrename/hello.txt");
@@ -72,8 +76,6 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     }
 
     public void testTempPrefixUUIDFilename() throws Exception {
-        deleteDirectory("target/tempandrename");
-
         template.sendBody("direct:a", "Bye World");
     }
 

@@ -32,9 +32,13 @@ import org.apache.camel.impl.RoutePolicySupport;
  */
 public class ManagedSuspendedServiceTest extends ManagementTestSupport {
 
-    public void testConsumeSuspendAndResumeFile() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/suspended");
+        super.setUp();
+    }
 
+    public void testConsumeSuspendAndResumeFile() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=consumers,*"), null);

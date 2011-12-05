@@ -28,6 +28,12 @@ import org.apache.camel.Exchange;
 public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
 
     @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/tempprefix");
+        super.setUp();
+    }
+
+    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
@@ -41,8 +47,6 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     }
 
     public void testWriteUsingTempPrefixButFileExist() throws Exception {
-        deleteDirectory("target/tempprefix");
-
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
@@ -52,8 +56,6 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     }
 
     public void testWriteUsingTempPrefixButBothFileExist() throws Exception {
-        deleteDirectory("target/tempprefix");
-
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "foohello.txt");
         template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
@@ -64,8 +66,6 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     }
 
     public void testWriteUsingTempPrefixButFileExistOverride() throws Exception {
-        deleteDirectory("target/tempprefix");
-
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo&fileExist=Override", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
@@ -75,8 +75,6 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     }
 
     public void testWriteUsingTempPrefixButFileExistIgnore() throws Exception {
-        deleteDirectory("target/tempprefix");
-
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo&fileExist=Ignore", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
@@ -87,8 +85,6 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
     }
 
     public void testWriteUsingTempPrefixButFileExistFail() throws Exception {
-        deleteDirectory("target/tempprefix");
-
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         try {
             template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo&fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");

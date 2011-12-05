@@ -25,15 +25,20 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileContentBasedRouterTest extends ContextTestSupport {
 
-    private void prepareFiles() {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/cbr");
+        super.setUp();
+    }
+
+    private void sendFiles() {
         template.sendBodyAndHeader("file://target/cbr", "Hello London", "CamelFileName", "london.txt");
         template.sendBodyAndHeader("file://target/cbr", "Hello Paris", "CamelFileName", "paris.txt");
         template.sendBodyAndHeader("file://target/cbr", "Hello Copenhagen", "CamelFileName", "copenhagen.txt");
     }
 
     public void testRouteLondon() throws Exception {
-        prepareFiles();
+        sendFiles();
 
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
@@ -45,7 +50,7 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
     }
 
     public void testRouteParis() throws Exception {
-        prepareFiles();
+        sendFiles();
 
         MockEndpoint mock = getMockEndpoint("mock:paris");
         mock.expectedMessageCount(1);
@@ -57,7 +62,7 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
     }
 
     public void testRouteOther() throws Exception {
-        prepareFiles();
+        sendFiles();
 
         MockEndpoint mock = getMockEndpoint("mock:other");
         mock.expectedMessageCount(1);
