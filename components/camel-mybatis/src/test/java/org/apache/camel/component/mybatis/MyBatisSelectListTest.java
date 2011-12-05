@@ -36,7 +36,7 @@ public class MyBatisSelectListTest extends MyBatisTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
         Account james = (Account) list.get(0);
         Account claus = (Account) list.get(1);
         assertEquals("James", james.getFirstName());

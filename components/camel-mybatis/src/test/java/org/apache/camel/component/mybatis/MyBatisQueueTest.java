@@ -16,21 +16,24 @@
  */
 package org.apache.camel.component.mybatis;
 
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class MyBatisQueueTest extends CamelTestSupport {
+public class MyBatisQueueTest extends MyBatisTestSupport {
+    
+    protected boolean createTestData() {
+        return false;
+    }
+    
+    protected String createStatement() {
+        return "create table ACCOUNT ( ACC_ID INTEGER , ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255), PROCESSED BOOLEAN DEFAULT false)";
+    }
 
     @Test
     public void testConsume() throws Exception {
@@ -60,7 +63,7 @@ public class MyBatisQueueTest extends CamelTestSupport {
         Thread.sleep(1000);
 
         // now lets poll that the account has been inserted
-        List body = template.requestBody("mybatis:selectProcessedAccounts?statementType=SelectList", null, List.class);
+        List<?> body = template.requestBody("mybatis:selectProcessedAccounts?statementType=SelectList", null, List.class);
 
         assertEquals("Wrong size: " + body, 2, body.size());
         Account actual = assertIsInstanceOf(Account.class, body.get(0));
@@ -84,33 +87,4 @@ public class MyBatisQueueTest extends CamelTestSupport {
             }
         };
     }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-
-        // lets create the database...
-        Connection connection = createConnection();
-        Statement statement = connection.createStatement();
-        statement.execute("create table ACCOUNT ( ACC_ID INTEGER , ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255), PROCESSED BOOLEAN DEFAULT false)");
-        connection.close();
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        Connection connection = createConnection();
-        Statement statement = connection.createStatement();
-        statement.execute("drop table ACCOUNT");
-        connection.close();
-
-        super.tearDown();
-    }
-
-    private Connection createConnection() throws Exception {
-        MyBatisEndpoint endpoint = resolveMandatoryEndpoint("mybatis:Account", MyBatisEndpoint.class);
-        return endpoint.getSqlSessionFactory().getConfiguration().getEnvironment().getDataSource().getConnection();
-    }
-
 }
