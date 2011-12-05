@@ -38,7 +38,7 @@ public final class ModelHelper {
     /**
      * Dumps the definition as XML
      *
-     * @param definition  the definition, such as a {@link org.apache.camel.model.RouteDefinition}
+     * @param definition  the definition, such as a {@link org.apache.camel.NamedNode}
      * @return            the output in XML (is formatted)
      * @throws JAXBException is throw if error marshalling to XML
      */
