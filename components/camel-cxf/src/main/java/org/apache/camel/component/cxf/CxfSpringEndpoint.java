@@ -42,10 +42,6 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
 
     private String beanId;
     private ApplicationContext applicationContext;
-
-    public CxfSpringEndpoint(CamelContext context, String address) throws Exception {
-        super(address, context);
-    }
     
     public CxfSpringEndpoint(CxfComponent component, String address) throws Exception {
         super(address, component);

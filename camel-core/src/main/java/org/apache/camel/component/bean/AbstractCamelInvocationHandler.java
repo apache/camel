@@ -171,6 +171,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
     }
 
+    @SuppressWarnings("deprecation")
     protected static synchronized ExecutorService getExecutorService(CamelContext context) {
         // CamelContext will shutdown thread pool when it shutdown so we can
         // lazy create it on demand

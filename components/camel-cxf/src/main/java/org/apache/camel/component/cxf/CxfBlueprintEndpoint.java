@@ -37,7 +37,7 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
     private BlueprintCamelContext blueprintCamelContext;
 
     public CxfBlueprintEndpoint(String address, BundleContext context) {
-        super(address);
+        super(address, (CxfComponent)null);
         bundleContext = context;
     }
 

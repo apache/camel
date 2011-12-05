@@ -27,7 +27,7 @@ public abstract class TracingTestBase extends SpringTestSupport {
 
     protected List<StringBuilder> getTracedMessages() {
         Tracer tracer = (Tracer) this.applicationContext.getBean("tracer");
-        TraceHandlerTestHandler handler = (TraceHandlerTestHandler) tracer.getTraceHandler();
+        TraceHandlerTestHandler handler = (TraceHandlerTestHandler) tracer.getTraceHandlers().get(0);
         return handler.getEventMessages();
     }
 

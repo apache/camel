@@ -18,6 +18,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
 import org.apache.camel.component.cxf.spring.SpringJAXRSServerFactoryBean;
 import org.apache.camel.spring.SpringCamelContext;
@@ -33,8 +34,8 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     private String beanId;
     
     
-    public CxfRsSpringEndpoint(CamelContext context, AbstractJAXRSFactoryBean bean) throws Exception {
-        super(bean.getAddress(), context);        
+    public CxfRsSpringEndpoint(Component component, AbstractJAXRSFactoryBean bean) throws Exception {
+        super(bean.getAddress(), component);        
         init(bean);
     }
     

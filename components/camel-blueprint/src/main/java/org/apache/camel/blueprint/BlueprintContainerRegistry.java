@@ -70,7 +70,6 @@ public class BlueprintContainerRegistry implements Registry {
     public static <T> Map<String, T> lookupByType(BlueprintContainer blueprintContainer, Class<T> type) {
         Bundle bundle = (Bundle) blueprintContainer.getComponentInstance("blueprintBundle");
         Map<String, T> objects = new LinkedHashMap<String, T>();
-        @SuppressWarnings("unchecked")
         Set<String> ids = blueprintContainer.getComponentIds();
         for (String id : ids) {
             try {

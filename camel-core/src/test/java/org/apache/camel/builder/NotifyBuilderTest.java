@@ -863,7 +863,7 @@ public class NotifyBuilderTest extends ContextTestSupport {
 
     public void testOneNonAbstractPredicate() throws Exception {
         try {
-            NotifyBuilder notify = new NotifyBuilder(context)
+            new NotifyBuilder(context)
                     .wereSentTo("mock:foo")
                     .create();
             fail("Should throw exception");

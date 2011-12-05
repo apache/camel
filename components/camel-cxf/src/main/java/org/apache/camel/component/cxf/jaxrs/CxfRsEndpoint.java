@@ -60,6 +60,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     private boolean isSetDefaultBus;
 
+    @Deprecated
     public CxfRsEndpoint(String endpointUri, CamelContext camelContext) {
         super(endpointUri, camelContext);
         setAddress(endpointUri);

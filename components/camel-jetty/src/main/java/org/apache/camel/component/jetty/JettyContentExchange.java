@@ -157,7 +157,7 @@ public class JettyContentExchange extends ContentExchange {
 
     public String getUrl() {
         String params = getRequestFields().getStringField(HttpHeaders.CONTENT_ENCODING);
-        return getScheme() + "//" + getAddress().toString() + getURI() + (params != null ? "?" + params : "");
+        return getScheme() + "//" + getAddress().toString() + getRequestURI() + (params != null ? "?" + params : "");
     }
 
     protected void doTaskCompleted() {

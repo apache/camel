@@ -59,15 +59,5 @@ public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport
         
     }
     
-    
-    @SuppressWarnings("unchecked")
-    private <T> T getInterceptor(List<Interceptor<? extends Message>> list, Class<T> clz) {
-        for (Interceptor<? extends Message> i : list) {
-            if (clz.isInstance(i)) {
-                return (T)i;
-            }
-        }
-        return null;
-    }
 
 }

@@ -153,11 +153,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         setAddress(remaining);
     }
 
+    @Deprecated
     public CxfEndpoint(String remaining, CamelContext context) {
         super(remaining, context);
         setAddress(remaining);
     }
 
+    @Deprecated
     public CxfEndpoint(String remaining) {
         super(remaining);
         setAddress(remaining);
