@@ -44,6 +44,8 @@ public class NewFileConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
+        Thread.sleep(250);
+
         assertTrue("Should have invoked postPollCheck", myFile.isPost());
     }
 

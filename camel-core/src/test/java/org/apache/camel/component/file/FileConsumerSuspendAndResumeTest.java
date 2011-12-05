@@ -48,7 +48,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Thread.sleep(100);
+        Thread.sleep(250);
 
         // the route is suspended by the policy so we should only receive one
         String[] files = new File("target/suspended/").getAbsoluteFile().list();

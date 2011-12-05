@@ -280,52 +280,6 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.stop();
     }
     
-    public void testAggregateInitialCompletionInterval() throws Exception {
-        // camel context must be started
-        context.start();
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("A+B", "C+D");
-        mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "interval");
-
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
-        Expression corr = header("id");
-        AggregationStrategy as = new BodyInAggregatingStrategy();
-
-        AggregateProcessor ap = new AggregateProcessor(context, done, corr, as, executorService);
-        ap.setCompletionInterval(2000);
-        ap.start();
-
-        Exchange e1 = new DefaultExchange(context);
-        e1.getIn().setBody("A");
-        e1.getIn().setHeader("id", 123);
-
-        Exchange e2 = new DefaultExchange(context);
-        e2.getIn().setBody("B");
-        e2.getIn().setHeader("id", 123);
-
-        Exchange e3 = new DefaultExchange(context);
-        e3.getIn().setBody("C");
-        e3.getIn().setHeader("id", 123);
-
-        Exchange e4 = new DefaultExchange(context);
-        e4.getIn().setBody("D");
-        e4.getIn().setHeader("id", 123);
-
-        ap.process(e1);
-        
-        Thread.sleep(1500L);
-        ap.process(e2);
-        
-        Thread.sleep(500L);
-        ap.process(e3);
-        ap.process(e4);
-
-        assertMockEndpointsSatisfied();
-
-        ap.stop();
-    }
-
     public void testAggregateIgnoreInvalidCorrelationKey() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+C+END");

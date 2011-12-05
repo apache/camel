@@ -24,6 +24,7 @@ import java.util.Scanner;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Predicate;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -51,15 +52,42 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
     }
 
     @Override
+    public boolean matches(Exchange exchange) {
+        // as a predicate we must close the stream, as we do not return an iterator that can be used
+        // afterwards to iterate the input stream
+        Object value = doEvaluate(exchange, true);
+        return ObjectHelper.evaluateValuePredicate(value);
+    }
+
+    @Override
     public Object evaluate(Exchange exchange) {
+        // as we return an iterator to access the input stream, we should not close it
+        return doEvaluate(exchange, false);
+    }
+
+    /**
+     * Strategy to evaluate the exchange
+     *
+     * @param exchange   the exchange
+     * @param closeStream whether to close the stream before returning from this method.
+     * @return the evaluated value
+     */
+    protected Object doEvaluate(Exchange exchange, boolean closeStream) {
+        InputStream in = null;
         try {
-            InputStream in = exchange.getIn().getMandatoryBody(InputStream.class);
+            in = exchange.getIn().getMandatoryBody(InputStream.class);
             // we may read from a file, and want to support custom charset defined on the exchange
             String charset = IOHelper.getCharsetName(exchange);
             return createIterator(in, charset);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);
+            // must close input stream
+            IOHelper.close(in);
             return null;
+        } finally {
+            if (closeStream) {
+                IOHelper.close(in);
+            }
         }
     }
 
