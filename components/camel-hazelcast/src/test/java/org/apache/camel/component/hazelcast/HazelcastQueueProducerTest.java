@@ -53,6 +53,15 @@ public class HazelcastQueueProducerTest extends CamelTestSupport {
     }
 
     @Test
+    public void noOperation() throws InterruptedException {
+        template.sendBody("direct:no-operation", "bar");
+
+        assertTrue(queue.contains("bar"));
+
+        queue.clear();
+    }
+
+    @Test
     public void add() throws InterruptedException {
         template.sendBody("direct:add", "bar");
 
@@ -122,6 +131,8 @@ public class HazelcastQueueProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                from("direct:no-operation").to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+
                 from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
 
                 from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));

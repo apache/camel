@@ -59,6 +59,8 @@ public class HazelcastQueueProducer extends DefaultProducer {
 
         switch (operation) {
 
+        case -1:
+        //If no operation is specified use ADD.
         case HazelcastConstants.ADD_OPERATION:
             this.add(exchange);
             break;
