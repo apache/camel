@@ -39,6 +39,8 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.server.ssl.SslConnector;
+import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -58,7 +60,6 @@ public class CometdComponent extends DefaultComponent {
     private String sslKeyPassword;
     private String sslPassword;
     private String sslKeystore;
-    private SslSocketConnector sslSocketConnector;
     private SecurityPolicy securityPolicy;
     private List<BayeuxServer.Extension> extensions;
     private SSLContextParameters sslContextParameters;
@@ -202,28 +203,29 @@ public class CometdComponent extends DefaultComponent {
         return servlet;
     }
 
-    public synchronized SslSocketConnector getSslSocketConnector() {
-        if (sslContextParameters != null && sslSocketConnector == null) {
+    protected SslConnector getSslSocketConnector() {
+        SslSelectChannelConnector sslSocketConnector = null;
+        if (sslContextParameters != null) {
             SslContextFactory sslContextFactory = new CometdComponentSslContextFactory();
             try {
                 sslContextFactory.setSslContext(sslContextParameters.createSSLContext());
             } catch (Exception e) {
                 throw new RuntimeCamelException("Error initiating SSLContext.", e);
             }
-            sslSocketConnector = new SslSocketConnector(sslContextFactory);
+            sslSocketConnector = new SslSelectChannelConnector(sslContextFactory);
         } else {
-            if (sslSocketConnector == null) {
-                sslSocketConnector = new SslSocketConnector();
-                // with default null values, jetty ssl system properties
-                // and console will be read by jetty implementation
-                sslSocketConnector.getSslContextFactory().setKeyManagerPassword(sslPassword);
-                sslSocketConnector.getSslContextFactory().setKeyStorePassword(sslKeyPassword);
-                if (sslKeystore != null) {
-                    sslSocketConnector.getSslContextFactory().setKeyStore(sslKeystore);
-                }
+
+            sslSocketConnector = new SslSelectChannelConnector();
+            // with default null values, jetty ssl system properties
+            // and console will be read by jetty implementation
+            sslSocketConnector.getSslContextFactory().setKeyManagerPassword(sslPassword);
+            sslSocketConnector.getSslContextFactory().setKeyStorePassword(sslKeyPassword);
+            if (sslKeystore != null) {
+                sslSocketConnector.getSslContextFactory().setKeyStore(sslKeystore);
             }
+
         }
-        
+
         return sslSocketConnector;
     }
 

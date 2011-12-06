@@ -46,7 +46,10 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
         super.start();
         // must connect first
         endpoint.connect(this);
-        service = new ConsumerService(endpoint.getPath(), bayeux, this);
+        // should probably look into synchronization for this.
+        if (service == null) {
+            service = new ConsumerService(endpoint.getPath(), bayeux, this);
+        }
     }
 
     @Override

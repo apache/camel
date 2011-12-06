@@ -46,8 +46,12 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
     public void start() throws Exception {
         super.start();
         // must connect first
+
         endpoint.connect(this);
-        service = new ProducerService(getBayeux(), new CometdBinding(bayeux), endpoint.getPath(), this);
+        // should probably look into synchronization for this.
+        if (service == null) {
+            service = new ProducerService(getBayeux(), new CometdBinding(bayeux), endpoint.getPath(), this);
+        }
     }
 
     @Override
@@ -68,6 +72,10 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         return bayeux;
     }
 
+    protected ProducerService getProducerService() {
+        return service;
+    }
+
     public void setBayeux(BayeuxServerImpl bayeux) {
         this.bayeux = bayeux;
     }
@@ -77,7 +85,8 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         private final CometdProducer producer;
         private final CometdBinding binding;
 
-        public ProducerService(BayeuxServer bayeux, CometdBinding cometdBinding, String channel, CometdProducer producer) {
+        public ProducerService(BayeuxServer bayeux, CometdBinding cometdBinding, String channel,
+                               CometdProducer producer) {
             super(bayeux, channel);
             this.producer = producer;
             this.binding = cometdBinding;
@@ -91,7 +100,8 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
 
             if (channel != null) {
                 logDelivery(exchange, channel);
-                ServerMessage.Mutable mutable = binding.createCometdMessage(channel, serverSession, exchange.getIn());
+                ServerMessage.Mutable mutable = binding.createCometdMessage(channel, serverSession,
+                                                                            exchange.getIn());
                 channel.publish(serverSession, mutable);
             }
         }
@@ -99,7 +109,7 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         private void logDelivery(Exchange exchange, ServerChannel channel) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace(String.format("Delivering to clients %s path: %s exchange: %s",
-                        channel.getSubscribers(), channel, exchange));
+                                        channel.getSubscribers(), channel, exchange));
             }
         }
     }
