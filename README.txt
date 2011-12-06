@@ -6,22 +6,22 @@ Enterprise Integration Patterns with powerful Bean Integration.
 
 Camel lets you create the Enterprise Integration Patterns to implement routing
 and mediation rules in either a Java based Domain Specific Language (or Fluent API),
-via Spring based Xml Configuration files or via the Scala DSL. This means you
-get smart completion of routing rules in your IDE whether in your Java,
-Scala or XML editor.
+via Spring or Blueprint based Xml Configuration files, or via the Scala DSL.
+This means you get smart completion of routing rules in your IDE whether
+in your Java, Scala or XML editor.
 
 Apache Camel uses URIs so that it can easily work directly with any kind of
-Transport or messaging model such as HTTP, ActiveMQ, JMS, JBI, SCA, MINA
-or CXF Bus API together with working with pluggable Data Format options.
+transport or messaging model such as HTTP, ActiveMQ, JMS, JBI, SCA, MINA
+or CXF together with working with pluggable Data Format options.
 Apache Camel is a small library which has minimal dependencies for easy embedding
 in any Java application. Apache Camel lets you work with the same API regardless
-which kind of Transport used, so learn the API once and you will be able to
+which kind of transport used, so learn the API once and you will be able to
 interact with all the Components that is provided out-of-the-box.
 
 Apache Camel has powerful Bean Binding and integrated seamless with
-popular frameworks such as Spring and Guice.
+popular frameworks such as Spring, Blueprint and Guice.
 
-Apache Camel has extensive Testing support allowing you to easily
+Apache Camel has extensive testing support allowing you to easily
 unit test your routes.
 
 Apache Camel can be used as a routing and mediation engine for the
@@ -32,6 +32,8 @@ following projects:
   * Apache ActiveMQ which is the most popular and powerful open
     source message broker
   * Apache CXF which is a smart web services suite (JAX-WS and JAX-RS)
+  * Apache Karaf which is a small OSGi based runtime which applications
+    can be deployed
   * Apache MINA a networking framework
 
 
