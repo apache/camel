@@ -19,16 +19,16 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.Component;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedComponentMBean;
 import org.apache.camel.spi.ManagementStrategy;
 
 /**
  * @version 
  */
 @ManagedResource(description = "Managed Component")
-public class ManagedComponent implements ManagedInstance {
+public class ManagedComponent implements ManagedInstance, ManagedComponentMBean {
     private final Component component;
     private final String name;
 
@@ -45,12 +45,10 @@ public class ManagedComponent implements ManagedInstance {
         return component;
     }
 
-    @ManagedAttribute(description = "Component Name")
     public String getComponentName() {
         return name;
     }
 
-    @ManagedAttribute(description = "Component State")
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (component instanceof StatefulService) {
@@ -66,7 +64,6 @@ public class ManagedComponent implements ManagedInstance {
         return ServiceStatus.Started.name();
     }
 
-    @ManagedAttribute(description = "Camel id")
     public String getCamelId() {
         return component.getCamelContext().getName();
     }

@@ -17,16 +17,15 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedProducerCacheMBean;
 import org.apache.camel.impl.ProducerCache;
 
 /**
  * @version 
  */
 @ManagedResource(description = "Managed ProducerCache")
-public class ManagedProducerCache extends ManagedService {
+public class ManagedProducerCache extends ManagedService implements ManagedProducerCacheMBean {
     private final ProducerCache producerCache;
 
     public ManagedProducerCache(CamelContext context, ProducerCache producerCache) {
@@ -38,7 +37,6 @@ public class ManagedProducerCache extends ManagedService {
         return producerCache;
     }
 
-    @ManagedAttribute(description = "Source")
     public String getSource() {
         if (producerCache.getSource() != null) {
             return producerCache.getSource().toString();
@@ -46,32 +44,26 @@ public class ManagedProducerCache extends ManagedService {
         return null;
     }
 
-    @ManagedAttribute(description = "Number of elements cached")
     public Integer getSize() {
         return producerCache.size();
     }
 
-    @ManagedAttribute(description = "Maximum cache size (capacity)")
     public Integer getMaximumCacheSize() {
         return producerCache.getCapacity();
     }
 
-    @ManagedAttribute(description = "Cache hits")
     public Long getHits() {
         return producerCache.getHits();
     }
 
-    @ManagedAttribute(description = "Cache misses")
     public Long getMisses() {
         return producerCache.getMisses();
     }
 
-    @ManagedOperation(description = "Reset cache statistics")
     public void resetStatistics() {
         producerCache.resetCacheStatistics();
     }
 
-    @ManagedOperation(description = "Purges the cache")
     public void purge() {
         producerCache.purge();
     }

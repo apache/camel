@@ -14,25 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management;
+package org.apache.camel.api.management.mbean;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-@Documented
-public @interface ManagedNotification {
+public interface ManagedProducerCacheMBean {
 
-    String name();
+    @ManagedAttribute(description = "Source")
+    String getSource();
 
-    String description() default "";
+    @ManagedAttribute(description = "Number of elements cached")
+    Integer getSize();
 
-    String[] notificationTypes();
+    @ManagedAttribute(description = "Maximum cache size (capacity)")
+    Integer getMaximumCacheSize();
+
+    @ManagedAttribute(description = "Cache hits")
+    Long getHits();
+
+    @ManagedAttribute(description = "Cache misses")
+    Long getMisses();
+
+    @ManagedOperation(description = "Reset cache statistics")
+    void resetStatistics();
+
+    @ManagedOperation(description = "Purges the cache")
+    void purge();
 
 }

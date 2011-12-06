@@ -25,9 +25,8 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.TimerListener;
-import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -35,7 +34,7 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed Route")
-public class ManagedRoute extends ManagedPerformanceCounter implements TimerListener {
+public class ManagedRoute extends ManagedPerformanceCounter implements TimerListener, ManagedRouteMBean {
     public static final String VALUE_UNKNOWN = "Unknown";
     protected final Route route;
     protected final String description;
@@ -58,7 +57,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return context;
     }
 
-    @ManagedAttribute(description = "Route id")
     public String getRouteId() {
         String id = route.getId();
         if (id == null) {
@@ -67,18 +65,15 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return id;
     }
 
-    @ManagedAttribute(description = "Route Description")
     public String getDescription() {
         return description;
     }
 
-    @ManagedAttribute(description = "Route Endpoint Uri")
     public String getEndpointUri() {
         Endpoint ep = route.getEndpoint();
         return ep != null ? ep.getEndpointUri() : VALUE_UNKNOWN;
     }
 
-    @ManagedAttribute(description = "Route State")
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         ServiceStatus status = context.getRouteStatus(route.getId());
@@ -89,7 +84,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return status.name();
     }
 
-    @ManagedAttribute(description = "Current number of inflight Exchanges")
     public Integer getInflightExchanges() {
         if (route.getEndpoint() != null) {
             return context.getInflightRepository().size(route.getEndpoint());
@@ -98,22 +92,18 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
     }
 
-    @ManagedAttribute(description = "Camel id")
     public String getCamelId() {
         return context.getName();
     }
 
-    @ManagedAttribute(description = "Tracing")
     public Boolean getTracing() {
         return route.getRouteContext().isTracing();
     }
 
-    @ManagedAttribute(description = "Tracing")
     public void setTracing(Boolean tracing) {
         route.getRouteContext().setTracing(tracing);
     }
 
-    @ManagedAttribute(description = "Route Policy List")
     public String getRoutePolicyList() {
         List<RoutePolicy> policyList = route.getRouteContext().getRoutePolicyList();
 
@@ -134,17 +124,14 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return sb.toString();
     }
 
-    @ManagedAttribute(description = "Average load over the last minute")
     public String getLoad01() {
         return String.format("%.2f", load.getLoad1());
     }
 
-    @ManagedAttribute(description = "Average load over the last five minutes")
     public String getLoad05() {
         return String.format("%.2f", load.getLoad5());
     }
 
-    @ManagedAttribute(description = "Average load over the last fifteen minutes")
     public String getLoad15() {
         return String.format("%.2f", load.getLoad15());
     }
@@ -154,7 +141,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         load.update(getInflightExchanges());
     }
     
-    @ManagedOperation(description = "Start route")
     public void start() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -162,7 +148,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         context.startRoute(getRouteId());
     }
 
-    @ManagedOperation(description = "Stop route")
     public void stop() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -170,7 +155,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         context.stopRoute(getRouteId());
     }
 
-    @ManagedOperation(description = "Stop route (using timeout in seconds)")
     public void stop(long timeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -178,7 +162,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         context.stopRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 
-    @ManagedOperation(description = "Stop route, abort stop after timeout (in seconds)")
     public boolean stop(Long timeout, Boolean abortAfterTimeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -186,11 +169,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return context.stopRoute(getRouteId(), timeout, TimeUnit.SECONDS, abortAfterTimeout);
     }
 
-    /**
-     * @deprecated will be removed in the near future. Use stop and remove instead
-     */
-    @ManagedOperation(description = "Shutdown and remove route")
-    @Deprecated
     public void shutdown() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -198,11 +176,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         context.shutdownRoute(getRouteId());
     }
 
-    /**
-     * @deprecated will be removed in the near future. Use stop and remove instead
-     */
-    @ManagedOperation(description = "Shutdown and remove route (using timeout in seconds)")
-    @Deprecated
     public void shutdown(long timeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -210,7 +183,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         context.shutdownRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 
-    @ManagedOperation(description = "Remove route (must be stopped)")
     public boolean remove() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -218,7 +190,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return context.removeRoute(getRouteId());
     }
 
-    @ManagedOperation(description = "Dumps the route as XML")
     public String dumpRouteAsXml() throws Exception {
         String id = route.getId();
         RouteDefinition def = context.getRouteDefinition(id);
@@ -228,7 +199,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return null;
     }
 
-    @ManagedOperation(description = "Updates the route from XML")
     public void updateRouteFromXml(String xml) throws Exception {
         // convert to model from xml
         RouteDefinition def = ModelHelper.createModelFromXml(xml, RouteDefinition.class);

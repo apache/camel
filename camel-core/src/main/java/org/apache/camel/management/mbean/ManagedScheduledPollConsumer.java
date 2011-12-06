@@ -19,15 +19,15 @@ package org.apache.camel.management.mbean;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedSchedulePollConsumerMBean;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
  * @version 
  */
 @ManagedResource(description = "Managed Scheduled Polling Consumer")
-public class ManagedScheduledPollConsumer extends ManagedConsumer {
+public class ManagedScheduledPollConsumer extends ManagedConsumer implements ManagedSchedulePollConsumerMBean {
     private final ScheduledPollConsumer consumer;
 
     public ManagedScheduledPollConsumer(CamelContext context, ScheduledPollConsumer consumer) {
@@ -39,42 +39,34 @@ public class ManagedScheduledPollConsumer extends ManagedConsumer {
         return consumer;
     }
 
-    @ManagedAttribute(description = "Scheduled Delay")
     public long getDelay() {
         return getConsumer().getDelay();
     }
 
-    @ManagedAttribute(description = "Scheduled Delay")
     public void setDelay(long delay) {
         getConsumer().setDelay(delay);
     }
 
-    @ManagedAttribute(description = "Scheduled Initial Delay")
     public long getInitialDelay() {
         return getConsumer().getInitialDelay();
     }
 
-    @ManagedAttribute(description = "Scheduled Initial Delay")
     public void setInitialDelay(long initialDelay) {
         getConsumer().setInitialDelay(initialDelay);
     }
 
-    @ManagedAttribute(description = "Scheduled Fixed Delay")
     public boolean isUseFixedDelay() {
         return getConsumer().isUseFixedDelay();
     }
 
-    @ManagedAttribute(description = "Scheduled Fixed Delay")
     public void setUseFixedDelay(boolean useFixedDelay) {
         getConsumer().setUseFixedDelay(useFixedDelay);
     }
 
-    @ManagedAttribute(description = "Scheduled TimeUnit")
     public String getTimeUnit() {
         return getConsumer().getTimeUnit().name();
     }
 
-    @ManagedAttribute(description = "Scheduled TimeUnit")
     public void setTimeUnit(String timeUnit) {
         getConsumer().setTimeUnit(TimeUnit.valueOf(timeUnit));
     }

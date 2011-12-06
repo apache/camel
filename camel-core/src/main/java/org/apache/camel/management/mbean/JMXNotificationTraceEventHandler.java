@@ -19,7 +19,6 @@ package org.apache.camel.management.mbean;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.management.Notification;
 
 import org.apache.camel.Exchange;

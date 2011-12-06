@@ -22,10 +22,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedInstance;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.util.ServiceHelper;
 
@@ -33,7 +32,7 @@ import org.apache.camel.util.ServiceHelper;
  * @version 
  */
 @ManagedResource(description = "Managed Processor")
-public class ManagedProcessor extends ManagedPerformanceCounter implements ManagedInstance {
+public class ManagedProcessor extends ManagedPerformanceCounter implements ManagedInstance, ManagedProcessorMBean {
 
     private final CamelContext context;
     private final Processor processor;
@@ -71,7 +70,6 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.route = route;
     }
 
-    @ManagedAttribute(description = "Processor State")
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (processor instanceof StatefulService) {
@@ -87,12 +85,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         return ServiceStatus.Started.name();
     }
 
-    @ManagedAttribute(description = "Camel id")
     public String getCamelId() {
         return context.getName();
     }
 
-    @ManagedAttribute(description = "Route id")
     public String getRouteId() {
         if (route != null) {
             return route.getId();
@@ -100,12 +96,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         return null;
     }
 
-    @ManagedAttribute(description = "Processor id")
     public String getProcessorId() {
         return id;
     }
 
-    @ManagedOperation(description = "Start Processor")
     public void start() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -113,7 +107,6 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         ServiceHelper.startService(getProcessor());
     }
 
-    @ManagedOperation(description = "Stop Processor")
     public void stop() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");

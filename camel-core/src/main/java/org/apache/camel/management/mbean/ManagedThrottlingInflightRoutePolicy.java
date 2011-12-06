@@ -18,15 +18,15 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedThrottlingInflightRoutePolicyMBean;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 
 /**
  * @version 
  */
 @ManagedResource(description = "Managed ThrottlingInflightRoutePolicy")
-public class ManagedThrottlingInflightRoutePolicy extends ManagedService {
+public class ManagedThrottlingInflightRoutePolicy extends ManagedService implements ManagedThrottlingInflightRoutePolicyMBean {
     private final ThrottlingInflightRoutePolicy policy;
 
     public ManagedThrottlingInflightRoutePolicy(CamelContext context, ThrottlingInflightRoutePolicy policy) {
@@ -38,42 +38,34 @@ public class ManagedThrottlingInflightRoutePolicy extends ManagedService {
         return policy;
     }
 
-    @ManagedAttribute(description = "Maximum inflight exchanges")
     public int getMaxInflightExchanges() {
         return getPolicy().getMaxInflightExchanges();
     }
 
-    @ManagedAttribute(description = "Maximum inflight exchanges")
     public void setMaxInflightExchanges(int maxInflightExchanges) {
         getPolicy().setMaxInflightExchanges(maxInflightExchanges);
     }
 
-    @ManagedAttribute(description = "Resume percentage of maximum inflight exchanges")
     public int getResumePercentOfMax() {
         return getPolicy().getResumePercentOfMax();
     }
 
-    @ManagedAttribute(description = "Resume percentage of maximum inflight exchanges")
     public void setResumePercentOfMax(int resumePercentOfMax) {
         getPolicy().setResumePercentOfMax(resumePercentOfMax);
     }
 
-    @ManagedAttribute(description = "Scope")
     public String getScope() {
         return getPolicy().getScope().name();
     }
 
-    @ManagedAttribute(description = "Scope")
     public void setScope(String scope) {
         getPolicy().setScope(ThrottlingInflightRoutePolicy.ThrottlingScope.valueOf(scope));
     }
 
-    @ManagedAttribute(description = "Logging Level")
     public String getLoggingLevel() {
         return getPolicy().getLoggingLevel().name();
     }
 
-    @ManagedAttribute(description = "Logging Level")
     public void setLoggingLevel(String loggingLevel) {
         LoggingLevel level = LoggingLevel.valueOf(loggingLevel);
         getPolicy().setLoggingLevel(level);

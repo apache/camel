@@ -18,8 +18,8 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedSendProcessorMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.SendProcessor;
 
@@ -27,7 +27,7 @@ import org.apache.camel.processor.SendProcessor;
  * @version 
  */
 @ManagedResource(description = "Managed SendProcessor")
-public class ManagedSendProcessor extends ManagedProcessor {
+public class ManagedSendProcessor extends ManagedProcessor implements ManagedSendProcessorMBean {
     private final SendProcessor processor;
 
     public ManagedSendProcessor(CamelContext context, SendProcessor processor, ProcessorDefinition<?> definition) {
@@ -39,18 +39,15 @@ public class ManagedSendProcessor extends ManagedProcessor {
         return processor;
     }
 
-    @ManagedAttribute(description = "Destination as Endpoint Uri")
     public String getDestination() {
         return processor.getDestination().getEndpointUri();
     }
 
-    @ManagedAttribute(description = "Destination as Endpoint Uri")
     public void setDestination(String uri) {
         Endpoint endpoint = getContext().getEndpoint(uri);
         processor.setDestination(endpoint);
     }
 
-    @ManagedAttribute(description = "Message Exchange Pattern")
     public String getMessageExchangePattern() {
         if (processor.getPattern() != null) {
             return processor.getPattern().name();

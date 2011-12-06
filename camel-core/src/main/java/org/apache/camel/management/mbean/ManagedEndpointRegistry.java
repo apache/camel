@@ -17,16 +17,15 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedEndpointRegistryMBean;
 import org.apache.camel.impl.EndpointRegistry;
 
 /**
  * @version 
  */
 @ManagedResource(description = "Managed EndpointRegistry")
-public class ManagedEndpointRegistry extends ManagedService {
+public class ManagedEndpointRegistry extends ManagedService implements ManagedEndpointRegistryMBean {
     private final EndpointRegistry endpointRegistry;
 
     public ManagedEndpointRegistry(CamelContext context, EndpointRegistry endpointRegistry) {
@@ -38,22 +37,18 @@ public class ManagedEndpointRegistry extends ManagedService {
         return endpointRegistry;
     }
 
-    @ManagedAttribute(description = "Source")
     public String getSource() {
         return endpointRegistry.toString();
     }
 
-    @ManagedAttribute(description = "Number of endpoints cached")
     public Integer getSize() {
         return endpointRegistry.size();
     }
 
-    @ManagedAttribute(description = "Maximum cache size (capacity)")
     public Integer getMaximumCacheSize() {
         return endpointRegistry.getMaxCacheSize();
     }
 
-    @ManagedOperation(description = "Purges the cache")
     public void purge() {
         endpointRegistry.purge();
     }

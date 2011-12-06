@@ -14,25 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management;
+package org.apache.camel.api.management.mbean;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-@Documented
-public @interface ManagedNotification {
+public interface ManagedProcessorMBean {
 
-    String name();
+    @ManagedAttribute(description = "Processor State")
+    String getState();
 
-    String description() default "";
+    @ManagedAttribute(description = "Camel id")
+    String getCamelId();
 
-    String[] notificationTypes();
+    @ManagedAttribute(description = "Route id")
+    String getRouteId();
+
+    @ManagedAttribute(description = "Processor id")
+    String getProcessorId();
+
+    @ManagedOperation(description = "Start Processor")
+    void start() throws Exception;
+
+    @ManagedOperation(description = "Stop Processor")
+    void stop() throws Exception;
 
 }

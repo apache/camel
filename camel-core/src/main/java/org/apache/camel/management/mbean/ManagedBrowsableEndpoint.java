@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedBrowsableEndpointMBean;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.MessageHelper;
 
@@ -29,7 +29,7 @@ import org.apache.camel.util.MessageHelper;
  * @version 
  */
 @ManagedResource(description = "Managed BrowsableEndpoint")
-public class ManagedBrowsableEndpoint extends ManagedEndpoint {
+public class ManagedBrowsableEndpoint extends ManagedEndpoint implements ManagedBrowsableEndpointMBean {
 
     private BrowsableEndpoint endpoint;
 
@@ -42,12 +42,10 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint {
         return endpoint;
     }
 
-    @ManagedOperation(description = "Current number of Exchanges in Queue")
     public long queueSize() {
         return endpoint.getExchanges().size();
     }
 
-    @ManagedOperation(description = "Get Exchange from queue by index")
     public String browseExchange(Integer index) {
         List<Exchange> exchanges = endpoint.getExchanges();
 
@@ -62,7 +60,6 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint {
         return exchange.toString();
     }
 
-    @ManagedOperation(description = "Get message body from queue by index")
     public String browseMessageBody(Integer index) {
         List<Exchange> exchanges = endpoint.getExchanges();
 
@@ -85,16 +82,10 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint {
         return body;
     }
 
-    /**
-     * @deprecated use {@link #browseAllMessagesAsXml(Boolean)} instead
-     */
-    @ManagedOperation(description = "Get message as XML from queue by index")
-    @Deprecated
     public String browseMessageAsXml(Integer index) {
         return browseMessageAsXml(index, true);
     }
 
-    @ManagedOperation(description = "Get message as XML from queue by index")
     public String browseMessageAsXml(Integer index, Boolean includeBody) {
         List<Exchange> exchanges = endpoint.getExchanges();
 
@@ -112,12 +103,10 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint {
         return xml;
     }
 
-    @ManagedOperation(description = "Gets all the messages as XML from the queue")
     public String browseAllMessagesAsXml(Boolean includeBody) {
         return browseRangeMessagesAsXml(0, Integer.MAX_VALUE, includeBody);
     }
 
-    @ManagedOperation(description = "Gets the range of messages as XML from the queue")
     public String browseRangeMessagesAsXml(Integer fromIndex, Integer toIndex, Boolean includeBody) {
         if (fromIndex == null) {
             fromIndex = 0;

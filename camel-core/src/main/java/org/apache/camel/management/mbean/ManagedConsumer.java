@@ -18,14 +18,14 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedConsumerMBean;
 
 /**
  * @version 
  */
 @ManagedResource(description = "Managed Consumer")
-public class ManagedConsumer extends ManagedService {
+public class ManagedConsumer extends ManagedService implements ManagedConsumerMBean {
     private final Consumer consumer;
 
     public ManagedConsumer(CamelContext context, Consumer consumer) {
@@ -37,12 +37,10 @@ public class ManagedConsumer extends ManagedService {
         return consumer;
     }
 
-    @ManagedAttribute(description = "Endpoint Uri")
     public String getEndpointUri() {
         return consumer.getEndpoint().getEndpointUri();
     }
 
-    @ManagedAttribute(description = "Current number of inflight Exchanges")
     public Integer getInflightExchanges() {
         return getContext().getInflightRepository().size(consumer.getEndpoint());
     }

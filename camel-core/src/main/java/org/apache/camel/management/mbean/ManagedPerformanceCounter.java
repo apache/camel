@@ -19,15 +19,14 @@ package org.apache.camel.management.mbean;
 import java.util.Date;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.PerformanceCounter;
+import org.apache.camel.api.management.mbean.ManagedPerformanceCounterMBean;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ExchangeHelper;
 
 @ManagedResource(description = "PerformanceCounter")
-public abstract class ManagedPerformanceCounter extends ManagedCounter implements PerformanceCounter {
+public abstract class ManagedPerformanceCounter extends ManagedCounter implements PerformanceCounter, ManagedPerformanceCounterMBean {
     private Statistic exchangesCompleted;
     private Statistic exchangesFailed;
     private Statistic failuresHandled;
@@ -64,7 +63,6 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     }
 
     @Override
-    @ManagedOperation(description = "Reset counters")
     public synchronized void reset() {
         super.reset();
         exchangesCompleted.reset();
@@ -82,81 +80,66 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         lastExchangeFailureTimestamp.reset();
     }
 
-    @ManagedAttribute(description = "Number of completed exchanges")
     public long getExchangesCompleted() throws Exception {
         return exchangesCompleted.getValue();
     }
 
-    @ManagedAttribute(description = "Number of failed exchanges")
     public long getExchangesFailed() throws Exception {
         return exchangesFailed.getValue();
     }
 
-    @ManagedAttribute(description = "Number of failures handled")
     public long getFailuresHandled() throws Exception {
         return failuresHandled.getValue();
     }
 
-    @ManagedAttribute(description = "Number of redeliveries")
     public long getRedeliveries() throws Exception {
         return redeliveries.getValue();
     }
 
-    @ManagedAttribute(description = "Min Processing Time [milliseconds]")
     public long getMinProcessingTime() throws Exception {
         return minProcessingTime.getValue();
     }
 
-    @ManagedAttribute(description = "Mean Processing Time [milliseconds]")
     public long getMeanProcessingTime() throws Exception {
         return meanProcessingTime.getValue();
     }
 
-    @ManagedAttribute(description = "Max Processing Time [milliseconds]")
     public long getMaxProcessingTime() throws Exception {
         return maxProcessingTime.getValue();
     }
 
-    @ManagedAttribute(description = "Total Processing Time [milliseconds]")
     public long getTotalProcessingTime() throws Exception {
         return totalProcessingTime.getValue();
     }
 
-    @ManagedAttribute(description = "Last Processing Time [milliseconds]")
     public long getLastProcessingTime() throws Exception {
         return lastProcessingTime.getValue();
     }
 
-    @ManagedAttribute(description = "Last Exchange Completed Timestamp")
     public Date getLastExchangeCompletedTimestamp() {
         long value = lastExchangeCompletedTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
-    @ManagedAttribute(description = "First Exchange Completed Timestamp")
     public Date getFirstExchangeCompletedTimestamp() {
         long value = firstExchangeCompletedTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
-    @ManagedAttribute(description = "Last Exchange Failed Timestamp")
     public Date getLastExchangeFailureTimestamp() {
         long value = lastExchangeFailureTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
-    @ManagedAttribute(description = "First Exchange Failed Timestamp")
     public Date getFirstExchangeFailureTimestamp() {
         long value = firstExchangeFailureTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
     }
 
-    @ManagedAttribute(description = "Statistics enabled")
     public boolean isStatisticsEnabled() {
         return statisticsEnabled;
     }
 
-    @ManagedAttribute(description = "Statistics enabled")
     public void setStatisticsEnabled(boolean statisticsEnabled) {
         this.statisticsEnabled = statisticsEnabled;
     }

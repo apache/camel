@@ -17,8 +17,8 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedThrottlerMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.Throttler;
 
@@ -28,7 +28,7 @@ import static org.apache.camel.builder.Builder.constant;
  * @version 
  */
 @ManagedResource(description = "Managed Throttler")
-public class ManagedThrottler extends ManagedProcessor {
+public class ManagedThrottler extends ManagedProcessor implements ManagedThrottlerMBean {
     private final Throttler throttler;
 
     public ManagedThrottler(CamelContext context, Throttler throttler, ProcessorDefinition<?> definition) {
@@ -40,22 +40,18 @@ public class ManagedThrottler extends ManagedProcessor {
         return throttler;
     }
 
-    @ManagedAttribute(description = "Maximum requires per period")
     public long getMaximumRequestsPerPeriod() {
         return getThrottler().getCurrentMaximumRequestsPerPeriod();
     }
 
-    @ManagedAttribute(description = "Maximum requires per period")
     public void setMaximumRequestsPerPeriod(long maximumRequestsPerPeriod) {
         getThrottler().setMaximumRequestsPerPeriodExpression(constant(maximumRequestsPerPeriod));
     }
 
-    @ManagedAttribute(description = "Time period in millis")
     public long getTimePeriodMillis() {
         return getThrottler().getTimePeriodMillis();
     }
 
-    @ManagedAttribute(description = "Time period in millis")
     public void setTimePeriodMillis(long timePeriodMillis) {
         getThrottler().setTimePeriodMillis(timePeriodMillis);
     }

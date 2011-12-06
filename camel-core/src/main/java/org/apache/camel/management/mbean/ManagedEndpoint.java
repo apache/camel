@@ -19,13 +19,13 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedEndpointMBean;
 import org.apache.camel.spi.ManagementStrategy;
 
 @ManagedResource(description = "Managed Endpoint")
-public class ManagedEndpoint implements ManagedInstance {
+public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
     private final Endpoint endpoint;
 
     public ManagedEndpoint(Endpoint endpoint) {
@@ -40,22 +40,18 @@ public class ManagedEndpoint implements ManagedInstance {
         return endpoint;
     }
 
-    @ManagedAttribute(description = "Camel id")
     public String getCamelId() {
         return endpoint.getCamelContext().getName();
     }
 
-    @ManagedAttribute(description = "Endpoint Uri")
     public String getEndpointUri() {
         return endpoint.getEndpointUri();
     }
 
-    @ManagedAttribute(description = "Singleton")
     public boolean isSingleton() {
         return endpoint.isSingleton();
     }
 
-    @ManagedAttribute(description = "Service State")
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (endpoint instanceof StatefulService) {

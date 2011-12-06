@@ -19,18 +19,17 @@ package org.apache.camel.management.mbean;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedSuspendableRouteMBean;
 import org.apache.camel.model.ModelCamelContext;
 
 @ManagedResource(description = "Managed Suspendable Route")
-public class ManagedSuspendableRoute extends ManagedRoute {
+public class ManagedSuspendableRoute extends ManagedRoute implements ManagedSuspendableRouteMBean {
 
     public ManagedSuspendableRoute(ModelCamelContext context, Route route) {
         super(context, route);
     }
 
-    @ManagedOperation(description = "Suspend route")
     public void suspend() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -38,7 +37,6 @@ public class ManagedSuspendableRoute extends ManagedRoute {
         context.suspendRoute(getRouteId());
     }
 
-    @ManagedOperation(description = "Suspend route (using timeout in seconds)")
     public void suspend(long timeout) throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -46,7 +44,6 @@ public class ManagedSuspendableRoute extends ManagedRoute {
         context.suspendRoute(getRouteId(), timeout, TimeUnit.SECONDS);
     }
 
-    @ManagedOperation(description = "Resume Route")
     public void resume() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");

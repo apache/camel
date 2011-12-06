@@ -42,7 +42,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A Camel specific {@link javax.management.MBeanInfo} assembler that reads the
- * details from the {@link ManagedResource}, {@link ManagedAttribute}, and {@link ManagedOperation} annotations.
+ * details from the {@link ManagedResource}, {@link ManagedAttribute}, {@link ManagedOperation},
+ * {@link ManagedNotification}, and {@link ManagedNotifications} annotations.
  */
 public class MBeanInfoAssembler {
 
@@ -66,14 +67,14 @@ public class MBeanInfoAssembler {
         Set<ModelMBeanNotificationInfo> mBeanNotifications = new LinkedHashSet<ModelMBeanNotificationInfo>();
 
         // extract details from default managed bean
-        extractAttributesAndOperations(defaultManagedBean, attributes, operations);
+        extractAttributesAndOperations(defaultManagedBean.getClass(), attributes, operations);
         extractMbeanAttributes(defaultManagedBean, attributes, mBeanAttributes, mBeanOperations);
         extractMbeanOperations(defaultManagedBean, operations, mBeanOperations);
         extractMbeanNotifications(defaultManagedBean, mBeanNotifications);
 
         // extract details from custom managed bean
         if (customManagedBean != null) {
-            extractAttributesAndOperations(customManagedBean, attributes, operations);
+            extractAttributesAndOperations(customManagedBean.getClass(), attributes, operations);
             extractMbeanAttributes(customManagedBean, attributes, mBeanAttributes, mBeanOperations);
             extractMbeanOperations(customManagedBean, operations, mBeanOperations);
             extractMbeanNotifications(customManagedBean, mBeanNotifications);
@@ -91,8 +92,37 @@ public class MBeanInfoAssembler {
         return info;
     }
 
-    private void extractAttributesAndOperations(Object managedBean, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
-        for (Method method : managedBean.getClass().getMethods()) {
+    private void extractAttributesAndOperations(Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
+        // extract the class
+        doExtractAttributesAndOperations(managedClass, attributes, operations);
+
+        // and then any sub classes
+        if (managedClass.getSuperclass() != null) {
+            Class<?> clazz = managedClass.getSuperclass();
+            // skip any JDK classes
+            if (!clazz.getName().startsWith("java")) {
+                LOG.trace("Extracting attributes and operations from sub class: {}", clazz);
+                extractAttributesAndOperations(clazz, attributes, operations);
+            }
+        }
+
+        // and then any additional interfaces (as interfaces can be annotated as well)
+        if (managedClass.getInterfaces() != null) {
+            for (Class<?> clazz : managedClass.getInterfaces()) {
+                // recursive as there may be multiple interfaces
+                if (clazz.getName().startsWith("java")) {
+                    // skip any JDK classes
+                    continue;
+                }
+                LOG.trace("Extracting attributes and operations from implemented interface: {}", clazz);
+                extractAttributesAndOperations(clazz, attributes, operations);
+            }
+        }
+    }
+
+    private void doExtractAttributesAndOperations(Class<?> managedClass, Map<String, ManagedAttributeInfo> attributes, Set<ManagedOperationInfo> operations) {
+        LOG.trace("Extracting attributes and operations from class: {}", managedClass);
+        for (Method method : managedClass.getDeclaredMethods()) {
             LOG.trace("Extracting attributes and operations from method: {}", method);
 
             ManagedAttribute ma = method.getAnnotation(ManagedAttribute.class);
@@ -109,7 +139,7 @@ public class MBeanInfoAssembler {
                     key = IntrospectionSupport.getSetterShorthandName(method);
                     setter = method;
                 } else {
-                    throw new IllegalArgumentException("@ManagedAttribute can only be used on Java bean methods, was: " + method + " on bean: " + managedBean);
+                    throw new IllegalArgumentException("@ManagedAttribute can only be used on Java bean methods, was: " + method + " on bean: " + managedClass);
                 }
 
                 // they key must be capitalized

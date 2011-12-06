@@ -20,16 +20,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedThreadPoolMBean;
 import org.apache.camel.spi.ManagementStrategy;
 
 /**
  * @version 
  */
 @ManagedResource(description = "Managed ThreadPool")
-public class ManagedThreadPool {
+public class ManagedThreadPool implements ManagedThreadPoolMBean {
 
     private final CamelContext camelContext;
     private final ThreadPoolExecutor threadPool;
@@ -60,72 +59,58 @@ public class ManagedThreadPool {
         return threadPool;
     }
 
-    @ManagedAttribute(description = "Thread Pool id")
     public String getId() {
         return id;
     }
 
-    @ManagedAttribute(description = "Id of source for creating Thread Pool")
     public String getSourceId() {
         return sourceId;
     }
 
-    @ManagedAttribute(description = "Route id for the source, which created the Thread Pool")
     public String getRouteId() {
         return routeId;
     }
 
-    @ManagedAttribute(description = "Id of the thread pool profile which this pool is based upon")
     public String getThreadPoolProfileId() {
         return threadPoolProfileId;
     }
 
-    @ManagedAttribute(description = "Core pool size")
     public int getCorePoolSize() {
         return threadPool.getCorePoolSize();
     }
 
-    @ManagedAttribute(description = "Core pool size")
     public void setCorePoolSize(int corePoolSize) {
         threadPool.setCorePoolSize(corePoolSize);
     }
 
-    @ManagedAttribute(description = "Pool size")
     public int getPoolSize() {
         return threadPool.getPoolSize();
     }
 
-    @ManagedAttribute(description = "Maximum pool size")
     public int getMaximumPoolSize() {
         return threadPool.getMaximumPoolSize();
     }
 
-    @ManagedAttribute(description = "Maximum pool size")
     public void setMaximumPoolSize(int maximumPoolSize) {
         threadPool.setMaximumPoolSize(maximumPoolSize);
     }
 
-    @ManagedAttribute(description = "Largest pool size")
     public int getLargestPoolSize() {
         return threadPool.getLargestPoolSize();
     }
 
-    @ManagedAttribute(description = "Active count")
     public int getActiveCount() {
         return threadPool.getActiveCount();
     }
 
-    @ManagedAttribute(description = "Task count")
     public long getTaskCount() {
         return threadPool.getTaskCount();
     }
 
-    @ManagedAttribute(description = "Completed task count")
     public long getCompletedTaskCount() {
         return threadPool.getCompletedTaskCount();
     }
 
-    @ManagedAttribute(description = "Task queue size")
     public long getTaskQueueSize() {
         if (threadPool.getQueue() != null) {
             return threadPool.getQueue().size();
@@ -134,7 +119,6 @@ public class ManagedThreadPool {
         }
     }
 
-    @ManagedAttribute(description = "Is task queue empty")
     public boolean isTaskQueueEmpty() {
         if (threadPool.getQueue() != null) {
             return threadPool.getQueue().isEmpty();
@@ -143,22 +127,18 @@ public class ManagedThreadPool {
         }
     }
 
-    @ManagedAttribute(description = "Keep alive time in seconds")
     public long getKeepAliveTime() {
         return threadPool.getKeepAliveTime(TimeUnit.SECONDS);
     }
 
-    @ManagedAttribute(description = "Keep alive time in seconds")
     public void setKeepAliveTime(long keepAliveTimeInSeconds) {
         threadPool.setKeepAliveTime(keepAliveTimeInSeconds, TimeUnit.SECONDS);
     }
 
-    @ManagedAttribute(description = "Is shutdown")
     public boolean isShutdown() {
         return threadPool.isShutdown();
     }
 
-    @ManagedOperation(description = "Purges the pool")
     public void purge() {
         threadPool.purge();
     }

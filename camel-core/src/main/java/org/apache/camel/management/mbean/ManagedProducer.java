@@ -18,14 +18,14 @@ package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedProducerMBean;
 
 /**
  * @version 
  */
 @ManagedResource(description = "Managed Producer")
-public class ManagedProducer extends ManagedService {
+public class ManagedProducer extends ManagedService implements ManagedProducerMBean {
     private final Producer producer;
 
     public ManagedProducer(CamelContext context, Producer producer) {
@@ -37,12 +37,10 @@ public class ManagedProducer extends ManagedService {
         return producer;
     }
 
-    @ManagedAttribute(description = "Endpoint Uri")
     public String getEndpointUri() {
         return producer.getEndpoint().getEndpointUri();
     }
 
-    @ManagedAttribute(description = "Singleton")
     public boolean isSingleton() {
         return producer.isSingleton();
     }

@@ -14,25 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management;
+package org.apache.camel.api.management.mbean;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.camel.api.management.ManagedOperation;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-@Documented
-public @interface ManagedNotification {
+public interface ManagedSuspendableRouteMBean {
 
-    String name();
+    @ManagedOperation(description = "Suspend route")
+    void suspend() throws Exception;
 
-    String description() default "";
+    @ManagedOperation(description = "Suspend route (using timeout in seconds)")
+    void suspend(long timeout) throws Exception;
 
-    String[] notificationTypes();
+    @ManagedOperation(description = "Resume Route")
+    void resume() throws Exception;
 
 }

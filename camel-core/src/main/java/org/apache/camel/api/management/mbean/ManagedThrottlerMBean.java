@@ -14,25 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management;
+package org.apache.camel.api.management.mbean;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.apache.camel.api.management.ManagedAttribute;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-@Documented
-public @interface ManagedNotification {
+public interface ManagedThrottlerMBean {
 
-    String name();
+    @ManagedAttribute(description = "Maximum requires per period")
+    long getMaximumRequestsPerPeriod();
 
-    String description() default "";
+    @ManagedAttribute(description = "Maximum requires per period")
+    void setMaximumRequestsPerPeriod(long maximumRequestsPerPeriod);
 
-    String[] notificationTypes();
+    @ManagedAttribute(description = "Time period in millis")
+    long getTimePeriodMillis();
+
+    @ManagedAttribute(description = "Time period in millis")
+    void setTimePeriodMillis(long timePeriodMillis);
 
 }

@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
@@ -29,9 +28,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.TimerListener;
-import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -42,7 +40,7 @@ import org.apache.camel.spi.ManagementStrategy;
  * @version 
  */
 @ManagedResource(description = "Managed CamelContext")
-public class ManagedCamelContext implements TimerListener {
+public class ManagedCamelContext implements TimerListener, ManagedCamelContextMBean {
     private final ModelCamelContext context;   
     private final LoadTriplet load = new LoadTriplet();
 
@@ -58,17 +56,14 @@ public class ManagedCamelContext implements TimerListener {
         return context;
     }
 
-    @ManagedAttribute(description = "Camel id")
     public String getCamelId() {
         return context.getName();
     }
 
-    @ManagedAttribute(description = "Camel Version")
     public String getCamelVersion() {
         return context.getVersion();
     }
 
-    @ManagedAttribute(description = "Camel State")
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         ServiceStatus status = context.getStatus();
@@ -79,12 +74,10 @@ public class ManagedCamelContext implements TimerListener {
         return status.name();
     }
 
-    @ManagedAttribute(description = "Uptime")
     public String getUptime() {
         return context.getUptime();
     }
 
-    @ManagedAttribute(description = "Camel Properties")
     public Map<String, String> getProperties() {
         if (context.getProperties().isEmpty()) {
             return null;
@@ -92,62 +85,50 @@ public class ManagedCamelContext implements TimerListener {
         return context.getProperties();
     }
 
-    @ManagedAttribute(description = "Tracing")
     public Boolean getTracing() {
         return context.isTracing();
     }
 
-    @ManagedAttribute(description = "Tracing")
     public void setTracing(Boolean tracing) {
         context.setTracing(tracing);
     }
 
-    @ManagedAttribute(description = "Current number of inflight Exchanges")
     public Integer getInflightExchanges() {
         return context.getInflightRepository().size();
     }
 
-    @ManagedAttribute(description = "Shutdown timeout")
     public void setTimeout(long timeout) {
         context.getShutdownStrategy().setTimeout(timeout);
     }
 
-    @ManagedAttribute(description = "Shutdown timeout")
     public long getTimeout() {
         return context.getShutdownStrategy().getTimeout();
     }
 
-    @ManagedAttribute(description = "Shutdown timeout time unit")
     public void setTimeUnit(TimeUnit timeUnit) {
         context.getShutdownStrategy().setTimeUnit(timeUnit);
     }
 
-    @ManagedAttribute(description = "Shutdown timeout time unit")
     public TimeUnit getTimeUnit() {
         return context.getShutdownStrategy().getTimeUnit();
     }
 
-    @ManagedAttribute(description = "Whether to force shutdown now when a timeout occurred")
     public void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout) {
         context.getShutdownStrategy().setShutdownNowOnTimeout(shutdownNowOnTimeout);
     }
 
-    @ManagedAttribute(description = "Whether to force shutdown now when a timeout occurred")
     public boolean isShutdownNowOnTimeout() {
         return context.getShutdownStrategy().isShutdownNowOnTimeout();
     }
     
-    @ManagedAttribute(description = "Average load over the last minute")
     public String getLoad01() {
         return String.format("%.2f", load.getLoad1());
     }
 
-    @ManagedAttribute(description = "Average load over the last five minutes")
     public String getLoad05() {
         return String.format("%.2f", load.getLoad5());
     }
 
-    @ManagedAttribute(description = "Average load over the last fifteen minutes")
     public String getLoad15() {
         return String.format("%.2f", load.getLoad15());
     }
@@ -157,7 +138,6 @@ public class ManagedCamelContext implements TimerListener {
         load.update(getInflightExchanges());
     }
 
-    @ManagedOperation(description = "Start Camel")
     public void start() throws Exception {
         if (context.isSuspended()) {
             context.resume();
@@ -166,17 +146,14 @@ public class ManagedCamelContext implements TimerListener {
         }
     }
 
-    @ManagedOperation(description = "Stop Camel (shutdown)")
     public void stop() throws Exception {
         context.stop();
     }
 
-    @ManagedOperation(description = "Suspend Camel")
     public void suspend() throws Exception {
         context.suspend();
     }
 
-    @ManagedOperation(description = "Resume Camel")
     public void resume() throws Exception {
         if (context.isSuspended()) {
             context.resume();
@@ -185,7 +162,6 @@ public class ManagedCamelContext implements TimerListener {
         }
     }
 
-    @ManagedOperation(description = "Send body (in only)")
     public void sendBody(String endpointUri, Object body) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         try {
@@ -195,12 +171,10 @@ public class ManagedCamelContext implements TimerListener {
         }
     }
 
-    @ManagedOperation(description = "Send body (String type) (in only)")
     public void sendStringBody(String endpointUri, String body) throws Exception {
         sendBody(endpointUri, body);
     }
 
-    @ManagedOperation(description = "Send body and headers (in only)")
     public void sendBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         try {
@@ -210,7 +184,6 @@ public class ManagedCamelContext implements TimerListener {
         }
     }
 
-    @ManagedOperation(description = "Request body (in out)")
     public Object requestBody(String endpointUri, Object body) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         Object answer = null;
@@ -222,12 +195,10 @@ public class ManagedCamelContext implements TimerListener {
         return answer;
     }
 
-    @ManagedOperation(description = "Request body (String type) (in out)")
     public Object requestStringBody(String endpointUri, String body) throws Exception {
         return requestBody(endpointUri, body);
     }
 
-    @ManagedOperation(description = "Request body and headers (in out)")
     public Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         Object answer = null;
@@ -239,7 +210,6 @@ public class ManagedCamelContext implements TimerListener {
         return answer;
     }
 
-    @ManagedOperation(description = "Dumps the routes as XML")
     public String dumpRoutesAsXml() throws Exception {
         List<RouteDefinition> routes = context.getRouteDefinitions();
         if (routes.isEmpty()) {
@@ -252,7 +222,6 @@ public class ManagedCamelContext implements TimerListener {
         return ModelHelper.dumpModelAsXml(def);
     }
 
-    @ManagedOperation(description = "Adds or updates existing routes from XML")
     public void addOrUpdateRoutesFromXml(String xml) throws Exception {
         // convert to model from xml
         InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, xml);
@@ -265,14 +234,6 @@ public class ManagedCamelContext implements TimerListener {
         context.addRouteDefinitions(def.getRoutes());
     }
 
-    /**
-     * Creates the endpoint by the given uri
-     *
-     * @param uri uri of endpoint to create
-     * @return <tt>true</tt> if a new endpoint was created, <tt>false</tt> if the endpoint already existed
-     * @throws Exception is thrown if error occurred
-     */
-    @ManagedOperation(description = "Creates the endpoint by the given uri")
     public boolean createEndpoint(String uri) throws Exception {
         if (context.hasEndpoint(uri) != null) {
             // endpoint already exists
@@ -295,15 +256,6 @@ public class ManagedCamelContext implements TimerListener {
         }
     }
 
-    /**
-     * Removes the endpoint by the given pattern
-     *
-     * @param pattern the pattern
-     * @return number of endpoints removed
-     * @throws Exception is thrown if error occurred
-     * @see CamelContext#removeEndpoints(String)
-     */
-    @ManagedOperation(description = "Removes endpoints by the given pattern")
     public int removeEndpoints(String pattern) throws Exception {
         // endpoints is always removed from JMX if removed from context
         Collection<Endpoint> removed = context.removeEndpoints(pattern);

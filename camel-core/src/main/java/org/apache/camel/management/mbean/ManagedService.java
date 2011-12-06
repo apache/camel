@@ -22,14 +22,13 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedInstance;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedServiceMBean;
 import org.apache.camel.spi.ManagementStrategy;
 
 @ManagedResource(description = "Managed Service")
-public class ManagedService implements ManagedInstance {
+public class ManagedService implements ManagedInstance, ManagedServiceMBean {
     private final CamelContext context;
     private final Service service;
     private Route route;
@@ -59,7 +58,6 @@ public class ManagedService implements ManagedInstance {
         this.route = route;
     }
 
-    @ManagedAttribute(description = "Service State")
     public String getState() {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
         if (service instanceof StatefulService) {
@@ -75,12 +73,10 @@ public class ManagedService implements ManagedInstance {
         return ServiceStatus.Started.name();
     }
 
-    @ManagedAttribute(description = "Camel id")
     public String getCamelId() {
         return context.getName();
     }
 
-    @ManagedAttribute(description = "Route id")
     public String getRouteId() {
         if (route != null) {
             return route.getId();
@@ -88,7 +84,6 @@ public class ManagedService implements ManagedInstance {
         return null;
     }
 
-    @ManagedOperation(description = "Start Service")
     public void start() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -96,7 +91,6 @@ public class ManagedService implements ManagedInstance {
         service.start();
     }
 
-    @ManagedOperation(description = "Stop Service")
     public void stop() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -104,12 +98,10 @@ public class ManagedService implements ManagedInstance {
         service.stop();
     }
 
-    @ManagedAttribute(description = "Whether this service supports suspension")
     public boolean isSupportSuspension() {
         return service instanceof SuspendableService;
     }
 
-    @ManagedAttribute(description = "Whether this service is suspended")
     public boolean isSuspended() {
         if (service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
@@ -119,7 +111,6 @@ public class ManagedService implements ManagedInstance {
         }
     }
 
-    @ManagedOperation(description = "Suspend Service")
     public void suspend() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
@@ -132,7 +123,6 @@ public class ManagedService implements ManagedInstance {
         }
     }
 
-    @ManagedOperation(description = "Resume Service")
     public void resume() throws Exception {
         if (!context.getStatus().isStarted()) {
             throw new IllegalArgumentException("CamelContext is not started");
