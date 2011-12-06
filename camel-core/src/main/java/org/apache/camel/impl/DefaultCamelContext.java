@@ -1446,7 +1446,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
         // start routes
         if (doNotStartRoutesOnFirstStart) {
-            log.info("Cannot start routes as CamelContext has been configured with autoStartup=false");
+            log.debug("Skip starting of routes as CamelContext has been configured with autoStartup=false");
         }
 
         // invoke this logic to warmup the routes and if possible also start the routes
@@ -1867,7 +1867,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             // if we are starting camel, then skip routes which are configured to not be auto started
             boolean autoStartup = routeService.getRouteDefinition().isAutoStartup(this);
             if (addingRoute && !autoStartup) {
-                log.info("Cannot start route " + routeService.getId() + " as its configured with autoStartup=false");
+                log.info("Skipping starting of route " + routeService.getId() + " as its configured with autoStartup=false");
                 continue;
             }
 
