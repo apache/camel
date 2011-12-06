@@ -17,9 +17,12 @@
 package org.apache.camel.component.mybatis;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.derby.jdbc.EmbeddedDriver;
 import org.junit.After;
 import org.junit.Before;
 
@@ -31,6 +34,10 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
     protected boolean createTestData() {
         return true;
     }
+    
+    protected String createStatement() {
+        return "create table ACCOUNT ( ACC_ID INTEGER , ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255)  )";
+    }
 
     @Override
     @Before
@@ -40,7 +47,8 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
         // lets create the database...
         Connection connection = createConnection();
         Statement statement = connection.createStatement();
-        statement.execute("create table ACCOUNT ( ACC_ID INTEGER , ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255)  )");
+        statement.execute(createStatement());
+        connection.commit();
         connection.close();
 
         if (createTestData()) {
@@ -63,12 +71,15 @@ public abstract class MyBatisTestSupport extends CamelTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        Connection connection = createConnection();
-        Statement statement = connection.createStatement();
-        statement.execute("drop table ACCOUNT");
-        connection.close();
-
         super.tearDown();
+        
+        try {
+            new EmbeddedDriver().connect("jdbc:derby:memory:mybatis;drop=true", new Properties());
+        } catch (SQLException ex) {
+            if (!"08006".equals(ex.getSQLState())) {
+                throw ex;
+            }
+        }
     }
 
     private Connection createConnection() throws Exception {
