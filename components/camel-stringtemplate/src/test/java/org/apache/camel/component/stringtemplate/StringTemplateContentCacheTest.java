@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.stringtemplate;
 
+import java.util.ArrayList;
+import java.util.Set;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -34,6 +40,11 @@ public class StringTemplateContentCacheTest extends CamelTestSupport {
 
         // create a tm file in the classpath as this is the tricky reloading stuff
         template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/stringtemplate?fileExist=Override", "Hello $headers.name$", Exchange.FILE_NAME, "hello.tm");
+    }
+    
+    @Override
+    public boolean useJmx() {
+        return true;
     }
 
     @Test
@@ -69,6 +80,45 @@ public class StringTemplateContentCacheTest extends CamelTestSupport {
         // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
         mock.expectedBodiesReceived("Hello Paris");
 
+        template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
+        mock.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testClearCacheViaJmx() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello London");
+
+        template.sendBodyAndHeader("direct:b", "Body", "name", "London");
+        mock.assertIsSatisfied();
+
+        // now change content in the file in the classpath and try again
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/stringtemplate?fileExist=Override", "Bye $headers.name$", Exchange.FILE_NAME, "hello.tm");
+
+        mock.reset();
+        // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
+        mock.expectedBodiesReceived("Hello Paris");
+
+        template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
+        mock.assertIsSatisfied();
+        
+        // clear the cache using jmx
+        MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
+        Set<ObjectName> objNameSet = mbeanServer.queryNames(new ObjectName("org.apache.camel:type=endpoints,name=\"string-template:*contentCache=true*\",*"), null);
+        ObjectName managedObjName = new ArrayList<ObjectName>(objNameSet).get(0);        
+        mbeanServer.invoke(managedObjName, "clearContentCache", null, null);
+           
+        mock.reset();
+        // we expect that the new resource will be set as the cached value, since the cache has been cleared
+        mock.expectedBodiesReceived("Bye Paris");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/stringtemplate?fileExist=Override", "Bye $headers.name$", Exchange.FILE_NAME, "hello.tm");    
+        template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
+        mock.assertIsSatisfied();
+        
+        mock.reset();
+        // we expect that the cached value will not be replaced by a different resource since the cache is now re-established
+        mock.expectedBodiesReceived("Bye Paris");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/stringtemplate?fileExist=Override", "Hello $headers.name$", Exchange.FILE_NAME, "hello.tm");
         template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
         mock.assertIsSatisfied();
     }

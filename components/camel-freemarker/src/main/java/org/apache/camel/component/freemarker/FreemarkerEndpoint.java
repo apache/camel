@@ -89,6 +89,11 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
         log.debug("Getting endpoint with URI: {}", newUri);
         return (FreemarkerEndpoint) getCamelContext().getEndpoint(newUri);
     }
+    
+    @Override
+    public void clearContentCache() {
+        configuration.clearTemplateCache();   
+    }
 
     @Override
     @SuppressWarnings("unchecked")

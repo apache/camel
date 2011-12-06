@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Component;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedResourceEndpointMBean;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.util.IOHelper;
@@ -32,11 +34,12 @@ import org.slf4j.LoggerFactory;
  * A useful base class for endpoints which depend on a resource
  * such as things like Velocity or XQuery based components.
  */
-public abstract class ResourceEndpoint extends ProcessorEndpoint {
+@ManagedResource(description = "Managed ResourceEndpoint")
+public abstract class ResourceEndpoint extends ProcessorEndpoint implements ManagedResourceEndpointMBean {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private String resourceUri;
     private boolean contentCache;
-    private byte[] buffer;
+    private volatile byte[] buffer;
 
     public ResourceEndpoint() {
     }
@@ -58,7 +61,7 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint {
     public InputStream getResourceAsInputStream() throws IOException {
         // try to get the resource input stream
         InputStream is;
-        if (contentCache) {
+        if (isContentCache()) {
             synchronized (this) {
                 if (buffer == null) {
                     log.debug("Reading resource: {} into the content cache", resourceUri);
@@ -91,6 +94,11 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint {
 
     public boolean isContentCache() {
         return contentCache;
+    }
+    
+    public synchronized void clearContentCache() {
+        log.debug("Clearing resource: {} from the content cache", resourceUri);
+        buffer = null;
     }
 
     /**
