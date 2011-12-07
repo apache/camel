@@ -57,7 +57,7 @@ public class JpaNonTXRollbackTest extends CamelTestSupport {
         template.sendBody("jpa://" + SendEmail.class.getName(), new SendEmail("kaboom@beer.org"));
 
         // should only rollback the failed
-        getMockEndpoint("mock:start").expectedMinimumMessageCount(4);
+        getMockEndpoint("mock:start").expectedMinimumMessageCount(5);
         // and only the 2 good messages goes here
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
@@ -78,7 +78,7 @@ public class JpaNonTXRollbackTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jpa://" + SendEmail.class.getName() + "?consumer.transacted=false&delay=1000").routeId("foo").noAutoStartup()
+                from("jpa://" + SendEmail.class.getName() + "?consumer.transacted=false&delay=100").routeId("foo").noAutoStartup()
                         .to("mock:start")
                         .process(new Processor() {
                             @Override
