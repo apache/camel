@@ -27,7 +27,8 @@
 
   <artifactId>maven-html-to-pdf</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Camel :: Html to Pdf Plugin</name>
+  <name>Maven Plugins :: Camel Manual Plugin</name>
+  <description>Maven plugin to generate the Camel manual by converting html to pdf document</description>
 
   <dependencies>
     <dependency>

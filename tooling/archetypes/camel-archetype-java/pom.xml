@@ -29,7 +29,7 @@
 
   <groupId>org.apache.camel.archetypes</groupId>
   <artifactId>camel-archetype-java</artifactId>
-  <name>Camel :: Archetypes :: Router</name>
+  <name>Camel :: Archetypes :: Java Router</name>
   <description>Creates a new Camel project using Java DSL.</description>
   <packaging>maven-archetype</packaging>
 
