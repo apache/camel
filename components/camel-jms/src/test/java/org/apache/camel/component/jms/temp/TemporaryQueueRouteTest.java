@@ -66,8 +66,6 @@ public class TemporaryQueueRouteTest extends CamelTestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        deleteDirectory("activemq-data");
-
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();

@@ -118,11 +118,9 @@ public class TwoConsumerOnSameTopicTest extends CamelTestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        deleteDirectory("activemq-data");
-
         CamelContext camelContext = super.createCamelContext();
 
-        // must be persistent to rember the messages
+        // must be persistent to remember the messages
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 

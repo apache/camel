@@ -42,8 +42,6 @@ public class ConsumerTemplateJmsSelectorTest extends CamelTestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        deleteDirectory("activemq-data");
-
         CamelContext camelContext = super.createCamelContext();
 
         // must be persistent to rember the messages

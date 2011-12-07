@@ -33,12 +33,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsDeadLetterChannelInOutTest extends CamelTestSupport {
 
-    @Override
-    public void setUp() throws Exception {
-        deleteDirectory("activemq-data");
-        super.setUp();
-    }
-
     @Test
     public void testJmsDLCInOut() throws Exception {
         Exchange out = template.send("direct:start", new Processor() {

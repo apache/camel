@@ -33,12 +33,6 @@ public class JmsThrottlingInflightRoutePolicyTest extends CamelTestSupport {
 
     private int size = 200;
 
-    @Override
-    public void setUp() throws Exception {
-        deleteDirectory("activemq-data");
-        super.setUp();
-    }
-
     @Test
     public void testJmsThrottlingInflightRoutePolicy() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

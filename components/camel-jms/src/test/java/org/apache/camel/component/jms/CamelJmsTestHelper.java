@@ -70,7 +70,11 @@ public final class CamelJmsTestHelper {
     public static ConnectionFactory createPersistentConnectionFactory(String options) {
         // using a unique broker name improves testing when running the entire test suite in the same JVM
         int id = counter.incrementAndGet();
-        String url = "vm://test-broker-" + id + "?broker.persistent=true&broker.useJmx=false";
+
+        // use an unique data directory in target
+        String dir = "target/activemq-data-" + id;
+
+        String url = "vm://test-broker-" + id + "?broker.persistent=true&broker.useJmx=false&broker.dataDirectory=" + dir;
         if (options != null) {
             url = url + "&" + options;
         }

@@ -72,7 +72,6 @@ public class JmsAutoStartupTest extends CamelTestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        deleteDirectory("activemq-data");
         CamelContext camelContext = super.createCamelContext();
 
         // must use persistent so the message is not lost

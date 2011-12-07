@@ -31,12 +31,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsDurableTopicTest extends CamelTestSupport {
 
-    @Override
-    public void setUp() throws Exception {
-        deleteDirectory("./activemq-data");
-        super.setUp();
-    }
-
     @Test
     public void testDurableTopic() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
