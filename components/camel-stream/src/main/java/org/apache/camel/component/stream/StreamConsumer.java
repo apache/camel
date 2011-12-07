@@ -36,6 +36,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,8 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
     private ExecutorService executor;
-    private InputStream inputStream = System.in;
+    private volatile InputStream inputStream = System.in;
+    private volatile InputStream inputStreamToClose;
     private StreamEndpoint endpoint;
     private String uri;
     private boolean initialPromptDone;
@@ -86,6 +88,9 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             executor = null;
         }
         lines.clear();
+
+        // do not close regular inputStream as it may be System.in etc.
+        IOHelper.close(inputStreamToClose);
         super.doStop();
     }
 
@@ -98,16 +103,21 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     }
 
     private BufferedReader initializeStream() throws Exception {
+        // close old stream, before obtaining a new stream
+        IOHelper.close(inputStreamToClose);
+
         if ("in".equals(uri)) {
             inputStream = System.in;
+            inputStreamToClose = null;
         } else if ("file".equals(uri)) {
             inputStream = resolveStreamFromFile();
+            inputStreamToClose = inputStream;
         } else if ("url".equals(uri)) {
             inputStream = resolveStreamFromUrl();
+            inputStreamToClose = inputStream;
         }
         Charset charset = endpoint.getCharset();
-        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset));
-        return br;
+        return new BufferedReader(new InputStreamReader(inputStream, charset));
     }
 
     private void readFromStream() throws Exception {
