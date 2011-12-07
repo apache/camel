@@ -28,8 +28,8 @@ import org.apache.karaf.shell.console.OsgiCommandSupport;
 /**
  * Command to list all Camel routes.
  */
-@Command(scope = "camel", name = "list-routes", description = "List all Camel routes.")
-public class ListRoutesCommand extends OsgiCommandSupport {
+@Command(scope = "camel", name = "route-list", description = "List Camel routes.")
+public class RouteList extends OsgiCommandSupport {
 
     protected static final String HEADER_FORMAT = "%-20s %-20s %-20s";
     protected static final String OUTPUT_FORMAT = "[%-18s] [%-18s] [%-18s]";

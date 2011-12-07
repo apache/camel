@@ -18,22 +18,13 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
 
     <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
-        <command name="camel/list-contexts">
-            <action class="org.apache.camel.karaf.commands.ListContextsCommand">
+        <command name="camel/context-list">
+            <action class="org.apache.camel.karaf.commands.ContextList">
                 <property name="camelController" ref="camelController"/>
             </action>
         </command>
-        <command name="camel/info-context">
-            <action class="org.apache.camel.karaf.commands.InfoContextCommand">
-                <property name="camelController" ref="camelController"/>
-            </action>
-            <completers>
-                <ref component-id="camelContextCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command name="camel/start-context">
-            <action class="org.apache.camel.karaf.commands.StartContextCommand">
+        <command name="camel/context-info">
+            <action class="org.apache.camel.karaf.commands.ContextInfo">
                 <property name="camelController" ref="camelController"/>
             </action>
             <completers>
@@ -41,8 +32,8 @@
                 <null/>
             </completers>
         </command>
-        <command name="camel/stop-context">
-            <action class="org.apache.camel.karaf.commands.StopContextCommand">
+        <command name="camel/context-start">
+            <action class="org.apache.camel.karaf.commands.ContextStart">
                 <property name="camelController" ref="camelController"/>
             </action>
             <completers>
@@ -50,8 +41,8 @@
                 <null/>
             </completers>
         </command>
-        <command name="camel/list-routes">
-            <action class="org.apache.camel.karaf.commands.ListRoutesCommand">
+        <command name="camel/context-stop">
+            <action class="org.apache.camel.karaf.commands.ContextStop">
                 <property name="camelController" ref="camelController"/>
             </action>
             <completers>
@@ -59,8 +50,17 @@
                 <null/>
             </completers>
         </command>
-        <command name="camel/info-route">
-            <action class="org.apache.camel.karaf.commands.InfoRouteCommand">
+        <command name="camel/route-list">
+            <action class="org.apache.camel.karaf.commands.RouteList">
+                <property name="camelController" ref="camelController"/>
+            </action>
+            <completers>
+                <ref component-id="camelContextCompleter"/>
+                <null/>
+            </completers>
+        </command>
+        <command name="camel/route-info">
+            <action class="org.apache.camel.karaf.commands.RouteInfo">
                 <property name="camelController" ref="camelController"/>
             </action>
             <completers>
@@ -68,8 +68,8 @@
                 <null/>
             </completers>
         </command>
-        <command name="camel/show-route">
-            <action class="org.apache.camel.karaf.commands.ShowRouteCommand">
+        <command name="camel/route-show">
+            <action class="org.apache.camel.karaf.commands.RouteShow">
                 <property name="camelController" ref="camelController"/>
             </action>
             <completers>
@@ -77,8 +77,8 @@
                 <null/>
             </completers>
         </command>
-        <command name="camel/start-route">
-            <action class="org.apache.camel.karaf.commands.StartRouteCommand">
+        <command name="camel/route-start">
+            <action class="org.apache.camel.karaf.commands.RouteStart">
                 <property name="camelController" ref="camelController"/>
             </action>
             <completers>
@@ -86,8 +86,8 @@
                 <null/>
             </completers>
         </command>
-        <command name="camel/stop-route">
-            <action class="org.apache.camel.karaf.commands.StopRouteCommand">
+        <command name="camel/route-stop">
+            <action class="org.apache.camel.karaf.commands.RouteStop">
                 <property name="camelController" ref="camelController"/>
             </action>
             <completers>
@@ -95,8 +95,8 @@
                 <null/>
             </completers>
         </command>
-        <command name="camel/resume-route">
-            <action class="org.apache.camel.karaf.commands.ResumeRouteCommand">
+        <command name="camel/route-resume">
+            <action class="org.apache.camel.karaf.commands.RouteResume">
                 <property name="camelController" ref="camelController"/>
             </action>
             <completers>
@@ -104,8 +104,8 @@
                 <null/>
             </completers>
         </command>
-        <command name="camel/suspend-route">
-            <action class="org.apache.camel.karaf.commands.SuspendRouteCommand">
+        <command name="camel/route-suspend">
+            <action class="org.apache.camel.karaf.commands.RouteSuspend">
                 <property name="camelController" ref="camelController"/>
             </action>
             <completers>

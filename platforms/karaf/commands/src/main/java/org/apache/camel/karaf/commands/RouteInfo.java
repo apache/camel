@@ -37,8 +37,8 @@ import org.apache.karaf.util.StringEscapeUtils;
 /**
  * Command to display detailed information about a Camel route.
  */
-@Command(scope = "camel", name = "info-route", description = "Display information about a Camel route.")
-public class InfoRouteCommand extends OsgiCommandSupport {
+@Command(scope = "camel", name = "route-info", description = "Display information about a Camel route.")
+public class RouteInfo extends OsgiCommandSupport {
 
     @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
     String route;

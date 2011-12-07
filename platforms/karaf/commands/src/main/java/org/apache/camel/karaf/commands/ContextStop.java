@@ -16,23 +16,18 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.Route;
-import org.apache.camel.model.ModelHelper;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.CamelContext;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
- * Command to show the route marshaled in XML.
+ * Command to stop a Camel context.
  */
-@Command(scope = "camel", name = "show-route", description = "Display the Camel route definition in XML.")
-public class ShowRouteCommand extends OsgiCommandSupport {
+@Command(scope = "camel", name = "context-stop", description = "Stop a Camel context.")
+public class ContextStop extends OsgiCommandSupport {
 
-    @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
-    String route;
-
-    @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
+    @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
     String context;
 
     private CamelController camelController;
@@ -42,17 +37,12 @@ public class ShowRouteCommand extends OsgiCommandSupport {
     }
 
     public Object doExecute() throws Exception {
-        Route camelRoute = camelController.getRoute(route, context);
-        if (camelRoute == null) {
-            System.err.println("Camel route " + route + " not found.");
+        CamelContext camelContext = camelController.getCamelContext(context);
+        if (camelContext == null) {
+            System.err.println("The Camel context " + camelContext + " is not found.");
             return null;
         }
-        RouteDefinition routeDefinition = camelController.getRouteDefinition(route, camelRoute.getRouteContext().getCamelContext().getName());
-        if (routeDefinition == null) {
-            System.err.println("Definition of route " + route + " not found.");
-            return null;
-        }
-        System.out.println(ModelHelper.dumpModelAsXml(routeDefinition));
+        camelContext.stop();
         return null;
     }
 

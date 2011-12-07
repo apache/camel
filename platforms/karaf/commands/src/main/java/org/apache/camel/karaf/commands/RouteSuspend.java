@@ -23,10 +23,10 @@ import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
- * Command to resume a route.
+ * Command to suspend a route.
  */
-@Command(scope = "camel", name = "resume-route", description = "Resume a Camel route.")
-public class ResumeRouteCommand extends OsgiCommandSupport {
+@Command(scope = "camel", name = " route-suspend", description = "Suspend a Camel route.")
+public class RouteSuspend extends OsgiCommandSupport {
 
     @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
     String route;
@@ -47,7 +47,7 @@ public class ResumeRouteCommand extends OsgiCommandSupport {
             return null;
         }
         CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
-        camelContext.resumeRoute(route);
+        camelContext.suspendRoute(route);
         return null;
     }
 

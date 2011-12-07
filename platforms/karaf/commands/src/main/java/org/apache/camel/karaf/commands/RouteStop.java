@@ -16,20 +16,23 @@
  */
 package org.apache.camel.karaf.commands;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
+import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
- * List the Camel contexts available in the Karaf instance.
+ * Command to stop a route.
  */
-@Command(scope = "camel", name = "list-contexts", description = "Lists all Camel contexts.")
-public class ListContextsCommand extends OsgiCommandSupport {
+@Command(scope = "camel", name = " route-stop", description = "Stop a Camel route.")
+public class RouteStop extends OsgiCommandSupport {
 
-    protected static final String HEADER_FORMAT = "%-20s %-20s %-20s";
-    protected static final String OUTPUT_FORMAT = "[%-18s] [%-18s] [%-18s]";
+    @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
+    String route;
+
+    @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
+    String context;
 
     private CamelController camelController;
 
@@ -37,14 +40,14 @@ public class ListContextsCommand extends OsgiCommandSupport {
         this.camelController = camelController;
     }
 
-    protected Object doExecute() throws Exception {
-        System.out.println(String.format(HEADER_FORMAT, "Name", "Status", "Uptime"));
-
-        List<CamelContext> camelContexts = camelController.getCamelContexts();
-        for (CamelContext camelContext : camelContexts) {
-            System.out.println(String.format(OUTPUT_FORMAT, camelContext.getName(), camelContext.getStatus(), camelContext.getUptime()));
+    public Object doExecute() throws Exception {
+        Route camelRoute = camelController.getRoute(route, context);
+        if (camelRoute == null) {
+            System.err.println("Camel route " + route + " not found.");
+            return null;
         }
-
+        CamelContext camelContext = camelRoute.getRouteContext().getCamelContext();
+        camelContext.stopRoute(route);
         return null;
     }
 

@@ -27,8 +27,8 @@ import org.apache.karaf.util.StringEscapeUtils;
 /**
  * Command to display detailed information about a Camel context.
  */
-@Command(scope = "camel", name = "info-context", description = "Display detailed information about a Camel context.")
-public class InfoContextCommand extends OsgiCommandSupport {
+@Command(scope = "camel", name = "context-info", description = "Display detailed information about a Camel context.")
+public class ContextInfo extends OsgiCommandSupport {
 
     @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
     String name;
