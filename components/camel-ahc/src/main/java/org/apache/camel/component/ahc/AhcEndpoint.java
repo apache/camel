@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -155,6 +156,10 @@ public class AhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        // ensure client is closed when stopping
+        if (client != null && !client.isClosed()) {
+            client.close();
+        }
         client = null;
     }
 
