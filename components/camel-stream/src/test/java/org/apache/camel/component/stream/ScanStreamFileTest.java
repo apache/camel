@@ -51,10 +51,13 @@ public class ScanStreamFileTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(2);
 
         FileOutputStream fos = new FileOutputStream(file);
-        fos.write("Hello\n".getBytes());
-        Thread.sleep(150);
-        fos.write("World\n".getBytes());
-        fos.close();
+        try {
+            fos.write("Hello\n".getBytes());
+            Thread.sleep(150);
+            fos.write("World\n".getBytes());
+        } finally {
+            fos.close();
+        }
         
         assertMockEndpointsSatisfied();
     }
@@ -65,17 +68,20 @@ public class ScanStreamFileTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(3);
 
         FileOutputStream fos = refreshFile(null);
-        fos.write("Hello\n".getBytes());        
-        Thread.sleep(150);
-        fos = refreshFile(fos);
-        fos.write("there\n".getBytes());
-        Thread.sleep(150);
-        fos = refreshFile(fos);
-        fos.write("World\n".getBytes());
-        Thread.sleep(150);
-        fos = refreshFile(fos);
-        fos.write("!\n".getBytes());
-        fos.close();
+        try {
+            fos.write("Hello\n".getBytes());
+            Thread.sleep(150);
+            fos = refreshFile(fos);
+            fos.write("there\n".getBytes());
+            Thread.sleep(150);
+            fos = refreshFile(fos);
+            fos.write("World\n".getBytes());
+            Thread.sleep(150);
+            fos = refreshFile(fos);
+            fos.write("!\n".getBytes());
+        } finally {
+            fos.close();
+        }
 
         assertMockEndpointsSatisfied();
     }
