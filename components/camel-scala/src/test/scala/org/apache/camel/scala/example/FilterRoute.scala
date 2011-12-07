@@ -16,16 +16,16 @@
  */
 package org.apache.camel.scala.example
 
-import org.apache.camel.scala.dsl.builder.{RouteBuilder, RouteBuilderSupport}
+import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * A Camel route which filters unwanted messages using Scala predicates.
+ * A Camel route, defined using the Scala DSL. The route filters unwanted messages using Scala predicates.
  */
 // START SNIPPET: e1
-// the class should extend the RouteBuilderSupport from org.apache.camel.scala.dsl.builder package
-class FilterRoute extends RouteBuilderSupport {
+class FilterRoute {
 
-  // then define any method which creates a new org.apache.camel.scala.dsl.builder.RouteBuilder instance
+  // define any method which creates a new org.apache.camel.scala.dsl.builder.RouteBuilder instance
+  // and within the scope of RouteBuilder we have the Scala DSL at our disposal
   def createMyFilterRoute = new RouteBuilder {
     // and here we can use the Scala DSL to define the routes
     from("direct:start")

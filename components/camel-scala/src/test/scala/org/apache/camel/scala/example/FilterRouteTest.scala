@@ -18,14 +18,17 @@ package org.apache.camel.scala.example
 
 import org.apache.camel.test.junit4.CamelTestSupport
 import org.junit.Test
+import org.apache.camel.scala.dsl.builder.RouteBuilderSupport
 
 // START SNIPPET: e1
-// we want to use the Camel test kit to test the FilterRouteExample which we can do by extending
+// we want to use the Camel test kit to test the FilterRoute which we can do by extending
 // the CamelTestSupport class from camel-test
-class FilterRouteTest extends CamelTestSupport {
+// to bridge the Scala DSL RouteBuilder with the Java DSL RouteBuilder, that the Camel test kit
+// is using, we need to mixin the trait RouteBuilderSupport (using the with keyword)
+class FilterRouteTest extends CamelTestSupport with RouteBuilderSupport {
 
-  // then override this method to provide the RouteBuilder instance from camel-core
-  override def createRouteBuilder() = new FilterRoute().createMyFilterRoute.builder
+  // then override the createRouteBuilder method to provide the route we want to test
+  override def createRouteBuilder() = new FilterRoute().createMyFilterRoute
 
   // and here we just have regular JUnit test method which uses the API from camel-test
 
