@@ -35,6 +35,7 @@ import org.cometd.server.BayeuxServerImpl;
 public class CometdBinding {
     public static final String HEADERS_FIELD = "CamelHeaders";
     public static final String COMETD_CLIENT_ID_HEADER_NAME = "CometdClientId";
+    public static final String SUBSCRIPTION_HEADER_NAME = "subscription";
 
     private final BayeuxServerImpl bayeux;
 
@@ -63,6 +64,11 @@ public class CometdBinding {
         message.setBody(data);
         message.setHeaders(getHeadersFromMessage(cometdMessage));
         message.setHeader(COMETD_CLIENT_ID_HEADER_NAME, remote.getId());
+
+        if (cometdMessage.get(SUBSCRIPTION_HEADER_NAME) != null) {
+            message.setHeader(SUBSCRIPTION_HEADER_NAME, cometdMessage.get(SUBSCRIPTION_HEADER_NAME));
+        }
+
         return message;
     }
 
