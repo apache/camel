@@ -29,7 +29,7 @@
     </parent>
 
     <artifactId>camel-itest</artifactId>
-    <name>Camel :: Integration Tests</name>
+    <name>Camel :: Integration Tests :: Non OSGi</name>
     <description>Performs cross component integration tests</description>
 
     <repositories>

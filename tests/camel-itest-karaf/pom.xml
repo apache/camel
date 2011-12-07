@@ -30,7 +30,7 @@
     </parent>
 
     <artifactId>camel-itest-karaf</artifactId>
-    <name>Camel :: Karaf Integration Tests</name>
+    <name>Camel :: Integration Tests :: Karaf</name>
     <description>Performs Karaf compliance integration tests</description>
 
     <dependencies>

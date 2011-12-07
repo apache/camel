@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-partial-classpath-test</artifactId>
-  <name>Camel :: Partial Classpath Tests</name>
+  <name>Camel :: Integration Tests :: Partial Classpath</name>
   <description>Performs integration tests with incomplete classpaths</description>
 
   <dependencies>

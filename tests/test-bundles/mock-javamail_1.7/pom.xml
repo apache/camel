@@ -30,7 +30,7 @@
     <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
     <version>2.9-SNAPSHOT</version>
     <packaging>bundle</packaging>
-    <name>Camel :: Test Bundles: ${pkgArtifactId}-${pkgVersion}</name>
+    <name>Camel :: Integration Tests :: Test Bundles: ${pkgArtifactId}-${pkgVersion}</name>
     <description>
         This bundle simply wraps ${pkgArtifactId}-${pkgVersion}.jar.
     </description>

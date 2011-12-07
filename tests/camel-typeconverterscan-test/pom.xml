@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-typeconverterscan-test</artifactId>
-  <name>Camel :: TypeConverter Scan Tests</name>
+  <name>Camel :: Integration Tests :: TypeConverter Scan</name>
   <description>Tests the type converter package scanning</description>
 
   <dependencies>

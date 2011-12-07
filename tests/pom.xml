@@ -27,8 +27,8 @@
   </parent>
 
   <artifactId>tests</artifactId>
-  <name>Camel :: Tests</name>
-  <description>Camel Tests</description>
+  <name>Camel :: Integration Tests</name>
+  <description>Camel Integration Tests</description>
   <packaging>pom</packaging>
 
   <modules>

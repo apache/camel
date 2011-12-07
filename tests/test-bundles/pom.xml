@@ -31,7 +31,7 @@
     <artifactId>bundles-pom</artifactId>
     <packaging>pom</packaging>
     <version>2.9-SNAPSHOT</version>
-    <name>Camel :: Tests Bundles</name>
+    <name>Camel :: Integration Tests :: Test Bundles</name>
 
     <properties>
         <servicemix.legal.version>1.0</servicemix.legal.version>
