@@ -26,7 +26,7 @@
 
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/SoapContext/SoapPort"
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/SoapContext/SoapPort"
                    wsdlURL="wsdl/hello_world.wsdl"
                    serviceClass="org.apache.hello_world_soap_http.Greeter"
                    endpointName="s:SoapOverHttp"
@@ -34,7 +34,7 @@
                    xmlns:s="http://apache.org/hello_world_soap_http">
   </cxf:cxfEndpoint>
 
-  <cxf:cxfEndpoint id="serviceEndpoint2" address="http://localhost:9001/SoapContext/SoapPort"
+  <cxf:cxfEndpoint id="serviceEndpoint2" address="http://localhost:9003/SoapContext/SoapPort"
                    wsdlURL="wsdl/hello_world.wsdl"
                    serviceClass="org.apache.hello_world_soap_http.Greeter"
                    endpointName="s:SoapOverHttp"
