@@ -27,7 +27,7 @@
 
 	<artifactId>camel-example-spring-ws</artifactId>
 	<packaging>war</packaging>
-	<name>Camel :: Example :: Spring Web Services</name>
+	<name>Camel :: Example :: Spring :: Web Services</name>
 	<description>An example showing how to work with Camel and Spring Web Services</description>
 
 	<dependencies>

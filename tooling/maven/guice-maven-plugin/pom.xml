@@ -27,7 +27,7 @@
 
   <artifactId>guice-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Maven Plugins :: Camel Maven Guice</name>
+  <name>Camel :: Maven Plugins :: Camel Maven Guice</name>
   <description>Maven plugin to run Camel with Guice</description>
 
   <dependencies>

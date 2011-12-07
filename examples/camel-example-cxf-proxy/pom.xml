@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>camel-example-cxf-proxy</artifactId>
-    <name>Camel :: Example :: CXF Proxy</name>
+    <name>Camel :: Example :: CXF :: Proxy</name>
     <description>An example which uses Camel to proxy a web service</description>
     <packaging>bundle</packaging>
     

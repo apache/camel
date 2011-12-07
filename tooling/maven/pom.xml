@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>maven-plugins</artifactId>
-  <name>Maven Plugins</name>
+  <name>Camel :: Maven Plugins</name>
   <description>Camel Maven Plugins</description>
   <packaging>pom</packaging>
 

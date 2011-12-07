@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>camel-example-cxf-tomcat</artifactId>
-    <name>Camel :: Example :: CXF Tomcat</name>
+    <name>Camel :: Example :: CXF :: Tomcat</name>
     <description>An example using Camel CXF (code first) with Apache Tomcat</description>
     <packaging>war</packaging>
 

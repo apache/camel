@@ -29,7 +29,7 @@
 
 	<artifactId>camel-example-spring-security</artifactId>
 	<packaging>war</packaging>
-	<name>Camel :: Example :: Spring Security</name>
+	<name>Camel :: Example :: Spring :: Security</name>
 	<description>An example showing how to work with Camel and Spring Security</description>
 
 	<dependencies>
