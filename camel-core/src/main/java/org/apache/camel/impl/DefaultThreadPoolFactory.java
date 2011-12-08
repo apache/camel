@@ -89,9 +89,6 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
         return answer;
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.impl.ThreadPoolFactory#newScheduledThreadPool(java.lang.Integer, java.util.concurrent.ThreadFactory)
-     */
     @Override
     public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
         return Executors.newScheduledThreadPool(profile.getPoolSize(), threadFactory);

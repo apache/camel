@@ -27,6 +27,7 @@ import java.util.concurrent.ThreadFactory;
  * should not be created with the jdk methods
  */
 public interface ThreadPoolFactory {
+
     /**
      * Creates a new cached thread pool
      * <p/>
