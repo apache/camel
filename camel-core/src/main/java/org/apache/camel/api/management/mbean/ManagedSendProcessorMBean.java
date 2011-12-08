@@ -18,7 +18,7 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedSendProcessorMBean {
+public interface ManagedSendProcessorMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Destination as Endpoint Uri")
     String getDestination();

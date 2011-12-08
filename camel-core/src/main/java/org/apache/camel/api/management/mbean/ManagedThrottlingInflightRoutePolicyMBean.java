@@ -18,7 +18,7 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedThrottlingInflightRoutePolicyMBean {
+public interface ManagedThrottlingInflightRoutePolicyMBean extends ManagedServiceMBean {
 
     @ManagedAttribute(description = "Maximum inflight exchanges")
     int getMaxInflightExchanges();

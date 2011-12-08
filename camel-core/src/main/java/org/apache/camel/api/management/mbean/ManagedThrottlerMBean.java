@@ -18,7 +18,7 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedThrottlerMBean {
+public interface ManagedThrottlerMBean extends ManagedProcessorMBean {
 
     @ManagedAttribute(description = "Maximum requires per period")
     long getMaximumRequestsPerPeriod();

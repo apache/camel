@@ -18,7 +18,7 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedSuspendableRouteMBean {
+public interface ManagedSuspendableRouteMBean extends ManagedRouteMBean {
 
     @ManagedOperation(description = "Suspend route")
     void suspend() throws Exception;

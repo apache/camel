@@ -19,7 +19,7 @@ package org.apache.camel.api.management.mbean;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedProcessorMBean {
+public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
 
     @ManagedAttribute(description = "Processor State")
     String getState();

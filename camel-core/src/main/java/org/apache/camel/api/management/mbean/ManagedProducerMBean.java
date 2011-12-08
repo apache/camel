@@ -18,7 +18,7 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedProducerMBean {
+public interface ManagedProducerMBean extends ManagedServiceMBean {
 
     @ManagedAttribute(description = "Endpoint Uri")
     String getEndpointUri();

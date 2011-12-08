@@ -18,7 +18,7 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedBrowsableEndpointMBean {
+public interface ManagedBrowsableEndpointMBean extends ManagedEndpointMBean {
 
     @ManagedOperation(description = "Current number of Exchanges in Queue")
     long queueSize();

@@ -18,7 +18,7 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 
-public interface ManagedSchedulePollConsumerMBean {
+public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
 
     @ManagedAttribute(description = "Scheduled Delay")
     long getDelay();

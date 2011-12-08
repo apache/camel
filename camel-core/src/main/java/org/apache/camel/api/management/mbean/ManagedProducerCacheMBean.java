@@ -19,7 +19,7 @@ package org.apache.camel.api.management.mbean;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedProducerCacheMBean {
+public interface ManagedProducerCacheMBean extends ManagedServiceMBean {
 
     @ManagedAttribute(description = "Source")
     String getSource();
