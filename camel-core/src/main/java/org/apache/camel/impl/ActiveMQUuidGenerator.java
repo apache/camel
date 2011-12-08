@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.InetAddressUtil;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,10 +62,16 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
                 Thread.sleep(100);
                 ss.close();
             } catch (Exception ioe) {
-                LOG.warn("Cannot generate unique stub", ioe);
+                LOG.warn("Could not generate unique stub by using DNS and binding to local port, will fallback and use localhost as name", ioe);
             }
-        } else {
+        }
+
+        // fallback to use localhost
+        if (hostName == null) {
             hostName = "localhost";
+        }
+
+        if (ObjectHelper.isEmpty(stub)) {
             stub = "-1-" + System.currentTimeMillis() + "-";
         }
         UNIQUE_STUB = stub;
