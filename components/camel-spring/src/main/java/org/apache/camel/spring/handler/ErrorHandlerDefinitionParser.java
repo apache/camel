@@ -150,6 +150,16 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
             throw new IllegalArgumentException("Attribute executorServiceRef is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
+        String logName = element.getAttribute("logName");
+        if (ObjectHelper.isNotEmpty(logName) && (!type.equals(ErrorHandlerType.LoggingErrorHandler))) {
+            throw new IllegalArgumentException("Attribute logName is not supported by error handler type: "
+                    + type.name() + ", in error handler with id: " + id);
+        }
+        String level = element.getAttribute("level");
+        if (ObjectHelper.isNotEmpty(level) && (!type.equals(ErrorHandlerType.LoggingErrorHandler))) {
+            throw new IllegalArgumentException("Attribute level is not supported by error handler type: "
+                    + type.name() + ", in error handler with id: " + id);
+        }
     }
 
     private void parserRefAttribute(Element element, String attributeName, String propertyName, BeanDefinitionBuilder builder) {
