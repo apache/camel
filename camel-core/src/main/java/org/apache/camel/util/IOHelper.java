@@ -16,11 +16,17 @@
  */
 package org.apache.camel.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
@@ -64,6 +70,66 @@ public final class IOHelper {
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Impossible failure: Charset.forName(\"utf-8\") returns invalid name.", e);
         }
+    }
+
+    /**
+     * Wraps the passed <code>in</code> into a {@link BufferedInputStream}
+     * object and returns that. If the passed <code>in</code> is already an
+     * instance of {@link BufferedInputStream} returns the same passed
+     * <code>in</code> reference as is (avoiding double wrapping).
+     * 
+     * @param in the wrapee to be used for the buffering support
+     * @return the passed <code>in</code> decorated through a
+     *         {@link BufferedInputStream} object as wrapper
+     */
+    public static BufferedInputStream buffered(InputStream in) {
+        ObjectHelper.notNull(in, "in");
+        return (in instanceof BufferedInputStream) ? (BufferedInputStream)in : new BufferedInputStream(in);
+    }
+
+    /**
+     * Wraps the passed <code>out</code> into a {@link BufferedOutputStream}
+     * object and returns that. If the passed <code>out</code> is already an
+     * instance of {@link BufferedOutputStream} returns the same passed
+     * <code>out</code> reference as is (avoiding double wrapping).
+     * 
+     * @param out the wrapee to be used for the buffering support
+     * @return the passed <code>out</code> decorated through a
+     *         {@link BufferedOutputStream} object as wrapper
+     */
+    public static BufferedOutputStream buffered(OutputStream out) {
+        ObjectHelper.notNull(out, "out");
+        return (out instanceof BufferedOutputStream) ? (BufferedOutputStream)out : new BufferedOutputStream(out);
+    }
+
+    /**
+     * Wraps the passed <code>reader</code> into a {@link BufferedReader} object
+     * and returns that. If the passed <code>reader</code> is already an
+     * instance of {@link BufferedReader} returns the same passed
+     * <code>reader</code> reference as is (avoiding double wrapping).
+     * 
+     * @param reader the wrapee to be used for the buffering support
+     * @return the passed <code>reader</code> decorated through a
+     *         {@link BufferedReader} object as wrapper
+     */
+    public static BufferedReader buffered(Reader reader) {
+        ObjectHelper.notNull(reader, "reader");
+        return (reader instanceof BufferedReader) ? (BufferedReader)reader : new BufferedReader(reader);
+    }
+
+    /**
+     * Wraps the passed <code>writer</code> into a {@link BufferedWriter} object
+     * and returns that. If the passed <code>writer</code> is already an
+     * instance of {@link BufferedWriter} returns the same passed
+     * <code>writer</code> reference as is (avoiding double wrapping).
+     * 
+     * @param writer the wrapee to be used for the buffering support
+     * @return the passed <code>writer</code> decorated through a
+     *         {@link BufferedWriter} object as wrapper
+     */
+    public static BufferedWriter buffered(Writer writer) {
+        ObjectHelper.notNull(writer, "writer");
+        return (writer instanceof BufferedWriter) ? (BufferedWriter)writer : new BufferedWriter(writer);
     }
 
     /**

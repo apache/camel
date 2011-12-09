@@ -26,7 +26,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
@@ -121,7 +120,7 @@ public final class ObjectHelper {
      * types between the left and right values. This allows you to equal test eg String and Integer as
      * Camel will be able to coerce the types
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
 
         // if both values is numeric then compare using numeric
@@ -227,7 +226,7 @@ public final class ObjectHelper {
      * @param b  the second object
      * @param ignoreCase  ignore case for string comparison
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static int compare(Object a, Object b, boolean ignoreCase) {
         if (a == b) {
             return 0;
@@ -429,14 +428,14 @@ public final class ObjectHelper {
      */
     public static boolean contains(Object collectionOrArray, Object value) {
         if (collectionOrArray instanceof Collection) {
-            Collection collection = (Collection)collectionOrArray;
+            Collection<?> collection = (Collection<?>)collectionOrArray;
             return collection.contains(value);
         } else if (collectionOrArray instanceof String && value instanceof String) {
             String str = (String)collectionOrArray;
             String subStr = (String)value;
             return str.contains(subStr);
         } else {
-            Iterator iter = createIterator(collectionOrArray);
+            Iterator<Object> iter = createIterator(collectionOrArray);
             while (iter.hasNext()) {
                 if (equal(value, iter.next())) {
                     return true;
@@ -479,9 +478,9 @@ public final class ObjectHelper {
         if (value == null) {
             return Collections.emptyList().iterator();
         } else if (value instanceof Iterator) {
-            return (Iterator)value;
+            return (Iterator<Object>)value;
         } else if (value instanceof Iterable) {
-            return ((Iterable)value).iterator();
+            return ((Iterable<Object>)value).iterator();
         } else if (value.getClass().isArray()) {
             // TODO we should handle primitive array types?
             List<Object> list = Arrays.asList((Object[])value);
@@ -548,7 +547,7 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if the first element is a boolean and its value
      *         is true or if the list is non empty
      */
-    public static boolean matches(List list) {
+    public static boolean matches(List<?> list) {
         if (!list.isEmpty()) {
             Object value = list.get(0);
             if (value instanceof Boolean) {
@@ -1055,7 +1054,7 @@ public final class ObjectHelper {
         if (toType == boolean.class) {
             return (T)cast(Boolean.class, value);
         } else if (toType.isPrimitive()) {
-            Class newType = convertPrimitiveTypeToWrapperType(toType);
+            Class<?> newType = convertPrimitiveTypeToWrapperType(toType);
             if (newType != toType) {
                 return (T)cast(newType, value);
             }
@@ -1100,9 +1099,9 @@ public final class ObjectHelper {
     /**
      * Does the given class have a default public no-arg constructor.
      */
-    public static boolean hasDefaultPublicNoArgConstructor(Class type) {
+    public static boolean hasDefaultPublicNoArgConstructor(Class<?> type) {
         // getConstructors() returns only public constructors
-        for (Constructor ctr : type.getConstructors()) {
+        for (Constructor<?> ctr : type.getConstructors()) {
             if (ctr.getParameterTypes().length == 0) {
                 return true;
             }
@@ -1158,7 +1157,7 @@ public final class ObjectHelper {
             return list.getLength() > 0;
         } else if (value instanceof Collection) {
             // is it an empty collection
-            Collection col = (Collection) value;
+            Collection<?> col = (Collection<?>) value;
             return col.size() > 0;
         }
         return value != null;
@@ -1316,7 +1315,7 @@ public final class ObjectHelper {
      * @param name   the name of the field to lookup
      * @return the value of the constant field, or <tt>null</tt> if not found
      */
-    public static String lookupConstantFieldValue(Class clazz, String name) {
+    public static String lookupConstantFieldValue(Class<?> clazz, String name) {
         if (clazz == null) {
             return null;
         }

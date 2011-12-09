@@ -38,7 +38,7 @@ public class ObjectHelperTest extends TestCase {
     public void testArrayAsIterator() throws Exception {
         String[] data = {"a", "b"};
 
-        Iterator iter = ObjectHelper.createIterator(data);
+        Iterator<?> iter = ObjectHelper.createIterator(data);
         assertTrue("should have next", iter.hasNext());
         Object a = iter.next();
         assertEquals("a", "a", a);
@@ -69,21 +69,21 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testIteratorWithComma() {
-        Iterator it = ObjectHelper.createIterator("Claus,Jonathan");
+        Iterator<?> it = ObjectHelper.createIterator("Claus,Jonathan");
         assertEquals("Claus", it.next());
         assertEquals("Jonathan", it.next());
         assertEquals(false, it.hasNext());
     }
 
     public void testIteratorWithOtherDelimiter() {
-        Iterator it = ObjectHelper.createIterator("Claus#Jonathan", "#");
+        Iterator<?> it = ObjectHelper.createIterator("Claus#Jonathan", "#");
         assertEquals("Claus", it.next());
         assertEquals("Jonathan", it.next());
         assertEquals(false, it.hasNext());
     }
 
     public void testIteratorEmpty() {
-        Iterator it = ObjectHelper.createIterator("");
+        Iterator<?> it = ObjectHelper.createIterator("");
         assertEquals(false, it.hasNext());
 
         it = ObjectHelper.createIterator("    ");
@@ -94,7 +94,7 @@ public class ObjectHelperTest extends TestCase {
     }
 
     public void testIteratorIdempotentNext() {
-        Iterator<Object> it = ObjectHelper.createIterator("a");
+        Iterator<?> it = ObjectHelper.createIterator("a");
         assertTrue(it.hasNext());
         assertTrue(it.hasNext());
         it.next();
@@ -113,7 +113,7 @@ public class ObjectHelperTest extends TestCase {
             }
         };
 
-        Iterator<Object> it = ObjectHelper.createIterator(nodeList);
+        Iterator<?> it = ObjectHelper.createIterator(nodeList);
         assertTrue(it.hasNext());
         assertTrue(it.hasNext());
         it.next();

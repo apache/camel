@@ -53,7 +53,7 @@ public final class FutureTypeConverter implements TypeConverter {
 
         if (Future.class.isAssignableFrom(value.getClass())) {
 
-            Future future = (Future) value;
+            Future<?> future = (Future<?>) value;
 
             if (future.isCancelled()) {
                 // return void to indicate its not possible to convert at this time
@@ -86,10 +86,12 @@ public final class FutureTypeConverter implements TypeConverter {
         return null;
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         try {
             return doConvertTo(type, exchange, value);
@@ -98,10 +100,12 @@ public final class FutureTypeConverter implements TypeConverter {
         }
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
         return mandatoryConvertTo(type, null, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
         T answer;
         try {

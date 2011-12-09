@@ -123,7 +123,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     protected void registerComponents(Bundle bundle, List<BaseService> resolvers) {
         if (checkCompat(bundle, Component.class)) {
             Map<String, String> components = new HashMap<String, String>();
-            for (Enumeration e = bundle.getEntryPaths(META_INF_COMPONENT); e != null && e.hasMoreElements();) {
+            for (Enumeration<?> e = bundle.getEntryPaths(META_INF_COMPONENT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
                 LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
                 String name = path.substring(path.lastIndexOf("/") + 1);
@@ -138,7 +138,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     protected void registerLanguages(Bundle bundle, List<BaseService> resolvers) {
         if (checkCompat(bundle, Language.class)) {
             Map<String, String> languages = new HashMap<String, String>();
-            for (Enumeration e = bundle.getEntryPaths(META_INF_LANGUAGE); e != null && e.hasMoreElements();) {
+            for (Enumeration<?> e = bundle.getEntryPaths(META_INF_LANGUAGE); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
                 LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
                 String name = path.substring(path.lastIndexOf("/") + 1);
@@ -147,7 +147,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             if (!languages.isEmpty()) {
                 resolvers.add(new BundleLanguageResolver(bundle, languages));
             }
-            for (Enumeration e = bundle.getEntryPaths(META_INF_LANGUAGE_RESOLVER); e != null && e.hasMoreElements();) {
+            for (Enumeration<?> e = bundle.getEntryPaths(META_INF_LANGUAGE_RESOLVER); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
                 LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
                 String name = path.substring(path.lastIndexOf("/") + 1);
@@ -159,7 +159,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     protected void registerDataFormats(Bundle bundle, List<BaseService> resolvers) {
         if (checkCompat(bundle, DataFormat.class)) {
             Map<String, String> dataformats = new HashMap<String, String>();
-            for (Enumeration e = bundle.getEntryPaths(META_INF_DATAFORMAT); e != null && e.hasMoreElements();) {
+            for (Enumeration<?> e = bundle.getEntryPaths(META_INF_DATAFORMAT); e != null && e.hasMoreElements();) {
                 String path = (String) e.nextElement();
                 LOG.debug("Found entry: {} in bundle {}", path, bundle.getSymbolicName());
                 String name = path.substring(path.lastIndexOf("/") + 1);
@@ -319,7 +319,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                         // its a FQN class name so load it directly
                         LOG.trace("Loading {} class", pkg);
                         try {
-                            Class clazz = bundle.loadClass(pkg);
+                            Class<?> clazz = bundle.loadClass(pkg);
                             if (test.matches(clazz)) {
                                 classes.add(clazz);
                             }
@@ -338,7 +338,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                         String externalName = path.substring(path.charAt(0) == '/' ? 1 : 0, path.indexOf('.')).replace('/', '.');
                         LOG.trace("Loading {} class", externalName);
                         try {
-                            Class clazz = bundle.loadClass(externalName);
+                            Class<?> clazz = bundle.loadClass(externalName);
                             if (test.matches(clazz)) {
                                 classes.add(clazz);
                             }
@@ -351,7 +351,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
                 // load the classes into type converter registry
                 LOG.info("Found {} @Converter classes to load", classes.size());
-                for (Class type : classes) {
+                for (Class<?> type : classes) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Loading converter class: {}", ObjectHelper.name(type));
                     }
@@ -419,21 +419,21 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
         public abstract void register();
 
-        protected void doRegister(Class type, String key, Collection<String> value) {
+        protected void doRegister(Class<?> type, String key, Collection<String> value) {
             doRegister(type, key, value.toArray(new String[value.size()]));
         }
 
-        protected void doRegister(Class type, String key, Object value) {
+        protected void doRegister(Class<?> type, String key, Object value) {
             Hashtable<String, Object> props = new Hashtable<String, Object>();
             props.put(key, value);
             doRegister(type, props);
         }
 
-        protected void doRegister(Class type) {
+        protected void doRegister(Class<?> type) {
             doRegister(type, null);
         }
 
-        protected void doRegister(Class type, Dictionary props) {
+        protected void doRegister(Class<?> type, Dictionary<?, ?> props) {
             reg = bundle.getBundleContext().registerService(type.getName(), this, props);
         }
 
@@ -446,7 +446,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         Properties properties = new Properties();
         BufferedInputStream reader = null;
         try {
-            reader = new BufferedInputStream(url.openStream());
+            reader = IOHelper.buffered(url.openStream());
             properties.load(reader);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -456,7 +456,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         return properties;
     }
 
-    protected static boolean checkCompat(Bundle bundle, Class clazz) {
+    protected static boolean checkCompat(Bundle bundle, Class<?> clazz) {
         // Check bundle compatibility
         try {
             if (bundle.loadClass(clazz.getName()) != clazz) {
@@ -473,7 +473,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         if (resource != null) {
             BufferedReader reader = null;
             try {
-                reader = new BufferedReader(new InputStreamReader(resource.openStream()));
+                reader = IOHelper.buffered(new InputStreamReader(resource.openStream()));
                 while (true) {
                     String line = reader.readLine();
                     if (line == null) {

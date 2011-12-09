@@ -16,7 +16,6 @@
  */
 package org.apache.camel.converter.stream;
 
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -207,7 +207,7 @@ public class CachedOutputStream extends OutputStream {
         LOG.trace("Creating temporary stream cache file: {}", tempFile);
 
         try {
-            currentStream = new BufferedOutputStream(new FileOutputStream(tempFile));
+            currentStream = IOHelper.buffered(new FileOutputStream(tempFile));
             bout.writeTo(currentStream);
         } finally {
             // ensure flag is flipped to file based

@@ -43,7 +43,7 @@ public class LazyLoadingTypeConverter extends BaseTypeConverterRegistry {
     }
 
     @Override
-    protected Object doConvertTo(final Class type, final Exchange exchange, final Object value) {
+    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value) {
         Object answer = super.doConvertTo(type, exchange, value);
         if (answer == null && !loaded.get()) {
             // okay we could not convert, so try again, but load the converters up front

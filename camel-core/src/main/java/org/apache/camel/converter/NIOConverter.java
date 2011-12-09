@@ -16,7 +16,6 @@
  */
 package org.apache.camel.converter;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -66,7 +65,7 @@ public final class NIOConverter {
         InputStream in = null;
         try {
             byte[] buf = new byte[(int)file.length()];
-            in = new BufferedInputStream(new FileInputStream(file));
+            in = IOHelper.buffered(new FileInputStream(file));
             int sizeLeft = (int)file.length();
             int offset = 0;
             while (sizeLeft > 0) {

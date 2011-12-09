@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -66,12 +64,12 @@ public final class IOConverter {
 
     @Converter
     public static InputStream toInputStream(URL url) throws IOException {
-        return url.openStream();
+        return IOHelper.buffered(url.openStream());
     }
 
     @Converter
     public static InputStream toInputStream(File file) throws IOException {
-        return new BufferedInputStream(new FileInputStream(file));
+        return IOHelper.buffered(new FileInputStream(file));
     }
 
     /**
@@ -84,7 +82,7 @@ public final class IOConverter {
 
     @Converter
     public static BufferedReader toReader(File file, Exchange exchange) throws IOException {
-        return new BufferedReader(new EncodingFileReader(file, IOHelper.getCharsetName(exchange)));
+        return IOHelper.buffered(new EncodingFileReader(file, IOHelper.getCharsetName(exchange)));
     }
 
     @Converter
@@ -94,7 +92,7 @@ public final class IOConverter {
 
     @Converter
     public static OutputStream toOutputStream(File file) throws FileNotFoundException {
-        return new BufferedOutputStream(new FileOutputStream(file));
+        return IOHelper.buffered(new FileOutputStream(file));
     }
 
     /**
@@ -107,7 +105,7 @@ public final class IOConverter {
     
     @Converter
     public static BufferedWriter toWriter(File file, Exchange exchange) throws IOException {
-        return new BufferedWriter(new EncodingFileWriter(file, IOHelper.getCharsetName(exchange)));
+        return IOHelper.buffered(new EncodingFileWriter(file, IOHelper.getCharsetName(exchange)));
     }
 
     /**
@@ -120,7 +118,7 @@ public final class IOConverter {
 
     @Converter
     public static Reader toReader(InputStream in, Exchange exchange) throws IOException {
-        return new InputStreamReader(in, IOHelper.getCharsetName(exchange));
+        return IOHelper.buffered(new InputStreamReader(in, IOHelper.getCharsetName(exchange)));
     }
 
     /**
@@ -133,11 +131,13 @@ public final class IOConverter {
     
     @Converter
     public static Writer toWriter(OutputStream out, Exchange exchange) throws IOException {
-        return new OutputStreamWriter(out, IOHelper.getCharsetName(exchange));
+        return IOHelper.buffered(new OutputStreamWriter(out, IOHelper.getCharsetName(exchange)));
     }
 
     @Converter
     public static StringReader toReader(String text) {
+        // no buffering required as the complete string input is already passed
+        // over as a whole
         return new StringReader(text);
     }
 
@@ -213,11 +213,7 @@ public final class IOConverter {
     
     @Converter
     public static byte[] toByteArray(Reader reader, Exchange exchange) throws IOException {
-        if (reader instanceof BufferedReader) {
-            return toByteArray((BufferedReader)reader, exchange);
-        } else {
-            return toByteArray(new BufferedReader(reader), exchange);
-        }
+        return toByteArray(IOHelper.buffered(reader), exchange);
     }
 
     /**
@@ -240,11 +236,7 @@ public final class IOConverter {
 
     @Converter
     public static String toString(Reader reader) throws IOException {
-        if (reader instanceof BufferedReader) {
-            return toString((BufferedReader)reader);
-        } else {
-            return toString(new BufferedReader(reader));
-        }
+        return toString(IOHelper.buffered(reader));
     }
 
     @Converter
@@ -256,13 +248,10 @@ public final class IOConverter {
         StringBuilder sb = new StringBuilder(1024);
         char[] buf = new char[1024];
         try {
-            int len = 0;
+            int len;
             // read until we reach then end which is the -1 marker
-            while (len != -1) {
-                len = reader.read(buf);
-                if (len != -1) {
-                    sb.append(buf, 0, len);
-                }
+            while ((len = reader.read(buf)) != -1) {
+                sb.append(buf, 0, len);
             }
         } finally {
             IOHelper.close(reader, "reader", LOG);
@@ -312,6 +301,8 @@ public final class IOConverter {
 
     @Converter
     public static InputStream toInputStream(byte[] data) {
+        // no buffering required as the complete byte input is already passed
+        // over as a whole
         return new ByteArrayInputStream(data);
     }
 
@@ -320,7 +311,7 @@ public final class IOConverter {
         if (stream instanceof ObjectOutput) {
             return (ObjectOutput) stream;
         } else {
-            return new ObjectOutputStream(stream);
+            return new ObjectOutputStream(IOHelper.buffered(stream));
         }
     }
 
@@ -329,19 +320,18 @@ public final class IOConverter {
         if (stream instanceof ObjectInput) {
             return (ObjectInput) stream;
         } else {
-            return new ObjectInputStream(stream);
+            return new ObjectInputStream(IOHelper.buffered(stream));
         }
     }
 
     @Converter
     public static byte[] toBytes(InputStream stream) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try {
-            IOHelper.copy(stream, bos);
-            return bos.toByteArray();
-        } finally {
-            IOHelper.close(bos, "stream", LOG);
-        }
+        IOHelper.copy(IOHelper.buffered(stream), bos);
+
+        // no need to close the ByteArrayOutputStream as it's close()
+        // implementation is noop
+        return bos.toByteArray();
     }
 
     @Converter
@@ -364,6 +354,8 @@ public final class IOConverter {
 
     @Converter
     public static InputStream toInputStream(ByteArrayOutputStream os) {
+        // no buffering required as the complete byte array input is already
+        // passed over as a whole
         return new ByteArrayInputStream(os.toByteArray());
     }
 

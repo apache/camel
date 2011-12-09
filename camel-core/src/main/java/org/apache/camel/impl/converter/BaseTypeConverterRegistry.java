@@ -39,7 +39,6 @@ import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -88,11 +87,13 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return typeConverterLoaders;
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         if (!isRunAllowed()) {
             throw new IllegalStateException(this + " is not started");
@@ -123,11 +124,13 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
         return mandatoryConvertTo(type, null, value);
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
         if (!isRunAllowed()) {
             throw new IllegalStateException(this + " is not started");
@@ -147,8 +150,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected Object doConvertTo(final Class type, final Exchange exchange, final Object value) {
+    protected Object doConvertTo(final Class<?> type, final Exchange exchange, final Object value) {
         if (log.isTraceEnabled()) {
             log.trace("Converting {} -> {} with value: {}",
                     new Object[]{value == null ? "null" : value.getClass().getCanonicalName(), 
@@ -218,7 +220,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         // not found with that type then if it was a primitive type then try again with the wrapper type
         if (type.isPrimitive()) {
-            Class primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(type);
+            Class<?> primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(type);
             if (primitiveType != type) {
                 return convertTo(primitiveType, exchange, value);
             }
@@ -231,6 +233,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return Void.TYPE;
     }
 
+    @Override
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         log.trace("Adding type converter: {}", typeConverter);
         TypeMapping key = new TypeMapping(toType, fromType);
@@ -249,6 +252,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         }
     }
 
+    @Override
     public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
         log.trace("Adding fallback type converter: {} which can promote: {}", typeConverter, canPromote);
 
@@ -265,10 +269,12 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return typeMappings.get(key);
     }
 
+    @Override
     public Injector getInjector() {
         return injector;
     }
 
+    @Override
     public void setInjector(Injector injector) {
         this.injector = injector;
     }
@@ -319,6 +325,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return converter;
     }
 
+    @Override
     public TypeConverter lookup(Class<?> toType, Class<?> fromType) {
         return doLookup(toType, fromType, false);
     }

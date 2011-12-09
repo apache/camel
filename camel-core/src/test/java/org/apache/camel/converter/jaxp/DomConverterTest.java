@@ -62,11 +62,11 @@ public class DomConverterTest extends ContextTestSupport {
         Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
                 + "<foo><hello>Hello World</hello><bye>Bye Camel</bye></foo>");
 
-        List list = DomConverter.toList(document.getElementsByTagName("foo"));
+        List<?> list = DomConverter.toList(document.getElementsByTagName("foo"));
         assertEquals(1, list.size());
 
         NodeList nl = assertIsInstanceOf(NodeList.class, list.get(0));
-        List sub = DomConverter.toList(nl);
+        List<?> sub = DomConverter.toList(nl);
         assertEquals(2, sub.size());
 
         assertEquals("<hello>Hello World</hello>", new DomConverter().toString((NodeList) sub.get(0), null));

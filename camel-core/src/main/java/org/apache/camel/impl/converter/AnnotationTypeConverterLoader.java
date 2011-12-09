@@ -74,6 +74,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         this.resolver = resolver;
     }
 
+    @Override
     public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
         String[] packageNames;
 
@@ -120,7 +121,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
 
         // load all the found classes into the type converter registry
-        for (Class type : classes) {
+        for (Class<?> type : classes) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Loading converter class: {}", ObjectHelper.name(type));
             }
@@ -213,7 +214,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 // remember we have visited this uri so we wont read it twice
                 visitedURIs.add(path);
                 LOG.debug("Loading file {} to retrieve list of packages, from url: {}", META_INF_SERVICES, url);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream()));
                 try {
                     while (true) {
                         String line = reader.readLine();

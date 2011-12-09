@@ -30,6 +30,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.IOHelper;
 
 public class CachedOutputStreamTest extends ContextTestSupport {
     private static final String TEST_STRING = "This is a test string and it has enough" 
@@ -51,7 +52,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
     }
 
     private static String toString(InputStream input) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        BufferedReader reader = IOHelper.buffered(new InputStreamReader(input));
         CollectionStringBuffer builder = new CollectionStringBuffer();
         while (true) {
             String line = reader.readLine();

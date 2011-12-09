@@ -47,16 +47,19 @@ public class EnumTypeConverter implements TypeConverter {
         return null;
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         // ignore exchange
         return convertTo(type, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Object value) {
         // ignore exchange
         return convertTo(type, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
         // ignore exchange
         return convertTo(type, value);

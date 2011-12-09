@@ -33,6 +33,7 @@ import org.apache.camel.component.bean.BeanInvocation;
 public class ToStringTypeConverter implements TypeConverter {
 
     @SuppressWarnings("unchecked")
+    @Override
     public <T> T convertTo(Class<T> toType, Object value) {
         if (value != null) {
 
@@ -63,14 +64,17 @@ public class ToStringTypeConverter implements TypeConverter {
         return null;
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Object value) {
         return convertTo(type, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
     }

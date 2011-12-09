@@ -38,7 +38,7 @@ public class ArrayTypeConverter implements TypeConverter {
     public <T> T convertTo(Class<T> type, Object value) {
         if (type.isArray()) {
             if (value instanceof Collection) {
-                Collection collection = (Collection)value;
+                Collection<?> collection = (Collection<?>)value;
                 Object array = Array.newInstance(type.getComponentType(), collection.size());
                 if (array instanceof Object[]) {
                     collection.toArray((Object[])array);
@@ -63,7 +63,7 @@ public class ArrayTypeConverter implements TypeConverter {
                     return (T)Arrays.asList((Object[])value);
                 } else if (value.getClass().isArray()) {
                     int size = Array.getLength(value);
-                    List answer = new ArrayList(size);
+                    List<Object> answer = new ArrayList<Object>(size);
                     for (int i = 0; i < size; i++) {
                         answer.add(Array.get(value, i));
                     }
@@ -74,14 +74,17 @@ public class ArrayTypeConverter implements TypeConverter {
         return null;
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Object value) {
         return convertTo(type, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
     }

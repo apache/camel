@@ -66,9 +66,8 @@ public final class ObjectConverter {
     /**
      * Creates an iterator over the value
      */
-    @SuppressWarnings("rawtypes")
     @Converter
-    public static Iterator iterator(Object value) {
+    public static Iterator<?> iterator(Object value) {
         return ObjectHelper.createIterator(value);
     }
     
@@ -112,11 +111,10 @@ public final class ObjectConverter {
     /**
      * Returns the converted value, or null if the value is null
      */
-    @SuppressWarnings("rawtypes")
     @Converter
-    public static Class toClass(Object value, Exchange exchange) {
+    public static Class<?> toClass(Object value, Exchange exchange) {
         if (value instanceof Class) {
-            return (Class) value;
+            return (Class<?>) value;
         } else if (value instanceof String) {
             // prefer to use class resolver API
             if (exchange != null) {

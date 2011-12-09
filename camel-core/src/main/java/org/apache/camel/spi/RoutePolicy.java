@@ -46,28 +46,28 @@ public interface RoutePolicy {
     /**
      * Callback invoked when the {@link Route} is being started
      *
-     * @param route     the route being removed
+     * @param route     the route being started
      */
     void onStart(Route route);
 
     /**
      * Callback invoked when the {@link Route} is being stopped
      *
-     * @param route     the route being removed
+     * @param route     the route being stopped
      */
     void onStop(Route route);
 
     /**
      * Callback invoked when the {@link Route} is being suspended
      *
-     * @param route     the route being removed
+     * @param route     the route being suspended
      */
     void onSuspend(Route route);
 
     /**
      * Callback invoked when the {@link Route} is being resumed
      *
-     * @param route     the route being removed
+     * @param route     the route being resumed
      */
     void onResume(Route route);
 

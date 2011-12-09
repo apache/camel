@@ -41,6 +41,7 @@ public class StaticMethodTypeConverter implements TypeConverter {
         return "StaticMethodTypeConverter: " + method;
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
@@ -51,10 +52,12 @@ public class StaticMethodTypeConverter implements TypeConverter {
             : (T)ObjectHelper.invokeMethod(method, null, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, null, value);
     }
