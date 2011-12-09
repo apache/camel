@@ -89,7 +89,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             answer = createTransactionErrorHandler(routeContext, processor, builder);
             answer.setExceptionPolicy(builder.getExceptionPolicyStrategy());
             // configure our answer based on the existing error handler
-            builder.configure(answer);
+            builder.configure(routeContext, answer);
         } else {
             // no transaction error handler builder configure so create a temporary one as we got all
             // the needed information form the configured builder anyway this allow us to use transacted
@@ -109,7 +109,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             answer = createTransactionErrorHandler(routeContext, processor, txBuilder);
             answer.setExceptionPolicy(txBuilder.getExceptionPolicyStrategy());
             // configure our answer based on the existing error handler
-            txBuilder.configure(answer);
+            txBuilder.configure(routeContext, answer);
 
             // set the route to use our transacted error handler builder
             routeContext.getRoute().setErrorHandlerBuilder(txBuilder);

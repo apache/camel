@@ -53,7 +53,7 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         CamelLogger logger = new CamelLogger(log, level);
 
         LoggingErrorHandler handler = new LoggingErrorHandler(routeContext.getCamelContext(), processor, logger, getExceptionPolicyStrategy());
-        configure(handler);
+        configure(routeContext, handler);
         return handler;
     }
 

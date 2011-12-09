@@ -18,7 +18,9 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -76,8 +78,6 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @XmlTransient
     private List<Class> exceptionClasses;
     @XmlTransient
-    private Processor errorHandler;
-    @XmlTransient
     private Predicate handledPolicy;
     @XmlTransient
     private Predicate continuedPolicy;
@@ -87,6 +87,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     private Processor onRedelivery;
     @XmlTransient
     private Boolean routeScoped;
+    // TODO: in Camel 3.0 the OnExceptionDefinition should not contain state and ErrorHandler processors
+    @XmlTransient
+    private final Map<String, Processor> errorHandlers = new HashMap<String, Processor>();
 
     public OnExceptionDefinition() {
     }
@@ -181,10 +184,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         Processor child = createOutputsProcessor(routeContext);
         if (child != null) {
             // wrap in our special safe fallback error handler if OnException have child output
-            errorHandler = new FatalFallbackErrorHandler(child);
-        } else {
-            // do not wrap as there is no child output
-            errorHandler = null;
+            Processor errorHandler = new FatalFallbackErrorHandler(child);
+            String id = routeContext.getRoute().getId();
+            errorHandlers.put(id, errorHandler);
         }
         // lookup the error handler builder
         ErrorHandlerBuilder builder = (ErrorHandlerBuilder)routeContext.getRoute().getErrorHandlerBuilder();
@@ -749,8 +751,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         this.exceptions = exceptions;
     }
 
-    public Processor getErrorHandler() {
-        return errorHandler;
+    public Processor getErrorHandler(String routeId) {
+        return errorHandlers.get(routeId);
+    }
+    
+    public Collection<Processor> getErrorHandlers() {
+        return errorHandlers.values();
     }
 
     public RedeliveryPolicyDefinition getRedeliveryPolicy() {

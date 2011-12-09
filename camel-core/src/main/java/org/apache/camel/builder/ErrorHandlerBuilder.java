@@ -22,6 +22,7 @@ import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * A builder of a <a href="http://camel.apache.org/error-handler.html">Error Handler</a>
@@ -70,7 +71,8 @@ public interface ErrorHandlerBuilder extends ErrorHandlerFactory {
     /**
      * Configures the other error handler based on this error handler.
      *
+     * @param routeContext the route context
      * @param handler the other error handler
      */
-    void configure(ErrorHandler handler);
+    void configure(RouteContext routeContext, ErrorHandler handler);
 }

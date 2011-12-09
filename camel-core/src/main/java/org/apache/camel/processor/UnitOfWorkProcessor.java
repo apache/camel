@@ -98,6 +98,14 @@ public class UnitOfWorkProcessor extends DelegateAsyncProcessor {
                 return true;
             }
 
+
+            // if a route context has been configured, then wrap the processor with a
+            // RouteContextProcessor to ensure we track the route context properly during
+            // processing of the exchange
+            if (routeContext != null) {
+                processor = new RouteContextProcessor(routeContext, processor);
+            }
+
             Object synchronous = exchange.removeProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC);
             if (synchronous != null) {
                 // the exchange signalled to process synchronously

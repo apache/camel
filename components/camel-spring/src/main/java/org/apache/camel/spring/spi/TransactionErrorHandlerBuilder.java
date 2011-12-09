@@ -110,7 +110,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
             getLogger(), getOnRedelivery(), getRedeliveryPolicy(), getExceptionPolicyStrategy(), transactionTemplate, 
             getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorServiceRef());
         // configure error handler before we can use it
-        configure(answer);
+        configure(routeContext, answer);
         return answer;
     }
 

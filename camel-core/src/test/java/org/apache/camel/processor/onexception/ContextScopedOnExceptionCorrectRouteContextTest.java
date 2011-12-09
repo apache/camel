@@ -17,12 +17,14 @@
 package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  *
  */
-public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
+public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -34,7 +36,14 @@ public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class)
-                    .log("Error due ${exception.message}");
+                    .log("Error due ${exception.message}")
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            String routeId = exchange.getUnitOfWork().getRouteContext().getRoute().getId();
+                            assertEquals("bar", routeId);
+                        }
+                    });
 
                 from("direct:start").routeId("foo")
                     .to("mock:foo")
@@ -67,7 +76,14 @@ public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class)
-                    .log("Error due ${exception.message}");
+                    .log("Error due ${exception.message}")
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            String routeId = exchange.getUnitOfWork().getRouteContext().getRoute().getId();
+                            assertEquals("foo", routeId);
+                        }
+                    });
 
                 from("direct:start").routeId("foo")
                     .to("mock:foo")

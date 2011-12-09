@@ -57,7 +57,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
                 getRedeliveryPolicy(), getExceptionPolicyStrategy(), getFailureProcessor(), getDeadLetterUri(), isUseOriginalMessage(),
                 getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorServiceRef());
         // configure error handler before we can use it
-        configure(answer);
+        configure(routeContext, answer);
         return answer;
     }
 

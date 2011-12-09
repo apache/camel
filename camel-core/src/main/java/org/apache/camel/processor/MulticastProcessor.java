@@ -871,13 +871,13 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             }
 
             // and wrap in unit of work processor so the copy exchange also can run under UoW
-            answer = createUnitOfWorkProcessor(processor, exchange);
+            answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
 
             // add to cache
             errorHandlers.putIfAbsent(key, answer);
         } else {
             // and wrap in unit of work processor so the copy exchange also can run under UoW
-            answer = createUnitOfWorkProcessor(processor, exchange);
+            answer = createUnitOfWorkProcessor(routeContext, processor, exchange);
         }
 
         return answer;
@@ -886,16 +886,17 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     /**
      * Strategy to create the {@link UnitOfWorkProcessor} to be used for the sub route
      *
-     * @param processor the processor wrapped in this unit of work processor
-     * @param exchange  the exchange
+     * @param routeContext the route context
+     * @param processor    the processor wrapped in this unit of work processor
+     * @param exchange     the exchange
      * @return the unit of work processor
      */
-    protected UnitOfWorkProcessor createUnitOfWorkProcessor(Processor processor, Exchange exchange) {
+    protected UnitOfWorkProcessor createUnitOfWorkProcessor(RouteContext routeContext, Processor processor, Exchange exchange) {
         UnitOfWork parent = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
         if (parent != null) {
-            return new ChildUnitOfWorkProcessor(parent, processor);
+            return new ChildUnitOfWorkProcessor(parent, routeContext, processor);
         } else {
-            return new UnitOfWorkProcessor(processor);
+            return new UnitOfWorkProcessor(routeContext, processor);
         }
     }
 

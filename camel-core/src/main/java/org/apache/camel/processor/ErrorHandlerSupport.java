@@ -28,6 +28,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ChildServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +45,16 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
     protected final Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
     protected ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
 
-    public void addExceptionPolicy(OnExceptionDefinition exceptionType) {
-        Processor processor = exceptionType.getErrorHandler();
-        addChildService(processor);
+    public void addExceptionPolicy(RouteContext routeContext, OnExceptionDefinition exceptionType) {
+        if (routeContext != null) {
+            // add error handler as child service so they get lifecycle handled
+            Processor errorHandler = exceptionType.getErrorHandler(routeContext.getRoute().getId());
+            if (errorHandler != null) {
+                addChildService(errorHandler);
+            }
+        }
 
         List<Class> list = exceptionType.getExceptionClasses();
-
         for (Class clazz : list) {
             String routeId = null;
             // only get the route id, if the exception type is route scoped
@@ -62,21 +67,6 @@ public abstract class ErrorHandlerSupport extends ChildServiceSupport implements
             ExceptionPolicyKey key = new ExceptionPolicyKey(routeId, clazz, exceptionType.getOnWhen());
             exceptionPolicies.put(key, exceptionType);
         }
-    }
-
-    /**
-     * Attempts to invoke the handler for this particular exception if one is available
-     */
-    protected boolean customProcessorForException(Exchange exchange, Throwable exception) throws Exception {
-        OnExceptionDefinition policy = getExceptionPolicy(exchange, exception);
-        if (policy != null) {
-            Processor processor = policy.getErrorHandler();
-            if (processor != null) {
-                processor.process(exchange);
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

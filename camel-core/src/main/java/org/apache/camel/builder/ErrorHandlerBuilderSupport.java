@@ -23,6 +23,7 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -41,12 +42,12 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
         }
     }
 
-    public void configure(ErrorHandler handler) {
+    public void configure(RouteContext routeContext, ErrorHandler handler) {
         if (handler instanceof ErrorHandlerSupport) {
             ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport) handler;
 
             for (OnExceptionDefinition exception : exceptions) {
-                handlerSupport.addExceptionPolicy(exception);
+                handlerSupport.addExceptionPolicy(routeContext, exception);
             }
         }
     }

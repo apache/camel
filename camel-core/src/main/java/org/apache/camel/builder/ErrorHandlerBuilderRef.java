@@ -128,8 +128,6 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         return answer;
     }
 
-
-
     /**
      * Returns whether a specific error handler builder has been configured or not.
      * <p/>

@@ -33,7 +33,7 @@ public class ErrorHandlerSupportTest extends TestCase {
         exceptions.add(ParentException.class);
 
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        support.addExceptionPolicy(new OnExceptionDefinition(exceptions));
+        support.addExceptionPolicy(null, new OnExceptionDefinition(exceptions));
 
         assertEquals(ChildException.class, getExceptionPolicyFor(support, new ChildException(), 0));
         assertEquals(ParentException.class, getExceptionPolicyFor(support, new ParentException(), 1));
@@ -45,7 +45,7 @@ public class ErrorHandlerSupportTest extends TestCase {
         exceptions.add(ChildException.class);
 
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        support.addExceptionPolicy(new OnExceptionDefinition(exceptions));
+        support.addExceptionPolicy(null, new OnExceptionDefinition(exceptions));
 
         assertEquals(ChildException.class, getExceptionPolicyFor(support, new ChildException(), 1));
         assertEquals(ParentException.class, getExceptionPolicyFor(support, new ParentException(), 0));
@@ -53,8 +53,8 @@ public class ErrorHandlerSupportTest extends TestCase {
 
     public void testTwoPolicyChildFirst() {
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        support.addExceptionPolicy(new OnExceptionDefinition(ChildException.class));
-        support.addExceptionPolicy(new OnExceptionDefinition(ParentException.class));
+        support.addExceptionPolicy(null, new OnExceptionDefinition(ChildException.class));
+        support.addExceptionPolicy(null, new OnExceptionDefinition(ParentException.class));
 
         assertEquals(ChildException.class, getExceptionPolicyFor(support, new ChildException(), 0));
         assertEquals(ParentException.class, getExceptionPolicyFor(support, new ParentException(), 0));
@@ -62,8 +62,8 @@ public class ErrorHandlerSupportTest extends TestCase {
 
     public void testTwoPolicyChildLast() {
         ErrorHandlerSupport support = new ShuntErrorHandlerSupport();
-        support.addExceptionPolicy(new OnExceptionDefinition(ParentException.class));
-        support.addExceptionPolicy(new OnExceptionDefinition(ChildException.class));
+        support.addExceptionPolicy(null, new OnExceptionDefinition(ParentException.class));
+        support.addExceptionPolicy(null, new OnExceptionDefinition(ChildException.class));
 
         assertEquals(ChildException.class, getExceptionPolicyFor(support, new ChildException(), 0));
         assertEquals(ParentException.class, getExceptionPolicyFor(support, new ParentException(), 0));
