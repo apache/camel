@@ -102,7 +102,7 @@
         <configuration>
           <manifestLocation>target/META-INF</manifestLocation>
           <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
             <Export-Package>org.apache.camel.example.reportincident*</Export-Package>
             <Import-Package>
               *
