@@ -83,10 +83,12 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
     
     public static SpringCamelContext springCamelContext(ApplicationContext applicationContext, boolean maybeStart) throws Exception {
-        // lets try and look up a configured camel context in the context
-        String[] names = applicationContext.getBeanNamesForType(SpringCamelContext.class);
-        if (names.length == 1) {
-            return (SpringCamelContext)applicationContext.getBean(names[0], SpringCamelContext.class);
+        if (applicationContext != null) {
+            // lets try and look up a configured camel context in the context
+            String[] names = applicationContext.getBeanNamesForType(SpringCamelContext.class);
+            if (names.length == 1) {
+                return (SpringCamelContext)applicationContext.getBean(names[0], SpringCamelContext.class);
+            }
         }
         SpringCamelContext answer = new SpringCamelContext();
         answer.setApplicationContext(applicationContext);
