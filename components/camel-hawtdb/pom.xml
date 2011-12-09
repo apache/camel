@@ -46,6 +46,11 @@
             <artifactId>hawtdb</artifactId>
             <version>${hawtdb-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.fusesource.hawtbuf</groupId>
+            <artifactId>hawtbuf</artifactId>
+            <version>${hawtbuf-version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>
