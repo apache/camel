@@ -69,7 +69,7 @@ public interface Route {
     RouteContext getRouteContext();
 
     /**
-     * A strategy callback allowing special initialization when services is starting.
+     * A strategy callback allowing special initialization when services are starting.
      *
      * @param services the service
      * @throws Exception is thrown in case of error

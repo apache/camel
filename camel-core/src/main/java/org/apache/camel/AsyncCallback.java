@@ -30,13 +30,13 @@ package org.apache.camel;
 public interface AsyncCallback {
 
     /**
-     * This method is invoked once the {@link Exchange is done}.
+     * This method is invoked once the {@link Exchange} is done.
      * <p/>
      * If an exception occurred while processing the exchange, the exception field of the
      * {@link Exchange} being processed will hold the caused exception.
      *
-     * @param doneSync is <tt>true</tt> if the processing of the {@link Exchange} was completed by the synchronously thread.
-     *                 Otherwise its <tt>false</tt> to indicate it was completed by the asynchronously thread.
+     * @param doneSync is <tt>true</tt> if the processing of the {@link Exchange} was completed by a synchronous thread.
+     *                 Otherwise its <tt>false</tt> to indicate it was completed by an asynchronous thread.
      */
     void done(boolean doneSync);
 

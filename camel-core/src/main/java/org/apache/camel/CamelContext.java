@@ -63,15 +63,15 @@ import org.apache.camel.spi.UuidGenerator;
  *   <li>{@link #resume()} - to resume after a suspend</li>
  * </ul>
  * <p/>
- * <b>Notice:</b> that {@link #stop()} and {@link #suspend()} will graceful stop/suspend routs ensuring any in progress
- * messages is given time to complete. See more details at {@link org.apache.camel.spi.ShutdownStrategy}.
+ * <b>Notice:</b> {@link #stop()} and {@link #suspend()} will gracefully stop/suspend routes ensuring any messages
+ * in progress will be given time to complete. See more details at {@link org.apache.camel.spi.ShutdownStrategy}.
  * <p/>
- * If you are doing a hot restart then its adviced to use the suspend/resume methods which ensures a faster
+ * If you are doing a hot restart then it's advised to use the suspend/resume methods which ensure a faster
  * restart but also allows any internal state to be kept as is.
  * The stop/start approach will do a <i>cold</i> restart of Camel, where all internal state is reset.
  * <p/>
- * End users is adviced to use suspend/resume. Using stop is for shutting down Camel and its not guaranteed that
- * when its being started again using the start method that everything works out of the box.
+ * End users are advised to use suspend/resume. Using stop is for shutting down Camel and it's not guaranteed that
+ * when it's being started again using the start method that Camel will operate consistently.
  *
  * @version 
  */

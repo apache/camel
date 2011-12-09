@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * A {@link Service} which has all the lifecycles events and offers details about its current state.
+ * A {@link Service} which has all the lifecycle events and offers details about its current state.
  */
 public interface StatefulService extends SuspendableService, ShutdownableService {
 

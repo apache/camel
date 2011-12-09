@@ -17,8 +17,8 @@
 package org.apache.camel;
 
 /**
- * Various runtime configuration used by {@link org.apache.camel.CamelContext} and {@link org.apache.camel.spi.RouteContext}
- * for cross cutting functions such as tracing, delayer, stream cache and the likes.
+ * Various runtime configuration options used by {@link org.apache.camel.CamelContext} and {@link org.apache.camel.spi.RouteContext}
+ * for cross cutting functions such as tracing, delayer, stream cache and the like.
  *
  * @version 
  */
@@ -27,7 +27,6 @@ public interface RuntimeConfiguration {
     /**
      * Sets whether stream caching is enabled or not (default is disabled).
      * <p/>
-     * Is disabled by default
      *
      * @param cache whether stream caching is enabled or not
      */
@@ -43,9 +42,8 @@ public interface RuntimeConfiguration {
     /**
      * Sets whether tracing is enabled or not (default is disabled).
      * <p/>
-     * Is disabled by default
      *
-     * @param tracing whether tracing is enabled or not.
+     * @param tracing whether to enable tracing.
      */
     void setTracing(Boolean tracing);
 
@@ -57,24 +55,23 @@ public interface RuntimeConfiguration {
     Boolean isTracing();
 
     /**
-     * Sets whether handle fault is enabled or not (default is disabled).
+     * Sets whether fault handling is enabled or not (default is disabled).
      * <p/>
-     * Is disabled by default
      *
-     * @param handleFault whether handle fault is enabled or not.
+     * @param handleFault whether to enable fault handling.
      */
     void setHandleFault(Boolean handleFault);
 
     /**
-     * Returns whether tracing enabled
+     * Returns whether fault handling enabled
      *
-     * @return true if tracing is enabled
+     * @return true if fault handling is enabled
      */
     Boolean isHandleFault();
 
     /**
      * Sets a delay value in millis that a message is delayed at every step it takes in the route path,
-     * to slow things down to better helps you to see what goes
+     * slowing the process down to better observe what is occurring
      * <p/>
      * Is disabled by default
      *
@@ -90,50 +87,47 @@ public interface RuntimeConfiguration {
     Long getDelayer();
 
     /**
-     * Sets whether it should automatic start when Camel starts.
+     * Sets whether the object should automatically start when Camel starts.
      * <p/>
-     * Currently only routes can be disabled, as {@link CamelContext} itself are always started}
+     * Currently only routes can be disabled, as {@link CamelContext}s are always started.
      * <br/>
-     * Default is true to always startup.
+     * Default is true to always start up.
      *
-     * @param autoStartup  whether to auto startup.
+     * @param autoStartup whether to start up automatically.
      */
     void setAutoStartup(Boolean autoStartup);
 
     /**
-     * Gets whether it should automatic start when Camel starts.
+     * Gets whether the object should automatically start when Camel starts.
      *
-     * @return true if should auto start
+     * @return true if object should automatically start
      */
     Boolean isAutoStartup();
 
     /**
-     * Sets the option to use when shutting down routes.
+     * Sets the ShutdownRoute option for routes.
      *
      * @param shutdownRoute the option to use.
      */
     void setShutdownRoute(ShutdownRoute shutdownRoute);
 
     /**
-     * Gets the option to use when shutting down route.
+     * Gets the option to use when shutting down the route.
      *
      * @return the option
      */
     ShutdownRoute getShutdownRoute();
 
     /**
-     * Sets the option to use when shutting down a route and how to act when it has running tasks.
+     * Sets the ShutdownRunningTask option to use when shutting down a route.
      * <p/>
-     * A running task is for example a {@link org.apache.camel.BatchConsumer} which has a group
-     * of messages to process. With this option you can control whether it should complete the entire
-     * group or stop after the current message has been processed.
      *
      * @param shutdownRunningTask the option to use.
      */
     void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask);
 
     /**
-     * Gets the option to use when shutting down a route and how to act when it has running tasks.
+     * Gets the ShutdownRunningTask option in use when shutting down a route.
      *
      * @return the option
      */

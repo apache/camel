@@ -29,7 +29,7 @@ public interface ProducerCallback<T> {
     /**
      * Performs operation on the given producer to send the given exchange.
      *
-     * @param producer        the producer, is newer <tt>null</tt>
+     * @param producer        the producer, is never <tt>null</tt>
      * @param exchange        the exchange, can be <tt>null</tt> if so then create a new exchange from the producer
      * @param exchangePattern the exchange pattern, can be <tt>null</tt>
      * @return the response

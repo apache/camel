@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * A proxy creation failed trying to create a proxy of a given type and on an given endpoint
+ * Exception indicating a failure while trying to create a proxy of a given type and on a given endpoint
  *
  * @version 
  */

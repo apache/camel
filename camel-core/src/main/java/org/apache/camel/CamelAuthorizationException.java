@@ -17,6 +17,11 @@
 
 package org.apache.camel;
 
+/**
+ * An exception thrown for authorization errors occurring in a Camel exchange.
+ *
+ * @version 
+ */
 public class CamelAuthorizationException extends CamelExchangeException {
     private final String policyId;
     

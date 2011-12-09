@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * Interface to be implement by objects that should be orderable, such as in a {@link java.util.Collection}.
+ * Interface to be implemented by objects that should be orderable, such as with a {@link java.util.Collection}.
  *
  * @version 
  */

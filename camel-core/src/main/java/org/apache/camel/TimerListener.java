@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Listener for receiving timer events.
  * <p/>
- * For example to periodically to update internal state.
+ * For example to periodically update internal state.
  *
  * @see org.apache.camel.support.TimerListenerManager
  */

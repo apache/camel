@@ -40,7 +40,7 @@ public class FailedToCreateRouteException extends CamelException {
     }
 
     protected static String getRouteMessage(String route) {
-        // cut the route after 60 chars so it wont be too big in the message
+        // cut the route after 60 chars so it won't be too big in the message
         // users just need to be able to identify the route so they know where to look
         if (route.length() > 60) {
             return route.substring(0, 60) + "...";

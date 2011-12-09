@@ -28,8 +28,8 @@ public interface BatchConsumer extends Consumer {
     /**
      * Sets a maximum number of messages as a limit to poll at each polling.
      * <p/>
-     * Can be used to limit eg to 100 to avoid when starting and there are millions
-     * of messages for you in the first poll.
+     * Can be used to limit e.g. to 100 to avoid reading thousands or more 
+     * messages within the first polling at startup.
      * <p/>
      * Is default unlimited, but use 0 or negative number to disable it as unlimited.
      *
@@ -38,7 +38,7 @@ public interface BatchConsumer extends Consumer {
     void setMaxMessagesPerPoll(int maxMessagesPerPoll);
 
     /**
-     * Processes the list of {@link org.apache.camel.Exchange} in a batch. 
+     * Processes the list of {@link org.apache.camel.Exchange} objects in a batch. 
      * <p/>
      * Each message exchange will be processed individually but the batch
      * consumer will add properties with the current index and total in the batch.
@@ -54,8 +54,8 @@ public interface BatchConsumer extends Consumer {
     /**
      * Whether processing the batch is still allowed.
      * <p/>
-     * This is used during shutdown to help indicate whether to complete the pending
-     * exchanges or stop after current exchange has been processed.
+     * This is used during shutdown to indicate whether to complete the pending
+     * exchanges or stop after the current exchange has been processed.
      *
      * @return <tt>true</tt> to continue processing from the batch, or <tt>false</tt> to stop.
      * @see org.apache.camel.ShutdownRunningTask

@@ -17,14 +17,14 @@
 package org.apache.camel;
 
 /**
- * Allows objects to be notified when {@link CamelContext} have just been started.
+ * Allows objects to be notified when {@link CamelContext} has just been started.
  * <p/>
  * This can be used to perform any custom work when the entire {@link CamelContext} has been initialized and started.
- * For example this ensures that all the Camel routes has been started and are up and running, before this callback
- * is being invoked.
+ * For example this ensures that all Camel routes have been started and are up and running, before this callback
+ * is invoked.
  * <p/>
- * For example the QuartzComponent leverages this to ensure the Quartz scheduler is started late, when all the
- * Camel routes and services already have been started.
+ * For example the QuartzComponent leverages this to ensure the Quartz scheduler does not start until after all the
+ * Camel routes and services have already been started.
  *
  * @version 
  */

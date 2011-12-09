@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * A routes builder is capable of building routes using the builder and model classes.
  * <p/>
- * Eventually the routes is added to a {@link org.apache.camel.CamelContext} where they
+ * Eventually the routes are added to a {@link org.apache.camel.CamelContext} where they
  * run inside.
  */
 public interface RoutesBuilder {

@@ -17,12 +17,12 @@
 package org.apache.camel;
 
 /**
- * A {@link org.apache.camel.Service} which is also capable of shutting down.
+ * A {@link org.apache.camel.Service} which is capable of being shut down.
  * <p/>
- * This is useable for services which needs more fine grained control when {@link CamelContext} is shutting down.
- * Then its possible to have different behavior when stopping or shutting down.
+ * This is useful for services which need more fine grained control when the {@link CamelContext} is shutting down.
+ * This allows customization of behavior when stopping or shutting down.
  * <p/>
- * For example to shutdown thread pools on shutdown and <b>not</b> on stop.
+ * For example to shutdown thread pools during shutdown and <b>not</b> at CamelContext termination.
  *
  * @version 
  */
@@ -31,7 +31,7 @@ public interface ShutdownableService extends Service {
     /**
      * Shutdown the service, which means it cannot be started again.
      *
-     * @throws Exception is thrown if shutting down failed
+     * @throws Exception thrown if shutting down failed
      */
     void shutdown() throws Exception;
 

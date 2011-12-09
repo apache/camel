@@ -35,7 +35,7 @@ public interface RouteNode {
     /**
      * Gets the model definition that represents this node
      *
-     * @return the definition, is newer <tt>null</tt>
+     * @return the definition, is never <tt>null</tt>
      */
     ProcessorDefinition<?> getProcessorDefinition();
 
@@ -50,7 +50,7 @@ public interface RouteNode {
     /**
      * Whether this node is abstract (no real processor under the cover).
      * <p/>
-     * Some nodes is abstract that represents intermediate steps for instance with
+     * Some nodes that represent intermediate steps are abstract, for instance with
      * onException, onCompletion or intercept
      *
      * @return whether this node is abstract or not
