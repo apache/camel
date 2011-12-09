@@ -16,17 +16,19 @@
  */
 package org.apache.camel.example.camel.transport;
 
-
+/**
+ * Main class to run the Camel transport example.
+ */
 public final class CamelTransportExample {
+
     private CamelTransportExample() {
     }
 
     public static void main(String args[]) throws Exception {
-
         Server server = new Server();
 
         try {
-            // setup the camel context for the camel transport
+            // setup the Camel context for the Camel transport
             server.prepare();
             // start the endpoints
             server.start();
@@ -43,7 +45,6 @@ public final class CamelTransportExample {
             server.stop();
             System.exit(0);
         }
-
     }
 
 }

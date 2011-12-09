@@ -27,7 +27,7 @@ public class Server {
     Endpoint endpointB;
 
     public void prepare() throws Exception {
-        // setup the camel context for the camel transport
+        // setup the Camel context for the Camel transport
         // START SNIPPET: e1
         SpringBusFactory bf = new SpringBusFactory();
         BusFactory.setDefaultBus(null);

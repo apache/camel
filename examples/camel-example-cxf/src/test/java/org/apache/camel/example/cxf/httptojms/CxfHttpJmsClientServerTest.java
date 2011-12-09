@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.cxf;
+package org.apache.camel.example.cxf.httptojms;
 
 import java.net.MalformedURLException;
 
@@ -45,7 +45,7 @@ public class CxfHttpJmsClientServerTest extends CamelSpringTestSupport {
 
         try {
             proxy.pingMe("hello");
-            fail("expect exception here");
+            fail("exception expected but none thrown");
         } catch (PingMeFault ex) {
             FaultDetail detail = ex.getFaultInfo();
             assertEquals("Wrong FaultDetail major:", 2, detail.getMajor());
@@ -55,7 +55,7 @@ public class CxfHttpJmsClientServerTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(new String[] {"/META-INF/spring/CxfRouteCamelContext.xml"});
+        return new ClassPathXmlApplicationContext(new String[] {"/META-INF/spring/HttpToJmsCamelContext.xml"});
     }
 
 }

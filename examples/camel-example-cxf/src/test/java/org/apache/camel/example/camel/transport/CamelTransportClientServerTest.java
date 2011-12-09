@@ -70,9 +70,9 @@ public class CamelTransportClientServerTest extends Assert {
 
         try {
             port.pingMe("hello");
-            fail("expects the exception here");
+            fail("exception expected but none thrown");
         } catch (PingMeFault ex) {
-            assertEquals("Get a wrong exception message", "PingMeFault raised by server EndpointB", ex.getMessage());
+            assertEquals("Wrong exception message received", "PingMeFault raised by server EndpointB", ex.getMessage());
             FaultDetail detail = ex.getFaultInfo();
             assertEquals("Wrong FaultDetail major:", 2, detail.getMajor());
             assertEquals("Wrong FaultDetail minor:", 1, detail.getMinor());

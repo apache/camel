@@ -20,7 +20,9 @@ To run the example of showing how to create CXF JAXRS endpoint
 
 To run the example within ServiceMix 4
  First, you need to install the camel-cxf, camel-jetty features into ServiceMix4
- Then install this bundle into ServiceMix, and use those java client to call the services
+ Then install this bundle into ServiceMix, and use the following Java clients 
+ to call the services:
+ 
  mvn exec:java -PHttpToJMS.Client
  mvn exec:java -PCamelTransport.Client
  mvn exec:java -PWebServiceProvider.Client
@@ -38,7 +40,7 @@ Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
 
 ------------------------
-The Camel riders!
+The Camel Riders!
 
 
 

@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.cxf;
+package org.apache.camel.example.cxf.httptojms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.example.jms.JmsBroker;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
@@ -47,7 +46,7 @@ public final class CamelCxfExample {
 
         @Override
         public void configure() throws Exception {
-            // Here we just pass the exception back , don't need to use errorHandler
+            // Here we just pass the exception back, don't need to use errorHandler
             errorHandler(noErrorHandler());
             from(ROUTER_ENDPOINT_URI).to(SERVICE_ENDPOINT_URI);
         }
@@ -71,7 +70,7 @@ public final class CamelCxfExample {
             // START SNIPPET: e3
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
-                    // Here we just pass the exception back , don't need to use errorHandler
+                    // Here we just pass the exception back, don't need to use errorHandler
                     errorHandler(noErrorHandler());
                     from(ROUTER_ENDPOINT_URI).to(SERVICE_ENDPOINT_URI);
                 }

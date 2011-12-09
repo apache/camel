@@ -32,7 +32,7 @@ public class JAXRSClientServerTest extends CamelSpringTestSupport {
         JAXWSClient jaxwsClient = new JAXWSClient();
         BookStore bookStore = jaxwsClient.getBookStore();
         
-        bookStore.addBook(new Book("Camel User Guide", 234L));
+        bookStore.addBook(new Book("Camel User Guide", 123L));
         Book book = bookStore.getBook(123L);
         assertNotNull("We should find the book here", book);       
       

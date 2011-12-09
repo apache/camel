@@ -27,7 +27,7 @@ public class Client {
         JAXWSClient jaxwsClient = new JAXWSClient();
         BookStore bookStore = jaxwsClient.getBookStore();
         
-        bookStore.addBook(new Book("Camel User Guide", 234L));
+        bookStore.addBook(new Book("Camel User Guide", 123L));
         Book book = bookStore.getBook(123L);
         System.out.println("Get the book with id 123. " + book);       
       
@@ -35,14 +35,14 @@ public class Client {
             book = bookStore.getBook(124L);
             System.out.println("Get the book with id 124. " + book); 
         } catch (Exception exception) {
-            System.out.println("Get the exception " + exception);
+            System.out.println("Expected exception received: " + exception);
         }
         
         // JAXRSClient invocation
         JAXRSClient jaxrsClient = new JAXRSClient();
         bookStore =  jaxrsClient.getBookStore();
         
-        bookStore.addBook(new Book("Camel User Guide", 124L));
+        bookStore.addBook(new Book("Karaf User Guide", 124L));
         book = bookStore.getBook(124L);
         System.out.println("Get the book with id 124. " + book);
         
@@ -50,7 +50,7 @@ public class Client {
             book = bookStore.getBook(126L);
             System.out.println("Get the book with id 126. " + book); 
         } catch (Exception exception) {
-            System.out.println("Get the exception " + exception);
+            System.out.println("Expected exception received: " + exception);
         }
     }
     
