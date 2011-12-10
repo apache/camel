@@ -58,8 +58,8 @@ Rules for Camel's routing and mediation engine can be defined in either a Java b
     <category rdf:resource="http://projects.apache.org/category/network-client" />
     <maintainer>
       <foaf:Person>
-        <foaf:name>Hadrian Zbarcea</foaf:name>
-          <foaf:mbox rdf:resource="mailto:hadrian@apache.org"/>
+        <foaf:name>Christian Mueller</foaf:name>
+          <foaf:mbox rdf:resource="mailto:cmueller@apache.org"/>
       </foaf:Person>
     </maintainer>
   </Project>
