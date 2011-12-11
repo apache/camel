@@ -16,20 +16,15 @@
  */
 package org.apache.camel.component.ibatis;
 
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy;
 import org.apache.camel.component.ibatis.strategy.TransactionIsolationLevel;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-
 
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.createMock;
@@ -38,10 +33,17 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
-public class IBatisBatchConsumerIsolationLevelTest extends CamelTestSupport {
+public class IBatisBatchConsumerIsolationLevelTest extends IBatisTestSupport {
 
     IBatisProcessingStrategy strategyMock = createMock(IBatisProcessingStrategy.class);
 
+    protected boolean createTestData() {
+        return false;
+    }
+
+    protected String getStatement() {
+        return "create table ACCOUNT ( ACC_ID INTEGER , ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255), PROCESSED BOOLEAN DEFAULT false)";
+    }
 
     @Test
     public void testConsumeWithIsolation() throws Exception {
@@ -93,30 +95,5 @@ public class IBatisBatchConsumerIsolationLevelTest extends CamelTestSupport {
                 from("direct:start").to("ibatis:insertAccount?statementType=Insert");
             }
         };
-    }
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-
-        // lets create the database...
-        IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
-        Connection connection = endpoint.getSqlMapClient().getDataSource().getConnection();
-        Statement statement = connection.createStatement();
-        statement.execute("create table ACCOUNT ( ACC_ID INTEGER , ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255), PROCESSED BOOLEAN DEFAULT false)");
-        connection.close();
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
-        Connection connection = endpoint.getSqlMapClient().getDataSource().getConnection();
-        Statement statement = connection.createStatement();
-        statement.execute("drop table ACCOUNT");
-        connection.close();
-
-        super.tearDown();
     }
 }

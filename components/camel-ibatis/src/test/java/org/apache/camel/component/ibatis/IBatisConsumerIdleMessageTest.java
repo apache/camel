@@ -25,10 +25,14 @@ import org.junit.Test;
  * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
  */
 public class IBatisConsumerIdleMessageTest extends IBatisTestSupport {
-    
+
+    @Override
+    protected boolean createTestData() {
+        return false;
+    }
+
     @Test
     public void testConsumeIdleMessages() throws Exception {
-        
         Thread.sleep(110);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
@@ -47,11 +51,5 @@ public class IBatisConsumerIdleMessageTest extends IBatisTestSupport {
                     .to("mock:result");      
             }
         };
-    }
-    
-    @Override
-    protected boolean createTestData() {
-        // no test data so an empty resultset
-        return false;
     }
 }

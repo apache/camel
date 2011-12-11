@@ -27,6 +27,11 @@ import org.junit.Test;
  */
 public class IBatisRouteEmptyResultSetTest extends IBatisTestSupport {
 
+    @Override
+    protected boolean createTestData() {
+        return false;
+    }
+
     @Test
     public void testRouteEmptyResultSet() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
@@ -45,11 +50,5 @@ public class IBatisRouteEmptyResultSetTest extends IBatisTestSupport {
                 from("ibatis:selectAllAccounts?consumer.useIterator=false&consumer.routeEmptyResultSet=true").to("mock:results");
             }
         };
-    }
-
-    @Override
-    protected boolean createTestData() {
-        // no test data so an empty resultset
-        return false;
     }
 }
