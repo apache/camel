@@ -26,8 +26,8 @@
        and a managed datasource -->
   <transactionManager type="JDBC" commitRequired="false">
     <dataSource type="SIMPLE">
-      <property name="JDBC.Driver" value="org.hsqldb.jdbcDriver"/>
-      <property name="JDBC.ConnectionURL" value="jdbc:hsqldb:mem:camel_ibatis"/>
+      <property name="JDBC.Driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="JDBC.ConnectionURL" value="jdbc:derby:memory:ibatis;create=true"/>
       <property name="JDBC.Username" value="sa"/>
       <property name="JDBC.Password" value=""/>
     </dataSource>
