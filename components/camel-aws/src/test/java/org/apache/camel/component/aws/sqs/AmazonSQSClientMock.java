@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
@@ -42,7 +43,7 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
     Map<String, Map<String, String>> queueAttributes = new HashMap<String, Map<String, String>>();
     
     public AmazonSQSClientMock() {
-        super(null);
+        super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
     }
 
     @Override

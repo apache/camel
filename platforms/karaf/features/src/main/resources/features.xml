@@ -159,7 +159,8 @@
     <bundle>mvn:org.apache.camel/camel-atom/${pom.version}</bundle>
   </feature>
   <feature name='camel-aws' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency="true">mvn:commons-codec/commons-codec/${commons-codec}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency="true">mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>

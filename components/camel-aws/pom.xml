@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
-            <version>1.1.1</version>
+            <version>1.2.12</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.codehaus.jackson</groupId>
