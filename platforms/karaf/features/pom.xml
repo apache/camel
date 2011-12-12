@@ -108,7 +108,7 @@
       <opensaml-version>2.4.1_1</opensaml-version>
       <osgi.compendium.version>4.2.0</osgi.compendium.version>
       <oscache-bundle-version>2.4_5</oscache-bundle-version>
-      <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
+      <qpid-bundle-version>0.12_1</qpid-bundle-version>
       <quickfix-bundle-version>1.5.1_1</quickfix-bundle-version>
       <pax.web.version>0.7.2</pax.web.version>
       <quartz-bundle-version>1.8.3_2</quartz-bundle-version>
