@@ -116,7 +116,7 @@
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
       <serp-bundle-version>1.13.1_4</serp-bundle-version>
       <smack-bundle-version>3.2.0_1</smack-bundle-version>
-      <solrj-bundle-version>3.5.0_1-SNAPSHOT</solrj-bundle-version>
+      <solrj-bundle-version>3.5.0_1</solrj-bundle-version>
       <spring-osgi-version>1.2.1</spring-osgi-version>
       <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
       <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version>
