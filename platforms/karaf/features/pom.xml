@@ -105,7 +105,7 @@
       <protobuf-java-bundle-version>2.3.0_1</protobuf-java-bundle-version>
       <pax-web-version>0.7.2</pax-web-version>
       <quartz-bundle-version>1.8.5_1</quartz-bundle-version>
-      <qpid-bundle-version>0.5.0_2</qpid-bundle-version>
+      <qpid-bundle-version>0.12_1</qpid-bundle-version>
       <quickfix-bundle-version>1.5.1_1</quickfix-bundle-version>
       <regexp-bundle-version>1.3_2</regexp-bundle-version>
       <rhino-bundle-version>1.7R2_2</rhino-bundle-version>
