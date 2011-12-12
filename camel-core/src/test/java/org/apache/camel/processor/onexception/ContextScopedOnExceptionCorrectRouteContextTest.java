@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.onexception;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -64,8 +65,9 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
         try {
             template.sendBody("direct:start", "Hello World");
             fail("Should have thrown exception");
-        } catch (Exception e) {
-            // ignore
+        } catch (CamelExecutionException e) {
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Forced bar error", cause.getMessage());
         }
 
         assertMockEndpointsSatisfied();
@@ -107,8 +109,9 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
         try {
             template.sendBody("direct:start", "Hello World");
             fail("Should have thrown exception");
-        } catch (Exception e) {
-            // expected
+        } catch (CamelExecutionException e) {
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Forced foo error", cause.getMessage());
         }
 
         assertMockEndpointsSatisfied();
