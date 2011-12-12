@@ -20,6 +20,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.AddPermissionRequest;
 import com.amazonaws.services.sns.model.ConfirmSubscriptionRequest;
@@ -46,7 +47,7 @@ import com.amazonaws.services.sns.model.UnsubscribeRequest;
 public class AmazonSNSClientMock extends AmazonSNSClient {
     
     public AmazonSNSClientMock() {
-        super(null);
+        super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
     }
 
     @Override
