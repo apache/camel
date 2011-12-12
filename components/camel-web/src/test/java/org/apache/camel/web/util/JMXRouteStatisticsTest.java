@@ -61,7 +61,7 @@ public class JMXRouteStatisticsTest extends Assert {
     public void setUp() throws Exception {
         applicationContext = new FileSystemXmlApplicationContext("src/main/webapp/WEB-INF/applicationContext.xml");
         applicationContext.start();
-        Map<String, CamelContext> beansOfType = CastUtils.cast(applicationContext.getBeansOfType(CamelContext.class));
+        Map<String, CamelContext> beansOfType = applicationContext.getBeansOfType(CamelContext.class);
         camelContext = beansOfType.isEmpty() ? null : beansOfType.values().iterator().next();
         assertNotNull("camelContext", camelContext);
     }

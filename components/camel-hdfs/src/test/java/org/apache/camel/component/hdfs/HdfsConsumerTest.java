@@ -87,7 +87,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
                 from("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&chunkSize=4096&initialDelay=0").to("mock:result");
             }
         });
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
 
         resultEndpoint.expectedMessageCount(2);
         context.start();
@@ -118,7 +118,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
@@ -147,7 +147,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
             }
         });
         context.start();
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
 
         resultEndpoint.expectedMessageCount(1);
         List<Exchange> exchanges = resultEndpoint.getReceivedExchanges();
@@ -182,7 +182,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
@@ -211,7 +211,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
@@ -241,7 +241,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
@@ -271,7 +271,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
@@ -301,7 +301,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
@@ -331,7 +331,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }
@@ -363,7 +363,7 @@ public class HdfsConsumerTest extends CamelTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }

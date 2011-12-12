@@ -66,7 +66,7 @@ public class CxfCustomerStartStopTest extends Assert {
         
         ClassPathXmlApplicationContext applicationContext = 
             new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CamelCxfConsumerContext.xml");
-        Bus bus = (Bus)applicationContext.getBean("cxf");
+        Bus bus = applicationContext.getBean("cxf", Bus.class);
         // Bus shutdown will be called when the application context is closed.
         String orig = System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "false");
         applicationContext.close();

@@ -34,7 +34,7 @@ public class KratiProducerTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:put", "TEST1", KratiConstants.KEY, "1");
         template.sendBodyAndHeader("direct:put", "TEST2", KratiConstants.KEY, "2");
         template.sendBodyAndHeader("direct:put", "TEST3", KratiConstants.KEY, "3");
-        MockEndpoint endpoint = (MockEndpoint) context.getEndpoint("mock:results");
+        MockEndpoint endpoint = context.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedMessageCount(3);
         endpoint.assertIsSatisfied();
     }

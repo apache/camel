@@ -65,7 +65,7 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
     public void testProducer() throws Exception {
         Person person = new Person("David", "Greco");
         template.requestBody("direct:input", person);
-        MockEndpoint ep = (MockEndpoint) context.getEndpoint("mock:test");
+        MockEndpoint ep = context.getEndpoint("mock:test", MockEndpoint.class);
         List<Exchange> exchanges = ep.getReceivedExchanges();
         for (Exchange exchange : exchanges) {
             Person person1 = (Person) exchange.getIn().getBody();

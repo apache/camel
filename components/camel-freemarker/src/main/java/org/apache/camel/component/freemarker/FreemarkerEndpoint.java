@@ -87,7 +87,7 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
     public FreemarkerEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(getResourceUri(), newResourceUri);
         log.debug("Getting endpoint with URI: {}", newUri);
-        return (FreemarkerEndpoint) getCamelContext().getEndpoint(newUri);
+        return getCamelContext().getEndpoint(newUri, FreemarkerEndpoint.class);
     }
     
     @Override

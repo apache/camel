@@ -38,7 +38,7 @@ public final class CamelClientRemoting {
         // just get the proxy to the service and we as the client can use the "proxy" as it was
         // a local object we are invoking. Camel will under the covers do the remote communication
         // to the remote ActiveMQ server and fetch the response.
-        Multiplier multiplier = (Multiplier)context.getBean("multiplierProxy");
+        Multiplier multiplier = context.getBean("multiplierProxy", Multiplier.class);
 
         System.out.println("Invoking the multiply with 33");
         int response = multiplier.multiply(33);

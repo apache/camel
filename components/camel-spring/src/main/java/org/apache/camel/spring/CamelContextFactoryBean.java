@@ -162,7 +162,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     
 
     @Override
-    public Class getObjectType() {
+    public Class<SpringCamelContext> getObjectType() {
         return SpringCamelContext.class;
     }
     
@@ -170,14 +170,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         S bean = null;
         String[] names = getApplicationContext().getBeanNamesForType(clazz, true, true);
         if (names.length == 1) {
-            bean = (S) getApplicationContext().getBean(names[0], clazz);
+            bean = getApplicationContext().getBean(names[0], clazz);
         }
         if (bean == null) {
             ApplicationContext parentContext = getApplicationContext().getParent();
             if (parentContext != null) {
                 names = parentContext.getBeanNamesForType(clazz, true, true);
                 if (names.length == 1) {
-                    bean = (S) parentContext.getBean(names[0], clazz);
+                    bean = parentContext.getBean(names[0], clazz);
                 }
             }
         }

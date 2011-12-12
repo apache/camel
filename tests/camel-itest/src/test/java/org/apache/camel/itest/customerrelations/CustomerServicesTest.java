@@ -47,7 +47,7 @@ public class CustomerServicesTest extends Assert {
 
             clientContext =  new ClassPathXmlApplicationContext(
                 new String[] {"spring-config/client-applicationContext.xml"});
-            CustomerServiceV1 customerService = (CustomerServiceV1) clientContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1");
+            CustomerServiceV1 customerService = clientContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1", CustomerServiceV1.class);
 
             // CXF 2.1.2 only apply the SOAPAction for the request message (in SoapPreProtocolOutInterceptor)
             // After went through the SOAP 1.1 specification, I got that the SOAPAction is only for the request message

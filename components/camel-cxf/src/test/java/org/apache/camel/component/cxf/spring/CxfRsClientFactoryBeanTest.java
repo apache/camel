@@ -30,7 +30,7 @@ public class CxfRsClientFactoryBeanTest extends AbstractSpringBeanTestSupport {
     
     @Test
     public void testCxfRsClientFactoryBean() {
-        SpringJAXRSClientFactoryBean cfb = (SpringJAXRSClientFactoryBean) ctx.getBean("rsClient1");
+        SpringJAXRSClientFactoryBean cfb = ctx.getBean("rsClient1", SpringJAXRSClientFactoryBean.class);
         assertEquals("Get a wrong address", cfb.getAddress(), "http://localhost:" + port + "/CxfRsClientFactoryBeanTest/router");
         assertEquals("Get a wrong beanId", cfb.getBeanId(), "rsClient1");
         assertEquals("Get a wrong password", cfb.getPassword(), "passwd");

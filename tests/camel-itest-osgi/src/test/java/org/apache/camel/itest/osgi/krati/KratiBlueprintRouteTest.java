@@ -57,7 +57,7 @@ public class KratiBlueprintRouteTest extends OSGiBlueprintTestSupport {
         getInstalledBundle("CamelBlueprintKratiTestBundle").start();
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintKratiTestBundle)", 20000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintKratiTestBundle)", 20000);
-        MockEndpoint mock = (MockEndpoint) ctx.getEndpoint("mock:results");
+        MockEndpoint mock = ctx.getEndpoint("mock:results", MockEndpoint.class);
         ProducerTemplate template = ctx.createProducerTemplate();
         mock.expectedMessageCount(2);
         template.sendBodyAndHeader("direct:put", new SomeObject("1", "Test 1"), KratiConstants.KEY, "1");

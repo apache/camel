@@ -33,8 +33,7 @@ public class RouteAutoStartupPropertiesTest extends TestCase {
     public void testAutoStartupFalse() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteAutoStartupFalseTest.xml");
 
-        // must type cast to work with Spring 2.5.x
-        SpringCamelContext camel = (SpringCamelContext) ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
 
         assertEquals(false, camel.getRouteStatus("foo").isStarted());
 
@@ -57,8 +56,7 @@ public class RouteAutoStartupPropertiesTest extends TestCase {
     public void testAutoStartupTrue() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteAutoStartupTrueTest.xml");
 
-        // must type cast to work with Spring 2.5.x
-        SpringCamelContext camel = (SpringCamelContext) ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
 
         assertEquals(true, camel.getRouteStatus("bar").isStarted());
 

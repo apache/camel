@@ -37,9 +37,9 @@ public class ContainerWideInterceptorTest extends TestSupport {
     protected void setUp() throws Exception {
         super.setUp();
         ac = new ClassPathXmlApplicationContext("/org/apache/camel/spring/interceptor/ContainerWideInterceptorTest.xml");
-        camel1 = (CamelContext) ac.getBean("camel1");
-        camel2 = (CamelContext) ac.getBean("camel2");
-        myInterceptor = (ContainerWideInterceptor) ac.getBean("myInterceptor");
+        camel1 = ac.getBean("camel1", CamelContext.class);
+        camel2 = ac.getBean("camel2", CamelContext.class);
+        myInterceptor = ac.getBean("myInterceptor", ContainerWideInterceptor.class);
     }
 
     @Override

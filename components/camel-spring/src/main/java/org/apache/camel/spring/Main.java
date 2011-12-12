@@ -156,7 +156,7 @@ public class Main extends MainSupport {
     protected ProducerTemplate findOrCreateCamelTemplate() {
         String[] names = getApplicationContext().getBeanNamesForType(ProducerTemplate.class);
         if (names != null && names.length > 0) {
-            return (ProducerTemplate) getApplicationContext().getBean(names[0], ProducerTemplate.class);
+            return getApplicationContext().getBean(names[0], ProducerTemplate.class);
         }
         if (getCamelContexts().isEmpty()) {
             throw new IllegalArgumentException("No CamelContexts are available so cannot create a ProducerTemplate!");

@@ -43,8 +43,8 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
         this.testBinding = new TestHttpBinding();
         this.testConfigurer = new TestClientConfigurer();
         super.setUp();
-        this.endpoint1 = (HttpEndpoint) context.getEndpoint(TEST_URI_1);
-        this.endpoint2 = (HttpEndpoint) context.getEndpoint(TEST_URI_2);
+        this.endpoint1 = context.getEndpoint(TEST_URI_1, HttpEndpoint.class);
+        this.endpoint2 = context.getEndpoint(TEST_URI_2, HttpEndpoint.class);
     }
 
     @Test

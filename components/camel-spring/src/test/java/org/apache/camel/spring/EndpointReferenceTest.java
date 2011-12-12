@@ -57,7 +57,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
     }
 
     protected SpringCamelContext createCamelContext() {
-        return (SpringCamelContext) applicationContext.getBean("camel");
+        return applicationContext.getBean("camel", SpringCamelContext.class);
     }
 
     public void testEndpointConfigurationAfterEnsuringThatTheStatementRouteBuilderWasCreated() throws Exception {
@@ -70,7 +70,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
     }
     
     public void testReferenceEndpointFromOtherCamelContext() throws Exception {
-        CamelContext context = (CamelContext)applicationContext.getBean("camel2");
+        CamelContext context = applicationContext.getBean("camel2", CamelContext.class);
         RouteContext routeContext = new DefaultRouteContext(context);
         try {
             routeContext.resolveEndpoint(null, "endpoint1");

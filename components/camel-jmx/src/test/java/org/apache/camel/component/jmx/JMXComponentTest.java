@@ -38,7 +38,7 @@ public class JMXComponentTest {
 
     @Test
     public void withObjectProperties() throws Exception {
-        JMXEndpoint ep = (JMXEndpoint) context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.propOne=prop1&key.propTwo=prop2");
+        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&key.propOne=prop1&key.propTwo=prop2", JMXEndpoint.class);
         assertNotNull(ep);
 
         Hashtable<String, String> props = ep.getObjectProperties();
@@ -51,7 +51,7 @@ public class JMXComponentTest {
 
     @Test
     public void withObjectName() throws Exception {
-        JMXEndpoint ep = (JMXEndpoint) context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName");
+        JMXEndpoint ep = context.getEndpoint("jmx:platform?objectDomain=FooDomain&objectName=theObjectName", JMXEndpoint.class);
         assertNotNull(ep);
 
         assertEquals("theObjectName", ep.getObjectName());

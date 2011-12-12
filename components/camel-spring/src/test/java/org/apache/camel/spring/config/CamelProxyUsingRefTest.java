@@ -28,7 +28,7 @@ public class CamelProxyUsingRefTest extends TestCase {
     public void testCamelProxyUsingRef() throws Exception {
         ApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/CamelProxyUsingRefTest.xml");
 
-        MyProxySender sender = (MyProxySender) ac.getBean("myProxySender");
+        MyProxySender sender = ac.getBean("myProxySender", MyProxySender.class);
         String reply = sender.hello("World");
 
         assertEquals("Hello World", reply);

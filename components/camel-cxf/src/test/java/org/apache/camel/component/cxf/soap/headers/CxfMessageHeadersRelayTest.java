@@ -449,8 +449,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
 
     @Test
     public void testMessageHeadersRelaysSpringContext() throws Exception {
-        CxfEndpoint endpoint = (CxfEndpoint)context
-            .getEndpoint("cxf:bean:serviceExtraRelays?headerFilterStrategy=#customMessageFilterStrategy");
+        CxfEndpoint endpoint = context.getEndpoint("cxf:bean:serviceExtraRelays?headerFilterStrategy=#customMessageFilterStrategy", CxfEndpoint.class);
         CxfHeaderFilterStrategy strategy = (CxfHeaderFilterStrategy)endpoint.getHeaderFilterStrategy();
         List<MessageHeaderFilter> filters = strategy.getMessageHeaderFilters();
         assertEquals("Expected number of filters ", 2, filters.size());

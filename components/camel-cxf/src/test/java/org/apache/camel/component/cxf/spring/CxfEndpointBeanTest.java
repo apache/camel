@@ -45,7 +45,7 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
 
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
-        CxfEndpoint routerEndpoint = (CxfEndpoint)ctx.getBean("routerEndpoint");
+        CxfEndpoint routerEndpoint = ctx.getBean("routerEndpoint", CxfEndpoint.class);
         assertEquals("Got the wrong endpoint address", "http://localhost:" + port1 
                      + "/CxfEndpointBeanTest/router", routerEndpoint.getAddress());
         assertEquals("Got the wrong endpont service class", "org.apache.camel.component.cxf.HelloService",
@@ -56,7 +56,7 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
         assertEquals("Got the wrong schemalocations size", 1, routerEndpoint.getSchemaLocations().size());
         assertEquals("Got the wrong schemalocation", "classpath:wsdl/Message.xsd", routerEndpoint.getSchemaLocations().get(0));
 
-        CxfEndpoint myEndpoint = (CxfEndpoint)ctx.getBean("myEndpoint");
+        CxfEndpoint myEndpoint = ctx.getBean("myEndpoint", CxfEndpoint.class);
         assertEquals("Got the wrong endpointName", endpointName, myEndpoint.getPortName());
         assertEquals("Got the wrong serviceName", serviceName, myEndpoint.getServiceName());
         assertEquals("loggingFeatureEnabled should be true", true, myEndpoint.isLoggingFeatureEnabled());
@@ -69,7 +69,7 @@ public class CxfEndpointBeanTest extends AbstractSpringBeanTestSupport {
     
     @Test
     public void testPropertiesSettingOnCxfClient() throws Exception {
-        CxfEndpoint clientEndpoint = (CxfEndpoint)ctx.getBean("clientEndpoint");
+        CxfEndpoint clientEndpoint = ctx.getBean("clientEndpoint", CxfEndpoint.class);
         CxfProducer producer = (CxfProducer) clientEndpoint.createProducer();
         Client client = producer.getClient();
         HTTPConduit conduit = (HTTPConduit)client.getConduit();

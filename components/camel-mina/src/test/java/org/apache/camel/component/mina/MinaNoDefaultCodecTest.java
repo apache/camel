@@ -45,8 +45,8 @@ public class MinaNoDefaultCodecTest extends BaseMinaTest {
             }
         });
 
-        MinaEndpoint endpoint1 = (MinaEndpoint)context.getEndpoint(uri1);
-        MinaEndpoint endpoint2 = (MinaEndpoint)context.getEndpoint(uri2);
+        MinaEndpoint endpoint1 = context.getEndpoint(uri1, MinaEndpoint.class);
+        MinaEndpoint endpoint2 = context.getEndpoint(uri2, MinaEndpoint.class);
         List<Entry> filters1 = endpoint1.getAcceptorConfig().getFilterChain().getAll();
         List<Entry> filters2 = endpoint2.getAcceptorConfig().getFilterChain().getAll();
         assertTrue(filters1.size() < filters2.size());

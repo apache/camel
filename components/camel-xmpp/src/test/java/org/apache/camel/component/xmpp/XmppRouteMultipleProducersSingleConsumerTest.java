@@ -33,8 +33,8 @@ public class XmppRouteMultipleProducersSingleConsumerTest extends CamelTestSuppo
     @Test
     public void testProducerGetsEverything() throws Exception {
 
-        goodEndpoint = (MockEndpoint)context.getEndpoint("mock:good");
-        badEndpoint = (MockEndpoint)context.getEndpoint("mock:bad");
+        goodEndpoint = context.getEndpoint("mock:good", MockEndpoint.class);
+        badEndpoint = context.getEndpoint("mock:bad", MockEndpoint.class);
 
         goodEndpoint.expectedMessageCount(4);
         badEndpoint.expectedMessageCount(0);

@@ -44,7 +44,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
     public void startTest() throws Exception {
         CamelContext context = startRouteWithPolicy("startPolicy");
         
-        MockEndpoint mock = (MockEndpoint) context.getEndpoint("mock:success");
+        MockEndpoint mock = context.getEndpoint("mock:success", MockEndpoint.class);
         mock.expectedMinimumMessageCount(1);
         
         context.stopRoute("testRoute", 0, TimeUnit.MILLISECONDS);
@@ -94,7 +94,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
     public void resumeTest() throws Exception {
         CamelContext context = startRouteWithPolicy("resumePolicy");
         
-        MockEndpoint mock = (MockEndpoint) context.getEndpoint("mock:success");
+        MockEndpoint mock = context.getEndpoint("mock:success", MockEndpoint.class);
         mock.expectedMinimumMessageCount(1);
 
         ServiceHelper.suspendService(context.getRoute("testRoute").getConsumer());
@@ -110,7 +110,7 @@ public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
     private CamelContext startRouteWithPolicy(String policyBeanName) throws Exception {
         CamelContext context = new DefaultCamelContext();
         ArrayList<RouteDefinition> routes = (ArrayList<RouteDefinition>)applicationContext.getBean("testRouteContext");
-        RoutePolicy policy = (RoutePolicy)applicationContext.getBean(policyBeanName);
+        RoutePolicy policy = applicationContext.getBean(policyBeanName, RoutePolicy.class);
         assertTrue(getTestType() == TestType.SIMPLE 
             ? policy instanceof SimpleScheduledRoutePolicy 
             : policy instanceof CronScheduledRoutePolicy);

@@ -67,7 +67,7 @@ public class GzipDataFormatTest extends ContextTestSupport {
         });
         context.start();
 
-        MockEndpoint result = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
         result.expectedBodiesReceived(TEXT.getBytes("UTF-8"));
         sendText();
         result.assertIsSatisfied();

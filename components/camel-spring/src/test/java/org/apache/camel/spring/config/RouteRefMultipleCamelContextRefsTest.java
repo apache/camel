@@ -36,8 +36,8 @@ public class RouteRefMultipleCamelContextRefsTest extends TestCase {
         AbstractXmlApplicationContext ac = createApplicationContext();
         ac.start();
 
-        CamelContext camel1 = (CamelContext) ac.getBean("myCamel-1", CamelContext.class);
-        CamelContext camel2 = (CamelContext) ac.getBean("myCamel-2", CamelContext.class);
+        CamelContext camel1 = ac.getBean("myCamel-1", CamelContext.class);
+        CamelContext camel2 = ac.getBean("myCamel-2", CamelContext.class);
 
         Endpoint start1 = camel1.getEndpoint("direct:start");
         Endpoint start2 = camel2.getEndpoint("direct:start");

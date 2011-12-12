@@ -26,7 +26,7 @@ public class InitSolrEndpointTest extends CamelTestSupport {
 
     @Test
     public void endpointCreatedCorrectlyWithAllOptions() throws Exception {
-        SolrEndpoint solrEndpoint = (SolrEndpoint) context.getEndpoint(solrUrl + getFullOptions());
+        SolrEndpoint solrEndpoint = context.getEndpoint(solrUrl + getFullOptions(), SolrEndpoint.class);
         assertNotNull(solrEndpoint);
     }
 

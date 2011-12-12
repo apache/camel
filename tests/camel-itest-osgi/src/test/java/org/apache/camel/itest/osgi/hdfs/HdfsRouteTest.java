@@ -75,7 +75,7 @@ public class HdfsRouteTest extends OSGiIntegrationTestSupport {
         });
         context.start();
 
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }

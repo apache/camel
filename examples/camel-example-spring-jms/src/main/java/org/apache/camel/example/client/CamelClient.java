@@ -38,7 +38,7 @@ public final class CamelClient {
         ApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
 
         // get the camel template for Spring template style sending of messages (= producer)
-        ProducerTemplate camelTemplate = (ProducerTemplate) context.getBean("camelTemplate");
+        ProducerTemplate camelTemplate = context.getBean("camelTemplate", ProducerTemplate.class);
 
         System.out.println("Invoking the multiply with 22");
         // as opposed to the CamelClientRemoting example we need to define the service URI in this java code

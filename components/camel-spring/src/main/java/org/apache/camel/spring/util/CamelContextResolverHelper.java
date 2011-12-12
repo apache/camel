@@ -30,7 +30,7 @@ public final class CamelContextResolverHelper {
     
     public static CamelContext getCamelContextWithId(ApplicationContext context, String contextId) {
         try {
-            return (CamelContext) context.getBean(contextId);
+            return context.getBean(contextId, CamelContext.class);
         } catch (Exception e) {
             throw new IllegalArgumentException("Cannot find the CamelContext with id " + contextId, e);
         }

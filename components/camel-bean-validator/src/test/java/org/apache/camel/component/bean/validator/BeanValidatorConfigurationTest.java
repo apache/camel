@@ -65,7 +65,7 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
     
     @Test
     public void configureWithDefaults() throws Exception {
-        ProcessorEndpoint endpoint = (ProcessorEndpoint) context.getEndpoint("bean-validator://x");
+        ProcessorEndpoint endpoint = context.getEndpoint("bean-validator://x", ProcessorEndpoint.class);
         BeanValidator processor = (BeanValidator) endpoint.getProcessor();
 
         assertNull(processor.getGroup());
@@ -77,11 +77,11 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
     
     @Test
     public void configureBeanValidator() throws Exception {
-        ProcessorEndpoint endpoint = (ProcessorEndpoint) context.getEndpoint("bean-validator://x"
+        ProcessorEndpoint endpoint = context.getEndpoint("bean-validator://x"
                 + "?group=org.apache.camel.component.bean.validator.OptionalChecks"
                 + "&messageInterpolator=#myMessageInterpolator"
                 + "&traversableResolver=#myTraversableResolver"
-                + "&constraintValidatorFactory=myConstraintValidatorFactory");
+                + "&constraintValidatorFactory=myConstraintValidatorFactory", ProcessorEndpoint.class);
         BeanValidator processor = (BeanValidator) endpoint.getProcessor();
 
         assertEquals("org.apache.camel.component.bean.validator.OptionalChecks", processor.getGroup().getName());

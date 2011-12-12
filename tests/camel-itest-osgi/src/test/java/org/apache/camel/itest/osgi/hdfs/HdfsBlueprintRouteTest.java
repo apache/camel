@@ -56,7 +56,7 @@ public class HdfsBlueprintRouteTest extends OSGiBlueprintTestSupport {
         ProducerTemplate template = ctx.createProducerTemplate();
         template.sendBody("direct:start", "CIAO");
 
-        MockEndpoint resultEndpoint = (MockEndpoint) ctx.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = ctx.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.assertIsSatisfied();
     }

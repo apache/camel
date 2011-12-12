@@ -50,13 +50,6 @@ public abstract class ApplicationContextTestSupport extends TestCase {
      * it is not present or the correct type
      */
     public <T> T getMandatoryBean(Class<T> type, String name) {
-        Object value = applicationContext.getBean(name);
-        assertNotNull("No spring bean found for name <" + name + ">", value);
-        if (type.isInstance(value)) {
-            return type.cast(value);
-        } else {
-            fail("Spring bean <" + name + "> is not an instanceof " + type.getName() + " but is of type " + ObjectHelper.className(value));
-            return null;
-        }
+        return applicationContext.getBean(name, type);
     }
 }

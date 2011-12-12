@@ -83,8 +83,7 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
 
     @SuppressWarnings("unchecked")
     protected Map<String, Object> getPropertyMap(BeanDefinitionBuilder bean, boolean lazyInstantiation) {
-        PropertyValue propertyValue = (PropertyValue)bean.getBeanDefinition().getPropertyValues()
-            .getPropertyValue("properties");
+        PropertyValue propertyValue = bean.getBeanDefinition().getPropertyValues().getPropertyValue("properties");
         
         Map<String, Object> map = null;
         if (propertyValue == null) {

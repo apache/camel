@@ -244,7 +244,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
 
     protected CamelContext getOrLookupCamelContext() {
         if (camelContext == null && applicationContext.containsBean(camelId)) {
-            camelContext = (CamelContext) applicationContext.getBean(camelId);
+            camelContext = applicationContext.getBean(camelId, CamelContext.class);
         }
         return camelContext;
     }

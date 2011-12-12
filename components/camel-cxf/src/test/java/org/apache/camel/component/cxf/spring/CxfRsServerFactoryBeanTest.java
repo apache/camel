@@ -32,13 +32,13 @@ public class CxfRsServerFactoryBeanTest extends AbstractSpringBeanTestSupport {
     
     @Test
     public void testCxfRsServerFactoryBean() {
-        SpringJAXRSServerFactoryBean sfb1 = (SpringJAXRSServerFactoryBean) ctx.getBean("rsServer1");
+        SpringJAXRSServerFactoryBean sfb1 = ctx.getBean("rsServer1", SpringJAXRSServerFactoryBean.class);
         assertEquals("Get a wrong address", sfb1.getAddress(), "http://localhost:" + port + "/CxfRsServerFactoryBeanTest/server1");        
         List<Class<?>> resource1Classes = sfb1.getResourceClasses();
         assertEquals("Get a wrong size of resouceClasses", resource1Classes.size(), 1);
         assertEquals("Get a wrong resource class", resource1Classes.get(0), CustomerService.class);
         
-        SpringJAXRSServerFactoryBean sfb2 = (SpringJAXRSServerFactoryBean) ctx.getBean("rsServer2");
+        SpringJAXRSServerFactoryBean sfb2 = ctx.getBean("rsServer2", SpringJAXRSServerFactoryBean.class);
         assertEquals("Get a wrong address", sfb2.getAddress(), "http://localhost:" + port + "/CxfRsServerFactoryBeanTest/server2");
         sfb2.getResourceClasses();
         List<Class<?>> resource2Classes = sfb2.getResourceClasses();

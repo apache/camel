@@ -29,7 +29,7 @@ public class AnotherCamelProxyTest extends TestCase {
         // START SNIPPET: e1
         ApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/AnotherCamelProxyTest.xml");
 
-        MyProxySender sender = (MyProxySender) ac.getBean("myProxySender");
+        MyProxySender sender = ac.getBean("myProxySender", MyProxySender.class);
         String reply = sender.hello("Camel");
 
         assertEquals("Bye Camel", reply);

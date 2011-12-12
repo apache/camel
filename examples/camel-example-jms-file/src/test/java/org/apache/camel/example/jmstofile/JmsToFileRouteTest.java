@@ -28,7 +28,7 @@ public class JmsToFileRouteTest extends Assert {
     public void startRoute() throws Exception {
         AbstractApplicationContext applicationContext =
             new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/camelContext.xml"});
-        CamelContext camelContext = (CamelContext)applicationContext.getBean("camelContext");
+        CamelContext camelContext = applicationContext.getBean("camelContext", CamelContext.class);
         assertNotNull("The camel context should not be null", camelContext);
         Thread.sleep(2000);        
         camelContext.stop();

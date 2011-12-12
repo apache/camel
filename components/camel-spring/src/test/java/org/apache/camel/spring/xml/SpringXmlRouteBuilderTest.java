@@ -42,14 +42,14 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
     @Override
     protected List<Route> buildCustomProcessor() {
         List<Route> answer = getRoutesFromContext("org/apache/camel/spring/xml/buildCustomProcessor.xml");
-        myProcessor = (Processor) applicationContext.getBean("myProcessor");
+        myProcessor = applicationContext.getBean("myProcessor", Processor.class);
         return answer;
     }
 
     @Override
     protected List<Route> buildCustomProcessorWithFilter() {
         List<Route> answer = getRoutesFromContext("org/apache/camel/spring/xml/buildCustomProcessorWithFilter.xml");
-        myProcessor = (Processor) applicationContext.getBean("myProcessor");
+        myProcessor = applicationContext.getBean("myProcessor", Processor.class);
         return answer;
     }
 
@@ -100,8 +100,7 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
 
     protected List<Route> getRoutesFromContext(String classpathConfigFile) {
         applicationContext = new ClassPathXmlApplicationContext(classpathConfigFile);
-        // must type cast to work with Spring 2.5.x
-        SpringCamelContext context = (SpringCamelContext) applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         assertNotNull("No Camel Context in file: " + classpathConfigFile, context);
         List<Route> routes = context.getRoutes();
         assertNotNull("No routes available for context: " + context.getName() + " in file: " + classpathConfigFile, routes);

@@ -34,7 +34,7 @@ public class CustomerServicesWsAddressingTest extends Assert {
 
             clientContext =  new ClassPathXmlApplicationContext(
                 new String[] {"spring-config/client-WsAddressingContext.xml"});
-            CustomerServiceV1 customerService = (CustomerServiceV1) clientContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1");
+            CustomerServiceV1 customerService = clientContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1", CustomerServiceV1.class);
 
             Customer customer = customerService.getCustomer("12345");
             assertNotNull("We should get Customer here", customer);

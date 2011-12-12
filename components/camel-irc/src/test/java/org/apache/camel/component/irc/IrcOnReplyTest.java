@@ -38,7 +38,7 @@ public class IrcOnReplyTest extends CamelTestSupport {
     @Ignore("test manual")
     @Test
     public void testIrcMessages() throws Exception {
-        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(resultEnd);
 
         resultEndpoint.assertIsSatisfied();

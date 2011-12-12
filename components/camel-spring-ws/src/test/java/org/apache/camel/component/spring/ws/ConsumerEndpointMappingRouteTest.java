@@ -63,7 +63,7 @@ public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        webServiceTemplate = (WebServiceTemplate) applicationContext.getBean("webServiceTemplate");
+        webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
     }
 
     @Test

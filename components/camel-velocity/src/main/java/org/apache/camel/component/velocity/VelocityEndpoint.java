@@ -147,7 +147,7 @@ public class VelocityEndpoint extends ResourceEndpoint {
     public VelocityEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(getResourceUri(), newResourceUri);
         log.debug("Getting endpoint with URI: {}", newUri);
-        return (VelocityEndpoint) getCamelContext().getEndpoint(newUri);
+        return getCamelContext().getEndpoint(newUri, VelocityEndpoint.class);
     }
 
     @SuppressWarnings("unchecked")

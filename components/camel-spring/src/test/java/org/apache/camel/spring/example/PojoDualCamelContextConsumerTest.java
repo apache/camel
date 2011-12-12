@@ -99,8 +99,8 @@ public class PojoDualCamelContextConsumerTest extends TestSupport {
         super.setUp();
 
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/example/pojoDualCamelContextConsumer.xml");
-        camel1 = (CamelContext) ac.getBean("camel-1");
-        camel2 = (CamelContext) ac.getBean("camel-2");
+        camel1 = ac.getBean("camel-1", CamelContext.class);
+        camel2 = ac.getBean("camel-2", CamelContext.class);
     }
 
     @Override

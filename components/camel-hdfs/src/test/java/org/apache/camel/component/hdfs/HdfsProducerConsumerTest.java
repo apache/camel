@@ -67,7 +67,7 @@ public class HdfsProducerConsumerTest extends CamelTestSupport {
             template.sendBody("direct:start", "CIAO" + i);
         }
 
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
 
         resultEndpoint.expectedMessageCount(10);
         resultEndpoint.assertIsSatisfied();

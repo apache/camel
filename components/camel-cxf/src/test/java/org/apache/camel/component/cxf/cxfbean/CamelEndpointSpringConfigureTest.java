@@ -33,7 +33,7 @@ public class CamelEndpointSpringConfigureTest extends CamelSpringTestSupport {
     
     @Test
     public void testCreateDestinationFromSpring() throws Exception {
-        CxfEndpoint cxfEndpoint = (CxfEndpoint) context.getEndpoint("cxf:bean:serviceEndpoint");
+        CxfEndpoint cxfEndpoint = context.getEndpoint("cxf:bean:serviceEndpoint", CxfEndpoint.class);
         CxfProducer producer = (CxfProducer)cxfEndpoint.createProducer();
         assertNotNull("The producer should not be null", producer);        
         producer.start();
@@ -41,7 +41,7 @@ public class CamelEndpointSpringConfigureTest extends CamelSpringTestSupport {
         assertTrue("we should get SpringCamelContext here", conduit.getCamelContext() instanceof SpringCamelContext);
         assertEquals("The context id should be camel_conduit", "camel_conduit", conduit.getCamelContext().getName());
         
-        cxfEndpoint = (CxfEndpoint) context.getEndpoint("cxf:bean:routerEndpoint");
+        cxfEndpoint = context.getEndpoint("cxf:bean:routerEndpoint", CxfEndpoint.class);
         CxfConsumer consumer = (CxfConsumer)cxfEndpoint.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // do nothing here                

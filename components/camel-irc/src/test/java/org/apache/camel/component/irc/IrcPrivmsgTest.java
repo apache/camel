@@ -43,7 +43,7 @@ public class IrcPrivmsgTest extends CamelTestSupport {
     @Ignore("test manual")
     @Test
     public void testIrcPrivateMessages() throws Exception {
-        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(expectedBody1, expectedBody2);
 
         resultEndpoint.assertIsSatisfied();

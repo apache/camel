@@ -35,7 +35,7 @@ public class PojoProxyHelperOneWayTest extends ContextTestSupport {
     @Test
     public void testOneWay() throws Exception {
         Endpoint personEndpoint = context.getEndpoint("direct:person");
-        MockEndpoint result = (MockEndpoint)context.getEndpoint("mock:result");
+        MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
         Person person = new Person("Chris");
         result.expectedBodiesReceived(person);
         PersonHandler sender = PojoProxyHelper.createProxy(personEndpoint, PersonHandler.class);

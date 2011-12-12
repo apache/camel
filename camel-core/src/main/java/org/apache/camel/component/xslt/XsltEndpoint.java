@@ -73,7 +73,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     public XsltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(resourceUri, newResourceUri);
         LOG.trace("Getting endpoint with URI: {}", newUri);
-        return (XsltEndpoint) getCamelContext().getEndpoint(newUri);
+        return getCamelContext().getEndpoint(newUri, XsltEndpoint.class);
     }
     
     @Override

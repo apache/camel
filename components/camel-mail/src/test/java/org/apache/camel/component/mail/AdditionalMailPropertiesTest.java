@@ -34,7 +34,7 @@ public class AdditionalMailPropertiesTest extends CamelTestSupport {
         // clear mailbox
         Mailbox.clearAll();
 
-        MailEndpoint endpoint = (MailEndpoint) context.getEndpoint("pop3://localhost?username=james&mail.pop3.forgettopheaders=true");
+        MailEndpoint endpoint = context.getEndpoint("pop3://localhost?username=james&mail.pop3.forgettopheaders=true", MailEndpoint.class);
         Properties prop = endpoint.getConfiguration().getAdditionalJavaMailProperties();
         assertEquals("true", prop.get("mail.pop3.forgettopheaders"));
     }

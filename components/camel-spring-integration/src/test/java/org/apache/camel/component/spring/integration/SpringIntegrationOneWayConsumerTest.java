@@ -31,7 +31,7 @@ public class SpringIntegrationOneWayConsumerTest extends CamelSpringTestSupport 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(MESSAGE_BODY);
 
-        MessageChannel outputChannel = (MessageChannel) applicationContext.getBean("outputChannel");
+        MessageChannel outputChannel = applicationContext.getBean("outputChannel", MessageChannel.class);
         outputChannel.send(new GenericMessage<Object>(MESSAGE_BODY));
 
         resultEndpoint.assertIsSatisfied();

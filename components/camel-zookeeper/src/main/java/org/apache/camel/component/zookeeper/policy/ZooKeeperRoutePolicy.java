@@ -208,7 +208,7 @@ public class ZooKeeperRoutePolicy extends RoutePolicySupport {
         if (log.isInfoEnabled()) {
             log.info(format("Initializing ZookeeperRoutePolicy with uri '%s'", uri));
         }
-        ZooKeeperEndpoint zep = (ZooKeeperEndpoint)camelContext.getEndpoint(uri);
+        ZooKeeperEndpoint zep = camelContext.getEndpoint(uri, ZooKeeperEndpoint.class);
         zep.getConfiguration().setCreate(true);
         String fullpath = createFullPathToCandidate(zep);
         Exchange e = zep.createExchange();
