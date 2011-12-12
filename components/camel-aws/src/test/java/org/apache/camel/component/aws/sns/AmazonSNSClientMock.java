@@ -22,6 +22,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.AddPermissionRequest;
 import com.amazonaws.services.sns.model.ConfirmSubscriptionRequest;
@@ -50,7 +51,7 @@ public class AmazonSNSClientMock extends AmazonSNSClient {
     private static final String DEFAULT_TOPIC_ARN = "arn:aws:sns:us-east-1:541925086079:MyTopic";
     
     public AmazonSNSClientMock() {
-        super(null);
+        super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
     }
 
     @Override

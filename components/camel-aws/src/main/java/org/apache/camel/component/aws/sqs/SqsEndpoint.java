@@ -77,9 +77,6 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         
         // creates a new queue, or returns the URL of an existing one
         CreateQueueRequest request = new CreateQueueRequest(configuration.getQueueName());
-        if (getConfiguration().getDefaultVisibilityTimeout() != null) {
-            request.setDefaultVisibilityTimeout(getConfiguration().getDefaultVisibilityTimeout());
-        }
         
         LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
         
@@ -89,6 +86,9 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         LOG.trace("Queue created and available at: {}", queueUrl);
 
         // According to the documentation, only one setting can be made at a time, even though they go into a Map.
+        if (getConfiguration().getDefaultVisibilityTimeout() != null) {
+            updateAttribute("VisibilityTimeout", getConfiguration().getDefaultVisibilityTimeout());
+        }
         if (getConfiguration().getMaximumMessageSize() != null) {
             updateAttribute("MaximumMessageSize", getConfiguration().getMaximumMessageSize());
         }
