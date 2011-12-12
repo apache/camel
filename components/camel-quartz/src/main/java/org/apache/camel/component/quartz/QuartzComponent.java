@@ -98,6 +98,11 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         String cron = getAndRemoveParameter(parameters, "cron", String.class);
         Boolean fireNow = getAndRemoveParameter(parameters, "fireNow", Boolean.class, Boolean.FALSE);
 
+        // host can be null if the uri did contain invalid host characters such as an underscore
+        if (host == null) {
+            host = ObjectHelper.before(remaining, "/");
+        }
+
         // group can be optional, if so set it to Camel
         String name;
         String group;
