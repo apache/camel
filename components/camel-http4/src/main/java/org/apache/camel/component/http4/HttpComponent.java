@@ -17,6 +17,7 @@
 package org.apache.camel.component.http4;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -193,7 +194,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // create the configurer to use for this endpoint
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, secure);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
-        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
+        // create the endpoint and set the http uri to be null
+        HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, clientParams, clientConnectionManager, configurer);
+        // configure the endpoint
+        setProperties(endpoint, parameters);
         // The httpUri should be start with http or https
         String httpUriAddress = addressUri;
         if (addressUri.startsWith("http4")) {
@@ -202,6 +206,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (addressUri.startsWith("https4")) {
             httpUriAddress = "https" + addressUri.substring(6);
         }
+        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
+        // build up the http uri
         URI httpUri = URISupport.createRemainingURI(new URI(httpUriAddress), CastUtils.cast(parameters));
 
         // validate http uri that end-user did not duplicate the http part that can be a common error
@@ -213,14 +219,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
                         "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
             }
         }
-
-        // register port on schema registry
-        int port = getPort(httpUri);
-        registerPort(secure, x509HostnameVerifier, port, sslContextParameters);
-
-        // create the endpoint
-        HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, httpUri, clientParams, clientConnectionManager, configurer);
-        setProperties(endpoint, parameters);
+        endpoint.setHttpUri(httpUri);
         setEndpointHeaderFilterStrategy(endpoint);
         endpoint.setBinding(getHttpBinding());
         if (httpBinding != null) {
@@ -229,10 +228,13 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (httpClientConfigurer != null) {
             endpoint.setHttpClientConfigurer(httpClientConfigurer);
         }
+        // register port on schema registry
+        int port = getPort(httpUri);
+        registerPort(secure, x509HostnameVerifier, port, sslContextParameters);
 
         return endpoint;
     }
-
+   
     private static int getPort(URI uri) {
         int port = uri.getPort();
         if (port < 0) {
