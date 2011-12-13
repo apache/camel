@@ -70,6 +70,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpConnectionManager httpConnectionManager) throws URISyntaxException {
         this(endPointURI, component, httpURI, new HttpClientParams(), httpConnectionManager, null);
     }
+    
+    public HttpEndpoint(String endPointURI, HttpComponent component, HttpClientParams clientParams,
+                        HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+        this(endPointURI, component, null, clientParams, httpConnectionManager, clientConfigurer);
+    }
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientParams clientParams,
                         HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
