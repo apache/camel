@@ -34,14 +34,6 @@
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.amqp.*</camel.osgi.export.pkg>
   </properties>
-  
-  <repositories>
-    <repository>
-      <id>fusesource.m2</id>
-      <name>Fusesource Dependency Repository</name>
-      <url>http://repo.fusesource.com/maven2-all</url>
-    </repository>     
-  </repositories>
 
   <dependencies>
     <dependency>
@@ -78,12 +70,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.qpid</groupId>
-      <artifactId>qpid-broker</artifactId>
-      <version>${qpid-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
