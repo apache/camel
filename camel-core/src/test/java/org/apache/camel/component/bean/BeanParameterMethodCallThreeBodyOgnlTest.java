@@ -65,7 +65,7 @@ public class BeanParameterMethodCallThreeBodyOgnlTest extends ContextTestSupport
         public String route(Object body) {
             if (body instanceof List) {
                 return "bean:foo?method=bar('A','B','C')";
-            } else{
+            } else {
                 return null;
             }
         }
@@ -83,7 +83,7 @@ public class BeanParameterMethodCallThreeBodyOgnlTest extends ContextTestSupport
 
         public String bar(String order1, String order2) {
             assertEquals("A", order1);
-            assertEquals("Hello,World", order2);
+            assertEquals("B", order2);
             return "2";
         }
 
