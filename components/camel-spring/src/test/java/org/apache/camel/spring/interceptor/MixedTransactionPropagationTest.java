@@ -22,6 +22,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Ignore;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,6 +30,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  * Unit test to demonstrate the transactional client pattern.
  */
+@Ignore
 public class MixedTransactionPropagationTest extends SpringTestSupport {
 
     protected JdbcTemplate jdbc;
