@@ -39,7 +39,7 @@ public class JdbcTableService implements InitializingBean, DisposableBean {
         } catch (Exception e) {
             // ignore
         }
-        jdbc.execute("create table ProcessedPayments (paymentIdentifier varchar)");
+        jdbc.execute("create table ProcessedPayments (paymentIdentifier varchar(24))");
     }
 
     public void dropTable() {
