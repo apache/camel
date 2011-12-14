@@ -83,32 +83,6 @@ public class JdbcOptionsTest extends CamelTestSupport {
         assertEquals(4, list.size());
     }
 
-    @SuppressWarnings("rawtypes")
-    @Test
-    public void testInsertRollback() throws Exception {
-        // insert 2 records
-        try {
-            template.sendBody("direct:startTx", "insert into customer values ('cust3', 'johnsmith');insert into customer values ('cust3', 'hkesler')");
-            fail("Should have thrown a CamelExecutionException");
-        } catch (CamelExecutionException e) {
-            if (!e.getCause().getMessage().contains("Violation of unique constraint")) {
-                fail("Test did not throw the expected Constraint Violation Exception");
-            }
-        }
-
-        // check to see that they failed by getting a rec count from table
-        MockEndpoint mockTest = getMockEndpoint("mock:retrieve");
-        mockTest.expectedMessageCount(1);
-
-        template.sendBody("direct:retrieve", "select * from customer");
-
-        mockTest.assertIsSatisfied();
-
-        List list = mockTest.getExchanges().get(0).getIn().getBody(ArrayList.class);
-        // all recs failed to insert
-        assertEquals(2, list.size());
-    }
-
     @Test
     public void testNoDataSourceInRegistry() throws Exception {
         try {
@@ -151,12 +125,8 @@ public class JdbcOptionsTest extends CamelTestSupport {
 
     @Before
     public void setUp() throws Exception {
-        Properties connectionProperties = new Properties();
-        connectionProperties.put("autoCommit", Boolean.TRUE);
-        
         DriverManagerDataSource dataSource = new SingleConnectionDataSource(url, user, password, true);
         dataSource.setDriverClassName(driverClass);
-        dataSource.setConnectionProperties(connectionProperties);
         ds = dataSource;
 
         JdbcTemplate jdbc = new JdbcTemplate(ds);
