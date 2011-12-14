@@ -36,11 +36,11 @@ public class CamelListener {
         Exchange exchange = consumer.getEndpoint().createExchange();
 
         // set object to body
-        exchange.getOut().setBody(value);
+        exchange.getIn().setBody(value);
 
         // set headers
         if (key != null) {
-            exchange.getOut().setHeader(HazelcastConstants.OBJECT_ID, key);
+            exchange.getIn().setHeader(HazelcastConstants.OBJECT_ID, key);
         }
 
         HazelcastComponentHelper.setListenerHeaders(exchange, HazelcastConstants.CACHE_LISTENER, operation, cacheName);
