@@ -74,7 +74,6 @@
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
     <geronimo-jpa-spec-version>1.1.1</geronimo-jpa-spec-version>
     <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
-    <geronimo-jsp-spec-version>1.0.1</geronimo-jsp-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
     <geronimo-servlet-spec-version>1.1.2</geronimo-servlet-spec-version>
     <groovy-version>1.8.4</groovy-version>
@@ -1053,11 +1052,6 @@
         <groupId>org.apache.servicemix.specs</groupId>
         <artifactId>org.apache.servicemix.specs.java-persistence-api-1.1.1</artifactId>
         <version>${servicemix-specs-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jsp_2.1_spec</artifactId>
-        <version>${geronimo-jsp-spec-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
