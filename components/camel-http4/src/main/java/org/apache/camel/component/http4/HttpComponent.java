@@ -17,7 +17,6 @@
 package org.apache.camel.component.http4;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
