@@ -85,14 +85,18 @@
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
     <bundle dependency="true">mvn:commons-codec/commons-codec/${commons-codec}</bundle>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
+    <!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
+    <!-- TODO replace the jetty feature by a Karaf spec feature -->
+    <feature>jetty</feature>
     <bundle>mvn:org.apache.camel/camel-http/${pom.version}</bundle>
   </feature>
   <feature name='camel-http4' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle dependency="true">mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency="true">mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
+    <!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
+    <!-- TODO replace the jetty feature by a Karaf spec feature -->
+    <feature>jetty</feature>
     <bundle>mvn:org.apache.camel/camel-http4/${pom.version}</bundle>
   </feature>
   <feature name='camel-mina' version='${pom.version}' resolver='(obr)' start-level='50'>
@@ -210,8 +214,8 @@
   </feature-->
   <feature name='camel-dozer' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
-    <bundle dependency="true">mvn:org.ops4j.pax.web/pax-web-jsp/${pax.web.version}</bundle>
+    <!-- the war feature provides the geronimo-servlet_2.5_spec and pax-web-jsp bundles -->
+    <feature>war</feature>
     <bundle dependency="true">mvn:net.sf.dozer/dozer-osgi/${dozer-version}</bundle>
     <bundle dependency="true">mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency="true">mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
@@ -314,7 +318,9 @@
   <feature name='camel-ibatis' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle dependency="true">mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
+    <!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
+    <!-- TODO replace the jetty feature by a Karaf spec feature -->
+    <feature>jetty</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/${commons-dbcp-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oscache/${oscache-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/${cglib-version}</bundle>
@@ -393,9 +399,8 @@
   </feature>
   <feature name='camel-jxpath' version='${pom.version}' resolver='(obr)' start-level='50'>
     <!-- All those bundles should be optional I think, but the commons-jxpath osgi metadata is not really good -->
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-el_1.0_spec/${el-api-1.0-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jsp_2.1_spec/${jsp-api-2.1-version}</bundle>
+    <!-- the war feature provides geronimo-servlet_2.5_spec, pax-web-jsp (exporting el and jsp packages) bundles -->
+    <feature>war</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency="true">mvn:commons-jxpath/commons-jxpath/${commons-jxpath-version}</bundle>
@@ -404,8 +409,8 @@
   </feature>
   <feature name='camel-juel' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-core</feature>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
-    <bundle dependency="true">mvn:org.ops4j.pax.web/pax-web-jsp/${pax.web.version}</bundle>
+    <!-- the war feature provides the geronimo-servlet_2.5_spec and pax-web-jsp bundles -->
+    <feature>war</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.juel/${juel-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-juel/${pom.version}</bundle>
   </feature>
@@ -445,7 +450,9 @@
   <feature name='camel-mybatis' version='${pom.version}' resolver='(obr)' start-level='50'>
     <feature version='${pom.version}'>camel-spring</feature>
     <bundle dependency="true">mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
+    <!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
+    <!-- TODO replace the jetty feature by a Karaf spec feature -->
+    <feature>jetty</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/${commons-dbcp-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/${cglib-version}</bundle>
     <bundle dependency="true">mvn:org.mybatis/mybatis/${mybatis-version}</bundle>
@@ -636,7 +643,9 @@
     <bundle>mvn:org.apache.camel/camel-tagsoup/${pom.version}</bundle>
   </feature>
   <feature name='camel-velocity' version='${pom.version}' resolver='(obr)' start-level='50'>
-    <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${servlet-api-2.5-version}</bundle>
+    <!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
+    <!-- TODO replace the jetty feature by a Karaf spec feature -->
+    <feature>jetty</feature>
     <bundle dependency="true">mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency="true">mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
