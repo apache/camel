@@ -17,13 +17,13 @@
 package org.apache.camel.impl;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 
 /**
  * @version 
@@ -387,7 +387,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         ExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(this, "Cool", 5);
         assertNotNull(pool);
 
-        ScheduledThreadPoolExecutor tp = assertIsInstanceOf(ScheduledThreadPoolExecutor.class, pool);
+        SizedScheduledExecutorService tp = assertIsInstanceOf(SizedScheduledExecutorService.class, pool);
         // a scheduled dont use keep alive
         assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
         assertEquals(Integer.MAX_VALUE, tp.getMaximumPoolSize());
@@ -403,7 +403,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         ExecutorService pool = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "Cool");
         assertNotNull(pool);
 
-        ScheduledThreadPoolExecutor tp = assertIsInstanceOf(ScheduledThreadPoolExecutor.class, pool);
+        SizedScheduledExecutorService tp = assertIsInstanceOf(SizedScheduledExecutorService.class, pool);
         // a scheduled dont use keep alive
         assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
         assertEquals(Integer.MAX_VALUE, tp.getMaximumPoolSize());
@@ -444,7 +444,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         ExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(this, "Cool", "foo");
         assertNotNull(pool);
 
-        ScheduledThreadPoolExecutor tp = assertIsInstanceOf(ScheduledThreadPoolExecutor.class, pool);
+        SizedScheduledExecutorService tp = assertIsInstanceOf(SizedScheduledExecutorService.class, pool);
         // a scheduled dont use keep alive
         assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
         assertEquals(Integer.MAX_VALUE, tp.getMaximumPoolSize());

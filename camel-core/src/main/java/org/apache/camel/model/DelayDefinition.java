@@ -83,7 +83,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
         if (getAsyncDelayed() != null && getAsyncDelayed()) {
             scheduled = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", this);
             if (scheduled == null) {
-                scheduled = routeContext.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "Delay");
+                scheduled = routeContext.getCamelContext().getExecutorServiceManager().newDefaultScheduledThreadPool(this, "Delay");
             }
         }
 

@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 
 /**
  * Factory for thread pools that uses the JDK {@link Executors} for creating the thread pools.
@@ -92,20 +93,22 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
     
     @Override
     public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-        ScheduledThreadPoolExecutor answer = new ScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory);
-
-        // need to use setters to set the other values as we cannot use a constructor
-        // keep alive and maximum pool size have no effects on a scheduled thread pool as its
-        // a fixed size pool with an unbounded queue (see class javadoc)
-        // TODO: when JDK7 we should setRemoveOnCancelPolicy(true)
-
         RejectedExecutionHandler rejectedExecutionHandler = profile.getRejectedExecutionHandler();
         if (rejectedExecutionHandler == null) {
             rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
         }
-        answer.setRejectedExecutionHandler(rejectedExecutionHandler);
 
-        return answer;
+        ScheduledThreadPoolExecutor answer = new ScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
+        // TODO: when JDK7 we should setRemoveOnCancelPolicy(true)
+
+        // need to wrap the thread pool in a sized to guard against the problem that the
+        // JDK created thread pool has an unbounded queue (see class javadoc), which mean
+        // we could potentially keep adding tasks, and run out of memory.
+        if (profile.getMaxPoolSize() > 0) {
+            return new SizedScheduledExecutorService(answer, profile.getMaxQueueSize());
+        } else {
+            return answer;
+        }
     }
 
 }

@@ -87,7 +87,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         if (getAsyncDelayed() != null && getAsyncDelayed()) {
             scheduled = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this);
             if (scheduled == null) {
-                scheduled = routeContext.getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "Throttle");
+                scheduled = routeContext.getCamelContext().getExecutorServiceManager().newDefaultScheduledThreadPool(this, "Throttle");
             }
         }
 

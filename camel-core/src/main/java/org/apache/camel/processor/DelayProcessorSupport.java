@@ -84,6 +84,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
         long delay = calculateDelay(exchange);
         if (delay <= 0) {
             // no delay then continue routing
+            log.trace("No delay for exchangeId: {}", exchange.getExchangeId());
             return super.process(exchange, callback);
         }
 
@@ -113,6 +114,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
                     if (!isRunAllowed()) {
                         exchange.setException(new RejectedExecutionException());
                     } else {
+                        log.debug("Scheduling rejected task, so letting caller run, delaying at first for {} millis for exchangeId: {}", delay, exchange.getExchangeId());
                         // let caller run by processing
                         try {
                             delay(delay, exchange);
