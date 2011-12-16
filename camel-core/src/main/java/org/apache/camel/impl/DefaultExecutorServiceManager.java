@@ -220,7 +220,17 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
             LOG.debug("Created new ScheduledThreadPool for source: {} with name: {}. -> {}", new Object[]{source, sanitizedName, answer});
         }
         return answer;
+    }
 
+    @Override
+    public ScheduledExecutorService newScheduledThreadPool(Object source, String name, String profileId) {
+        ThreadPoolProfile profile = getThreadPoolProfile(profileId);
+        if (profile != null) {
+            return newScheduledThreadPool(source, name, profile);
+        } else {
+            // no profile with that id
+            return null;
+        }
     }
 
     @Override

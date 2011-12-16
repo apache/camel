@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -91,7 +92,20 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
     
     @Override
     public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-        return Executors.newScheduledThreadPool(profile.getPoolSize(), threadFactory);
+        ScheduledThreadPoolExecutor answer = new ScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory);
+
+        // need to use setters to set the other values as we cannot use a constructor
+        // keep alive and maximum pool size have no effects on a scheduled thread pool as its
+        // a fixed size pool with an unbounded queue (see class javadoc)
+        // TODO: when JDK7 we should setRemoveOnCancelPolicy(true)
+
+        RejectedExecutionHandler rejectedExecutionHandler = profile.getRejectedExecutionHandler();
+        if (rejectedExecutionHandler == null) {
+            rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+        }
+        answer.setRejectedExecutionHandler(rejectedExecutionHandler);
+
+        return answer;
     }
 
 }

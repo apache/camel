@@ -430,4 +430,30 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertTrue(tp.isShutdown());
     }
 
+    public void testNewScheduledThreadPoolProfileById() throws Exception {
+        assertNull(context.getExecutorServiceManager().getThreadPoolProfile("foo"));
+
+        ThreadPoolProfile foo = new ThreadPoolProfile("foo");
+        foo.setKeepAliveTime(20L);
+        foo.setMaxPoolSize(40);
+        foo.setPoolSize(5);
+        foo.setMaxQueueSize(2000);
+
+        context.getExecutorServiceManager().registerThreadPoolProfile(foo);
+
+        ExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(this, "Cool", "foo");
+        assertNotNull(pool);
+
+        ScheduledThreadPoolExecutor tp = assertIsInstanceOf(ScheduledThreadPoolExecutor.class, pool);
+        // a scheduled dont use keep alive
+        assertEquals(0, tp.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(Integer.MAX_VALUE, tp.getMaximumPoolSize());
+        assertEquals(5, tp.getCorePoolSize());
+        assertFalse(tp.isShutdown());
+
+        context.stop();
+
+        assertTrue(tp.isShutdown());
+    }
+
 }
