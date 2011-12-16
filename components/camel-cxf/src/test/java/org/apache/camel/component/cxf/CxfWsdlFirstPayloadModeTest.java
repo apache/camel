@@ -74,7 +74,7 @@ public class CxfWsdlFirstPayloadModeTest extends CxfWsdlFirstTest {
             client.getPerson(personId, ssn, name);
             fail("We expect to get a message schema validation failure");        
         } catch (Exception ex) {
-            assertEquals("Could not parse the XML stream.", ex.getMessage());         
+            assertTrue(ex.getMessage().startsWith("Could not parse the XML stream"));         
         }
 
         verifyJaxwsHandlers(fromHandler, toHandler);
