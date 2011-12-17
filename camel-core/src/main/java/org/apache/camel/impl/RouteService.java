@@ -199,8 +199,9 @@ public class RouteService extends ServiceSupport {
             // fire event
             EventHelper.notifyRouteStopped(camelContext, route);
         }
-
-        camelContext.removeRouteCollection(routes);
+        if (isRemovingRoutes()) {
+            camelContext.removeRouteCollection(routes);
+        }
         // need to warm up again
         warmUpDone.set(false);
     }
@@ -217,7 +218,9 @@ public class RouteService extends ServiceSupport {
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
             strategy.onRoutesRemove(routes);
         }
-
+        
+        camelContext.removeRouteCollection(routes);
+        
         // clear inputs on shutdown
         inputs.clear();
         warmUpDone.set(false);
