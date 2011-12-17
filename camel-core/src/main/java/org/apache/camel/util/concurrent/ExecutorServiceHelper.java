@@ -23,6 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -106,7 +107,31 @@ public final class ExecutorServiceHelper {
      * @return the created pool
      */
     public static ScheduledExecutorService newScheduledThreadPool(final int poolSize, final String pattern, final String name, final boolean daemon) {
-        return Executors.newScheduledThreadPool(poolSize, new CamelThreadFactory(pattern, name, daemon));
+        return newScheduledThreadPool(poolSize, 0, pattern, name, daemon);
+    }
+
+    /**
+     * Creates a new scheduled thread pool which can schedule threads.
+     *
+     * @param poolSize the core pool size
+     * @param maxQueueSize max queue size, use 0 or negative for unbounded
+     * @param pattern  pattern of the thread name
+     * @param name     ${name} in the pattern name
+     * @param daemon   whether the threads is daemon or not
+     * @return the created pool
+     */
+    public static ScheduledExecutorService newScheduledThreadPool(final int poolSize, final int maxQueueSize, final String pattern, final String name, final boolean daemon) {
+        ScheduledThreadPoolExecutor answer = new ScheduledThreadPoolExecutor(poolSize, new CamelThreadFactory(pattern, name, daemon));
+        // TODO: when JDK7 we should setRemoveOnCancelPolicy(true)
+
+        // need to wrap the thread pool in a sized to guard against the problem that the
+        // JDK created thread pool has an unbounded queue (see class javadoc), which mean
+        // we could potentially keep adding tasks, and run out of memory.
+        if (maxQueueSize > 0) {
+            return new SizedScheduledExecutorService(answer, maxQueueSize);
+        } else {
+            return answer;
+        }
     }
 
     /**

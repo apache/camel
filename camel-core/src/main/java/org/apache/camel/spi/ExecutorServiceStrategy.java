@@ -165,6 +165,17 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
 
     /**
      * Creates a new scheduled thread pool.
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @param poolSize    the core pool size
+     * @param maxQueueSize the max queue size, use 0 or negative for unbounded
+     * @return the created thread pool
+     */
+    ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize, int maxQueueSize);
+
+    /**
+     * Creates a new scheduled thread pool.
      * <p/>
      * Will use the pool size from the default thread pool profile
      *

@@ -38,6 +38,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
+import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,7 +173,11 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
                 if (poolSize == null) {
                     poolSize = getDefaultThreadPoolProfile().getPoolSize();
                 }
-                answer = newScheduledThreadPool(source, name, poolSize);
+                Integer maxQueueSize = profile.getMaxQueueSize();
+                if (maxQueueSize == null) {
+                    maxQueueSize = getDefaultThreadPoolProfile().getMaxQueueSize();
+                }
+                answer = newScheduledThreadPool(source, name, poolSize, maxQueueSize);
                 if (answer != null) {
                     LOG.debug("Looking up ScheduledExecutorService with ref: {} and found a matching ThreadPoolProfile to create the ScheduledExecutorService: {}",
                             executorServiceRef, answer);
@@ -224,15 +229,20 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
 
     public ScheduledExecutorService newScheduledThreadPool(Object source, String name) {
         int poolSize = getDefaultThreadPoolProfile().getPoolSize();
-        return newScheduledThreadPool(source, name, poolSize);
+        int queueSize = getDefaultThreadPoolProfile().getMaxQueueSize();
+        return newScheduledThreadPool(source, name, poolSize, queueSize);
     }
 
     public ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize) {
-        ScheduledExecutorService answer = ExecutorServiceHelper.newScheduledThreadPool(poolSize, threadNamePattern, name, true);
+        return newScheduledThreadPool(source, name, poolSize, 0);
+    }
+
+    public ScheduledExecutorService newScheduledThreadPool(Object source, String name, int poolSize, int maxQueueSize) {
+        ScheduledExecutorService answer = ExecutorServiceHelper.newScheduledThreadPool(poolSize, maxQueueSize, threadNamePattern, name, true);
         onThreadPoolCreated(answer, source, null);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Created new scheduled thread pool for source: {} with name: {}. [poolSize={}]. -> {}", new Object[]{source, name, poolSize, answer});
+            LOG.debug("Created new scheduled thread pool for source: {} with name: {}. [poolSize={}, maxQueueSize={}]. -> {}", new Object[]{source, name, poolSize, maxQueueSize, answer});
         }
         return answer;
     }
@@ -392,8 +402,13 @@ public class DefaultExecutorServiceStrategy extends ServiceSupport implements Ex
         }
 
         // let lifecycle strategy be notified as well which can let it be managed in JMX as well
+        ThreadPoolExecutor threadPool = null;
         if (executorService instanceof ThreadPoolExecutor) {
-            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) executorService;
+            threadPool = (ThreadPoolExecutor) executorService;
+        } else if (executorService instanceof SizedScheduledExecutorService) {
+            threadPool = ((SizedScheduledExecutorService) executorService).getScheduledThreadPoolExecutor();
+        }
+        if (threadPool != null) {
             for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
                 lifecycle.onThreadPoolAdd(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId);
             }
