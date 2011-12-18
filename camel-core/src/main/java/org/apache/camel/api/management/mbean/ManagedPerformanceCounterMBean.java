@@ -56,14 +56,26 @@ public interface ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Last Exchange Completed Timestamp")
     Date getLastExchangeCompletedTimestamp();
 
+    @ManagedAttribute(description = "Last Exchange Completed ExchangeId")
+    String getLastExchangeCompletedExchangeId();
+
     @ManagedAttribute(description = "First Exchange Completed Timestamp")
     Date getFirstExchangeCompletedTimestamp();
+
+    @ManagedAttribute(description = "First Exchange Completed ExchangeId")
+    String getFirstExchangeCompletedExchangeId();
 
     @ManagedAttribute(description = "Last Exchange Failed Timestamp")
     Date getLastExchangeFailureTimestamp();
 
+    @ManagedAttribute(description = "Last Exchange Failed ExchangeId")
+    String getLastExchangeFailureExchangeId();
+
     @ManagedAttribute(description = "First Exchange Failed Timestamp")
     Date getFirstExchangeFailureTimestamp();
+
+    @ManagedAttribute(description = "First Exchange Failed ExchangeId")
+    String getFirstExchangeFailureExchangeId();
 
     @ManagedAttribute(description = "Statistics enabled")
     boolean isStatisticsEnabled();
