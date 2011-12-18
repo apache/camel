@@ -45,5 +45,10 @@
             <from uri="aws-s3://mycamelbucket?accessKey=xxx&amp;secretKey=yyy&amp;maxMessagesPerPoll=5"/>
             <to uri="mock:result-s3"/>
         </route>
+        
+        <route>
+            <from uri="direct:start-ses"/>
+            <to uri="aws-ses://from@example.com?accessKey=xxx&amp;secretKey=yyy"/>
+        </route>
     </camelContext>
 </beans>
