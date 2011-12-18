@@ -29,7 +29,7 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Singleton")
     boolean isSingleton();
 
-    @ManagedAttribute(description = "Service State")
+    @ManagedAttribute(description = "Endpoint State")
     String getState();
 
 }
