@@ -24,8 +24,11 @@ import org.apache.camel.Route;
  * <p/>
  * For example using the {@link org.apache.camel.impl.ThrottlingInflightRoutePolicy} to throttle the {@link Route}
  * at runtime where it suspends and resume the {@link org.apache.camel.Route#getConsumer()}.
+ * <p/>
+ * See also {@link Route} class javadoc about controlling the lifecycle of a {@link Route}
  *
- * @version 
+ * @version
+ * @see Route
  */
 public interface RoutePolicy {
 
