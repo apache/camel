@@ -57,11 +57,11 @@ public class QuartzRouteRestartTest extends CamelTestSupport {
                     // .to("log:CONTROL")
                     .to("mock:result")
                     .process(new Processor() {
-                        private boolean DONE = false;
+                        private boolean done;
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            if (!DONE) {
-                                DONE = true;
+                            if (!done) {
+                                done = true;
                                 exchange.getContext().stopRoute("trigger");
                                 Thread.sleep(5000);
                                 exchange.getContext().startRoute("trigger");
