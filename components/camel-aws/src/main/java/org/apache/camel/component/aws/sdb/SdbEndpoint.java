@@ -32,7 +32,12 @@ import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Defines the <a href="http://camel.apache.org/aws.html">AWS SDB Endpoint</a>.  
+ *
+ */
 public class SdbEndpoint extends ScheduledPollEndpoint {
+    
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
     private SdbConfiguration configuration;
 
@@ -56,6 +61,7 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
+        
         AmazonSimpleDB sdbClient = getSdbClient();
         String domainName = getConfiguration().getDomainName();
         LOG.trace("Querying whether domain [{}] already exists...", domainName);
@@ -66,8 +72,9 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
             return;
         } catch (NoSuchDomainException ase) {
             LOG.trace("Domain [{}] doesn't exist yet", domainName);
+            LOG.trace("Creating domain [{}]...", domainName);
             sdbClient.createDomain(new CreateDomainRequest(domainName));
-            LOG.trace("Domain created:" + domainName);
+            LOG.trace("Domain [{}] created", domainName);
         }
     }
 
@@ -76,7 +83,7 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
     }
 
     public AmazonSimpleDB getSdbClient() {
-        return configuration.getAmazonSdbClient() != null ? configuration.getAmazonSdbClient() : createSdbClient();
+        return configuration.getAmazonSDBClient() != null ? configuration.getAmazonSDBClient() : createSdbClient();
     }
 
     AmazonSimpleDBClient createSdbClient() {
@@ -85,7 +92,7 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
         if (configuration.getAmazonSdbEndpoint() != null) {
             client.setEndpoint(configuration.getAmazonSdbEndpoint());
         }
-        configuration.setAmazonSdbClient(client);
+        configuration.setAmazonSDBClient(client);
         return client;
     }
 }

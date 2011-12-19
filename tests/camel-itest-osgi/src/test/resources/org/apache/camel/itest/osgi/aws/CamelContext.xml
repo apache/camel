@@ -50,6 +50,11 @@
             <from uri="direct:start-ses"/>
             <to uri="aws-ses://from@example.com?amazonSESClient=#amazonSESClient"/>
         </route>
+        
+        <route>
+            <from uri="direct:start-sdb"/>
+            <to uri="aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&amp;operation=GetAttributes"/>
+        </route>
     </camelContext>
 
     <bean id="amazonSQSClient" class="org.apache.camel.itest.osgi.aws.AmazonSQSClientMock"/>
@@ -59,4 +64,6 @@
     <bean id="amazonS3Client" class="org.apache.camel.itest.osgi.aws.AmazonS3ClientMock"/>
     
     <bean id="amazonSESClient" class="org.apache.camel.itest.osgi.aws.AmazonSESClientMock"/>
+    
+    <bean id="amazonSDBClient" class="org.apache.camel.itest.osgi.aws.AmazonSDBClientMock"/>
 </beans>

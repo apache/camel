@@ -16,13 +16,32 @@
  */
 package org.apache.camel.component.aws.sdb;
 
+/**
+ * Constants used in Camel AWS SDB component
+ */
 public interface SdbConstants {
-    String MESSAGE_ID = "CamelAwsSdbMessageId";
+    
+    String ATTRIBUTES = "CamelAwsSdbAttributes";
+    String ATTRIBUTE_NAMES = "CamelAwsSdbAttributeNames";
+    String ATTRIBUTE_NAME_COUNT = "CamelAwsSdbAttributeNameCount";
+    String ATTRIBUTE_NAME_SIZE = "CamelAwsSdbAttributeNameSize";
+    String ATTRIBUTE_VALUE_COUNT = "CamelAwsSdbAttributeValueCount";
+    String ATTRIBUTE_VALUE_SIZE = "CamelAwsSdbAttributeValueSize";
+    String CONSISTENT_READ = "CamelAwsSdbConsistentRead";
+    String DELETABLE_ITEMS = "CamelAwsSdbDeletableItems";
     String DOMAIN_NAME = "CamelAwsSdbDomainName";
-    String ITEM_KEY = "CamelAwsSdbItemKey";
-    String ATTRIBUTE_PREFIX = "CamelAwsSdbAttributePrefix";
+    String DOMAIN_NAMES = "CamelAwsSdbDomainNames";
+    String ITEMS = "CamelAwsSdbItems";
+    String ITEM_COUNT = "CamelAwsSdbItemCount";
+    String ITEM_NAME_SIZE = "CamelAwsSdbItemNameSize";
+    String ITEM_NAME = "CamelAwsSdbItemName";
+    String MAX_NUMBER_OF_DOMAINS = "CamelAwsSdbMaxNumberOfDomains";
+    String MESSAGE_ID = "CamelAwsSdbMessageId";
+    String NEXT_TOKEN = "CamelAwsSdbNextToken";
     String OPERATION = "CamelAwsSdbOperation";
-    String OPERATION_PUT = "CamelAwsSdbPut";
-    String OPERATION_GET = "CamelAwsSdbGet";
-    String OPERATION_DELETE = "CamelAwsSdbDelete";
+    String REPLACEABLE_ATTRIBUTES = "CamelAwsSdbReplaceableAttributes";
+    String REPLACEABLE_ITEMS = "CamelAwsSdbReplaceableItems";
+    String SELECT_EXPRESSION = "CamelAwsSdbSelectExpression";
+    String TIMESTAMP = "CamelAwsSdbTimestamp";
+    String UPDATE_CONDITION = "CamelAwsSdbUpdateCondition";
 }
