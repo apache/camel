@@ -40,8 +40,8 @@ public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
     
     @Test
     public void testBusInjectedBySpring() throws Exception {
-        CamelContext camelContext = (CamelContext) ctx.getBean("camel");
-        CxfEndpoint endpoint = (CxfEndpoint)camelContext.getEndpoint("cxf:bean:routerEndpoint");
+        CamelContext camelContext = ctx.getBean("camel", CamelContext.class);
+        CxfEndpoint endpoint = camelContext.getEndpoint("cxf:bean:routerEndpoint", CxfEndpoint.class);
 
         // verify the interceptor that is added by the logging feature
         // Spring 3.0.0 has an issue of SPR-6589 which will call the BusApplicationListener twice for the same event,
@@ -52,7 +52,7 @@ public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
     
     @Test
     public void testCxfEndpointBeanDefinitionParser() {
-        CxfEndpoint routerEndpoint = (CxfEndpoint)ctx.getBean("routerEndpoint");
+        CxfEndpoint routerEndpoint = ctx.getBean("routerEndpoint", CxfEndpoint.class);
         assertEquals("Got the wrong endpoint address", "http://localhost:" + port1 
                      + "/CxfEndpointBeanWithBusTest/router/", routerEndpoint.getAddress());
         assertEquals("Got the wrong endpont service class", 

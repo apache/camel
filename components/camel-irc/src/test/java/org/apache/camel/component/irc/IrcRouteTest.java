@@ -37,7 +37,7 @@ public class IrcRouteTest extends CamelTestSupport {
     
     @Test
     public void testIrcMessages() throws Exception {
-        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(body1, body2);
 
         resultEndpoint.assertIsSatisfied();

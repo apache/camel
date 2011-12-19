@@ -30,6 +30,10 @@ import org.apache.camel.spi.RouteContext;
 /**
  * A {@link DefaultRoute} which starts with an
  * <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>
+ * <p/>
+ * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route,
+ * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
+ * and {@link org.apache.camel.CamelContext#stopRoute(String)} methods.
  *
  * @version 
  */

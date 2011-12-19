@@ -31,7 +31,7 @@ public class PlainSpringCustomPostProcessorOnRouteBuilderTest extends TestCase {
         assertNotNull("Context not created", context);
         assertNotNull("Post processor not registered", context.getBeansOfType(MagicAnnotationPostProcessor.class));
 
-        TestPojo pojo = (TestPojo) context.getBean("testPojo");
+        TestPojo pojo = context.getBean("testPojo", TestPojo.class);
         assertNotNull("Test pojo not registered", pojo);
 
         assertEquals("Processor has not changed field value", "Changed Value", pojo.getTestValue());

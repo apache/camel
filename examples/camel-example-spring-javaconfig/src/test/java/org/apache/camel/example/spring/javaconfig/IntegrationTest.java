@@ -40,7 +40,7 @@ public class IntegrationTest extends Assert {
         ApplicationContext context = new ClassPathXmlApplicationContext("/META-INF/spring/camel-context.xml");
         String[] names = context.getBeanNamesForType(CamelContext.class);
         assertEquals("There should be a camel context ", 1, names.length);
-        CamelContext camelContext = (CamelContext) context.getBean(names[0]);
+        CamelContext camelContext = context.getBean(names[0], CamelContext.class);
         assertNotNull(camelContext);
         Thread.sleep(2000);
     }

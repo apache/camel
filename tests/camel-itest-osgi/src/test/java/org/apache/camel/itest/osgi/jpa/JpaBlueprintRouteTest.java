@@ -48,7 +48,7 @@ public class JpaBlueprintRouteTest extends OSGiBlueprintTestSupport {
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintJpaTestBundle)", 30000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintJpaTestBundle)", 20000);
 
-        MockEndpoint mock = (MockEndpoint) ctx.getEndpoint("mock:result");
+        MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
 
         ProducerTemplate template = ctx.createProducerTemplate();

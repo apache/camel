@@ -38,8 +38,7 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
     public void testXMLRouteLoading() throws Exception {
         applicationContext = createApplicationContext();
 
-        // must type cast to work with Spring 2.5.x
-        SpringCamelContext context = (SpringCamelContext) applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
+        SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         assertValidContext(context);
 
         // now lets send a message
@@ -54,7 +53,7 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
         });
         template.stop();
 
-        MyProcessor myProcessor = (MyProcessor) applicationContext.getBean("myProcessor");
+        MyProcessor myProcessor = applicationContext.getBean("myProcessor", MyProcessor.class);
         List<Exchange> list = myProcessor.getExchanges();
         assertEquals("Should have received a single exchange: " + list, 1, list.size());
     }

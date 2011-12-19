@@ -129,16 +129,14 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
             // If we are being configured with spring...
             if (applicationContext != null) {
-                Map<String, Object> beansOfType = 
-                    CastUtils.cast(applicationContext.getBeansOfType(ConnectionFactory.class));
-                if (!beansOfType.isEmpty()) {
-                    ConnectionFactory cf = (ConnectionFactory)beansOfType.values().iterator().next();
+                Map<String, ConnectionFactory> beansOfTypeConnectionFactory = applicationContext.getBeansOfType(ConnectionFactory.class);
+                if (!beansOfTypeConnectionFactory.isEmpty()) {
+                    ConnectionFactory cf = beansOfTypeConnectionFactory.values().iterator().next();
                     configuration.setConnectionFactory(cf);
                 }
-                beansOfType = CastUtils.cast(applicationContext.getBeansOfType(DestinationResolver.class));
-                if (!beansOfType.isEmpty()) {
-                    DestinationResolver destinationResolver = (DestinationResolver)beansOfType.values()
-                        .iterator().next();
+                Map<String, DestinationResolver> beansOfTypeDestinationResolver = applicationContext.getBeansOfType(DestinationResolver.class);
+                if (!beansOfTypeDestinationResolver.isEmpty()) {
+                    DestinationResolver destinationResolver = beansOfTypeDestinationResolver.values().iterator().next();
                     configuration.setDestinationResolver(destinationResolver);
                 }
             }

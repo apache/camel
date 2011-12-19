@@ -39,7 +39,7 @@ public class SimpleScheduledCombinedRoutePolicyTest extends CamelTestSupport {
 
     @Test
     public void testScheduledStartAndStopRoutePolicy() throws Exception {
-        MockEndpoint success = (MockEndpoint) context.getEndpoint("mock:success");        
+        MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);        
         success.expectedMessageCount(1);
         
         context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");

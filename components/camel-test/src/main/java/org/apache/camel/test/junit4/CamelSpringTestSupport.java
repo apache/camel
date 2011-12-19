@@ -142,7 +142,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         routeExcludingContext.registerBeanDefinition("excludingResolver", new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
         routeExcludingContext.refresh();
 
-        ExcludingPackageScanClassResolver excludingResolver = (ExcludingPackageScanClassResolver)routeExcludingContext.getBean("excludingResolver");
+        ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
         List<Class<?>> excluded = CastUtils.cast(Arrays.asList(excludeRoutes()));
         excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
 

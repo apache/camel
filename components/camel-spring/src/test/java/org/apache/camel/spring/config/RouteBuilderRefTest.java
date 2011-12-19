@@ -29,7 +29,7 @@ public class RouteBuilderRefTest extends XmlConfigTestSupport {
         ApplicationContext applicationContext =
             new ClassPathXmlApplicationContext("org/apache/camel/spring/config/routeBuilderRef.xml");
 
-        CamelContext context = (CamelContext) applicationContext.getBean("camel5");
+        CamelContext context = applicationContext.getBean("camel5", CamelContext.class);
         assertValidContext(context);
     }
 

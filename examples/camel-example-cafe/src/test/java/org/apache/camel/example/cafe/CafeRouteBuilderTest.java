@@ -50,8 +50,8 @@ public class CafeRouteBuilderTest extends CamelTestSupport {
     
     @Test
     public void testSplitter() throws InterruptedException {
-        MockEndpoint coldDrinks = (MockEndpoint)context.getEndpoint("mock:coldDrinks");
-        MockEndpoint hotDrinks = (MockEndpoint)context.getEndpoint("mock:hotDrinks");
+        MockEndpoint coldDrinks = context.getEndpoint("mock:coldDrinks", MockEndpoint.class);
+        MockEndpoint hotDrinks = context.getEndpoint("mock:hotDrinks", MockEndpoint.class);
         
         Order order = new Order(1);
         order.addItem(DrinkType.ESPRESSO, 2, true);

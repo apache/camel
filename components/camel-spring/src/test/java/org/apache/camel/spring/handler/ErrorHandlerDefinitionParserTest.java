@@ -38,14 +38,14 @@ public class ErrorHandlerDefinitionParserTest extends TestCase {
     }
     
     public void testLoggingErrorHandler() {
-        LoggingErrorHandlerBuilder errorHandler = (LoggingErrorHandlerBuilder) ctx.getBean("loggingErrorHandler");
+        LoggingErrorHandlerBuilder errorHandler = ctx.getBean("loggingErrorHandler", LoggingErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         assertEquals("The log level should be INFO", LoggingLevel.INFO, errorHandler.getLevel());
         assertEquals("The log name should be foo", "foo", errorHandler.getLogName());
     }
     
     public void testDefaultErrorHandler() {
-        DefaultErrorHandlerBuilder errorHandler = (DefaultErrorHandlerBuilder) ctx.getBean("defaultErrorHandler");
+        DefaultErrorHandlerBuilder errorHandler = ctx.getBean("defaultErrorHandler", DefaultErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();
         assertNotNull(policy);
@@ -53,12 +53,12 @@ public class ErrorHandlerDefinitionParserTest extends TestCase {
         assertEquals("Wrong redeliveryDelay", 0, policy.getRedeliveryDelay());
         assertEquals("Wrong logStackTrace", false, policy.isLogStackTrace());
         
-        errorHandler = (DefaultErrorHandlerBuilder) ctx.getBean("errorHandler");
+        errorHandler = ctx.getBean("errorHandler", DefaultErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
     }
     
     public void testTransactionErrorHandler() {
-        TransactionErrorHandlerBuilder errorHandler = (TransactionErrorHandlerBuilder) ctx.getBean("transactionErrorHandler");
+        TransactionErrorHandlerBuilder errorHandler = ctx.getBean("transactionErrorHandler", TransactionErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         assertNotNull(errorHandler.getTransactionTemplate());
         Processor processor = errorHandler.getOnRedelivery();
@@ -66,13 +66,13 @@ public class ErrorHandlerDefinitionParserTest extends TestCase {
     }
     
     public void testTXErrorHandler() {
-        TransactionErrorHandlerBuilder errorHandler = (TransactionErrorHandlerBuilder) ctx.getBean("txEH");
+        TransactionErrorHandlerBuilder errorHandler = ctx.getBean("txEH", TransactionErrorHandlerBuilder.class);
         assertNotNull(errorHandler);
         assertNotNull(errorHandler.getTransactionTemplate());
     }
 
     public void testDeadLetterErrorHandler() {
-        DeadLetterChannelBuilder errorHandler = (DeadLetterChannelBuilder) ctx.getBean("deadLetterErrorHandler");
+        DeadLetterChannelBuilder errorHandler = ctx.getBean("deadLetterErrorHandler", DeadLetterChannelBuilder.class);
         assertNotNull(errorHandler);
         assertEquals("Get wrong deadletteruri", "log:dead", errorHandler.getDeadLetterUri());
         RedeliveryPolicy policy = errorHandler.getRedeliveryPolicy();

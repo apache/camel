@@ -35,11 +35,11 @@ public class JmsQosRouteTest extends CamelTestSupport {
     @Test
     public void testJmsRoutePreserveQos() throws Exception {
         
-        MockEndpoint preserveEndpoint1 = (MockEndpoint) context.getEndpoint("mock:preserve-1");
+        MockEndpoint preserveEndpoint1 = context.getEndpoint("mock:preserve-1", MockEndpoint.class);
         preserveEndpoint1.expectedMessageCount(1);
         preserveEndpoint1.message(0).header("JMSPriority").isEqualTo(1);
 
-        MockEndpoint preserveEndpoint2 = (MockEndpoint) context.getEndpoint("mock:preserve-2");
+        MockEndpoint preserveEndpoint2 = context.getEndpoint("mock:preserve-2", MockEndpoint.class);
         preserveEndpoint2.expectedMessageCount(1);
         preserveEndpoint2.message(0).header("JMSPriority").isEqualTo(2);
 
@@ -52,11 +52,11 @@ public class JmsQosRouteTest extends CamelTestSupport {
     @Test
     public void testJmsRouteNormalQos() throws Exception {
         
-        MockEndpoint regularEndpoint1 = (MockEndpoint) context.getEndpoint("mock:regular-1");
+        MockEndpoint regularEndpoint1 = context.getEndpoint("mock:regular-1", MockEndpoint.class);
         regularEndpoint1.expectedMessageCount(1);
         regularEndpoint1.message(0).header("JMSPriority").isEqualTo(4);
 
-        MockEndpoint regularEndpoint2 = (MockEndpoint) context.getEndpoint("mock:regular-2");
+        MockEndpoint regularEndpoint2 = context.getEndpoint("mock:regular-2", MockEndpoint.class);
         regularEndpoint2.expectedMessageCount(1);
         regularEndpoint2.message(0).header("JMSPriority").isEqualTo(4);
 

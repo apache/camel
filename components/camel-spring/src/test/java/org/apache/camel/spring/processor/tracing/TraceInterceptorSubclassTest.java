@@ -31,7 +31,7 @@ public class TraceInterceptorSubclassTest extends TracingTestBase {
     @SuppressWarnings("unchecked")
     @Override
     protected List<StringBuilder> getTracedMessages() {
-        return (List<StringBuilder>) this.applicationContext.getBean("eventMessages");
+        return this.applicationContext.getBean("eventMessages", List.class);
     }
 
 }

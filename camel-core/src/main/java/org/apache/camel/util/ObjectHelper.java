@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class ObjectHelper {
     private static final transient Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
+    private static final String DEFAULT_DELIMITER = ",";
 
     /**
      * Utility classes should not have a public constructor.
@@ -447,8 +448,9 @@ public final class ObjectHelper {
 
     /**
      * Creates an iterator over the value if the value is a collection, an
-     * Object[] or a primitive type array; otherwise to simplify the caller's
-     * code, we just create a singleton collection iterator over a single value
+     * Object[], a String with values separated by comma,
+     * or a primitive type array; otherwise to simplify the caller's code,
+     * we just create a singleton collection iterator over a single value
      * <p/>
      * Will default use comma for String separating String values.
      *
@@ -456,12 +458,13 @@ public final class ObjectHelper {
      * @return the iterator
      */
     public static Iterator<Object> createIterator(Object value) {
-        return createIterator(value, ",");
+        return createIterator(value, DEFAULT_DELIMITER);
     }
 
     /**
      * Creates an iterator over the value if the value is a collection, an
-     * Object[] or a primitive type array; otherwise to simplify the caller's
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
      * code, we just create a singleton collection iterator over a single value
      *
      * @param value  the value
@@ -512,6 +515,21 @@ public final class ObjectHelper {
             if (delimiter != null && s.contains(delimiter)) {
                 // use a scanner if it contains the delimiter
                 Scanner scanner = new Scanner((String)value);
+
+                if (DEFAULT_DELIMITER.equals(delimiter)) {
+                    // we use the default delimiter which is a comma, then cater for bean expressions with OGNL
+                    // which may have balanced parentheses pairs as well.
+                    // if the value contains parentheses we need to balance those, to avoid iterating
+                    // in the middle of parentheses pair, so use this regular expression (a bit hard to read)
+                    // the regexp will split by comma, but honor parentheses pair that may include commas
+                    // as well, eg if value = "bean=foo?method=killer(a,b),bean=bar?method=great(a,b)"
+                    // then the regexp will split that into two:
+                    // -> bean=foo?method=killer(a,b)
+                    // -> bean=bar?method=great(a,b)
+                    // http://stackoverflow.com/questions/1516090/splitting-a-title-into-separate-parts
+                    delimiter = ",(?!(?:[^\\(,]|[^\\)],[^\\)])+\\))";
+                }
+
                 scanner.useDelimiter(delimiter);
                 return CastUtils.cast(scanner);
             } else {

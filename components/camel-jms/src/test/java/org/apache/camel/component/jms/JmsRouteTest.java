@@ -61,7 +61,7 @@ public class JmsRouteTest extends CamelTestSupport {
 
         super.setUp();
 
-        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
     }
 
     protected CamelContext createCamelContext() throws Exception {

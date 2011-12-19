@@ -37,7 +37,7 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
     public void testSendingOneWayMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(MESSAGE_BODY);
-        MessageChannel outputChannel = (MessageChannel) applicationContext.getBean("channelA");
+        MessageChannel outputChannel = applicationContext.getBean("channelA", MessageChannel.class);
         outputChannel.send(new GenericMessage<Object>(MESSAGE_BODY));
         resultEndpoint.assertIsSatisfied();
     }
@@ -45,7 +45,7 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
     @Test
     public void testSendingTwoWayMessage() throws Exception {
 
-        MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("channelB");
+        MessageChannel requestChannel = applicationContext.getBean("channelB", MessageChannel.class);
         Message message = new GenericMessage<Object>(MESSAGE_BODY);
         //Need to subscribe the responseChannel first
         DirectChannel responseChannel = (DirectChannel) applicationContext.getBean("channelC");
@@ -61,8 +61,8 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
     @Test
     public void testSendingTwoWayMessageWithMessageAddress() throws Exception {
 
-        MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("channelD");
-        DirectChannel responseChannel = (DirectChannel) applicationContext.getBean("channelC");
+        MessageChannel requestChannel = applicationContext.getBean("channelD", MessageChannel.class);
+        DirectChannel responseChannel = applicationContext.getBean("channelC", DirectChannel.class);
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MessageHeaders.REPLY_CHANNEL, responseChannel);
         GenericMessage<String> message = new GenericMessage<String>(MESSAGE_BODY, headers);

@@ -22,5 +22,11 @@ import javax.management.Notification;
  * To be implemented by classes that can send out notifications
  */
 public interface NotificationSender {
+
+    /**
+     * Send notification
+     *
+     * @param notification notification to send
+     */
     void sendNotification(Notification notification);
 }

@@ -49,7 +49,7 @@ public class CacheManagerFactoryRefTest extends OSGiIntegrationTestSupport {
 
     @Test
     public void testCache() throws Exception {
-        CacheEndpoint endpoint = (CacheEndpoint) context.getEndpoint(CACHE_URI);
+        CacheEndpoint endpoint = context.getEndpoint(CACHE_URI, CacheEndpoint.class);
 
         // do some routes to let everything be initialized
         template.sendBody("direct:add", "Hello World");

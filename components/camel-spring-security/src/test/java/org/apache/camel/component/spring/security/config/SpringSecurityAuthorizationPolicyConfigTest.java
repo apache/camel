@@ -46,13 +46,13 @@ public class SpringSecurityAuthorizationPolicyConfigTest extends Assert {
     @Test
     public void testAuthorizationPolicy() {
                 
-        SpringSecurityAuthorizationPolicy adminPolicy = (SpringSecurityAuthorizationPolicy) context.getBean("admin");
+        SpringSecurityAuthorizationPolicy adminPolicy = context.getBean("admin", SpringSecurityAuthorizationPolicy.class);
         assertNotNull("We should get admin policy", adminPolicy);
         assertNotNull("The accessDecisionManager should not be null", adminPolicy.getAccessDecisionManager());
         assertNotNull("The authenticationManager should not be null", adminPolicy.getAuthenticationManager());
         assertNotNull("The springSecurityAccessPolicy should not be null", adminPolicy.getSpringSecurityAccessPolicy());
         
-        SpringSecurityAuthorizationPolicy userPolicy = (SpringSecurityAuthorizationPolicy) context.getBean("user");
+        SpringSecurityAuthorizationPolicy userPolicy = context.getBean("user", SpringSecurityAuthorizationPolicy.class);
         assertNotNull("We should get user policy", userPolicy);
         assertNotNull("The accessDecisionManager should not be null", userPolicy.getAccessDecisionManager());
         assertNotNull("The authenticationManager should not be null", userPolicy.getAuthenticationManager());

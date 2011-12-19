@@ -112,7 +112,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
             Object returnAddress = siInMessage.getHeaders().getReplyChannel();
             if (returnAddress != null) {
                 if (returnAddress instanceof String) {
-                    reply = (MessageChannel) context.getApplicationContext().getBean((String)returnAddress);
+                    reply = context.getApplicationContext().getBean((String)returnAddress, MessageChannel.class);
                 } else if (returnAddress instanceof MessageChannel) {
                     reply = (MessageChannel) returnAddress;
                 }

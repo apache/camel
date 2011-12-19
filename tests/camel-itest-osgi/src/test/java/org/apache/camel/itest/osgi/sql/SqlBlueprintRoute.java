@@ -59,7 +59,7 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
 
-        MockEndpoint mock = (MockEndpoint) ctx.getEndpoint("mock:result");
+        MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
         List<Object> body = new ArrayList<Object>();
         body.add("ASF");
@@ -84,7 +84,7 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
 
-        MockEndpoint mock = (MockEndpoint) ctx.getEndpoint("mock:result");
+        MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
         try {
             ProducerTemplate template = ctx.createProducerTemplate();
             template.sendBody("direct:list", "ASF");
@@ -104,7 +104,7 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
         DataSource ds = getOsgiService(DataSource.class, 10000);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
         ProducerTemplate template = ctx.createProducerTemplate();
-        MockEndpoint mock = (MockEndpoint) ctx.getEndpoint("mock:result");
+        MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
 
         template.sendBody("direct:insert", new Object[]{10, "test", "test"});

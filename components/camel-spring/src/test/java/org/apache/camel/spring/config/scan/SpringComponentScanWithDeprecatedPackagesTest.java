@@ -17,7 +17,6 @@
 
 package org.apache.camel.spring.config.scan;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
@@ -30,7 +29,7 @@ public class SpringComponentScanWithDeprecatedPackagesTest extends ContextTestSu
     protected void setUp() throws Exception {
         super.setUp();
         ApplicationContext c = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScanWithPackages.xml");
-        context = (ModelCamelContext)c.getBean("camelContext");
+        context = c.getBean("camelContext", ModelCamelContext.class);
         template = context.createProducerTemplate();
         template.start();
     }

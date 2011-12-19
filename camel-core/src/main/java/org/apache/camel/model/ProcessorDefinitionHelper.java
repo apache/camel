@@ -289,13 +289,7 @@ public final class ProcessorDefinitionHelper {
                 // then create a thread pool assuming the ref is a thread pool profile id
                 ThreadPoolProfile profile = manager.getThreadPoolProfile(definition.getExecutorServiceRef());
                 if (profile != null) {
-                    // okay we need to grab the pool size from the ref
-                    Integer poolSize = profile.getPoolSize();
-                    if (poolSize == null) {
-                        // fallback and use the default pool size, if none was set on the profile
-                        poolSize = manager.getDefaultThreadPoolProfile().getPoolSize();
-                    }
-                    answer = manager.newScheduledThreadPool(definition, name, poolSize);
+                    answer = manager.newScheduledThreadPool(definition, name, profile);
                 }
             }
             if (answer == null) {

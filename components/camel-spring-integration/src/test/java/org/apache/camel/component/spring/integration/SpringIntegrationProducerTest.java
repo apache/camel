@@ -36,7 +36,7 @@ public class SpringIntegrationProducerTest extends CamelSpringTestSupport {
     @Test
     public void testSendingOneWayMessage() throws Exception {
         template.sendBody("direct:onewayMessage", "Greet");
-        HelloWorldService service = (HelloWorldService)applicationContext.getBean("helloService");
+        HelloWorldService service = applicationContext.getBean("helloService", HelloWorldService.class);
         assertEquals("We should call the service", service.getGreetName(), "Greet");        
     }
 

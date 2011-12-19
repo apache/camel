@@ -54,9 +54,9 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent {
             AbstractJAXRSFactoryBean bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, 
                 AbstractJAXRSFactoryBean.class);
             if (bean instanceof BlueprintSupport) {
-                answer = new CxfRsBlueprintEndpoint(this, bean);
+                answer = new CxfRsBlueprintEndpoint(this, remaining, bean);
             } else {
-                answer = new CxfRsSpringEndpoint(this, bean);
+                answer = new CxfRsSpringEndpoint(this, remaining, bean);
             }
             // Apply Spring bean properties (including # notation referenced bean).  Note that the
             // Spring bean properties values can be overridden by property defined in URI query.

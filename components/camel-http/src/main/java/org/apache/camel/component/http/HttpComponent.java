@@ -207,11 +207,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             // try without ref
             binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         }
-        Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
-        Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
-        Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
-        Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
-        Boolean disableStreamCache = getAndRemoveParameter(parameters, "disableStreamCache", Boolean.class);
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
         String authMethodPriority = getAndRemoveParameter(parameters, "authMethodPriority", String.class);
@@ -225,22 +220,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
-        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
-        
-        // validate http uri that end-user did not duplicate the http part that can be a common error
-        String part = httpUri.getSchemeSpecificPart();
-        if (part != null) {
-            part = part.toLowerCase();
-            if (part.startsWith("//http//") || part.startsWith("//https//") || part.startsWith("//http://") || part.startsWith("//https://")) {
-                throw new ResolveEndpointFailedException(uri,
-                        "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
-            }
-        }
-        // need to keep the parameters of http client configure to avoid unwiser endpoint caching
-
+       
         // create the endpoint
-        HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, httpUri, clientParams, httpConnectionManager, configurer);
+        HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, clientParams, httpConnectionManager, configurer);
         setEndpointHeaderFilterStrategy(endpoint);
 
         // prefer to use endpoint configured over component configured
@@ -250,23 +232,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         if (binding != null) {
             endpoint.setBinding(binding);
-        }
-        // should we use an exception for failed error codes?
-        if (throwExceptionOnFailure != null) {
-            endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
-        }
-        // should we transfer exception as serialized object
-        if (transferException != null) {
-            endpoint.setTransferException(transferException);
-        }
-        if (bridgeEndpoint != null) {
-            endpoint.setBridgeEndpoint(bridgeEndpoint);
-        }
-        if (matchOnUriPrefix != null) {
-            endpoint.setMatchOnUriPrefix(matchOnUriPrefix);
-        }
-        if (disableStreamCache != null) {
-            endpoint.setDisableStreamCache(disableStreamCache);
         }
         if (proxyHost != null) {
             endpoint.setProxyHost(proxyHost);
@@ -287,8 +252,20 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
                 endpoint.setAuthMethodPriority(authMethodPriority);
             }
         }
-
         setProperties(endpoint, parameters);
+        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
+        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
+        
+        // validate http uri that end-user did not duplicate the http part that can be a common error
+        String part = httpUri.getSchemeSpecificPart();
+        if (part != null) {
+            part = part.toLowerCase();
+            if (part.startsWith("//http//") || part.startsWith("//https//") || part.startsWith("//http://") || part.startsWith("//https://")) {
+                throw new ResolveEndpointFailedException(uri,
+                        "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
+            }
+        }
+        endpoint.setHttpUri(httpUri);
         return endpoint;
     }
     

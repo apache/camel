@@ -32,7 +32,7 @@ public class SpringRemotingBeanConverterTest extends TestCase {
 
         CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
         
-        Invoker invoker = (Invoker) applicationContext.getBean("invokerProxy");
+        Invoker invoker = applicationContext.getBean("invokerProxy", Invoker.class);
         String response = invoker.invoke(new Bean.SubClass());
         assertEquals("Hello from Sub" , response);
 

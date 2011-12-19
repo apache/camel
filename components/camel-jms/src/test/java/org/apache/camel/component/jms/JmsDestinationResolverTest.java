@@ -62,7 +62,7 @@ public class JmsDestinationResolverTest extends CamelTestSupport {
 
         super.setUp();
 
-        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
     }
     
     @Override

@@ -43,7 +43,7 @@ public final class CamelClientEndpoint {
         System.out.println("Notice this client requires that the CamelServer is already running!");
 
         ApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
-        CamelContext camel = (CamelContext) context.getBean("camel-client");
+        CamelContext camel = context.getBean("camel-client", CamelContext.class);
 
         // get the endpoint from the camel context
         Endpoint endpoint = camel.getEndpoint("jms:queue:numbers");

@@ -139,7 +139,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         routeExcludingContext.registerBeanDefinition("excludingResolver", new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
         routeExcludingContext.refresh();
 
-        ExcludingPackageScanClassResolver excludingResolver = (ExcludingPackageScanClassResolver)routeExcludingContext.getBean("excludingResolver");
+        ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
         List<Class<?>> excluded = CastUtils.cast(Arrays.asList(excludeRoutes()));
         excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
 
@@ -169,14 +169,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
      * it is not present or the correct type
      */
     public <T> T getMandatoryBean(Class<T> type, String name) {
-        Object value = applicationContext.getBean(name);
-        assertNotNull(value, "No spring bean found for name <" + name + ">");
-        if (type.isInstance(value)) {
-            return type.cast(value);
-        } else {
-            fail("Spring bean <" + name + "> is not an instanceof " + type.getName() + " but is of type " + ObjectHelper.className(value));
-            return null;
-        }
+        return applicationContext.getBean(name, type);
     }
 
     @Override

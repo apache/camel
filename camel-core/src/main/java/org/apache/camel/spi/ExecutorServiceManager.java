@@ -141,8 +141,8 @@ public interface ExecutorServiceManager extends ShutdownableService {
     /**
      * Creates a new thread pool using the given profile
      *
-     * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
-     * @param name   name which is appended to the thread name
+     * @param source   the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name     name which is appended to the thread name
      * @param profile the profile with the thread pool settings to use
      * @return the created thread pool
      */
@@ -151,8 +151,8 @@ public interface ExecutorServiceManager extends ShutdownableService {
     /**
      * Creates a new thread pool using using the given profile id
      *
-     * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
-     * @param name   name which is appended to the thread name
+     * @param source    the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name      name which is appended to the thread name
      * @param profileId the id of the profile with the thread pool settings to use
      * @return the created thread pool, or <tt>null</tt> if the thread pool profile could not be found
      */
@@ -223,13 +223,23 @@ public interface ExecutorServiceManager extends ShutdownableService {
     
     /**
      * Creates a new scheduled thread pool using a profile
-     * 
-     * @param source the source object, usually it should be <tt>this</tt> passed in as parameter
-     * @param name name which is appended to the thread name
-     * @param profile
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @param profile     the profile with the thread pool settings to use
      * @return created thread pool
      */
     ScheduledExecutorService newScheduledThreadPool(Object source, String name, ThreadPoolProfile profile);
+
+    /**
+     * Creates a new scheduled thread pool using a profile id
+     *
+     * @param source      the source object, usually it should be <tt>this</tt> passed in as parameter
+     * @param name        name which is appended to the thread name
+     * @param profileId   the id of the profile with the thread pool settings to use
+     * @return created thread pool
+     */
+    ScheduledExecutorService newScheduledThreadPool(Object source, String name, String profileId);
 
     /**
      * Shutdown the given executor service.

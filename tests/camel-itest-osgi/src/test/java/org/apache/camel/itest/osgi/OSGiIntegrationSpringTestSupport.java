@@ -33,7 +33,7 @@ public abstract class OSGiIntegrationSpringTestSupport extends OSGiIntegrationTe
         applicationContext.refresh();
         String[] names = applicationContext.getBeanNamesForType(SpringCamelContext.class);
         if (names.length == 1) {
-            return (SpringCamelContext)applicationContext.getBean(names[0], SpringCamelContext.class);
+            return applicationContext.getBean(names[0], SpringCamelContext.class);
         } else {
             throw new IllegalStateException("Exactly 1 bean of type SpringCamelContext expected but found " + names.length + " beans.");
         }

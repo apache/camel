@@ -155,6 +155,19 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("c", it.next());
     }
 
+    public void testCreateIteratorWithStringAndCommaInParanthesesSeparator() {
+        String s = "bean:foo?method=bar('A','B','C')";
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ","));
+        assertEquals("bean:foo?method=bar('A','B','C')", it.next());
+    }
+
+    public void testCreateIteratorWithStringAndCommaInParanthesesSeparatorTwo() {
+        String s = "bean:foo?method=bar('A','B','C'),bean:bar?method=cool('A','Hello,World')";
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ","));
+        assertEquals("bean:foo?method=bar('A','B','C')", it.next());
+        assertEquals("bean:bar?method=cool('A','Hello,World')", it.next());
+    }
+
     public void testBefore() {
         assertEquals("Hello ", ObjectHelper.before("Hello World", "World"));
         assertEquals("Hello ", ObjectHelper.before("Hello World Again", "World"));

@@ -55,8 +55,8 @@ public class XsltReferenceParameterTest extends TestSupport {
         registry.bind("testConverter", testConverter);
         registry.bind("testTransformerFactory", testTransformerFactory);
 
-        ProcessorEndpoint pep1 = (ProcessorEndpoint)context.getEndpoint(TEST_URI_1);
-        ProcessorEndpoint pep2 = (ProcessorEndpoint)context.getEndpoint(TEST_URI_2);
+        ProcessorEndpoint pep1 = context.getEndpoint(TEST_URI_1, ProcessorEndpoint.class);
+        ProcessorEndpoint pep2 = context.getEndpoint(TEST_URI_2, ProcessorEndpoint.class);
 
         builder1 = (XsltBuilder)pep1.getProcessor();
         builder2 = (XsltBuilder)pep2.getProcessor();

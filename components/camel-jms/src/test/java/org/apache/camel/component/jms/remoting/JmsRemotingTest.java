@@ -36,7 +36,7 @@ public class JmsRemotingTest extends CamelSpringTestSupport {
 
     @Test
     public void testRemoting() throws Exception {
-        ISay proxy = (ISay) applicationContext.getBean("sayProxy");
+        ISay proxy = applicationContext.getBean("sayProxy", ISay.class);
         String rc = proxy.say();
         assertEquals("Hello", rc);
     }

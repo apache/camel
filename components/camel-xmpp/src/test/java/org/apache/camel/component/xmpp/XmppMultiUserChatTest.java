@@ -36,7 +36,7 @@ public class XmppMultiUserChatTest extends CamelTestSupport {
     @Test
     public void testXmppChat() throws Exception {
         // TODO: requires online against jabber. Test this manually
-        consumerEndpoint = (MockEndpoint)context.getEndpoint("mock:out");
+        consumerEndpoint = context.getEndpoint("mock:out", MockEndpoint.class);
         consumerEndpoint.expectedBodiesReceived(body1, body2);
 
         //will send chat messages to the room

@@ -32,7 +32,7 @@ import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@ManagedResource(description = "XSLT Endpoint")
+@ManagedResource(description = "Managed XsltEndpoint")
 public class XsltEndpoint extends ProcessorEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
@@ -73,7 +73,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     public XsltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(resourceUri, newResourceUri);
         LOG.trace("Getting endpoint with URI: {}", newUri);
-        return (XsltEndpoint) getCamelContext().getEndpoint(newUri);
+        return getCamelContext().getEndpoint(newUri, XsltEndpoint.class);
     }
     
     @Override

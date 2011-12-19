@@ -54,7 +54,7 @@ public class EchoSpringRemotingPojoDirectTest extends SpringTestSupport {
         try {
             // use the pojo directly to call the injected endpoint and have the
             // original runtime exception thrown
-            EchoPojoDirect echoPojoDirect = (EchoPojoDirect)applicationContext.getBean("myPojoDirect");
+            EchoPojoDirect echoPojoDirect = applicationContext.getBean("myPojoDirect", EchoPojoDirect.class);
             String out = echoPojoDirect.onEcho("Kabom");
             assertNotNull(out);
             fail("Should have thrown exception");

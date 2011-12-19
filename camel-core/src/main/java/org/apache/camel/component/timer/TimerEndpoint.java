@@ -24,7 +24,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -34,7 +33,7 @@ import org.apache.camel.impl.DefaultEndpoint;
  *
  * @version 
  */
-@ManagedResource(description = "Managed Timer Endpoint")
+@ManagedResource(description = "Managed TimerEndpoint")
 public class TimerEndpoint extends DefaultEndpoint {
     private String timerName;
     private Date time;

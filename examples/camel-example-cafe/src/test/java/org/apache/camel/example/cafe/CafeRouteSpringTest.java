@@ -33,8 +33,8 @@ public class CafeRouteSpringTest extends CafeRouteBuilderTest {
         applicationContext = new ClassPathXmlApplicationContext("META-INF/camel-routes.xml");
         setUseRouteBuilder(false);
         super.setUp();
-        waiter = (TestWaiter) applicationContext.getBean("waiter");
-        driverRouter = (TestDrinkRouter) applicationContext.getBean("drinkRouter");
+        waiter = applicationContext.getBean("waiter", TestWaiter.class);
+        driverRouter = applicationContext.getBean("drinkRouter", TestDrinkRouter.class);
     }
     
     @After
@@ -46,7 +46,7 @@ public class CafeRouteSpringTest extends CafeRouteBuilderTest {
     }
     
     protected CamelContext createCamelContext() throws Exception {
-        return (CamelContext) applicationContext.getBean("camel");
+        return applicationContext.getBean("camel", CamelContext.class);
     }
 
 }

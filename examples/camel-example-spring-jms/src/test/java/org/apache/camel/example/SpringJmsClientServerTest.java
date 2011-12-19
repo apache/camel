@@ -55,7 +55,7 @@ public class SpringJmsClientServerTest extends Assert {
         ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
 
         // get the camel template for Spring template style sending of messages (= producer)
-        ProducerTemplate camelTemplate = (ProducerTemplate) context.getBean("camelTemplate");
+        ProducerTemplate camelTemplate = context.getBean("camelTemplate", ProducerTemplate.class);
         
         // as opposed to the CamelClientRemoting example we need to define the service URI in this java code
         int response = (Integer)camelTemplate.sendBody("jms:queue:numbers", ExchangePattern.InOut, 22);
@@ -68,7 +68,7 @@ public class SpringJmsClientServerTest extends Assert {
     @Test
     public void testCamelEndpointInvocation() throws Exception {
         ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
-        CamelContext camel = (CamelContext) context.getBean("camel-client");
+        CamelContext camel = context.getBean("camel-client", CamelContext.class);
 
         // get the endpoint from the camel context
         Endpoint endpoint = camel.getEndpoint("jms:queue:numbers");
@@ -105,7 +105,7 @@ public class SpringJmsClientServerTest extends Assert {
         // just get the proxy to the service and we as the client can use the "proxy" as it was
         // a local object we are invoking. Camel will under the covers do the remote communication
         // to the remote ActiveMQ server and fetch the response.
-        Multiplier multiplier = (Multiplier)context.getBean("multiplierProxy");
+        Multiplier multiplier = context.getBean("multiplierProxy", Multiplier.class);
        
         int response = multiplier.multiply(33);
         

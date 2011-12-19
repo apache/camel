@@ -27,8 +27,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.HttpMethod;
-import com.amazonaws.Request;
-import com.amazonaws.http.HttpMethodName;
+import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.S3ResponseMetadata;
 import com.amazonaws.services.s3.model.AbortMultipartUploadRequest;
@@ -79,7 +78,7 @@ public class AmazonS3ClientMock extends AmazonS3Client {
     List<S3Object> objects = new ArrayList<S3Object>();    
     
     public AmazonS3ClientMock() {
-        super(null);
+        super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
     }
 
     @Override
@@ -419,16 +418,6 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public S3ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected Request<Void> createRequest(String bucketName, String key, AmazonWebServiceRequest originalRequest) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected <T> void signRequest(Request<T> request, HttpMethodName methodName, String bucketName, String key) {
         throw new UnsupportedOperationException();
     }
 }

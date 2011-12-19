@@ -34,8 +34,9 @@ public class NoTypeConversionAvailableException extends CamelException {
     }
 
     public NoTypeConversionAvailableException(Object value, Class<?> type, Throwable cause) {
-        this(value, type);
-        initCause(cause);
+        super(createMessage(value, type, cause), cause);
+        this.value = value;
+        this.type = type;
     }
 
     /**
@@ -70,5 +71,14 @@ public class NoTypeConversionAvailableException extends CamelException {
     public static String createMessage(Object value, Class<?> type) {
         return "No type converter available to convert from type: " + (value != null ? value.getClass().getCanonicalName() : null)
               + " to the required type: " + type.getCanonicalName() + " with value " + value;
+    }
+    
+    /**
+     * Returns an error message for no type converter available with the cause.
+     */
+    public static String createMessage(Object value, Class<?> type, Throwable cause) {
+        return "Converting Exception when converting from type: "
+               + (value != null ? value.getClass().getCanonicalName() : null) + " to the required type: "
+               + type.getCanonicalName() + " with value " + value + ", which is caused by " + cause;
     }
 }

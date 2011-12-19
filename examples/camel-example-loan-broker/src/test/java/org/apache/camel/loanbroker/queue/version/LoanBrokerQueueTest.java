@@ -79,7 +79,7 @@ public class LoanBrokerQueueTest extends TestSupport {
     
     @Test
     public void testClientInvocation() throws Exception {
-        MockEndpoint endpoint = (MockEndpoint) camelContext.getEndpoint("mock:endpoint");
+        MockEndpoint endpoint = camelContext.getEndpoint("mock:endpoint", MockEndpoint.class);
         endpoint.expectedMessageCount(2);
         // send out the request message
         for (int i = 0; i < 2; i++) {

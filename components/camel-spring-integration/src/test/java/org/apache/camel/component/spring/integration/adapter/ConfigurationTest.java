@@ -28,11 +28,11 @@ public class ConfigurationTest extends Assert {
     @Test
     public void testCamelSourceEndpoint() throws Exception {
         context = new ClassPathXmlApplicationContext(new String[]{"/org/apache/camel/component/spring/integration/adapter/CamelSource.xml"});
-        CamelSourceAdapter camelSourceA = (CamelSourceAdapter) context.getBean("camelSourceA");
+        CamelSourceAdapter camelSourceA = context.getBean("camelSourceA", CamelSourceAdapter.class);
         assertNotNull(camelSourceA);
         assertEquals("Get the wrong request channel name", camelSourceA.getChannel().toString(), "channelA");
         assertEquals("ExpectReply should be false ", camelSourceA.isExpectReply(), false);
-        CamelSourceAdapter camelSourceB = (CamelSourceAdapter) context.getBean("camelSourceB");
+        CamelSourceAdapter camelSourceB = context.getBean("camelSourceB", CamelSourceAdapter.class);
         assertNotNull(camelSourceB);
         assertEquals("Get the wrong request channel name", camelSourceB.getChannel().toString(), "channelB");
         assertEquals("ExpectReply should be true ", camelSourceB.isExpectReply(), true);
@@ -43,10 +43,10 @@ public class ConfigurationTest extends Assert {
     @Test
     public void testCamelTragetEndpoint() throws Exception {
         context = new ClassPathXmlApplicationContext(new String[]{"/org/apache/camel/component/spring/integration/adapter/CamelTarget.xml"});
-        CamelTargetAdapter camelTargetA = (CamelTargetAdapter)context.getBean("camelTargetA");
+        CamelTargetAdapter camelTargetA = context.getBean("camelTargetA", CamelTargetAdapter.class);
         assertNotNull(camelTargetA);
         assertEquals("Subscript the wrong CamelEndpointUri", camelTargetA.getCamelEndpointUri(), "direct:EndpointA");
-        CamelTargetAdapter camelTargetB = (CamelTargetAdapter)context.getBean("camelTargetB");
+        CamelTargetAdapter camelTargetB = context.getBean("camelTargetB", CamelTargetAdapter.class);
         assertNotNull(camelTargetB);
         assertEquals("Subscript the wrong reply channel name", camelTargetB.getReplyChannel().toString(), "channelC");
         context.destroy();

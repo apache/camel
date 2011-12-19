@@ -36,7 +36,7 @@ public final class CamelFileClient {
         ApplicationContext context = new ClassPathXmlApplicationContext("camel-file-client.xml");
 
         // get the camel template for Spring template style sending of messages (= producer)
-        final ProducerTemplate producer = (ProducerTemplate) context.getBean("camelTemplate");
+        final ProducerTemplate producer = context.getBean("camelTemplate", ProducerTemplate.class);
 
         // now send a lot of messages
         System.out.println("Writing files ...");

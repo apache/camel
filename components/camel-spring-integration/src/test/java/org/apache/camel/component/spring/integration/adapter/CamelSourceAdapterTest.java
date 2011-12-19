@@ -27,7 +27,7 @@ import org.springframework.integration.core.MessageHandler;
 public class CamelSourceAdapterTest extends CamelSpringTestSupport {
     @Test
     public void testSendingOneWayMessage() throws Exception {
-        DirectChannel channelA = (DirectChannel) applicationContext.getBean("channelA");
+        DirectChannel channelA = applicationContext.getBean("channelA", DirectChannel.class);
         channelA.subscribe(new MessageHandler() {
             public void handleMessage(Message<?> message) {
                 assertEquals("We should get the message from channelA", message.getPayload(), "Willem");             

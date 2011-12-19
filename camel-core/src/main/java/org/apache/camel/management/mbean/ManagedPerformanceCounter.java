@@ -37,9 +37,13 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     private Statistic lastProcessingTime;
     private Statistic meanProcessingTime;
     private Statistic firstExchangeCompletedTimestamp;
+    private String firstExchangeCompletedExchangeId;
     private Statistic firstExchangeFailureTimestamp;
+    private String firstExchangeFailureExchangeId;
     private Statistic lastExchangeCompletedTimestamp;
+    private String lastExchangeCompletedExchangeId;
     private Statistic lastExchangeFailureTimestamp;
+    private String lastExchangeFailureExchangeId;
     private boolean statisticsEnabled = true;
 
     public void init(ManagementStrategy strategy) {
@@ -75,9 +79,13 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         lastProcessingTime.reset();
         meanProcessingTime.reset();
         firstExchangeCompletedTimestamp.reset();
+        firstExchangeCompletedExchangeId = null;
         firstExchangeFailureTimestamp.reset();
+        firstExchangeFailureExchangeId = null;
         lastExchangeCompletedTimestamp.reset();
+        lastExchangeCompletedExchangeId = null;
         lastExchangeFailureTimestamp.reset();
+        lastExchangeFailureExchangeId = null;
     }
 
     public long getExchangesCompleted() throws Exception {
@@ -121,9 +129,17 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         return value > 0 ? new Date(value) : null;
     }
 
+    public String getLastExchangeCompletedExchangeId() {
+        return lastExchangeCompletedExchangeId;
+    }
+
     public Date getFirstExchangeCompletedTimestamp() {
         long value = firstExchangeCompletedTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
+    }
+
+    public String getFirstExchangeCompletedExchangeId() {
+        return firstExchangeCompletedExchangeId;
     }
 
     public Date getLastExchangeFailureTimestamp() {
@@ -131,9 +147,17 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         return value > 0 ? new Date(value) : null;
     }
 
+    public String getLastExchangeFailureExchangeId() {
+        return lastExchangeFailureExchangeId;
+    }
+
     public Date getFirstExchangeFailureTimestamp() {
         long value = firstExchangeFailureTimestamp.getValue();
         return value > 0 ? new Date(value) : null;
+    }
+
+    public String getFirstExchangeFailureExchangeId() {
+        return firstExchangeFailureExchangeId;
     }
 
     public boolean isStatisticsEnabled() {
@@ -163,6 +187,10 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         }
 
         lastExchangeCompletedTimestamp.updateValue(now);
+        if (firstExchangeCompletedExchangeId == null) {
+            firstExchangeCompletedExchangeId = exchange.getExchangeId();
+        }
+        lastExchangeCompletedExchangeId = exchange.getExchangeId();
 
         // update mean
         long count = exchangesCompleted.getValue();
@@ -184,6 +212,10 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         }
 
         lastExchangeFailureTimestamp.updateValue(now);
+        if (firstExchangeFailureExchangeId == null) {
+            firstExchangeFailureExchangeId = exchange.getExchangeId();
+        }
+        lastExchangeFailureExchangeId = exchange.getExchangeId();
     }
 
 }

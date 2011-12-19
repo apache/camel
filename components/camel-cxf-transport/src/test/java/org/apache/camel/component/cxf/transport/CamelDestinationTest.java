@@ -182,7 +182,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
                 }
             }
         };
-        MockEndpoint error = (MockEndpoint)context.getEndpoint("mock:error");
+        MockEndpoint error = context.getEndpoint("mock:error", MockEndpoint.class);
         error.expectedMessageCount(0);
         //this call will active the camelDestination
         destination.setMessageObserver(observer);
@@ -233,7 +233,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
             }
         };
         
-        MockEndpoint error = (MockEndpoint)context.getEndpoint("mock:error");
+        MockEndpoint error = context.getEndpoint("mock:error", MockEndpoint.class);
         error.expectedMessageCount(1);
         
         //this call will active the camelDestination

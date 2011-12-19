@@ -102,7 +102,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
         routeExcludingContext.registerBeanDefinition("excludingResolver", new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
         routeExcludingContext.refresh();
 
-        ExcludingPackageScanClassResolver excludingResolver = (ExcludingPackageScanClassResolver)routeExcludingContext.getBean("excludingResolver");
+        ExcludingPackageScanClassResolver excludingResolver = routeExcludingContext.getBean("excludingResolver", ExcludingPackageScanClassResolver.class);
         List<Class<?>> excluded = CastUtils.cast(Arrays.asList(excludeRoutes()));
         excludingResolver.setExcludedClasses(new HashSet<Class<?>>(excluded));
 
@@ -132,14 +132,9 @@ public abstract class SpringTestSupport extends ContextTestSupport {
      * it is not present or the correct type
      */
     public <T> T getMandatoryBean(Class<T> type, String name) {
-        Object value = applicationContext.getBean(name);
+        T value = applicationContext.getBean(name, type);
         assertNotNull("No spring bean found for name <" + name + ">", value);
-        if (type.isInstance(value)) {
-            return type.cast(value);
-        } else {
-            fail("Spring bean <" + name + "> is not an instanceof " + type.getName() + " but is of type " + ObjectHelper.className(value));
-            return null;
-        }
+        return value;
     }
 
     @Override

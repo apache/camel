@@ -29,6 +29,10 @@ import org.apache.camel.support.ServiceSupport;
 
 /**
  * Default implementation of {@link Route}.
+ * <p/>
+ * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route,
+ * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
+ * and {@link org.apache.camel.CamelContext#stopRoute(String)} methods.
  *
  * @version 
  */
@@ -85,6 +89,22 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
     }
 
     /**
+     * Do not invoke this method directly, use {@link org.apache.camel.CamelContext#startRoute(String)} to start a route.
+     */
+    @Override
+    public void start() throws Exception {
+        super.start();
+    }
+
+    /**
+     * Do not invoke this method directly, use {@link org.apache.camel.CamelContext#stopRoute(String)} to stop a route.
+     */
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+    }
+
+    /**
      * Strategy method to allow derived classes to lazily load services for the route
      */
     protected void addServices(List<Service> services) throws Exception {
@@ -98,5 +118,4 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
         // clear services when stopping
         services.clear();
     }
-
 }

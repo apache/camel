@@ -43,7 +43,7 @@ public class XsltBlueprintRouteTest extends OSGiBlueprintTestSupport {
     
     @Test
     public void testSendMessageAndHaveItTransformed() throws Exception {
-        MockEndpoint endpoint = (MockEndpoint)camelContext.getEndpoint("mock:result");
+        MockEndpoint endpoint = camelContext.getEndpoint("mock:result", MockEndpoint.class);
         endpoint.expectedMessageCount(1);
 
         mytemplate.sendBody("direct:start",

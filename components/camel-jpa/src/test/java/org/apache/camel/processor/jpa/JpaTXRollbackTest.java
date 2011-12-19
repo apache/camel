@@ -104,7 +104,7 @@ public class JpaTXRollbackTest extends CamelTestSupport {
     }
 
     protected void cleanupRepository() {
-        jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
         TransactionTemplate transactionTemplate = new TransactionTemplate();
         transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));

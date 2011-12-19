@@ -75,7 +75,7 @@ public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
         BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintJcloudsTestBundle)", 20000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintJcloudsTestBundle)", 20000);
 
-        MockEndpoint mock = (MockEndpoint) ctx.getEndpoint("mock:results");
+        MockEndpoint mock = ctx.getEndpoint("mock:results", MockEndpoint.class);
         ProducerTemplate template = ctx.createProducerTemplate();
         mock.expectedMessageCount(2);
         template.sendBodyAndHeader("direct:start", new SimpleObject("1", "Test 1"), JcloudsConstants.BLOB_NAME, "blob1");

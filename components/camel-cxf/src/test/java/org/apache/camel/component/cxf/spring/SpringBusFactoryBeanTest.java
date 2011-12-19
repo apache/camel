@@ -29,10 +29,10 @@ public class SpringBusFactoryBeanTest extends AbstractSpringBeanTestSupport {
     
     @Test
     public void getTheBusInstance() {
-        Bus bus = (Bus)ctx.getBean("cxfBus");
+        Bus bus = ctx.getBean("cxfBus", Bus.class);
         assertNotNull("The bus should not be null", bus);
         
-        bus = (Bus)ctx.getBean("myBus");
+        bus = ctx.getBean("myBus", Bus.class);
         assertNotNull("The bus should not be null", bus);
 
         SoapBindingFactory soapBindingFactory = bus.getExtension(SoapBindingFactory.class);

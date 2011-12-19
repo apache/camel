@@ -39,7 +39,7 @@ public class IrcMultiChannelRouteTest extends CamelTestSupport {
     @Ignore("test manual")
     @Test
     public void testIrcMessages() throws Exception {
-        resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         //consumer is going to receive two copies of body3
         resultEndpoint.expectedBodiesReceived(body1, body2, body3, body3);
 

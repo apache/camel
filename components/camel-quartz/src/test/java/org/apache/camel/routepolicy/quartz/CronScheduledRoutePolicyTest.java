@@ -42,8 +42,8 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
 
     @Test
     public void testScheduledStartRoutePolicyWithTwoRoutes() throws Exception {
-        MockEndpoint success1 = (MockEndpoint) context.getEndpoint("mock:success1");
-        MockEndpoint success2 = (MockEndpoint) context.getEndpoint("mock:success2");
+        MockEndpoint success1 = context.getEndpoint("mock:success1", MockEndpoint.class);
+        MockEndpoint success2 = context.getEndpoint("mock:success2", MockEndpoint.class);
         success1.expectedMessageCount(1);
         success2.expectedMessageCount(1);
 
@@ -124,7 +124,7 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
 
     @Test
     public void testScheduledStartRoutePolicy() throws Exception {
-        MockEndpoint success = (MockEndpoint) context.getEndpoint("mock:success");
+        MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
         success.expectedMessageCount(1);
         
         context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
@@ -214,7 +214,7 @@ public class CronScheduledRoutePolicyTest extends CamelTestSupport {
     
     @Test
     public void testScheduledResumeRoutePolicy() throws Exception {
-        MockEndpoint success = (MockEndpoint) context.getEndpoint("mock:success");
+        MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
         success.expectedMessageCount(1);
         
         context.getComponent("quartz", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");

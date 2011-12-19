@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class RoutePolicySupport extends ServiceSupport implements RoutePolicy {
 
+    // TODO: Move to support package
+
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private ExceptionHandler exceptionHandler;
 

@@ -73,7 +73,7 @@ public class SqlRouteTest extends OSGiIntegrationTestSupport {
             applicationContext.setBundleContext(bundleContext);
             applicationContext.refresh();
         }
-        ds = (DataSource) applicationContext.getBean("dataSource");
+        ds = applicationContext.getBean("dataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(ds);
         return SpringCamelContext.springCamelContext(applicationContext);
     }

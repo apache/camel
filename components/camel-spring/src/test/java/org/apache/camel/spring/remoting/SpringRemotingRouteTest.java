@@ -32,7 +32,7 @@ public class SpringRemotingRouteTest extends TestCase {
         CamelContext camelContext = SpringCamelContext.springCamelContext(applicationContext);
 
         // START SNIPPET: invoke
-        ISay proxy = (ISay) applicationContext.getBean("sayProxy");
+        ISay proxy = applicationContext.getBean("sayProxy", ISay.class);
         String rc = proxy.say();
         assertEquals("Hello", rc);
         // END SNIPPET: invoke

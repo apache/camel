@@ -23,7 +23,7 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
 public class MyCoolBeanTest extends AbstractJUnit38SpringContextTests {
 
     public void testProducerTemplate() throws Exception {
-        MyCoolBean cool = (MyCoolBean) applicationContext.getBean("cool");
+        MyCoolBean cool = applicationContext.getBean("cool", MyCoolBean.class);
         cool.sendMsg();
     }
 }

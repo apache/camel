@@ -77,7 +77,7 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
     }
 
     private void assertEntityInDB() throws Exception {
-        jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
         List<?> list = jpaTemplate.find(SELECT_ALL_STRING);
         assertEquals(1, list.size());
@@ -90,7 +90,7 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
     }
 
     protected void cleanupRepository() {
-        jpaTemplate = (JpaTemplate)applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
 
         TransactionTemplate transactionTemplate = new TransactionTemplate();
         transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));

@@ -42,7 +42,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         template.requestBodyAndHeader("direct:input", person, "testHeading", "value");
 
         //assert
-        MockEndpoint ep = (MockEndpoint) context.getEndpoint("mock:test");
+        MockEndpoint ep = context.getEndpoint("mock:test", MockEndpoint.class);
         List<Exchange> exchanges = ep.getReceivedExchanges();
         for (Exchange exchange : exchanges) {
             Message message = exchange.getIn();
@@ -62,7 +62,7 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         template.requestBodyAndHeader("direct:input", "message", headerName, headerValue);
 
         //assert
-        MockEndpoint ep = (MockEndpoint) context.getEndpoint("mock:test");
+        MockEndpoint ep = context.getEndpoint("mock:test", MockEndpoint.class);
         List<Exchange> exchanges = ep.getReceivedExchanges();
         assertTrue(exchanges.size() > 0);
         for (Exchange exchange : exchanges) {

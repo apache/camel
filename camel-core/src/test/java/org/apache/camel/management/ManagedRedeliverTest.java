@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  *
@@ -31,7 +32,8 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
     public void testRedeliver() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        MockEndpoint mock = getMockEndpoint("mock:foo");
+        mock.expectedMessageCount(1);
 
         Object out = template.requestBody("direct:start", "Hello World");
         assertEquals("Error", out);
@@ -54,11 +56,22 @@ public class ManagedRedeliverTest extends ManagementTestSupport {
         num = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(0, num.longValue());
 
-        num = (Long) mbeanServer.getAttribute(on, "ExchangesFailed");
+        num = (Long) mbeanServer.getAttribute(on, "ExchangesTotal");
         assertEquals(5, num.longValue());
 
+        // there should be 5 failed exchanges (1 first time, and 4 redelivery attempts)
+        num = (Long) mbeanServer.getAttribute(on, "ExchangesFailed");
+        assertEquals(5, num.longValue());
+        
+        // and we tried to redeliver the exchange 4 times, before it failed
         num = (Long) mbeanServer.getAttribute(on, "Redeliveries");
         assertEquals(4, num.longValue());
+
+        String first = (String) mbeanServer.getAttribute(on, "FirstExchangeFailureExchangeId");
+        assertEquals(mock.getReceivedExchanges().get(0).getExchangeId(), first);
+
+        String last = (String) mbeanServer.getAttribute(on, "LastExchangeFailureExchangeId");
+        assertEquals(mock.getReceivedExchanges().get(0).getExchangeId(), last);
     }
 
     @Override

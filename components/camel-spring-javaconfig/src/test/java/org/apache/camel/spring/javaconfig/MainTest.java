@@ -53,7 +53,7 @@ public class MainTest extends Assert {
        
     
     private void runTests(CamelContext context) throws Exception {
-        MockEndpoint resultEndpoint = (MockEndpoint) context.getEndpoint("mock:result");
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         ProducerTemplate template = context.createProducerTemplate();
         
         String expectedBody = "<matched/>";

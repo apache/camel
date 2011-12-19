@@ -58,7 +58,7 @@ public class CafeRouteSpringIntegrationTest extends Assert {
     }
     
     protected CamelContext getCamelContext() throws Exception {
-        return (DefaultCamelContext) applicationContext.getBean("camel");
+        return applicationContext.getBean("camel", CamelContext.class);
     }
 
 }
