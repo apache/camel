@@ -30,6 +30,7 @@ public class SesConfiguration {
     private AmazonSimpleEmailService amazonSESClient;
     private String accessKey;
     private String secretKey;
+    private String amazonSESEndpoint;
     private String subject;
     private String from;
     private List<String> to;
@@ -107,6 +108,14 @@ public class SesConfiguration {
     public void setReplyToAddresses(String replyToAddresses) {
         this.replyToAddresses = Arrays.asList(replyToAddresses.split(","));
     }
+    
+    public String getAmazonSESEndpoint() {
+        return amazonSESEndpoint;
+    }
+
+    public void setAmazonSESEndpoint(String amazonSesEndpoint) {
+        this.amazonSESEndpoint = amazonSesEndpoint;
+    }
 
     @Override
     public String toString() {
@@ -114,6 +123,7 @@ public class SesConfiguration {
                 + "accessKey='" + accessKey + '\''
                 + ", amazonSESClient=" + amazonSESClient
                 + ", secretKey=xxxxxxxxxxxxxxx"
+                + ", amazonSesEndpoint='" + amazonSESEndpoint + '\''
                 + ", subject='" + subject + '\''
                 + ", from='" + from + '\''
                 + ", to='" + to + '\''
