@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -32,13 +33,12 @@ import org.junit.Test;
 public class QuartzRouteRestartTest extends CamelTestSupport {
 
     @Test
+    @Ignore("CAMEL-4794")
     public void testQuartzCronRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.setResultWaitTime(20000);
         mock.expectedMinimumMessageCount(3);
-        // the second message should have been skipped due to route being down for 7 sec
-        // mock.message(1).arrives().between(9, 11).seconds().afterPrevious();
-        // check if two messages came in short sequence
+        mock.message(1).arrives().between(9, 11).seconds().afterPrevious();
         mock.message(2).arrives().between(4, 6).seconds().afterPrevious();
 
         assertMockEndpointsSatisfied();
