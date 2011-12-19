@@ -28,15 +28,24 @@ import com.amazonaws.services.simpledb.model.UpdateCondition;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultProducerTemplate;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SdbComponentTest extends CamelTestSupport {
+public class SdbComponentSpringTest extends CamelSpringTestSupport {
     
     private AmazonSDBClientMock amazonSDBClient;
+    
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        
+        amazonSDBClient = context.getRegistry().lookup("amazonSDBClient", AmazonSDBClientMock.class);
+    }
     
     @Test
     public void doesntCreateDomainOnStartIfExists() throws Exception {
@@ -279,23 +288,8 @@ public class SdbComponentTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        amazonSDBClient = new AmazonSDBClientMock();
-        registry.bind("amazonSDBClient", amazonSDBClient);
-        
-        return registry;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .to("aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&operation=GetAttributes");
-            }
-        };
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(
+                "org/apache/camel/component/aws/sdb/SDBComponentSpringTest-context.xml");
     }
 }

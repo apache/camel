@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.sdb;
+package org.apache.camel.itest.osgi.aws;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,15 +28,32 @@ import com.amazonaws.services.simpledb.model.UpdateCondition;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws.sdb.SdbConstants;
+import org.apache.camel.component.aws.sdb.SdbOperations;
 import org.apache.camel.impl.DefaultProducerTemplate;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-public class SdbComponentTest extends CamelTestSupport {
+@RunWith(JUnit4TestRunner.class)
+public class AwsSdbTest extends AwsTestSupport {
     
     private AmazonSDBClientMock amazonSDBClient;
+    
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        
+        amazonSDBClient = context.getRegistry().lookup("amazonSDBClient", AmazonSDBClientMock.class);
+    }
+    
+    @Override
+    protected OsgiBundleXmlApplicationContext createApplicationContext() {
+        return new OsgiBundleXmlApplicationContext(new String[]{"org/apache/camel/itest/osgi/aws/CamelContext.xml"});
+    }
     
     @Test
     public void doesntCreateDomainOnStartIfExists() throws Exception {
@@ -56,7 +73,7 @@ public class SdbComponentTest extends CamelTestSupport {
             new DeletableItem("ITEM1", null),
             new DeletableItem("ITEM2", null)});
         
-        template.send("direct:start", new Processor() {
+        template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.BatchDeleteAttributes);
                 exchange.getIn().setHeader(SdbConstants.DELETABLE_ITEMS, deletableItems);
@@ -72,7 +89,7 @@ public class SdbComponentTest extends CamelTestSupport {
         final List<ReplaceableItem> replaceableItems = Arrays.asList(new ReplaceableItem[] {
             new ReplaceableItem("ITEM1")});
         
-        template.send("direct:start", new Processor() {
+        template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.BatchPutAttributes);
                 exchange.getIn().setHeader(SdbConstants.REPLACEABLE_ITEMS, replaceableItems);
@@ -89,7 +106,7 @@ public class SdbComponentTest extends CamelTestSupport {
             new Attribute("NAME1", "VALUE1")});
         final UpdateCondition condition = new UpdateCondition("Key1", "Value1", true);
         
-        template.send("direct:start", new Processor() {
+        template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.DeleteAttributes);
                 exchange.getIn().setHeader(SdbConstants.ATTRIBUTES, attributes);
@@ -110,7 +127,7 @@ public class SdbComponentTest extends CamelTestSupport {
             new Attribute("NAME1", "VALUE1")});
         final UpdateCondition condition = new UpdateCondition("Key1", "Value1", true);
         
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.DeleteAttributes);
                 exchange.getIn().setHeader(SdbConstants.ATTRIBUTES, attributes);
@@ -124,7 +141,7 @@ public class SdbComponentTest extends CamelTestSupport {
     
     @Test
     public void deleteDomain() {
-        template.send("direct:start", new Processor() {
+        template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.DeleteDomain);
             }
@@ -135,7 +152,7 @@ public class SdbComponentTest extends CamelTestSupport {
     
     @Test
     public void domainMetadata() {
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.DomainMetadata);
             }
@@ -157,7 +174,7 @@ public class SdbComponentTest extends CamelTestSupport {
     public void getAttributes() {
         final List<String> attributeNames = Arrays.asList(new String[] {"ATTRIBUTE1"});
         
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.GetAttributes);
                 exchange.getIn().setHeader(SdbConstants.ITEM_NAME, "ITEM1");
@@ -183,7 +200,7 @@ public class SdbComponentTest extends CamelTestSupport {
     public void getAttributesItemNameIsRequired() {
         final List<String> attributeNames = Arrays.asList(new String[] {"ATTRIBUTE1"});
         
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.GetAttributes);
                 exchange.getIn().setHeader(SdbConstants.CONSISTENT_READ, Boolean.TRUE);
@@ -198,7 +215,7 @@ public class SdbComponentTest extends CamelTestSupport {
     @SuppressWarnings({ "unchecked" })
     @Test
     public void listDomains() {
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.ListDomains);
                 exchange.getIn().setHeader(SdbConstants.MAX_NUMBER_OF_DOMAINS, new Integer(5));
@@ -222,7 +239,7 @@ public class SdbComponentTest extends CamelTestSupport {
             new ReplaceableAttribute("NAME1", "VALUE1", true)});
         final UpdateCondition updateCondition = new UpdateCondition("NAME1", "VALUE1", true);
         
-        template.send("direct:start", new Processor() {
+        template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.PutAttributes);
                 exchange.getIn().setHeader(SdbConstants.ITEM_NAME, "ITEM1");
@@ -243,7 +260,7 @@ public class SdbComponentTest extends CamelTestSupport {
             new ReplaceableAttribute("NAME1", "VALUE1", true)});
         final UpdateCondition updateCondition = new UpdateCondition("NAME1", "VALUE1", true);
         
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.PutAttributes);
                 exchange.getIn().setHeader(SdbConstants.UPDATE_CONDITION, updateCondition);
@@ -258,7 +275,7 @@ public class SdbComponentTest extends CamelTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void select() {
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.Select);
                 exchange.getIn().setHeader(SdbConstants.NEXT_TOKEN, "TOKEN1");
@@ -276,26 +293,5 @@ public class SdbComponentTest extends CamelTestSupport {
         assertEquals(2, items.size());
         assertEquals("ITEM1", items.get(0).getName());
         assertEquals("ITEM2", items.get(1).getName());
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        amazonSDBClient = new AmazonSDBClientMock();
-        registry.bind("amazonSDBClient", amazonSDBClient);
-        
-        return registry;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .to("aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&operation=GetAttributes");
-            }
-        };
     }
 }

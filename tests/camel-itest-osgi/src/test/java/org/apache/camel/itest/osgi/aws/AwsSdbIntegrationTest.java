@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.sdb.integration;
+package org.apache.camel.itest.osgi.aws;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,15 +27,23 @@ import com.amazonaws.services.simpledb.model.UpdateCondition;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.sdb.SdbConstants;
 import org.apache.camel.component.aws.sdb.SdbOperations;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
+@RunWith(JUnit4TestRunner.class)
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
-public class SdbComponentIntegrationTest extends CamelTestSupport {
+public class AwsSdbIntegrationTest extends AwsTestSupport {
+    
+    @Override
+    protected OsgiBundleXmlApplicationContext createApplicationContext() {
+        return new OsgiBundleXmlApplicationContext(
+                new String[]{"org/apache/camel/itest/osgi/aws/CamelIntegrationContext.xml"});
+    }
     
     @Test
     public void batchDeleteAttributes() {
@@ -43,7 +51,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
             new DeletableItem("ITEM1", null),
             new DeletableItem("ITEM2", null)});
         
-        template.send("direct:start", new Processor() {
+        template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.BatchDeleteAttributes);
                 exchange.getIn().setHeader(SdbConstants.DELETABLE_ITEMS, deletableItems);
@@ -56,7 +64,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
         final List<ReplaceableItem> replaceableItems = Arrays.asList(new ReplaceableItem[] {
             new ReplaceableItem("ITEM1")});
         
-        template.send("direct:start", new Processor() {
+        template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.BatchPutAttributes);
                 exchange.getIn().setHeader(SdbConstants.REPLACEABLE_ITEMS, replaceableItems);
@@ -70,7 +78,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
             new Attribute("NAME1", "VALUE1")});
         final UpdateCondition condition = new UpdateCondition("Key1", "Value1", true);
         
-        template.send("direct:start", new Processor() {
+        template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.DeleteAttributes);
                 exchange.getIn().setHeader(SdbConstants.ATTRIBUTES, attributes);
@@ -82,7 +90,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
     
     @Test
     public void deleteDomain() {
-        template.send("direct:start", new Processor() {
+        template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.DeleteDomain);
             }
@@ -91,7 +99,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
     
     @Test
     public void domainMetadata() {
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.DomainMetadata);
             }
@@ -110,7 +118,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
     public void getAttributes() {
         final List<String> attributeNames = Arrays.asList(new String[] {"ATTRIBUTE1"});
         
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.GetAttributes);
                 exchange.getIn().setHeader(SdbConstants.ITEM_NAME, "ITEM1");
@@ -124,7 +132,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
     
     @Test
     public void listDomains() {
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.ListDomains);
                 exchange.getIn().setHeader(SdbConstants.MAX_NUMBER_OF_DOMAINS, new Integer(5));
@@ -141,7 +149,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
             new ReplaceableAttribute("NAME1", "VALUE1", true)});
         final UpdateCondition updateCondition = new UpdateCondition("NAME1", "VALUE1", true);
         
-        template.send("direct:start", new Processor() {
+        template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.PutAttributes);
                 exchange.getIn().setHeader(SdbConstants.ITEM_NAME, "ITEM1");
@@ -153,7 +161,7 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
     
     @Test
     public void select() {
-        Exchange exchange = template.send("direct:start", new Processor() {
+        Exchange exchange = template.send("direct:start-sdb", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(SdbConstants.OPERATION, SdbOperations.Select);
                 exchange.getIn().setHeader(SdbConstants.NEXT_TOKEN, "TOKEN1");
@@ -163,16 +171,5 @@ public class SdbComponentIntegrationTest extends CamelTestSupport {
         });
         
         assertNotNull(exchange.getIn().getHeader(SdbConstants.ITEMS, List.class));
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                        .to("aws-sdb://TestDomain?accessKey=xxx&secretKey=yyy&operation=GetAttributes");
-            }
-        };
     }
 }

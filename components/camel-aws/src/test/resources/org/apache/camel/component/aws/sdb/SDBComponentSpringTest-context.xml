@@ -23,37 +23,9 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <to uri="aws-sqs://MyQueue?accessKey=xxx&amp;secretKey=yyy"/>
-        </route>
-
-        <route>
-            <from uri="aws-sqs://MyQueue?accessKey=xxx&amp;secretKey=yyy"/>
-            <to uri="mock:result"/>
-        </route>
-        
-        <route>
-            <from uri="direct:start-sns"/>
-            <to uri="aws-sns://MyTopic?accessKey=xxx&amp;secretKey=yyy"/>
-        </route>
-        
-        <route>
-            <from uri="direct:start-s3"/>
-            <to uri="aws-s3://mycamelbucket?accessKey=xxx&amp;secretKey=yyy"/>
-        </route>
-        
-        <route>
-            <from uri="aws-s3://mycamelbucket?accessKey=xxx&amp;secretKey=yyy&amp;maxMessagesPerPoll=5"/>
-            <to uri="mock:result-s3"/>
-        </route>
-        
-        <route>
-            <from uri="direct:start-ses"/>
-            <to uri="aws-ses://from@example.com?accessKey=xxx&amp;secretKey=yyy"/>
-        </route>
-        
-        <route>
-            <from uri="direct:start-sdb"/>
             <to uri="aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&amp;operation=GetAttributes"/>
         </route>
     </camelContext>
+
+    <bean id="amazonSDBClient" class="org.apache.camel.component.aws.sdb.AmazonSDBClientMock"/>
 </beans>

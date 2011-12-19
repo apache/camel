@@ -18,13 +18,20 @@ package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
 
+/**
+ * The AWS SDB component configuration properties
+ * 
+ */
 public class SdbConfiguration {
+    
     private String accessKey;
     private String secretKey;
-    private AmazonSimpleDB amazonSdbClient;
+    private AmazonSimpleDB amazonSDBClient;
     private String amazonSdbEndpoint;
     private String domainName;
-    private String operation;
+    private Integer maxNumberOfDomains;
+    private Boolean consistentRead;
+    private SdbOperations operation = SdbOperations.PutAttributes;
 
     public void setAmazonSdbEndpoint(String amazonSdbEndpoint) {
         this.amazonSdbEndpoint = amazonSdbEndpoint;
@@ -50,12 +57,12 @@ public class SdbConfiguration {
         this.secretKey = secretKey;
     }
 
-    public AmazonSimpleDB getAmazonSdbClient() {
-        return amazonSdbClient;
+    public AmazonSimpleDB getAmazonSDBClient() {
+        return amazonSDBClient;
     }
 
-    public void setAmazonSdbClient(AmazonSimpleDB amazonSdbClient) {
-        this.amazonSdbClient = amazonSdbClient;
+    public void setAmazonSDBClient(AmazonSimpleDB amazonSDBClient) {
+        this.amazonSDBClient = amazonSDBClient;
     }
 
     public String getDomainName() {
@@ -66,11 +73,27 @@ public class SdbConfiguration {
         this.domainName = domainName;
     }
 
-    public String getOperation() {
+    public SdbOperations getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
+    public void setOperation(SdbOperations operation) {
         this.operation = operation;
+    }
+
+    public Integer getMaxNumberOfDomains() {
+        return maxNumberOfDomains;
+    }
+
+    public void setMaxNumberOfDomains(Integer maxNumberOfDomains) {
+        this.maxNumberOfDomains = maxNumberOfDomains;
+    }
+
+    public Boolean getConsistentRead() {
+        return consistentRead;
+    }
+
+    public void setConsistentRead(Boolean consistentRead) {
+        this.consistentRead = consistentRead;
     }
 }
