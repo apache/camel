@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -229,7 +230,8 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         } else {
             LOG.debug("Trigger: {}/{} already exists and will be resumed automatically by Quartz.", trigger.getGroup(), trigger.getName());
             if (!isClustered()) {
-                scheduler.resumeTrigger(trigger.getName(), trigger.getGroup());
+                trigger.setStartTime(Calendar.getInstance().getTime());
+                scheduler.rescheduleJob(trigger.getName(), trigger.getGroup(), trigger);
             }
         }
     }
