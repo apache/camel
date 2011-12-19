@@ -64,6 +64,9 @@ public class SesEndpoint extends DefaultEndpoint {
     private AmazonSimpleEmailService createSESClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
         AmazonSimpleEmailService client = new AmazonSimpleEmailServiceClient(credentials);
+        if (configuration.getAmazonSESEndpoint() != null) {
+            client.setEndpoint(configuration.getAmazonSESEndpoint());
+        }
         configuration.setAmazonSESClient(client);
         return client;
     }
