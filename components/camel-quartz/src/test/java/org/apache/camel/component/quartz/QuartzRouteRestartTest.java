@@ -33,13 +33,12 @@ import org.junit.Test;
 public class QuartzRouteRestartTest extends CamelTestSupport {
 
     @Test
-    @Ignore("CAMEL-4794")
     public void testQuartzCronRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.setResultWaitTime(20000);
+        mock.setResultWaitTime(15000);
         mock.expectedMinimumMessageCount(3);
-        mock.message(1).arrives().between(9, 11).seconds().afterPrevious();
-        mock.message(2).arrives().between(4, 6).seconds().afterPrevious();
+        mock.message(0).arrives().between(7, 9).seconds().beforeNext();
+        mock.message(2).arrives().between(3, 5).seconds().afterPrevious();
 
         assertMockEndpointsSatisfied();
     }
@@ -49,7 +48,7 @@ public class QuartzRouteRestartTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("quartz://groupName/timerName?cron=0/5+*+*+*+*+?").routeId("trigger")
+                from("quartz://groupName/timerName?cron=0/4+*+*+*+*+?").routeId("trigger")
                     .setBody(bean(CurrentTime.class))
                     // .to("log:QUARTZ")
                     .to("seda:control");
@@ -64,7 +63,7 @@ public class QuartzRouteRestartTest extends CamelTestSupport {
                             if (!DONE) {
                                 DONE = true;
                                 exchange.getContext().stopRoute("trigger");
-                                Thread.sleep(7000);
+                                Thread.sleep(5000);
                                 exchange.getContext().startRoute("trigger");
                             }
                         }
