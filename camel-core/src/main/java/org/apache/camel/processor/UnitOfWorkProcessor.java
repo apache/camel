@@ -78,6 +78,17 @@ public class UnitOfWorkProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        // if a route context has been configured, then wrap the processor with a
+        // RouteContextProcessor to ensure we track the route context properly during
+        // processing of the exchange
+        if (routeContext != null) {
+            processor = new RouteContextProcessor(routeContext, processor);
+        }
+        super.doStart();
+    }
+
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // if the exchange doesn't have from route id set, then set it if it originated
         // from this unit of work
@@ -96,14 +107,6 @@ public class UnitOfWorkProcessor extends DelegateAsyncProcessor {
                 callback.done(true);
                 exchange.setException(e);
                 return true;
-            }
-
-
-            // if a route context has been configured, then wrap the processor with a
-            // RouteContextProcessor to ensure we track the route context properly during
-            // processing of the exchange
-            if (routeContext != null) {
-                processor = new RouteContextProcessor(routeContext, processor);
             }
 
             Object synchronous = exchange.removeProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC);

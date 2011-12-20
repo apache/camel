@@ -33,23 +33,27 @@ public class ReplyHolder {
     private final AsyncCallback callback;
     private final Message message;
     private final String originalCorrelationId;
+    private final String correlationId;
     private long timeout;
 
     /**
      * Constructor to use when a reply message was received
      */
-    public ReplyHolder(Exchange exchange, AsyncCallback callback, String originalCorrelationId, Message message) {
+    public ReplyHolder(Exchange exchange, AsyncCallback callback, String originalCorrelationId,
+                       String correlationId, Message message) {
         this.exchange = exchange;
         this.callback = callback;
         this.originalCorrelationId = originalCorrelationId;
+        this.correlationId = correlationId;
         this.message = message;
     }
 
     /**
      * Constructor to use when a timeout occurred
      */
-    public ReplyHolder(Exchange exchange, AsyncCallback callback, String originalCorrelationId, long timeout) {
-        this(exchange, callback, originalCorrelationId, null);
+    public ReplyHolder(Exchange exchange, AsyncCallback callback, String originalCorrelationId,
+                       String correlationId, long timeout) {
+        this(exchange, callback, originalCorrelationId, correlationId, null);
         this.timeout = timeout;
     }
 
@@ -69,6 +73,15 @@ public class ReplyHolder {
      */
     public String getOriginalCorrelationId() {
         return originalCorrelationId;
+    }
+
+    /**
+     * Gets the correlation id
+     *
+     * @see #getOriginalCorrelationId()
+     */
+    public String getCorrelationId() {
+        return correlationId;
     }
 
     /**

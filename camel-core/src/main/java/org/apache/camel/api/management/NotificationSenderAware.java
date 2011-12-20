@@ -17,9 +17,14 @@
 package org.apache.camel.api.management;
 
 /**
- * To be implemented by the user class to get a NotificationSender injected
- *
+ * To be implemented by the user class to get a {@link NotificationSender} injected
  */
 public interface NotificationSenderAware {
+
+    /**
+     * {@link NotificationSender} to use for sending notifications.
+     *
+     * @param sender sender to use for sending notifications
+     */
     void setNotificationSender(NotificationSender sender);
 }

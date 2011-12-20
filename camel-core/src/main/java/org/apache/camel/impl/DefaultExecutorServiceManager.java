@@ -42,6 +42,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
+import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,7 +221,17 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
             LOG.debug("Created new ScheduledThreadPool for source: {} with name: {}. -> {}", new Object[]{source, sanitizedName, answer});
         }
         return answer;
+    }
 
+    @Override
+    public ScheduledExecutorService newScheduledThreadPool(Object source, String name, String profileId) {
+        ThreadPoolProfile profile = getThreadPoolProfile(profileId);
+        if (profile != null) {
+            return newScheduledThreadPool(source, name, profile);
+        } else {
+            // no profile with that id
+            return null;
+        }
     }
 
     @Override
@@ -349,8 +360,13 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         }
 
         // let lifecycle strategy be notified as well which can let it be managed in JMX as well
+        ThreadPoolExecutor threadPool = null;
         if (executorService instanceof ThreadPoolExecutor) {
-            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) executorService;
+            threadPool = (ThreadPoolExecutor) executorService;
+        } else if (executorService instanceof SizedScheduledExecutorService) {
+            threadPool = ((SizedScheduledExecutorService) executorService).getScheduledThreadPoolExecutor();
+        }
+        if (threadPool != null) {
             for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
                 lifecycle.onThreadPoolAdd(camelContext, threadPool, id, sourceId, routeId, threadPoolProfileId);
             }

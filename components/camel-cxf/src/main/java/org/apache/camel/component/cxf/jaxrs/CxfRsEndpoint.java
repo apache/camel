@@ -31,6 +31,7 @@ import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.feature.LoggingFeature;
@@ -167,6 +168,19 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     protected JAXRSClientFactoryBean newJAXRSClientFactoryBean() {
         return new JAXRSClientFactoryBean();
     }
+    
+    protected String resolvePropertyPlaceholders(String str) {
+        try {
+            if (getCamelContext() != null) {
+                return getCamelContext().resolvePropertyPlaceholders(str);
+            } else {
+                return str;
+            }
+        } catch (Exception ex) {
+            throw ObjectHelper.wrapRuntimeCamelException(ex);
+        }
+    }
+
 
     public JAXRSServerFactoryBean createJAXRSServerFactoryBean() {
         JAXRSServerFactoryBean answer = newJAXRSServerFactoryBean();
@@ -216,7 +230,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
 
     public String getAddress() {
-        return address;
+        return resolvePropertyPlaceholders(address);
     }
 
     public boolean isLoggingFeatureEnabled() {

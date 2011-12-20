@@ -21,6 +21,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version 
@@ -39,6 +40,9 @@ public class ManagedStatisticsTest extends ManagementTestSupport {
         // use route to get the total time
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(0, completed.longValue());
+        
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(5);
 
         // send in 5 messages
         template.sendBody("direct:start", "A");
@@ -47,9 +51,23 @@ public class ManagedStatisticsTest extends ManagementTestSupport {
         template.sendBody("direct:start", "D");
         template.sendBody("direct:start", "E");
 
+        assertMockEndpointsSatisfied();
+        
         // should be 5 on the route
         completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(5, completed.longValue());
+        
+        String first = (String) mbeanServer.getAttribute(on, "FirstExchangeCompletedExchangeId");
+        assertEquals(result.getReceivedExchanges().get(0).getExchangeId(), first);
+
+        String firstFail = (String) mbeanServer.getAttribute(on, "FirstExchangeFailureExchangeId");
+        assertNull(firstFail);
+
+        String last = (String) mbeanServer.getAttribute(on, "LastExchangeCompletedExchangeId");
+        assertEquals(result.getReceivedExchanges().get(4).getExchangeId(), last);
+
+        String lastFail = (String) mbeanServer.getAttribute(on, "LastExchangeFailureExchangeId");
+        assertNull(lastFail);
 
         // should be 5 on the processors
         ObjectName foo = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"foo\"");

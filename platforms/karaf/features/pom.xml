@@ -45,7 +45,7 @@
       <cometd-java-server-bundle-version>2.3.1_1</cometd-java-server-bundle-version>
       <commons-beanutils-bundle-version>1.7.0_3</commons-beanutils-bundle-version>
       <commons-csv-version>1.0-r706899_3</commons-csv-version>
-      <commons-codec-version>${commons-code}</commons-codec-version>
+      <commons-codec-version>${commons-codec}</commons-codec-version>
       <commons-codec-bundle-version>1.3_3</commons-codec-bundle-version>
       <commons-configuration-version>1.6</commons-configuration-version>
       <commons-daemon-version>1.0.5</commons-daemon-version>
@@ -102,7 +102,6 @@
       <opensaml-version>2.4.1_1</opensaml-version>
       <oscache-bundle-version>2.4_5</oscache-bundle-version>
       <protobuf-java-bundle-version>2.3.0_1</protobuf-java-bundle-version>
-      <pax-web-version>0.7.2</pax-web-version>
       <quartz-bundle-version>1.8.5_1</quartz-bundle-version>
       <qpid-bundle-version>0.12_1</qpid-bundle-version>
       <quickfix-bundle-version>1.5.1_1</quickfix-bundle-version>

@@ -25,6 +25,10 @@ import org.apache.camel.spi.RouteContext;
  * A <a href="http://camel.apache.org/routes.html">Route</a>
  * defines the processing used on an inbound message exchange
  * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}
+ * <p/>
+ * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route,
+ * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
+ * and {@link org.apache.camel.CamelContext#stopRoute(String)} methods.
  */
 public interface Route {
 
@@ -41,16 +45,22 @@ public interface Route {
 
     /**
      * Gets the inbound endpoint
+     *
+     * @return the inbound endpoint
      */
     Endpoint getEndpoint();
 
     /**
      * Gets the inbound {@link Consumer}
+     *
+     * @return the inbound consumer
      */
     Consumer getConsumer();
 
     /**
-     * Whether or not the route supports suspension
+     * Whether or not the route supports suspension (suspend and resume)
+     *
+     * @return <tt>true</tt> if this route supports suspension
      */
     boolean supportsSuspension();
 
@@ -78,6 +88,8 @@ public interface Route {
 
     /**
      * Returns the services for this particular route
+     *
+     * @return the services
      */
     List<Service> getServices();
 

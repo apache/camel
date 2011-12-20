@@ -29,10 +29,7 @@ import org.apache.camel.{Exchange, Converter}
  * Converter implementation for supporting some common Scala types within Apache Camel
  */
 @Converter
-class ScalaTypeConverter {
-
-  // static classes in Scala don't work on linux with Camel type converter as for some reason
-  // camel-core cannot see the methods have static modifiers
+object ScalaTypeConverter {
 
    @Converter
    def convertToDocument(xml: Elem, exchange : Exchange) : Document = {

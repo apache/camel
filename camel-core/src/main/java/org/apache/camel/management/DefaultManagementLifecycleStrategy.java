@@ -754,8 +754,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         boolean enabled = camelContext.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         if (enabled) {
-            LOG.info("StatiticsLevel at {} so enabling load performance statistics", camelContext.getManagementStrategy().getStatisticsLevel());
-            ScheduledExecutorService executorService = camelContext.getExecutorServiceManager().newDefaultScheduledThreadPool(this, "ManagementLoadTask");
+            LOG.info("StatisticsLevel at {} so enabling load performance statistics", camelContext.getManagementStrategy().getStatisticsLevel());
+            ScheduledExecutorService executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "ManagementLoadTask");
             timerListenerManager.setExecutorService(executorService);
             // must use 1 sec interval as the load statistics is based on 1 sec calculations
             timerListenerManager.setInterval(1000);

@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -24,6 +25,17 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version 
  */
 public class RouteRemoveTest extends ContextTestSupport {
+
+    public void testStopRouteOnContext() throws Exception {
+        assertEquals(ServiceStatus.Started, ((DefaultRoute) context.getRoute("foo")).getStatus());
+        assertEquals(ServiceStatus.Started, context.getRouteStatus("foo"));
+        
+        context.stopRoute("foo");
+        
+        assertEquals(ServiceStatus.Stopped, ((DefaultRoute) context.getRoute("foo")).getStatus());
+        assertEquals(ServiceStatus.Stopped, context.getRouteStatus("foo"));
+    }
+    
 
     public void testRemove() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

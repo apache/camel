@@ -40,17 +40,17 @@ public class LogEndpoint extends ProcessorEndpoint {
         super(endpointUri, component);
         setLogger(logger);
     }
-    
+
     @Override
-    public void start() throws Exception {
+    protected void doStart() throws Exception {
         ServiceHelper.startService(logger);
     }
 
     @Override
-    public void stop() throws Exception {
+    protected void doStop() throws Exception {
         ServiceHelper.stopService(logger);
     }
-    
+
     public void setLogger(Processor logger) {
         this.logger = logger;
         // the logger is the processor

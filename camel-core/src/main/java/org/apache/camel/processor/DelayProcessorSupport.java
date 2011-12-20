@@ -57,9 +57,18 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
             if (!isRunAllowed()) {
                 exchange.setException(new RejectedExecutionException("Run is not allowed"));
             }
-            DelayProcessorSupport.super.process(exchange, callback);
-            // signal callback we are done async
-            callback.done(false);
+
+            // process the exchange now that we woke up
+            DelayProcessorSupport.super.process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    log.trace("Delayed task done for exchangeId: {}", exchange.getExchangeId());
+                    // we must done the callback from this async callback as well, to ensure callback is done correctly
+                    // must invoke done on callback with false, as that is what the original caller would
+                    // expect as we returned false in the process method
+                    callback.done(false);
+                }
+            });
         }
     }
 
@@ -84,6 +93,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
         long delay = calculateDelay(exchange);
         if (delay <= 0) {
             // no delay then continue routing
+            log.trace("No delay for exchangeId: {}", exchange.getExchangeId());
             return super.process(exchange, callback);
         }
 
@@ -113,6 +123,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
                     if (!isRunAllowed()) {
                         exchange.setException(new RejectedExecutionException());
                     } else {
+                        log.debug("Scheduling rejected task, so letting caller run, delaying at first for {} millis for exchangeId: {}", delay, exchange.getExchangeId());
                         // let caller run by processing
                         try {
                             delay(delay, exchange);

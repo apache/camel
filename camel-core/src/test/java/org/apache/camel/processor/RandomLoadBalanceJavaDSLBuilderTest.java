@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import java.util.List;
 
-import org.apache.camel.Channel;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -77,11 +76,16 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
 
         for (Processor child : nav.next()) {
 
+            if (child instanceof RouteContextProcessor) {
+                child = ((RouteContextProcessor) child).getProcessor();
+            }
+
             if (child instanceof DefaultChannel) {
                 DefaultChannel channel = (DefaultChannel) child;
                 ProcessorDefinition def = channel.getProcessorDefinition();
                 navigateDefinition(def, sb);
             }
+
         }
     }
 

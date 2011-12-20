@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 
 /**
  * Factory for thread pools that uses the JDK {@link Executors} for creating the thread pools.
@@ -91,7 +93,22 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
     
     @Override
     public ScheduledExecutorService newScheduledThreadPool(ThreadPoolProfile profile, ThreadFactory threadFactory) {
-        return Executors.newScheduledThreadPool(profile.getPoolSize(), threadFactory);
+        RejectedExecutionHandler rejectedExecutionHandler = profile.getRejectedExecutionHandler();
+        if (rejectedExecutionHandler == null) {
+            rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+        }
+
+        ScheduledThreadPoolExecutor answer = new ScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
+        // TODO: when JDK7 we should setRemoveOnCancelPolicy(true)
+
+        // need to wrap the thread pool in a sized to guard against the problem that the
+        // JDK created thread pool has an unbounded queue (see class javadoc), which mean
+        // we could potentially keep adding tasks, and run out of memory.
+        if (profile.getMaxPoolSize() > 0) {
+            return new SizedScheduledExecutorService(answer, profile.getMaxQueueSize());
+        } else {
+            return answer;
+        }
     }
 
 }

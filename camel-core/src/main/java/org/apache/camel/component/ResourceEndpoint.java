@@ -96,7 +96,7 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
         return contentCache;
     }
     
-    public synchronized void clearContentCache() {
+    public void clearContentCache() {
         log.debug("Clearing resource: {} from the content cache", resourceUri);
         buffer = null;
     }
