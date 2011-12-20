@@ -19,19 +19,24 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <artifactId>components</artifactId>
-        <groupId>org.apache.camel</groupId>
-        <version>2.9-SNAPSHOT</version>
-    </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>camel-ssh</artifactId>
-    <packaging>jar</packaging>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-parent</artifactId>
+        <version>2.10-SNAPSHOT</version>
+        <relativePath>../../parent</relativePath>
+    </parent>
 
+    <artifactId>camel-ssh</artifactId>
+    <packaging>bundle</packaging>
     <name>Camel :: SSH</name>
-    <url>http://www.myorganization.org</url>
+    <description>Camel SSH support</description>
+
+    <properties>
+        <camel.osgi.export.pkg>org.apache.camel.component.ssh.*</camel.osgi.export.pkg>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -80,20 +85,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <defaultGoal>install</defaultGoal>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
