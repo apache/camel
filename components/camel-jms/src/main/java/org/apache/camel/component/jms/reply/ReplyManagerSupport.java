@@ -113,8 +113,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
             boolean timeout = holder.isTimeout();
             if (timeout) {
+                log.warn("Timeout occurred after {} millis waiting for reply message with correlationID [{}]."
+                        + " Setting ExchangeTimedOutException on ExchangeId: {} and continue routing.",
+                        new Object[]{holder.getRequestTimeout(), holder.getCorrelationId(), exchange.getExchangeId()});
+
                 // no response, so lets set a timed out exception
-                exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout()));
+                String msg = "reply message with correlationID: " + holder.getCorrelationId() + " not received";
+                exchange.setException(new ExchangeTimedOutException(exchange, holder.getRequestTimeout(), msg));
             } else {
                 JmsMessage response = new JmsMessage(message, endpoint.getBinding());
                 Object body = response.getBody();
