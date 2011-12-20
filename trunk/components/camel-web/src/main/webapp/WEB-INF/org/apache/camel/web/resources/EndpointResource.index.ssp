@@ -1,0 +1,20 @@
+<%@ import val it: EndpointResource %>
+      #{ attributes("title") = "Endpoint " + it.getUri}#
+        <h1>Endpoint: ${it.getUri}</h1>
+
+        <ul>
+          <li><a class='send' href='${uri(it.getHref + "/send")}'>Send to this endpoint</a></li>
+        </ul>
+
+        #if(it.getBrowsableEndpoint != null)
+          <table>
+            <tr>
+              <th>Message ID (${it.getBrowsableEndpoint.getExchanges.size} in total)</th>
+            </tr>
+          #for(exchange <- it.getBrowsableEndpoint.getExchanges)
+            <tr>
+              <td><a class='message' href='${uri(it.getHref + "/messages/" + exchange.getExchangeId)}' title="View this message">${exchange.getExchangeId}</a></td>
+            </tr>
+          #end
+          </table>
+        #end

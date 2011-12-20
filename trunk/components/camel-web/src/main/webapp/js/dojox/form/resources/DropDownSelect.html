@@ -1,0 +1,14 @@
+<table class='dijit dijitReset dijitInline dijitLeft'
+	dojoAttachPoint="dropDownNode,tableNode" cellspacing='0' cellpadding='0' waiRole="presentation"
+	dojoAttachEvent="onmouseenter:_onMouse,onmouseleave:_onMouse,onmousedown:_onMouse"
+	><tbody waiRole="presentation"><tr waiRole="presentation"
+		><td class="dijitReset dijitStretch dijitButtonContents dijitButtonNode" 
+			><span class="dijitReset dijitInline dijitButtonText"  dojoAttachPoint="containerNode,popupStateNode" id="${id}_label"></span
+			><input type="hidden" ${nameAttrSetting} dojoAttachPoint="valueNode" value="${value}" />
+		</td><td class="dijitReset dijitRight dijitButtonNode dijitArrowButton dijitDownArrowButton" 
+				dojoAttachPoint="focusNode,titleNode" waiRole="button" waiState="haspopup-true,labelledby-${id}_label"
+			><div class="dijitReset dijitArrowButtonInner">&thinsp;</div
+			><div class="dijitReset dijitArrowButtonChar" waiRole="presentation">&#9660;</div
+		></td
+	></tr></tbody
+></table>

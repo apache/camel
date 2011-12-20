@@ -1,0 +1,30 @@
+
+<ul>
+  <li>
+    <a href='${uri("/endpoints")}' title="View current endpoints or create new ones">Endpoints</a>
+  </li>
+  <li>
+    <a href='${uri("/routes")}' title="View current routes">Routes</a>
+  </li>
+  <li>
+    <a href='${uri("/api")}' title="Documentation on the REST API to Camel">API</a>
+  </li>
+</ul>
+
+<p>The following diagnostic links might be useful too...
+</p>
+
+<ul>
+  <li>
+    <a href='${uri("/components")}' title="View the available components you can use with Camel">Components</a>
+  </li>
+  <li>
+    <a href='${uri("/languages")}' title="View the available languages you can use with Camel">Languages</a>
+  </li>
+  <li>
+    <a href='${uri("/converters")}' title="View the available type converters currently registered with Camel">Type Converters</a>
+  </li>
+  <li>
+    <a href='${uri("/systemProperties")}' title="View the System Properties used to create this service">System Properties</a>
+  </li>
+</ul>

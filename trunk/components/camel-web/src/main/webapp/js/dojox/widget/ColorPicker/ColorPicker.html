@@ -1,0 +1,31 @@
+<div class="dojoxColorPicker" dojoAttachEvent="onkeypress: _handleKey">
+	<div class="dojoxColorPickerBox">
+		<div dojoAttachPoint="cursorNode" tabIndex="0" class="dojoxColorPickerPoint"></div>
+		<img dojoAttachPoint="colorUnderlay" dojoAttachEvent="onclick: _setPoint" class="dojoxColorPickerUnderlay" src="${_underlay}">
+	</div>
+	<div class="dojoxHuePicker">
+		<div dojoAttachPoint="hueCursorNode" tabIndex="0" class="dojoxHuePickerPoint"></div>
+		<div dojoAttachPoint="hueNode" class="dojoxHuePickerUnderlay" dojoAttachEvent="onclick: _setHuePoint"></div>
+	</div>
+	<div dojoAttachPoint="previewNode" class="dojoxColorPickerPreview"></div>
+	<div dojoAttachPoint="safePreviewNode" class="dojoxColorPickerWebSafePreview"></div>
+	<div class="dojoxColorPickerOptional" dojoAttachEvent="onchange: _colorInputChange">
+		<div class="dijitInline dojoxColorPickerRgb" dojoAttachPoint="rgbNode">
+			<table>
+			<tr><td>r</td><td><input dojoAttachPoint="Rval" size="1"></td></tr>
+			<tr><td>g</td><td><input dojoAttachPoint="Gval" size="1"></td></tr>
+			<tr><td>b</td><td><input dojoAttachPoint="Bval" size="1"></td></tr>
+			</table>
+		</div>
+		<div class="dijitInline dojoxColorPickerHsv" dojoAttachPoint="hsvNode">
+			<table>
+			<tr><td>h</td><td><input dojoAttachPoint="Hval"size="1"> &deg;</td></tr>
+			<tr><td>s</td><td><input dojoAttachPoint="Sval" size="1"> %</td></tr>
+			<tr><td>v</td><td><input dojoAttachPoint="Vval" size="1"> %</td></tr>
+			</table>
+		</div>
+		<div class="dojoxColorPickerHex" dojoAttachPoint="hexNode">	
+			hex: <input dojoAttachPoint="hexCode, focusNode, valueNode" size="6" class="dojoxColorPickerHexCode">
+		</div>
+	</div>
+</div>

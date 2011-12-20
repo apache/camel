@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+  http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-parent</artifactId>
+    <version>2.9.0</version>
+    <relativePath>../parent</relativePath>
+  </parent>
+
+  <artifactId>components</artifactId>
+  <name>Camel :: Components</name>
+  <description>Camel Components</description>
+  <packaging>pom</packaging>
+
+  <modules>
+	<!-- we want to test these modules first to catch any errors early as possible -->
+    <module>camel-test</module>
+    <module>camel-testng</module>
+    <module>camel-core-osgi</module>
+    <module>camel-core-xml</module>
+    <module>camel-blueprint</module>
+    <module>camel-spring</module>
+    <module>camel-bam</module>
+    <module>camel-groovy</module>
+    <module>camel-scala</module>
+    <module>camel-http</module>
+    <module>camel-http4</module>
+    <module>camel-jetty</module>
+    <module>camel-cxf</module>
+    <module>camel-cxf-transport</module>
+    <module>camel-web</module>
+    <module>camel-web-standalone</module>
+    <module>camel-jms</module>
+
+    <!-- regular modules in alphabetic order -->
+    <module>camel-ahc</module>
+    <module>camel-amqp</module>
+    <module>camel-apns</module>
+    <module>camel-atom</module>
+    <module>camel-aws</module>
+    <module>camel-bean-validator</module>
+    <module>camel-bindy</module>
+    <module>camel-cache</module>
+    <module>camel-castor</module>
+    <module>camel-cometd</module>
+    <module>camel-context</module>
+    <module>camel-crypto</module>
+    <module>camel-csv</module>
+    <module>camel-dns</module>
+    <module>camel-dozer</module>
+    <module>camel-eclipse</module>
+    <module>camel-ejb</module>
+    <module>camel-eventadmin</module>
+    <module>camel-exec</module>
+    <module>camel-flatpack</module>
+    <module>camel-freemarker</module>
+    <module>camel-ftp</module>
+    <module>camel-gae</module>
+    <module>camel-guice</module>
+    <module>camel-hawtdb</module>
+    <module>camel-hazelcast</module>
+    <module>camel-hdfs</module>
+    <module>camel-hl7</module>
+    <module>camel-ibatis</module>
+    <module>camel-irc</module>
+    <module>camel-jackson</module>
+    <module>camel-javaspace</module>
+    <module>camel-jaxb</module>
+    <module>camel-jasypt</module>
+    <module>camel-jclouds</module>
+    <module>camel-jcr</module>
+    <module>camel-jdbc</module>
+    <module>camel-jibx</module>
+    <module>camel-jing</module>
+    <module>camel-jmx</module>
+    <module>camel-josql</module>
+    <module>camel-jpa</module>
+    <module>camel-jt400</module>
+    <module>camel-juel</module>
+    <module>camel-jxpath</module>
+    <module>camel-kestrel</module>
+    <module>camel-krati</module>
+    <module>camel-ldap</module>
+    <module>camel-lucene</module>
+    <module>camel-mail</module>
+    <module>camel-mina</module>
+    <module>camel-msv</module>
+    <module>camel-mvel</module>
+    <module>camel-mybatis</module>
+    <module>camel-nagios</module>
+    <module>camel-netty</module>
+    <module>camel-ognl</module>
+    <module>camel-paxlogging</module>
+    <module>camel-printer</module>
+    <module>camel-protobuf</module>
+    <module>camel-quartz</module>
+    <module>camel-quickfix</module>
+    <module>camel-restlet</module>
+    <module>camel-rmi</module>
+    <module>camel-routebox</module>
+    <module>camel-ruby</module>
+    <module>camel-rss</module>
+    <module>camel-saxon</module>
+    <module>camel-script</module>
+    <module>camel-servlet</module>
+    <module>camel-shiro</module>
+    <module>camel-sip</module>
+    <module>camel-smpp</module>
+    <module>camel-snmp</module>
+    <module>camel-soap</module>
+    <module>camel-solr</module>
+    <module>camel-spring-javaconfig</module>
+    <module>camel-spring-integration</module>
+    <module>camel-spring-security</module>
+    <module>camel-spring-ws</module>
+    <module>camel-sql</module>
+    <module>camel-stax</module>
+    <module>camel-stream</module>
+    <module>camel-stringtemplate</module>
+    <module>camel-syslog</module>
+    <module>camel-tagsoup</module>
+    <module>camel-velocity</module>
+    <module>camel-xmlbeans</module>
+    <module>camel-xmlsecurity</module>
+    <module>camel-xmpp</module>
+    <module>camel-xstream</module>
+    <module>camel-zookeeper</module>
+  </modules>
+  
+</project>

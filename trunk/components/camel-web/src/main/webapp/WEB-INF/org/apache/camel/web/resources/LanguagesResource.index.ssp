@@ -1,0 +1,21 @@
+<%@ import val it: LanguagesResource %>
+
+#{ attributes("title") = "Languages"}#
+
+<h1>Languages</h1>
+
+
+<table>
+  <tr>
+    <th>Language</th>
+    <th>Documentation</th>
+  </tr>
+  #for(id <- it.getLanguageIds)
+    <tr>
+      <td><a href="languages/${id}">${id}</a></td>
+      <td><a href="http://camel.apache.org/${id}.html">documentation</a></td>
+    </tr>
+  #end
+</table>
+
+

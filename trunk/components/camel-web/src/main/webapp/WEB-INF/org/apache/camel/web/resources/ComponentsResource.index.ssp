@@ -1,0 +1,22 @@
+<%@ import val it: ComponentsResource %>
+
+#{ attributes("title") = "Components"}#
+
+
+<h1>Components</h1>
+
+
+<table>
+  <tr>
+    <th>Component</th>
+    <th>Documentation</th>
+  </tr>
+  #for(id <- it.getComponentIds)
+    <tr>
+      <td><a href="components/${id}">${id}</a></td>
+      <td><a href="http://camel.apache.org/${id}.html">documentation</a></td>
+    </tr>
+  #end
+</table>
+
+

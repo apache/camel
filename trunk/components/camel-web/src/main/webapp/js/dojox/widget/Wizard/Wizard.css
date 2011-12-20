@@ -1,0 +1,19 @@
+.dojoxWizard {
+	position:relative; 
+}
+.dojoxWizardButtons {
+	position:absolute;
+	bottom:5px;
+	right:5px;	
+}
+.tundra .dojoxWizard {
+	background: #eeeeee;
+	border: #b7b7b7 1px solid;
+	padding: 2px;
+	-moz-border-radius:3pt;
+	-webkit-border-radius:4pt;
+}
+.soria .dojoxWizard {
+	border:1px solid #b7b7b7;
+	padding:2px;
+}

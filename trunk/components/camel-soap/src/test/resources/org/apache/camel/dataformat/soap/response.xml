@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:Envelope xmlns:ns2="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns3="http://customerservice.example.com/">
+    <ns2:Body>
+        <ns3:getCustomersByNameResponse>
+            <return>
+                <name>Smith</name>
+                <numOrders>0</numOrders>
+                <revenue>100000.0</revenue>
+            </return>
+        </ns3:getCustomersByNameResponse>
+    </ns2:Body>
+</ns2:Envelope>
