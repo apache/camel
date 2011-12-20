@@ -165,7 +165,7 @@
     <xalan-version>2.7.1</xalan-version>
     <xmlunit-version>1.3</xmlunit-version>
     <xmlbeans-version>2.5.0</xmlbeans-version>
-    <zookeeper-version>3.3.4</zookeeper-version>
+    <zookeeper-version>3.4.1</zookeeper-version>
     <!-- used by camel archetypes -->
     <maven-compiler-plugin-version>2.3.2</maven-compiler-plugin-version>
 
