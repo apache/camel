@@ -43,8 +43,7 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
-import org.apache.zookeeper.server.NIOServerCnxnFactory;
-import org.apache.zookeeper.server.ServerCnxnFactory;
+import org.apache.zookeeper.server.NIOServerCnxn;
 import org.apache.zookeeper.server.ZooKeeperServer;
 import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
 import org.junit.AfterClass;
@@ -98,7 +97,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
 
     public static class TestZookeeperServer {
         private static int count;
-        private ServerCnxnFactory connectionFactory;
+        private NIOServerCnxn.Factory connectionFactory;
         private ZooKeeperServer zkServer;
         private File zookeeperBaseDir;
         
@@ -114,7 +113,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
             FileTxnSnapLog ftxn = new FileTxnSnapLog(dataDir, snapDir);
             zkServer.setTxnLogFactory(ftxn);
             zkServer.setTickTime(1000);
-            connectionFactory = NIOServerCnxnFactory.createFactory(new InetSocketAddress("localhost", clientPort), 0);
+            connectionFactory = new NIOServerCnxn.Factory(new InetSocketAddress("localhost", clientPort), 0);
             connectionFactory.startup(zkServer);
         }
         
