@@ -34,6 +34,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.karaf.testing.Helper;
 import org.apache.log4j.Logger;
@@ -45,8 +46,7 @@ import org.apache.zookeeper.ZooDefs.Ids;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Stat;
-import org.apache.zookeeper.server.NIOServerCnxnFactory;
-import org.apache.zookeeper.server.ServerCnxnFactory;
+import org.apache.zookeeper.server.NIOServerCnxn;
 import org.apache.zookeeper.server.ZooKeeperServer;
 import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
 import org.junit.AfterClass;
@@ -128,7 +128,7 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
     }
 
     public static class TestZookeeperServer {
-        private ServerCnxnFactory connectionFactory;
+        private NIOServerCnxn.Factory connectionFactory;
         private ZooKeeperServer zkServer;
 
         public TestZookeeperServer(int clientPort, boolean clearServerData) throws Exception {
@@ -146,7 +146,7 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
             FileTxnSnapLog ftxn = new FileTxnSnapLog(dataDir, snapDir);
             zkServer.setTxnLogFactory(ftxn);
             zkServer.setTickTime(1000);
-            connectionFactory = NIOServerCnxnFactory.createFactory(new InetSocketAddress("localhost", clientPort), 0);
+            connectionFactory = new NIOServerCnxn.Factory(new InetSocketAddress("localhost", clientPort), 0);
             connectionFactory.startup(zkServer);
         }
 
