@@ -26,12 +26,9 @@ import org.apache.camel.Exchange;
  */
 public class PersistentQueueReplyHandler extends TemporaryQueueReplyHandler {
 
-    private MessageSelectorCreator dynamicMessageSelector;
-
     public PersistentQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                       String originalCorrelationId, long timeout, MessageSelectorCreator dynamicMessageSelector) {
-        super(replyManager, exchange, callback, originalCorrelationId, timeout);
-        this.dynamicMessageSelector = dynamicMessageSelector;
+                                       String originalCorrelationId, String correlationId, long timeout) {
+        super(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
     }
 
 }

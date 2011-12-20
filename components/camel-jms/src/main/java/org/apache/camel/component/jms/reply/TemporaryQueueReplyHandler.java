@@ -34,27 +34,29 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
     protected final AsyncCallback callback;
     // remember the original correlation id, in case the server returns back a reply with a messed up correlation id
     protected final String originalCorrelationId;
+    protected final String correlationId;
     protected final long timeout;
 
     public TemporaryQueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-                                      String originalCorrelationId, long timeout) {
+                                      String originalCorrelationId, String correlationId, long timeout) {
         this.replyManager = replyManager;
         this.exchange = exchange;
         this.originalCorrelationId = originalCorrelationId;
+        this.correlationId = correlationId;
         this.callback = callback;
         this.timeout = timeout;
     }
 
     public void onReply(String correlationId, Message reply) {
         // create holder object with the the reply
-        ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, reply);
+        ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, reply);
         // process the reply
         replyManager.processReply(holder);
     }
 
     public void onTimeout(String correlationId) {
         // create holder object without the reply which means a timeout occurred
-        ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, timeout);
+        ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, timeout);
         // process timeout
         replyManager.processReply(holder);
     }

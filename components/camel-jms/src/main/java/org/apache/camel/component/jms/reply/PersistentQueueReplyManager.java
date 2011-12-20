@@ -44,7 +44,7 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
                                 String originalCorrelationId, String correlationId, long requestTimeout) {
         // add to correlation map
         PersistentQueueReplyHandler handler = new PersistentQueueReplyHandler(replyManager, exchange, callback,
-                originalCorrelationId, requestTimeout, dynamicMessageSelector);
+                originalCorrelationId, correlationId, requestTimeout);
         correlation.put(correlationId, handler, requestTimeout);
         return correlationId;
     }
@@ -76,9 +76,9 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         } else {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message
-            String text = "Reply received for unknown correlationID [" + correlationID + "] -> " + message;
+            String text = "Reply received for unknown correlationID [" + correlationID + "]. The message will be ignored: " + message;
+            // log a warn and then ignore the message
             log.warn(text);
-            throw new UnknownReplyMessageException(text, message, correlationID);
         }
     }
 
