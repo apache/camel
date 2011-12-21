@@ -226,6 +226,7 @@
     <bundle>mvn:org.apache.camel/camel-dozer/${pom.version}</bundle>
   </feature>
   <feature name='camel-eventadmin' version='${pom.version}' resolver='(obr)' start-level='50'>
+    <feature version='[2.2,3)'>eventadmin</feature>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-eventadmin/${pom.version}</bundle>
   </feature>
