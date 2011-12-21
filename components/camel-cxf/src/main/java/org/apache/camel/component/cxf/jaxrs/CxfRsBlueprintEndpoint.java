@@ -52,6 +52,8 @@ public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
         super(uri, comp);
         this.bean = bean;
         setAddress(bean.getAddress());
+        // update the sfb address by resolving the properties
+        bean.setAddress(getAddress());
         BlueprintSupport support = (BlueprintSupport)bean;
         setBlueprintContainer(support.getBlueprintContainer());
         setBundleContext(support.getBundleContext());

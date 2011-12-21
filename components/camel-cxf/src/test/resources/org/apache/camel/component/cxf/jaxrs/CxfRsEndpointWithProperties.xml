@@ -32,6 +32,10 @@
  
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
   	<propertyPlaceholder id="properties" location="org/apache/camel/component/cxf/jaxrs/testEndpoint.properties"/>
+  	<route>
+  		<from uri="cxfrs:bean:testEndpoint"/>
+		<to uri="mock:end"/>
+  	</route>
   </camelContext>
   
   

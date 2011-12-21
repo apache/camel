@@ -18,6 +18,9 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.spring.AbstractSpringBeanTestSupport;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.Test;
 
 public class CxfRsEndpointWithProperties extends AbstractSpringBeanTestSupport {
@@ -32,7 +35,11 @@ public class CxfRsEndpointWithProperties extends AbstractSpringBeanTestSupport {
         // get the camelContext from application context
         CamelContext camelContext = ctx.getBean("camel", CamelContext.class);
         CxfRsEndpoint testEndpoint = camelContext.getEndpoint("cxfrs:bean:testEndpoint", CxfRsEndpoint.class);
-        assertEquals("Got a wrong address", "http://localhost:9000/testEndpoint", testEndpoint.getAddress());
+        assertEquals("Got a wrong address", "http://localhost:9900/testEndpoint", testEndpoint.getAddress());
+        HttpGet get = new HttpGet(testEndpoint.getAddress());
+        DefaultHttpClient httpclient = new DefaultHttpClient();
+        HttpResponse response = httpclient.execute(get);
+        assertEquals(404, response.getStatusLine().getStatusCode());
     }
 
 }
