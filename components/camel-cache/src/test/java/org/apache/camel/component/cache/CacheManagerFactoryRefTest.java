@@ -38,11 +38,12 @@ public class CacheManagerFactoryRefTest extends CamelTestSupport {
     @Produce(uri = "direct:start")
     protected ProducerTemplate producerTemplate;
 
-    private CacheManagerFactory testingCacheManagerFactory = new TestingCacheManagerFactory();
+    protected CacheManagerFactory testingCacheManagerFactory;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
+        testingCacheManagerFactory = new TestingCacheManagerFactory();
         jndi.bind("testCacheManagerFactory", testingCacheManagerFactory);
         return jndi;
     }
