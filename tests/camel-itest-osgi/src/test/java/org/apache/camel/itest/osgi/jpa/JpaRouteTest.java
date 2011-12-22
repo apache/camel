@@ -135,22 +135,14 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),
-                
-            // install the spring.
-            scanFeatures(getKarafFeatureUrl(), "spring"),
-            // using the features to install the camel components             
-            scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-spring", "camel-test", "camel-jpa"),
-            
-            mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"),
-            workingDirectory("target/paxrunner/"),
 
-            felix(), equinox());
-        
+            getDefaultCamelKarafOptions(),
+            // using the features to install the camel components
+            scanFeatures(getCamelKarafFeatureUrl(), "camel-jpa"),
+
+            // use derby as the database
+            mavenBundle().groupId("org.apache.derby").artifactId("derby").version("10.4.2.0"));
+
         return options;
     }
 }

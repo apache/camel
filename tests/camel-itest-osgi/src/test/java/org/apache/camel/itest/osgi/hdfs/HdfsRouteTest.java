@@ -83,10 +83,11 @@ public class HdfsRouteTest extends OSGiIntegrationTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-                // Default karaf environment
-                Helper.getDefaultOptions(
-                        // this is how you set the default log level when using pax logging (logProfile)
-                        Helper.setLogLevel("WARN")),
+
+                getDefaultCamelKarafOptions(),
+                // using the features to install the camel components
+                scanFeatures(getCamelKarafFeatureUrl(), "camel-hdfs"),
+
                 new Customizer() {
                     @Override
                     public InputStream customizeTestProbe(InputStream testProbe) {
@@ -98,16 +99,7 @@ public class HdfsRouteTest extends OSGiIntegrationTestSupport {
                                 .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                                 .build();
                     }
-                },
-
-                // install the spring.
-                scanFeatures(getKarafFeatureUrl(), "spring"),
-                // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-core", "camel-spring", "camel-test", "camel-hdfs"),
-                workingDirectory("target/paxrunner/"),
-                //vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
-                felix(), equinox());
+                });
 
         return options;
     }

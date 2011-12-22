@@ -71,20 +71,9 @@ public class KratiRouteTest extends OSGiIntegrationTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-                // Default karaf environment
-                Helper.getDefaultOptions(
-                        // this is how you set the default log level when using pax logging (logProfile)
-                        Helper.setLogLevel("WARN")),
-
-                // install the spring.
-                scanFeatures(getKarafFeatureUrl(), "spring"),
+                getDefaultCamelKarafOptions(),
                 // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(),
-                        "camel-core", "camel-spring", "camel-test", "camel-krati"),
-
-                workingDirectory("target/paxrunner/"),
-                //vmOption("-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"),
-                felix(), equinox());
+                scanFeatures(getCamelKarafFeatureUrl(), "camel-krati"));
 
         return options;
     }
