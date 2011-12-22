@@ -16,9 +16,9 @@
     limitations under the License.
 -->
 <features>
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${pom.version}/xml/features</repository>
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
     
-    <feature name="jpa-hibernate" version="${pom.version}">
+    <feature name="jpa-hibernate" version="${project.version}">
         <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/1.4.0</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.2.2_5</bundle>
         <bundle>mvn:org.springframework/spring-jdbc/${spring-version}</bundle>
@@ -35,11 +35,11 @@
     </feature>
    
     
-    <feature name="camel-example-tracer" version="${pom.version}">
-        <feature version="${pom.version}">camel</feature>
-        <feature version="${pom.version}">camel-jpa</feature>
-        <feature version="${pom.version}">camel-stream</feature>
-        <bundle>mvn:org.apache.camel/camel-example-tracer/${pom.version}</bundle>
+    <feature name="camel-example-tracer" version="${project.version}">
+        <feature version="${project.version}">camel</feature>
+        <feature version="${project.version}">camel-jpa</feature>
+        <feature version="${project.version}">camel-stream</feature>
+        <bundle>mvn:org.apache.camel/camel-example-tracer/${project.version}</bundle>
     </feature>
 
 </features>

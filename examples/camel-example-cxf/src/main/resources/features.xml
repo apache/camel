@@ -16,8 +16,8 @@
     limitations under the License.
 -->
 <features>
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${pom.version}/xml/features</repository>
-    <feature name='activemq-feature' version='${pom.version}'>
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
+    <feature name='activemq-feature' version='${project.version}'>
        <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
        <bundle>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
        <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-management_1.1_spec/1.0.1</bundle>
@@ -31,12 +31,12 @@
        <bundle>mvn:org.apache.activemq/activemq-camel/${activemq-version}</bundle>
     </feature>
 
-    <feature name='camel-example-cxf' version='${pom.version}'>
-        <feature version="${pom.version}">camel</feature>
-        <feature version="${pom.version}">camel-cxf</feature>
-        <feature version="${pom.version}">camel-jetty</feature>
+    <feature name='camel-example-cxf' version='${project.version}'>
+        <feature version="${project.version}">camel</feature>
+        <feature version="${project.version}">camel-cxf</feature>
+        <feature version="${project.version}">camel-jetty</feature>
         <!-- don't need to install the activemq-feature if we have  -->
-        <bundle>mvn:org.apache.camel/camel-example-cxf/${pom.version}</bundle>
+        <bundle>mvn:org.apache.camel/camel-example-cxf/${project.version}</bundle>
     </feature>
 
 </features>
