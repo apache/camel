@@ -109,6 +109,8 @@
     <bundle>mvn:org.apache.camel/camel-jetty/${project.version}</bundle>
   </feature>
   <feature name='camel-servlet' version='${project.version}' resolver='(obr)' start-level='50'>
+    <!-- camel-servlet need to access the http OSGi services -->
+    <feature>http</feature>
     <feature version='${project.version}'>camel-http</feature>
     <bundle>mvn:org.apache.camel/camel-servlet/${project.version}</bundle>
   </feature>
