@@ -142,6 +142,11 @@ public final class IOConverter {
         return toInputStream(text.getBytes(getCharsetName(exchange)));
     }
     
+    @Converter
+    public static InputStream toInputStream(StringBuffer buffer, Exchange exchange) throws IOException {
+        return toInputStream(buffer.toString(), exchange);
+    }
+    
     @Deprecated
     public static InputStream toInputStream(BufferedReader buffer) throws IOException {
         return toInputStream(buffer, null);
