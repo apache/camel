@@ -48,6 +48,7 @@ public class InstanceMethodFallbackTypeConverter implements TypeConverter {
         return "InstanceMethodFallbackTypeConverter: " + method;
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
@@ -63,10 +64,12 @@ public class InstanceMethodFallbackTypeConverter implements TypeConverter {
                 .invokeMethod(method, instance, type, value, registry);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, null, value);
     }

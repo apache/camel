@@ -35,7 +35,7 @@ public class ObjectConverterTest extends TestCase {
     }
 
     public void testIterator() {
-        Iterator it = ObjectConverter.iterator("Claus,Jonathan");
+        Iterator<?> it = ObjectConverter.iterator("Claus,Jonathan");
         assertEquals("Claus", it.next());
         assertEquals("Jonathan", it.next());
         assertEquals(false, it.hasNext());

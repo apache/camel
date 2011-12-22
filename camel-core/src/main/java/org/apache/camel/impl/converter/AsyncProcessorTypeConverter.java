@@ -83,14 +83,17 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
         return null;
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
         return convertTo(type, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
         return convertTo(type, exchange, value);
     }

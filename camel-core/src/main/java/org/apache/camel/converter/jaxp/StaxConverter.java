@@ -16,6 +16,9 @@
  */
 package org.apache.camel.converter.jaxp;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -34,6 +37,7 @@ import javax.xml.transform.Source;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.util.IOHelper;
 
 /**
  * A converter of StAX objects
@@ -47,12 +51,12 @@ public class StaxConverter {
 
     @Converter
     public XMLEventWriter createXMLEventWriter(OutputStream out, Exchange exchange) throws XMLStreamException {
-        return getOutputFactory().createXMLEventWriter(out, IOConverter.getCharsetName(exchange));
+        return getOutputFactory().createXMLEventWriter(IOHelper.buffered(out), IOHelper.getCharsetName(exchange));
     }
     
     @Converter
     public XMLEventWriter createXMLEventWriter(Writer writer) throws XMLStreamException {
-        return getOutputFactory().createXMLEventWriter(writer);
+        return getOutputFactory().createXMLEventWriter(IOHelper.buffered(writer));
     }
 
     @Converter
@@ -67,7 +71,7 @@ public class StaxConverter {
 
     @Converter
     public XMLStreamWriter createXMLStreamWriter(Writer writer) throws XMLStreamException {
-        return getOutputFactory().createXMLStreamWriter(writer);
+        return getOutputFactory().createXMLStreamWriter(IOHelper.buffered(writer));
     }
 
     @Converter
@@ -80,17 +84,22 @@ public class StaxConverter {
      */
     @Deprecated
     public XMLStreamReader createXMLStreamReader(InputStream in) throws XMLStreamException {
-        return getInputFactory().createXMLStreamReader(in);
+        return getInputFactory().createXMLStreamReader(IOHelper.buffered(in));
     }
     
     @Converter
     public XMLStreamReader createXMLStreamReader(InputStream in, Exchange exchange) throws XMLStreamException {
-        return getInputFactory().createXMLStreamReader(in, IOConverter.getCharsetName(exchange));
+        return getInputFactory().createXMLStreamReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange));
     }
 
     @Converter
-    public XMLStreamReader createXMLStreamReader(Reader in) throws XMLStreamException {
-        return getInputFactory().createXMLStreamReader(in);
+    public XMLStreamReader createXMLStreamReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
+        return getInputFactory().createXMLStreamReader(IOHelper.buffered(new FileInputStream(file)), IOHelper.getCharsetName(exchange));
+    }
+
+    @Converter
+    public XMLStreamReader createXMLStreamReader(Reader reader) throws XMLStreamException {
+        return getInputFactory().createXMLStreamReader(IOHelper.buffered(reader));
     }
 
     @Converter
@@ -103,22 +112,27 @@ public class StaxConverter {
      */
     @Deprecated
     public XMLEventReader createXMLEventReader(InputStream in) throws XMLStreamException {
-        return getInputFactory().createXMLEventReader(in);
+        return getInputFactory().createXMLEventReader(IOHelper.buffered(in));
     }
 
     @Converter
     public XMLEventReader createXMLEventReader(InputStream in, Exchange exchange) throws XMLStreamException {
-        return getInputFactory().createXMLEventReader(in, IOConverter.getCharsetName(exchange));
+        return getInputFactory().createXMLEventReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange));
     }
 
     @Converter
-    public XMLEventReader createXMLEventReader(Reader in) throws XMLStreamException {
-        return getInputFactory().createXMLEventReader(in);
+    public XMLEventReader createXMLEventReader(File file, Exchange exchange) throws XMLStreamException, FileNotFoundException {
+        return getInputFactory().createXMLEventReader(IOHelper.buffered(new FileInputStream(file)), IOHelper.getCharsetName(exchange));
     }
 
     @Converter
-    public XMLEventReader createXMLEventReader(XMLStreamReader in) throws XMLStreamException {
-        return getInputFactory().createXMLEventReader(in);
+    public XMLEventReader createXMLEventReader(Reader reader) throws XMLStreamException {
+        return getInputFactory().createXMLEventReader(IOHelper.buffered(reader));
+    }
+
+    @Converter
+    public XMLEventReader createXMLEventReader(XMLStreamReader reader) throws XMLStreamException {
+        return getInputFactory().createXMLEventReader(reader);
     }
 
     @Converter

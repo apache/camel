@@ -31,14 +31,14 @@ import org.apache.camel.impl.DefaultExchange;
 public class FutureConverterTest extends ContextTestSupport {
 
     public void testConvertFuture() {
-        Future future = template.asyncRequestBody("direct:foo", "Hello World");
+        Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
 
         String out = context.getTypeConverter().convertTo(String.class, future);
         assertEquals("Bye World", out);
     }
 
     public void testConvertMandatoryFuture() throws Exception {
-        Future future = template.asyncRequestBody("direct:foo", "Hello World");
+        Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
 
         String out = context.getTypeConverter().mandatoryConvertTo(String.class, future);
         assertEquals("Bye World", out);
@@ -46,7 +46,7 @@ public class FutureConverterTest extends ContextTestSupport {
 
     public void testConvertMandatoryFutureWithExchange() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Future future = template.asyncRequestBody("direct:foo", "Hello World");
+        Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
 
         String out = context.getTypeConverter().mandatoryConvertTo(String.class, exchange, future);
         assertEquals("Bye World", out);
@@ -54,7 +54,7 @@ public class FutureConverterTest extends ContextTestSupport {
 
     public void testConvertMandatoryFutureWithExchangeFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Future future = template.asyncRequestBody("direct:foo", "Hello World");
+        Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
 
         try {
             context.getTypeConverter().mandatoryConvertTo(Timestamp.class, exchange, future);
@@ -66,14 +66,14 @@ public class FutureConverterTest extends ContextTestSupport {
 
     public void testConvertFutureWithExchangeFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
-        Future future = template.asyncRequestBody("direct:foo", "Hello World");
+        Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
 
         Timestamp out = context.getTypeConverter().convertTo(Timestamp.class, exchange, future);
         assertNull(out);
     }
 
     public void testConvertFutureCancelled() {
-        Future future = template.asyncRequestBody("direct:foo", "Hello World");
+        Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
         future.cancel(true);
 
         Object out = context.getTypeConverter().convertTo(String.class, future);
@@ -82,7 +82,7 @@ public class FutureConverterTest extends ContextTestSupport {
     }
 
     public void testConvertFutureCancelledThenOkay() {
-        Future future = template.asyncRequestBody("direct:foo", "Hello World");
+        Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
         future.cancel(true);
 
         Object out = context.getTypeConverter().convertTo(String.class, future);

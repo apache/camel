@@ -104,11 +104,10 @@ public final class DomConverter {
         return Long.valueOf(s);
     }
 
-    @SuppressWarnings("unchecked")
     @Converter
-    public static List toList(NodeList nodeList) {
-        List answer = new ArrayList();
-        Iterator it = ObjectHelper.createIterator(nodeList);
+    public static List<?> toList(NodeList nodeList) {
+        List<Object> answer = new ArrayList<Object>();
+        Iterator<Object> it = ObjectHelper.createIterator(nodeList);
         while (it.hasNext()) {
             answer.add(it.next());
         }

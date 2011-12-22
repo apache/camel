@@ -142,7 +142,7 @@ public class DefaultFactoryFinder implements FactoryFinder {
         // lets load the file
         BufferedInputStream reader = null;
         try {
-            reader = new BufferedInputStream(in);
+            reader = IOHelper.buffered(in);
             Properties properties = new Properties();
             properties.load(reader);
             return properties;

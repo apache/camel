@@ -19,7 +19,6 @@ package org.apache.camel.converter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,12 +26,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.util.CaseInsensitiveMap;
 
 /**
  * Test cases for {@link CollectionConverter}
  */
-@SuppressWarnings("unchecked")
 public class CollectionConverterTest extends TestCase {
     
     private static final List<String> SMURFS = Arrays.asList("Papa smurf", "Smurfette", "Hefty smurf", "Jokey smurf");
@@ -42,13 +41,13 @@ public class CollectionConverterTest extends TestCase {
     }
     
     public void testIterableToList() throws Exception {
-        assertSmurfs(CollectionConverter.toList(new Iterable() {
-            public Iterator iterator() {
+        assertSmurfs(CollectionConverter.toList(new Iterable<String>() {
+            public Iterator<String> iterator() {
                 return SMURFS.iterator();
             }
         }));
         // no conversion should occur for the list itself
-        assertSame(SMURFS, CollectionConverter.toList((Iterable) SMURFS));
+        assertSame(SMURFS, CollectionConverter.toList((Iterable<String>) SMURFS));
     }
 
     private void assertSmurfs(Collection<String> result) {
@@ -65,36 +64,36 @@ public class CollectionConverterTest extends TestCase {
     }
 
     public void testToList() {
-        List out = CollectionConverter.toList(SMURFS);
+        List<String> out = CollectionConverter.toList(SMURFS);
         assertEquals(4, out.size());
     }
 
     public void testToSet() {
-        Map map = new HashMap();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("foo", "bar");
 
-        Set out = CollectionConverter.toSet(map);
+        Set<Map.Entry<String, String>> out = CollectionConverter.toSet(map);
         assertEquals(1, out.size());
     }
 
     public void testToHashMap() {
-        Map map = new CaseInsensitiveMap();
+        Map<String, Object> map = new CaseInsensitiveMap();
         map.put("foo", "bar");
 
-        HashMap out = CollectionConverter.toHashMap(map);
+        Map<String, Object> out = CollectionConverter.toHashMap(map);
         assertEquals(1, out.size());
     }
 
     public void testToHashtable() {
-        Map map = new CaseInsensitiveMap();
+        Map<String, Object> map = new CaseInsensitiveMap();
         map.put("foo", "bar");
 
-        Hashtable out = CollectionConverter.toHashtable(map);
+        Map<String, Object> out = CollectionConverter.toHashtable(map);
         assertEquals(1, out.size());
     }
 
     public void testToProperties() {
-        Map map = new HashMap();
+        Map<Object, Object> map = new HashMap<Object, Object>();
         map.put("foo", "bar");
 
         Properties prop = CollectionConverter.toProperties(map);

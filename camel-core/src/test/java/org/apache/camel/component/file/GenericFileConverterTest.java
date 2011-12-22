@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 
@@ -157,7 +157,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
                         @Override
                         public void process(Exchange exchange) throws Exception {
                             Object body = exchange.getIn().getBody();
-                            assertIsInstanceOf(FileInputStream.class, body);
+                            assertIsInstanceOf(BufferedInputStream.class, body);
                         }
                     })
                     .to("mock:result");
@@ -165,9 +165,11 @@ public class GenericFileConverterTest extends ContextTestSupport {
         });
         context.start();
 
+        // a file input stream is wrapped in a buffered so its faster
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(FileInputStream.class);
+        mock.message(0).body().isInstanceOf(BufferedInputStream.class);
         mock.message(0).body(String.class).isEqualTo("Hello World");
 
         template.sendBodyAndHeader("file://target/gf", "Hello World", Exchange.FILE_NAME, "hello.txt");

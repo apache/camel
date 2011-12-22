@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
@@ -29,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
         LOG.info("Writing 10 files with 100000 rows in each file");
         // write 10 files of 100k rows
         for (int i = 0; i < files; i++) {
-            Writer out = new BufferedWriter(new FileWriter(new File("target/files", "data" + i)));
+            Writer out = IOHelper.buffered(new FileWriter(new File("target/files", "data" + i)));
             for (int j = 0; j < rows; j++) {
                 out.write(DATA);
             }

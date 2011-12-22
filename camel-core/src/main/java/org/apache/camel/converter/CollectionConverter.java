@@ -123,10 +123,9 @@ public final class CollectionConverter {
      * Converts an {@link Iterable} into a {@link List} 
      */
     @Converter
-    @SuppressWarnings("unchecked")
     public static <T> List<T> toList(Iterable<T> iterable) {
         if (iterable instanceof List) {
-            return (List) iterable;
+            return (List<T>) iterable;
         }
         List<T> result = new LinkedList<T>();
         for (T value : iterable) {

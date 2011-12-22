@@ -53,6 +53,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -400,8 +401,8 @@ public class XmlConverter {
      */
     @Converter
     public SAXSource toSAXSource(File file, Exchange exchange) throws IOException, SAXException, TransformerException {
-        FileInputStream fis = new FileInputStream(file);
-        return toSAXSource(fis, exchange);
+        InputStream is = IOHelper.buffered(new FileInputStream(file));
+        return toSAXSource(is, exchange);
     }
 
     /**
@@ -412,8 +413,8 @@ public class XmlConverter {
      */
     @Converter
     public StAXSource toStAXSource(File file, Exchange exchange) throws FileNotFoundException, XMLStreamException {
-        FileInputStream fis = new FileInputStream(file);
-        XMLStreamReader r = new StaxConverter().createXMLStreamReader(fis, exchange);
+        InputStream is = IOHelper.buffered(new FileInputStream(file));
+        XMLStreamReader r = new StaxConverter().createXMLStreamReader(is, exchange);
         return new StAXSource(r);
     }
 
@@ -596,8 +597,8 @@ public class XmlConverter {
 
     @Converter
     public DOMSource toDOMSource(File file) throws ParserConfigurationException, IOException, SAXException {
-        FileInputStream fis = new FileInputStream(file);
-        return toDOMSource(fis);
+        InputStream is = IOHelper.buffered(new FileInputStream(file));
+        return toDOMSource(is);
     }
 
     @Converter
@@ -859,6 +860,12 @@ public class XmlConverter {
 
     @Converter
     public InputSource toInputSource(InputStream is) {
+        return new InputSource(is);
+    }
+
+    @Converter
+    public InputSource toInputSource(File file, Exchange exchange) throws FileNotFoundException {
+        InputStream is = IOHelper.buffered(new FileInputStream(file));
         return new InputSource(is);
     }
 

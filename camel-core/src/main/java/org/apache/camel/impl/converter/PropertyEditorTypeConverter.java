@@ -48,6 +48,7 @@ public class PropertyEditorTypeConverter implements TypeConverter {
         misses.clear();
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Object value) {
         // We can't convert null values since we can't figure out a property
         // editor for it.
@@ -107,14 +108,17 @@ public class PropertyEditorTypeConverter implements TypeConverter {
         }
     }
 
+    @Override
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Object value) {
         return convertTo(type, value);
     }
 
+    @Override
     public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
     }
