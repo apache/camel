@@ -16,9 +16,9 @@
     limitations under the License.
 -->
 <features>
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${pom.version}/xml/features</repository>
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
     
-    <feature name='activemq-feature' version='${pom.version}'>
+    <feature name='activemq-feature' version='${project.version}'>
        <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
        <bundle>mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
        <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-management_1.1_spec/1.0.1</bundle>
@@ -32,10 +32,10 @@
        <bundle>mvn:org.apache.activemq/activemq-camel/${activemq-version}</bundle>
     </feature>
     
-    <feature name='camel-example-spring-jms' version='${pom.version}'>
-        <feature version="${pom.version}">camel</feature>
-        <feature version="${pom.version}">camel-jms</feature>
-        <bundle>mvn:org.apache.camel/camel-example-spring-jms/${pom.version}</bundle>
+    <feature name='camel-example-spring-jms' version='${project.version}'>
+        <feature version="${project.version}">camel</feature>
+        <feature version="${project.version}">camel-jms</feature>
+        <bundle>mvn:org.apache.camel/camel-example-spring-jms/${project.version}</bundle>
     </feature>
 
 </features>

@@ -16,13 +16,13 @@
     limitations under the License.
 -->
 <features>
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${pom.version}/xml/features</repository>
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
     
-    <feature name='camel-example-osgi-rmi' version='${pom.version}'>
-        <feature version="${pom.version}">camel</feature>
-        <feature version="${pom.version}">camel-spring</feature>
-        <feature version="${pom.version}">camel-rmi</feature>
-        <bundle>mvn:org.apache.camel/camel-example-osgi-rmi/${pom.version}</bundle>
+    <feature name='camel-example-osgi-rmi' version='${project.version}'>
+        <feature version="${project.version}">camel</feature>
+        <feature version="${project.version}">camel-spring</feature>
+        <feature version="${project.version}">camel-rmi</feature>
+        <bundle>mvn:org.apache.camel/camel-example-osgi-rmi/${project.version}</bundle>
     </feature>
 
 </features>
