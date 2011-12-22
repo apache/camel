@@ -20,10 +20,10 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedSendProcessorMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "Destination as Endpoint Uri")
+    @ManagedAttribute(description = "Destination as Endpoint URI")
     String getDestination();
 
-    @ManagedAttribute(description = "Destination as Endpoint Uri")
+    @ManagedAttribute(description = "Destination as Endpoint URI")
     void setDestination(String uri);
 
     @ManagedAttribute(description = "Message Exchange Pattern")

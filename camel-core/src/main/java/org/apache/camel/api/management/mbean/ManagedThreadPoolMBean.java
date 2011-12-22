@@ -21,16 +21,16 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedThreadPoolMBean {
 
-    @ManagedAttribute(description = "Thread Pool id")
+    @ManagedAttribute(description = "Thread Pool ID")
     String getId();
 
-    @ManagedAttribute(description = "Id of source for creating Thread Pool")
+    @ManagedAttribute(description = "ID of source for creating Thread Pool")
     String getSourceId();
 
-    @ManagedAttribute(description = "Route id for the source, which created the Thread Pool")
+    @ManagedAttribute(description = "Route ID for the source, which created the Thread Pool")
     String getRouteId();
 
-    @ManagedAttribute(description = "Id of the thread pool profile which this pool is based upon")
+    @ManagedAttribute(description = "ID of the thread pool profile which this pool is based upon")
     String getThreadPoolProfileId();
 
     @ManagedAttribute(description = "Core pool size")

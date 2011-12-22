@@ -21,13 +21,13 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
 
-    @ManagedAttribute(description = "Route id")
+    @ManagedAttribute(description = "Route ID")
     String getRouteId();
 
     @ManagedAttribute(description = "Route Description")
     String getDescription();
 
-    @ManagedAttribute(description = "Route Endpoint Uri")
+    @ManagedAttribute(description = "Route Endpoint URI")
     String getEndpointUri();
 
     @ManagedAttribute(description = "Route State")
@@ -36,7 +36,7 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Current number of inflight Exchanges")
     Integer getInflightExchanges();
 
-    @ManagedAttribute(description = "Camel id")
+    @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
     @ManagedAttribute(description = "Tracing")

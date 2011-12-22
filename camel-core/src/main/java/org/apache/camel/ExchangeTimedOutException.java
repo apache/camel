@@ -31,6 +31,11 @@ public class ExchangeTimedOutException extends CamelExchangeException {
         this.timeout = timeout;
     }
 
+    public ExchangeTimedOutException(Exchange exchange, long timeout, String message) {
+        super("The OUT message was not received within: " + timeout + " millis due " + message, exchange);
+        this.timeout = timeout;
+    }
+
     /**
      * Return the timeout which expired in milliseconds
      */

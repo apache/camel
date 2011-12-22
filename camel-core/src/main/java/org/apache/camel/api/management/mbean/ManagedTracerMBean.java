@@ -26,16 +26,16 @@ public interface ManagedTracerMBean {
     @ManagedAttribute(description = "Tracer enabled")
     void setEnabled(boolean enabled);
 
-    @ManagedAttribute(description = "Additional destination Uri")
+    @ManagedAttribute(description = "Additional destination URI")
     String getDestinationUri();
 
-    @ManagedAttribute(description = "Additional destination Uri")
+    @ManagedAttribute(description = "Additional destination URI")
     void setDestinationUri(String uri);
 
     @ManagedAttribute(description = "Logging Name")
     String getLogName();
 
-    @ManagedAttribute(description = "Using Jpa")
+    @ManagedAttribute(description = "Using JPA")
     boolean getUseJpa();
 
     @ManagedAttribute(description = "Logging Name")
@@ -101,10 +101,10 @@ public interface ManagedTracerMBean {
     @ManagedAttribute(description = "Formatter show breadcrumb")
     void setFormatterShowBreadCrumb(boolean showBreadCrumb);
 
-    @ManagedAttribute(description = "Formatter show exchange id")
+    @ManagedAttribute(description = "Formatter show exchange ID")
     boolean getFormatterShowExchangeId();
 
-    @ManagedAttribute(description = "Formatter show exchange id")
+    @ManagedAttribute(description = "Formatter show exchange ID")
     void setFormatterShowExchangeId(boolean showExchangeId);
 
     @ManagedAttribute(description = "Formatter show headers")
@@ -143,10 +143,10 @@ public interface ManagedTracerMBean {
     @ManagedAttribute(description = "Formatter show exception")
     void setFormatterShowException(boolean showException);
 
-    @ManagedAttribute(description = "Formatter show route id")
+    @ManagedAttribute(description = "Formatter show route ID")
     boolean getFormatterShowRouteId();
 
-    @ManagedAttribute(description = "Formatter show route id")
+    @ManagedAttribute(description = "Formatter show route ID")
     void setFormatterShowRouteId(boolean showRouteId);
 
     @ManagedAttribute(description = "Formatter breadcrumb length")
@@ -155,10 +155,10 @@ public interface ManagedTracerMBean {
     @ManagedAttribute(description = "Formatter breadcrumb length")
     void setFormatterBreadCrumbLength(int breadCrumbLength);
 
-    @ManagedAttribute(description = "Formatter show short exchange id")
+    @ManagedAttribute(description = "Formatter show short exchange ID")
     boolean getFormatterShowShortExchangeId();
 
-    @ManagedAttribute(description = "Formatter show short exchange id")
+    @ManagedAttribute(description = "Formatter show short exchange ID")
     void setFormatterShowShortExchangeId(boolean showShortExchangeId);
 
     @ManagedAttribute(description = "Formatter node length")
@@ -173,10 +173,10 @@ public interface ManagedTracerMBean {
     @ManagedAttribute(description = "Formatter max chars")
     void setFormatterMaxChars(int maxChars);
 
-    @ManagedAttribute(description = "Should trace events be sent as jmx notifications")
+    @ManagedAttribute(description = "Should trace events be sent as JMX notifications")
     boolean isJmxTraceNotifications();
 
-    @ManagedAttribute(description = "Should trace events be sent as jmx notifications")
+    @ManagedAttribute(description = "Should trace events be sent as JMX notifications")
     void setJmxTraceNotifications(boolean jmxTraceNotifications);
 
     @ManagedAttribute(description = "Maximum size of a message body for trace notification")

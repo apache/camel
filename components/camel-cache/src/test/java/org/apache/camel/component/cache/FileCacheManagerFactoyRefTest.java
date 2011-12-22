@@ -14,27 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.component.cache;
 
-/**
- * Used for defining if a given class is singleton or not.  If the class is a singleton, 
- * then a single instance will be shared (and hence should be treated as immutable and
- * be used in a thread-safe manner.)
- * 
- * This interface is not implemented as a marker interface (i.e., it's necessary to read  
- * isSingleton() instead of instanceof(IsSingleton)).  This allows for subclasses to have 
- * a singleton status different from a parent and for objects to have this value dynamically 
- * changed. 
- *
- * @version 
- */
-public interface IsSingleton {
+import org.apache.camel.component.cache.CacheManagerFactoryRefTest.TestingCacheManagerFactory;
+import org.apache.camel.impl.JndiRegistry;
 
-    /**
-     * Whether this class supports being singleton or not.
-     *  
-     * @return <tt>true</tt> to be a single shared instance, <tt>false</tt> to create new instances.
-     */
-    boolean isSingleton();
+public class FileCacheManagerFactoyRefTest extends CacheManagerFactoryRefTest {
+    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = new JndiRegistry(createJndiContext());
+        testingCacheManagerFactory = new FileCacheManagerFactory("src/main/resources/ehcache.xml");
+        jndi.bind("testCacheManagerFactory", testingCacheManagerFactory);
+        return jndi;
+    }
 
 }

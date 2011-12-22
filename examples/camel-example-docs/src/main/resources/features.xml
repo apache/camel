@@ -16,11 +16,11 @@
     limitations under the License.
 -->
 <features>
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${pom.version}/xml/features</repository>
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
     
-    <feature name='camel-example-docs' version='${pom.version}'>
-        <feature version="${pom.version}">camel</feature>
-        <bundle>mvn:org.apache.camel/camel-example-docs/${pom.version}</bundle>
+    <feature name='camel-example-docs' version='${project.version}'>
+        <feature version="${project.version}">camel</feature>
+        <bundle>mvn:org.apache.camel/camel-example-docs/${project.version}</bundle>
     </feature>
 
 </features>

@@ -14,21 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.transport;
+package org.apache.camel.component.cache;
 
-import java.util.List;
+import java.io.FileInputStream;
 
-public interface HelloService {
-    String sayHello();
+import net.sf.ehcache.CacheManager;
 
-    void ping();
+import org.apache.camel.RuntimeCamelException;
 
-    int getInvocationCount();
-
-    String echo(String text) throws Exception;
-
-    Boolean echoBoolean(Boolean bool);
+public class FileCacheManagerFactory extends CacheManagerFactory {
+    private String fileName;
     
-    String complexParameters(List<String> par1, List<String> par2);
+    public FileCacheManagerFactory(String name) {
+        fileName = name;
+    }
     
+    public void setFileName(String name) {
+        fileName = name;
+    }
+    
+    @Override
+    protected CacheManager createCacheManagerInstance() {
+        try {
+            return CacheManager.create(new FileInputStream(fileName));
+        } catch (Exception exception) {
+            throw new RuntimeCamelException(exception);
+        }
+    }
+
 }
