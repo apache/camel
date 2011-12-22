@@ -147,6 +147,11 @@ public final class IOConverter {
         return toInputStream(buffer.toString(), exchange);
     }
     
+    @Converter
+    public static InputStream toInputStream(StringBuilder builder, Exchange exchange) throws IOException {
+        return toInputStream(builder.toString(), exchange);
+    }
+    
     @Deprecated
     public static InputStream toInputStream(BufferedReader buffer) throws IOException {
         return toInputStream(buffer, null);
