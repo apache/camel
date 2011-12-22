@@ -92,7 +92,7 @@ public class FreemarkerContentCacheTest extends CamelTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again .... after delaying longer than the cache update delay
-        Thread.sleep(5000);
+        Thread.sleep(2000);
         template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/freemarker?fileExist=Override", "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
 
         mock.reset();
@@ -110,7 +110,7 @@ public class FreemarkerContentCacheTest extends CamelTestSupport {
 
                 from("direct:b").to("freemarker://org/apache/camel/component/freemarker/hello.ftl?contentCache=true").to("mock:result");
                 
-                from("direct:c").to("freemarker://org/apache/camel/component/freemarker/hello.ftl?contentCache=true&templateUpdateDelay=4").to("mock:result");
+                from("direct:c").to("freemarker://org/apache/camel/component/freemarker/hello.ftl?contentCache=true&templateUpdateDelay=1").to("mock:result");
             }
         };
     }
