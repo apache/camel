@@ -159,6 +159,11 @@ public final class IOConverter {
         return toInputStream(buffer.toString(), exchange);
     }
     
+    @Converter
+    public static InputStream toInputStream(StringBuilder builder, Exchange exchange) throws IOException {
+        return toInputStream(builder.toString(), exchange);
+    }
+    
     /**
      * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */

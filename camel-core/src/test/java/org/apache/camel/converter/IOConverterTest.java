@@ -103,15 +103,23 @@ public class IOConverterTest extends ContextTestSupport {
 
         InputStream is = IOConverter.toInputStream("Hello World", exchange);
         assertNotNull(is);
+        assertEquals("Hello World", IOConverter.toString(is, exchange));
     }
     
-    public void testToInputStreamStringBufferExchange() throws Exception {
+    public void testToInputStreamStringBufferAndBuilderExchange() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, ObjectHelper.getDefaultCharacterSet());
         StringBuffer buffer = new StringBuffer();
         buffer.append("Hello World");
         InputStream is = IOConverter.toInputStream(buffer, exchange);
         assertNotNull(is);
+        assertEquals("Hello World", IOConverter.toString(is, exchange));
+        
+        StringBuilder builder = new StringBuilder();
+        builder.append("Hello World");
+        is = IOConverter.toInputStream(builder, exchange);
+        assertNotNull(is);
+        assertEquals("Hello World", IOConverter.toString(is, exchange));
     }
 
     public void testToInputStreamBufferReader() throws Exception {
