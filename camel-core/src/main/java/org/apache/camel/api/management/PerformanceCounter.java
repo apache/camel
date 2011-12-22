@@ -19,7 +19,7 @@ package org.apache.camel.api.management;
 import org.apache.camel.Exchange;
 
 /**
- * A counter that gathers performance metrics when {@link org.apache.camel.Exchange} are routed in Camel.
+ * A counter that gathers performance metrics when an {@link org.apache.camel.Exchange} is routed in Camel.
  *
  * @version 
  */
@@ -29,7 +29,7 @@ public interface PerformanceCounter {
      * Executed when an {@link org.apache.camel.Exchange} is complete.
      *
      * @param exchange the exchange
-     * @param time  the time it took in millis to complete it
+     * @param time the time it took in millis to complete
      */
     void completedExchange(Exchange exchange, long time);
 
@@ -41,20 +41,20 @@ public interface PerformanceCounter {
     void failedExchange(Exchange exchange);
 
     /**
-     * Is statistics enabled.
+     * Are statistics enabled?
      * <p/>
      * They can be enabled and disabled at runtime
      *
-     * @return whether statistics is enabled or not
+     * @return whether statistics are enabled or not
      */
     boolean isStatisticsEnabled();
 
     /**
-     * Sets whether statistics is enabled.
+     * Sets whether statistics are enabled.
      * <p/>
      * They can be enabled and disabled at runtime
      *
-     * @param statisticsEnabled whether statistics is enabled or not
+     * @param statisticsEnabled whether statistics are enabled or not
      */
     void setStatisticsEnabled(boolean statisticsEnabled);
 

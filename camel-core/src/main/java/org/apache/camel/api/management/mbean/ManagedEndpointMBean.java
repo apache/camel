@@ -20,10 +20,10 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedEndpointMBean {
 
-    @ManagedAttribute(description = "Camel id")
+    @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
-    @ManagedAttribute(description = "Endpoint Uri")
+    @ManagedAttribute(description = "Endpoint URI")
     String getEndpointUri();
 
     @ManagedAttribute(description = "Singleton")
