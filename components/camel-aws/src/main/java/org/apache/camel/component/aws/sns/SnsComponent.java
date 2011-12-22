@@ -48,7 +48,7 @@ public class SnsComponent extends DefaultComponent {
             throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
         }
 
-        SnsEndpoint endpoint = new SnsEndpoint(uri, getCamelContext(), configuration);
+        SnsEndpoint endpoint = new SnsEndpoint(uri, this, configuration);
         return endpoint;
     }
 }

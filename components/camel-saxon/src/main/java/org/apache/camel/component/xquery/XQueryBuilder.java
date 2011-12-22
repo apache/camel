@@ -64,7 +64,6 @@ import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.StringSource;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
@@ -86,7 +85,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private StaticQueryContext staticQueryContext;
     private Map<String, Object> parameters = new HashMap<String, Object>();
     private Map<String, String> namespacePrefixes = new HashMap<String, String>();
-    private XmlConverter converter = new XmlConverter();
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
     private Class resultType;

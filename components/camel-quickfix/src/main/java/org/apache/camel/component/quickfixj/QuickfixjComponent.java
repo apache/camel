@@ -68,7 +68,7 @@ public class QuickfixjComponent extends DefaultComponent {
                     }
                 }
 
-                endpoint = new QuickfixjEndpoint(engine, uri, getCamelContext());
+                endpoint = new QuickfixjEndpoint(engine, uri, this);
                 engine.addEventListener(endpoint);
                 endpoints.put(uri, endpoint);
             }
@@ -131,18 +131,4 @@ public class QuickfixjComponent extends DefaultComponent {
         this.configurations = configurations;
     }
 
-    private static String getPath(String uri) throws URISyntaxException {
-        // Adapted from DefaultComponent
-        URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
-        String path = u.getSchemeSpecificPart();
-        // lets trim off any query arguments
-        if (path.startsWith("//")) {
-            path = path.substring(2);
-        }
-        int idx = path.indexOf('?');
-        if (idx > 0) {
-            path = path.substring(0, idx);
-        }
-        return path;
-    }
 }

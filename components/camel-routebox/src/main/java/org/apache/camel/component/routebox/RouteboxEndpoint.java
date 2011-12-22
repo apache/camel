@@ -27,10 +27,12 @@ public abstract class RouteboxEndpoint extends DefaultEndpoint {
         super();
     }
     
+    @Deprecated
     public RouteboxEndpoint(String endpointUri) {
         super(endpointUri);
     }
     
+    @Deprecated
     public RouteboxEndpoint(String endpointUri, CamelContext camelContext) {
         super(endpointUri, camelContext);
     }
