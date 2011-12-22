@@ -33,9 +33,9 @@ package org.apache.camel;
 public interface MultipleConsumersSupport {
 
     /**
-     * Is multiple consumers supported?
+     * Are multiple consumers supported?
      *
-     * @return <tt>true</tt> if multiple consumers is supported
+     * @return <tt>true</tt> if multiple consumers are supported
      */
     boolean isMultipleConsumersSupported();
 }
