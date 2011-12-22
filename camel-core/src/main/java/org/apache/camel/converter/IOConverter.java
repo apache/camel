@@ -156,6 +156,11 @@ public final class IOConverter {
         return toInputStream(text.getBytes(getCharsetName(exchange)));
     }
     
+    @Converter
+    public static InputStream toInputStream(StringBuffer buffer, Exchange exchange) throws IOException {
+        return toInputStream(buffer.toString(), exchange);
+    }
+    
     /**
      * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.
      */
