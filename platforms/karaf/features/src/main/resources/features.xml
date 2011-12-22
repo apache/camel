@@ -30,6 +30,8 @@
   </feature>
   <feature name='camel-core' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version="[3,4)">spring</feature>
+    <feature version="${project.version}">xml-specs-api</feature>
+    <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/${jaxb-bundle-version}</bundle>
     <bundle>mvn:org.fusesource.commonman/commons-management/${commons-management-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
     <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${project.version}</bundle>
