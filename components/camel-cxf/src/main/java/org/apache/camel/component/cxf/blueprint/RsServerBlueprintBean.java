@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.blueprint;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;

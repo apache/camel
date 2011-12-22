@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.component.cxf.blueprint.BlueprintSupport;
 import org.apache.camel.component.cxf.blueprint.RsClientBlueprintBean;
@@ -32,10 +33,27 @@ public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
     private BlueprintContainer blueprintContainer;
     private BundleContext bundleContext;
     private BlueprintCamelContext blueprintCamelContext;
-
+    
+    @Deprecated 
+    /**
+     * It will be removed in Camel 2.9
+     * @param camelContext
+     * @param bean
+     */
     public CxfRsBlueprintEndpoint(CamelContext camelContext, AbstractJAXRSFactoryBean bean) {
         super(bean.getAddress(), camelContext);
         this.bean = bean;
+        BlueprintSupport support = (BlueprintSupport)bean;
+        setBlueprintContainer(support.getBlueprintContainer());
+        setBundleContext(support.getBundleContext());
+    }
+
+    public CxfRsBlueprintEndpoint(Component comp, String uri, AbstractJAXRSFactoryBean bean) {
+        super(uri, comp);
+        this.bean = bean;
+        setAddress(bean.getAddress());
+        // update the sfb address by resolving the properties
+        bean.setAddress(getAddress());
         BlueprintSupport support = (BlueprintSupport)bean;
         setBlueprintContainer(support.getBlueprintContainer());
         setBundleContext(support.getBundleContext());

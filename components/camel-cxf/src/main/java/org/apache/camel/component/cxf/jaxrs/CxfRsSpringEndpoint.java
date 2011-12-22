@@ -18,23 +18,31 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.cxf.spring.SpringJAXRSClientFactoryBean;
-import org.apache.camel.component.cxf.spring.SpringJAXRSServerFactoryBean;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.cxf.configuration.spring.ConfigurerImpl;
+import org.apache.camel.Component;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 
 public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     private AbstractJAXRSFactoryBean bean;
     private String beanId;
     
-    
+    @Deprecated 
+    /**
+     * It will be removed in Camel 2.9
+     * @param comp
+     * @param bean
+     */
     public CxfRsSpringEndpoint(CamelContext context, AbstractJAXRSFactoryBean bean) throws Exception {
         super(bean.getAddress(), context);        
+        init(bean);
+    }
+    
+    public CxfRsSpringEndpoint(Component component, String uri, AbstractJAXRSFactoryBean bean) throws Exception {
+        super(uri, component);
+        setAddress(bean.getAddress());
+        // Update the sfb address by resolving the properties
+        bean.setAddress(getAddress());
         init(bean);
     }
     
@@ -47,7 +55,7 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
     
     @Override
     protected void setupJAXRSServerFactoryBean(JAXRSServerFactoryBean sfb) {
-        // Do nothing here
+       // Do nothing here
     }
     
     @Override
