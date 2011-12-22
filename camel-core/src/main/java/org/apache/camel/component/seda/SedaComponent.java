@@ -33,7 +33,25 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class SedaComponent extends DefaultComponent {
     protected final int maxConcurrentConsumers = 500;
+    protected int queueSize;
+    protected int defaultConcurrentConsumers = 1;
     private final Map<String, BlockingQueue<Exchange>> queues = new HashMap<String, BlockingQueue<Exchange>>();
+    
+    public void setQueueSize(int size) {
+        queueSize = size;
+    }
+    
+    public int getQueueSize() {
+        return queueSize;
+    }
+    
+    public void setConcurrentConsumers(int size) {
+        defaultConcurrentConsumers = size;
+    }
+    
+    public int getConcurrentConsumers() {
+        return defaultConcurrentConsumers;
+    }
 
     public synchronized BlockingQueue<Exchange> createQueue(String uri, Map<String, Object> parameters) {
         String key = getQueueKey(uri);
@@ -48,7 +66,11 @@ public class SedaComponent extends DefaultComponent {
         if (size != null && size > 0) {
             queue = new LinkedBlockingQueue<Exchange>(size);
         } else {
-            queue = new LinkedBlockingQueue<Exchange>();
+            if (getQueueSize() > 0) {
+                queue = new LinkedBlockingQueue<Exchange>(getQueueSize());
+            } else {
+                queue = new LinkedBlockingQueue<Exchange>();
+            }
         }
 
         queues.put(key, queue);
@@ -57,7 +79,7 @@ public class SedaComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        int consumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, 1);
+        int consumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, defaultConcurrentConsumers);
         boolean limitConcurrentConsumers = getAndRemoveParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
         if (limitConcurrentConsumers && consumers >  maxConcurrentConsumers) {
             throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
