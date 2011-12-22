@@ -72,6 +72,36 @@ public class FreemarkerContentCacheTest extends CamelTestSupport {
         template.sendBodyAndHeader("direct:b", "Body", "name", "Paris");
         mock.assertIsSatisfied();
     }
+    
+    @Test
+    public void testTemplateUpdateDelay() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello London");
+
+        template.sendBodyAndHeader("direct:c", "Body", "name", "London");
+        mock.assertIsSatisfied();
+
+        // now change content in the file in the classpath and try again .... with no delay
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/freemarker?fileExist=Override", "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+
+        mock.reset();
+        // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
+        mock.expectedBodiesReceived("Hello Paris");
+
+        template.sendBodyAndHeader("direct:c", "Body", "name", "Paris");
+        mock.assertIsSatisfied();
+
+        // now change content in the file in the classpath and try again .... after delaying longer than the cache update delay
+        Thread.sleep(5000);
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/freemarker?fileExist=Override", "Bye ${headers.name}", Exchange.FILE_NAME, "hello.ftl");
+
+        mock.reset();
+        // we must expected the new content, because the cache has expired
+        mock.expectedBodiesReceived("Bye Paris");
+        template.sendBodyAndHeader("direct:c", "Body", "name", "Paris");
+        mock.assertIsSatisfied();
+    }
+
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -79,6 +109,8 @@ public class FreemarkerContentCacheTest extends CamelTestSupport {
                 from("direct:a").to("freemarker://org/apache/camel/component/freemarker/hello.ftl?contentCache=false").to("mock:result");
 
                 from("direct:b").to("freemarker://org/apache/camel/component/freemarker/hello.ftl?contentCache=true").to("mock:result");
+                
+                from("direct:c").to("freemarker://org/apache/camel/component/freemarker/hello.ftl?contentCache=true&templateUpdateDelay=4").to("mock:result");
             }
         };
     }

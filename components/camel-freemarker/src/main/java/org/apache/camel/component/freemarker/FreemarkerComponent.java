@@ -46,6 +46,10 @@ public class FreemarkerComponent extends ResourceBasedComponent {
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
         if (cache) {
             config = getConfiguration();
+            int templateUpdateDelay = getAndRemoveParameter(parameters, "templateUpdateDelay", Integer.class, 0);
+            if (templateUpdateDelay > 0) {
+                config.setTemplateUpdateDelay(templateUpdateDelay);
+            }
         } else {
             config = getNoCacheConfiguration();
         }
