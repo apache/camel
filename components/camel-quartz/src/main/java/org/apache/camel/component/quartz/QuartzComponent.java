@@ -31,7 +31,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.StartupListener;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.quartz.CronTrigger;

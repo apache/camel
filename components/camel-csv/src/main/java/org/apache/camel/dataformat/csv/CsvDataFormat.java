@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;

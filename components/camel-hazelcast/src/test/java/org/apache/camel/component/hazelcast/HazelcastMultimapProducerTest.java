@@ -19,7 +19,6 @@ package org.apache.camel.component.hazelcast;
 import java.util.Collection;
 
 import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
 import org.apache.camel.builder.RouteBuilder;

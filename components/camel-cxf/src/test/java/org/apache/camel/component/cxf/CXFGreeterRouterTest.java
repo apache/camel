@@ -16,25 +16,10 @@
  */
 package org.apache.camel.component.cxf;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
-import javax.xml.ws.Service;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.http.HttpOperationFailedException;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
-import org.apache.hello_world_soap_http.NoSuchCodeLitFault;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CXFGreeterRouterTest extends AbstractCXFGreeterRouterTest {

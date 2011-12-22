@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

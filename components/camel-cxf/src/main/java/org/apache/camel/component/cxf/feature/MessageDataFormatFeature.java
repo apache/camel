@@ -17,16 +17,12 @@
 
 package org.apache.camel.component.cxf.feature;
 
-import java.util.List;
-
 import org.apache.camel.component.cxf.interceptors.RawMessageContentRedirectInterceptor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.WSDLGetInterceptor;
-import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

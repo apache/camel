@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.spi;
 
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;

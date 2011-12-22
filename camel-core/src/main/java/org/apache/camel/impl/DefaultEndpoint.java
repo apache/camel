@@ -19,7 +19,6 @@ package org.apache.camel.impl;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;

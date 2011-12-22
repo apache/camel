@@ -18,7 +18,6 @@ package org.apache.camel.example.cafe;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

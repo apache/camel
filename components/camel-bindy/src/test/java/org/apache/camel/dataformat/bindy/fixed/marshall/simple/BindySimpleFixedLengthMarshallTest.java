@@ -33,8 +33,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
-import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
-import org.apache.camel.dataformat.bindy.model.simple.oneclass.Order;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.junit.Test;

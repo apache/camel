@@ -17,13 +17,9 @@
 package org.apache.camel.itest.greeter;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.junit4.TestSupport;

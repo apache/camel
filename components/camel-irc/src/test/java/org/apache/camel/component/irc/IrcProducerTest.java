@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.junit.Before;
 import org.junit.Test;

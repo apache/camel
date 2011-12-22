@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.jclouds;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
 import java.util.LinkedList;
 import java.util.Queue;
 

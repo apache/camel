@@ -16,9 +16,7 @@
  */
 package org.apache.camel.example;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;

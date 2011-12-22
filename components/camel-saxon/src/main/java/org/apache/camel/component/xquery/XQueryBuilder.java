@@ -40,7 +40,6 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import net.sf.saxon.Configuration;
@@ -63,7 +62,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExpressionException;
 import org.apache.camel.StringSource;
-import org.apache.camel.WrappedFile;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;

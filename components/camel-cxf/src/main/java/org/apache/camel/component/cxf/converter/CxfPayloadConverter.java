@@ -20,10 +20,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -32,11 +28,9 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.cxf.staxutils.StaxUtils;
 
 @Converter
 public final class CxfPayloadConverter {

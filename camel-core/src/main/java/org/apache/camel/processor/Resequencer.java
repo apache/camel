@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -27,7 +26,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.util.ExpressionComparator;
-import org.apache.camel.util.ExpressionListComparator;
 
 /**
  * An implementation of the <a href="http://camel.apache.org/resequencer.html">Resequencer</a>

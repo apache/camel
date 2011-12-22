@@ -27,7 +27,6 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Lookup;
-import org.xbill.DNS.SimpleResolver;
 import org.xbill.DNS.Type;
 
 /**

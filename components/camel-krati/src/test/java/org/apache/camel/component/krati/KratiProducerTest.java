@@ -17,13 +17,10 @@
 
 package org.apache.camel.component.krati;
 
-import java.io.File;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class KratiProducerTest extends CamelTestSupport {

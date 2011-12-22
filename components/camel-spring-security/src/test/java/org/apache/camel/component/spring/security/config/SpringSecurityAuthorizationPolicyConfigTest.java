@@ -17,7 +17,6 @@
 package org.apache.camel.component.spring.security.config;
 
 import org.apache.camel.component.spring.security.SpringSecurityAuthorizationPolicy;
-import org.apache.camel.spi.Policy;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

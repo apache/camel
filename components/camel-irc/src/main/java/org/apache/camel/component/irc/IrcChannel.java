@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.irc;
 
-import org.apache.camel.Exchange;
-
 public final class IrcChannel {
     private String name;
     private String key;

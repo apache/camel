@@ -17,20 +17,14 @@
 package org.apache.camel.guice;
 
 import java.util.Hashtable;
-import java.util.Set;
-
 import javax.naming.InitialContext;
 
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import org.apache.camel.CamelContext;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileFilter;
-import org.apache.camel.component.mock.MockComponent;
-import org.apache.camel.guice.GuiceRouteWithNamedKeysTest.MyModule;
 import org.guiceyfruit.Injectors;
 import org.guiceyfruit.jndi.GuiceInitialContextFactory;
 import org.guiceyfruit.jndi.JndiBind;

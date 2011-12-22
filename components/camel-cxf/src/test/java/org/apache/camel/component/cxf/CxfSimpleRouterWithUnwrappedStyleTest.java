@@ -22,8 +22,6 @@ import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {    

@@ -17,8 +17,6 @@
 package org.apache.camel.component.jt400;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.DataQueue;

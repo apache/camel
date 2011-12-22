@@ -16,8 +16,6 @@
  */
 package org.apache.camel.itest.osgi.jpa;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -32,11 +30,7 @@ import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.options.UrlProvisionOption;
-import org.ops4j.store.Store;
-import org.ops4j.store.StoreFactory;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
@@ -51,7 +45,6 @@ import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
 public class JpaRouteTest extends OSGiIntegrationTestSupport {

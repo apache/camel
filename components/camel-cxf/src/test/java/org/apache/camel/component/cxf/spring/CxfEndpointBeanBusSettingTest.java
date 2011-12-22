@@ -16,16 +16,10 @@
  */
 package org.apache.camel.component.cxf.spring;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.cxf.Bus;
-import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
-import org.apache.cxf.message.Message;
 import org.junit.Test;
 
 public class CxfEndpointBeanBusSettingTest extends AbstractSpringBeanTestSupport {

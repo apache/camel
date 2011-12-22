@@ -17,8 +17,6 @@
 package org.apache.camel.component.irc;
 
 import java.net.URI;
-import java.net.URLEncoder;
-import java.util.Dictionary;
 import java.util.List;
 
 import org.apache.camel.Endpoint;

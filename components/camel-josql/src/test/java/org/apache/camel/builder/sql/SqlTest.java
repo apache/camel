@@ -18,14 +18,11 @@ package org.apache.camel.builder.sql;
 
 import java.util.List;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
 import org.junit.Test;
 

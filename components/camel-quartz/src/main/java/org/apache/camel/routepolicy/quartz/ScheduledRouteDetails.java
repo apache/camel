@@ -16,7 +16,6 @@
  */
 package org.apache.camel.routepolicy.quartz;
 
-import org.apache.camel.Route;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
 

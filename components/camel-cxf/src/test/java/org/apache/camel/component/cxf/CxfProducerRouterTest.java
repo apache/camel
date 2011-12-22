@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

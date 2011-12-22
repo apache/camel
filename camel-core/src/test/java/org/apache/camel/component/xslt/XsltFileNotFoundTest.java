@@ -17,8 +17,6 @@
 package org.apache.camel.component.xslt;
 
 import java.io.FileNotFoundException;
-import javax.xml.transform.TransformerConfigurationException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;

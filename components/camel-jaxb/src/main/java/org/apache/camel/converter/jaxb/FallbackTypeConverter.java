@@ -44,7 +44,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.BeanInvocation;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;

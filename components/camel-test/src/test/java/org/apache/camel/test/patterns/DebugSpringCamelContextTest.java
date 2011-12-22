@@ -17,7 +17,6 @@
 package org.apache.camel.test.patterns;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

@@ -23,7 +23,6 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.junit.Before;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;

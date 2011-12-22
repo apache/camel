@@ -34,7 +34,6 @@ import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.karaf.testing.Helper;
 import org.apache.log4j.Logger;

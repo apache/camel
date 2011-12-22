@@ -25,7 +25,6 @@ import javax.xml.bind.JAXBContext;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.web.resources.CamelContextResource;
 import org.junit.After;
 import org.junit.Assert;

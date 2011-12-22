@@ -16,15 +16,9 @@
  */
 package org.apache.camel.component.jclouds;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
 import org.apache.camel.Exchange;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.Blob;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

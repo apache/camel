@@ -25,8 +25,6 @@ import javax.mail.util.ByteArrayDataSource;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
-import org.w3c.dom.Element;
-
 import junit.framework.Assert;
 
 import org.apache.camel.Exchange;

@@ -21,7 +21,6 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.wsdl_first.PersonImpl12;
 import org.junit.Before;
-import org.junit.BeforeClass;
 
 public class CXFWsdlOnlyPayloadModeNoSpringSoap12Test extends CXFWsdlOnlyPayloadModeNoSpringTest {
     

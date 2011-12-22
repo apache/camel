@@ -20,9 +20,6 @@ package org.apache.camel.component.cxf;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
-
 import org.w3c.dom.Element;
 
 import org.apache.camel.CamelContext;
@@ -32,7 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.endpoint.Server;

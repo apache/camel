@@ -20,31 +20,9 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.seda.SedaComponent;
-import org.apache.camel.processor.interceptor.Tracer;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.ops4j.pax.exam.options.UrlProvisionOption;
 import org.ops4j.store.Store;
 import org.ops4j.store.StoreFactory;
-import org.osgi.framework.Constants;
-import org.osgi.service.blueprint.container.BlueprintContainer;
-
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.*;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
 /**
  * Base class for OSGi blueprint tests.

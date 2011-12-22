@@ -18,10 +18,7 @@ package org.apache.camel.dataformat.xstream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.junit4.CamelSpringTestSupport;
-import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

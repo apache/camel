@@ -17,7 +17,6 @@
 package org.apache.camel.component.solr;
 
 import java.util.HashMap;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.solr.client.solrj.SolrQuery;

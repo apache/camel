@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.bindy.model.fix.complex.onetomany;
 
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
-import org.apache.camel.dataformat.bindy.annotation.Message;
 
 // @Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type = "FIX", version = "4.1")
 public class Security {
