@@ -27,12 +27,8 @@ import junit.framework.Assert;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.eclipse.jetty.util.IO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;

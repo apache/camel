@@ -37,12 +37,10 @@ import org.apache.camel.pizza.types.CallerIDHeaderType;
 import org.apache.camel.pizza.types.OrderPizzaResponseType;
 import org.apache.camel.pizza.types.OrderPizzaType;
 import org.apache.camel.pizza.types.ToppingsListType;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapHeader;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 

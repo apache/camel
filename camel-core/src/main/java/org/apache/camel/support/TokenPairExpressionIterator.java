@@ -24,7 +24,6 @@ import java.util.Scanner;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.Predicate;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 

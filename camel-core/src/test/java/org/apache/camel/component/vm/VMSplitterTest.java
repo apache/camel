@@ -23,8 +23,6 @@ import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.language.MethodCallExpression;
-import org.apache.camel.processor.SplitterMethodCallTest.SplitWordsBean;
 
 public class VMSplitterTest extends AbstractVmTestSupport {
     

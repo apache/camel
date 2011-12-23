@@ -24,7 +24,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.web.resources.CamelContextResource;
 import org.junit.After;
 import org.junit.Assert;

@@ -28,7 +28,6 @@ import java.net.URISyntaxException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.ahc.AhcEndpoint;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.URISupport;
 

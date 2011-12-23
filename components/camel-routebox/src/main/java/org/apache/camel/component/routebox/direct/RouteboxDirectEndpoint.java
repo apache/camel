@@ -29,6 +29,7 @@ import org.apache.camel.component.routebox.RouteboxEndpoint;
 public class RouteboxDirectEndpoint extends RouteboxEndpoint {
     private final Map<String, RouteboxDirectConsumer> consumers = new HashMap<String, RouteboxDirectConsumer>();
 
+    @Deprecated
     public RouteboxDirectEndpoint(String endpointUri) {
         super(endpointUri);
     }

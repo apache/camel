@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.component.cxf.blueprint.BlueprintSupport;

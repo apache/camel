@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;

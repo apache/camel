@@ -18,11 +18,8 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.blueprint.BlueprintCamelContext;
-import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.frontend.ServerFactoryBean;
-import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.slf4j.Logger;

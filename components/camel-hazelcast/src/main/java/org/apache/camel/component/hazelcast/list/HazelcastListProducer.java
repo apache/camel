@@ -18,7 +18,6 @@ package org.apache.camel.component.hazelcast.list;
 
 import java.util.Map;
 
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
 

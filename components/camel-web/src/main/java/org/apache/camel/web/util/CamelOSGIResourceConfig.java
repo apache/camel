@@ -21,7 +21,6 @@ import java.util.Map;
 import javax.ws.rs.core.MediaType;
 
 import com.sun.jersey.api.core.ClassNamesResourceConfig;
-import com.sun.jersey.api.core.PackagesResourceConfig;
 import org.apache.camel.web.resources.CamelContextResource;
 import org.apache.camel.web.resources.ComponentResource;
 import org.apache.camel.web.resources.ComponentsResource;

@@ -24,6 +24,7 @@ import com.amazonaws.services.sns.model.CreateTopicResult;
 import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -41,9 +42,14 @@ public class SnsEndpoint extends DefaultEndpoint {
 
     private SnsConfiguration configuration;
     private AmazonSNSClient snsClient;
-    
+
+    @Deprecated
     public SnsEndpoint(String uri, CamelContext context, SnsConfiguration configuration) {
         super(uri, context);
+        this.configuration = configuration;
+    }
+    public SnsEndpoint(String uri, Component component, SnsConfiguration configuration) {
+        super(uri, component);
         this.configuration = configuration;
     }
 

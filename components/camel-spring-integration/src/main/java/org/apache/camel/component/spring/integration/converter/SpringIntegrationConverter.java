@@ -38,6 +38,7 @@ public final class SpringIntegrationConverter {
     }
 
     @Converter
+    @SuppressWarnings("deprecation")
     public static Endpoint toEndpoint(final MessageChannel channel) throws Exception {
         Endpoint answer = new SpringIntegrationEndpoint("spring-integration://" + channel.toString(), channel, null);
         return answer;

@@ -17,8 +17,6 @@
 package org.apache.camel.language.groovy;
 
 import java.io.InputStreamReader;
-import java.io.Reader;
-
 import groovy.lang.GroovyShell;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;

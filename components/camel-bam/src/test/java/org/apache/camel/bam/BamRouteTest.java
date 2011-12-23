@@ -29,7 +29,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import static org.apache.camel.util.Time.seconds;
 
 /**

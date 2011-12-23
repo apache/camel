@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf;
 
 import javax.xml.ws.Endpoint;
 
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hello_world_soap_http.GreeterImpl;
 
 import org.junit.AfterClass;

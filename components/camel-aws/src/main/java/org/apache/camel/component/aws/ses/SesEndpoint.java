@@ -21,6 +21,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClient;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -34,8 +35,13 @@ public class SesEndpoint extends DefaultEndpoint {
     
     private SesConfiguration configuration;
 
+    @Deprecated
     public SesEndpoint(String uri, CamelContext context, SesConfiguration configuration) {
         super(uri, context);
+        this.configuration = configuration;
+    }
+    public SesEndpoint(String uri, Component component, SesConfiguration configuration) {
+        super(uri, component);
         this.configuration = configuration;
     }
 

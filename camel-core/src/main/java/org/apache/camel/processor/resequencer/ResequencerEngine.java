@@ -18,7 +18,6 @@ package org.apache.camel.processor.resequencer;
 
 import java.util.Timer;
 
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.util.concurrent.ThreadHelper;
 
 /**

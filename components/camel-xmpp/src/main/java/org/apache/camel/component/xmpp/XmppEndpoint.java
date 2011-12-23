@@ -69,6 +69,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         super(uri, component);
     }
 
+    @Deprecated
     public XmppEndpoint(String endpointUri) {
         super(endpointUri);
     }

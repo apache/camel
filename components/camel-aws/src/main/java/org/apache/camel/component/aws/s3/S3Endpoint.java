@@ -26,6 +26,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -49,8 +50,13 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     private S3Configuration configuration;
     private int maxMessagesPerPoll = 10;
     
+    @Deprecated
     public S3Endpoint(String uri, CamelContext context, S3Configuration configuration) {
         super(uri, context);
+        this.configuration = configuration;
+    }
+    public S3Endpoint(String uri, Component comp, S3Configuration configuration) {
+        super(uri, comp);
         this.configuration = configuration;
     }
 

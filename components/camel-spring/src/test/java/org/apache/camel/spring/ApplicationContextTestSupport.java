@@ -17,7 +17,6 @@
 package org.apache.camel.spring;
 
 import junit.framework.TestCase;
-import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**

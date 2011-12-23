@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cache;
 
-import org.apache.camel.component.cache.CacheManagerFactoryRefTest.TestingCacheManagerFactory;
 import org.apache.camel.impl.JndiRegistry;
 
 public class FileCacheManagerFactoyRefTest extends CacheManagerFactoryRefTest {

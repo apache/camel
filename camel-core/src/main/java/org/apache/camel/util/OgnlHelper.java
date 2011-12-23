@@ -22,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Helper for Camel OGNL expressions.
+ * Helper for Camel OGNL (Object-Graph Navigation Language) expressions.
  *
  * @version 
  */
@@ -36,17 +36,17 @@ public final class OgnlHelper {
     /**
      * Tests whether or not the given String is a Camel OGNL expression.
      * <p/>
-     * Its consider Camel OGNL expression when it contains either one of the following chars: . or [
+     * An expression is considered an OGNL expression when it contains either one of the following chars: . or [
      *
      * @param expression  the String
-     * @return <tt>true</tt> if Camel OGNL expression, otherwise <tt>false</tt>. 
+     * @return <tt>true</tt> if a Camel OGNL expression, otherwise <tt>false</tt>. 
      */
     public static boolean isValidOgnlExpression(String expression) {
         if (ObjectHelper.isEmpty(expression)) {
             return false;
         }
 
-        // the brackets should come in pair
+        // the brackets should come in a pair
         int bracketBegin = StringHelper.countChar(expression, '[');
         int bracketEnd = StringHelper.countChar(expression, ']');
         if (bracketBegin > 0 && bracketEnd > 0) {
@@ -81,10 +81,10 @@ public final class OgnlHelper {
     }
 
     /**
-     * Tests whether or not the given Camel OGNL expression is using the elvis operator or not.
+     * Tests whether or not the given Camel OGNL expression is using the Elvis operator or not.
      *
      * @param ognlExpression the Camel OGNL expression
-     * @return <tt>true</tt> if the elvis operator is used, otherwise <tt>false</tt>.
+     * @return <tt>true</tt> if the Elvis operator is used, otherwise <tt>false</tt>.
      */
     public static boolean isNullSafeOperator(String ognlExpression) {
         if (ObjectHelper.isEmpty(ognlExpression)) {
@@ -163,7 +163,7 @@ public final class OgnlHelper {
     /**
      * Regular expression with repeating groups is a pain to get right
      * and then nobody understands the reg exp afterwards.
-     * So use a bit ugly/low-level java code to split the ognl into methods.
+     * So we use a bit ugly/low-level Java code to split the OGNL into methods.
      */
     public static List<String> splitOgnl(String ognl) {
         List<String> methods = new ArrayList<String>();

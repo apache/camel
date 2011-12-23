@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class AtomPollingConsumer extends FeedPollingConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(AtomPollingConsumer.class);
 
     public AtomPollingConsumer(AtomEndpoint endpoint, Processor processor) {
         super(endpoint, processor);

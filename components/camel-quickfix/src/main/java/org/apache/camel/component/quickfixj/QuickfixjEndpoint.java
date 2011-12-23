@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.MultipleConsumersSupport;
@@ -46,8 +47,13 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<QuickfixjConsumer>();
     private final QuickfixjEngine engine;
 
+    @Deprecated
     public QuickfixjEndpoint(QuickfixjEngine engine, String uri, CamelContext context) {
         super(uri, context);
+        this.engine = engine;
+    }
+    public QuickfixjEndpoint(QuickfixjEngine engine, String uri, Component component) {
+        super(uri, component);
         this.engine = engine;
     }
 

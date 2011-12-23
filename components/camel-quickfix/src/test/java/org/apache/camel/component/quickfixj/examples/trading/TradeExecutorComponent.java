@@ -94,7 +94,7 @@ public class TradeExecutorComponent extends DefaultComponent {
         private List<Processor> processors = new CopyOnWriteArrayList<Processor>();
         
         public TradeExecutorEndpoint(String uri, TradeExecutor tradeExecutor) {
-            super(uri, TradeExecutorComponent.this.getCamelContext());
+            super(uri, TradeExecutorComponent.this);
             this.tradeExecutor = tradeExecutor;
             tradeExecutor.addListener(new QuickfixjMessageListener() {
                 public void onMessage(SessionID sessionID, Message message) throws Exception {

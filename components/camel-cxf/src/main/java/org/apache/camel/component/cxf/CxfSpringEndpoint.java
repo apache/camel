@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.BusFactory;

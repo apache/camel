@@ -22,7 +22,6 @@ import java.util.List;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 public class SpringSecurityAccessPolicy {
 

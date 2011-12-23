@@ -16,8 +16,6 @@
  */
 package org.apache.camel.itest.http;
 
-import junit.framework.Assert;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

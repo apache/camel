@@ -19,12 +19,10 @@ package org.apache.camel.component.cxf.util;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfComponent;
 import org.apache.camel.component.cxf.CxfEndpoint;
-import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;

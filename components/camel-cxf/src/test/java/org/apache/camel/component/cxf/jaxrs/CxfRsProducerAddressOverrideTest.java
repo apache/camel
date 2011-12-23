@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.jaxrs;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.apache.camel.test.AvailablePortFinder;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

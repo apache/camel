@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.spring.ws;
 
-import java.io.File;
 import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

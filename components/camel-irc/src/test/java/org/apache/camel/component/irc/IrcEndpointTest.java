@@ -17,8 +17,6 @@
 package org.apache.camel.component.irc;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
 import java.util.List;
 
 import org.junit.Before;

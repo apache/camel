@@ -28,7 +28,6 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.apache.cxf.version.Version;
 import org.junit.Test;
 
 public class CxfHolderConsumerTest extends CamelTestSupport {
