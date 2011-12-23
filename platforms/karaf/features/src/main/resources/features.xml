@@ -150,6 +150,7 @@
     <bundle>mvn:org.apache.camel/camel-apns/${project.version}</bundle>
   </feature--> 
   <feature name='camel-atom' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency="true">mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <bundle dependency="true">mvn:org.apache.ws.commons.axiom/axiom-impl/${axiom-version}</bundle>
