@@ -282,6 +282,7 @@
     <bundle>mvn:org.apache.camel/camel-hawtdb/${project.version}</bundle>
   </feature>
   <feature name='camel-hdfs' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <feature version='${project.version}'>camel-core</feature>
     <feature>war</feature>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/${servicemix-specs-version}</bundle>
@@ -595,6 +596,7 @@
     <bundle>mvn:org.apache.camel/camel-snmp/${project.version}</bundle>
   </feature>
   <feature name='camel-soap' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <feature version='${project.version}'>camel-jaxb</feature>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-ws-metadata_2.0_spec/${geronimo-ws-metadata-spec-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/${servicemix-specs-version}</bundle>
