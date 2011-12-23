@@ -57,6 +57,14 @@ public class LogProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testNoLog() throws Exception {
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+
+        template.sendBody("direct:nolog", "Hi World");
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -71,6 +79,8 @@ public class LogProcessorTest extends ContextTestSupport {
                 from("direct:wombat").routeId("wombat")
                     .log(LoggingLevel.INFO, "cool", "mymarker", "Me got ${body}")
                     .to("mock:wombat");
+
+                from("direct:nolog").routeId("nolog").log(LoggingLevel.TRACE, "Should not log ${body}").to("mock:bar");
             }
         };
     }

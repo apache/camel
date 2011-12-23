@@ -79,11 +79,25 @@ public class CamelLogger {
         log(message);
         setLevel(oldLogLevel);
     }
-    
+
+    /**
+     * Logs the message <b>with</b> checking the {@link #shouldLog()} method first.
+     *
+     * @param message the message to log, if {@link #shouldLog()} returned <tt>true</tt>
+     */
     public void log(String message) {
         if (shouldLog(log, level)) {
             log(log, level, marker, message);
         }
+    }
+
+    /**
+     * Logs the message <b>without</b> checking the {@link #shouldLog()} method first.
+     * 
+     * @param message the message to log
+     */
+    public void doLog(String message) {
+        log(log, level, marker, message);
     }
 
     public void log(String message, Throwable exception, LoggingLevel loggingLevel) {
