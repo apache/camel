@@ -29,7 +29,7 @@ import java.net.URLConnection;
 import org.apache.camel.spi.ClassResolver;
 
 /**
- * Helper for loading resources on the classpath or file system.
+ * Helper class for loading resources on the classpath or file system.
  */
 public final class ResourceHelper {
 
@@ -38,10 +38,10 @@ public final class ResourceHelper {
     }
 
     /**
-     * Determines whether the uri has a scheme (eg file:, classpath: or http:)
+     * Determines whether the URI has a scheme (e.g. file:, classpath: or http:)
      *
-     * @param uri the uri
-     * @return <tt>true</tt> if the uri starts with a scheme
+     * @param uri the URI
+     * @return <tt>true</tt> if the URI starts with a scheme
      */
     public static boolean hasScheme(String uri) {
         if (uri == null) {
@@ -54,12 +54,11 @@ public final class ResourceHelper {
     /**
      * Resolves the mandatory resource.
      * <p/>
-     * If possible prefer to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
-     * if possible.
+     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
      *
      * @param classResolver the class resolver to load the resource from the classpath
-     * @param uri uri of the resource
-     * @return the resource as an {@link InputStream}, remember to close the stream after usage.
+     * @param uri URI of the resource
+     * @return the resource as an {@link InputStream}.  Remember to close this stream after usage.
      * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
      */
     public static InputStream resolveMandatoryResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
@@ -98,9 +97,9 @@ public final class ResourceHelper {
      *
      * @param classResolver the class resolver to load the resource from the classpath
      * @param uri uri of the resource
-     * @return the resource as an {@link InputStream}, remember to close the stream after usage.
+     * @return the resource as an {@link InputStream}.  Remember to close this stream after usage.
      * @throws java.io.FileNotFoundException is thrown if the resource file could not be found
-     * @throws java.net.MalformedURLException if the uri is malformed
+     * @throws java.net.MalformedURLException if the URI is malformed
      */
     public static URL resolveMandatoryResourceAsUrl(ClassResolver classResolver, String uri) throws FileNotFoundException, MalformedURLException {
         if (uri.startsWith("file:")) {
