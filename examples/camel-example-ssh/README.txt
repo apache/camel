@@ -28,7 +28,7 @@ You will need to compile and install this example first:
 If using Apache Karaf / Apache ServiceMix you can install this example
 from the shell
 
-  > features:addurl mvn:org.apache.camel/camel-example-ssh/2.10-SNAPSHOT/xml/features
+  > features:addurl mvn:org.apache.camel/camel-example-ssh/2.9-SNAPSHOT/xml/features
   > features:install camel-example-ssh
 
 If you hit any problems please let us know on the Camel Forums
