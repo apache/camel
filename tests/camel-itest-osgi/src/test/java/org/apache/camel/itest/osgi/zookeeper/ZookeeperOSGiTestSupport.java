@@ -35,7 +35,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.util.FileUtil;
-import org.apache.karaf.testing.Helper;
 import org.apache.log4j.Logger;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
@@ -54,20 +53,13 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
 
+    protected static final Logger LOG = Logger.getLogger(ZookeeperOSGiTestSupport.class);
     protected static TestZookeeperServer server;
-    
     protected static TestZookeeperClient client;
 
-    protected static final Logger LOG = Logger.getLogger(ZookeeperOSGiTestSupport.class);
- 
-    protected String testPayload = "This is a test";
-
-    protected byte[] testPayloadBytes = testPayload.getBytes();
-        
     @BeforeClass
     public static void setupTestServer() throws Exception {
         LOG.info("Starting Zookeeper Test Infrastructure");
@@ -90,26 +82,14 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
         LOG.info("Stopped Zookeeper Test Infrastructure");
     }
 
-    
     @Configuration
     public static Option[] configure() {
         Option[] options = combine(
-        // Set the karaf environment with some customer configuration
-            combine(Helper.getDefaultConfigOptions(
-                                               Helper.setLogLevel("ERROR")),
-                Helper.getDefaultProvisioningOptions()),
-        // install the spring, http features first
-                                   scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
 
-                                   // using the features to install the camel
-                                   // components
-                                   scanFeatures(getCamelKarafFeatureUrl(), "camel-core", "camel-spring",
-                                                "camel-test", "camel-zookeeper"),
+                getDefaultCamelKarafOptions(),
+                // using the features to install the camel components
+                scanFeatures(getCamelKarafFeatureUrl(), "jetty", "camel-zookeeper"));
 
-                                   workingDirectory("target/paxrunner/"));
-
-        // equinox(),
-        // felix());
         return options;
     }
 
@@ -161,14 +141,9 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
 
     public static class TestZookeeperClient implements Watcher {
 
-        public int x;
-
         private final Logger log = Logger.getLogger(getClass());
-
+        private final CountDownLatch connected = new CountDownLatch(1);
         private ZooKeeper zk;
-
-        private CountDownLatch connected = new CountDownLatch(1);
-
 
         public TestZookeeperClient(int port, int timeout) throws Exception {
             zk = new ZooKeeper("localhost:" + port, timeout, this);
@@ -217,7 +192,6 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
         }
 
         public void process(WatchedEvent event) {
-
             if (event.getState() == KeeperState.SyncConnected) {
                 log.info("TestClient connected");
                 connected.countDown();
@@ -365,4 +339,5 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
             assertEquals(new String(expected), new String(client.getData(node)));
         }
     }
+
 }
