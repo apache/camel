@@ -233,7 +233,7 @@
     <bundle>mvn:org.apache.camel/camel-dozer/${project.version}</bundle>
   </feature>
   <feature name='camel-eventadmin' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='[2.2,3)'>eventadmin</feature>
+    <feature>eventadmin</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-eventadmin/${project.version}</bundle>
   </feature>
