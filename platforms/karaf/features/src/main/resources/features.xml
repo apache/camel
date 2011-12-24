@@ -17,13 +17,16 @@
       limitations under the License.
 -->
 <features name='camel-${project.version}'>
+
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
+
   <feature name="xml-specs-api" version='${servicemix-specs-version}' resolver='(obr)' start-level='10'>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxb-api-2.2/${servicemix-specs-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
+    <bundle dependency="true">mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
+    <bundle dependency="true">mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-core-bundle-version}</bundle>
   </feature>
-  
   <feature name='camel' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-spring</feature>
@@ -695,8 +698,6 @@
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.joda-time/${jodatime-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/${dom4j-bundle-version}</bundle>
-    <bundle dependency="true">mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
-    <bundle dependency="true">mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-core-bundle-version}</bundle>
     <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xstream/${project.version}</bundle>
   </feature>
