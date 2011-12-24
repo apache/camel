@@ -16,18 +16,22 @@
  */
 package org.apache.camel.example.reportincident;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -39,16 +43,28 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ReportIncidentRoutesTest extends CamelSpringTestSupport {
 
     // should be the same address as we have in our route
-    private static final String URL = "http://localhost:9080/camel-example-reportincident/webservices/incident";
+    private static final String URL = "http://localhost:{{port}}/camel-example-reportincident/webservices/incident";
 
     protected CamelContext camel;
+    
+    @BeforeClass
+    public static void setupFreePort() throws Exception {
+        // find a free port number from 9100 onwards, and write that in the custom.properties file
+        // which we will use for the unit tests, to avoid port number in use problems
+        int port = AvailablePortFinder.getNextAvailable(9100);
+        String s = "port=" + port;
+        File custom = new File("target/custom.properties");
+        FileOutputStream fos = new FileOutputStream(custom);
+        fos.write(s.getBytes());
+        fos.close();
+    }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("/META-INF/spring/camel-context.xml");
     }
 
-    protected static ReportIncidentEndpoint createCXFClient() {
+    protected static ReportIncidentEndpoint createCXFClient(String url) {
         List<Interceptor<? extends Message>> outInterceptors = new ArrayList<Interceptor<? extends Message>>();
 
         // Define WSS4j properties for flow outgoing
@@ -71,7 +87,7 @@ public class ReportIncidentRoutesTest extends CamelSpringTestSupport {
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setOutInterceptors(outInterceptors);
         factory.setServiceClass(ReportIncidentEndpoint.class);
-        factory.setAddress(URL);
+        factory.setAddress(url);
         return (ReportIncidentEndpoint) factory.create();
     }
 
@@ -94,7 +110,8 @@ public class ReportIncidentRoutesTest extends CamelSpringTestSupport {
         input.setPhone("0011 22 33 44");
 
         // create the webservice client and send the request
-        ReportIncidentEndpoint client = createCXFClient();
+        String url = context.resolvePropertyPlaceholders(URL);
+        ReportIncidentEndpoint client = createCXFClient(url);
         OutputReportIncident out = client.reportIncident(input);
 
         // assert we got a OK back
