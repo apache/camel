@@ -22,7 +22,6 @@ public class BankQuote {
     private Double rate;
 
     public BankQuote() {
-
     }
 
     public BankQuote(String name, String s, Double r) {

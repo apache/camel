@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.loanbroker.webservice.version.bank;
+
 //START SNIPPET: bankImpl
 public class Bank implements BankWS {
     private String bankName;
@@ -30,7 +31,7 @@ public class Bank implements BankWS {
     }
 
     public BankQuote getQuote(String ssn, double loanAmount, int loanDuration, int creditHistory, int creditScore) {
-        Double rate = primeRate + (double)(loanDuration / 12) / 10 + (double)(Math.random() * 10) / 10;
+        Double rate = primeRate + (double)(loanDuration / 12) / 10 + Math.random() * 10 / 10;
         // Wait for a while
         try {
             Thread.sleep(1000);

@@ -14,20 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.loanbroker.webservice.version.bank;
 
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.loanbroker.webservice.version.Constants;
 
-
-
 public class BankServer {
 
-    Endpoint endpoint1;
-    Endpoint endpoint2;
-    Endpoint endpoint3;
+    private Endpoint endpoint1;
+    private Endpoint endpoint2;
+    private Endpoint endpoint3;
 
     public void start() throws Exception {
         System.out.println("Starting Bank Server");
@@ -38,8 +35,6 @@ public class BankServer {
         endpoint1 = Endpoint.publish(Constants.BANK1_ADDRESS, bank1);
         endpoint2 = Endpoint.publish(Constants.BANK2_ADDRESS, bank2);
         endpoint3 = Endpoint.publish(Constants.BANK3_ADDRESS, bank3);
-
-
     }
 
     public void stop() {
@@ -53,7 +48,6 @@ public class BankServer {
             endpoint3.stop();
         }
     }
-
 
     public static void main(String args[]) throws Exception {
         BankServer server = new BankServer();

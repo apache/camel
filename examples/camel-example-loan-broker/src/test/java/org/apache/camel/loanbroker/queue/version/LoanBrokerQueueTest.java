@@ -97,7 +97,7 @@ public class LoanBrokerQueueTest extends TestSupport {
             String ssn = "Client-A" + index;
             String result = exchange.getIn().getBody(String.class);
             assertNotNull("The result should not be null", result);
-            assertTrue("The result is wrong", result.startsWith("Loan quotion for Client " + ssn));
+            assertTrue("The result is wrong", result.startsWith("Loan quote for Client " + ssn));
             index++;
         }
         
@@ -105,7 +105,7 @@ public class LoanBrokerQueueTest extends TestSupport {
         Exchange exchange = template.send("jms:queue2:parallelLoanRequestQueue", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
-                exchange.getIn().setBody("Quote for the lowerst rate of loaning bank");
+                exchange.getIn().setBody("Quote for the lowest rate of loaning bank");
                 exchange.getIn().setHeader(Constants.PROPERTY_SSN, "Client-B");
             }
         });
