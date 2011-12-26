@@ -154,7 +154,6 @@
     <bundle>mvn:org.apache.camel/camel-apns/${project.version}</bundle>
   </feature--> 
   <feature name='camel-atom' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.ws.commons.axiom/axiom-impl/${axiom-version}</bundle>
@@ -287,7 +286,6 @@
     <bundle>mvn:org.apache.camel/camel-hawtdb/${project.version}</bundle>
   </feature>
   <feature name='camel-hdfs' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <feature version='${project.version}'>camel-core</feature>
     <feature>war</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/${servicemix-specs-version}</bundle>
@@ -379,7 +377,6 @@
     <bundle>mvn:org.apache.camel/camel-jing/${project.version}</bundle>
   </feature>
   <feature name='camel-jibx' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jibx/${project.version}</bundle>
     <bundle dependency='true'>mvn:org.jibx/jibx-run/${jibx-version}</bundle>
@@ -602,7 +599,6 @@
     <bundle>mvn:org.apache.camel/camel-snmp/${project.version}</bundle>
   </feature>
   <feature name='camel-soap' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <feature version='${project.version}'>camel-jaxb</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-ws-metadata_2.0_spec/${geronimo-ws-metadata-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/${servicemix-specs-version}</bundle>
@@ -713,7 +709,6 @@
     <bundle>mvn:org.apache.camel/camel-xmpp/${project.version}</bundle>
   </feature>
   <feature name='camel-xstream' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <bundle dependency='true'>mvn:org.codehaus.jettison/jettison/${jettison-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
