@@ -16,10 +16,15 @@
  */
 package org.apache.camel.example.osgi;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -30,6 +35,21 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version 
  */
 public class RmiTest extends CamelSpringTestSupport {
+    
+    private static int PORT;
+
+    @BeforeClass
+    public static void setupFreePort() throws Exception {
+        // find a free port number from 9100 onwards, and write that in the custom.properties file
+        // which we will use for the unit tests, to avoid port number in use problems
+        PORT = AvailablePortFinder.getNextAvailable(9100);
+        String s = "port=" + PORT;
+
+        File custom = new File("target/custom.properties");
+        FileOutputStream fos = new FileOutputStream(custom);
+        fos.write(s.getBytes());
+        fos.close();
+    }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -39,19 +59,17 @@ public class RmiTest extends CamelSpringTestSupport {
     @Test
     public void testRmi() throws Exception {
         // Create a new camel context to send the request so we can test the service which is deployed into a container
-        CamelContext camelContext = new DefaultCamelContext();
-        ProducerTemplate myTemplate = camelContext.createProducerTemplate();
+        CamelContext myContext = new DefaultCamelContext();
+        ProducerTemplate myTemplate = myContext.createProducerTemplate();
         myTemplate.start();
         try {
-            String out = myTemplate.requestBody("rmi://localhost:37541/helloServiceBean", "Camel", String.class);
+            System.out.println("Calling on port " + PORT);
+            String out = myTemplate.requestBody("rmi://localhost:" + PORT + "/helloServiceBean", "Camel", String.class);
             assertEquals("Hello Camel", out);
         } finally {
-            if (myTemplate != null) {
-                template.stop();
-            }
-            camelContext.stop();
+            myTemplate.stop();
+            myContext.stop();
         }
-        
     }
 
 }

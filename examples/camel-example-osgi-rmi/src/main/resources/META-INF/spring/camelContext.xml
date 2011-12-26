@@ -19,23 +19,31 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <!-- spring property placeholder, ignore resource not found as the file resource is for unit testing -->
+  <context:property-placeholder location="classpath:myapp.properties,file:target/custom.properties"
+                                ignore-resource-not-found="true"/>
 
   <!-- bean implementing logic -->
   <bean id="helloServiceBean" class="org.apache.camel.example.osgi.HelloServiceImpl"/>
 
-  <!-- setup RMI server on port 37541 -->
+  <!-- setup RMI server -->
   <bean id="rmiServer" class="java.rmi.registry.LocateRegistry" factory-method="createRegistry">
-    <constructor-arg index="0" value="37541"/>
+    <constructor-arg index="0" value="${port}"/>
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring" depends-on="rmiServer">
 
+    <endpoint id="rmiService" uri="rmi://localhost:${port}/helloServiceBean?remoteInterfaces=org.apache.camel.example.osgi.HelloService"/>
+
     <!-- expose a RMI service as a Camel route -->
     <camel:route>
-      <from uri="rmi://localhost:37541/helloServiceBean?remoteInterfaces=org.apache.camel.example.osgi.HelloService"/>
+      <from ref="rmiService"/>
       <to uri="log:Incoming request on RMI"/>
       <to uri="bean:helloServiceBean"/>
     </camel:route>
