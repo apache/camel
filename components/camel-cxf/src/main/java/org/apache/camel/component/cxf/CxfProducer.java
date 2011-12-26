@@ -34,6 +34,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.cxf.Bus;
 import org.apache.cxf.binding.soap.model.SoapHeaderInfo;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
@@ -80,6 +81,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         try {
             // create CXF exchange
             ExchangeImpl cxfExchange = new ExchangeImpl();
+            // set the Bus on the exchange in case the CXF interceptor need to access it from exchange
+            cxfExchange.put(Bus.class, endpoint.getBus());
             
             // prepare binding operation info
             BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
@@ -118,6 +121,8 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         
         // create CXF exchange
         ExchangeImpl cxfExchange = new ExchangeImpl();
+        // set the Bus on the exchange in case the CXF interceptor need to access it from exchange
+        cxfExchange.put(Bus.class, endpoint.getBus());
         
         // prepare binding operation info
         BindingOperationInfo boi = prepareBindingOperation(camelExchange, cxfExchange);
