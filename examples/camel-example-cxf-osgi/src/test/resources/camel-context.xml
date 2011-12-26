@@ -26,7 +26,7 @@
            http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
     
     <cxf:cxfEndpoint id="reportIncident"
-                     address="http://localhost:8181/cxf/camel-example-cxf-osgi/webservices/incident"
+                     address="http://localhost:{{port}}/cxf/camel-example-cxf-osgi/webservices/incident"
                      wsdlURL="META-INF/wsdl/report_incident.wsdl"
                      serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint">
     </cxf:cxfEndpoint>
@@ -34,6 +34,8 @@
     <bean id="reportIncidentRoutes" class="org.apache.camel.example.reportincident.ReportIncidentRoutes" />
 
     <camel:camelContext id="camel">
+      <!-- property which contains port number -->
+      <camel:propertyPlaceholder id="properties" location="file:target/custom.properties"/>
     	<camel:routeBuilder ref="reportIncidentRoutes"/>
     </camel:camelContext>
 </beans>
