@@ -36,14 +36,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class RmiTest extends CamelSpringTestSupport {
     
-    private static int PORT;
+    private static int port;
 
     @BeforeClass
     public static void setupFreePort() throws Exception {
         // find a free port number from 9100 onwards, and write that in the custom.properties file
         // which we will use for the unit tests, to avoid port number in use problems
-        PORT = AvailablePortFinder.getNextAvailable(9100);
-        String s = "port=" + PORT;
+        port = AvailablePortFinder.getNextAvailable(9100);
+        String s = "port=" + port;
 
         File custom = new File("target/custom.properties");
         FileOutputStream fos = new FileOutputStream(custom);
@@ -63,8 +63,8 @@ public class RmiTest extends CamelSpringTestSupport {
         ProducerTemplate myTemplate = myContext.createProducerTemplate();
         myTemplate.start();
         try {
-            System.out.println("Calling on port " + PORT);
-            String out = myTemplate.requestBody("rmi://localhost:" + PORT + "/helloServiceBean", "Camel", String.class);
+            System.out.println("Calling on port " + port);
+            String out = myTemplate.requestBody("rmi://localhost:" + port + "/helloServiceBean", "Camel", String.class);
             assertEquals("Hello Camel", out);
         } finally {
             myTemplate.stop();

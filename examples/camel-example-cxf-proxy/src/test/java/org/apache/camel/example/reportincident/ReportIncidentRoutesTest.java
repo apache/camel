@@ -19,13 +19,14 @@ package org.apache.camel.example.reportincident;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import junit.framework.Assert;
+
 import org.apache.camel.spring.Main;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
 
 /**
  * Unit test of our routes
@@ -33,7 +34,7 @@ import static junit.framework.Assert.assertEquals;
 public class ReportIncidentRoutesTest {
 
     // should be the same address as we have in our route
-    private static String URL;
+    private static String url;
 
     protected Main main;
 
@@ -53,7 +54,7 @@ public class ReportIncidentRoutesTest {
         fos.write(s2.getBytes());
         fos.close();
 
-        URL = "http://localhost:" + port + "/camel-example-cxf-proxy/webservices/incident";
+        url = "http://localhost:" + port + "/camel-example-cxf-proxy/webservices/incident";
     }
 
     protected void startCamel() throws Exception {
@@ -76,7 +77,7 @@ public class ReportIncidentRoutesTest {
         // we use CXF to create a client for us as its easier than JAXWS and works
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(ReportIncidentEndpoint.class);
-        factory.setAddress(URL);
+        factory.setAddress(url);
         return (ReportIncidentEndpoint) factory.create();
     }
 
@@ -110,6 +111,6 @@ public class ReportIncidentRoutesTest {
         OutputReportIncident out = client.reportIncident(input);
 
         // assert we got a OK back
-        assertEquals("OK;456", out.getCode());
+        Assert.assertEquals("OK;456", out.getCode());
     }
 }
