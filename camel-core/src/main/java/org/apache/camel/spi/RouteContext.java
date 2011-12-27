@@ -97,7 +97,7 @@ public interface RouteContext extends RuntimeConfiguration {
     <T> Map<String, T> lookupByType(Class<T> type);
 
     /**
-     * Lets complete the route creation, creating a single event driven route
+     * For completing the route creation, creating a single event driven route
      * for the current from endpoint with any processors required
      */
     void commit();

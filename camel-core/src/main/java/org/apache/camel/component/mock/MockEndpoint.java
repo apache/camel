@@ -1144,7 +1144,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         // Wait for a default 10 seconds if resultWaitTime is not set
         long waitTime = timeout == 0 ? 10000L : timeout;
 
-        // now lets wait for the results
+        // now let's wait for the results
         LOG.debug("Waiting on the latch for: " + timeout + " millis");
         latch.await(waitTime, TimeUnit.MILLISECONDS);
     }

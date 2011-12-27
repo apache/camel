@@ -65,7 +65,7 @@ public class LocalContextComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
         throws Exception {
 
-        // lets first check if we are using a fully qualified name: [context:]contextId:endpointUri
+        // first check if we are using a fully qualified name: [context:]contextId:endpointUri
         Map<String, Endpoint> map = getLocalCamelContext().getEndpointMap();
 
         if (LOG.isTraceEnabled()) {
@@ -77,7 +77,7 @@ public class LocalContextComponent extends DefaultComponent {
             return endpoint;
         }
 
-        // lets look to see if there is an endpoint of name 'remaining' using one of the local endpoints within
+        // look to see if there is an endpoint of name 'remaining' using one of the local endpoints within
         // the black box CamelContext
         String[] separators = {":", "://"};
         for (String scheme : localProtocolSchemes) {

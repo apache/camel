@@ -155,7 +155,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         String contextId = element.getAttribute("id");
         boolean implicitId = false;
 
-        // lets avoid folks having to explicitly give an ID to a camel context
+        // let's avoid folks having to explicitly give an ID to a camel context
         if (ObjectHelper.isEmpty(contextId)) {
             // if no explicit id was set then use a default auto generated name
             CamelContextNameStrategy strategy = new DefaultCamelContextNameStrategy();
@@ -164,7 +164,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             implicitId = true;
         }
 
-        // now lets parse the routes with JAXB
+        // now let's parse the routes with JAXB
         Binder<Node> binder;
         try {
             binder = getJaxbContext().createBinder();
@@ -237,7 +237,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private Metadata parseRouteContextNode(Element element, ParserContext context) {
-        // now lets parse the routes with JAXB
+        // now parse the routes with JAXB
         Binder<Node> binder;
         try {
             binder = getJaxbContext().createBinder();
@@ -271,7 +271,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private Metadata parseKeyStoreParametersNode(Element element, ParserContext context) {
-        // now lets parse the key store parameters with JAXB
+        // now parse the key store parameters with JAXB
         Binder<Node> binder;
         try {
             binder = getJaxbContext().createBinder();
@@ -305,7 +305,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private Metadata parseSecureRandomParametersNode(Element element, ParserContext context) {
-        // now lets parse the key store parameters with JAXB
+        // now parse the key store parameters with JAXB
         Binder<Node> binder;
         try {
             binder = getJaxbContext().createBinder();
@@ -339,7 +339,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     }
 
     private Metadata parseSSLContextParametersNode(Element element, ParserContext context) {
-        // now lets parse the key store parameters with JAXB
+        // now parse the key store parameters with JAXB
         Binder<Node> binder;
         try {
             binder = getJaxbContext().createBinder();

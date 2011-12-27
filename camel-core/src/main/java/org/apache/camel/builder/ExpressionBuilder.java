@@ -219,7 +219,7 @@ public final class ExpressionBuilder {
                 Message out = exchange.getOut();
                 Object header = out.getHeader(headerName);
                 if (header == null) {
-                    // lets try the exchange header
+                    // let's try the exchange header
                     header = exchange.getProperty(headerName);
                 }
                 return header;

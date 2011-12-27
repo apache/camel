@@ -82,7 +82,7 @@ public class PackageScanRouteBuilderFinder {
     }
 
     /**
-     * Lets ignore beans that are explicitly configured in the Spring XML files
+     * Allows for ignoring beans that are explicitly configured in the Spring XML files
      */
     protected boolean shouldIgnoreBean(Class<?> type) {
         for (Object metadataObject : blueprintContainer.getMetadata(BeanMetadata.class)) {

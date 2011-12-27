@@ -178,7 +178,7 @@ public class BeanInfo {
                 } else if (methods != null) {
                     // there are more methods with that name so we cannot decide which to use
 
-                    // but first lets try to choose a method and see if that comply with the name
+                    // but first let's try to choose a method and see if that complies with the name
                     // must use the method name which may have qualifiers
                     methodInfo = chooseMethod(pojo, exchange, methodName);
 
@@ -353,7 +353,7 @@ public class BeanInfo {
                         // use exchange
                         expression = ExpressionBuilder.exchangeExpression();
                     } else {
-                        // lets assume its the body and it must be mandatory convertable to the parameter type
+                        // assume it's the body and it must be mandatory convertible to the parameter type
                         // but we allow null bodies in case the message really contains a null body
                         expression = ExpressionBuilder.mandatoryBodyExpression(parameterType, true);
                     }
@@ -367,7 +367,7 @@ public class BeanInfo {
             LOG.trace("Parameter #{} has parameter info: ", i, parameterInfo);
         }
 
-        // now lets add the method to the repository
+        // now let's add the method to the repository
         return new MethodInfo(camelContext, clazz, method, parameters, bodyParameters, hasCustomAnnotation, hasHandlerAnnotation);
     }
 
@@ -400,14 +400,14 @@ public class BeanInfo {
     }
 
     /**
-     * Lets try choose one of the available methods to invoke if we can match
+     * Choose one of the available methods to invoke if we can match
      * the message body to the body parameter
      *
      * @param pojo the bean to invoke a method on
      * @param exchange the message exchange
      * @param name an optional name of the method that must match, use <tt>null</tt> to indicate all methods
      * @return the method to invoke or null if no definitive method could be matched
-     * @throws AmbiguousMethodCallException is thrown if cannot chose method due to ambiguous
+     * @throws AmbiguousMethodCallException is thrown if cannot choose method due to ambiguity
      */
     protected MethodInfo chooseMethod(Object pojo, Exchange exchange, String name) throws AmbiguousMethodCallException {
         // @Handler should be select first
@@ -470,7 +470,7 @@ public class BeanInfo {
     private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList,
                                                     List<MethodInfo> operationsWithCustomAnnotation)
         throws AmbiguousMethodCallException {
-        // lets see if we can find a method who's body param type matches the message body
+        // see if we can find a method whose body param type matches the message body
         Message in = exchange.getIn();
         Object body = in.getBody();
         if (body != null) {
@@ -525,7 +525,7 @@ public class BeanInfo {
         } else if (possibles.isEmpty()) {
             LOG.trace("No possible methods so now trying to convert body to parameter types");
 
-            // lets try converting
+            // let's try converting
             Object newBody = null;
             MethodInfo matched = null;
             int matchCounter = 0;
@@ -555,7 +555,7 @@ public class BeanInfo {
                 return matched;
             }
         } else {
-            // if we only have a single method with custom annotations, lets use that one
+            // if we only have a single method with custom annotations, let's use that one
             if (possibleWithCustomAnnotation.size() == 1) {
                 MethodInfo answer = possibleWithCustomAnnotation.get(0);
                 LOG.trace("There are only one method with annotations so we choose it: {}", answer);
@@ -621,7 +621,7 @@ public class BeanInfo {
 
     private MethodInfo chooseMethodWithCustomAnnotations(Exchange exchange, Collection<MethodInfo> possibles)
         throws AmbiguousMethodCallException {
-        // if we have only one method with custom annotations lets choose that
+        // if we have only one method with custom annotations let's choose that
         MethodInfo chosen = null;
         for (MethodInfo possible : possibles) {
             if (possible.hasCustomAnnotation()) {

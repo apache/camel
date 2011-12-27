@@ -19,7 +19,7 @@ package org.apache.camel.component.context;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Lets use the verbose context:camelContextId:actualEndpointName when referring to endpoints
+ * Tests use of the verbose context:camelContextId:actualEndpointName when referring to endpoints
  */
 public class JavaDslBlackBoxWithVerboseUriTest extends JavaDslBlackBoxTest {
 
