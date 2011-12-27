@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf;
 
 import javax.xml.ws.Endpoint;
 
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.junit.BeforeClass;

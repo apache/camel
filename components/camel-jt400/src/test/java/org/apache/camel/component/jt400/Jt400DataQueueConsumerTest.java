@@ -26,8 +26,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
 /**
  * Test case for {@link Jt400DataQueueConsumer}.
  * <p>

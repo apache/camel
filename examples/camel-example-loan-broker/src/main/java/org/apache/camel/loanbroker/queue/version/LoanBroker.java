@@ -81,13 +81,11 @@ public class LoanBroker extends RouteBuilder {
 
         // Now we aggregate the response message by using the Constants.PROPERTY_SSN header.
         // The aggregation will be complete when all the three bank responses are received
-        // In Camel 2.0 the we use AGGERATED_SIZE instead of AGGERATED_COUNT as the header 
-        // name of the aggregated message size.
         from("jms:queue:bankReplyQueue")
             .aggregate(header(Constants.PROPERTY_SSN), new BankResponseAggregationStrategy())
             .completionPredicate(header(Exchange.AGGREGATED_SIZE).isEqualTo(3))
 
-        // Here we do some translation and put the message back to loanReplyQueue
+            // Here we do some translation and put the message back to loanReplyQueue
             .process(new Translator()).to("jms:queue:loanReplyQueue");
 
     // END SNIPPET: dsl

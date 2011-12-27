@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cxf.wsdl;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 public class Order {
 
     String customerName;

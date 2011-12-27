@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

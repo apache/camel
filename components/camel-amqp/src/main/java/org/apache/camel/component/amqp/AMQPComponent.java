@@ -24,6 +24,8 @@ import org.apache.qpid.client.AMQConnectionFactory;
 import org.apache.qpid.url.URLSyntaxException;
 
 /**
+ * This component supports the AMQP protocol using the Client API of the Apache Qpid project.
+ * 
  * @version 
  */
 public class AMQPComponent extends JmsComponent {
@@ -52,7 +54,7 @@ public class AMQPComponent extends JmsComponent {
     }
 
     /**
-     * Lets install the default connection factory
+     * Let's install the default connection factory
      */
     private void init() {
         AMQConnectionFactory connectionFactory = new AMQConnectionFactory();

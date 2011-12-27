@@ -46,7 +46,7 @@ public class DefaultAnnotationExpressionFactory implements AnnotationExpressionF
     }
 
     protected String getExpressionFromAnnotation(Annotation annotation) {
-        // lets try the 'value()' method
+        // let's try the 'value()' method
         try {
             Method method = annotation.getClass().getMethod("value");
             Object value = ObjectHelper.invokeMethod(method, annotation);

@@ -24,10 +24,10 @@ public interface ManagedServiceMBean {
     @ManagedAttribute(description = "Service State")
     String getState();
 
-    @ManagedAttribute(description = "Camel id")
+    @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
-    @ManagedAttribute(description = "Route id")
+    @ManagedAttribute(description = "Route ID")
     String getRouteId();
 
     @ManagedOperation(description = "Start Service")

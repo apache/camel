@@ -123,17 +123,11 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-            // Default karaf environment
-            Helper.getDefaultOptions(
-            // this is how you set the default log level when using pax logging (logProfile)
-                Helper.setLogLevel("WARN")),
-            // install the spring, http features first
-            scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
-                
-            // using the features to install the camel components             
-            scanFeatures(getCamelKarafFeatureUrl(),                         
-                          "camel-core", "camel-spring", "camel-test"),
-            
+
+            getDefaultCamelKarafOptions(),
+            // using the features to install the camel components
+            scanFeatures(getCamelKarafFeatureUrl(), "jetty"),
+
             // using the java mail API bundle
             mavenBundle().groupId("org.apache.servicemix.specs").artifactId("org.apache.servicemix.specs.javamail-api-1.4").version("1.3.0"),
                           
@@ -141,7 +135,7 @@ public class MailRouteTest extends OSGiIntegrationTestSupport {
             
             // Added the mock_java_mail bundle for testing
             // just using the mock_java_mail version for testing
-            mavenBundle().groupId("org.apache.camel.tests").artifactId("org.apache.camel.tests.mock-javamail_1.7").version("2.4.0"),
+            mavenBundle().groupId("org.apache.camel.tests").artifactId("org.apache.camel.tests.mock-javamail_1.7").version("2.8.3"),
             
             workingDirectory("target/paxrunner/"),
 

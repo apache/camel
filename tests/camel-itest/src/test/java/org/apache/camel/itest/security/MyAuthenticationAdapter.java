@@ -17,8 +17,6 @@
 package org.apache.camel.itest.security;
 
 import java.security.Principal;
-import java.security.cert.X509Certificate;
-
 import javax.security.auth.Subject;
 
 import org.apache.camel.component.spring.security.DefaultAuthenticationAdapter;

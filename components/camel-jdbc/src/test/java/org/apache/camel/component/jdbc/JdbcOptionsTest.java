@@ -19,11 +19,8 @@ package org.apache.camel.component.jdbc;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-
 import javax.sql.DataSource;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

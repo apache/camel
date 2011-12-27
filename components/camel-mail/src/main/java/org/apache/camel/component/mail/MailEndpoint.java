@@ -48,6 +48,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
+    @Deprecated
     public MailEndpoint(String endpointUri, MailConfiguration configuration) {
         super(endpointUri);
         this.configuration = configuration;

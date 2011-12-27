@@ -49,6 +49,7 @@ public class RmiEndpoint extends DefaultEndpoint {
         this.uri = new URI(endpointUri);
     }
 
+    @Deprecated
     public RmiEndpoint(String endpointUri) throws URISyntaxException {
         super(endpointUri);
         this.uri = new URI(endpointUri);

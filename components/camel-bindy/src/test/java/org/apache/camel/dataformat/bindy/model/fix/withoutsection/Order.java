@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.bindy.model.fix.withoutsection;
 
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
-import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
 
 // No section has been defined

@@ -26,7 +26,7 @@ public interface ManagedComponentMBean {
     @ManagedAttribute(description = "Component State")
     String getState();
 
-    @ManagedAttribute(description = "Camel id")
+    @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
 }

@@ -42,7 +42,6 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;

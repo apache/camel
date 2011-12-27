@@ -69,9 +69,9 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method for comparing objects for equality in which it uses type coerce to coerce
-     * types between the left and right values. This allows you to equal test eg String and Integer as
-     * Camel will be able to coerce the types.
+     * A helper method for comparing objects for equality in which it uses type coercion to coerce
+     * types between the left and right values. This allows you test for equality for example with
+     * a String and Integer type as Camel will be able to coerce the types.
      */
     public static boolean typeCoerceEquals(TypeConverter converter, Object leftValue, Object rightValue) {
         // sanity check
@@ -108,18 +108,18 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method for comparing objects for equality in which it uses type coerce to coerce
-     * types between the left and right values. This allows you to equal test eg String and Integer as
-     * Camel will be able to coerce the types
+     * A helper method for comparing objects for inequality in which it uses type coercion to coerce
+     * types between the left and right values.  This allows you test for inequality for example with
+     * a String and Integer type as Camel will be able to coerce the types.
      */
     public static boolean typeCoerceNotEquals(TypeConverter converter, Object leftValue, Object rightValue) {
         return !typeCoerceEquals(converter, leftValue, rightValue);
     }
 
     /**
-     * A helper method for comparing objects ordering in which it uses type coerce to coerce
-     * types between the left and right values. This allows you to equal test eg String and Integer as
-     * Camel will be able to coerce the types
+     * A helper method for comparing objects ordering in which it uses type coercion to coerce
+     * types between the left and right values.  This allows you test for ordering for example with
+     * a String and Integer type as Camel will be able to coerce the types.
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static int typeCoerceCompare(TypeConverter converter, Object leftValue, Object rightValue) {
@@ -1214,7 +1214,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Cleans the string to pure java identifier so we can use it for loading class names.
+     * Cleans the string to a pure Java identifier so we can use it for loading class names.
      * <p/>
      * Especially from Spring DSL people can have \n \t or other characters that otherwise
      * would result in ClassNotFoundException

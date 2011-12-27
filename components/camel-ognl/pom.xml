@@ -45,7 +45,7 @@
       <artifactId>org.apache.servicemix.bundles.ognl</artifactId>
       <exclusions>
          <exclusion>
-            <groupId>jboss</groupId>
+            <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
          </exclusion>
       </exclusions>

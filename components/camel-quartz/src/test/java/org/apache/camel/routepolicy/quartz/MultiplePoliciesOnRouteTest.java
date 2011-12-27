@@ -27,8 +27,6 @@ import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @version 

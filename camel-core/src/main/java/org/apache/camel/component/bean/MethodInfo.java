@@ -542,7 +542,7 @@ public class MethodInfo {
         if (answer == null) {
             Class<?> type = method.getDeclaringClass();
 
-            // lets create the search order of types to scan
+            // create the search order of types to scan
             List<Class<?>> typesToSearch = new ArrayList<Class<?>>();
             addTypeAndSuperTypes(type, typesToSearch);
             Class<?>[] interfaces = type.getInterfaces();
@@ -550,7 +550,7 @@ public class MethodInfo {
                 addTypeAndSuperTypes(anInterface, typesToSearch);
             }
 
-            // now lets scan for a type which the current declared class overloads
+            // now let's scan for a type which the current declared class overloads
             answer = findOneWayAnnotationOnMethod(typesToSearch, method);
             if (answer == null) {
                 answer = findOneWayAnnotation(typesToSearch);
@@ -583,7 +583,7 @@ public class MethodInfo {
         int nextDepth = depth - 1;
 
         if (nextDepth > 0) {
-            // lets look at all the annotations to see if any of those are annotated
+            // look at all the annotations to see if any of those are annotated
             Annotation[] annotations = annotatedElement.getAnnotations();
             for (Annotation annotation : annotations) {
                 Class<? extends Annotation> annotationType = annotation.annotationType();

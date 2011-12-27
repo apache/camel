@@ -24,9 +24,6 @@
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <package>org.apache.camel.example.spring</package>
-
-    <!-- Default JMX connector url: "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi/camel" -->
-    <jmxAgent id="agent" createConnector="true"/>
   </camelContext>
 
   <!-- lets configure the default ActiveMQ broker URL -->

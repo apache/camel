@@ -71,7 +71,8 @@ public class MailEndpointTest extends CamelTestSupport {
         cfg.setUsername("james");
         cfg.setPassword("secret");
 
-        MailEndpoint endpoint = new MailEndpoint("smtp://myhost", cfg);
+        MailComponent comp = new MailComponent(cfg);
+        MailEndpoint endpoint = new MailEndpoint("smtp://myhost", comp, cfg);
         assertSame(cfg, endpoint.getConfiguration());
         assertNull(endpoint.getContentTypeResolver());
         assertNotNull(endpoint.getBinding());

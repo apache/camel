@@ -25,7 +25,6 @@ public interface BankWS {
 
     String getBankName();
 
-
     BankQuote getQuote(String ssn, double loanAmount, int loanDuration, int creditHistory, int creditScore);
 
 }

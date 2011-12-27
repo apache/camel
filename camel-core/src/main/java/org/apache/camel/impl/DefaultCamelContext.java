@@ -1994,7 +1994,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     /**
-     * Lets force some lazy initialization to occur upfront before we start any
+     * Force some lazy initialization to occur upfront before we start any
      * components and create routes
      */
     protected void forceLazyInitialization() {
@@ -2005,7 +2005,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     /**
-     * Lets force clear lazy initialization so they can be re-created on restart
+     * Force clear lazy initialization so they can be re-created on restart
      */
     protected void forceStopLazyInitialization() {
         injector = null;

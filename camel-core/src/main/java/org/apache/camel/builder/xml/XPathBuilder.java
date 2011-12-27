@@ -93,7 +93,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     // For some reason the default expression of "a/b" on a document such as
     // <a><b>1</b><b>2</b></a>
     // will evaluate as just "1" by default which is bizarre. So by default
-    // lets assume XPath expressions result in nodesets.
+    // let's assume XPath expressions result in nodesets.
     private Class<?> resultType;
     private QName resultQName = XPathConstants.NODESET;
     private String objectModelUri;
@@ -697,7 +697,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     }
 
     /**
-     * Lets populate a number of standard prefixes if they are not already there
+     * Populate a number of standard prefixes if they are not already there
      */
     protected void populateDefaultNamespaces(DefaultNamespaceContext context) {
         setNamespaceIfNotPresent(context, "in", IN_NAMESPACE);
@@ -802,7 +802,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             answer = body;
         }
 
-        // lets try coerce some common types into something JAXP can deal with
+        // let's try coercing some common types into something JAXP can work with
         if (answer instanceof WrappedFile) {
             // special for files so we can work with them out of the box
             InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, answer);

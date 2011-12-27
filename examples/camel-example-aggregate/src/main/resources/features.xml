@@ -16,13 +16,13 @@
     limitations under the License.
 -->
 <features>
-    <repository>mvn:org.apache.camel.karaf/apache-camel/${pom.version}/xml/features</repository>
+    <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
 
-    <feature name='camel-example-aggregate' version='${pom.version}'>
-        <feature version="${pom.version}">camel</feature>
-        <feature version="${pom.version}">camel-stream</feature>
-        <feature version="${pom.version}">camel-hawtdb</feature>
-        <bundle>mvn:org.apache.camel/camel-example-aggregate/${pom.version}</bundle>
+    <feature name='camel-example-aggregate' version='${project.version}'>
+        <feature version="${project.version}">camel</feature>
+        <feature version="${project.version}">camel-stream</feature>
+        <feature version="${project.version}">camel-hawtdb</feature>
+        <bundle>mvn:org.apache.camel/camel-example-aggregate/${project.version}</bundle>
     </feature>
 
 </features>

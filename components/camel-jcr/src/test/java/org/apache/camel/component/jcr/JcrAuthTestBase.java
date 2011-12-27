@@ -21,7 +21,6 @@ import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.security.AccessControlList;
 import javax.jcr.security.AccessControlManager;
-import javax.jcr.security.AccessControlPolicy;
 import javax.jcr.security.AccessControlPolicyIterator;
 import javax.naming.Context;
 

@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.loanbroker.webservice.version;
-
 
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
@@ -25,7 +23,6 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 /**
  * The client that will invoke the loan broker service
  */
-
 //START SNIPPET: client
 public class Client {
 
@@ -41,18 +38,21 @@ public class Client {
 
     public static void main(String[] args) {
         Client client = new Client();
-        String result = null;
         LoanBrokerWS loanBroker = client.getProxy(Constants.LOANBROKER_ADDRESS);
+
         long startTime = System.currentTimeMillis();
-        result = loanBroker.getLoanQuote("Sequential SSN", 1000.54, 10);
+        String result = loanBroker.getLoanQuote("Sequential SSN", 1000.54, 10);
         long endTime = System.currentTimeMillis();
+
         System.out.println("It takes " + (endTime - startTime) + " milliseconds to call the sequential loan broker service");
         System.out.println(result);
 
-        LoanBrokerWS paralleLoanBroker = client.getProxy(Constants.PARALLEL_LOANBROKER_ADDRESS);
+        LoanBrokerWS parallelLoanBroker = client.getProxy(Constants.PARALLEL_LOANBROKER_ADDRESS);
+
         startTime = System.currentTimeMillis();
-        result = paralleLoanBroker.getLoanQuote("Parallel SSN", 1000.54, 10);
+        result = parallelLoanBroker.getLoanQuote("Parallel SSN", 1000.54, 10);
         endTime = System.currentTimeMillis();
+
         System.out.println("It takes " + (endTime - startTime) + " milliseconds to call the parallel loan broker service");
         System.out.println(result);
     }

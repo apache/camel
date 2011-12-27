@@ -17,120 +17,49 @@
 package org.apache.camel.processor.idempotent.jdbc;
 
 import java.sql.Timestamp;
-
 import javax.sql.DataSource;
 
-import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
-import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.support.ServiceSupport;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * @version 
+ * Default implementation of {@link AbstractJdbcMessageIdRepository}
  */
-@ManagedResource(description = "JDBC based message id repository")
-public class JdbcMessageIdRepository extends ServiceSupport implements IdempotentRepository<String> {
-    
-    protected static final String QUERY_STRING = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
-    protected static final String INSERT_STRING = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
-    protected static final String DELETE_STRING = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
-    
-    private final JdbcTemplate jdbcTemplate;
-    private final String processorName;
-    private final TransactionTemplate transactionTemplate;
+public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<String> {
+
+    public static final String QUERY_STRING = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
+    public static final String INSERT_STRING = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
+    public static final String DELETE_STRING = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
+
+    public JdbcMessageIdRepository() {
+        super();
+    }
 
     public JdbcMessageIdRepository(DataSource dataSource, String processorName) {
-        this(dataSource, createTransactionTemplate(dataSource), processorName);
+        super(dataSource, processorName);
     }
 
     public JdbcMessageIdRepository(DataSource dataSource, TransactionTemplate transactionTemplate, String processorName) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
-        this.jdbcTemplate.afterPropertiesSet();
-        this.processorName = processorName;
-        this.transactionTemplate = transactionTemplate;
+        super(dataSource, transactionTemplate, processorName);
     }
 
-    public static JdbcMessageIdRepository jpaMessageIdRepository(DataSource dataSource, String processorName) {
-        return new JdbcMessageIdRepository(dataSource, processorName);
-    }
-
-    private static TransactionTemplate createTransactionTemplate(DataSource dataSource) {
-        TransactionTemplate transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(new DataSourceTransactionManager(dataSource));
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-        return transactionTemplate;
-    }
-
-    @ManagedOperation(description = "Adds the key to the store")
-    public boolean add(final String messageId) {
-        // Run this in single transaction.
-        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus status) {
-                int count = jdbcTemplate.queryForInt(QUERY_STRING, processorName, messageId);
-                if (count == 0) {
-                    jdbcTemplate.update(INSERT_STRING, processorName, messageId, new Timestamp(System.currentTimeMillis()));
-                    return Boolean.TRUE;
-                } else {
-                    return Boolean.FALSE;
-                }
-            }
-        });
-        return rc.booleanValue();
-    }
-
-    @ManagedOperation(description = "Does the store contain the given key")
-    public boolean contains(final String messageId) {
-        // Run this in single transaction.
-        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus status) {
-                int count = jdbcTemplate.queryForInt(QUERY_STRING, processorName, messageId);
-                if (count == 0) {
-                    return Boolean.FALSE;
-                } else {
-                    return Boolean.TRUE;
-                }
-            }
-        });
-        return rc.booleanValue();
-    }
-
-    @ManagedOperation(description = "Remove the key from the store")
-    public boolean remove(final String messageId) {
-        Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus status) {
-                int updateCount = jdbcTemplate.update(DELETE_STRING, processorName, messageId);
-                if (updateCount == 0) {
-                    return Boolean.FALSE;
-                } else {
-                    return Boolean.TRUE;
-                }
-            }
-        });
-        return rc.booleanValue();
-    }
-
-    public boolean confirm(String s) {
-        // noop
-        return true;
-    }
-
-    @ManagedAttribute(description = "The processor name")
-    public String getProcessorName() {
-        return processorName;
+    public JdbcMessageIdRepository(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
+        super(jdbcTemplate, transactionTemplate);
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected int queryForInt(String key) {
+        return jdbcTemplate.queryForInt(QUERY_STRING, processorName, key);
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected int insert(String key) {
+        return jdbcTemplate.update(INSERT_STRING, processorName, key, new Timestamp(System.currentTimeMillis()));
     }
+
+    @Override
+    protected int delete(String key) {
+        return jdbcTemplate.update(DELETE_STRING, processorName, key);
+    }
+
 }

@@ -20,7 +20,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedErrorHandlerMBean {
 
-    @ManagedAttribute(description = "Camel id")
+    @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
     @ManagedAttribute(description = "Does the error handler support redelivery")

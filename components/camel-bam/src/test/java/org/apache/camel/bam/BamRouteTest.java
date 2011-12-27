@@ -29,7 +29,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 import static org.apache.camel.util.Time.seconds;
 
 /**
@@ -74,14 +73,14 @@ public class BamRouteTest extends CamelSpringTestSupport {
         return new ProcessBuilder(jpaTemplate, transactionTemplate) {
             public void configure() throws Exception {
 
-                // lets define some activities, correlating on an XPath on the message bodies
+                // let's define some activities, correlating on an XPath on the message bodies
                 ActivityBuilder a = activity("seda:a").name("a")
                         .correlate(xpath("/hello/@id"));
 
                 ActivityBuilder b = activity("seda:b").name("b")
                         .correlate(xpath("/hello/@id"));
 
-                // now lets add some rules
+                // now let's add some rules
                 b.starts().after(a.completes())
                         .expectWithin(seconds(1))
                         .errorIfOver(seconds(errorTimeout)).to("mock:overdue");

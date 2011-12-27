@@ -35,7 +35,6 @@ import org.apache.camel.component.http4.HttpConstants;
 import org.apache.camel.component.http4.HttpConverter;
 import org.apache.camel.component.http4.HttpEndpoint;
 import org.apache.camel.component.http4.HttpMethods;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;

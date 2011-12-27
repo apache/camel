@@ -85,7 +85,7 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     protected void onExchange(Exchange exchange) throws Exception {
         getExchanges().add(exchange);
 
-        // lets fire any consumers
+        // now fire any consumers
         loadBalancer.process(exchange);
     }
 

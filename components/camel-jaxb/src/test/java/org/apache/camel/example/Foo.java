@@ -25,8 +25,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.model.RouteBuilderDefinition;
-
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Foo {

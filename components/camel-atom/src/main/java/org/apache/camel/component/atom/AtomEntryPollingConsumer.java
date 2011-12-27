@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(AtomEntryPollingConsumer.class);
     private Document<Feed> document;
 
     public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate, boolean throttleEntries) {

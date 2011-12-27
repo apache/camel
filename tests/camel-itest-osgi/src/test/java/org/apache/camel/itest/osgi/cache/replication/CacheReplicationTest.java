@@ -66,24 +66,14 @@ public class CacheReplicationTest extends OSGiIntegrationSpringTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-        // Default karaf environment
-                Helper.getDefaultOptions(
-                    // this is how you set the default log level when using pax
-                    // logging (logProfile)
-                    Helper.setLogLevel("WARN")),
-                    
-                    // install the spring, http features first
-                    scanFeatures(getKarafFeatureUrl(), "spring", "spring-dm", "jetty"),
+                // Default karaf environment
+                getDefaultCamelKarafOptions(),
+                // using the features to install the camel components
+                scanFeatures(getCamelKarafFeatureUrl(), "jetty", "camel-jms", "camel-cache"),
 
-                    // using the features to install AMQ
-                    scanFeatures("mvn:org.apache.activemq/activemq-karaf/5.5.0/xml/features",
-                            "activemq"),
-
-                    // using the features to install the camel components
-                    scanFeatures(getCamelKarafFeatureUrl(),
-                            "camel-core", "camel-spring", "camel-test", "camel-jms", "camel-cache"),
-
-                workingDirectory("target/paxrunner/"),
+                // using the features to install AMQ
+                scanFeatures("mvn:org.apache.activemq/activemq-karaf/5.5.0/xml/features",
+                        "activemq"),
 
                 felix());
 

@@ -48,6 +48,12 @@
             <to uri="mock:wombat"/>
         </route>
 
+        <route id="nolog">
+            <from uri="direct:nolog"/>
+            <log message="Should not log ${body}" loggingLevel="TRACE"/>
+            <to uri="mock:bar"/>
+        </route>
+
     </camelContext>
 
 </beans>

@@ -40,7 +40,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.ahc.helper.AhcHelper;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.GZIPHelper;

@@ -24,13 +24,13 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Processor State")
     String getState();
 
-    @ManagedAttribute(description = "Camel id")
+    @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
-    @ManagedAttribute(description = "Route id")
+    @ManagedAttribute(description = "Route ID")
     String getRouteId();
 
-    @ManagedAttribute(description = "Processor id")
+    @ManagedAttribute(description = "Processor ID")
     String getProcessorId();
 
     @ManagedOperation(description = "Start Processor")

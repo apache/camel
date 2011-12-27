@@ -20,8 +20,6 @@ package org.apache.camel.dataformat.protobuf;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.google.protobuf.Message;
 import com.google.protobuf.Message.Builder;
 

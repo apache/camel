@@ -184,7 +184,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         long index = receivedCount - 1;
         Exchange expected = createExchange(index);
 
-        // now lets assert that they are the same
+        // now let's assert that they are the same
         if (log.isDebugEnabled()) {
             log.debug("Received message: {} (DataSet index={}) = {}",
                     new Object[]{index, copy.getIn().getHeader(Exchange.DATASET_INDEX, Integer.class), copy});

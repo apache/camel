@@ -20,9 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Unit test for testing CXF bus injection.

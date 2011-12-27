@@ -75,7 +75,7 @@ public class Namespaces {
     }
 
     public Namespaces add(Element element) {
-        // lets set the parent first in case we overload a prefix here
+        // let's set the parent first in case we overload a prefix here
         Node parentNode = element.getParentNode();
         if (parentNode instanceof org.w3c.dom.Element) {
             add((Element) parentNode);

@@ -27,7 +27,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Lets use the Java DSL to create a black box CamelContext and then test its use from another context
+ * Allows for use of the Java DSL to create a black box CamelContext and then test its use from another context
  */
 public class JavaDslBlackBoxTest extends CamelTestSupport {
 
@@ -52,13 +52,13 @@ public class JavaDslBlackBoxTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        // lets create our black box as a camel context and a set of routes
+        // let's create our black box as a Camel context and a set of routes
         DefaultCamelContext blackBox = new DefaultCamelContext(registry);
         blackBox.setName("blackBox");
         blackBox.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // receive purchase orders, lets process it in some way then
+                // we received purchase orders, so let's process it in some way then
                 // send an invoice to our invoice endpoint
                 from("direct:purchaseOrder").setHeader("received").constant("true").to("direct:invoice");
             }

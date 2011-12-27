@@ -16,8 +16,13 @@
  */
 package org.apache.camel.example.reportincident;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -28,22 +33,30 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ReportIncidentRoutesClientTest extends CamelSpringTestSupport {
 
     // should be the same address as we have in our route
-    private static final String URL = "http://localhost:8181/cxf/camel-example-cxf-osgi/webservices/incident";
-   
-    protected static ReportIncidentEndpoint createCXFClient() {
+    private static final String URL = "http://localhost:{{port}}/cxf/camel-example-cxf-osgi/webservices/incident";
+
+    @BeforeClass
+    public static void setupFreePort() throws Exception {
+        // find a free port number from 9100 onwards, and write that in the custom.properties file
+        // which we will use for the unit tests, to avoid port number in use problems
+        int port = AvailablePortFinder.getNextAvailable(9100);
+        String s = "port=" + port;
+        File custom = new File("target/custom.properties");
+        FileOutputStream fos = new FileOutputStream(custom);
+        fos.write(s.getBytes());
+        fos.close();
+    }
+
+    protected static ReportIncidentEndpoint createCXFClient(String url) {
         // we use CXF to create a client for us as its easier than JAXWS and works
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(ReportIncidentEndpoint.class);
-        factory.setAddress(URL);
+        factory.setAddress(url);
         return (ReportIncidentEndpoint) factory.create();
     }
 
     @Test
-    public void testRendportIncident() throws Exception {
-        runTest();
-    }
-    
-    protected void runTest() throws Exception {
+    public void testReportIncident() throws Exception {
         // create input parameter
         InputReportIncident input = new InputReportIncident();
         input.setIncidentId("123");
@@ -56,7 +69,8 @@ public class ReportIncidentRoutesClientTest extends CamelSpringTestSupport {
         input.setPhone("0045 2962 7576");
 
         // create the webservice client and send the request
-        ReportIncidentEndpoint client = createCXFClient();
+        String url = context.resolvePropertyPlaceholders(URL);
+        ReportIncidentEndpoint client = createCXFClient(url);
         OutputReportIncident out = client.reportIncident(input);
 
         // assert we got a OK back
@@ -68,11 +82,11 @@ public class ReportIncidentRoutesClientTest extends CamelSpringTestSupport {
         
         // assert we got a Accept back
         assertEquals("Accepted", out.getCode());
-
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(new String[] {"camel-context.xml"});
     }
+
 }

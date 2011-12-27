@@ -175,7 +175,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
 
             LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
         } catch (InvocationTargetException e) {
-            // lets unwrap the exception when its an invocation target exception
+            // let's unwrap the exception when it's an invocation target exception
             exchange.setException(e.getCause());
             callback.done(true);
             return true;

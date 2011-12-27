@@ -14,21 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.transport;
+package org.apache.camel.component.cache;
 
-import java.util.List;
+import org.apache.camel.impl.JndiRegistry;
 
-public interface HelloService {
-    String sayHello();
-
-    void ping();
-
-    int getInvocationCount();
-
-    String echo(String text) throws Exception;
-
-    Boolean echoBoolean(Boolean bool);
+public class FileCacheManagerFactoyRefTest extends CacheManagerFactoryRefTest {
     
-    String complexParameters(List<String> par1, List<String> par2);
-    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = new JndiRegistry(createJndiContext());
+        testingCacheManagerFactory = new FileCacheManagerFactory("src/main/resources/ehcache.xml");
+        jndi.bind("testCacheManagerFactory", testingCacheManagerFactory);
+        return jndi;
+    }
+
 }

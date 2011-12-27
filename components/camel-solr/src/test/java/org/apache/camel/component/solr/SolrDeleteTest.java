@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.solr;
 
-import org.apache.solr.client.solrj.response.QueryResponse;
 import org.junit.Test;
 
 public class SolrDeleteTest extends SolrComponentTestSupport {

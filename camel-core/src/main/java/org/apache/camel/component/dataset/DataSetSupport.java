@@ -57,7 +57,7 @@ public abstract class DataSetSupport implements DataSet {
         Object expectedBody = expected.getIn().getBody();
         Object actualBody = actual.getIn().getBody();
         if (expectedBody != null) {
-            // lets coerce to the correct type
+            // let's coerce to the correct type
             actualBody = ExchangeHelper.getMandatoryInBody(actual, expectedBody.getClass());
         }
         DataSetEndpoint.assertEquals("message body", expectedBody, actualBody, actual);

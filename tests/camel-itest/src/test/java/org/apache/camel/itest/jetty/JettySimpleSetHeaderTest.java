@@ -22,8 +22,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
-
 /**
  * @version 
  */

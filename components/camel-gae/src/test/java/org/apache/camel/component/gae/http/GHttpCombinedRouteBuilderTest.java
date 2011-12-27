@@ -27,7 +27,6 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.gae.support.ServletTestSupport;
 import org.eclipse.jetty.server.Server;
 import org.junit.After;
@@ -35,7 +34,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
 import static org.apache.camel.component.gae.TestConfig.getBaseUri;

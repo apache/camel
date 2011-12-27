@@ -18,7 +18,6 @@ package org.apache.camel.component.cxf.blueprint;
 
 import java.util.List;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;

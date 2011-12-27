@@ -20,27 +20,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.ws.rs.core.Response;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.camel.Converter;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.cxf.CxfEndpoint;
-import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.util.EndpointHelper;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
-import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

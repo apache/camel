@@ -36,13 +36,13 @@ public class MyModule extends CamelModuleWithMatchingRoutes {
     protected void configure() {
         super.configure();
 
-        // lets add in any RouteBuilder instances we want to use
+        // let's add in any RouteBuilder instances we want to use
         bind(MyRouteBuilder.class);
         bind(Printer.class);
     }
 
     /**
-     * Lets configure the JMS component, parameterizing some properties from the
+     * Let's configure the JMS component, parameterizing some properties from the
      * jndi.properties file
      */
     @Provides

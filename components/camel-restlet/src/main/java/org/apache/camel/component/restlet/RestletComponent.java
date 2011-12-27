@@ -16,16 +16,13 @@
  */
 package org.apache.camel.component.restlet;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;

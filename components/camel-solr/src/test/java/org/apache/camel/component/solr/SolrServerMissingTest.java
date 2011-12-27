@@ -17,8 +17,6 @@
 package org.apache.camel.component.solr;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.solr.client.solrj.SolrServerException;

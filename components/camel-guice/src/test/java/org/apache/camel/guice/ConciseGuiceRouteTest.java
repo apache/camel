@@ -21,7 +21,7 @@ import com.google.inject.Injector;
 import org.junit.Assert;
 import org.junit.Test;
 /**
- * Lets use a RouteBuilder to bind instances of routes to the CamelContext
+ * Uses a RouteBuilder to bind instances of routes to the CamelContext
  *
  * @version 
  */

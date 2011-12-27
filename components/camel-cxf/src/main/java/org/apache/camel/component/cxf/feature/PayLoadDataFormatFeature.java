@@ -18,9 +18,6 @@ package org.apache.camel.component.cxf.feature;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
@@ -38,7 +35,6 @@ import org.apache.cxf.jaxws.interceptors.HolderOutInterceptor;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessageInfo;
-import org.apache.cxf.service.model.MessagePartInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

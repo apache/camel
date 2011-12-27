@@ -46,6 +46,7 @@ public class StreamEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
+    @Deprecated
     public StreamEndpoint(String endpointUri) {
         super(endpointUri);
     }

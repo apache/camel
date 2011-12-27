@@ -17,7 +17,6 @@
 package org.apache.camel.component.spring.security;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.security.auth.Subject;

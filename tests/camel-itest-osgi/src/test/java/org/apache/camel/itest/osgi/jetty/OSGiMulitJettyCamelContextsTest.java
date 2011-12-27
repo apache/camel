@@ -18,8 +18,6 @@ package org.apache.camel.itest.osgi.jetty;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
-import org.apache.karaf.testing.Helper;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;

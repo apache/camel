@@ -36,7 +36,7 @@ public final class PredicateAssertHelper {
         ObjectHelper.notNull(exchange, "exchange");
 
         if (predicate instanceof BinaryPredicate) {
-            // special for binary evaluable as we can get more detailed information
+            // with binary evaluations as we can get more detailed information
             BinaryPredicate eval = (BinaryPredicate) predicate;
             String evalText = eval.matchesReturningFailureMessage(exchange);
             if (evalText != null) {

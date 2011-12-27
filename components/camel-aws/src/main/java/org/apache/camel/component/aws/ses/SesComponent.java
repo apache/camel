@@ -48,6 +48,6 @@ public class SesComponent extends DefaultComponent {
             throw new IllegalArgumentException("AmazonSESClient or accessKey and secretKey must be specified");
         }
 
-        return new SesEndpoint(uri, getCamelContext(), configuration);
+        return new SesEndpoint(uri, this, configuration);
     }
 }

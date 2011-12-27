@@ -16,14 +16,11 @@
  */
 package org.apache.camel.language.sql;
 
-import javax.xml.namespace.QName;
-
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.sql.SqlBuilder;
-import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.spi.Language;
 import org.josql.QueryParseException;
 

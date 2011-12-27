@@ -27,9 +27,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class ReportIncidentRoutes extends RouteBuilder {
     
     public void configure() throws Exception {
-        // webservice response for OK
+        // webservice responses
         OutputReportIncident ok = new OutputReportIncident();
         ok.setCode("OK");
+
         OutputReportIncident accepted = new OutputReportIncident();
         accepted.setCode("Accepted");
 
@@ -37,7 +38,9 @@ public class ReportIncidentRoutes extends RouteBuilder {
             .convertBodyTo(InputReportIncident.class)
             .setHeader(Exchange.FILE_NAME, constant("request-${date:now:yyyy-MM-dd-HHmmssSSS}"))
             .wireTap("file://target/inbox/")
-            .choice().when(simple("${body.givenName} == 'Claus'")).transform(constant(ok))
-            .otherwise().transform(constant(accepted));
+            .choice().when(simple("${body.givenName} == 'Claus'"))
+                .transform(constant(ok))
+            .otherwise()
+                .transform(constant(accepted));
     }
 }

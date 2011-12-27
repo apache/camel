@@ -28,7 +28,7 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
     
     // Here we put the bank response together
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        LOG.debug("Get the exchange to aggregate, older: " + oldExchange + " newer:" + newExchange);
+        LOG.debug("oldExchange: {}, newExchange: {}", oldExchange, newExchange);
 
         // the first time we only have the new exchange
         if (oldExchange == null) {
@@ -51,7 +51,7 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
             result = newExchange;
         }
 
-        LOG.debug("Get the lower rate exchange " + result);
+        LOG.debug("Lowest rate exchange: {}", result);
         return result;
     }
 

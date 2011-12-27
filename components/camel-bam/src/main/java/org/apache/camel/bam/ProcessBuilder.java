@@ -29,20 +29,15 @@ import org.apache.camel.bam.model.ProcessDefinition;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.processor.ActivityMonitorEngine;
 import org.apache.camel.bam.processor.JpaBamProcessor;
-import org.apache.camel.bam.processor.JpaBamProcessorSupport;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.ClassUtils;
-
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -157,7 +152,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
         ObjectHelper.notNull(getJpaTemplate(), "jpaTemplate", this);
         ObjectHelper.notNull(getTransactionTemplate(), "transactionTemplate", this);
 
-        // lets add the monitoring service - should there be an easier way??
+        // add the monitoring service - should there be an easier way??
         if (engine == null) {
             engine = new ActivityMonitorEngine(getJpaTemplate(), getTransactionTemplate(), getProcessRules());
         }
@@ -167,7 +162,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
             defaultCamelContext.addService(engine);
         }
 
-        // lets create the routes for the activites
+        // create the routes for the activities
         for (ActivityBuilder builder : activityBuilders) {
             from(builder.getEndpoint()).process(builder.getProcessor());
         }

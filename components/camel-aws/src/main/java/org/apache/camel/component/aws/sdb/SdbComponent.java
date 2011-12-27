@@ -48,7 +48,7 @@ public class SdbComponent extends DefaultComponent {
             throw new IllegalArgumentException("amazonSDBClient or accessKey and secretKey must be specified");
         }
 
-        SdbEndpoint endpoint = new SdbEndpoint(uri, getCamelContext(), configuration);
+        SdbEndpoint endpoint = new SdbEndpoint(uri, this, configuration);
         return endpoint;
     }
 }

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.loanbroker.webservice.version;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,12 +33,8 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 
-
-
 /**
  * The LoanBroker is a RouteBuilder which builds the whole loan message routing rules
- *
- *
  */
 public class LoanBroker extends RouteBuilder {
 
@@ -66,6 +61,7 @@ public class LoanBroker extends RouteBuilder {
         creditAgencyServer.stop();
     }
     //END SNIPPET: server
+
     /**
      * Lets configure the Camel routing rules using Java code...
      */
@@ -121,7 +117,7 @@ public class LoanBroker extends RouteBuilder {
 
             String ssn = (String)request.get(0);
             Double amount = (Double) request.get(1);
-            Integer loanDuriation = (Integer)request.get(2);
+            Integer loanDuration = (Integer)request.get(2);
             int historyLength = proxy.getCreditHistoryLength(ssn);
             int score = proxy.getCreditScore(ssn);
 
@@ -129,7 +125,7 @@ public class LoanBroker extends RouteBuilder {
             List<Object> bankRequest = new ArrayList<Object>();
             bankRequest.add(ssn);
             bankRequest.add(amount);
-            bankRequest.add(loanDuriation);
+            bankRequest.add(loanDuration);
             bankRequest.add(historyLength);
             bankRequest.add(score);
             exchange.getOut().setBody(bankRequest);

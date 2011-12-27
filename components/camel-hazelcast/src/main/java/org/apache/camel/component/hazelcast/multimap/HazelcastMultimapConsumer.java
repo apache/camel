@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hazelcast.multimap;
 
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
