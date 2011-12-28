@@ -17,42 +17,28 @@
 package org.apache.camel.loanbroker.queue.version;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
+import org.apache.camel.loanbroker.webservice.version.bank.BankQuote;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 //START SNIPPET: aggregation
-public class BankResponseAggregationStrategy implements AggregationStrategy {    
-    private static final transient Logger LOG = LoggerFactory.getLogger(BankResponseAggregationStrategy.class);
-    
-    // Here we put the bank response together
-    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        LOG.debug("oldExchange: {}, newExchange: {}", oldExchange, newExchange);
+public class BankResponseAggregationStrategy implements AggregationStrategy {
 
+    @Override
+    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         // the first time we only have the new exchange
         if (oldExchange == null) {
             return newExchange;
         }
 
-        Message oldMessage;
-        Message newMessage;
-       
-        oldMessage = oldExchange.getIn();
-        newMessage = newExchange.getIn();
+        Double oldQuote = oldExchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
+        Double newQuote = newExchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
 
-        Double oldRate = oldMessage.getHeader(Constants.PROPERTY_RATE, Double.class);
-        Double newRate = newMessage.getHeader(Constants.PROPERTY_RATE, Double.class);
-
-        Exchange result;
-        if (newRate >= oldRate) {
-            result = oldExchange;
+        // return the winner with the lowest rate
+        if (oldQuote.doubleValue() <= newQuote.doubleValue()) {
+            return oldExchange;
         } else {
-            result = newExchange;
+            return newExchange;
         }
-
-        LOG.debug("Lowest rate exchange: {}", result);
-        return result;
     }
 
 }

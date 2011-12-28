@@ -21,9 +21,12 @@ import java.io.File;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 
+/**
+ * Embedded JMS broker
+ */
 public final class JmsBroker {
-    JMSEmbeddedBroker jmsBrokerThread;
-    String jmsBrokerUrl = "tcp://localhost:51616";
+    private JMSEmbeddedBroker jmsBrokerThread;
+    private String jmsBrokerUrl = "tcp://localhost:51616";
 
     public JmsBroker() {
     }

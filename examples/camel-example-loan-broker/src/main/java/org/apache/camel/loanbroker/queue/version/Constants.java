@@ -18,17 +18,9 @@ package org.apache.camel.loanbroker.queue.version;
 
 public interface Constants {
 
-    String LOANBROKER_SERVICE = "loan-broker";
-    String CREDITAGENCY_SERVICE = "credit-agency";
-    String LENDERGATEWAY_SERVICE = "lender-gateway";
-
-
     String PROPERTY_SSN = "ssn";
-    String PROPERTY_AMOUNT = "amount";
-    String PROPERTY_DURATION = "duration";
     String PROPERTY_SCORE = "score";
     String PROPERTY_HISTORYLENGTH = "hlength";
-    String PROPERTY_RECIPIENTS = "recipients";
     String PROPERTY_RATE = "rate";
     String PROPERTY_BANK = "bank";
 

@@ -20,16 +20,15 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 
 //START SNIPPET: client
-public class Client extends RouteBuilder {
+public final class Client {
+
+    private Client() {
+    }
 
     public static void main(String args[]) throws Exception {
         CamelContext context = new DefaultCamelContext();
@@ -37,53 +36,15 @@ public class Client extends RouteBuilder {
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:51616");
         // Note we can explicit name of the component
         context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
-
-        context.addRoutes(new Client());
+        context.start();
 
         ProducerTemplate template = context.createProducerTemplate();
 
-        context.start();
+        String out = template.requestBodyAndHeader("jms:queue:loan", null, Constants.PROPERTY_SSN, "Client-A", String.class);
+        System.out.println(out);
 
-        // send out the request message
-        for (int i = 0; i < 2; i++) {
-            template.sendBodyAndHeader("jms:queue:loanRequestQueue",
-                                       "Quote for the lowest rate of loaning bank",
-                                       Constants.PROPERTY_SSN, "Client-A" + i);
-            Thread.sleep(100);
-        }
-        // wait for the response
-        Thread.sleep(2000);
-        
-        // send the request and get the response from the same queue       
-        Exchange exchange = template.send("jms:queue2:parallelLoanRequestQueue", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.setPattern(ExchangePattern.InOut);
-                exchange.getIn().setBody("Quote for the lowst rate of loaning bank");
-                exchange.getIn().setHeader(Constants.PROPERTY_SSN, "Client-B");
-            }
-        });
-        
-        String bank = (String)exchange.getOut().getHeader(Constants.PROPERTY_BANK);
-        Double rate = (Double)exchange.getOut().getHeader(Constants.PROPERTY_RATE);
-        String ssn = (String)exchange.getOut().getHeader(Constants.PROPERTY_SSN);
-        System.out.println("Loan quote for Client " + ssn + "."
-                           + " The lowest rate bank is " + bank + ", with rate " + rate);
-        
-        // Wait a while before stop the context
-        Thread.sleep(1000 * 5);
+        template.stop();
         context.stop();
-    }
-
-    /**
-     * Lets configure the Camel routing rules using Java code to pull the response message
-     */
-    public void configure() {
-        from("jms:queue:loanReplyQueue").process(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // Print out the response message
-                System.out.println(exchange.getIn().getBody());
-            }
-        });
     }
 
 }

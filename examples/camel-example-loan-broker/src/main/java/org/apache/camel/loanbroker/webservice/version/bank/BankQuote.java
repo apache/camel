@@ -55,7 +55,7 @@ public class BankQuote {
     }
 
     public String toString() {
-        return "[ ssn:" + ssn + " bank:" + bankName + " rate:" + rate + " ]";
+        return "[ssn:" + ssn + " bank:" + bankName + " rate:" + rate + "]";
     }
 
 }

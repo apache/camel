@@ -14,22 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.loanbroker.queue.version;
+package org.apache.camel.loanbroker.webservice.version;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.loanbroker.webservice.version.bank.BankQuote;
 
-//START SNIPPET: translator
-public class Translator implements Processor {
-
+/**
+ * Processor to set the reply message for the loan broker web service
+ */
+public class ReplyProcessor implements Processor {
+    
+    @Override
     public void process(Exchange exchange) throws Exception {
-        String bank = (String)exchange.getIn().getHeader(Constants.PROPERTY_BANK);
-        Double rate = (Double)exchange.getIn().getHeader(Constants.PROPERTY_RATE);
-        String ssn = (String)exchange.getIn().getHeader(Constants.PROPERTY_SSN);
-        exchange.getOut().setBody("Loan quote for Client " + ssn + "."
-                                  + " The lowest rate bank is " + bank + ", with rate " + rate);
+        BankQuote quote = exchange.getIn().getBody(BankQuote.class);
+        
+        String answer = "The best rate is " + quote.toString();
+        exchange.getOut().setBody(answer);
     }
-
 }
-//END SNIPPET: translator
-

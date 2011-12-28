@@ -20,88 +20,44 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * The LoanBroker is a RouteBuilder which builds the whole loan message routing rules
- *
- * @version 
+ * Main class to start the loan broker server
  */
-public class LoanBroker extends RouteBuilder {
+public final class LoanBroker {
 
-    /**
-     * A main() so we can easily run these routing rules in our IDE
-     */
+    private LoanBroker() {
+    }
+
     // START SNIPPET: starting
     public static void main(String... args) throws Exception {
-
-        CamelContext context = new DefaultCamelContext();
+        // setup an embedded JMS broker
         JmsBroker broker = new JmsBroker();
         broker.start();
+
+        // create a camel context
+        CamelContext context = new DefaultCamelContext();
+
         // Set up the ActiveMQ JMS Components
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:51616");
-
         // Note we can explicitly name the component
         context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 
-        context.addRoutes(new LoanBroker());
-        // Start the loan broker
+        // add the route
+        context.addRoutes(new LoanBrokerRoute());
+
+        // start Camel
         context.start();
         System.out.println("Server is ready");
 
+        // let it run for 5 minutes before shutting down
         Thread.sleep(5 * 60 * 1000);
         context.stop();
         Thread.sleep(1000);
         broker.stop();
-
     }
     // END SNIPPET: starting
 
-    /**
-     * Lets configure the Camel routing rules using Java code...
-     */
-    public void configure() {
-    // START SNIPPET: dsl
-        // Put the message from loanRequestQueue to the creditRequestQueue
-        from("jms:queue:loanRequestQueue").to("jms:queue:creditRequestQueue");
-
-        // Now we can let the CreditAgency process the request, then the message will be put into creditResponseQueue
-        from("jms:queue:creditRequestQueue").process(new CreditAgency()).to("jms:queue:creditResponseQueue");
-
-        // Here we use the multicast pattern to send the message to three different bank queues
-        from("jms:queue:creditResponseQueue").multicast().to("jms:queue:bank1", "jms:queue:bank2", "jms:queue:bank3");
-
-        // Each bank processor will process the message and put the response message into the bankReplyQueue
-        from("jms:queue:bank1").process(new Bank("bank1")).to("jms:queue:bankReplyQueue");
-        from("jms:queue:bank2").process(new Bank("bank2")).to("jms:queue:bankReplyQueue");
-        from("jms:queue:bank3").process(new Bank("bank3")).to("jms:queue:bankReplyQueue");
-
-        // Now we aggregate the response message by using the Constants.PROPERTY_SSN header.
-        // The aggregation will be complete when all the three bank responses are received
-        from("jms:queue:bankReplyQueue")
-            .aggregate(header(Constants.PROPERTY_SSN), new BankResponseAggregationStrategy())
-            .completionPredicate(header(Exchange.AGGREGATED_SIZE).isEqualTo(3))
-
-            // Here we do some translation and put the message back to loanReplyQueue
-            .process(new Translator()).to("jms:queue:loanReplyQueue");
-
-    // END SNIPPET: dsl
-        
-    // START SNIPPET: dsl-2
-        // CreditAgency will get the request from parallelLoanRequestQueue
-        from("jms:queue2:parallelLoanRequestQueue").process(new CreditAgency())
-            // Set the aggregation strategy for aggregating the out message            
-            .multicast(new BankResponseAggregationStrategy())
-                // Send out the request to three different banks in parallel
-                .parallelProcessing().to("jms:queue2:bank1", "jms:queue2:bank2", "jms:queue2:bank3");
-        
-        // Each bank processor will process the message and put the response message back
-        from("jms:queue2:bank1").process(new Bank("bank1"));
-        from("jms:queue2:bank2").process(new Bank("bank2"));
-        from("jms:queue2:bank3").process(new Bank("bank3"));
-    // END SNIPPET: dsl-2
-    }
 }

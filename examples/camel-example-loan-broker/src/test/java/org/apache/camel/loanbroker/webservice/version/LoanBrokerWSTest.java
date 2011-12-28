@@ -16,50 +16,64 @@
  */
 package org.apache.camel.loanbroker.webservice.version;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
+import java.io.File;
+import java.io.FileOutputStream;
+
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class LoanBrokerWSTest extends Assert {
-    AbstractApplicationContext applicationContext;
+public class LoanBrokerWSTest extends CamelSpringTestSupport {
     
-    @Before
-    public void startServices() throws Exception {
-        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
-            applicationContext = new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/webServiceCamelContext.xml"});
-        } else {
-            System.out.println("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
-        }
-    }
+    private static String url;
     
-    @After
-    public void stopServices() throws Exception {
-        if (applicationContext != null) {
-            applicationContext.stop();
-        }
-    }
-    
-    @Test
-    public void testInvocation() {
-        Client client = new Client();
-        String result = null;
-        LoanBrokerWS loanBroker = client.getProxy(Constants.LOANBROKER_ADDRESS);
-        long startTime = System.currentTimeMillis();
-        result = loanBroker.getLoanQuote("Sequential SSN", 1000.54, 10);
-        long endTime = System.currentTimeMillis();
-        long delta1 = endTime - startTime;
-        assertTrue(result.startsWith("The best rate is [ ssn:Sequential SSN bank:bank"));
+    @BeforeClass
+    public static void setupFreePort() throws Exception {
+        // find a free port number from 9100 onwards, and write that in the custom.properties file
+        // which we will use for the unit tests, to avoid port number in use problems
+        int port = AvailablePortFinder.getNextAvailable(9100); 
+        String bank1 = "bank1.port=" + port;
+        port = AvailablePortFinder.getNextAvailable(port + 1);
+        String bank2 = "bank2.port=" + port;
+        port = AvailablePortFinder.getNextAvailable(port + 1);
+        String bank3 = "bank3.port=" + port;
+        port = AvailablePortFinder.getNextAvailable(port + 1);
+        String credit = "credit_agency.port=" + port;
+        port = AvailablePortFinder.getNextAvailable(port + 1);
+        String loan = "loan_broker.port=" + port;
 
-        LoanBrokerWS paralleLoanBroker = client.getProxy(Constants.PARALLEL_LOANBROKER_ADDRESS);
-        startTime = System.currentTimeMillis();
-        result = paralleLoanBroker.getLoanQuote("Parallel SSN", 1000.54, 10);
-        endTime = System.currentTimeMillis();
-        long delta2 = endTime - startTime;
-        assertTrue(result.startsWith("The best rate is [ ssn:Parallel SSN bank:bank"));
-        
-        assertTrue(delta2 < delta1);
+        File custom = new File("target/custom.properties");
+        FileOutputStream fos = new FileOutputStream(custom);
+        fos.write(bank1.getBytes());
+        fos.write("\n".getBytes());
+        fos.write(bank2.getBytes());
+        fos.write("\n".getBytes());
+        fos.write(bank3.getBytes());
+        fos.write("\n".getBytes());
+        fos.write(credit.getBytes());
+        fos.write("\n".getBytes());
+        fos.write(loan.getBytes());
+        fos.write("\n".getBytes());
+        fos.close();
+
+        url = "http://localhost:" + port + "/loanBroker";
+    }
+
+    @Test
+    public void testInvocation() throws Exception {
+        Client client = new Client();
+
+        LoanBrokerWS loanBroker = client.getProxy(url);
+        String result = loanBroker.getLoanQuote("SSN", 1000.54, 10);
+        log.info("Result: {}", result);
+        assertTrue(result.startsWith("The best rate is [ssn:SSN bank:bank"));
+    }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("/META-INF/spring/webServiceCamelContext.xml");
     }
 }

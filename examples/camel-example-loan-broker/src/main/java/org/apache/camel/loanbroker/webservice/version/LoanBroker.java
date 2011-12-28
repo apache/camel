@@ -16,123 +16,23 @@
  */
 package org.apache.camel.loanbroker.webservice.version;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.loanbroker.webservice.version.bank.BankServer;
-import org.apache.camel.loanbroker.webservice.version.credit.CreditAgencyServer;
-import org.apache.camel.loanbroker.webservice.version.credit.CreditAgencyWS;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.frontend.ClientFactoryBean;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.camel.spring.Main;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * The LoanBroker is a RouteBuilder which builds the whole loan message routing rules
+ * Main class to run the loan broker server from command line.
  */
-public class LoanBroker extends RouteBuilder {
+public final class LoanBroker {
 
-    //START SNIPPET: server
+    private LoanBroker() {
+    }
+
     public static void main(String... args) throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        CreditAgencyServer creditAgencyServer = new CreditAgencyServer();
-        // Start the credit server
-        creditAgencyServer.start();
-
-        // Start the bank server
-        BankServer bankServer = new BankServer();
-        bankServer.start();
-
-        // Start the camel context
-        context.addRoutes(new LoanBroker());
-        context.start();
-
-        // Start the loan broker
-        Thread.sleep(5 * 60 * 1000);
-        context.stop();
-        Thread.sleep(1000);
-        bankServer.stop();
-        creditAgencyServer.stop();
+        // create a new main which will boot the Spring XML file
+        Main main = new Main();
+        main.setApplicationContext(new ClassPathXmlApplicationContext("META-INF/spring/webServiceCamelContext.xml"));
+        main.enableHangupSupport();
+        main.run();
     }
-    //END SNIPPET: server
-
-    /**
-     * Lets configure the Camel routing rules using Java code...
-     */
-    public void configure() {
-    // START SNIPPET: dsl
-
-        // Router 1 to call the bank endpoints sequentially
-        from(Constants.LOANBROKER_URI)
-            // Using the CreditScoreProcessor to call the credit agency service
-            .process(new CreditScoreProcessor(Constants.CREDITAGENCY_ADDRESS))
-                // Set the aggregation strategy on the multicast pattern
-                .multicast(new BankResponseAggregationStrategy())
-                    // Send out the request to three different banks sequentially
-                    .to(Constants.BANK1_URI, Constants.BANK2_URI, Constants.BANK3_URI);
-
-        // Router 2 to call the bank endpoints in parallel
-        from(Constants.PARALLEL_LOANBROKER_URI)
-            .process(new CreditScoreProcessor(Constants.CREDITAGENCY_ADDRESS))
-                // Using the thread pool to send out messages to three different banks in parallel                
-                .multicast(new BankResponseAggregationStrategy())
-                    // Camel will create a thread pool with the default size (10) 
-                    // for sending the message in parallel
-                    .parallelProcessing()
-                    .to(Constants.BANK1_URI, Constants.BANK2_URI, Constants.BANK3_URI);
-
-    //END SNIPPET: dsl
-    }
-
-    //START SNIPPET: credit
-    class CreditScoreProcessor implements Processor {
-        private String creditAgencyAddress;
-        private CreditAgencyWS proxy;
-
-        public CreditScoreProcessor(String address) {
-            creditAgencyAddress = address;
-            proxy = getProxy();
-        }
-
-        private CreditAgencyWS getProxy() {
-            // Here we use JaxWs front end to create the proxy
-            JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
-            ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-            clientBean.setAddress(creditAgencyAddress);
-            clientBean.setServiceClass(CreditAgencyWS.class);
-            clientBean.setBus(BusFactory.getDefaultBus());
-            return (CreditAgencyWS)proxyFactory.create();
-        }
-
-        @SuppressWarnings("unchecked")
-        public void process(Exchange exchange) throws Exception {
-            Message requestMessage = exchange.getIn();
-            List<Object> request = (List<Object>) requestMessage.getBody();
-
-            String ssn = (String)request.get(0);
-            Double amount = (Double) request.get(1);
-            Integer loanDuration = (Integer)request.get(2);
-            int historyLength = proxy.getCreditHistoryLength(ssn);
-            int score = proxy.getCreditScore(ssn);
-
-            // create the invocation message for Bank client
-            List<Object> bankRequest = new ArrayList<Object>();
-            bankRequest.add(ssn);
-            bankRequest.add(amount);
-            bankRequest.add(loanDuration);
-            bankRequest.add(historyLength);
-            bankRequest.add(score);
-            exchange.getOut().setBody(bankRequest);
-            exchange.getOut().setHeader(CxfConstants.OPERATION_NAME, "getQuote");
-        }
-
-    }
-    //END SNIPPET: credit
 
 }

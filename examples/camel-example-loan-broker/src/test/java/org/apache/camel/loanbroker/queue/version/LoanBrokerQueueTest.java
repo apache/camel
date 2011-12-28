@@ -16,18 +16,12 @@
  */
 package org.apache.camel.loanbroker.queue.version;
 
-import java.util.List;
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.After;
@@ -46,20 +40,14 @@ public class LoanBrokerQueueTest extends TestSupport {
         camelContext = new DefaultCamelContext();
         broker = new JmsBroker("vm://localhost");
         broker.start();
+        
         // Set up the ActiveMQ JMS Components
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");
 
         // Note we can explicitly name the component
         camelContext.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 
-        camelContext.addRoutes(new LoanBroker());
-        
-        camelContext.addRoutes(new RouteBuilder() {
-            // using the mock endpoint to check the result
-            public void configure() throws Exception {
-                from("jms:queue:loanReplyQueue").to("mock:endpoint");
-            }
-        });
+        camelContext.addRoutes(new LoanBrokerRoute());
        
         template = camelContext.createProducerTemplate();
         camelContext.start();
@@ -79,45 +67,11 @@ public class LoanBrokerQueueTest extends TestSupport {
     
     @Test
     public void testClientInvocation() throws Exception {
-        MockEndpoint endpoint = camelContext.getEndpoint("mock:endpoint", MockEndpoint.class);
-        endpoint.expectedMessageCount(2);
-        // send out the request message
-        for (int i = 0; i < 2; i++) {
-            template.sendBodyAndHeader("jms:queue:loanRequestQueue",
-                                       "Quote for the lowerst rate of loaning bank",
-                                       Constants.PROPERTY_SSN, "Client-A" + i);
-            Thread.sleep(100);
-        }
-        endpoint.assertIsSatisfied();
-
-        // check the response from the mock endpoint
-        List<Exchange> exchanges = endpoint.getExchanges();
-        int index = 0;
-        for (Exchange exchange : exchanges) {
-            String ssn = "Client-A" + index;
-            String result = exchange.getIn().getBody(String.class);
-            assertNotNull("The result should not be null", result);
-            assertTrue("The result is wrong", result.startsWith("Loan quote for Client " + ssn));
-            index++;
-        }
+        String out = template.requestBodyAndHeader("jms:queue:loan", null, Constants.PROPERTY_SSN, "Client-A", String.class);
         
-        // send the request and get the response from the same queue       
-        Exchange exchange = template.send("jms:queue2:parallelLoanRequestQueue", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.setPattern(ExchangePattern.InOut);
-                exchange.getIn().setBody("Quote for the lowest rate of loaning bank");
-                exchange.getIn().setHeader(Constants.PROPERTY_SSN, "Client-B");
-            }
-        });
-        
-        String bank = exchange.getOut().getHeader(Constants.PROPERTY_BANK, String.class);
-        Double rate = exchange.getOut().getHeader(Constants.PROPERTY_RATE, Double.class);
-        String ssn = exchange.getOut().getHeader(Constants.PROPERTY_SSN, String.class);
-        
-        assertNotNull("The ssn should not be null.", ssn);
-        assertEquals("Get a wrong ssn", "Client-B",  ssn);
-        assertNotNull("The bank should not be null", bank);
-        assertNotNull("The rate should not be null", rate);
+        log.info("Result: {}", out);
+        assertNotNull(out);
+        assertTrue(out.startsWith("The best rate is [ssn:Client-A bank:bank"));
     }
 
 }
