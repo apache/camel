@@ -28,32 +28,27 @@
 	</parent>
 
 	<artifactId>camel-example-jms-file</artifactId>
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 	<name>Camel :: Example :: JMS-File</name>
 	<description>An example that persists messages from JMS to files</description>
 
-	<properties>
-		<camel.osgi.export.pkg>org.apache.camel.example.jmstofile.*</camel.osgi.export.pkg>
-		<camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool</camel.osgi.import.additional>
-	</properties>
-
 	<dependencies>
 
+    <!-- Camel dependencies -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-core</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-jms</artifactId>
 		</dependency>
 
+    <!-- ActiveMQ dependencies -->
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-core</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-camel</artifactId>
@@ -64,7 +59,6 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.xbean</groupId>
 			<artifactId>xbean-spring</artifactId>
@@ -76,21 +70,15 @@
 			</exclusions>
 		</dependency>
 
-        <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
 
 	</dependencies>
 
@@ -98,50 +86,13 @@
 		<profile>
 			<id>Example</id>
 			<properties>
-				<!--
-					Starting the camel-cxf example of routing the SOAP over http
-					message to SOAP over JMS Server
-				-->
 				<target.main.class>org.apache.camel.example.jmstofile.CamelJmsToFileExample</target.main.class>
-			</properties>
-		</profile>
-		<profile>
-			<id>Client</id>
-			<properties>
-				<!--
-					Starting the camel-cxf example of routing the SOAP over http
-					message to SOAP over JMS Server
-				-->
-				<target.main.class>org.apache.camel.example.jmstofile.JmsToFileClient</target.main.class>
 			</properties>
 		</profile>
 	</profiles>
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-artifacts</id>
-						<phase>package</phase>
-						<goals>
-							<goal>attach-artifact</goal>
-						</goals>
-						<configuration>
-							<artifacts>
-								<artifact>
-									<file>target/classes/features.xml</file>
-									<type>xml</type>
-									<classifier>features</classifier>
-								</artifact>
-							</artifacts>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 			<!-- Allows the example to be run via 'mvn compile exec:java' -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -153,4 +104,5 @@
 			</plugin>
 		</plugins>
 	</build>
+
 </project>

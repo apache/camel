@@ -20,8 +20,6 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
@@ -31,8 +29,6 @@ import org.apache.camel.impl.DefaultCamelContext;
  * An example class for demonstrating some of the basics behind Camel. This
  * example sends some text messages on to a JMS Queue, consumes them and
  * persists them to disk
- * 
- * @version 
  */
 public final class CamelJmsToFileExample {
 
@@ -52,16 +48,8 @@ public final class CamelJmsToFileExample {
         // Add some configuration by hand ...
         // START SNIPPET: e3
         context.addRoutes(new RouteBuilder() {
-
             public void configure() {
                 from("test-jms:queue:test.queue").to("file://test");
-                // set up a listener on the file component
-                from("file://test").process(new Processor() {
-
-                    public void process(Exchange e) {
-                        System.out.println("Received exchange: " + e.getIn());
-                    }
-                });
             }
         });
         // END SNIPPET: e3
@@ -85,6 +73,8 @@ public final class CamelJmsToFileExample {
             template.sendBody("test-jms:queue:test.queue", "Test Message: " + i);
         }
         // END SNIPPET: e5
+
+        // wait a bit and then stop
         Thread.sleep(1000);
         context.stop();
     }
