@@ -32,7 +32,7 @@ public final class Client {
     private Client() {
     }
 
-    public LoanBrokerWS getProxy(String address) {
+    public static LoanBrokerWS getProxy(String address) {
         // Now we use the simple front API to create the client proxy
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
@@ -43,8 +43,7 @@ public final class Client {
     }
 
     public static void main(String[] args) {
-        Client client = new Client();
-        LoanBrokerWS loanBroker = client.getProxy(url);
+        LoanBrokerWS loanBroker = getProxy(url);
 
         StopWatch watch = new StopWatch();
         String result = loanBroker.getLoanQuote("SSN", 5000.00, 24);

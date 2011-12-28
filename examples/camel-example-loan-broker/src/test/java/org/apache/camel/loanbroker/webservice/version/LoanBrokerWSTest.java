@@ -64,9 +64,7 @@ public class LoanBrokerWSTest extends CamelSpringTestSupport {
 
     @Test
     public void testInvocation() throws Exception {
-        Client client = new Client();
-
-        LoanBrokerWS loanBroker = client.getProxy(url);
+        LoanBrokerWS loanBroker = Client.getProxy(url);
         String result = loanBroker.getLoanQuote("SSN", 1000.54, 10);
         log.info("Result: {}", result);
         assertTrue(result.startsWith("The best rate is [ssn:SSN bank:bank"));
