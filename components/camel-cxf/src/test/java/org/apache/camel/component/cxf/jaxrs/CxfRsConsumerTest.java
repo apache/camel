@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.servlet.ServletRequest;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -36,6 +37,7 @@ import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -71,6 +73,21 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                                 // We just put the response Object into the out message body
                                 exchange.getOut().setBody(customer);
                             } else {
+                                if ("/customerservice/customers/400".equals(path)) {
+                                    // We return the remote client IP address this time
+                                    org.apache.cxf.message.Message cxfMessage = inMessage.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
+                                    ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
+                                    String remoteAddress = request.getRemoteAddr();
+                                    Response r = Response.status(200).entity("The remoteAddress is " + remoteAddress).build();
+                                    exchange.getOut().setBody(r);
+                                    return;
+                                }
+                                if ("/customerservice/customers/123".equals(path)) {
+                                    // send a customer response back
+                                    Response r = Response.status(200).entity("customer response back!").build();
+                                    exchange.getOut().setBody(r);
+                                    return;
+                                }
                                 if ("/customerservice/customers/456".equals(path)) {
                                     Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
                                     throw new WebApplicationException(r);
@@ -97,14 +114,30 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         };
     }
     // END SNIPPET: example
+
+    private void invokeGetCustomer(String uri, String expect) throws Exception {
+        HttpGet get = new HttpGet(uri);
+        get.addHeader("Accept" , "application/json");
+        HttpClient httpclient = new DefaultHttpClient();
+
+        try {
+            HttpResponse response = httpclient.execute(get);
+            assertEquals(200, response.getStatusLine().getStatusCode());
+            assertEquals(expect,
+                         EntityUtils.toString(response.getEntity()));
+        } finally {
+            httpclient.getConnectionManager().shutdown();
+        }
+    }
     
     @Test
     public void testGetCustomer() throws Exception {
-        URL url = new URL("http://localhost:9000/rest/customerservice/customers/126");
-
-        InputStream in = url.openStream();
-        assertEquals("{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}", CxfUtils.getStringFromInputStream(in));
-       
+        invokeGetCustomer("http://localhost:9000/rest/customerservice/customers/126",
+                          "{\"Customer\":{\"id\":126,\"name\":\"Willem\"}}");
+        invokeGetCustomer("http://localhost:9000/rest/customerservice/customers/123",
+                          "customer response back!");
+        invokeGetCustomer("http://localhost:9000/rest/customerservice/customers/400",
+            "The remoteAddress is 127.0.0.1");
     }
     
     @Test
