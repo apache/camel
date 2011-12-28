@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.10-SNAPSHOT</version>
+    <version>2.9-SNAPSHOT</version>
     <relativePath>../../parent</relativePath>
   </parent>
 
@@ -34,14 +34,6 @@
   <properties>
 	<camel.osgi.export.pkg>org.apache.camel.component.xmpp.*</camel.osgi.export.pkg>
   </properties>
-
-  <repositories>
-	<repository>
-		<id>m2-repository-smx</id>
-		<name>ServiceMix Maven2 Repository</name>
-		<url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-	</repository>
-  </repositories>
 
   <dependencies>
 

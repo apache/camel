@@ -141,7 +141,7 @@
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
     <shiro-bundle-version>1.1.0_2</shiro-bundle-version>
     <slf4j-version>1.6.1</slf4j-version>
-    <smack-version>3.2.0</smack-version>
+    <smack-version>3.2.1</smack-version>
     <snmp4j-version>1.8.1_5</snmp4j-version>
     <solr-version>3.5.0</solr-version>
     <spring-integration-version>2.0.5.RELEASE</spring-integration-version>
