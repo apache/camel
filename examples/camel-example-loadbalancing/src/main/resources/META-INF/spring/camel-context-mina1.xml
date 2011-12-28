@@ -16,8 +16,7 @@
     limitations under the License.
 -->
 
-<!-- Configures the Camel Context-->
-
+<!-- START SNIPPET: e1 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
@@ -27,12 +26,12 @@
 
   <bean id="service" class="org.apache.camel.example.service.Reporting"/>
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring" trace="false">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
 
     <route id="mina1">
-      <from uri="mina:tcp://localhost:9999"/>
+      <from uri="mina:tcp://localhost:9991"/>
       <setHeader headerName="minaServer">
-        <constant>localhost:9999</constant>
+        <constant>localhost:9991</constant>
       </setHeader>
       <bean ref="service" method="updateReport"/>
     </route>
@@ -40,3 +39,4 @@
   </camelContext>
 
 </beans>
+<!-- END SNIPPET: e1 -->

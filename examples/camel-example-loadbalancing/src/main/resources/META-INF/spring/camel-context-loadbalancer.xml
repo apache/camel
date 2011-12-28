@@ -16,8 +16,7 @@
     limitations under the License.
 -->
 
-<!-- Configures the Camel Context-->
-
+<!-- START SNIPPET: e1 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:camel="http://camel.apache.org/schema/spring"
@@ -27,10 +26,10 @@
 
   <bean id="service" class="org.apache.camel.example.service.Generator"/>
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring" trace="false">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
 
     <route id="sendMessage">
-      <from uri="timer://org.apache.camel.example.loadbalancer?fixedRate=true&amp;period=60000"/>
+      <from uri="timer://org.apache.camel.example.loadbalancer?period=10s"/>
       <bean ref="service" method="createReport"/>
       <to uri="direct:loadbalance"/>
     </route>
@@ -39,12 +38,13 @@
       <from uri="direct:loadbalance"/>
       <loadBalance>
         <roundRobin/>
-        <to uri="mina:tcp://localhost:9999?sync=true&amp;allowDefaultCodec=true"/>
-        <to uri="mina:tcp://localhost:9998?sync=true&amp;allowDefaultCodec=true"/>
+        <to uri="mina:tcp://localhost:9991?sync=true&amp;allowDefaultCodec=true"/>
+        <to uri="mina:tcp://localhost:9992?sync=true&amp;allowDefaultCodec=true"/>
       </loadBalance>
-      <to uri="log:org.apache.camel.example?level=INFO"/>
+      <log message="${body}"/>
     </route>
 
   </camelContext>
 
 </beans>
+<!-- END SNIPPET: e1 -->

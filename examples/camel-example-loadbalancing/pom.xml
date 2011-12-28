@@ -29,8 +29,8 @@
 	
 	<artifactId>camel-example-loadbalancing</artifactId>
 	<packaging>jar</packaging>
-	<name>Camel :: Example :: Loadbalancer camel-mina</name>
-	<description>An example that show loadbalancing messaging with mina servers (TCP/IP)</description>
+	<name>Camel :: Example :: Load Balancing</name>
+	<description>An example that demonstrate load balancing messaging with mina servers (TCP/IP)</description>
 
 	<dependencies>
 
@@ -48,10 +48,10 @@
 	    </dependency>
 
         <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+      </dependency>
 	    <dependency>
 	      <groupId>log4j</groupId> 
 	      <artifactId>log4j</artifactId> 
@@ -88,13 +88,7 @@
 
   <build>
   	<plugins>
-	    <!-- allows the route to be ran via 'mvn camel:run' -->
-	    <plugin>
-	        <groupId>org.apache.camel</groupId>
-	        <artifactId>camel-maven-plugin</artifactId>
-                <version>${project.version}</version>
-	    </plugin>
-      
+
 	    <!-- Allows the example to be run via 'mvn compile exec:java' -->
 	    <plugin>
 	        <groupId>org.codehaus.mojo</groupId>
