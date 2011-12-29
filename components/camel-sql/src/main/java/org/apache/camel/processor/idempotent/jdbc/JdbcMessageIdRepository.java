@@ -19,7 +19,10 @@ package org.apache.camel.processor.idempotent.jdbc;
 import java.sql.Timestamp;
 import javax.sql.DataSource;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -27,9 +30,11 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<String> {
 
-    public static final String QUERY_STRING = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
-    public static final String INSERT_STRING = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
-    public static final String DELETE_STRING = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
+    private String tableExistsString = "SELECT 1 FROM CAMEL_MESSAGEPROCESSED WHERE 1 = 0";
+    private String createString = "CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255), messageId VARCHAR(100), createdAt TIMESTAMP)";
+    private String queryString = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
+    private String insertString = "INSERT INTO CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)";
+    private String deleteString = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
 
     public JdbcMessageIdRepository() {
         super();
@@ -46,20 +51,81 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
     public JdbcMessageIdRepository(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
         super(jdbcTemplate, transactionTemplate);
     }
+    
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        
+        transactionTemplate.execute(new TransactionCallback<Boolean>() {
+            public Boolean doInTransaction(TransactionStatus status) {
+                try {
+                    // we will receive an exception if the table doesn't exists or we cannot access it
+                    jdbcTemplate.execute(tableExistsString);
+                    log.debug("table for JdbcMessageIdRepository already exists");
+                } catch (DataAccessException e) {
+                    log.debug("creating table for JdbcMessageIdRepository because it doesn't exists...");
+                    log.debug("executing query '{}'...", createString);
+                    // we will fail if we cannot create it
+                    jdbcTemplate.execute(createString);
+                    log.info("table created");
+                }
+                return Boolean.TRUE;
+            }
+        });
+    }
 
     @Override
     protected int queryForInt(String key) {
-        return jdbcTemplate.queryForInt(QUERY_STRING, processorName, key);
+        return jdbcTemplate.queryForInt(queryString, processorName, key);
     }
 
     @Override
     protected int insert(String key) {
-        return jdbcTemplate.update(INSERT_STRING, processorName, key, new Timestamp(System.currentTimeMillis()));
+        return jdbcTemplate.update(insertString, processorName, key, new Timestamp(System.currentTimeMillis()));
     }
 
     @Override
     protected int delete(String key) {
-        return jdbcTemplate.update(DELETE_STRING, processorName, key);
+        return jdbcTemplate.update(deleteString, processorName, key);
+    }
+    
+    public String getTableExistsString() {
+        return tableExistsString;
     }
 
+    public void setTableExistsString(String tableExistsString) {
+        this.tableExistsString = tableExistsString;
+    }
+    
+    public String getCreateString() {
+        return createString;
+    }
+
+    public void setCreateString(String createString) {
+        this.createString = createString;
+    }
+
+    public String getQueryString() {
+        return queryString;
+    }
+
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
+
+    public String getInsertString() {
+        return insertString;
+    }
+
+    public void setInsertString(String insertString) {
+        this.insertString = insertString;
+    }
+
+    public String getDeleteString() {
+        return deleteString;
+    }
+
+    public void setDeleteString(String deleteString) {
+        this.deleteString = deleteString;
+    }
 }
