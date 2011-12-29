@@ -38,11 +38,11 @@ public class ServerRoutes extends RouteBuilder {
         // as above but with the bean: prefix
         //from("jms:queue:numbers").to("bean:multiplier");
 
-        // beanRef is using explicity bean bindings to lookup the multiplier bean and invoke the multiply method
+        // beanRef is using explicit bean bindings to lookup the multiplier bean and invoke the multiply method
         //from("jms:queue:numbers").beanRef("multiplier", "multiply");
 
         // the same as above but expressed as a URI configuration
-        //from("activemq:queue:numbers").to("bean:multiplier?methodName=multiply");
+        //from("jms:queue:numbers").to("bean:multiplier?methodName=multiply");
     }
 
 }

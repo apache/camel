@@ -34,6 +34,10 @@
   <context:component-scan base-package="org.apache.camel.example.server"/>
   <!-- END SNIPPET: e2 -->
 
+  <!-- spring property placeholder, ignore resource not found as the file resource is for unit testing -->
+  <context:property-placeholder location="classpath:camel.properties,file:target/custom.properties"
+                                ignore-resource-not-found="true"/>
+
   <!-- START SNIPPET: e3 -->
   <!-- declare a camel context that scans for classes that is RouteBuilder
        in the package org.apache.camel.example.server -->
@@ -49,15 +53,18 @@
   <!-- lets configure the ActiveMQ JMS broker server to listen on TCP 61610 -->
   <broker:broker useJmx="true" persistent="false" brokerName="myBroker">
     <broker:transportConnectors>
-      <broker:transportConnector name="tcp" uri="tcp://localhost:61610"/>
+      <!-- expose a VM transport for in-JVM transport between AMQ and Camel on the server side -->
+      <broker:transportConnector name="vm" uri="vm://myBroker"/>
+      <!-- expose a TCP transport for clients to use -->
+      <broker:transportConnector name="tcp" uri="tcp://localhost:${tcp.port}"/>
     </broker:transportConnectors>
   </broker:broker>
   <!-- END SNIPPET: e4 -->
 
   <!-- START SNIPPET: e5 -->
-  <!-- lets configure the Camel ActiveMQ to use the ActiveMQ broker declared above -->
+  <!-- lets configure the Camel ActiveMQ to use the embedded ActiveMQ broker declared above -->
   <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
-    <property name="brokerURL" value="tcp://localhost:61610"/>
+    <property name="brokerURL" value="vm://myBroker"/>
   </bean>
   <!-- END SNIPPET: e5 -->
 
