@@ -171,7 +171,7 @@ public class NodeData {
     }
 
     /**
-     * Lets insert a space before each upper case letter after a lowercase
+     * Inserts a space before each upper case letter after a lowercase
      */
     public static String insertSpacesBetweenCamelCase(String name) {
         boolean lastCharacterLowerCase = false;

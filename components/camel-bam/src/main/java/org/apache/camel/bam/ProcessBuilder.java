@@ -152,7 +152,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
         ObjectHelper.notNull(getJpaTemplate(), "jpaTemplate", this);
         ObjectHelper.notNull(getTransactionTemplate(), "transactionTemplate", this);
 
-        // lets add the monitoring service - should there be an easier way??
+        // add the monitoring service - should there be an easier way??
         if (engine == null) {
             engine = new ActivityMonitorEngine(getJpaTemplate(), getTransactionTemplate(), getProcessRules());
         }
@@ -162,7 +162,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
             defaultCamelContext.addService(engine);
         }
 
-        // lets create the routes for the activites
+        // create the routes for the activities
         for (ActivityBuilder builder : activityBuilders) {
             from(builder.getEndpoint()).process(builder.getProcessor());
         }

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>examples</artifactId>
-        <version>2.9-SNAPSHOT</version>
+        <version>2.10-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-example-osgi-rmi</artifactId>
@@ -60,8 +60,12 @@
         <!-- used for mvn camel:run -->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
+            <artifactId>slf4j-log4j12</artifactId>
             <version>${slf4j-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
         </dependency>
 
     </dependencies>

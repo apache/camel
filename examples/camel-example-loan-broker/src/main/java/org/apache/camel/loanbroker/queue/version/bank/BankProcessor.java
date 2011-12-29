@@ -14,22 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.loanbroker.queue.version;
+package org.apache.camel.loanbroker.queue.version.bank;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.loanbroker.queue.version.Constants;
 
-//START SNIPPET: translator
-public class Translator implements Processor {
+//START SNIPPET: bank
+public class BankProcessor implements Processor {
+    private final String bankName;
+    private final double primeRate;
+
+    public BankProcessor(String name) {
+        bankName = name;
+        primeRate = 3.5;
+    }
 
     public void process(Exchange exchange) throws Exception {
-        String bank = (String)exchange.getIn().getHeader(Constants.PROPERTY_BANK);
-        Double rate = (Double)exchange.getIn().getHeader(Constants.PROPERTY_RATE);
-        String ssn = (String)exchange.getIn().getHeader(Constants.PROPERTY_SSN);
-        exchange.getOut().setBody("Loan quotion for Client " + ssn + "."
-                                  + " The lowest rate bank is " + bank + ", the rate is " + rate);
+        String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
+        Integer historyLength = exchange.getIn().getHeader(Constants.PROPERTY_HISTORYLENGTH, Integer.class);
+        double rate = primeRate + (double)(historyLength / 12) / 10 + (Math.random() * 10) / 10;
+
+        // set reply details as headers
+        exchange.getOut().setHeader(Constants.PROPERTY_BANK, bankName);
+        exchange.getOut().setHeader(Constants.PROPERTY_SSN, ssn);
+        exchange.getOut().setHeader(Constants.PROPERTY_RATE, rate);
     }
 
 }
-//END SNIPPET: translator
-
+//END SNIPPET: bank

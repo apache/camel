@@ -22,7 +22,6 @@ public class BankQuote {
     private Double rate;
 
     public BankQuote() {
-
     }
 
     public BankQuote(String name, String s, Double r) {
@@ -56,7 +55,7 @@ public class BankQuote {
     }
 
     public String toString() {
-        return "[ ssn:" + ssn + " bank:" + bankName + " rate:" + rate + " ]";
+        return "[ssn:" + ssn + " bank:" + bankName + " rate:" + rate + "]";
     }
 
 }

@@ -16,12 +16,17 @@
  */
 package org.apache.camel.example.reportincident;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
+import junit.framework.Assert;
 
 import org.apache.camel.spring.Main;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test of our routes
@@ -29,9 +34,28 @@ import static org.junit.Assert.assertEquals;
 public class ReportIncidentRoutesTest {
 
     // should be the same address as we have in our route
-    private static final String URL = "http://localhost:9080/camel-example-cxf-proxy/webservices/incident";
+    private static String url;
 
     protected Main main;
+
+    @BeforeClass
+    public static void setupFreePort() throws Exception {
+        // find a free port number from 9100 onwards, and write that in the custom.properties file
+        // which we will use for the unit tests, to avoid port number in use problems
+        int port = AvailablePortFinder.getNextAvailable(9100);
+        String s = "proxy.port=" + port;
+        int port2 = AvailablePortFinder.getNextAvailable(port + 1);
+        String s2 = "real.port=" + port2;
+
+        File custom = new File("target/custom.properties");
+        FileOutputStream fos = new FileOutputStream(custom);
+        fos.write(s.getBytes());
+        fos.write("\n".getBytes());
+        fos.write(s2.getBytes());
+        fos.close();
+
+        url = "http://localhost:" + port + "/camel-example-cxf-proxy/webservices/incident";
+    }
 
     protected void startCamel() throws Exception {
         if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
@@ -53,12 +77,12 @@ public class ReportIncidentRoutesTest {
         // we use CXF to create a client for us as its easier than JAXWS and works
         JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
         factory.setServiceClass(ReportIncidentEndpoint.class);
-        factory.setAddress(URL);
+        factory.setAddress(url);
         return (ReportIncidentEndpoint) factory.create();
     }
 
     @Test
-    public void testRendportIncident() throws Exception {
+    public void testReportIncident() throws Exception {
         // start camel
         startCamel();
 
@@ -82,13 +106,11 @@ public class ReportIncidentRoutesTest {
         input.setPhone("0045 2962 7576");
 
         // create the webservice client and send the request
+        
         ReportIncidentEndpoint client = createCXFClient();
         OutputReportIncident out = client.reportIncident(input);
 
         // assert we got a OK back
-        assertEquals("OK;456", out.getCode());
-
-        // let some time pass to allow Camel to pickup the file and send it as an email
-        Thread.sleep(3000);
+        Assert.assertEquals("OK;456", out.getCode());
     }
 }

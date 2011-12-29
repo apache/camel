@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.loanbroker.queue.version;
 
 import java.io.File;
@@ -22,10 +21,13 @@ import java.io.File;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.store.memory.MemoryPersistenceAdapter;
 
+/**
+ * Embedded JMS broker
+ */
 public final class JmsBroker {
-    JMSEmbeddedBroker jmsBrokerThread;
-    String jmsBrokerUrl = "tcp://localhost:51616";
-    String activeMQStorageDir;
+    private JMSEmbeddedBroker jmsBrokerThread;
+    private String jmsBrokerUrl = "tcp://localhost:51616";
+
     public JmsBroker() {
     }
 
@@ -42,10 +44,7 @@ public final class JmsBroker {
         synchronized (this) {
             jmsBrokerThread.shutdownBroker = true;
         }
-        if (jmsBrokerThread != null) {
-            jmsBrokerThread.join();
-        }
-        
+        jmsBrokerThread.join();
         jmsBrokerThread = null;
     }
     
@@ -53,8 +52,7 @@ public final class JmsBroker {
         boolean shutdownBroker;
         final String brokerUrl;
         Exception exception;
-        
-        
+
         public JMSEmbeddedBroker(String url) {
             brokerUrl = url;
         }
@@ -75,7 +73,6 @@ public final class JmsBroker {
         
         public void run() {
             try {  
-                //ContainerWapper container;
                 BrokerService broker = new BrokerService();
                 synchronized (this) {                                     
                     broker.setPersistenceAdapter(new MemoryPersistenceAdapter());                    
@@ -91,7 +88,6 @@ public final class JmsBroker {
                     }
                 }                
                 broker.stop();              
-                broker = null;                
             } catch (Exception e) {
                 exception = e;
                 e.printStackTrace();

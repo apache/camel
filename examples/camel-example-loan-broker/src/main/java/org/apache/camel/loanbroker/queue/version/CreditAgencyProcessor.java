@@ -18,36 +18,19 @@ package org.apache.camel.loanbroker.queue.version;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-//START SNIPPET: bank
-public class Bank implements Processor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(Bank.class);
-    private String bankName;
-    private double primeRate;
-
-    public Bank(String name) {
-        bankName = name;
-        primeRate = 3.5;
-    }
+//START SNIPPET: creditAgency
+public class CreditAgencyProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
-        Integer historyLength = exchange.getIn().getHeader(Constants.PROPERTY_HISTORYLENGTH, Integer.class);
-        double rate = primeRate + (double)(historyLength / 12) / 10 + (double)(Math.random() * 10) / 10;
-        LOG.info("The bank: " + bankName + " for client: " + ssn + " 's rate " + rate);
-        exchange.getOut().setHeader(Constants.PROPERTY_RATE, new Double(rate));
-        exchange.getOut().setHeader(Constants.PROPERTY_BANK, bankName);
+        int score = (int) (Math.random() * 600 + 300);
+        int hlength = (int) (Math.random() * 19 + 1);
+
+        exchange.getOut().setHeader(Constants.PROPERTY_SCORE, score);
+        exchange.getOut().setHeader(Constants.PROPERTY_HISTORYLENGTH, hlength);
         exchange.getOut().setHeader(Constants.PROPERTY_SSN, ssn);
-        exchange.getOut().setBody("Bank processed the request.");
-        // Sleep some time
-        try {
-            Thread.sleep((long) (Math.random() * 10) * 100);
-        } catch (InterruptedException e) {
-            // Discard
-        }
     }
 
 }
-//END SNIPPET: bank
+//END SNIPPET: creditAgency

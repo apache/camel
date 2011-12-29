@@ -18,23 +18,19 @@ package org.apache.camel.loanbroker.queue.version;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-//START SNIPPET: creditAgency
-public class CreditAgency implements Processor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CreditAgency.class);
+//START SNIPPET: translator
+public class ReplyProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
-        LOG.info("Receiving credit agency request");
+        String bankName = exchange.getIn().getHeader(Constants.PROPERTY_BANK, String.class);
         String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
-        int score = (int) (Math.random() * 600 + 300);
-        int hlength = (int) (Math.random() * 19 + 1);
-        exchange.getOut().setHeader(Constants.PROPERTY_SCORE, score);
-        exchange.getOut().setHeader(Constants.PROPERTY_HISTORYLENGTH, hlength);
-        exchange.getOut().setHeader(Constants.PROPERTY_SSN, ssn);
-        exchange.getOut().setBody("CreditAgency processed the request.");
+        Double rate = exchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
+
+        String answer = "The best rate is [ssn:" + ssn + " bank:" + bankName + " rate:" + rate + "]";
+        exchange.getOut().setBody(answer);
     }
 
 }
-//END SNIPPET: creditAgency
+//END SNIPPET: translator
+

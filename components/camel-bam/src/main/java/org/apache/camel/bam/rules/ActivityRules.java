@@ -68,7 +68,7 @@ public class ActivityRules extends ServiceSupport {
     //-------------------------------------------------------------------------
 
     public ActivityDefinition getActivityDefinition() {
-        // lets always query for it, to avoid issues with refreshing before a commit etc
+        // let's always query for it, to avoid issues with refreshing before a commit etc
         return builder.findOrCreateActivityDefinition(activityName);
     }
 

@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.loanbroker.webservice.version;
 
-
+import org.apache.camel.util.StopWatch;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
@@ -25,11 +24,15 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
 /**
  * The client that will invoke the loan broker service
  */
-
 //START SNIPPET: client
-public class Client {
+public final class Client {
+    
+    private static String url = "http://localhost:9008/loanBroker";
 
-    public LoanBrokerWS getProxy(String address) {
+    private Client() {
+    }
+
+    public static LoanBrokerWS getProxy(String address) {
         // Now we use the simple front API to create the client proxy
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
@@ -40,20 +43,12 @@ public class Client {
     }
 
     public static void main(String[] args) {
-        Client client = new Client();
-        String result = null;
-        LoanBrokerWS loanBroker = client.getProxy(Constants.LOANBROKER_ADDRESS);
-        long startTime = System.currentTimeMillis();
-        result = loanBroker.getLoanQuote("Sequential SSN", 1000.54, 10);
-        long endTime = System.currentTimeMillis();
-        System.out.println("It takes " + (endTime - startTime) + " milliseconds to call the sequential loan broker service");
-        System.out.println(result);
+        LoanBrokerWS loanBroker = getProxy(url);
 
-        LoanBrokerWS paralleLoanBroker = client.getProxy(Constants.PARALLEL_LOANBROKER_ADDRESS);
-        startTime = System.currentTimeMillis();
-        result = paralleLoanBroker.getLoanQuote("Parallel SSN", 1000.54, 10);
-        endTime = System.currentTimeMillis();
-        System.out.println("It takes " + (endTime - startTime) + " milliseconds to call the parallel loan broker service");
+        StopWatch watch = new StopWatch();
+        String result = loanBroker.getLoanQuote("SSN", 5000.00, 24);
+
+        System.out.println("Took " + watch.stop() + " milliseconds to call the loan broker service");
         System.out.println(result);
     }
 

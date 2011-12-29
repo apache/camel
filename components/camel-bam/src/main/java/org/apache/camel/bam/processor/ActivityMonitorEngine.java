@@ -109,7 +109,7 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
 
         template.execute(new JpaCallback() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
-                // lets try lock the object first
+                // let's try locking the object first
                 if (isUseLocking()) {
                     LOG.info("Attempting to lock: " + activityState);
                     entityManager.lock(activityState, LockModeType.WRITE);

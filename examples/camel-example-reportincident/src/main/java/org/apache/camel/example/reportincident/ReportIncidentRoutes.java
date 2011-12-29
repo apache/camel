@@ -41,11 +41,11 @@ public class ReportIncidentRoutes extends RouteBuilder {
 
         // endpoint to our CXF webservice  
         // We should use the related path to publish the service, when using the ServletTransport
-        // so we need to configure set the bus which is configured to use the ServletTranspot
+        // so we need to configure set the bus which is configured to use the ServletTransport
         String cxfEndpointAddress = "cxf:/incident?bus=#cxf&";
         // Using the full http address for stand alone running
         if (!usingServletTransport) {
-            cxfEndpointAddress = "cxf://http://localhost:9080/camel-example-reportincident/webservices/incident?";
+            cxfEndpointAddress = "cxf://http://localhost:{{port}}/camel-example-reportincident/webservices/incident?";
         }
         String cxfEndpoint = cxfEndpointAddress
                 + "serviceClass=org.apache.camel.example.reportincident.ReportIncidentEndpoint"

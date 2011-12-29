@@ -23,38 +23,22 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 //START SNIPPET: aggregating
 public class BankResponseAggregationStrategy implements AggregationStrategy {
 
-    public static final String BANK_QUOTE = "bank_quote";
-
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         // the first time we only have the new exchange
         if (oldExchange == null) {
             return newExchange;
         }
-
-        // Get the bank quote instance from the exchange
-        BankQuote oldQuote = oldExchange.getProperty(BANK_QUOTE, BankQuote.class);
-        // Get the oldQute from out message body if we can't get it from the exchange
-        if (oldQuote == null) {
-            oldQuote = oldExchange.getIn().getBody(BankQuote.class);
-        }
-        // Get the newQuote
+        
+        BankQuote oldQuote = oldExchange.getIn().getBody(BankQuote.class);
         BankQuote newQuote = newExchange.getIn().getBody(BankQuote.class);
-        Exchange result = null;
-        BankQuote bankQuote;
-
-        if (newQuote.getRate() >= oldQuote.getRate()) {
-            result = oldExchange;
-            bankQuote = oldQuote;
+        
+        // return the winner with the lowest rate
+        if (oldQuote.getRate() <= newQuote.getRate()) {
+            return oldExchange;
         } else {
-            result = newExchange;
-            bankQuote = newQuote;
+            return newExchange;
         }
-        // Set the lower rate BankQuote instance back to aggregated exchange
-        result.setProperty(BANK_QUOTE, bankQuote);
-        // Set the return message for the client
-        result.getOut().setBody("The best rate is " + bankQuote.toString());
-
-        return result;
     }
 
 }

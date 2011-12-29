@@ -177,5 +177,13 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
 
         assertTrue("Should match", pre.matches(exchange));
     }
+    
+    public void testSimpleExpressionPredicate() throws Exception {
+        exchange.getIn().setBody("Hello");
+        exchange.getIn().setHeader("number", "1234");
+        SimplePredicateParser parser = new SimplePredicateParser("${in.header.number} regex '\\d{4}'");
+        Predicate pre = parser.parsePredicate();
+        assertTrue("Should match", pre.matches(exchange));
+    }
 
 }

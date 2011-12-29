@@ -110,7 +110,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     private ClassLoader contextClassLoaderOnStart;
 
     public AbstractCamelContextFactoryBean() {
-        // Lets keep track of the class loader for when we actually do start things up
+        // Keep track of the class loader for when we actually do start things up
         contextClassLoaderOnStart = Thread.currentThread().getContextClassLoader();
     }
 

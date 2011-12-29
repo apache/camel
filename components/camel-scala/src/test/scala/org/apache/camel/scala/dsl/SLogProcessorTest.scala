@@ -39,5 +39,10 @@ class SLogProcessorTest extends LogProcessorTest with RouteBuilderSupport {
       // log(LoggingLevel.INFO, "cool", "mymarker", "Me got ${body}")
       to("mock:wombat")
     }
+
+    "nolog" :: "direct:nolog" ==> {
+      log(LoggingLevel.TRACE, "Should not log ${body}")
+      to("mock:bar")
+    }
   }
 }

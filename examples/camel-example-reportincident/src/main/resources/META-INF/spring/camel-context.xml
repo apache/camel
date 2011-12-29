@@ -25,20 +25,27 @@
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
          http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
 
+  <!-- this is Spring XML example of the Camel route in the ReportIncidentRoutes class -->
+  <!-- this is for demonstration purpose, to show how you can use Camel with XML DSL -->
+
   <!-- Needed Apache CXF imports -->
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
   
   <cxf:cxfEndpoint id="reportIncident"
-                   address="http://localhost:9080/camel-example-reportincident/webservices/incident"
+                   address="http://localhost:{{port}}/camel-example-reportincident/webservices/incident"
                    wsdlURL="etc/report_incident.wsdl"
                    serviceClass="org.apache.camel.example.reportincident.ReportIncidentEndpoint"/>
 
   <bean id="myBean" class="org.apache.camel.example.reportincident.MyBean"/>
+
   <bean id="filenameGenerator" class="org.apache.camel.example.reportincident.FilenameGenerator"/>
 
   <!-- this CamelContext contains the equivalent route from the Java DSL, but in XML
        so end users can see how to implement the route in both Java and XML -->
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+    <!-- property which contains port number -->
+    <camel:propertyPlaceholder id="properties" location="classpath:incident.properties,file:target/custom.properties"/>
 
     <route>
       <from uri="cxf:bean:reportIncident"/>

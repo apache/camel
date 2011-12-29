@@ -20,14 +20,14 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>2.9-SNAPSHOT</version>
+    <version>2.10-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-parent</artifactId>
-  <version>2.9-SNAPSHOT</version>
+  <version>2.10-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel :: Parent</name>
   <description>Camel Parent POM</description>
@@ -76,7 +76,7 @@
     <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
     <geronimo-servlet-spec-version>1.1.2</geronimo-servlet-spec-version>
-    <groovy-version>1.8.4</groovy-version>
+    <groovy-version>1.8.5</groovy-version>
     <guiceyfruit-version>2.0</guiceyfruit-version>
     <h2-version>1.3.161</h2-version>
     <hadoop-version>0.20.203.0</hadoop-version>
@@ -102,7 +102,7 @@
     <javax-mail-version>1.4.4</javax-mail-version>
     <jaxen-version>1.1.1</jaxen-version>
     <jclouds-version>1.2.1</jclouds-version>
-    <jclouds-feature-version>1.2.1_3</jclouds-feature-version>
+    <jclouds-feature-version>1.2.2</jclouds-feature-version>
     <jdom-version>1.1</jdom-version>
     <jetty-version>7.5.3.v20111011</jetty-version>
     <jettison-version>1.3</jettison-version>
@@ -141,7 +141,7 @@
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
     <shiro-bundle-version>1.1.0_2</shiro-bundle-version>
     <slf4j-version>1.6.1</slf4j-version>
-    <smack-version>3.2.0</smack-version>
+    <smack-version>3.2.1</smack-version>
     <snmp4j-version>1.8.1_5</snmp4j-version>
     <solr-version>3.5.0</solr-version>
     <spring-integration-version>2.0.5.RELEASE</spring-integration-version>

@@ -107,19 +107,20 @@ public class PropertiesComponent extends DefaultComponent {
     }
 
     public String parseUri(String uri, String... paths) throws Exception {
-        ObjectHelper.notNull(paths, "paths");
-
-        // location may contain JVM system property or OS environment variables
-        // so we need to parse those
-        String[] locations = parseLocations(paths);
-
-        // check cache first
-        CacheKey key = new CacheKey(locations);
-        Properties prop = cache ? cacheMap.get(key) : null;
-        if (prop == null) {
-            prop = propertiesResolver.resolveProperties(getCamelContext(), locations);
-            if (cache) {
-                cacheMap.put(key, prop);
+        Properties prop = null;
+        if (paths != null) {
+            // location may contain JVM system property or OS environment variables
+            // so we need to parse those
+            String[] locations = parseLocations(paths);
+    
+            // check cache first
+            CacheKey key = new CacheKey(locations);
+            prop = cache ? cacheMap.get(key) : null;
+            if (prop == null) {
+                prop = propertiesResolver.resolveProperties(getCamelContext(), locations);
+                if (cache) {
+                    cacheMap.put(key, prop);
+                }
             }
         }
 

@@ -14,26 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.component.velocity;
 
-package org.apache.camel.example.jmstofile;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.impl.JndiRegistry;
 
-public class JmsToFileRoute extends RouteBuilder {
-
-    @Override
-    public void configure() throws Exception {
-        from("test-jms:queue:test.queue").to("file://test");
-        // set up a listener on the file component
-        from("file://test").process(new Processor() {
-
-            public void process(Exchange e) {
-                System.out.println("Received exchange: " + e.getIn());
+public class VelocityFileLetterWithPropertyTest extends VelocityLetterTest {
+    
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry =  new JndiRegistry(createJndiContext());
+        registry.bind("properties", new PropertiesComponent());
+        return registry;
+    }
+    
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                
+                System.setProperty("ENV", "src/test/resources/");
+                
+                from("direct:a").to("velocity:file:{{ENV}}org/apache/camel/component/velocity/letter.vm").to("mock:result");
             }
-        });
-        
+        };
     }
 
 }

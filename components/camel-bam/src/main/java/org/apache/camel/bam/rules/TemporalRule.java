@@ -104,7 +104,7 @@ public class TemporalRule extends ServiceSupport {
         // TODO now we might need to set the second activity state
         // to 'grey' to indicate it now could happen?
 
-        // lets force the lazy creation of the second state
+        // let's force the lazy creation of the second state
         ActivityState secondState = second.getOrCreateActivityState(instance);
         if (expectedMillis > 0L) {
             Date expected = secondState.getTimeExpected();

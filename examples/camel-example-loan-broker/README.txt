@@ -1,22 +1,21 @@
 Loan Broker Example
 ====================
 
-This example shows how to use Camel to implement the EIP's loan broker example.
+This example shows how to use Camel to implement the EIP's loan broker example,
+from the EIP book (http://www.enterpriseintegrationpatterns.com/index.html).
 
-The example has two version, one is queue version which leverages the message
-queue to combine the credit agency and bank loan quote processing and it
-uses the InOnly exchange pattern; the other is web service version which shows
-how to integrate the credit agency and bank web services together and it uses
-the InOut exchange pattern.
+The example has two versions (JMS queues, and web services),
+that uses a different transport for exchanging messages between
+the client, credit agency, and the banks.
 
 You will need to compile this example first:
   mvn compile
 
-The example of queue version should run if you type
+The example of JMS queue version should run if you type
   mvn exec:java -PQueue.LoanBroker
   mvn exec:java -PQueue.Client
 
-The exmple of WebServices version
+The example of web services version
   mvn exec:java -PWS.LoanBroker
   mvn exec:java -PWS.Client
 

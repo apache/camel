@@ -28,7 +28,7 @@ import javax.xml.ws.Endpoint;
 public class RealWebServiceBean {
 
     // should be the same address as we have in our route
-    private String url = "http://localhost:9081/real-webservice";
+    private String url;
 
     private ReportIncidentEndpointService service = new ReportIncidentEndpointService();
     private Endpoint endpoint;

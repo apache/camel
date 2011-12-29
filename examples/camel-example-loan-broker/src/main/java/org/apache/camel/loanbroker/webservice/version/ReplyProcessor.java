@@ -14,25 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.jmstofile;
+package org.apache.camel.loanbroker.webservice.version;
 
-import org.apache.camel.CamelContext;
-import org.junit.Assert;
-import org.junit.Test;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.loanbroker.webservice.version.bank.BankQuote;
 
-public class JmsToFileRouteTest extends Assert {
+/**
+ * Processor to set the reply message for the loan broker web service
+ */
+public class ReplyProcessor implements Processor {
     
-    @Test
-    public void startRoute() throws Exception {
-        AbstractApplicationContext applicationContext =
-            new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/camelContext.xml"});
-        CamelContext camelContext = applicationContext.getBean("camelContext", CamelContext.class);
-        assertNotNull("The camel context should not be null", camelContext);
-        Thread.sleep(2000);        
-        camelContext.stop();
-        applicationContext.stop();
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        BankQuote quote = exchange.getIn().getBody(BankQuote.class);
+        
+        String answer = "The best rate is " + quote.toString();
+        exchange.getOut().setBody(answer);
     }
-
 }
