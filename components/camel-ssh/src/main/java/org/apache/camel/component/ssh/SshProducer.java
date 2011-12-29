@@ -16,17 +16,14 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.io.*;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 
 /**
  * The HelloWorld producer.
@@ -41,6 +38,7 @@ public class SshProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         System.out.println(exchange.getIn().getBody());
 

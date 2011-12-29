@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.net.URI;
-import java.util.Map;
+import java.net.*;
+import java.util.*;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class SshComponent extends DefaultComponent {
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SshConfiguration config = new SshConfiguration(new URI(uri));
 

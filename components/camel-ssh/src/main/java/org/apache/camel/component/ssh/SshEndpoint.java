@@ -20,7 +20,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
 
@@ -49,14 +48,17 @@ public class SshEndpoint extends DefaultEndpoint {
         this.config = config;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new SshProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new SshConsumer(this, processor);
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }

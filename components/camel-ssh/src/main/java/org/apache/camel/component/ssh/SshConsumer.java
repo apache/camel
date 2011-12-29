@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.util.*;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Date;
 
 public class SshConsumer extends ScheduledPollConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(SshConsumer.class);
@@ -34,7 +33,7 @@ public class SshConsumer extends ScheduledPollConsumer {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }
-    
+
     @Override
     protected int poll() throws Exception {
         Exchange exchange = endpoint.createExchange();

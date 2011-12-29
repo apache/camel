@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.ssh;
 
-import org.apache.camel.util.ObjectHelper;
+import java.net.*;
 
-import java.net.URI;
+import org.apache.camel.util.ObjectHelper;
 
 public class SshConfiguration {
     public static final int DEFAULT_SSH_PORT = 22;

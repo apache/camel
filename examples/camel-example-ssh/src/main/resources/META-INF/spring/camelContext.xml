@@ -23,15 +23,15 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring" trace="false">
-    <route>
-      <from uri="timer://myTimer?fixedRate=true&amp;period=2000"/>
-      <setBody>
-          <constant>osgi:list&#10;shell:logout&#10;</constant>
-      </setBody>
-      <to uri="ssh://karaf:karaf@localhost:8101"/>
-      <to uri="log:ExampleRouter?showAll=true"/>
-    </route>
-  </camelContext>
+    <camelContext xmlns="http://camel.apache.org/schema/spring" trace="false">
+        <route>
+            <from uri="timer://myTimer?fixedRate=true&amp;period=2000"/>
+            <setBody>
+                <constant>osgi:list&#10;shell:logout&#10;</constant>
+            </setBody>
+            <to uri="ssh://karaf:karaf@localhost:8101"/>
+            <to uri="log:ExampleRouter?showAll=true"/>
+        </route>
+    </camelContext>
 
 </beans>

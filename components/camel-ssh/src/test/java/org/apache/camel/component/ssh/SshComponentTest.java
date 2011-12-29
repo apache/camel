@@ -16,18 +16,16 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.net.*;
+import java.util.concurrent.CountDownLatch;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.Command;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-
-import java.net.ServerSocket;
-import java.util.concurrent.CountDownLatch;
 
 public class SshComponentTest extends CamelTestSupport {
 
@@ -42,7 +40,7 @@ public class SshComponentTest extends CamelTestSupport {
 
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);
-        sshd.setKeyPairProvider(new FileKeyPairProvider(new String[] { "src/test/resources/hostkey.pem" }));
+        sshd.setKeyPairProvider(new FileKeyPairProvider(new String[]{"src/test/resources/hostkey.pem"}));
         sshd.setShellFactory(new TestEchoShellFactory());
         sshd.setPasswordAuthenticator(new BogusPasswordAuthenticator());
         sshd.setPublickeyAuthenticator(new BogusPublickeyAuthenticator());
@@ -64,20 +62,21 @@ public class SshComponentTest extends CamelTestSupport {
     @Test
     public void testHelloWorld() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);       
-        
+        mock.expectedMinimumMessageCount(1);
+
         assertMockEndpointsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 from("timer://foo?fixedRate=true&period=5000")
-                  .setBody().constant("test\nexit\n")
-                  .to("ssh://smx:smx@localhost:"+port)
-                  .to("mock:result")
-                  .to("log:foo?showAll=true");
+                        .setBody().constant("test\nexit\n")
+                        .to("ssh://smx:smx@localhost:" + port)
+                        .to("mock:result")
+                        .to("log:foo?showAll=true");
             }
         };
     }
