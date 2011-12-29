@@ -40,8 +40,6 @@ public class SshProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        System.out.println(exchange.getIn().getBody());
-
         ClientSession session = endpoint.createSession();
 
         ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_SHELL);
