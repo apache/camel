@@ -23,9 +23,19 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring" trace="false">
-        <route>
-            <from uri="timer://myTimer?fixedRate=true&amp;period=2000"/>
+    <!--
+        Note: you need to XMl or URL encode newlines
+              XML encoding = &#10;
+              URL encoding = %0A
+    -->
+    <camelContext id="camel-example-ssh" xmlns="http://camel.apache.org/schema/spring" trace="false">
+        <route id="camel-example-ssh-consumer">
+            <from uri="ssh://karaf:karaf@localhost:8101?useFixedDelay=true&amp;delay=5000&amp;pollCommand=osgi:list%0Ashell:logout%0A"/>
+            <to uri="log:ExampleRouter?showAll=true"/>
+        </route>
+
+        <route id="camel-example-ssh-producer">
+            <from uri="direct:exampleSshProducerRoute"/>
             <setBody>
                 <constant>osgi:list&#10;shell:logout&#10;</constant>
             </setBody>
