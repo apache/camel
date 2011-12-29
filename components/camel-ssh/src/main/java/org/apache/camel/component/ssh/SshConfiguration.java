@@ -58,7 +58,12 @@ public class SshConfiguration {
         }
 
         setHost(uri.getHost());
-        setPort(uri.getPort());
+
+        // URI.getPort returns -1 if port not defined, else use default port
+        int uriPort = uri.getPort();
+        if (uriPort != -1) {
+            setPort(uriPort);
+        }
     }
 
     public String getUsername() {
