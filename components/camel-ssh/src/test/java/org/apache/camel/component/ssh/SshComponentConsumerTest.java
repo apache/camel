@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.net.*;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +28,6 @@ import org.apache.sshd.server.Command;
 import org.junit.Test;
 
 public class SshComponentConsumerTest extends CamelTestSupport {
-
     private SshServer sshd;
     private int port;
 
@@ -59,7 +57,7 @@ public class SshComponentConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHelloWorld() throws Exception {
+    public void testPollingConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
@@ -71,9 +69,9 @@ public class SshComponentConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=5000&pollCommand=test%0Dexit%0D")
-                    .to("mock:result")
-                    .to("log:foo?showAll=true");
+                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=5000&pollCommand=test%0D")
+                        .to("mock:result")
+                        .to("log:foo?showAll=true");
             }
         };
     }
@@ -97,5 +95,4 @@ public class SshComponentConsumerTest extends CamelTestSupport {
             }
         }
     }
-
 }

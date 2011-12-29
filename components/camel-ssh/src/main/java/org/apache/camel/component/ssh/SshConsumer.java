@@ -17,15 +17,12 @@
 package org.apache.camel.component.ssh;
 
 import java.io.*;
-import java.util.*;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SshConsumer extends ScheduledPollConsumer {
     private final SshEndpoint endpoint;
@@ -39,22 +36,27 @@ public class SshConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         ClientSession session = endpoint.createSession();
 
-        ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_SHELL);
+        ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_EXEC, endpoint.getPollCommand());
 
-        PipedOutputStream pipedIn = new PipedOutputStream();
-        channel.setIn(new PipedInputStream(pipedIn));
+        // TODO: do I need to put command into Channel IN for CHANNEL_EXEC?
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Writer w = new OutputStreamWriter(baos);
+        w.append(endpoint.getPollCommand());
+        w.close();
+        ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
+        channel.setIn(in);
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
         channel.setOut(out);
-        channel.setErr(err);
-        channel.open();
 
-        pipedIn.write(endpoint.getPollCommand());
-        pipedIn.flush();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        channel.setErr(err);
+
+        channel.open().await();
 
         channel.waitFor(ClientChannel.CLOSED, 0);
-
         channel.close(false);
+
         session.close(false);
 
         Exchange exchange = endpoint.createExchange();

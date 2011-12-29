@@ -28,7 +28,6 @@ import org.apache.sshd.server.Command;
 import org.junit.Test;
 
 public class SshComponentProducerTest extends CamelTestSupport {
-
     private SshServer sshd;
     private int port;
 
@@ -58,7 +57,7 @@ public class SshComponentProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testHelloWorld() throws Exception {
+    public void testProducer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
 
@@ -71,7 +70,7 @@ public class SshComponentProducerTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("timer://foo?fixedRate=true&period=5000")
-                        .setBody().constant("test\nexit\n")
+                        .setBody().constant("test\n")
                         .to("ssh://smx:smx@localhost:" + port)
                         .to("mock:result")
                         .to("log:foo?showAll=true");
@@ -98,5 +97,4 @@ public class SshComponentProducerTest extends CamelTestSupport {
             }
         }
     }
-
 }

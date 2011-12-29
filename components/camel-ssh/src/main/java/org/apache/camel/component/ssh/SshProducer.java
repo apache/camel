@@ -22,15 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * The HelloWorld producer.
- */
 public class SshProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SshProducer.class);
-
     private SshEndpoint endpoint;
 
     public SshProducer(SshEndpoint endpoint) {
@@ -42,25 +35,26 @@ public class SshProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         ClientSession session = endpoint.createSession();
 
-        ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_SHELL);
+        String command = exchange.getIn().getBody(String.class);
+        ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_EXEC, command);
 
-        PipedOutputStream pipedIn = new PipedOutputStream();
-        channel.setIn(new PipedInputStream(pipedIn));
+        // TODO: do I need to put command into Channel IN for CHANNEL_EXEC?
+        ByteArrayInputStream in = new ByteArrayInputStream(exchange.getIn().getBody(byte[].class));
+        channel.setIn(in);
+
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
         channel.setOut(out);
-        channel.setErr(err);
-        channel.open();
 
-        pipedIn.write(exchange.getIn().getBody(byte[].class));
-        pipedIn.flush();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        channel.setErr(err);
+
+        channel.open().await();
 
         channel.waitFor(ClientChannel.CLOSED, 0);
-
         channel.close(false);
+
         session.close(false);
 
         exchange.getOut().setBody(out.toByteArray());
     }
-
 }

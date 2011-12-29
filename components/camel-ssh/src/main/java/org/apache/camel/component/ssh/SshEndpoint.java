@@ -27,10 +27,9 @@ import org.apache.sshd.SshClient;
  * Represents an SSH endpoint.
  */
 public class SshEndpoint extends ScheduledPollEndpoint {
-
     private SshClient client;
     private SshConfiguration configuration;
-    private byte[] pollCommand;
+    private String pollCommand;
 
     public SshEndpoint() {
     }
@@ -84,11 +83,11 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         super.doStop();
     }
 
-    public byte[] getPollCommand() {
+    public String getPollCommand() {
         return pollCommand;
     }
 
-    public void setPollCommand(byte[] pollCommand) {
+    public void setPollCommand(String pollCommand) {
         this.pollCommand = pollCommand;
     }
 
@@ -102,5 +101,4 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public void setConfiguration(SshConfiguration configuration) {
         this.configuration = configuration;
     }
-
 }
