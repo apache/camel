@@ -27,7 +27,7 @@ import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.Command;
 import org.junit.Test;
 
-public class SshComponentTest extends CamelTestSupport {
+public class SshComponentProducerTest extends CamelTestSupport {
 
     private SshServer sshd;
     private int port;

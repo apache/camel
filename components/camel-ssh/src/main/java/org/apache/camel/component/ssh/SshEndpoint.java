@@ -19,33 +19,29 @@ package org.apache.camel.component.ssh;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
 
 /**
- * Represents a HelloWorld endpoint.
+ * Represents an SSH endpoint.
  */
-public class SshEndpoint extends DefaultEndpoint {
+public class SshEndpoint extends ScheduledPollEndpoint {
 
-    private SshConfiguration config;
     private SshClient client;
-    private int port;
+    private SshConfiguration configuration;
+    private byte[] pollCommand;
 
     public SshEndpoint() {
-    }
-
-    public SshEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     public SshEndpoint(String uri, SshComponent component) {
         super(uri, component);
     }
 
-    public SshEndpoint(String uri, SshComponent component, SshConfiguration config) {
+    public SshEndpoint(String uri, SshComponent component, SshConfiguration configuration) {
         super(uri, component);
-        this.config = config;
+        this.configuration = configuration;
     }
 
     @Override
@@ -64,8 +60,8 @@ public class SshEndpoint extends DefaultEndpoint {
     }
 
     ClientSession createSession() throws Exception {
-        ClientSession session = client.connect(config.getHost(), config.getPort()).await().getSession();
-        session.authPassword(config.getUsername(), config.getPassword()).await().isSuccess();
+        ClientSession session = client.connect(configuration.getHost(), configuration.getPort()).await().getSession();
+        session.authPassword(configuration.getUsername(), configuration.getPassword()).await().isSuccess();
 
         return session;
     }
@@ -88,7 +84,23 @@ public class SshEndpoint extends DefaultEndpoint {
         super.doStop();
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public byte[] getPollCommand() {
+        return pollCommand;
     }
+
+    public void setPollCommand(byte[] pollCommand) {
+        this.pollCommand = pollCommand;
+    }
+
+    public SshConfiguration getConfiguration() {
+        if (configuration == null) {
+            configuration = new SshConfiguration();
+        }
+        return configuration;
+    }
+
+    public void setConfiguration(SshConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
 }

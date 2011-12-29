@@ -16,17 +16,18 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.io.*;
 import java.util.*;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.sshd.ClientChannel;
+import org.apache.sshd.ClientSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SshConsumer extends ScheduledPollConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SshConsumer.class);
-
     private final SshEndpoint endpoint;
 
     public SshConsumer(SshEndpoint endpoint, Processor processor) {
@@ -36,11 +37,30 @@ public class SshConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
+        ClientSession session = endpoint.createSession();
+
+        ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_SHELL);
+
+        PipedOutputStream pipedIn = new PipedOutputStream();
+        channel.setIn(new PipedInputStream(pipedIn));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        channel.setOut(out);
+        channel.setErr(err);
+        channel.open();
+
+        pipedIn.write(endpoint.getPollCommand());
+        pipedIn.flush();
+
+        channel.waitFor(ClientChannel.CLOSED, 0);
+
+        channel.close(false);
+        session.close(false);
+
         Exchange exchange = endpoint.createExchange();
 
         // create a message body
-        Date now = new Date();
-        exchange.getIn().setBody("Hello World! The time is " + now);
+        exchange.getIn().setBody(out.toByteArray());
 
         try {
             // send message to next processor in the route

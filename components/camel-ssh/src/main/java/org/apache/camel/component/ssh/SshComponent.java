@@ -31,7 +31,8 @@ public class SshComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SshConfiguration config = new SshConfiguration(new URI(uri));
 
-        Endpoint endpoint = new SshEndpoint(uri, this, config);
+        SshEndpoint endpoint = new SshEndpoint(uri, this, config);
+        setProperties(endpoint.getConfiguration(), parameters);
         setProperties(endpoint, parameters);
         return endpoint;
     }
