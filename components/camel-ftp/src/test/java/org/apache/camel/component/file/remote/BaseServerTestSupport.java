@@ -16,13 +16,8 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Random;
-
-import org.apache.camel.converter.IOConverter;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 public class BaseServerTestSupport extends CamelTestSupport {
@@ -30,32 +25,7 @@ public class BaseServerTestSupport extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        File file = new File("./target/ftpport.txt");
-        file = file.getAbsoluteFile();
-
-        if (!file.exists()) {
-            // start from somewhere in the 21xxx range
-            port = 21000 + new Random().nextInt(900);
-        } else {
-            // read port number from file
-            String s = IOConverter.toString(file, null);
-            port = Integer.parseInt(s);
-            // use next number
-            port++;
-        }
-
-        // save to file, do not append
-        FileOutputStream fos = new FileOutputStream(file, false);
-        try {
-            fos.write(String.valueOf(port).getBytes());
-        } finally {
-            fos.close();
-        }
-    }
-
-    @AfterClass
-    public static void resetPort() throws Exception {
-        port = 0;
+        port = AvailablePortFinder.getNextAvailable(21000);
     }
 
     protected int getPort() {
