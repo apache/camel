@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.net.*;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
@@ -34,9 +34,7 @@ public class SshComponentProducerTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        ServerSocket s = new ServerSocket(0);
-        port = s.getLocalPort();
-        s.close();
+        port = AvailablePortFinder.getNextAvailable(22000);
 
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);
