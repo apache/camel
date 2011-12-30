@@ -39,7 +39,7 @@ public class SimpleWithPropertiesTest {
      * @throws Exception
      */
     @Test
-    public void testNullValue() throws Exception {
+    public void testProperty() throws Exception {
         CamelContext context = new DefaultCamelContext();
         Exchange exchange = new DefaultExchange(context);
         String result = SimpleBuilder.simple("{{test}}").evaluate(exchange, String.class);
