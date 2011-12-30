@@ -18,8 +18,8 @@ package org.apache.camel.component.ssh;
 
 import java.io.*;
 
-import org.apache.sshd.common.Factory;
 import org.apache.sshd.server.Command;
+import org.apache.sshd.server.CommandFactory;
 import org.apache.sshd.server.Environment;
 import org.apache.sshd.server.ExitCallback;
 
@@ -28,19 +28,24 @@ import org.apache.sshd.server.ExitCallback;
  *
  * @author <a href="mailto:dev@mina.apache.org">Apache MINA SSHD Project</a>
  */
-public class EchoShellFactory implements Factory<Command> {
+public class EchoCommandFactory implements CommandFactory {
 
     @Override
-    public Command create() {
-        return new EchoShell();
+    public Command createCommand(String command) {
+        return new EchoCommand(command);
     }
 
-    protected static class EchoShell implements Command, Runnable {
+    protected static class EchoCommand implements Command, Runnable {
+        private String command;
         private InputStream in;
         private OutputStream out;
         private OutputStream err;
         private ExitCallback callback;
         private Thread thread;
+
+        public EchoCommand(String command) {
+            this.command = command;
+        }
 
         @Override
         public void setInputStream(InputStream in) {
@@ -64,7 +69,7 @@ public class EchoShellFactory implements Factory<Command> {
 
         @Override
         public void start(Environment env) throws IOException {
-            thread = new Thread(this, "EchoShell");
+            thread = new Thread(this, "EchoCommand");
             thread.start();
         }
 
@@ -75,19 +80,9 @@ public class EchoShellFactory implements Factory<Command> {
 
         @Override
         public void run() {
-            BufferedReader r = new BufferedReader(new InputStreamReader(in));
             try {
-                while (true) {
-                    String s = r.readLine();
-                    if (s == null) {
-                        return;
-                    }
-                    out.write((s + "\n").getBytes());
-                    out.flush();
-                    if ("exit".equals(s)) {
-                        return;
-                    }
-                }
+                out.write(command.getBytes());
+                out.flush();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

@@ -38,7 +38,7 @@ public class SshComponentConsumerTest extends CamelTestSupport {
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);
         sshd.setKeyPairProvider(new FileKeyPairProvider(new String[]{"src/test/resources/hostkey.pem"}));
-        sshd.setShellFactory(new TestEchoShellFactory());
+        sshd.setCommandFactory(new TestEchoCommandFactory());
         sshd.setPasswordAuthenticator(new BogusPasswordAuthenticator());
         sshd.setPublickeyAuthenticator(new BogusPublickeyAuthenticator());
         sshd.start();
@@ -60,6 +60,7 @@ public class SshComponentConsumerTest extends CamelTestSupport {
     public void testPollingConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived(new Object[]{"test\r"});
 
         assertMockEndpointsSatisfied();
     }
@@ -76,15 +77,18 @@ public class SshComponentConsumerTest extends CamelTestSupport {
         };
     }
 
-    public static class TestEchoShellFactory extends EchoShellFactory {
+    public static class TestEchoCommandFactory extends EchoCommandFactory {
         @Override
-        public Command create() {
-            return new TestEchoShell();
+        public Command createCommand(String command) {
+            return new TestEchoCommand(command);
         }
 
-        public static class TestEchoShell extends EchoShell {
-
+        public static class TestEchoCommand extends EchoCommand {
             public static CountDownLatch latch = new CountDownLatch(1);
+
+            public TestEchoCommand(String command) {
+                super(command);
+            }
 
             @Override
             public void destroy() {
