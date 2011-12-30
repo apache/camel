@@ -22,12 +22,22 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class RecipientListCxfTest extends CamelSpringTestSupport {
+    
+    private static int port1 = AvailablePortFinder.getNextAvailable(20022);
+    private static int port2 = AvailablePortFinder.getNextAvailable(20023);
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("RecipientListCxfTest.port1", Integer.toString(port1));
+        System.setProperty("RecipientListCxfTest.port2", Integer.toString(port2));
+    }
 
     @EndpointInject(uri = "mock:reply")
     protected MockEndpoint replyEndpoint;

@@ -20,6 +20,8 @@ import javax.sql.DataSource;
 
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -48,6 +50,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
     protected String processorName;
     protected TransactionTemplate transactionTemplate;
     protected DataSource dataSource;
+    protected transient Logger log = LoggerFactory.getLogger(getClass());
 
     public AbstractJdbcMessageIdRepository() {
         super();

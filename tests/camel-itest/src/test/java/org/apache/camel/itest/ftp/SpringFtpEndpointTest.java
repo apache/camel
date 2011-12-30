@@ -23,6 +23,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
 import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
@@ -42,6 +43,12 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  */
 @ContextConfiguration
 public class SpringFtpEndpointTest extends AbstractJUnit4SpringContextTests {
+    private static int ftpPort = AvailablePortFinder.getNextAvailable(20125);
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("SpringFtpEndpointTest.ftpPort", Integer.toString(ftpPort));
+    }
     protected FtpServer ftpServer;
 
     @Autowired
@@ -87,7 +94,7 @@ public class SpringFtpEndpointTest extends AbstractJUnit4SpringContextTests {
         serverFactory.setFileSystem(fsf);
 
         ListenerFactory factory = new ListenerFactory();
-        factory.setPort(20125);
+        factory.setPort(ftpPort);
         serverFactory.addListener("default", factory.createListener());
 
         ftpServer = serverFactory.createServer();

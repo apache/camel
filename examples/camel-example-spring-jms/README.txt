@@ -8,11 +8,6 @@ with the received message.
 
 The Server is required to be running when you try the clients.
 
-The Server comes in two flavors:
-- Normal that acts as a JMS broker
-- As normal plus an AOP aspect that does audit trails of the invocation
-of the business service and uses Camel for mediation of the storage of the audit message.
-
 And for the Client we have a total of three flavors:
 - Normal use the ProducerTemplate ala Spring Template style
 - Using Spring Remoting for powerful "Client doesn't know at all its a remote call"
@@ -23,7 +18,6 @@ You will need to compile this example first:
 
 The example should run if you type:
   mvn exec:java -PCamelServer
-  mvn exec:java -PCamelServerAOP
 
   mvn exec:java -PCamelClient
   mvn exec:java -PCamelClientRemoting
@@ -45,6 +39,3 @@ have.  Enjoy!
 
 ------------------------
 The Camel riders!
-
-
-

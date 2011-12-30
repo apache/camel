@@ -22,19 +22,18 @@ import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 /**
  *
  */
-public class HttpJmsAsyncTimeoutTest extends CamelTestSupport {
+public class HttpJmsAsyncTimeoutTest extends HttpAsyncTestSupport {
 
     @Test
     public void testHttpJmsAsync() throws Exception {
         try {
-            template.requestBody("http://0.0.0.0:9080/myservice", "Hello World", String.class);
+            template.requestBody("http://0.0.0.0:"  + getPort() + "/myservice", "Hello World", String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
@@ -61,7 +60,7 @@ public class HttpJmsAsyncTimeoutTest extends CamelTestSupport {
                 // a lot of timeouts in the play :)
 
                 // jetty will timeout after 2 seconds
-                from("jetty:http://0.0.0.0:9080/myservice?continuationTimeout=2000")
+                from("jetty:http://0.0.0.0:" + getPort() + "/myservice?continuationTimeout=2000")
                     // jms request/reply will timeout after 5 seconds
                     .to("jms:queue:foo?requestTimeout=5000");
 

@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -43,6 +44,14 @@ public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);
     
     private static Endpoint endpoint;
+    
+    private static int port = AvailablePortFinder.getNextAvailable(20004);
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("CamelGreeterTest.port", Integer.toString(port));
+    }
+    
     @Autowired
     protected CamelContext camelContext;
 
@@ -53,7 +62,7 @@ public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
     public static void startServer() throws Exception {
         // Start the Greeter Server
         Object implementor = new GreeterImpl();
-        String address = "http://localhost:9000/SoapContext/SoapPort";
+        String address = "http://localhost:" + port + "/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor);
         LOG.info("The WS endpoint is published! ");
     }

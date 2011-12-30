@@ -23,6 +23,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
     <bean id="myFTPEndpoint" class="org.apache.camel.component.file.remote.FtpEndpoint">
         <property name="camelContext" ref="camel"/>
         <property name="configuration" ref="ftpConfig"/>
@@ -36,7 +37,7 @@
 
     <bean id="ftpConfig" class="org.apache.camel.component.file.remote.FtpConfiguration">
         <property name="host" value="localhost"/>
-        <property name="port" value="20125"/>
+        <property name="port" value="${SpringFtpEndpointTest.ftpPort}"/>
         <property name="username" value="admin"/>
         <property name="password" value="admin"/>
         <property name="protocol" value="ftp"/>

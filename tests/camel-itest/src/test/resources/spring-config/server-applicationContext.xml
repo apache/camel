@@ -26,9 +26,7 @@
 		http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-camel.xml" />
-
+	
 	<import	resource="classpath:spring-config/jms-applicationContext.xml" />
 
     <broker:broker useJmx="false" persistent="false" brokerName="localhost">

@@ -16,62 +16,51 @@
  */
 package org.apache.camel.example;
 
-import org.apache.camel.CamelContext;
+import java.io.File;
+import java.io.FileOutputStream;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.example.server.Multiplier;
-import org.junit.AfterClass;
-import org.junit.Assert;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringJmsClientServerTest extends Assert {
-    protected static ConfigurableApplicationContext serverContext;
-    
+public class SpringJmsClientServerTest extends CamelSpringTestSupport {
+
     @BeforeClass
-    public static void setUpServer() {
-        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
-            serverContext = new ClassPathXmlApplicationContext("/META-INF/spring/camel-server.xml");
-        } else {
-            System.out.println("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
-        }
-        
+    public static void setupFreePort() throws Exception {
+        // find a free port number from 9100 onwards, and write that in the custom.properties file
+        // which we will use for the unit tests, to avoid port number in use problems
+        int port = AvailablePortFinder.getNextAvailable(9100);
+        String bank1 = "tcp.port=" + port;
+
+        File custom = new File("target/custom.properties");
+        FileOutputStream fos = new FileOutputStream(custom);
+        fos.write(bank1.getBytes());
+        fos.close();
     }
-    
-    @AfterClass
-    public static void tearDownServer() {
-        if (serverContext != null) {
-            serverContext.stop();
-        }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("/META-INF/spring/camel-server.xml");
     }
     
     @Test
     public void testCamelClientInvocation() {
-        ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
-
-        // get the camel template for Spring template style sending of messages (= producer)
-        ProducerTemplate camelTemplate = context.getBean("camelTemplate", ProducerTemplate.class);
-        
         // as opposed to the CamelClientRemoting example we need to define the service URI in this java code
-        int response = (Integer)camelTemplate.sendBody("jms:queue:numbers", ExchangePattern.InOut, 22);
-        
+        int response = template.requestBody("jms:queue:numbers", 22, Integer.class);
         assertEquals("Get a wrong response", 66, response);
-        
-        context.stop();
     }
     
     @Test
     public void testCamelEndpointInvocation() throws Exception {
-        ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
-        CamelContext camel = context.getBean("camel-client", CamelContext.class);
-
         // get the endpoint from the camel context
-        Endpoint endpoint = camel.getEndpoint("jms:queue:numbers");
+        Endpoint endpoint = context.getEndpoint("jms:queue:numbers");
 
         // create the exchange used for the communication
         // we use the in out pattern for a synchronized exchange where we expect a response
@@ -85,8 +74,7 @@ public class SpringJmsClientServerTest extends Assert {
         // start the producer so it can operate
         producer.start();
 
-        // let the producer process the exchange where it does all the work in this oneline of code
-        
+        // let the producer process the exchange where it does all the work in this one line of code
         producer.process(exchange);
 
         // get the response from the out body and cast it to an integer
@@ -94,24 +82,8 @@ public class SpringJmsClientServerTest extends Assert {
         
         assertEquals("Get a wrong response.", 33, response);
 
-        // stop and exit the client
+        // stop the producer after usage
         producer.stop();
-        context.stop();
     }
     
-    @Test
-    public void testCamelRemotingInvocation() {
-        ConfigurableApplicationContext context = new ClassPathXmlApplicationContext("camel-client-remoting.xml");
-        // just get the proxy to the service and we as the client can use the "proxy" as it was
-        // a local object we are invoking. Camel will under the covers do the remote communication
-        // to the remote ActiveMQ server and fetch the response.
-        Multiplier multiplier = context.getBean("multiplierProxy", Multiplier.class);
-       
-        int response = multiplier.multiply(33);
-        
-        assertEquals("Get a wrong response", 99, response);
-        
-        context.stop();
-    }
-
 }

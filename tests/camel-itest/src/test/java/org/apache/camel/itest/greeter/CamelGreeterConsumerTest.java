@@ -25,6 +25,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hello_world_soap_http.PingMeFault;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,12 @@ import static org.junit.Assert.fail;
 
 @ContextConfiguration
 public class CamelGreeterConsumerTest extends AbstractJUnit4SpringContextTests {
+    private static int port = AvailablePortFinder.getNextAvailable(20001);
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("CamelGreeterConsumerTest.port", Integer.toString(port));
+    }
  
     @Autowired
     protected CamelContext camelContext;

@@ -10,9 +10,7 @@
 		http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd">
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
-	<import resource="classpath:META-INF/cxf/cxf-extension-camel.xml" />
-
+	
     <broker:broker useJmx="false" persistent="false" brokerName="localhost">
         <broker:transportConnectors>
             <broker:transportConnector name="vm" uri="vm://localhost"/>

@@ -25,8 +25,10 @@
     ">
 
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-    <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/SoapContext/SoapPort"
+    <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${CxfToJmsInOutTest.port}/SoapContext/SoapPort"
                      wsdlURL="wsdl/hello_world.wsdl"
                      serviceClass="org.apache.hello_world_soap_http.Greeter"
                      endpointName="s:SoapOverHttp"

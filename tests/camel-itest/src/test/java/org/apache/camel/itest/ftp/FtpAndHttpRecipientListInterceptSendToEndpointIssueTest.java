@@ -19,6 +19,7 @@ package org.apache.camel.itest.ftp;
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
@@ -27,18 +28,28 @@ import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  *
  */
 public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends CamelTestSupport {
+    protected static int ftpPort;
+    protected static int httpPort;
     protected FtpServer ftpServer;
+    
+    
+    @BeforeClass
+    public static void initPort() throws Exception {
+        ftpPort = AvailablePortFinder.getNextAvailable(20126);
+        httpPort = AvailablePortFinder.getNextAvailable(9193);
+    }
 
     @Test
     public void testFtpAndHttpIssue() throws Exception {
-        String ftp = "ftp:localhost:20126/myapp?password=admin&username=admin";
-        String http = "http://localhost:9193/myapp";
+        String ftp = "ftp:localhost:" + ftpPort + "/myapp?password=admin&username=admin";
+        String http = "http://localhost:" + httpPort + "/myapp";
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
@@ -61,7 +72,7 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
                     .recipientList(header("foo"))
                     .to("mock:result");
 
-                from("jetty:http://0.0.0.0:9193/myapp")
+                from("jetty:http://0.0.0.0:" + httpPort + "/myapp")
                     .transform().constant("Bye World");
 
                 from("seda:foo").to("mock:foo");
@@ -94,7 +105,7 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
         serverFactory.setFileSystem(fsf);
 
         ListenerFactory factory = new ListenerFactory();
-        factory.setPort(20126);
+        factory.setPort(ftpPort);
         serverFactory.addListener("default", factory.createListener());
 
         ftpServer = serverFactory.createServer();

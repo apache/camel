@@ -23,13 +23,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class HttpAsyncCallbackTest extends CamelTestSupport {
+public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
 
     @Test
     public void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
@@ -42,9 +41,10 @@ public class HttpAsyncCallbackTest extends CamelTestSupport {
 
         // Send 3 async request/reply message to the http endpoint
         // where we let the callback handle gathering the responses
-        template.asyncCallbackRequestBody("http://localhost:9080/myservice", "Claus", callback);
-        template.asyncCallbackRequestBody("http://localhost:9080/myservice", "Hadrian", callback);
-        template.asyncCallbackRequestBody("http://localhost:9080/myservice", "Willem", callback);
+        String url = "http://localhost:" + getPort() + "/myservice";
+        template.asyncCallbackRequestBody(url, "Claus", callback);
+        template.asyncCallbackRequestBody(url, "Hadrian", callback);
+        template.asyncCallbackRequestBody(url, "Willem", callback);
 
         // give on completion time to complete properly before we do assertions on its size
         // TODO: improve MockEndpoint.assertIsSatisfied(long) to make this sleep unnecessary
@@ -90,7 +90,7 @@ public class HttpAsyncCallbackTest extends CamelTestSupport {
                 // START SNIPPET: e1
                 // The mocks are here for unit test
                 // Simulate a slow http service (delaying 1 sec) we want to invoke async
-                from("jetty:http://0.0.0.0:9080/myservice")
+                from("jetty:http://0.0.0.0:" + getPort() + "/myservice")
                     .delay(300)
                     .transform(body().prepend("Hello "))
                     .to("mock:result");

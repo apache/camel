@@ -14,20 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example;
+package org.apache.camel.itest.async;
 
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class SpringJmsAOPClientServerTest extends SpringJmsClientServerTest {
+public class HttpAsyncTestSupport extends CamelTestSupport {
     
+    protected static int port;
+
     @BeforeClass
-    public static void setUpServer() {
-        if (!"true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"))) {
-            serverContext = new ClassPathXmlApplicationContext("/META-INF/spring/camel-server-aop.xml");
-        } else {
-            System.out.println("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
-        }
+    public static void initPort() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(23000);
+    }
+
+    protected int getPort() {
+        return port;
     }
 
 }

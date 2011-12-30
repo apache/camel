@@ -20,13 +20,12 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class HttpAsyncTest extends CamelTestSupport {
+public class HttpAsyncTest extends HttpAsyncTestSupport {
  
     @SuppressWarnings("unchecked")
     @Test
@@ -38,7 +37,7 @@ public class HttpAsyncTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Claus", "Bye World");
 
         // Send a async request/reply message to the http endpoint
-        Future future = template.asyncRequestBody("http://0.0.0.0:9080/myservice", "Hello World");
+        Future future = template.asyncRequestBody("http://0.0.0.0:" + getPort() + "/myservice", "Hello World");
 
         // We got the future so in the meantime we can do other stuff, as this is Camel
         // so lets invoke another request/reply route but this time is synchronous
@@ -73,7 +72,7 @@ public class HttpAsyncTest extends CamelTestSupport {
                 from("direct:name").transform(constant("Claus")).to("mock:result");
 
                 // Simulate a slow http service (delaying 1 sec) we want to invoke async
-                from("jetty:http://0.0.0.0:9080/myservice")
+                from("jetty:http://0.0.0.0:" + getPort() + "/myservice")
                     .delay(1000)
                     .transform(constant("Bye World"))
                     .to("mock:result");
