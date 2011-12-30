@@ -24,6 +24,7 @@
     ">
 
     <!-- START SNIPPET: e1 -->
+    <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
     <bean id="httpComponent" class="org.apache.camel.component.http4.HttpComponent">
         <property name="camelContext" ref="camel"/>
         <property name="clientConnectionManager" ref="clientConnectionManager"/>
@@ -65,7 +66,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" trace="true">
         <route>
             <from uri="direct:start"/>
-            <to uri="http://127.0.0.1:18080/"/>
+            <to uri="http://127.0.0.1:{{HttpTestServer.Port}}/"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

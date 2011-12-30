@@ -30,8 +30,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,6 +39,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
 public class Http4EndpointTest extends AbstractJUnit4SpringContextTests {
+    protected static HttpTestServer localServer;
 
     @Autowired
     protected CamelContext camelContext;
@@ -49,10 +50,10 @@ public class Http4EndpointTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mock;
 
-    protected HttpTestServer localServer;
+    
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
         localServer = new HttpTestServer(null, null);
         localServer.register("/", new HttpRequestHandler() {
             public void handle(HttpRequest request, HttpResponse response,
@@ -64,8 +65,8 @@ public class Http4EndpointTest extends AbstractJUnit4SpringContextTests {
         localServer.start();
     }
 
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void tearDown() throws Exception {
         if (localServer != null) {
             localServer.stop();
         }

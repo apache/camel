@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocketFactory;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpResponseFactory;
 import org.apache.http.HttpResponseInterceptor;
@@ -62,7 +63,9 @@ import org.apache.http.protocol.ResponseServer;
  * @author muellerc
  */
 public class HttpTestServer {
-
+    
+    public static final int PORT = AvailablePortFinder.getNextAvailable(18080);
+    
     /**
      * The local address to bind to.
      * The host is an IP number rather than "localhost" to avoid surprises
@@ -70,7 +73,7 @@ public class HttpTestServer {
      * The port is 0 to let the system pick one.
      */
     public static final InetSocketAddress TEST_SERVER_ADDR =
-        new InetSocketAddress("localhost", 18080);
+        new InetSocketAddress("localhost", PORT);
 
     /** The request handler registry. */
     private final HttpRequestHandlerRegistry handlerRegistry;
@@ -91,6 +94,12 @@ public class HttpTestServer {
 
     /** The number of connections this accepted. */
     private final AtomicInteger acceptedConnections = new AtomicInteger(0);
+    
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("HttpTestServer.Port", Integer.toString(PORT));
+    }
 
     /**
      * Creates a new test server.
