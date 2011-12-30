@@ -36,8 +36,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 public class CustomizedJdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
 
-    protected static final String SELECT_ALL_STRING = "SELECT messageId FROM CUSTOMIZED_CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
-    protected static final String DELETE_ALL_STRING = "DELETE FROM CUSTOMIZED_CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
+    protected static final String SELECT_ALL_STRING = "SELECT messageId FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE processorName = ?";
+    protected static final String DELETE_ALL_STRING = "DELETE FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE processorName = ?";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
     protected JdbcTemplate jdbcTemplate;

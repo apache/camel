@@ -29,15 +29,17 @@
         <property name="password" value=""/>
     </bean>
     
+    <!-- START SNIPPET: e1 -->
     <bean id="messageIdRepository" class="org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository">
     	<constructor-arg ref="dataSource" />
     	<constructor-arg value="myProcessorName" />
-    	<property name="tableExistsString" value="SELECT 1 FROM CUSTOMIZED_CAMEL_MESSAGEPROCESSED WHERE 1 = 0" />
-    	<property name="createString" value="CREATE TABLE CUSTOMIZED_CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255), messageId VARCHAR(100), createdAt DATETIME)" />
-    	<property name="queryString" value="SELECT COUNT(*) FROM CUSTOMIZED_CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?" />
-    	<property name="insertString" value="INSERT INTO CUSTOMIZED_CAMEL_MESSAGEPROCESSED (processorName, messageId, createdAt) VALUES (?, ?, ?)" />
-    	<property name="deleteString" value="DELETE FROM CUSTOMIZED_CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?" />
+    	<property name="tableExistsString" value="SELECT 1 FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE 1 = 0" />
+    	<property name="createString" value="CREATE TABLE CUSTOMIZED_MESSAGE_REPOSITORY (processorName VARCHAR(255), messageId VARCHAR(100), createdAt DATETIME)" />
+    	<property name="queryString" value="SELECT COUNT(*) FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE processorName = ? AND messageId = ?" />
+    	<property name="insertString" value="INSERT INTO CUSTOMIZED_MESSAGE_REPOSITORY (processorName, messageId, createdAt) VALUES (?, ?, ?)" />
+    	<property name="deleteString" value="DELETE FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE processorName = ? AND messageId = ?" />
     </bean>
+    <!-- END SNIPPET: e1 -->
     
     <camel:camelContext>
     	<camel:errorHandler id="deadLetterChannel" type="DeadLetterChannel" deadLetterUri="mock:error">
