@@ -22,6 +22,7 @@ import javax.xml.ws.Endpoint;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -37,12 +38,18 @@ public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
     
     private static Endpoint endpoint;
     private static GreeterImpl greeterImpl;
+    private static int port = AvailablePortFinder.getNextAvailable(20000);
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("CamelFileGreeterOneWayTest.port", Integer.toString(port));
+    }
 
     @BeforeClass
     public static void startServer() throws Exception {
         // Start the Greeter Server
         greeterImpl = new GreeterImpl();
-        String address = "http://localhost:9000/SoapContext/SoapPort";
+        String address = "http://localhost:" + port + "/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, greeterImpl);
         LOG.info("The WS endpoint is published! ");
     }

@@ -25,6 +25,7 @@
     ">
 
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
   <!-- to use from client -->
   <cxf:cxfEndpoint id="clientEndpoint"
@@ -35,7 +36,7 @@
                    xmlns:s="http://apache.org/hello_world_soap_http">
   </cxf:cxfEndpoint>
 
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/SoapContext/SoapPort"
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:${RecipientListCxf2Test.port1}/SoapContext/SoapPort"
                    wsdlURL="wsdl/hello_world.wsdl"
                    serviceClass="org.apache.hello_world_soap_http.Greeter"
                    endpointName="s:SoapOverHttp"
@@ -43,7 +44,7 @@
                    xmlns:s="http://apache.org/hello_world_soap_http">
   </cxf:cxfEndpoint>
 
-  <cxf:cxfEndpoint id="serviceEndpoint2" address="http://localhost:9003/SoapContext/SoapPort"
+  <cxf:cxfEndpoint id="serviceEndpoint2" address="http://localhost:${RecipientListCxf2Test.port2}/SoapContext/SoapPort"
                    wsdlURL="wsdl/hello_world.wsdl"
                    serviceClass="org.apache.hello_world_soap_http.Greeter"
                    endpointName="s:SoapOverHttp"

@@ -22,12 +22,22 @@ import java.util.Map;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class RecipientListCxf2Test extends CamelSpringTestSupport {
+    
+    private static int port1 = AvailablePortFinder.getNextAvailable(20012);
+    private static int port2 = AvailablePortFinder.getNextAvailable(20013);
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("RecipientListCxf2Test.port1", Integer.toString(port1));
+        System.setProperty("RecipientListCxf2Test.port2", Integer.toString(port2));
+    }
 
     @EndpointInject(uri = "mock:reply")
     protected MockEndpoint replyEndpoint;
@@ -51,14 +61,14 @@ public class RecipientListCxf2Test extends CamelSpringTestSupport {
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(CxfConstants.OPERATION_NAME, "greetMe");
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:9002/SoapContext/SoapPort");
+        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port1 + "/SoapContext/SoapPort");
 
         // returns the last message from the recipient list
         Object out = template.requestBodyAndHeaders("direct:start", "Willem", headers, String.class);
         assertEquals("Hello Willem", out);
 
         // change foo headers
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:9003/SoapContext/SoapPort");
+        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port2 + "/SoapContext/SoapPort");
 
         // call again to ensure that works also
         // returns the last message from the recipient list
@@ -66,8 +76,8 @@ public class RecipientListCxf2Test extends CamelSpringTestSupport {
         assertEquals("Bye Claus", out2);
 
         // change foo headers again
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:9002/SoapContext/SoapPort"
-                + ",cxf:bean:clientEndpoint?address=http://localhost:9003/SoapContext/SoapPort");
+        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port1 + "/SoapContext/SoapPort"
+                + ",cxf:bean:clientEndpoint?address=http://localhost:" + port2 + "/SoapContext/SoapPort");
 
         // and call again to ensure that it really works also
         // returns the last message from the recipient list
@@ -75,8 +85,8 @@ public class RecipientListCxf2Test extends CamelSpringTestSupport {
         assertEquals("Bye Jonathan", out3);
 
         // change foo headers again
-        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:9003/SoapContext/SoapPort"
-                + ",cxf:bean:clientEndpoint?address=http://localhost:9002/SoapContext/SoapPort");
+        headers.put("foo", "cxf:bean:clientEndpoint?address=http://localhost:" + port2 + "/SoapContext/SoapPort"
+                + ",cxf:bean:clientEndpoint?address=http://localhost:" + port1 + "/SoapContext/SoapPort");
 
         // and call again to ensure that it really works also
         // returns the last message from the recipient list
