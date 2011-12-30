@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
@@ -29,14 +30,21 @@ import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  *
  */
 public class FtpXQueryTest extends CamelTestSupport {
+    protected static int ftpPort;
     protected FtpServer ftpServer;
-    private String ftp = "ftp:localhost:20127/myapp?password=admin&username=admin";
+    private String ftp = "ftp:localhost:" + ftpPort + "/myapp?password=admin&username=admin";
+    
+    @BeforeClass
+    public static void initPort() throws Exception {
+        ftpPort = AvailablePortFinder.getNextAvailable(20127);
+    }
 
     @Test
     public void testXQueryFromFtp() throws Exception {
@@ -97,7 +105,7 @@ public class FtpXQueryTest extends CamelTestSupport {
         serverFactory.setFileSystem(fsf);
 
         ListenerFactory factory = new ListenerFactory();
-        factory.setPort(20127);
+        factory.setPort(ftpPort);
         serverFactory.addListener("default", factory.createListener());
 
         ftpServer = serverFactory.createServer();
