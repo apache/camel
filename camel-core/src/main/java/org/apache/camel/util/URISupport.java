@@ -187,7 +187,8 @@ public final class URISupport {
             path = path.substring(2);
         }
         int idx = path.indexOf('?');
-        if (idx > 0) {
+        // when the path has ?
+        if (idx != -1) {
             path = path.substring(0, idx);
         }
 

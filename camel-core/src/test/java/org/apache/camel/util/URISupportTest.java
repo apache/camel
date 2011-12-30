@@ -48,6 +48,12 @@ public class URISupportTest extends ContextTestSupport {
         out1 = URISupport.normalizeUri("seda:foo?concurrentConsumer=2");
         out2 = URISupport.normalizeUri("seda:foo");
         assertNotSame(out1, out2);
+        
+        out1 = URISupport.normalizeUri("foo:?test=1");
+        out2 = URISupport.normalizeUri("foo://?test=1");
+        assertEquals("foo://?test=1", out2);
+        assertEquals(out1, out2);
+        
     }
 
     public void testNormalizeEndpointUriNoParam() throws Exception {
