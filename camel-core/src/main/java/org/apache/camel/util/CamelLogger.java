@@ -14,19 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.util;
 
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 /**
- * A {@link Processor} which just logs to a {@link CamelLogger} object which can be used
- * as an exception handler instead of using a dead letter queue.
+ * A logger which logs to a slf4j {@link Logger}.
  * <p/>
  * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
  * which has a <tt>Logger</tt> class.
