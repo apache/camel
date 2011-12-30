@@ -22,6 +22,8 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
+    <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
+    
     <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
     </bean>
@@ -30,7 +32,7 @@
 
         <!-- defer shutdown to route the in progress exchanges -->
         <route shutdownRoute="Defer">
-            <from uri="jetty:http://localhost:9000/test"/>
+            <from uri="jetty:http://localhost:{{JettyJmsShutdownTest.port}}/test"/>
             <to uri="jms:queue:foo"/>
         </route>
 

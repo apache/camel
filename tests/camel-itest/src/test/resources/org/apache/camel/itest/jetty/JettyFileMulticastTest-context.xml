@@ -21,18 +21,18 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
- 
+  <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
   <bean id="SetResponseProcessor" class="org.apache.camel.itest.jetty.SetResponseProcessor"/>
 
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring" trace="true">
     <route>
-        <from uri="jetty:http://localhost:9000/test"/>        
+        <from uri="jetty:http://localhost:{{JettyFileMulticastTest.port}}/test"/>        
         <process ref="SetResponseProcessor"/>        
     </route>
     <route>
         <from uri="direct:start"/>
-        <to uri="jetty:http://localhost:9000/test"/>       
+        <to uri="jetty:http://localhost:{{JettyFileMulticastTest.port}}/test"/>       
         <multicast>
           <to uri="direct:file"/> 
           <to uri="direct:mock"/>

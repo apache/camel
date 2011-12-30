@@ -21,12 +21,14 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+    
+    <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <endpoint id="bad" uri="jetty:http://localhost:8871/bar"/>
-        <endpoint id="bad2" uri="jetty:http://localhost:8872/bad2"/>
-        <endpoint id="good" uri="jetty:http://localhost:8873/good"/>
-        <endpoint id="good2" uri="jetty:http://localhost:8874/good2"/>
+        <endpoint id="bad" uri="jetty:http://localhost:{{JettySpringFailoverRoundRobinTest.port1}}/bar"/>
+        <endpoint id="bad2" uri="jetty:http://localhost:{{JettySpringFailoverRoundRobinTest.port2}}/bad2"/>
+        <endpoint id="good" uri="jetty:http://localhost:{{JettySpringFailoverRoundRobinTest.port3}}/good"/>
+        <endpoint id="good2" uri="jetty:http://localhost:{{JettySpringFailoverRoundRobinTest.port4}}/good2"/>
 
         <!-- START SNIPPET: e1 -->
         <route>

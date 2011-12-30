@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,6 +31,15 @@ import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
 public class JettyJmsTwowayTest extends AbstractJUnit4SpringContextTests {
+    
+    private static int port = AvailablePortFinder.getNextAvailable(20123);
+    private static final String URL = "jetty:http://localhost:" + port + "/test";
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("JettyJmsTwowayTest.port", Integer.toString(port));
+    }
+
 
     @Autowired
     protected CamelContext camelContext;
@@ -38,7 +48,7 @@ public class JettyJmsTwowayTest extends AbstractJUnit4SpringContextTests {
     public void testSendingRequest() throws Exception {
         assertNotNull("the camelContext should not be null", camelContext);
         ProducerTemplate template = camelContext.createProducerTemplate();
-        Exchange exchange = template.send("jetty:http://localhost:9000/test", new Processor() {
+        Exchange exchange = template.send(URL, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("<hello>Willem</hello>");
                 exchange.getIn().setHeader("Operation", "greetMe");

@@ -30,6 +30,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<String> {
 
+    private boolean createTableIfNotExists = true;
     private String tableExistsString = "SELECT 1 FROM CAMEL_MESSAGEPROCESSED WHERE 1 = 0";
     private String createString = "CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(255), messageId VARCHAR(100), createdAt TIMESTAMP)";
     private String queryString = "SELECT COUNT(*) FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
@@ -63,15 +64,19 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
                     jdbcTemplate.execute(tableExistsString);
                     log.debug("table for JdbcMessageIdRepository already exists");
                 } catch (DataAccessException e) {
-                    log.debug("creating table for JdbcMessageIdRepository because it doesn't exists...");
-                    log.debug("executing query '{}'...", createString);
-                    // we will fail if we cannot create it
-                    jdbcTemplate.execute(createString);
-                    log.info("table created");
+                    if (createTableIfNotExists) {
+                        log.debug("creating table for JdbcMessageIdRepository because it doesn't exists...");
+                        // we will fail if we cannot create it
+                        jdbcTemplate.execute(createString);
+                        log.info("table created with query '{}'", createString);
+                    } else {
+                        throw e;
+                    }
+
                 }
                 return Boolean.TRUE;
             }
-        });
+        });   
     }
 
     @Override
@@ -88,7 +93,15 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
     protected int delete(String key) {
         return jdbcTemplate.update(deleteString, processorName, key);
     }
-    
+
+    public boolean isCreateTableIfNotExists() {
+        return createTableIfNotExists;
+    }
+
+    public void setCreateTableIfNotExists(boolean createTableIfNotExists) {
+        this.createTableIfNotExists = createTableIfNotExists;
+    }
+
     public String getTableExistsString() {
         return tableExistsString;
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.itest.jetty;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -25,6 +26,20 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version 
  */
 public class JettySpringFailoverRoundRobinTest extends CamelSpringTestSupport {
+
+    private static int port1 = AvailablePortFinder.getNextAvailable(23051);
+    private static int port2 = AvailablePortFinder.getNextAvailable(23052);
+    private static int port3 = AvailablePortFinder.getNextAvailable(23053);
+    private static int port4 = AvailablePortFinder.getNextAvailable(23054);
+    
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("JettySpringFailoverRoundRobinTest.port1", Integer.toString(port1));
+        System.setProperty("JettySpringFailoverRoundRobinTest.port2", Integer.toString(port2));
+        System.setProperty("JettySpringFailoverRoundRobinTest.port3", Integer.toString(port3));
+        System.setProperty("JettySpringFailoverRoundRobinTest.port4", Integer.toString(port4));
+    }
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {

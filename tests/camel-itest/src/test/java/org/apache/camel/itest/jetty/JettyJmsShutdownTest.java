@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -29,6 +30,13 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
 public class JettyJmsShutdownTest extends AbstractJUnit4SpringContextTests {
+    private static int port = AvailablePortFinder.getNextAvailable(20035);
+    private static final String URL = "http://localhost:" + port + "/test";
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("JettyJmsShutdownTest.port", Integer.toString(port));
+    }
 
     @Autowired
     protected CamelContext camelContext;
@@ -38,9 +46,9 @@ public class JettyJmsShutdownTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testShutdown() throws Exception {
-        Future<String> reply1 = template.asyncRequestBody("http://localhost:9000/test", "World", String.class);
-        Future<String> reply2 = template.asyncRequestBody("http://localhost:9000/test", "Camel", String.class);
-        Future<String> reply3 = template.asyncRequestBody("http://localhost:9000/test", "Tiger", String.class);
+        Future<String> reply1 = template.asyncRequestBody(URL, "World", String.class);
+        Future<String> reply2 = template.asyncRequestBody(URL, "Camel", String.class);
+        Future<String> reply3 = template.asyncRequestBody(URL, "Tiger", String.class);
 
         Thread.sleep(1000);
 
