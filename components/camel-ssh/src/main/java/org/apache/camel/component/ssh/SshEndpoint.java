@@ -50,7 +50,11 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new SshConsumer(this, processor);
+        SshConsumer consumer = new SshConsumer(this, processor);
+
+        configureConsumer(consumer);
+
+        return consumer;
     }
 
     @Override
