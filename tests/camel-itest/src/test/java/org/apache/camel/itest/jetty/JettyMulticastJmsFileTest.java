@@ -19,6 +19,7 @@ package org.apache.camel.itest.jetty;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,14 @@ import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration
 public class JettyMulticastJmsFileTest extends AbstractJUnit4SpringContextTests {
+    
+    private static int port = AvailablePortFinder.getNextAvailable(20040);
+    private static final String URL = "jetty:http://localhost:" + port + "/test";
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("JettyMulticastJmsFileTest.port", Integer.toString(port));
+    }
 
     @Autowired
     protected CamelContext camelContext;
@@ -39,7 +48,7 @@ public class JettyMulticastJmsFileTest extends AbstractJUnit4SpringContextTests 
 
         ProducerTemplate template = camelContext.createProducerTemplate();
 
-        String out = template.requestBody("jetty:http://localhost:9000/test", "Hello World", String.class);
+        String out = template.requestBody(URL, "Hello World", String.class);
         assertEquals("Bye World", out);
 
         template.stop();

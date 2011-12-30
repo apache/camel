@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -32,10 +33,15 @@ import org.junit.Test;
  */
 public class JettySimulateFailoverRoundRobinTest extends CamelTestSupport {
 
-    private String bad = "jetty:http://localhost:8871/bad";
-    private String bad2 = "jetty:http://localhost:8872/bad2";
-    private String good = "jetty:http://localhost:8873/good";
-    private String good2 = "jetty:http://localhost:8874/good2";
+    private static int port1 = AvailablePortFinder.getNextAvailable(23041);
+    private static int port2 = AvailablePortFinder.getNextAvailable(23042);
+    private static int port3 = AvailablePortFinder.getNextAvailable(23043);
+    private static int port4 = AvailablePortFinder.getNextAvailable(23044);
+
+    private String bad = "jetty:http://localhost:" + port1 + "/bad";
+    private String bad2 = "jetty:http://localhost:" + port2 + "/bad2";
+    private String good = "jetty:http://localhost:" + port3 + "/good";
+    private String good2 = "jetty:http://localhost:" + port4 + "/good2";
 
     @Test
     public void testJettySimulateFailoverRoundRobin() throws Exception {

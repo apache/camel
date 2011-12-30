@@ -24,6 +24,7 @@ import junit.framework.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.http.HttpOperationFailedException;
+import org.apache.camel.test.AvailablePortFinder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -31,6 +32,13 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
 public class JettyJmsShutdownInProgressTest extends AbstractJUnit4SpringContextTests {
+    private static int port = AvailablePortFinder.getNextAvailable(20034);
+    private static final String URL = "http://localhost:" + port + "/test";
+    static {
+        //set them as system properties so Spring can use the property placeholder
+        //things to set them into the URL's in the spring contexts 
+        System.setProperty("JettyJmsShutdownInProgressTest.port", Integer.toString(port));
+    }
 
     @Autowired
     protected CamelContext camelContext;
@@ -40,8 +48,8 @@ public class JettyJmsShutdownInProgressTest extends AbstractJUnit4SpringContextT
 
     @Test
     public void testShutdownInProgress() throws Exception {
-        Future<String> reply1 = template.asyncRequestBody("http://localhost:9002/test", "World", String.class);
-        Future<String> reply2 = template.asyncRequestBody("http://localhost:9002/test", "Camel", String.class);
+        Future<String> reply1 = template.asyncRequestBody(URL, "World", String.class);
+        Future<String> reply2 = template.asyncRequestBody(URL, "Camel", String.class);
 
         // shutdown camel while in progress, wait 2 sec so the first req has been received in Camel route
         Executors.newSingleThreadExecutor().execute(new Runnable() {
@@ -60,7 +68,7 @@ public class JettyJmsShutdownInProgressTest extends AbstractJUnit4SpringContextT
 
         // this one should fail
         try {
-            template.requestBody("http://localhost:9002/test", "Tiger", String.class);
+            template.requestBody(URL, "Tiger", String.class);
             Assert.fail("Should have thrown exception");
         } catch (Exception e) {
             HttpOperationFailedException hofe = (HttpOperationFailedException) e.getCause();
