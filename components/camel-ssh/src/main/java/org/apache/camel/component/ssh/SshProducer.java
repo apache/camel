@@ -33,28 +33,9 @@ public class SshProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        ClientSession session = endpoint.createSession();
-
         String command = exchange.getIn().getBody(String.class);
-        ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_EXEC, command);
+        byte[] result = endpoint.sendExecCommand(command);
 
-        // TODO: do I need to put command into Channel IN for CHANNEL_EXEC?
-        ByteArrayInputStream in = new ByteArrayInputStream(exchange.getIn().getBody(byte[].class));
-        channel.setIn(in);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        channel.setOut(out);
-
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        channel.setErr(err);
-
-        channel.open().await();
-
-        channel.waitFor(ClientChannel.CLOSED, 0);
-        channel.close(false);
-
-        session.close(false);
-
-        exchange.getOut().setBody(out.toByteArray());
+        exchange.getOut().setBody(result);
     }
 }

@@ -34,35 +34,11 @@ public class SshConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
-        ClientSession session = endpoint.createSession();
-
-        ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_EXEC, endpoint.getPollCommand());
-
-        // TODO: do I need to put command into Channel IN for CHANNEL_EXEC?
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Writer w = new OutputStreamWriter(baos);
-        w.append(endpoint.getPollCommand());
-        w.close();
-        ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
-        channel.setIn(in);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        channel.setOut(out);
-
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        channel.setErr(err);
-
-        channel.open().await();
-
-        channel.waitFor(ClientChannel.CLOSED, 0);
-        channel.close(false);
-
-        session.close(false);
+        String command = endpoint.getPollCommand();
+        byte[] result = endpoint.sendExecCommand(command);
 
         Exchange exchange = endpoint.createExchange();
-
-        // create a message body
-        exchange.getIn().setBody(out.toByteArray());
+        exchange.getIn().setBody(result);
 
         try {
             // send message to next processor in the route

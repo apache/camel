@@ -16,19 +16,27 @@
  */
 package org.apache.camel.component.ssh;
 
+import java.io.*;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
+import org.apache.sshd.client.future.OpenFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents an SSH endpoint.
  */
 public class SshEndpoint extends ScheduledPollEndpoint {
+    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+
     private SshClient client;
-    private SshConfiguration configuration;
+    private SshConfiguration sshConfiguration;
     private String pollCommand;
 
     public SshEndpoint() {
@@ -40,7 +48,7 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
     public SshEndpoint(String uri, SshComponent component, SshConfiguration configuration) {
         super(uri, component);
-        this.configuration = configuration;
+        this.sshConfiguration = configuration;
     }
 
     @Override
@@ -62,11 +70,35 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         return false;
     }
 
-    ClientSession createSession() throws Exception {
-        ClientSession session = client.connect(configuration.getHost(), configuration.getPort()).await().getSession();
-        session.authPassword(configuration.getUsername(), configuration.getPassword()).await().isSuccess();
+    public byte[] sendExecCommand(String command) throws Exception {
+        byte[] result = null;
 
-        return session;
+        ClientSession session = client.connect(sshConfiguration.getHost(), sshConfiguration.getPort()).await().getSession();
+        session.authPassword(sshConfiguration.getUsername(), sshConfiguration.getPassword()).await().isSuccess();
+
+        ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_EXEC, command);
+
+        ByteArrayInputStream in = new ByteArrayInputStream(new byte[]{0});
+        channel.setIn(in);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        channel.setOut(out);
+
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        channel.setErr(err);
+
+        OpenFuture openFuture = channel.open().await();
+        if (openFuture.isOpened()) {
+            int ret = channel.waitFor(ClientChannel.CLOSED, 0);
+            log.info("ret = " + ret);
+
+            //session.close(false);
+            //session.waitFor(ClientSession.CLOSED, 0);
+
+            result = out.toByteArray();
+        }
+
+        return result;
     }
 
     @Override
@@ -96,13 +128,13 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     }
 
     public SshConfiguration getConfiguration() {
-        if (configuration == null) {
-            configuration = new SshConfiguration();
+        if (sshConfiguration == null) {
+            sshConfiguration = new SshConfiguration();
         }
-        return configuration;
+        return sshConfiguration;
     }
 
     public void setConfiguration(SshConfiguration configuration) {
-        this.configuration = configuration;
+        this.sshConfiguration = configuration;
     }
 }
