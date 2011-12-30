@@ -16,13 +16,9 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.io.*;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.apache.sshd.ClientChannel;
-import org.apache.sshd.ClientSession;
 
 public class SshConsumer extends ScheduledPollConsumer {
     private final SshEndpoint endpoint;

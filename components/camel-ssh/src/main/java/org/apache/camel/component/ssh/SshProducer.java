@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.io.*;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.sshd.ClientChannel;
-import org.apache.sshd.ClientSession;
 
 public class SshProducer extends DefaultProducer {
     private SshEndpoint endpoint;
