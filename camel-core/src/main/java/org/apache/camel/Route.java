@@ -95,4 +95,9 @@ public interface Route {
      */
     Navigate<Processor> navigate();
 
+    /**
+     * Callback preparing the route to be started, by warming up the route.
+     */
+    void warmUp();
+
 }

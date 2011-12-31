@@ -167,4 +167,9 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         ServiceHelper.stopService(producerCache);
     }
 
+    protected void doShutdown() throws Exception {
+        // remove producer cache from service
+        camelContext.removeService(producerCache);
+        ServiceHelper.stopAndShutdownService(producerCache);
+    }
 }

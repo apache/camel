@@ -233,6 +233,13 @@ public class RecipientListProcessor extends MulticastProcessor {
         super.doStop();
     }
 
+    protected void doShutdown() throws Exception {
+        // remove producer cache from service
+        getCamelContext().removeService(producerCache);
+        ServiceHelper.stopAndShutdownService(producerCache);
+        super.doShutdown();
+    }
+
     @Override
     public String toString() {
         return "RecipientList";
