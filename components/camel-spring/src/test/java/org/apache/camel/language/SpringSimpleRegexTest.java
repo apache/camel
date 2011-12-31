@@ -29,11 +29,10 @@ public class SpringSimpleRegexTest extends SpringTestSupport {
     
     public void testSimpleRegex() {
         String result = template.requestBody("direct:start", "Something is wrong", String.class);
-        System.out.println("result : " + result);
-        
+        assertEquals("Let's keep looking.", result);
+
         result = template.requestBody("direct:start", "12.34.5678", String.class);
-        System.out.println("result : " + result);
+        assertEquals("Found the result.", result);
     }
-    
 
 }
