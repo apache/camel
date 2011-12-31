@@ -18,11 +18,9 @@ package org.apache.camel.component.jdbc;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class JdbcRouteUsingSqlSelectAliasJdbc3Test extends JdbcRouteUsingSqlSelectAliasTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -30,5 +28,4 @@ public class JdbcRouteUsingSqlSelectAliasJdbc3Test extends JdbcRouteUsingSqlSele
             }
         };
     }
-
 }

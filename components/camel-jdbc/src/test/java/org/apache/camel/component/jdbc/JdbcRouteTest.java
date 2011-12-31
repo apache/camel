@@ -18,18 +18,11 @@ package org.apache.camel.component.jdbc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.sql.DataSource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 /**
  * Is used as base class for testing the jdbc component.
@@ -38,12 +31,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
  * are semantically equivalent to what this class creates.
  * @version 
  */
-public class JdbcRouteTest extends CamelTestSupport {
-    protected DataSource ds;
-    private String driverClass = "org.hsqldb.jdbcDriver";
-    private String url = "jdbc:hsqldb:mem:camel_jdbc";
-    private String user = "sa";
-    private String password = "";
+public class JdbcRouteTest extends AbstractJdbcTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
@@ -62,9 +50,8 @@ public class JdbcRouteTest extends CamelTestSupport {
         assertNotNull(out);
         assertNotNull(out.getOut());
         ArrayList<HashMap<String, Object>> data = out.getOut().getBody(ArrayList.class);
-        assertNotNull("out body could not be converted to an ArrayList - was: "
-            + out.getOut().getBody(), data);
-        assertEquals(2, data.size());
+        assertNotNull(data);
+        assertEquals(3, data.size());
         HashMap<String, Object> row = data.get(0);
         assertEquals("cust1", row.get("ID"));
         assertEquals("jstrachan", row.get("NAME"));
@@ -74,15 +61,7 @@ public class JdbcRouteTest extends CamelTestSupport {
         // END SNIPPET: invoke
     }
 
-
-    protected JndiRegistry createRegistry() throws Exception {
-        // START SNIPPET: register
-        JndiRegistry reg = super.createRegistry();
-        reg.bind("testdb", ds);
-        return reg;
-        // END SNIPPET: register
-    }
-
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             // START SNIPPET: route
@@ -93,27 +72,4 @@ public class JdbcRouteTest extends CamelTestSupport {
             // END SNIPPET: route
         };
     }
-
-    @Before
-    public void setUp() throws Exception {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource(url, user, password);
-        dataSource.setDriverClassName(driverClass);
-        ds = dataSource;
-
-        JdbcTemplate jdbc = new JdbcTemplate(ds);
-        // START SNIPPET: setup
-        jdbc.execute("create table customer (id varchar(15), name varchar(10))");
-        jdbc.execute("insert into customer values('cust1','jstrachan')");
-        jdbc.execute("insert into customer values('cust2','nsandhu')");
-        // END SNIPPET: setup
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        JdbcTemplate jdbc = new JdbcTemplate(ds);
-        jdbc.execute("drop table customer");
-    }
-
 }

@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.jdbc;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- *
- */
-public class JdbcTransformSimpleTest extends JdbcRouteTest {
+public class JdbcTransformSimpleTest extends AbstractJdbcTestSupport {
+    
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint mock;
 
+    @Test
     public void testJdbcRoutes() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("jstrachan");
+        mock.expectedBodiesReceived("jstrachan");
 
         template.sendBody("direct:hello", "select * from customer order by ID");
 

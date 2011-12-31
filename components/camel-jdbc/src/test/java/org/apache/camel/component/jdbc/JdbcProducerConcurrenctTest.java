@@ -23,28 +23,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import javax.sql.DataSource;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-/**
- * @version 
- */
-public class JdbcProducerConcurrenctTest extends CamelTestSupport {
+public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
 
-    protected DataSource ds;
-    private String driverClass = "org.hsqldb.jdbcDriver";
-    private String url = "jdbc:hsqldb:mem:camel_jdbc";
-    private String user = "sa";
-    private String password = "";
-
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint mock;
+    
     @Test
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
@@ -57,7 +46,7 @@ public class JdbcProducerConcurrenctTest extends CamelTestSupport {
 
     @SuppressWarnings("rawtypes")
     private void doSendMessages(int files, int poolSize) throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(files);
+        mock.expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         Map<Integer, Future<Object>> responses = new ConcurrentHashMap<Integer, Future<Object>>();
@@ -65,15 +54,14 @@ public class JdbcProducerConcurrenctTest extends CamelTestSupport {
             final int index = i;
             Future<Object> out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    int id = index % 2;
-                    return template.requestBody("direct:start", "select * from customer where id = " + id);
+                    int id = (index % 2) + 1;
+                    return template.requestBody("direct:start", "select * from customer where id = 'cust" + id + "'");
                 }
             });
             responses.put(index, out);
         }
 
         assertMockEndpointsSatisfied();
-
         assertEquals(files, responses.size());
 
         for (int i = 0; i < files; i++) {
@@ -88,12 +76,7 @@ public class JdbcProducerConcurrenctTest extends CamelTestSupport {
         executor.shutdownNow();
     }
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
-        reg.bind("testdb", ds);
-        return reg;
-    }
-
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -101,25 +84,4 @@ public class JdbcProducerConcurrenctTest extends CamelTestSupport {
             }
         };
     }
-
-    @Before
-    public void setUp() throws Exception {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource(url, user, password);
-        dataSource.setDriverClassName(driverClass);
-        ds = dataSource;
-
-        JdbcTemplate jdbc = new JdbcTemplate(ds);
-        jdbc.execute("create table customer (id varchar(15), name varchar(10))");
-        jdbc.execute("insert into customer values('0','jstrachan')");
-        jdbc.execute("insert into customer values('1','nsandhu')");
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        JdbcTemplate jdbc = new JdbcTemplate(ds);
-        jdbc.execute("drop table customer");
-    }
-
 }

@@ -16,42 +16,27 @@
  */
 package org.apache.camel.component.jdbc;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringCamelContext;
-import org.junit.After;
-import org.junit.Before;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
-public class JdbcSpringAnotherRouteTest extends JdbcAnotherRouteTest {
-    private ClassPathXmlApplicationContext applicationContext;
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        setUseRouteBuilder(false);
-        applicationContext = createApplicationContext();
-        super.setUp();        
-        assertNotNull("Should have created a valid spring context", applicationContext);
-
-
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
-        super.tearDown();
-    }
+public class JdbcSpringAnotherRouteTest extends CamelSpringTestSupport {
     
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint mock;
+    
+    @Test
+    public void testTimerInvoked() throws Exception {
+        mock.expectedMessageCount(1);
+
+        assertMockEndpointsSatisfied();
     }
 
-
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jdbc/camelContext.xml");
     }
 }

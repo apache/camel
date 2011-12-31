@@ -27,12 +27,12 @@ import org.junit.Test;
 
 /**
  * Tests that key ordering for the Maps (rows) is preserved.
- * @version
  */
 public class JdbcRouteKeyOrderingTest extends JdbcRouteTest {
     
     @SuppressWarnings("unchecked")
     @Test
+    @Override
     public void testJdbcRoutes() throws Exception {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");
@@ -52,7 +52,7 @@ public class JdbcRouteKeyOrderingTest extends JdbcRouteTest {
             List<Map<String, Object>> rowList = out.getOut().getBody(List.class);
             assertNotNull("out body could not be converted to an ArrayList - was: "
                 + out.getOut().getBody(), rowList);
-            assertEquals(2, rowList.size());
+            assertEquals(3, rowList.size());
             
             Map<String, Object> row = rowList.get(0);
             assertTrue("ordering not preserved " + row.keySet(), isOrdered(row.keySet()));
@@ -61,7 +61,6 @@ public class JdbcRouteKeyOrderingTest extends JdbcRouteTest {
             assertTrue("ordering not preserved " + row.keySet(), isOrdered(row.keySet()));
         }
     }
-    
 
     /**
      * @param keySet (should have 2 items "ID" & "NAME")

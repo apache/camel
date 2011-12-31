@@ -19,36 +19,26 @@ package org.apache.camel.component.jdbc;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import javax.sql.DataSource;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
-public class JdbcOptionsTest extends CamelTestSupport {
-    private String driverClass = "org.hsqldb.jdbcDriver";
-    private String url = "jdbc:hsqldb:mem:camel_jdbc";
-    private String user = "sa";
-    private String password = "";
-    private DataSource ds;
+public class JdbcOptionsTest extends AbstractJdbcTestSupport {
+
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint mock;
 
     @SuppressWarnings("rawtypes")
     @Test
     public void testReadSize() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
         template.sendBody("direct:start", "select * from customer");
 
-        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
 
         List list = mock.getExchanges().get(0).getIn().getBody(ArrayList.class);
         assertEquals(1, list.size());
@@ -58,9 +48,10 @@ public class JdbcOptionsTest extends CamelTestSupport {
     @Test
     public void testInsertCommit() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resultTx");
-        mock.expectedMessageCount(1);
+        mock.expectedMessageCount(2);
         // insert 2 recs into table
-        template.sendBody("direct:startTx", "insert into customer values ('cust3', 'johnsmith');insert into customer values ('cust4', 'hkesler') ");
+        template.sendBody("direct:startTx", "insert into customer values ('cust4', 'johnsmith')");
+        template.sendBody("direct:startTx", "insert into customer values ('cust5', 'hkesler')");
 
         mock.assertIsSatisfied();
 
@@ -77,7 +68,7 @@ public class JdbcOptionsTest extends CamelTestSupport {
 
         List list = mockTest.getExchanges().get(0).getIn().getBody(ArrayList.class);
         // both records were committed
-        assertEquals(4, list.size());
+        assertEquals(5, list.size());
     }
 
     @Test
@@ -93,23 +84,18 @@ public class JdbcOptionsTest extends CamelTestSupport {
     
     @Test
     public void testResettingAutoCommitOption() throws Exception {
-        Connection connection = ds.getConnection();
+        Connection connection = db.getConnection();
         assertTrue(connection.getAutoCommit());
         connection.close();
         
         template.sendBody("direct:retrieve", "select * from customer");
         
-        connection = ds.getConnection();
+        connection = db.getConnection();
         assertTrue(connection.getAutoCommit());
         connection.close();
     }
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
-        reg.bind("testdb", ds);
-        return reg;
-    }
-
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -119,25 +105,4 @@ public class JdbcOptionsTest extends CamelTestSupport {
             }
         };
     }
-
-    @Before
-    public void setUp() throws Exception {
-        DriverManagerDataSource dataSource = new SingleConnectionDataSource(url, user, password, true);
-        dataSource.setDriverClassName(driverClass);
-        ds = dataSource;
-
-        JdbcTemplate jdbc = new JdbcTemplate(ds);
-        jdbc.execute("create table customer (id varchar(15) PRIMARY KEY, name varchar(10))");
-        jdbc.execute("insert into customer values('cust1','jstrachan')");
-        jdbc.execute("insert into customer values('cust2','nsandhu')");
-        super.setUp();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        JdbcTemplate jdbc = new JdbcTemplate(ds);
-        jdbc.execute("drop table customer");
-    }
-
 }
