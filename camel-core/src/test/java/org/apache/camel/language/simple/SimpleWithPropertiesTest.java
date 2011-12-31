@@ -19,6 +19,7 @@ package org.apache.camel.language.simple;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.SimpleBuilder;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Assert;
@@ -31,19 +32,25 @@ public class SimpleWithPropertiesTest {
 
     /**
      * A property from the property component in a expression 
-     * should be kept as is to be processed later
+     * is processed when the expression is evaluated with exchange
      * See https://issues.apache.org/jira/browse/CAMEL-4843
-     * 
-     * The property could also be parsed correctly by the simple language but it should not throw an exception
+     * Now camel doesn't support the properties expression of {{test}}
      * 
      * @throws Exception
      */
     @Test
     public void testProperty() throws Exception {
+        System.setProperty("test", "testValue");
+        PropertiesComponent pc = new PropertiesComponent();
         CamelContext context = new DefaultCamelContext();
+        pc.setCamelContext(context);
+        context.addComponent("proerties", pc);
+        
+        // try to setup the property
         Exchange exchange = new DefaultExchange(context);
-        String result = SimpleBuilder.simple("{{test}}").evaluate(exchange, String.class);
-        Assert.assertEquals("{{test}}", result);
+        String result = SimpleBuilder.simple("${properties:test}").evaluate(exchange, String.class);
+        Assert.assertEquals("testValue", result);
+        System.clearProperty("test");
     }
 
 }
