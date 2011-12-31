@@ -368,6 +368,12 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
         ServiceHelper.stopService(producerCache);
     }
 
+    protected void doShutdown() throws Exception {
+        // remove producer cache from service
+        camelContext.removeService(producerCache);
+        ServiceHelper.stopAndShutdownService(producerCache);
+    }
+
     /**
      * Returns the outbound message if available. Otherwise return the inbound message.
      */

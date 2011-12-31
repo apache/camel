@@ -85,7 +85,13 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
     }
 
     public void addService(Service service) {
-        getServices().add(service);
+        if (!services.contains(service)) {
+            services.add(service);
+        }
+    }
+
+    public void warmUp() {
+        getServices().clear();
     }
 
     /**
@@ -115,7 +121,12 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
     }
 
     protected void doStop() throws Exception {
-        // clear services when stopping
+        // noop
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        // clear services when shutting down
         services.clear();
     }
 }

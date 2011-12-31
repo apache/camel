@@ -118,8 +118,10 @@ public class RouteService extends ChildServiceSupport {
         if (warmUpDone.compareAndSet(false, true)) {
 
             for (Route route : routes) {
-                LOG.debug("Starting services on route: {}", route.getId());
+                // warm up the route first
+                route.warmUp();
 
+                LOG.debug("Starting services on route: {}", route.getId());
                 List<Service> services = route.getServices();
 
                 // callback that we are staring these services
@@ -224,6 +226,20 @@ public class RouteService extends ChildServiceSupport {
     @Override
     protected void doShutdown() throws Exception {
         for (Route route : routes) {
+            LOG.debug("Shutting down services on route: {}", route.getId());
+            List<Service> services = route.getServices();
+
+            // gather list of services to stop as we need to start child services as well
+            Set<Service> list = new LinkedHashSet<Service>();
+            for (Service service : services) {
+                doGetChildServices(list, service);
+            }
+            // shutdown services
+            stopChildService(route, list, true);
+
+            // shutdown the route itself
+            ServiceHelper.stopAndShutdownServices(route);
+
             // endpoints should only be stopped when Camel is shutting down
             // see more details in the warmUp method
             ServiceHelper.stopAndShutdownServices(route.getEndpoint());
@@ -239,7 +255,8 @@ public class RouteService extends ChildServiceSupport {
         for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
             strategy.onRoutesRemove(routes);
         }
-        
+
+        // remove the routes from the collections
         camelContext.removeRouteCollection(routes);
         
         // clear inputs on shutdown
@@ -288,7 +305,7 @@ public class RouteService extends ChildServiceSupport {
 
     protected void stopChildService(Route route, Set<Service> services, boolean shutdown) throws Exception {
         for (Service service : services) {
-            LOG.debug("Stopping child service on route: {} -> {}", route.getId(), service);
+            LOG.debug("{} child service on route: {} -> {}", new Object[]{shutdown ? "Shutting down" : "Stopping", route.getId(), service});
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
                 strategy.onServiceRemove(camelContext, service, route);
             }

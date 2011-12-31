@@ -154,6 +154,18 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void addService(Object object) throws Exception;
 
     /**
+     * Removes a service from this context.
+     * <p/>
+     * The service is assumed to have been previously added using {@link #addService(Object)} method.
+     * This method will <b>not</b> change the service lifecycle.
+     *
+     * @param object the service
+     * @throws Exception can be thrown if error removing the service
+     * @return <tt>true</tt> if the service was removed, <tt>false</tt> if no service existed
+     */
+    boolean removeService(Object object) throws Exception;
+
+    /**
      * Has the given service already been added to this context?
      *
      * @param object the service

@@ -317,5 +317,18 @@ public class ObjectHelperTest extends TestCase {
         assertTrue(ObjectHelper.hasDefaultPublicNoArgConstructor(ObjectHelperTest.class));
         assertFalse(ObjectHelper.hasDefaultPublicNoArgConstructor(MyStaticClass.class));
     }
+    
+    public void testIdentityHashCode() {
+        MyDummyObject dummy = new MyDummyObject("Camel");
+        
+        String code = ObjectHelper.getIdentityHashCode(dummy);
+        String code2 = ObjectHelper.getIdentityHashCode(dummy);
+
+        assertEquals(code, code2);
+
+        MyDummyObject dummyB = new MyDummyObject("Camel");
+        String code3 = ObjectHelper.getIdentityHashCode(dummyB);
+        assertNotSame(code, code3);
+    }
 
 }
