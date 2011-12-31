@@ -35,8 +35,6 @@ public class SimpleWithPropertiesTest {
      * is processed when the expression is evaluated with exchange
      * See https://issues.apache.org/jira/browse/CAMEL-4843
      * Now camel doesn't support the properties expression of {{test}}
-     * 
-     * @throws Exception
      */
     @Test
     public void testProperty() throws Exception {
@@ -44,7 +42,7 @@ public class SimpleWithPropertiesTest {
         PropertiesComponent pc = new PropertiesComponent();
         CamelContext context = new DefaultCamelContext();
         pc.setCamelContext(context);
-        context.addComponent("proerties", pc);
+        context.addComponent("properties", pc);
         
         // try to setup the property
         Exchange exchange = new DefaultExchange(context);
