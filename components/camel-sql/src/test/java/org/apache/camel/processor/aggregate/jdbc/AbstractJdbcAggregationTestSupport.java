@@ -19,29 +19,25 @@ package org.apache.camel.processor.aggregate.jdbc;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
-import org.springframework.context.ApplicationContext;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public abstract class AbstractJdbcAggregationTestSupport extends CamelTestSupport {
+public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTestSupport {
 
     JdbcAggregationRepository repo;
 
-    @Before
     @Override
-    public void setUp() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/processor/aggregate/jdbc/JdbcSpringDataSource.xml");
+    public void postProcessTest() throws Exception {
+        super.postProcessTest();
+        
         repo = applicationContext.getBean("repo1", JdbcAggregationRepository.class);
-        
         configureJdbcAggregationRepository();
-        
-        super.setUp();
     }
-
+    
     void configureJdbcAggregationRepository() {
     }
-
+    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -61,6 +57,16 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelTestSuppor
     
     long getCompletionInterval() {
         return 5000;
+    }
+    
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/processor/aggregate/jdbc/JdbcSpringDataSource.xml");
+    }
+
+    @Override
+    protected int getExpectedRouteCount() {
+        return 0;
     }
 
     public static class MyAggregationStrategy implements AggregationStrategy {

@@ -23,26 +23,26 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import javax.sql.DataSource;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 /**
  * @version 
  */
 public class SqlProducerConcurrentTest extends CamelTestSupport {
-    protected String driverClass = "org.hsqldb.jdbcDriver";
-    protected String url = "jdbc:hsqldb:mem:camel_jdbc";
-    protected String user = "sa";
-    protected String password = "";
-    private DataSource ds;
-    private JdbcTemplate jdbcTemplate;
+    
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint mockEndpoint;
+    private EmbeddedDatabase db;
 
     @Test
     public void testNoConcurrentProducers() throws Exception {
@@ -55,15 +55,16 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
     }
 
     private void doSendMessages(int files, int poolSize) throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(files);
+        mockEndpoint.expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
         Map<Integer, Future<?>> responses = new ConcurrentHashMap<Integer, Future<?>>();
+
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<?> out = executor.submit(new Callable<Object>() {
                 public Object call() throws Exception {
-                    int id = index % 3;
+                    int id = (index % 3) + 1;
                     return template.requestBody("direct:simple", "" + id);
                 }
             });
@@ -71,7 +72,6 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
         }
 
         assertMockEndpointsSatisfied();
-
         assertEquals(files, responses.size());
 
         for (int i = 0; i < files; i++) {
@@ -90,34 +90,27 @@ public class SqlProducerConcurrentTest extends CamelTestSupport {
 
     @Before
     public void setUp() throws Exception {
-        Class.forName(driverClass);
+        db = new EmbeddedDatabaseBuilder()
+            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+        
         super.setUp();
-
-        jdbcTemplate = new JdbcTemplate(ds);
-        jdbcTemplate.execute("create table projects (id integer primary key,"
-                             + "project varchar(10), license varchar(5))");
-        jdbcTemplate.execute("insert into projects values (0, 'Camel', 'ASF')");
-        jdbcTemplate.execute("insert into projects values (1, 'AMQ', 'ASF')");
-        jdbcTemplate.execute("insert into projects values (2, 'Linux', 'XXX')");
     }
 
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-        jdbcTemplate.execute("drop table projects");
+        
+        db.shutdown();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                ds = new SingleConnectionDataSource(url, user, password, true);
-                getContext().getComponent("sql", SqlComponent.class).setDataSource(ds);
+                getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:simple").to("sql:select * from projects where id = # order by id").to("mock:result");
             }
         };
     }
-
 }

@@ -28,16 +28,10 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 public class CustomizedJdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
 
     protected static final String SELECT_ALL_STRING = "SELECT messageId FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE processorName = ?";
-    protected static final String DELETE_ALL_STRING = "DELETE FROM CUSTOMIZED_MESSAGE_REPOSITORY WHERE processorName = ?";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
     protected JdbcTemplate jdbcTemplate;
@@ -57,28 +51,8 @@ public class CustomizedJdbcMessageIdRepositoryTest extends CamelSpringTestSuppor
         dataSource = context.getRegistry().lookup("dataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
-        
-        setupRepository();
     }
     
-    @Override
-    protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/processor/idempotent/jdbc/customized-spring.xml");
-    }
-
-    protected void setupRepository() {
-        TransactionTemplate transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(new DataSourceTransactionManager(dataSource));
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-        
-        transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus status) {
-                jdbcTemplate.update(DELETE_ALL_STRING, PROCESSOR_NAME);
-                return Boolean.TRUE;
-            }
-        });
-    }
-
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
@@ -100,5 +74,10 @@ public class CustomizedJdbcMessageIdRepositoryTest extends CamelSpringTestSuppor
         assertTrue(receivedMessageIds.contains("1"));
         assertTrue(receivedMessageIds.contains("2"));
         assertTrue(receivedMessageIds.contains("3"));
+    }
+    
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/processor/idempotent/jdbc/customized-spring.xml");
     }
 }

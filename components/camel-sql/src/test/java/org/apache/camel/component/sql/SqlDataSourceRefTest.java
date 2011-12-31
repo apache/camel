@@ -19,32 +19,36 @@ package org.apache.camel.component.sql;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 /**
  * @version 
  */
 public class SqlDataSourceRefTest extends CamelTestSupport {
-    protected String driverClass = "org.hsqldb.jdbcDriver";
-    protected String url = "jdbc:hsqldb:mem:camel_jdbc";
-    protected String user = "sa";
-    protected String password = "";
-    private JdbcTemplate jdbcTemplate;
+    
+    private EmbeddedDatabase db;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("jdbc/myDataSource", createDataSource());
+        
+        // START SNIPPET: e2
+        // this is the database we create with some initial data for our unit test
+        db = new EmbeddedDatabaseBuilder()
+            .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
+        // END SNIPPET: e2
+        
+        jndi.bind("jdbc/myDataSource", db);
+        
         return jndi;
     }
 
@@ -73,31 +77,11 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
         // END SNIPPET: e3
     }
 
-    @Before
-    public void setUp() throws Exception {
-        Class.forName(driverClass);
-        super.setUp();
-
-        jdbcTemplate = new JdbcTemplate(createDataSource());
-        // START SNIPPET: e2
-        // this is the database we create with some initial data for our unit test
-        jdbcTemplate.execute("create table projects (id integer primary key,"
-                             + "project varchar(10), license varchar(5))");
-        jdbcTemplate.execute("insert into projects values (1, 'Camel', 'ASF')");
-        jdbcTemplate.execute("insert into projects values (2, 'AMQ', 'ASF')");
-        jdbcTemplate.execute("insert into projects values (3, 'Linux', 'XXX')");
-        // END SNIPPET: e2
-    }
-
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(createDataSource());
-        jdbcTemplate.execute("drop table projects");
-    }
-
-    private DataSource createDataSource() {
-        return new SingleConnectionDataSource(url, user, password, true);
+        
+        db.shutdown();
     }
 
     @Override
@@ -112,5 +96,4 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
             }
         };
     }
-
 }

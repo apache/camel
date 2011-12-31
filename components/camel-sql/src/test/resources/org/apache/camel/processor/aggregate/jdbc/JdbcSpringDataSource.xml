@@ -35,12 +35,12 @@
     <tx:annotation-driven transaction-manager="txManager"/>
 
 	<!-- In Memory Database #1 -->
-    <jdbc:embedded-database id="dataSource1" type="H2">
+    <jdbc:embedded-database id="dataSource1" type="DERBY">
         <jdbc:script location="classpath:/sql/init.sql"/>
     </jdbc:embedded-database>
 
     <!-- In Memory Database #2 -->
-    <jdbc:embedded-database id="dataSource2" type="H2">
+    <jdbc:embedded-database id="dataSource2" type="DERBY">
         <jdbc:script location="classpath:/sql/init2.sql"/>
     </jdbc:embedded-database>
 
