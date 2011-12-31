@@ -22,8 +22,6 @@ import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,15 +30,6 @@ import org.junit.Test;
  */
 public class SimpleWithPropertiesTest {
 
-    /**
-     * A property from the property component in a expression 
-     * should be kept as is to be processed later
-     * See https://issues.apache.org/jira/browse/CAMEL-4843
-     * 
-     * The property could also be parsed correctly by the simple language but it should not throw an exception
-     * 
-     * @throws Exception
-     */
     @Test
     public void testProperty() throws Exception {
         PropertiesComponent pc = new PropertiesComponent();
@@ -48,7 +37,6 @@ public class SimpleWithPropertiesTest {
         CamelContext context = new DefaultCamelContext();
         pc.setCamelContext(context);
         context.addComponent("properties", pc);
-        // try to setup the propety
         Exchange exchange = new DefaultExchange(context);
         String result = SimpleBuilder.simple("${properties:test}").evaluate(exchange, String.class);
         Assert.assertEquals("testValue", result);
