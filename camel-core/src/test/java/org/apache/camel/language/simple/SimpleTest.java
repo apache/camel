@@ -1016,6 +1016,11 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.getClass.getSimpleName}", "Animal");
         assertExpression("${body.class.simpleName}", "Animal");
     }
+    
+    public void testSlashBeforeHeader() throws Exception {
+        assertExpression("foo/${header.foo}", "foo/abc");
+        assertExpression("foo\\${header.foo}", "foo\\abc");
+    }
 
     protected String getLanguageName() {
         return "simple";
