@@ -94,6 +94,7 @@
         <include>org.apache.camel:camel-lucene</include>
         <include>org.apache.camel:camel-mail</include>
         <include>org.apache.camel:camel-mina</include>
+        <include>org.apache.camel:camel-mina2</include>
         <include>org.apache.camel:camel-msv</include>
         <include>org.apache.camel:camel-mvel</include>
         <include>org.apache.camel:camel-mybatis</include>

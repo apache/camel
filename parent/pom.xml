@@ -118,6 +118,7 @@
     <log4j-version>1.2.16</log4j-version>
     <lucene-version>3.0.3</lucene-version>
     <mina-version>1.1.7</mina-version>
+    <mina2-version>2.0.4</mina2-version>
     <mockito-version>1.8.5</mockito-version>
     <mvel-version>2.0.18</mvel-version>
     <mybatis-version>3.0.6</mybatis-version>
@@ -180,7 +181,7 @@
       org.apache.qpid.*;version="[0.12,0.13)",
       org.apache.abdera.*;version="[0.4,2)",
       org.apache.commons.httpclient.*;version="[3.1,4.0)",
-      org.apache.mina.*;version="[1.1.7,2.0)",
+      org.apache.mina.*;version="[1.1.7,3.0)",
       org.apache.velocity.*;version="[1.6.2,2)",
       org.apache.xmlbeans.*;version="[2.4,3)",
       org.eclipse.jetty.*;version="[7.0,8)",
@@ -542,6 +543,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mina</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-mina2</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
