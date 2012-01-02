@@ -112,6 +112,7 @@ public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPo
     }
 
     public void start() throws Exception {
+        // noop
     }
 
     public void stop() throws Exception {
