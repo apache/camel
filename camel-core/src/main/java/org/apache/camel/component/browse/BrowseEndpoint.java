@@ -98,14 +98,18 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
         loadBalancer.process(exchange);
     }
 
-    public void start() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
         exchanges = createExchangeList();
+        super.doStart();
     }
 
-    public void stop() throws Exception {
+    @Override
+    protected void doStop() throws Exception {
         if (exchanges != null) {
             exchanges.clear();
             exchanges = null;
         }
+        super.doStop();
     }
 }

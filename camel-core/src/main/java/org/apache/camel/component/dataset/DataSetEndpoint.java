@@ -218,17 +218,16 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         return answer;
     }
 
-    public void start() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
         long size = getDataSet().getSize();
         expectedMessageCount((int) size);
         if (reporter == null) {
             reporter = createReporter();
         }
-        log.info("Start: " + this + " expecting " + size + " messages");
-    }
-
-    public void stop() throws Exception {
-        log.info("Stop: " + this);
+        log.info(this + " expecting " + size + " messages");
     }
 
 }
