@@ -75,6 +75,11 @@ public class FileUtilTest extends TestCase {
         assertEquals("/foo/bar", FileUtil.stripTrailingSeparator("/foo/bar/"));
         assertEquals("/foo/bar", FileUtil.stripTrailingSeparator("/foo/bar//"));
         assertEquals("/foo/bar", FileUtil.stripTrailingSeparator("/foo/bar///"));
+
+        assertEquals("/foo", FileUtil.stripTrailingSeparator("/foo"));
+        assertEquals("/foo", FileUtil.stripTrailingSeparator("/foo/"));
+        assertEquals("/", FileUtil.stripTrailingSeparator("/"));
+        assertEquals("//", FileUtil.stripTrailingSeparator("//"));
     }
 
     public void testStripPath() {

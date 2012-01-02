@@ -130,13 +130,25 @@ public final class FileUtil {
      * Strip any trailing separators
      */
     public static String stripTrailingSeparator(String name) {
-        if (name == null) {
-            return null;
+        if (ObjectHelper.isEmpty(name)) {
+            return name;
         }
-        while (name.endsWith("/") || name.endsWith(File.separator)) {
-            name = name.substring(0, name.length() - 1);
+        
+        String s = name;
+        
+        // there must be some leading text, as we should only remove trailing separators 
+        while (s.endsWith("/") || s.endsWith(File.separator)) {
+            s = s.substring(0, s.length() - 1);
         }
-        return name;
+        
+        // if the string is empty, that means there was only trailing slashes, and no leading text
+        // and so we should then return the original name as is
+        if (ObjectHelper.isEmpty(s)) {
+            return name;
+        } else {
+            // return without trailing slashes
+            return s;
+        }
     }
 
     /**

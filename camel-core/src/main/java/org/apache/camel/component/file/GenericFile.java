@@ -279,7 +279,12 @@ public class GenericFile<T> implements WrappedFile<T>  {
             parent = path.getParent();
         } else {
             String name = getRelativeFilePath();
-            File path = new File(endpointPath, name);
+            File path;
+            if (name != null) {
+                path = new File(endpointPath, name);
+            } else {
+                path = new File(endpointPath);
+            }
             parent = path.getParent();
         }
         return normalizePathToProtocol(parent);
