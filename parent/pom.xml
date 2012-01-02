@@ -181,7 +181,6 @@
       org.apache.qpid.*;version="[0.12,0.13)",
       org.apache.abdera.*;version="[0.4,2)",
       org.apache.commons.httpclient.*;version="[3.1,4.0)",
-      org.apache.mina.*;version="[1.1.7,3.0)",
       org.apache.velocity.*;version="[1.6.2,2)",
       org.apache.xmlbeans.*;version="[2.4,3)",
       org.eclipse.jetty.*;version="[7.0,8)",
