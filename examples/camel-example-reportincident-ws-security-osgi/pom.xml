@@ -105,11 +105,6 @@
 		
 		<!-- ws-security -->
 		<dependency>
-		    <groupId>org.apache.ws.security</groupId>
-		    <artifactId>wss4j</artifactId>
-		    <version>1.5.8</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-rt-ws-security</artifactId>
 			<version>${cxf-version}</version>
