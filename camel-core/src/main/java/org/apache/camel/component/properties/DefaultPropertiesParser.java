@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +58,8 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
             // okay all okay so add the replaced as visited
             visited.addAll(replaced);
 
-            // are we done yet
-            done = !answer.contains(prefixToken);
+            // we are done when we can no longer find any prefix tokens in the answer
+            done = findTokenPosition(answer, 0, prefixToken) == -1;
         }
         return answer;
     }
@@ -74,7 +75,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
         int pivot = 0;
         int size = uri.length();
         while (pivot < size) {
-            int idx = uri.indexOf(prefixToken, pivot);
+            int idx = findTokenPosition(uri, pivot, prefixToken);
             if (idx < 0) {
                 sb.append(createConstantPart(uri, pivot, size));
                 break;
@@ -83,7 +84,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                     sb.append(createConstantPart(uri, pivot, idx));
                 }
                 pivot = idx + prefixToken.length();
-                int endIdx = uri.indexOf(suffixToken, pivot);
+                int endIdx = findTokenPosition(uri, pivot, suffixToken);
                 if (endIdx < 0) {
                     throw new IllegalArgumentException("Expecting " + suffixToken + " but found end of string from text: " + uri);
                 }
@@ -115,7 +116,6 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                         esb.append("(and original key [").append(key).append("]) ");
                     }
                     esb.append("not found in properties from text: ").append(uri);
-                    
                     throw new IllegalArgumentException(esb.toString());
                 }
                 sb.append(part);
@@ -123,6 +123,28 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
             }
         }
         return sb.toString();
+    }
+    
+    private int findTokenPosition(String uri, int pivot, String token) {
+        int idx = uri.indexOf(token, pivot);
+        while (idx > 0) {
+            // grab part as the previous char + token + next char, to test if the token is quoted
+            String part = null;
+            int len = idx + token.length() + 1;
+            if (uri.length() >= len) {
+                part = uri.substring(idx - 1, len);
+            }
+            if (StringHelper.isQuoted(part)) {
+                // the token was quoted, so regard it as a literal
+                // and then try to find from next position
+                pivot = idx + token.length() + 1;
+                idx = uri.indexOf(token, pivot);
+            } else {
+                // found token
+                return idx;
+            }
+        }
+        return idx;
     }
 
     private String createConstantPart(String uri, int start, int end) {
