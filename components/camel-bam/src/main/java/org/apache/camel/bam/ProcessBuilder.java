@@ -132,6 +132,9 @@ public abstract class ProcessBuilder extends RouteBuilder {
     }
 
     public String getProcessName() {
+        if (processName == null) {
+            processName = createProcessName();
+        }
         return processName;
     }
 
