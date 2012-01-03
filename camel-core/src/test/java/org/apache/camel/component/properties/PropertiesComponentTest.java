@@ -464,15 +464,15 @@ public class PropertiesComponentTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     public void testQuotedPrefix() throws Exception {
-       assertEquals("mock", context.resolvePropertyPlaceholders("{{cool.mock}}"));
-       assertEquals("'{{' + something + '}}'", context.resolvePropertyPlaceholders("'{{' + something + '}}'"));
-       assertEquals("\"{{\" + something + \"}}\"", context.resolvePropertyPlaceholders("\"{{\" + something + \"}}\""));
-       assertEquals("mock'", context.resolvePropertyPlaceholders("{{cool.mock}}'"));
-       assertEquals("mock\"", context.resolvePropertyPlaceholders("{{cool.mock}}\""));
-       assertEquals("'mock", context.resolvePropertyPlaceholders("'{{cool.mock}}"));
-       assertEquals("\"mock", context.resolvePropertyPlaceholders("\"{{cool.mock}}"));
+        assertEquals("mock", context.resolvePropertyPlaceholders("{{cool.mock}}"));
+        assertEquals("'{{' + something + '}}'", context.resolvePropertyPlaceholders("'{{' + something + '}}'"));
+        assertEquals("\"{{\" + something + \"}}\"", context.resolvePropertyPlaceholders("\"{{\" + something + \"}}\""));
+        assertEquals("mock'", context.resolvePropertyPlaceholders("{{cool.mock}}'"));
+        assertEquals("mock\"", context.resolvePropertyPlaceholders("{{cool.mock}}\""));
+        assertEquals("'mock", context.resolvePropertyPlaceholders("'{{cool.mock}}"));
+        assertEquals("\"mock", context.resolvePropertyPlaceholders("\"{{cool.mock}}"));
     }
 
     @Override
