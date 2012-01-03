@@ -913,6 +913,23 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
+    public boolean removeService(Object object) throws Exception {
+        if (object instanceof Service) {
+            Service service = (Service) object;
+
+            for (LifecycleStrategy strategy : lifecycleStrategies) {
+                if (service instanceof Endpoint) {
+                    // use specialized endpoint remove
+                    strategy.onEndpointRemove((Endpoint) service);
+                } else {
+                    strategy.onServiceRemove(this, service, null);
+                }
+            }
+            return servicesToClose.remove(service);
+        }
+        return false;
+    }
+
     public boolean hasService(Object object) {
         if (object instanceof Service) {
             Service service = (Service) object;

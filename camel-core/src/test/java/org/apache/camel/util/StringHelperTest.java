@@ -95,5 +95,23 @@ public class StringHelperTest extends TestCase {
         assertEquals(true, StringHelper.hasStartToken("${body}", "foo"));
         assertEquals(true, StringHelper.hasStartToken("$foo{body}", "foo"));
     }
+    
+    public void testIsQuoted() throws Exception {
+        assertEquals(false, StringHelper.isQuoted(null));
+        assertEquals(false, StringHelper.isQuoted(""));
+        assertEquals(false, StringHelper.isQuoted(" "));
+        assertEquals(false, StringHelper.isQuoted("abc"));
+        assertEquals(false, StringHelper.isQuoted("abc'"));
+        assertEquals(false, StringHelper.isQuoted("\"abc'"));
+        assertEquals(false, StringHelper.isQuoted("abc\""));
+        assertEquals(false, StringHelper.isQuoted("'abc\""));
+        assertEquals(false, StringHelper.isQuoted("\"abc'"));
+        assertEquals(false, StringHelper.isQuoted("abc'def'"));
+        assertEquals(false, StringHelper.isQuoted("abc'def'ghi"));
+        assertEquals(false, StringHelper.isQuoted("'def'ghi"));
+
+        assertEquals(true, StringHelper.isQuoted("'abc'"));
+        assertEquals(true, StringHelper.isQuoted("\"abc\""));
+    }
 
 }

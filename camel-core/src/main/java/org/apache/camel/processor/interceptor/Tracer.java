@@ -362,14 +362,16 @@ public class Tracer implements InterceptStrategy, Service {
         this.traceBodySize = traceBodySize;
     }
 
-    @Override
-    public String toString() {
-        return "Tracer";
-    }
-
     public void start() throws Exception {
+        // noop
     }
 
     public void stop() throws Exception {
+        // noop
+    }
+
+    @Override
+    public String toString() {
+        return "Tracer";
     }
 }

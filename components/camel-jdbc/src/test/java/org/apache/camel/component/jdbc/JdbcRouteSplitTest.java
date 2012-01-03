@@ -16,23 +16,24 @@
  */
 package org.apache.camel.component.jdbc;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
-public class JdbcRouteSplitTest extends JdbcRouteTest {
+public class JdbcRouteSplitTest extends AbstractJdbcTestSupport {
+    
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint mock;
 
+    @Test
     public void testJdbcRoutes() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
+        mock.expectedMessageCount(3);
 
         template.sendBody("direct:hello", "select * from customer order by ID");
 
         assertMockEndpointsSatisfied();
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

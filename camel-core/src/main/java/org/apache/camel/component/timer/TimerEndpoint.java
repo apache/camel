@@ -60,12 +60,16 @@ public class TimerEndpoint extends DefaultEndpoint {
         return new TimerConsumer(this, processor);
     }
 
-    public void start() throws Exception {
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
         // do nothing, the timer will be set when the first consumer will request it
     }
 
-    public void stop() throws Exception {
+    @Override
+    protected void doStop() throws Exception {
         setTimer(null);
+        super.doStop();
     }
 
     @ManagedAttribute(description = "Timer Name")

@@ -64,5 +64,45 @@ public class SimpleParserExpressionInvalidTest extends ExchangeTestSupport {
             assertEquals(15, e.getIndex());
         }
     }
+    
+    public void testNoEndFunction() throws Exception {
+        SimpleExpressionParser parser = new SimpleExpressionParser("Hello ${body");
+        try {
+            parser.parseExpression();
+            fail("Should thrown exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(11, e.getIndex());
+        }
+    }
+
+    public void testNoStartFunction() throws Exception {
+        SimpleExpressionParser parser = new SimpleExpressionParser("Hello {body}");
+        try {
+            parser.parseExpression();
+            fail("Should thrown exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(11, e.getIndex());
+        }
+    }
+
+    public void testNoStartFunction2() throws Exception {
+        SimpleExpressionParser parser = new SimpleExpressionParser("Hello body}");
+        try {
+            parser.parseExpression();
+            fail("Should thrown exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(10, e.getIndex());
+        }
+    }
+
+    public void testPropertyPlaceholderSyntax() throws Exception {
+        SimpleExpressionParser parser = new SimpleExpressionParser("{{myserver}}/${header.myapp}");
+        try {
+            parser.parseExpression();
+            fail("Should thrown exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertEquals(10, e.getIndex());
+        }
+    }
 
 }

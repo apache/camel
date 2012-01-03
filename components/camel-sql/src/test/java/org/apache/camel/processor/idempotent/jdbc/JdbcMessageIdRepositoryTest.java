@@ -31,18 +31,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
 
     protected static final String SELECT_ALL_STRING = "SELECT messageId FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
-    protected static final String DELETE_ALL_STRING = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ?";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
     protected JdbcTemplate jdbcTemplate;
@@ -62,33 +55,8 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         dataSource = context.getRegistry().lookup("dataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
-        
-        setupRepository();
     }
     
-    @Override
-    protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/processor/idempotent/jdbc/spring.xml");
-    }
-
-    protected void setupRepository() {
-        TransactionTemplate transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(new DataSourceTransactionManager(dataSource));
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-        
-        transactionTemplate.execute(new TransactionCallback<Boolean>() {
-            public Boolean doInTransaction(TransactionStatus status) {
-                try {
-                    jdbcTemplate.execute("CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(20), messageId VARCHAR(10), createdAt timestamp)");
-                } catch (DataAccessException e) {
-                    // noop if table already exists 
-                }
-                jdbcTemplate.update(DELETE_ALL_STRING, PROCESSOR_NAME);
-                return Boolean.TRUE;
-            }
-        });
-    }
-
     @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
@@ -150,5 +118,10 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
         assertEquals(2, receivedMessageIds.size());
         assertTrue("Should contain message 1", receivedMessageIds.contains("1"));
         assertTrue("Should contain message 3", receivedMessageIds.contains("3"));
+    }
+    
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/processor/idempotent/jdbc/spring.xml");
     }
 }

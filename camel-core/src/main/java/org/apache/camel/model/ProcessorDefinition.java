@@ -418,14 +418,28 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     protected Processor makeProcessor(RouteContext routeContext) throws Exception {
         Processor processor = null;
 
+        // allow any custom logic before we create the processor
+        preCreateProcessor();
+
         // resolve properties before we create the processor
         resolvePropertyPlaceholders(routeContext, this);
 
         // resolve constant fields (eg Exchange.FILE_NAME)
         resolveKnownConstantFields(this);
 
-        // allow any custom logic before we create the processor
-        preCreateProcessor();
+        // also resolve properties and constant fields on embedded expressions
+        ProcessorDefinition me = (ProcessorDefinition) this;
+        if (me instanceof ExpressionNode) {
+            ExpressionNode exp = (ExpressionNode) me;
+            ExpressionDefinition expressionDefinition = exp.getExpression();
+            if (expressionDefinition != null) {
+                // resolve properties before we create the processor
+                resolvePropertyPlaceholders(routeContext, expressionDefinition);
+
+                // resolve constant fields (eg Exchange.FILE_NAME)
+                resolveKnownConstantFields(expressionDefinition);
+            }
+        }
 
         // at first use custom factory
         if (routeContext.getCamelContext().getProcessorFactory() != null) {
@@ -444,32 +458,36 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Inspects the given processor definition and resolves any property placeholders from its properties.
+     * Inspects the given definition and resolves any property placeholders from its properties.
      * <p/>
      * This implementation will check all the getter/setter pairs on this instance and for all the values
      * (which is a String type) will be property placeholder resolved.
      *
      * @param routeContext the route context
-     * @param definition   the processor definition
+     * @param definition   the definition
      * @throws Exception is thrown if property placeholders was used and there was an error resolving them
      * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
      * @see org.apache.camel.component.properties.PropertiesComponent
      */
-    protected void resolvePropertyPlaceholders(RouteContext routeContext, ProcessorDefinition definition) throws Exception {
+    protected void resolvePropertyPlaceholders(RouteContext routeContext, Object definition) throws Exception {
         log.trace("Resolving property placeholders for: {}", definition);
 
         // find all getter/setter which we can use for property placeholders
         Map<Object, Object> properties = new HashMap<Object, Object>();
         IntrospectionSupport.getProperties(definition, properties, null);
 
+        ProcessorDefinition processorDefinition = null;
+        if (definition instanceof ProcessorDefinition) {
+            processorDefinition = (ProcessorDefinition) definition;
+        }
         // include additional properties which have the Camel placeholder QName
         // and when the definition parameter is this (otherAttributes belong to this)
-        if (definition.getOtherAttributes() != null) {
-            for (Object key : definition.getOtherAttributes().keySet()) {
+        if (processorDefinition != null && processorDefinition.getOtherAttributes() != null) {
+            for (Object key : processorDefinition.getOtherAttributes().keySet()) {
                 QName qname = (QName) key;
                 if (Constants.PLACEHOLDER_QNAME.equals(qname.getNamespaceURI())) {
                     String local = qname.getLocalPart();
-                    Object value = definition.getOtherAttributes().get(key);
+                    Object value = processorDefinition.getOtherAttributes().get(key);
                     if (value != null && value instanceof String) {
                         // value must be enclosed with placeholder tokens
                         String s = (String) value;
@@ -519,14 +537,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Inspects the given processor definition and resolves known fields
+     * Inspects the given definition and resolves known fields
      * <p/>
      * This implementation will check all the getter/setter pairs on this instance and for all the values
      * (which is a String type) will check if it refers to a known field (such as on Exchange).
      *
-     * @param definition   the processor definition
+     * @param definition   the definition
      */
-    protected void resolveKnownConstantFields(ProcessorDefinition definition) throws Exception {
+    protected void resolveKnownConstantFields(Object definition) throws Exception {
         log.trace("Resolving known fields for: {}", definition);
 
         // find all String getter/setter

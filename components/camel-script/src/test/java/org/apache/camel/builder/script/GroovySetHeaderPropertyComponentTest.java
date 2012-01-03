@@ -45,6 +45,20 @@ public class GroovySetHeaderPropertyComponentTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testNumber() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived(5);
+
+        template.sendBody("direct:number", 3);
+
+        assertMockEndpointsSatisfied();
+    }
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -53,6 +67,10 @@ public class GroovySetHeaderPropertyComponentTest extends CamelTestSupport {
 
                 from("direct:start")
                     .setHeader("myHeader").groovy("context.resolvePropertyPlaceholders('{{' + request.headers.get('foo') + '}}')")
+                    .to("mock:result");
+                
+                from("direct:number")
+                    .transform().groovy("{{myscript}}")
                     .to("mock:result");
             }
         };

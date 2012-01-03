@@ -89,6 +89,21 @@ public final class StringHelper {
         }
         return s;
     }
+    
+    public static boolean isQuoted(String s) {
+        if (ObjectHelper.isEmpty(s)) {
+            return false;
+        }
+
+        if (s.startsWith("'") && s.endsWith("'")) {
+            return true;
+        }
+        if (s.startsWith("\"") && s.endsWith("\"")) {
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Encodes the text into safe XML by replacing < > and & with XML tokens

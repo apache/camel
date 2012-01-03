@@ -26,14 +26,12 @@ import java.lang.annotation.Target;
  * An annotation for injection of Spring Expression Language (SpEL) expressions
  * into method parameters, fields or properties.
  * 
- * In the context of Camel this annotation serves a similar purpose as Spring's {@Value} annotation.
+ * In the context of Camel this annotation serves a similar purpose as Spring's <tt>@Value</tt> annotation.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
 @LanguageAnnotation(language = "spel")
 public @interface SpEL {
-    
     String value();
-    
 }

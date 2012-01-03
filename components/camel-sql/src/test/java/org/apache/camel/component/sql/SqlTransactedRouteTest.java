@@ -18,8 +18,6 @@ package org.apache.camel.component.sql;
 
 import java.util.Map;
 
-import javax.sql.DataSource;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,21 +29,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 /**
  * @version 
  */
 public class SqlTransactedRouteTest extends CamelTestSupport {
     
-    protected DataSource ds;
-    protected JdbcTemplate jdbc;
-    
-    private String driverClass = "org.hsqldb.jdbcDriver";
-    private String url = "jdbc:hsqldb:mem:camel_jdbc";
-    private String user = "sa";
-    private String password = "";
+    private EmbeddedDatabase db;
+    private JdbcTemplate jdbc;
     
     private String startEndpoint = "direct:start";
     private String sqlEndpoint = "sql:overriddenByTheHeader?dataSourceRef=testdb";
@@ -54,7 +48,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         
-        jdbc = new JdbcTemplate(ds);
+        jdbc = new JdbcTemplate(db);
         jdbc.execute("CREATE TABLE CUSTOMER (ID VARCHAR(15) NOT NULL PRIMARY KEY, NAME VARCHAR(100))");
     }
 
@@ -62,12 +56,12 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry reg = super.createRegistry();
         
-        ds = new SingleConnectionDataSource(url, user, password, true);
-        ((DriverManagerDataSource) ds).setDriverClassName(driverClass);
-        reg.bind("testdb", ds);
+        db = new EmbeddedDatabaseBuilder()
+            .setType(EmbeddedDatabaseType.DERBY).build();
+        reg.bind("testdb", db);
         
         DataSourceTransactionManager txMgr = new DataSourceTransactionManager();
-        txMgr.setDataSource(ds);
+        txMgr.setDataSource(db);
         reg.bind("txManager", txMgr);
         
         SpringTransactionPolicy txPolicy = new SpringTransactionPolicy();
@@ -82,8 +76,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
         
-        JdbcTemplate jdbc = new JdbcTemplate(ds);
-        jdbc.execute("drop table customer");
+        db.shutdown();
     }
     
     @Test

@@ -209,6 +209,14 @@
               <packages>org.apache.camel.component.*</packages>
             </group>
             <group>
+              <title>Support APIs for implementors</title>
+              <packages>org.apache.camel.support.*</packages>
+            </group>
+            <group>
+              <title>Main class for running Camel standalone</title>
+              <packages>org.apache.camel.main.*</packages>
+            </group>
+            <group>
               <title>Camel Runtime</title>
               <packages>org.apache.camel.impl:org.apache.camel.impl.*</packages>
             </group>
@@ -286,6 +294,14 @@
                 <group>
                   <title>Camel Support having base classes to extend</title>
                   <packages>org.apache.camel.support</packages>
+                </group>
+                <group>
+                  <title>Support APIs for implementors</title>
+                  <packages>org.apache.camel.support.*</packages>
+                </group>
+                <group>
+                  <title>Main class for running Camel standalone</title>
+                  <packages>org.apache.camel.main.*</packages>
                 </group>
                 <group>
                   <title>Camel Runtime</title>

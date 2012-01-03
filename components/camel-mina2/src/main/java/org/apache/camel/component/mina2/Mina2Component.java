@@ -1,0 +1,97 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.mina2;
+
+import java.net.URI;
+import java.util.Map;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.mina.core.filterchain.IoFilter;
+
+/**
+ * Component for Apache MINA 2.x.
+ *
+ * @version 
+ */
+public class Mina2Component extends DefaultComponent {
+
+    private Mina2Configuration configuration;
+
+    public Mina2Component() {
+    }
+
+    public Mina2Component(CamelContext context) {
+        super(context);
+    }
+
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        // Using the configuration which set by the component as a default one
+        // Since the configuration's properties will be set by the URI
+        // we need to copy or create a new MinaConfiguration here
+        // Using the configuration which set by the component as a default one
+        // Since the configuration's properties will be set by the URI
+        // we need to copy or create a new MinaConfiguration here
+        Mina2Configuration config;
+        if (configuration != null) {
+            config = configuration.copy();
+        } else {
+            config = new Mina2Configuration();
+        }
+
+        URI u = new URI(remaining);
+        config.setHost(u.getHost());
+        config.setPort(u.getPort());
+        config.setProtocol(u.getScheme());
+        config.setFilters(resolveAndRemoveReferenceListParameter(parameters, "filters", IoFilter.class));
+        setProperties(config, parameters);
+
+        return createEndpoint(uri, config);
+    }
+
+    public Endpoint createEndpoint(Mina2Configuration config) throws Exception {
+        return createEndpoint(null, config);
+    }
+
+    private Endpoint createEndpoint(String uri, Mina2Configuration config) throws Exception {
+        ObjectHelper.notNull(getCamelContext(), "camelContext");
+        Endpoint endpoint;
+        String protocol = config.getProtocol();
+        // if mistyped uri then protocol can be null
+
+        if (protocol != null) {
+            if (protocol.equals("tcp") || config.isDatagramProtocol() || protocol.equals("vm")) {
+                return new Mina2Endpoint(uri, this, config);
+            }
+        }
+        // protocol not resolved so error
+        throw new IllegalArgumentException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
+    }
+
+    // Properties
+    //-------------------------------------------------------------------------
+    public Mina2Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Mina2Configuration configuration) {
+        this.configuration = configuration;
+    }
+}

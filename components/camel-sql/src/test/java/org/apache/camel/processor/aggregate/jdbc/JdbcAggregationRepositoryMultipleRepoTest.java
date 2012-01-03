@@ -18,21 +18,12 @@ package org.apache.camel.processor.aggregate.jdbc;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class JdbcAggregationRepositoryMultipleRepoTest extends CamelTestSupport {
-
-    ApplicationContext applicationContext;
-
-    @Override
-    public void setUp() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/processor/aggregate/jdbc/JdbcSpringDataSource.xml");
-
-        super.setUp();
-    }
+public class JdbcAggregationRepositoryMultipleRepoTest extends CamelSpringTestSupport {
 
     @Test
     public void testMultipeRepo() {
@@ -102,5 +93,15 @@ public class JdbcAggregationRepositoryMultipleRepoTest extends CamelTestSupport 
         assertEquals("Hello World", actual.getIn().getBody());
         actual = repo2.get(context, "foo");
         assertEquals("Bye World", actual.getIn().getBody());
+    }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/processor/aggregate/jdbc/JdbcSpringDataSource.xml");
+    }
+
+    @Override
+    protected int getExpectedRouteCount() {
+        return 0;
     }
 }

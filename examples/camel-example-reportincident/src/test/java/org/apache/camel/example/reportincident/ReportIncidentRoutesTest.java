@@ -20,29 +20,26 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * Unit test of our routes
  */
-public class ReportIncidentRoutesTest {
+public class ReportIncidentRoutesTest extends CamelTestSupport {
 
     // should be the same address as we have in our route
     private static final String URL = "http://localhost:{{port}}/camel-example-reportincident/webservices/incident";
 
-    protected CamelContext camel;
-
     @BeforeClass
     public static void setupFreePort() throws Exception {
-        // find a free port number from 9100 onwards, and write that in the custom.properties file
+        // find a free port number from 9200 onwards, and write that in the custom.properties file
         // which we will use for the unit tests, to avoid port number in use problems
         int port = AvailablePortFinder.getNextAvailable(9100);
         String s = "port=" + port;
@@ -52,20 +49,18 @@ public class ReportIncidentRoutesTest {
         fos.close();
     }
 
-    protected void startCamel() throws Exception {
-        camel = new DefaultCamelContext();
-
-        // add properties component
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camel = super.createCamelContext();
         camel.addComponent("properties", new PropertiesComponent("classpath:incident.properties,file:target/custom.properties"));
+        return camel;
+    }
 
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
         ReportIncidentRoutes routes = new ReportIncidentRoutes();
         routes.setUsingServletTransport(false);
-        camel.addRoutes(routes);
-        camel.start();
-    }
-    
-    protected void stopCamel() throws Exception {
-        camel.stop();
+        return routes;
     }
 
     protected static ReportIncidentEndpoint createCXFClient(String url) {
@@ -78,16 +73,6 @@ public class ReportIncidentRoutesTest {
 
     @Test
     public void testReportIncident() throws Exception {
-        // start camel
-        startCamel();
-
-        runTest();
-
-        // stop camel
-        stopCamel();
-    }
-    
-    protected void runTest() throws Exception {
         // assert mailbox is empty before starting
         Mailbox inbox = Mailbox.get("incident@mycompany.com");
         inbox.clear();
@@ -105,7 +90,7 @@ public class ReportIncidentRoutesTest {
         input.setPhone("0045 2962 7576");
 
         // create the webservice client and send the request
-        String url = camel.resolvePropertyPlaceholders(URL);
+        String url = context.resolvePropertyPlaceholders(URL);
         ReportIncidentEndpoint client = createCXFClient(url);
         OutputReportIncident out = client.reportIncident(input);
 
