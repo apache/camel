@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -48,7 +49,7 @@ public class ThrottlingInflightRoutePolicyContextScopeTest extends ContextTestSu
         Thread.sleep(2000);
         template.sendBody("direct:start", "B");
 
-        result.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(2, TimeUnit.SECONDS, result);
 
         result.reset();
         result.expectedBodiesReceived("B");
@@ -57,7 +58,7 @@ public class ThrottlingInflightRoutePolicyContextScopeTest extends ContextTestSu
         // to the throttler to resume the seda:foo consumer, so B can get done
         latch.countDown();
 
-        result.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(2, TimeUnit.SECONDS, result);
     }
 
     @Override
