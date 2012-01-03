@@ -51,6 +51,7 @@ public interface EndpointConfiguration {
     /**
      * Gets the value of a particular parameter.
      *
+     * @param name the parameter name
      * @return the configuration URI.
      */
     <T> T getParameter(String name);
@@ -58,13 +59,15 @@ public interface EndpointConfiguration {
     /**
      * Sets the value of a particular parameter.
      *
-     * @return the configuration URI.
+     * @param name  the parameter name
+     * @param value the parameter value
      */
     <T> void setParameter(String name, T value);
 
     /**
-     * Returns the formated configuration string of an {@link Endpoint}.
+     * Returns the formatted configuration string of an {@link Endpoint}.
      *
+     * @param format the format
      * @return the configuration URI in String format.
      */
     String toUriString(UriFormat format);

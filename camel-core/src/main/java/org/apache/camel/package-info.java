@@ -16,9 +16,7 @@
  */
 
 /**
- * The JAXB POJOs for the
- * <a href="http://camel.apache.org/xml-configuration.html">XML Configuration</a>
- * of the routing rules.
+ * The core Camel API.
  */
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel;
