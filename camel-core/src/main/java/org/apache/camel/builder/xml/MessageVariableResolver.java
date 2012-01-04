@@ -94,10 +94,10 @@ public class MessageVariableResolver implements XPathVariableResolver {
             }
         }
 
-        // If we can't find an answer we must return void.
-        // We can't return null then the xpath engine will throw a NullPointerException
+        // if we can't find an answer we must return an empty String.
+        // if we return null, then the JDK default XPathEngine will throw an exception
         if (answer == null) {
-            return Void.class;
+            return "";
         } else {
             return answer;
         }
