@@ -233,7 +233,7 @@ public class RouteService extends ChildServiceSupport {
         for (Route route : routes) {
             LOG.debug("Shutting down services on route: {}", route.getId());
             List<Service> services = route.getServices();
-            // also get route scoped child services
+            // also get route scoped services
             doGetRouteScopedServices(services, route);
 
             // gather list of services to stop as we need to start child services as well
