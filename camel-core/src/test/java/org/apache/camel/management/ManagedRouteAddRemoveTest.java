@@ -40,7 +40,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         };
     }
 
-    public void testRouteAddRemoteRoute() throws Exception {
+    public void testRouteAddRemoteRouteWithTo() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
@@ -67,6 +67,102 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMessageCount(1);
         template.sendBody("direct:bar", "Hello World");
+        bar.assertIsSatisfied();
+
+        // there should be one more producer cache
+        names = mbeanServer.queryNames(on, null);
+        assertEquals(2, names.size());
+
+        log.info("Removing 2nd route");
+
+        // now remove the 2nd route
+        context.stopRoute("bar");
+        boolean removed = context.removeRoute("bar");
+        assertTrue(removed);
+
+        // the producer cache should have been removed
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        names = mbeanServer.queryNames(on, null);
+        assertEquals(1, names.size());
+
+        log.info("Shutting down...");
+    }
+
+    public void testRouteAddRemoteRouteWithRecipientList() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        result.assertIsSatisfied();
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+
+        // number of producer caches
+        Set<ObjectName> names = mbeanServer.queryNames(on, null);
+        assertEquals(1, names.size());
+        
+        log.info("Adding 2nd route");
+
+        // add a 2nd route
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:bar").routeId("bar").recipientList(header("bar"));
+            }
+        });
+
+        // and send a message to it
+        MockEndpoint bar = getMockEndpoint("mock:bar");
+        bar.expectedMessageCount(1);
+        template.sendBodyAndHeader("direct:bar", "Hello World", "bar", "mock:bar");
+        bar.assertIsSatisfied();
+
+        // there should be one more producer cache
+        names = mbeanServer.queryNames(on, null);
+        assertEquals(2, names.size());
+
+        log.info("Removing 2nd route");
+
+        // now remove the 2nd route
+        context.stopRoute("bar");
+        boolean removed = context.removeRoute("bar");
+        assertTrue(removed);
+
+        // the producer cache should have been removed
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        names = mbeanServer.queryNames(on, null);
+        assertEquals(1, names.size());
+
+        log.info("Shutting down...");
+    }
+
+    public void testRouteAddRemoteRouteWithRoutingSlip() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        result.assertIsSatisfied();
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+
+        // number of producer caches
+        Set<ObjectName> names = mbeanServer.queryNames(on, null);
+        assertEquals(1, names.size());
+
+        log.info("Adding 2nd route");
+
+        // add a 2nd route
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:bar").routeId("bar").routingSlip(header("bar"));
+            }
+        });
+
+        // and send a message to it
+        MockEndpoint bar = getMockEndpoint("mock:bar");
+        bar.expectedMessageCount(1);
+        template.sendBodyAndHeader("direct:bar", "Hello World", "bar", "mock:bar");
         bar.assertIsSatisfied();
 
         // there should be one more producer cache
