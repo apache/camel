@@ -21,18 +21,94 @@ import java.util.*;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.sshd.common.KeyPairProvider;
 
 /**
  * Represents the component that manages {@link SshEndpoint}.
  */
 public class SshComponent extends DefaultComponent {
+    private SshConfiguration configuration;
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SshConfiguration config = new SshConfiguration(new URI(uri));
+        SshConfiguration newConfig;
 
-        SshEndpoint endpoint = new SshEndpoint(uri, this, config);
+        if (configuration == null) {
+            newConfig = new SshConfiguration(new URI(uri));
+        } else {
+            newConfig = configuration.copy();
+        }
+
+        SshEndpoint endpoint = new SshEndpoint(uri, this, newConfig);
         setProperties(endpoint.getConfiguration(), parameters);
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+
+    public SshConfiguration getConfiguration() {
+        if (configuration == null) {
+            configuration = new SshConfiguration();
+        }
+        return configuration;
+    }
+
+    public void setConfiguration(SshConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public String getHost() {
+        return getConfiguration().getHost();
+    }
+
+    public void setHost(String host) {
+        getConfiguration().setHost(host);
+    }
+
+    public int getPort() {
+        return getConfiguration().getPort();
+    }
+
+    public void setPort(int port) {
+        getConfiguration().setPort(port);
+    }
+
+    public String getUsername() {
+        return getConfiguration().getUsername();
+    }
+
+    public void setUsername(String username) {
+        getConfiguration().setUsername(username);
+    }
+
+    public String getPassword() {
+        return getConfiguration().getPassword();
+    }
+
+    public void setPassword(String password) {
+        getConfiguration().setPassword(password);
+    }
+
+    public String getPollCommand() {
+        return getConfiguration().getPollCommand();
+    }
+
+    public void setPollCommand(String pollCommand) {
+        getConfiguration().setPollCommand(pollCommand);
+    }
+
+    public KeyPairProvider getKeyPairProvider() {
+        return getConfiguration().getKeyPairProvider();
+    }
+
+    public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
+        getConfiguration().setKeyPairProvider(keyPairProvider);
+    }
+
+    public String getKeyType() {
+        return getConfiguration().getKeyType();
+    }
+
+    public void setKeyType(String keyType) {
+        getConfiguration().setKeyType(keyType);
     }
 }

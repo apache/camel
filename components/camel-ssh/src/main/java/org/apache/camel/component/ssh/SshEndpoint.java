@@ -17,6 +17,7 @@
 package org.apache.camel.component.ssh;
 
 import java.io.*;
+import java.security.KeyPair;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -25,7 +26,10 @@ import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
+import org.apache.sshd.client.future.AuthFuture;
 import org.apache.sshd.client.future.OpenFuture;
+import org.apache.sshd.common.KeyPairProvider;
+import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +41,6 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
     private SshClient client;
     private SshConfiguration sshConfiguration;
-    private String pollCommand;
 
     public SshEndpoint() {
     }
@@ -73,8 +76,22 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public byte[] sendExecCommand(String command) throws Exception {
         byte[] result = null;
 
-        ClientSession session = client.connect(sshConfiguration.getHost(), sshConfiguration.getPort()).await().getSession();
-        session.authPassword(sshConfiguration.getUsername(), sshConfiguration.getPassword()).await().isSuccess();
+        ClientSession session = client.connect(getHost(), getPort()).await().getSession();
+
+        AuthFuture authResult;
+
+        KeyPairProvider keyPairProvider = getKeyPairProvider();
+        if (keyPairProvider != null) {
+            KeyPair pair = keyPairProvider.loadKey(getKeyType());
+            authResult = session.authPublicKey(getUsername(), pair).await();
+        } else {
+            authResult = session.authPassword(getUsername(), getPassword()).await();
+        }
+
+        if (authResult.isFailure()) {
+            log.error("Failed to authenticate");
+            throw new Exception("Failed to successfully authenticate");
+        }
 
         ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_EXEC, command);
 
@@ -119,22 +136,67 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         super.doStop();
     }
 
-    public String getPollCommand() {
-        return pollCommand;
-    }
-
-    public void setPollCommand(String pollCommand) {
-        this.pollCommand = pollCommand;
-    }
-
     public SshConfiguration getConfiguration() {
-        if (sshConfiguration == null) {
-            sshConfiguration = new SshConfiguration();
-        }
         return sshConfiguration;
     }
 
     public void setConfiguration(SshConfiguration configuration) {
         this.sshConfiguration = configuration;
+    }
+
+    public String getHost() {
+        return getConfiguration().getHost();
+    }
+
+    public void setHost(String host) {
+        getConfiguration().setHost(host);
+    }
+
+    public int getPort() {
+        return getConfiguration().getPort();
+    }
+
+    public void setPort(int port) {
+        getConfiguration().setPort(port);
+    }
+
+    public String getUsername() {
+        return getConfiguration().getUsername();
+    }
+
+    public void setUsername(String username) {
+        getConfiguration().setUsername(username);
+    }
+
+    public String getPassword() {
+        return getConfiguration().getPassword();
+    }
+
+    public void setPassword(String password) {
+        getConfiguration().setPassword(password);
+    }
+
+    public String getPollCommand() {
+        return getConfiguration().getPollCommand();
+    }
+
+    public void setPollCommand(String pollCommand) {
+        getConfiguration().setPollCommand(pollCommand);
+    }
+
+    public KeyPairProvider getKeyPairProvider() {
+        return getConfiguration().getKeyPairProvider();
+    }
+
+    public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
+        getConfiguration().setKeyPairProvider(keyPairProvider);
+    }
+
+    public String getKeyType() {
+        return getConfiguration().getKeyType();
+    }
+
+    public void setKeyType(String keyType) {
+        getConfiguration().setKeyType(keyType);
     }
 }

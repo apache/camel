@@ -23,6 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.sshd.SshServer;
+import org.apache.sshd.common.KeyPairProvider;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.Command;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class SshComponentProducerTest extends CamelTestSupport {
     public void testProducer() throws Exception {
         final String msg = "test\n";
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = getMockEndpoint("mock:password");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(new Object[]{msg});
 
@@ -73,7 +74,7 @@ public class SshComponentProducerTest extends CamelTestSupport {
     public void testReconnect() throws Exception {
         final String msg = "test\n";
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = getMockEndpoint("mock:password");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived(new Object[]{msg});
 
@@ -93,6 +94,19 @@ public class SshComponentProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testRsa() throws Exception {
+        final String msg = "test\n";
+
+        MockEndpoint mock = getMockEndpoint("mock:rsa");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived(new Object[]{msg});
+
+        template.sendBody("direct:ssh-rsa", msg);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -100,8 +114,22 @@ public class SshComponentProducerTest extends CamelTestSupport {
             public void configure() {
                 from("direct:ssh")
                     .to("ssh://smx:smx@localhost:" + port)
-                    .to("mock:result")
-                    .to("log:foo?showAll=true");
+                    .to("mock:password")
+                    .to("log:password?showAll=true");
+
+                SshComponent sshComponent = new SshComponent();
+                sshComponent.setHost("localhost");
+                sshComponent.setPort(port);
+                sshComponent.setUsername("smx");
+                sshComponent.setKeyPairProvider(new FileKeyPairProvider(new String[]{"src/test/resources/hostkey.pem"}));
+                sshComponent.setKeyType(KeyPairProvider.SSH_RSA);
+
+                getContext().addComponent("ssh-rsa", sshComponent);
+
+                from("direct:ssh-rsa")
+                        .to("ssh-rsa:test")
+                        .to("mock:rsa")
+                        .to("log:rsa?showAll=true");
             }
         };
     }

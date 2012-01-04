@@ -18,15 +18,20 @@ package org.apache.camel.component.ssh;
 
 import java.net.*;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.sshd.common.KeyPairProvider;
 
-public class SshConfiguration {
+public class SshConfiguration implements Cloneable  {
     public static final int DEFAULT_SSH_PORT = 22;
 
     private String username;
     private String host;
     private int port;
     private String password;
+    private String pollCommand;
+    private KeyPairProvider keyPairProvider;
+    private String keyType;
 
     public SshConfiguration() {
     }
@@ -66,6 +71,14 @@ public class SshConfiguration {
         }
     }
 
+    public SshConfiguration copy() {
+        try {
+            return (SshConfiguration) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
     public String getUsername() {
         return username;
     }
@@ -96,5 +109,29 @@ public class SshConfiguration {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPollCommand() {
+        return pollCommand;
+    }
+
+    public void setPollCommand(String pollCommand) {
+        this.pollCommand = pollCommand;
+    }
+
+    public KeyPairProvider getKeyPairProvider() {
+        return keyPairProvider;
+    }
+
+    public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
+        this.keyPairProvider = keyPairProvider;
+    }
+
+    public String getKeyType() {
+        return keyType;
+    }
+
+    public void setKeyType(String keyType) {
+        this.keyType = keyType;
     }
 }
