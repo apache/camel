@@ -311,8 +311,7 @@ public class DotMojo extends AbstractMavenReport {
         PrintWriter out = new PrintWriter(buffer);
         printHtmlHeader(out, contextName);
         printHtmlFileHeader(out, file);
-        for (int j = 0; j < graphvizOutputTypes.length; j++) {
-            String format = graphvizOutputTypes[j];
+        for (String format : graphvizOutputTypes) {
             String generated = convertFile(file, format);
 
             if (format.equals("cmapx") && generated != null) {

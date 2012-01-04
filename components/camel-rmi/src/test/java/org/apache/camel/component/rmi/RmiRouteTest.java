@@ -90,8 +90,8 @@ public class RmiRouteTest extends Assert {
         if (cl instanceof URLClassLoader) {
             URLClassLoader ucl = (URLClassLoader)cl;
             URL[] urls = ucl.getURLs();
-            for (int i = 0; i < urls.length; i++) {
-                if (urls[i].getPath().contains(" ")) {
+            for (URL url : urls) {
+                if (url.getPath().contains(" ")) {
                     System.err.println("=======================================================================");
                     System.err.println(" TEST Skipped: " + this.getClass().getName());
                     System.err.println("   Your probably on windows.  We detected that the classpath");

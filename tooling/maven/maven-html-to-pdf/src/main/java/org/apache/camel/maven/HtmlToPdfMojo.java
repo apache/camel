@@ -194,9 +194,9 @@ public class HtmlToPdfMojo extends AbstractMojo {
         Argument arg;
 
         if (princeArgs != null) {
-            for (int i = 0; i < princeArgs.length; i++) {
+            for (String princeArg : princeArgs) {
                 arg = new Argument();
-                arg.setValue(princeArgs[i]);
+                arg.setValue(princeArg);
                 cl.addArg(arg);
             }
         }
@@ -259,8 +259,8 @@ public class HtmlToPdfMojo extends AbstractMojo {
             out.println(head);
         }
         if (styleSheets != null) {
-            for (int i = 0; i < styleSheets.length; i++) {
-                out.println("   <link href=\"" + styleSheets[i] + "\" rel=\"stylesheet\" type=\"text/css\"/>");
+            for (String styleSheet : styleSheets) {
+                out.println("   <link href=\"" + styleSheet + "\" rel=\"stylesheet\" type=\"text/css\"/>");
             }
         }
         out.println("</head>");

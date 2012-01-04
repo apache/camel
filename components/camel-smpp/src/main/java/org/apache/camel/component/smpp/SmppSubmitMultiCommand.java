@@ -56,8 +56,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
         SubmitMulti[] submitMulties = createSubmitMulti(exchange);
         List<SubmitMultiResult> results = new ArrayList<SubmitMultiResult>(submitMulties.length);
         
-        for (int i = 0; i < submitMulties.length; i++) {
-            SubmitMulti submitMulti = submitMulties[i];
+        for (SubmitMulti submitMulti : submitMulties) {
             SubmitMultiResult result;
             log.debug("Sending multiple short messages for exchange id '{}'...", exchange.getExchangeId());
             

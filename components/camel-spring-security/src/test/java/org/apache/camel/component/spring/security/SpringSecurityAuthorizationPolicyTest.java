@@ -89,8 +89,8 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         Authentication authToken;
         if (roles != null && roles.length > 0) {
             List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(roles.length);
-            for (int i = 0; i < roles.length; i++) {
-                authorities.add(new GrantedAuthorityImpl(roles[i]));
+            for (String role : roles) {
+                authorities.add(new GrantedAuthorityImpl(role));
             }
             authToken = new UsernamePasswordAuthenticationToken(username, password, authorities);
         } else {

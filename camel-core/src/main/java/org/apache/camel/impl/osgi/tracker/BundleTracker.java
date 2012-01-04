@@ -204,8 +204,8 @@ public class BundleTracker implements BundleTrackerCustomizer {
             }
         }
         if (bundles != null) {
-            for (int i = 0; i < bundles.length; i++) {
-                outgoing.untrack(bundles[i], null);
+            for (Bundle bundle : bundles) {
+                outgoing.untrack(bundle, null);
             }
         }
     }

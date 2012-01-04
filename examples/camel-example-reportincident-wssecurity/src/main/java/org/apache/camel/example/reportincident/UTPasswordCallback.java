@@ -46,8 +46,8 @@ public class UTPasswordCallback implements CallbackHandler {
 
         String user = "";
 
-        for (int i = 0; i < callbacks.length; i++) {
-            WSPasswordCallback pc = (WSPasswordCallback) callbacks[i];
+        for (Callback callback : callbacks) {
+            WSPasswordCallback pc = (WSPasswordCallback) callback;
             user = pc.getIdentifier();
 
             String pass = passwords.get(user);

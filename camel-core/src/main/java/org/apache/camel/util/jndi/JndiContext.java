@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.naming.Binding;
 import javax.naming.CompositeName;
@@ -170,8 +171,7 @@ public class JndiContext implements Context, Serializable {
             JndiContext defaultContext = (JndiContext)o;
             String remainder = name.substring(pos + 1);
             Map<String, Object> subBindings = defaultContext.internalBind(remainder, value);
-            for (Iterator<Map.Entry<String, Object>> iterator = subBindings.entrySet().iterator(); iterator.hasNext();) {
-                Map.Entry<String, Object> entry = iterator.next();
+            for (Entry<String, Object> entry : subBindings.entrySet()) {
                 String subName = segment + "/" + entry.getKey();
                 Object bound = entry.getValue();
                 treeBindings.put(subName, bound);
