@@ -154,7 +154,7 @@
     <spymemcached-version>2.5</spymemcached-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stringtemplate-version>3.0</stringtemplate-version>
-    <tagsoup-version>1.2</tagsoup-version>
+    <tagsoup-version>1.2.1</tagsoup-version>
     <testng-version>6.0.1</testng-version>
     <velocity-version>1.7</velocity-version>
     <woodstox-version>4.1.1</woodstox-version>

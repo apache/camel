@@ -74,7 +74,7 @@ public class TidyMarkupDataFormat implements DataFormat {
     /**
      * String or Node to return
      */
-    private Class dataObjectType;
+    private Class<?> dataObjectType;
 
     /**
      * What is the default output format ?
@@ -117,7 +117,6 @@ public class TidyMarkupDataFormat implements DataFormat {
      * 
      * @throws Exception
      */
-    @SuppressWarnings("unchecked")
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
 
         ObjectHelper.notNull(dataObjectType, "dataObjectType", this);
@@ -317,7 +316,7 @@ public class TidyMarkupDataFormat implements DataFormat {
     /**
      * @return the dataObjectType
      */
-    public Class getDataObjectType() {
+    public Class<?> getDataObjectType() {
         return dataObjectType;
     }
 
@@ -325,7 +324,7 @@ public class TidyMarkupDataFormat implements DataFormat {
      * @param dataObjectType
      *            the dataObjectType to set
      */
-    public void setDataObjectType(Class dataObjectType) {
+    public void setDataObjectType(Class<?> dataObjectType) {
         this.dataObjectType = dataObjectType;
     }
 
