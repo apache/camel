@@ -234,7 +234,12 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
         }
 
         if (in.getHeaders().containsKey(SmppConstants.VALIDITY_PERIOD)) {
-            submitMulti.setValidityPeriod(SmppUtils.formatTime(in.getHeader(SmppConstants.VALIDITY_PERIOD, Date.class)));
+            Object validityPeriod = in.getHeader(SmppConstants.VALIDITY_PERIOD);
+            if (validityPeriod instanceof String) {
+                submitMulti.setValidityPeriod((String) validityPeriod);
+            } else if (validityPeriod instanceof Date) {
+                submitMulti.setValidityPeriod(SmppUtils.formatTime((Date) validityPeriod));
+            }
         }
 
         if (in.getHeaders().containsKey(SmppConstants.REPLACE_IF_PRESENT_FLAG)) {
