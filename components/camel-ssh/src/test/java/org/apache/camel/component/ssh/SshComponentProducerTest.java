@@ -58,9 +58,37 @@ public class SshComponentProducerTest extends CamelTestSupport {
 
     @Test
     public void testProducer() throws Exception {
+        final String msg = "test\n";
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived(new Object[]{"test\n"});
+        mock.expectedBodiesReceived(new Object[]{msg});
+
+        template.sendBody("direct:ssh", msg);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testReconnect() throws Exception {
+        final String msg = "test\n";
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived(new Object[]{msg});
+
+        template.sendBody("direct:ssh", msg);
+
+        assertMockEndpointsSatisfied();
+
+        sshd.stop();
+        sshd.start();
+
+        mock.reset();
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived(new Object[]{msg});
+
+        template.sendBody("direct:ssh", msg);
 
         assertMockEndpointsSatisfied();
     }
@@ -70,11 +98,10 @@ public class SshComponentProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("timer://foo?fixedRate=true&period=5000")
-                        .setBody().constant("test\n")
-                        .to("ssh://smx:smx@localhost:" + port)
-                        .to("mock:result")
-                        .to("log:foo?showAll=true");
+                from("direct:ssh")
+                    .to("ssh://smx:smx@localhost:" + port)
+                    .to("mock:result")
+                    .to("log:foo?showAll=true");
             }
         };
     }
