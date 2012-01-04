@@ -512,6 +512,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public String getCacheLevelName() {
         return getConfiguration().getCacheLevelName();
     }
+    
+    @ManagedAttribute
+    public String getReplyToCacheLevelName() {
+        return getConfiguration().getReplyToCacheLevelName();
+    }
 
     @ManagedAttribute
     public String getClientId() {
@@ -757,6 +762,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setCacheLevelName(String cacheName) {
         getConfiguration().setCacheLevelName(cacheName);
+    }
+    
+    @ManagedAttribute
+    public void setReplyToCacheLevelName(String cacheName) {
+        getConfiguration().setReplyToCacheLevelName(cacheName);
     }
 
     @ManagedAttribute

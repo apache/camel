@@ -148,6 +148,12 @@ public class PersistentQueueReplyManager extends ReplyManagerSupport {
         } else {
             throw new IllegalArgumentException("ReplyToType " + type + " is not supported for persistent reply queues");
         }
+        
+        String replyToCacheLevelName = endpoint.getConfiguration().getReplyToCacheLevelName();
+        if (replyToCacheLevelName != null) {
+            answer.setCacheLevelName(replyToCacheLevelName);
+            log.debug("Setting the replyCacheLevel to be " + replyToCacheLevelName);
+        }
 
         DestinationResolver resolver = endpoint.getDestinationResolver();
         if (resolver == null) {
