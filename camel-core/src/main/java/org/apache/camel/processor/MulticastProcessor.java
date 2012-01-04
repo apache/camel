@@ -942,8 +942,15 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         return camelContext.getExecutorServiceManager().newCachedThreadPool(this, name);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(processors, errorHandlers);
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        ServiceHelper.stopAndShutdownServices(processors, errorHandlers);
+        // only clear error handlers when shutting down
         errorHandlers.clear();
     }
 

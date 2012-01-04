@@ -151,7 +151,7 @@ public final class ServiceHelper {
     /**
      * Stops and shutdowns all of the given services, throwing the first exception caught
      */
-    public static void stopAndShutdownService(Service value) throws Exception {
+    public static void stopAndShutdownService(Object value) throws Exception {
         stopService(value);
 
         // then try to shutdown

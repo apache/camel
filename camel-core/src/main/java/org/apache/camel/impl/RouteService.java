@@ -28,8 +28,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Navigate;
+import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -192,6 +195,8 @@ public class RouteService extends ChildServiceSupport {
             LOG.debug("Stopping services on route: {}", route.getId());
             // getServices will not add services again
             List<Service> services = route.getServices();
+            // also get route scoped services
+            doGetRouteScopedServices(services, route);
 
             // gather list of services to stop as we need to start child services as well
             Set<Service> list = new LinkedHashSet<Service>();
@@ -228,12 +233,15 @@ public class RouteService extends ChildServiceSupport {
         for (Route route : routes) {
             LOG.debug("Shutting down services on route: {}", route.getId());
             List<Service> services = route.getServices();
+            // also get route scoped child services
+            doGetRouteScopedServices(services, route);
 
             // gather list of services to stop as we need to start child services as well
             Set<Service> list = new LinkedHashSet<Service>();
             for (Service service : services) {
                 doGetChildServices(list, service);
             }
+
             // shutdown services
             stopChildService(route, list, true);
 
@@ -280,7 +288,6 @@ public class RouteService extends ChildServiceSupport {
 
     @Override
     protected void doResume() throws Exception {
-
         // suspend and resume logic is provided by DefaultCamelContext which leverages ShutdownStrategy
         // to safely suspend and resume
         for (Route route : routes) {
@@ -319,7 +326,24 @@ public class RouteService extends ChildServiceSupport {
     }
 
     /**
-     * Need to recursive start child services for routes
+     * Gather all route scoped services from the given route, such as route scoped error handler.
+     */
+    private void doGetRouteScopedServices(List<Service> services, Route route) {
+        for (ProcessorDefinition output : route.getRouteContext().getRoute().getOutputs()) {
+            if (output instanceof OnExceptionDefinition) {
+                OnExceptionDefinition onExceptionDefinition = (OnExceptionDefinition) output;
+                if (onExceptionDefinition.isRouteScoped()) {
+                    Processor errorHandler = onExceptionDefinition.getErrorHandler(route.getId());
+                    if (errorHandler != null && errorHandler instanceof Service) {
+                        services.add((Service) errorHandler);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Gather all child services by navigating the service to recursivly gather all child services.
      */
     private static void doGetChildServices(Set<Service> services, Service service) throws Exception {
         services.add(service);
