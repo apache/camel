@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPathFactory;
 
@@ -31,8 +31,6 @@ import org.apache.camel.util.CastUtils;
 /**
  * An implementation of {@link NamespaceContext} which uses a simple Map where
  * the keys are the prefixes and the values are the URIs
- *
- * @version 
  */
 public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware {
 
@@ -73,7 +71,7 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
         for (Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, String> entry = iter.next();
             if (namespaceURI.equals(entry.getValue())) {
-                return (String) entry.getKey();
+                return entry.getKey();
             }
         }
         if (parent != null) {
@@ -102,4 +100,30 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
     public void setNamespaces(Map<String, String> namespaces) {
         map.putAll(namespaces);
     }
+
+    /**
+     * toString() implementation that outputs the namespace mappings with the following format: "[me: {prefix -> value}, {prefix -> value}], [parent: {prefix -> value}, {prefix -> value}].
+     * Recurses up the parent's chain.
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[me: ");
+        for (Entry<String, String> nsEntry : map.entrySet()) {
+            sb.append("{" + nsEntry.getKey() + " -> " + nsEntry.getValue() + "},");
+        }
+        if (!map.isEmpty()) {
+            // remove the last comma
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        sb.append("]");
+
+        // Get the parent's namespace mappings
+        if (parent != null) {
+            sb.append(", [parent: ");
+            sb.append(parent.toString());
+            sb.append("]");
+        }
+        return sb.toString();
+    }
+
 }
