@@ -27,7 +27,7 @@ import java.util.Set;
  * A Least Recently Used Cache which uses {@link SoftReference}.
  * <p/>
  * This implementation uses {@link java.lang.ref.SoftReference} for stored values in the cache, to support the JVM
- * when it wants to reclaim objects when its running out of memory. Therefore this implementation does
+ * when it wants to reclaim objects when it's running out of memory. Therefore this implementation does
  * not support <b>all</b> the {@link java.util.Map} methods.
  * <p/>
  * The following methods is <b>only</b> be be used:
