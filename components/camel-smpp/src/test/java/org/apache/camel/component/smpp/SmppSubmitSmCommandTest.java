@@ -170,4 +170,38 @@ public class SmppSubmitSmCommandTest {
         assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
+    
+    @Test
+    public void executeWithValidityPeriodAsString() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitSm");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_TON, TypeOfNumber.NATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_NPI, NumberingPlanIndicator.NATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR_TON, TypeOfNumber.INTERNATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR_NPI, NumberingPlanIndicator.INTERNET.value());
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR, "1919");
+        exchange.getIn().setHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, new Date(1111111));
+        exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, "000003000000000R"); // three days
+        exchange.getIn().setHeader(SmppConstants.PROTOCOL_ID, (byte) 1);
+        exchange.getIn().setHeader(SmppConstants.PRIORITY_FLAG, (byte) 2);
+        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
+        exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
+        exchange.getIn().setBody("short message body");
+        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
+                eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
+                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("000003000000000R"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
+                eq(ReplaceIfPresentFlag.REPLACE.value()), eq(new GeneralDataCoding(false, true, MessageClass.CLASS1, Alphabet.ALPHA_DEFAULT)), eq((byte) 0), aryEq("short message body".getBytes())))
+                .andReturn("1");
+        
+        replay(session);
+        
+        command.execute(exchange);
+        
+        verify(session);
+        
+        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+    }
 }

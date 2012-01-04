@@ -112,4 +112,28 @@ public class SmppReplaceSmCommandTest {
         
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
     }
+    
+    @Test
+    public void executeWithValidityPeriodAsString() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "ReplaceSm");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_TON, TypeOfNumber.NATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_NPI, NumberingPlanIndicator.NATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
+        exchange.getIn().setHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, new Date(1111111));
+        exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, "000003000000000R"); // three days
+        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
+        exchange.getIn().setBody("new short message body");
+        session.replaceShortMessage(eq("1"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"), eq("-300101001831100-"), eq("000003000000000R"),
+                eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)), eq((byte) 0), aryEq("new short message body".getBytes()));
+        
+        replay(session);
+        
+        command.execute(exchange);
+        
+        verify(session);
+        
+        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+    }
 }
