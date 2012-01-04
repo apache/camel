@@ -197,7 +197,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 writeFile(empty, doneFileName);
             }
 
-            // lets store the name we really used in the header, so end-users
+            // let's store the name we really used in the header, so end-users
             // can retrieve it
             exchange.getIn().setHeader(Exchange.FILE_NAME_PRODUCED, target);
         } catch (Exception e) {

@@ -49,7 +49,7 @@ public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
     protected void processEntity(Exchange exchange, ProcessInstance process) throws Exception {
         LOG.debug("Processing process instance: {}", process);
 
-        // lets force the lazy creation of this activity
+        // force the lazy creation of this activity
         ActivityRules rules = getActivityRules();
         ActivityState state = process.getOrCreateActivityState(rules);
 

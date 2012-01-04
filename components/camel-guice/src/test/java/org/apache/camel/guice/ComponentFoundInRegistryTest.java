@@ -37,7 +37,7 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.is;
 
 /**
- * Lets use a custom CamelModule to perform explicit binding of route builders
+ * Uses a custom CamelModule to perform explicit binding of route builders
  *
  * @version 
  */

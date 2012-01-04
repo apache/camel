@@ -39,7 +39,7 @@ public class AMQPRouteTest extends CamelTestSupport {
     
     @BeforeClass
     public static void startBroker() throws Exception {
-        // lets create an in JVM broker
+        // create an in-JVM broker
         try {
             TransportConnection.createVMBroker(1);
         } catch (Exception e) {

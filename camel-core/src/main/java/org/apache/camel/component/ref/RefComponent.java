@@ -30,7 +30,7 @@ import org.apache.camel.util.CamelContextHelper;
 public class RefComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // lets remove the scheme from the URI
+        // first remove the scheme from the URI
         int index = uri.indexOf(':');
         String name = uri;
         if (index >= 0) {

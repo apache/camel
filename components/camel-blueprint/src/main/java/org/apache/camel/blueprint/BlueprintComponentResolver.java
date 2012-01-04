@@ -41,7 +41,7 @@ public class BlueprintComponentResolver extends OsgiComponentResolver {
                 LOG.debug("Found component: {} in registry: {}", name, bean);
                 return (Component) bean;
             } else {
-                // lets use Camel's type conversion mechanism to convert things like CamelContext
+                // let's use Camel's type conversion mechanism to convert things like CamelContext
                 // and other types into a valid Component
                 Component component = CamelContextHelper.convertTo(context, Component.class, bean);
                 if (component != null) {

@@ -34,7 +34,7 @@ public class MyRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Lets configure the Camel routing rules using Java code...
+     * Let's configure the Camel routing rules using Java code...
      */
     public void configure() {
 
