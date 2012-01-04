@@ -119,8 +119,8 @@ public class LuceneIndexer {
                 String[] files = file.list();
 
                 if (files != null) {
-                    for (int i = 0; i < files.length; i++) {
-                        add(new File(file.getAbsolutePath() + "/" + files[i]));
+                    for (String child : files) {
+                        add(new File(file.getAbsolutePath() + "/" + child));
                     }
                 }
             } else {

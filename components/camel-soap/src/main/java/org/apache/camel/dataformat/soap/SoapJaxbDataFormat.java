@@ -237,10 +237,8 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
             Annotation[][] annotations = bi.getMethod().getParameterAnnotations();
 
             List<WebParam> webParams = new ArrayList<WebParam>();
-            for (int i = 0; i < annotations.length; i++) {
-                Annotation[] singleParameterAnnotations = annotations[i];
-                for (int j = 0; j < singleParameterAnnotations.length; j++) {
-                    Annotation annotation = singleParameterAnnotations[j];
+            for (Annotation[] singleParameterAnnotations : annotations) {
+                for (Annotation annotation : singleParameterAnnotations) {
                     if (annotation instanceof WebParam) {
                         webParams.add((WebParam)annotation);
                     }

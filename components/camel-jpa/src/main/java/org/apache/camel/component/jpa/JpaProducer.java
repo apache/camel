@@ -18,7 +18,6 @@ package org.apache.camel.component.jpa;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -63,8 +62,8 @@ public class JpaProducer extends DefaultProducer {
                         @SuppressWarnings("unchecked")
                         Collection<Object> collection = (Collection<Object>) values;
                         List<Object> managedEntities = new ArrayList<Object>();
-                        for (Iterator<?> iter = collection.iterator(); iter.hasNext();) {
-                            Object managedEntity = save(iter.next(), entityManager);
+                        for (Object entity : collection) {
+                            Object managedEntity = save(entity, entityManager);
                             managedEntities.add(managedEntity);
                         }
                         if (!endpoint.isUsePersist()) {

@@ -129,9 +129,9 @@ public class LdapProducer extends DefaultProducer {
 
         byte[] cookie = null;
         if (responseControls != null) {
-            for (int i = 0; i < responseControls.length; i++) {
-                if (responseControls[i] instanceof PagedResultsResponseControl) {
-                    PagedResultsResponseControl prrc = (PagedResultsResponseControl) responseControls[i];
+            for (Control responseControl : responseControls) {
+                if (responseControl instanceof PagedResultsResponseControl) {
+                    PagedResultsResponseControl prrc = (PagedResultsResponseControl) responseControl;
                     cookie = prrc.getCookie();
                 }
             }

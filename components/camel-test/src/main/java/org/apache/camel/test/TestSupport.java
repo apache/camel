@@ -423,8 +423,8 @@ public abstract class TestSupport extends TestCase {
     public static void deleteDirectory(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                deleteDirectory(files[i]);
+            for (File child : files) {
+                deleteDirectory(child);
             }
         }
 

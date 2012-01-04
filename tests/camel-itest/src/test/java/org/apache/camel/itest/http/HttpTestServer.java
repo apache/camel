@@ -22,7 +22,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -279,8 +278,7 @@ public class HttpTestServer {
             t.shutdown();
         }
         synchronized (workers) {
-            for (Iterator<Worker> it = workers.iterator(); it.hasNext();) {
-                Worker worker = it.next();
+            for (Worker worker : workers) {
                 worker.shutdown();
             }
         }

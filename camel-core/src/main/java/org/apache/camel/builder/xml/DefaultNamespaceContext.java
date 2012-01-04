@@ -68,8 +68,7 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
     }
 
     public String getPrefix(String namespaceURI) {
-        for (Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry<String, String> entry = iter.next();
+        for (Entry<String, String> entry : map.entrySet()) {
             if (namespaceURI.equals(entry.getValue())) {
                 return entry.getKey();
             }
@@ -82,8 +81,7 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
 
     public Iterator<String> getPrefixes(String namespaceURI) {
         Set<String> set = new HashSet<String>();
-        for (Iterator<Map.Entry<String, String>> iter = map.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry<String, String> entry = iter.next();
+        for (Entry<String, String> entry : map.entrySet()) {
             if (namespaceURI.equals(entry.getValue())) {
                 set.add(entry.getKey());
             }

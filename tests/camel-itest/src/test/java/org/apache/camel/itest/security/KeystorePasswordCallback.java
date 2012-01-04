@@ -45,8 +45,8 @@ public class KeystorePasswordCallback implements CallbackHandler {
      * alias/passwords map.
      */
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-        for (int i = 0; i < callbacks.length; i++) {
-            WSPasswordCallback pc = (WSPasswordCallback)callbacks[i];
+        for (Callback callback : callbacks) {
+            WSPasswordCallback pc = (WSPasswordCallback)callback;
             String pass = passwords.get(pc.getIdentifier());
             String type = getPasswordType(pc);
             if (WSConstants.PASSWORD_DIGEST.equals(type)) {
