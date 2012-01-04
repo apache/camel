@@ -112,15 +112,16 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
      * @param predicate the predicate
      * @return the builder
      */
-    public ChoiceDefinition when(Predicate predicate) {
-        return choice().when(predicate);
+    public InterceptDefinition when(Predicate predicate) {
+        WhenDefinition when = new WhenDefinition(predicate);
+        addOutput(when);
+        return this;
     }
 
     /**
      * This method is <b>only</b> for handling some post configuration
-     * that is needed from the Spring DSL side as JAXB does not invoke the fluent
-     * builders, so we need to manually handle this afterwards, and since this is
-     * an interceptor it has to do a bit of magic logic to fixup to handle predicates
+     * that is needed since this is an interceptor, and we have to do
+     * a bit of magic logic to fixup to handle predicates
      * with or without proceed/stop set as well.
      */
     public void afterPropertiesSet() {

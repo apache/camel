@@ -126,6 +126,8 @@ public class JmsConfiguration implements Cloneable {
     private boolean disableTimeToLive;
     private ReplyToType replyToType;
     private boolean asyncConsumer;
+    // the cacheLevelName of reply manager
+    private String replyToCacheLevelName;
 
     public JmsConfiguration() {
     }
@@ -1206,6 +1208,14 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setAsyncConsumer(boolean asyncConsumer) {
         this.asyncConsumer = asyncConsumer;
+    }
+    
+    public void setReplyToCacheLevelName(String name) {
+        this.replyToCacheLevelName = name;
+    }
+    
+    public String getReplyToCacheLevelName() {
+        return replyToCacheLevelName;
     }
 
 }

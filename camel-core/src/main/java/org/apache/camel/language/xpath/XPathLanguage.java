@@ -17,6 +17,7 @@
 package org.apache.camel.language.xpath;
 
 import javax.xml.namespace.QName;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
@@ -26,11 +27,12 @@ import org.apache.camel.spi.Language;
 
 /**
  * XPath language.
- *
- * @version 
  */
 public class XPathLanguage implements Language, IsSingleton {
     private QName resultType;
+    private XPathFactory xpathFactory;
+    private Boolean useSaxon;
+    private String objectModelUri;
 
     public Predicate createPredicate(String expression) {
         XPathBuilder builder = XPathBuilder.xpath(expression);
@@ -52,9 +54,48 @@ public class XPathLanguage implements Language, IsSingleton {
         this.resultType = resultType;
     }
 
+    public XPathFactory getXpathFactory() {
+        return xpathFactory;
+    }
+
+    public void setXpathFactory(XPathFactory xpathFactory) {
+        this.xpathFactory = xpathFactory;
+    }
+
+    public void setUseSaxon(Boolean useSaxon) {
+        this.useSaxon = useSaxon;
+    }
+
+    public Boolean getUseSaxon() {
+        return useSaxon;
+    }
+
+    public Boolean isUseSaxon() {
+        return useSaxon != null && useSaxon;
+    }
+
+    public String getObjectModelUri() {
+        return objectModelUri;
+    }
+
+    public void setObjectModelUri(String objectModelUri) {
+        this.objectModelUri = objectModelUri;
+    }
+
     protected void configureBuilder(XPathBuilder builder) {
         if (resultType != null) {
             builder.setResultQName(resultType);
+        }
+
+        if (isUseSaxon()) {
+            builder.enableSaxon();
+        } else {
+            if (xpathFactory != null) {
+                builder.setXPathFactory(xpathFactory);
+            }
+            if (objectModelUri != null) {
+                builder.setObjectModelUri(objectModelUri);
+            }
         }
     }
 

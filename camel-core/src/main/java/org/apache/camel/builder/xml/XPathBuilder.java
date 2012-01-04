@@ -19,6 +19,9 @@ package org.apache.camel.builder.xml;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -77,14 +80,16 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
  * This implementation is thread safe by using thread locals and pooling to allow concurrency
  *
  * @see XPathConstants#NODESET
- *
- * @version 
  */
 public class XPathBuilder implements Expression, Predicate, NamespaceAware, Service {
     private static final transient Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
+    private static final String SAXON_OBJECT_MODEL_URI = "http://saxon.sf.net/jaxp/xpath/om";
+    private static final String OBTAIN_ALL_NS_XPATH = "//*/namespace::*";
+
     private static XPathFactory defaultXPathFactory;
 
     private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
+    private final Queue<XPathExpression> poolTraceNamespaces = new ConcurrentLinkedQueue<XPathExpression>();
     private final String text;
     private final ThreadLocal<MessageVariableResolver> variableResolver = new ThreadLocal<MessageVariableResolver>();
     private final ThreadLocal<Exchange> exchange = new ThreadLocal<Exchange>();
@@ -98,6 +103,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     private QName resultQName = XPathConstants.NODESET;
     private String objectModelUri;
     private DefaultNamespaceContext namespaceContext;
+    private boolean traceNamespaces;
     private XPathFunctionResolver functionResolver;
     private XPathFunction bodyFunction;
     private XPathFunction headerFunction;
@@ -145,7 +151,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      * Matches the given xpath using the provided body.
      *
      * @param context the camel context
-     * @param body the body
+     * @param body    the body
      * @return <tt>true</tt> if matches, <tt>false</tt> otherwise
      */
     public boolean matches(CamelContext context, Object body) {
@@ -167,8 +173,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      * Evaluates the given xpath using the provided body.
      *
      * @param context the camel context
-     * @param body the body
-     * @param type the type to return
+     * @param body    the body
+     * @param type    the type to return
      * @return result of the evaluation
      */
     public <T> T evaluate(CamelContext context, Object body, Class<T> type) {
@@ -190,7 +196,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      * Evaluates the given xpath using the provided body as a String return type.
      *
      * @param context the camel context
-     * @param body the body
+     * @param body    the body
      * @return result of the evaluation
      */
     public String evaluate(CamelContext context, Object body) {
@@ -278,6 +284,9 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      * @return the current builder
      */
     public XPathBuilder objectModel(String uri) {
+        // TODO: Careful! Setting the Object Model URI this way will set the *Default* XPath Factory, which since is a static field,
+        // will set the XPath Factory system-wide. Decide what to do, as changing this behaviour can break compatibility. Provided the setObjectModel which changes
+        // this instance's XPath Factory rather than the static field
         this.objectModelUri = uri;
         return this;
     }
@@ -289,7 +298,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      * @return the current builder
      */
     public XPathBuilder saxon() {
-        this.objectModelUri = "http://saxon.sf.net/jaxp/xpath/om";
+        this.objectModelUri = SAXON_OBJECT_MODEL_URI;
         return this;
     }
 
@@ -309,8 +318,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      * prefix can be used in XPath expressions
      *
      * @param prefix is the namespace prefix that can be used in the XPath
-     *                expressions
-     * @param uri is the namespace URI to which the prefix refers
+     *               expressions
+     * @param uri    is the namespace URI to which the prefix refers
      * @return the current builder
      */
     public XPathBuilder namespace(String prefix, String uri) {
@@ -323,7 +332,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      * prefixes can be used in XPath expressions
      *
      * @param namespaces is namespaces object that should be used in the
-     *                      XPath expression
+     *                   XPath expression
      * @return the current builder
      */
     public XPathBuilder namespaces(Namespaces namespaces) {
@@ -334,6 +343,10 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     /**
      * Registers a variable (in the global namespace) which can be referred to
      * from XPath expressions
+     *
+     * @param name  name of variable
+     * @param value value of variable
+     * @return the current builder
      */
     public XPathBuilder variable(String name, Object value) {
         getVariableResolver().addVariable(name, value);
@@ -370,10 +383,35 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         return this;
     }
 
+    /**
+     * Activates trace logging of all discovered namespaces in the message - to simplify debugging namespace-related issues
+     * <p/>
+     * Namespaces are printed in Hashmap style <code>{xmlns:prefix=[namespaceURI], xmlns:prefix=[namespaceURI]}</code>.
+     * <p/>
+     * The implicit XML namespace is omitted (http://www.w3.org/XML/1998/namespace).
+     * XML allows for namespace prefixes to be redefined/overridden due to hierarchical scoping, i.e. prefix abc can be mapped to http://abc.com,
+     * and deeper in the document it can be mapped to http://def.com. When two prefixes are detected which are equal but are mapped to different
+     * namespace URIs, Camel will show all namespaces URIs it is mapped to in an array-style.
+     * <p/>
+     * This feature is disabled by default.
+     *
+     * @return the current builder.
+     */
+    public XPathBuilder traceNamespaces() {
+        setTraceNamespaces(true);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
     public XPathFactory getXPathFactory() throws XPathFactoryConfigurationException {
         if (xpathFactory != null) {
+            return xpathFactory;
+        }
+
+        if (objectModelUri != null) {
+            xpathFactory = XPathFactory.newInstance(objectModelUri);
+            LOG.info("Using objectModelUri " + objectModelUri + " when created XPathFactory {}", defaultXPathFactory);
             return xpathFactory;
         }
 
@@ -496,7 +534,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
     public XPathFunction getOutHeaderFunction() {
         if (outHeaderFunction == null) {
-            outHeaderFunction = new XPathFunction() {                
+            outHeaderFunction = new XPathFunction() {
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange.get() != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -588,6 +626,30 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         }
     }
 
+    public void setTraceNamespaces(boolean traceNamespaces) {
+        this.traceNamespaces = traceNamespaces;
+    }
+
+    public boolean isTraceNamespaces() {
+        return traceNamespaces;
+    }
+
+    public String getObjectModelUri() {
+        return objectModelUri;
+    }
+
+    /**
+     * Enables Saxon on this particular XPath expression, as {@link #saxon()} sets the default static XPathFactory which may have already been initialised
+     * by previous XPath expressions
+     */
+    public void enableSaxon() {
+        this.setObjectModelUri(SAXON_OBJECT_MODEL_URI);
+    }
+
+    public void setObjectModelUri(String objectModelUri) {
+        this.objectModelUri = objectModelUri;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -619,12 +681,82 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             LOG.trace("Acquired XPathExpression from pool");
         }
         try {
+            if (traceNamespaces && LOG.isTraceEnabled()) {
+                traceNamespaces(exchange);
+            }
             return doInEvaluateAs(xpathExpression, exchange, resultQName);
         } finally {
             // release it back to the pool
             pool.add(xpathExpression);
             LOG.trace("Released XPathExpression back to pool");
         }
+    }
+
+    private void traceNamespaces(Exchange exchange) {
+        InputStream is = null;
+        NodeList answer = null;
+        XPathExpression xpathExpression = null;
+
+        try {
+            xpathExpression = poolTraceNamespaces.poll();
+            if (xpathExpression == null) {
+                xpathExpression = createTraceNamespaceExpression();
+            }
+
+            // prepare the input
+            Object document;
+            if (isInputStreamNeeded(exchange)) {
+                is = exchange.getIn().getBody(InputStream.class);
+                document = getDocument(exchange, is);
+            } else {
+                Object body = exchange.getIn().getBody();
+                document = getDocument(exchange, body);
+            }
+            // fetch all namespaces
+            if (document instanceof InputSource) {
+                InputSource inputSource = (InputSource) document;
+                answer = (NodeList) xpathExpression.evaluate(inputSource, XPathConstants.NODESET);
+            } else if (document instanceof DOMSource) {
+                DOMSource source = (DOMSource) document;
+                answer = (NodeList) xpathExpression.evaluate(source.getNode(), XPathConstants.NODESET);
+            } else {
+                answer = (NodeList) xpathExpression.evaluate(document, XPathConstants.NODESET);
+            }
+        } catch (Exception e) {
+            LOG.trace("Unable to trace discovered namespaces in XPath expression", e);
+        } finally {
+            // IOHelper can handle if is is null
+            IOHelper.close(is);
+            poolTraceNamespaces.add(xpathExpression);
+        }
+
+        if (answer != null) {
+            logDiscoveredNamespaces(answer);
+        }
+    }
+
+    private void logDiscoveredNamespaces(NodeList namespaces) {
+        HashMap<String, HashSet<String>> map = new LinkedHashMap<String, HashSet<String>>();
+        for (int i = 0; i < namespaces.getLength(); i++) {
+            Node n = namespaces.item(i);
+            if (n.getNodeName().equals("xmlns:xml")) {
+                // skip the implicit XML namespace as it provides no value
+                continue;
+            }
+
+            String prefix = namespaces.item(i).getNodeName();
+            if (prefix.equals("xmlns")) {
+                prefix = "DEFAULT";
+            }
+
+            // add to map
+            if (!map.containsKey(prefix)) {
+                map.put(prefix, new HashSet<String>());
+            }
+            map.get(prefix).add(namespaces.item(i).getNodeValue());
+        }
+
+        LOG.trace("Namespaces discovered in message: {}.", map);
     }
 
     protected Object doInEvaluateAs(XPathExpression xpathExpression, Exchange exchange, QName resultQName) {
@@ -685,6 +817,9 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         // XPathFactory is not thread safe
         XPath xPath = getXPathFactory().newXPath();
 
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext().toString());
+        }
         xPath.setNamespaceContext(getNamespaceContext());
         xPath.setXPathVariableResolver(getVariableResolver());
 
@@ -694,6 +829,12 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         }
         xPath.setXPathFunctionResolver(createDefaultFunctionResolver(parentResolver));
         return xPath.compile(text);
+    }
+
+    protected synchronized XPathExpression createTraceNamespaceExpression() throws XPathFactoryConfigurationException, XPathExpressionException {
+        // XPathFactory is not thread safe
+        XPath xPath = getXPathFactory().newXPath();
+        return xPath.compile(OBTAIN_ALL_NS_XPATH);
     }
 
     /**
@@ -840,6 +981,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
     public void stop() throws Exception {
         pool.clear();
+        poolTraceNamespaces.clear();
     }
 
     protected synchronized void initDefaultXPathFactory() throws XPathFactoryConfigurationException {

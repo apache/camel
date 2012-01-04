@@ -179,6 +179,10 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     public void setCacheLevelName(String cacheName) {
         getConfiguration().setCacheLevelName(cacheName);
     }
+    
+    public void setReplyToCacheLevelName(String cacheName) {
+        getConfiguration().setReplyToCacheLevelName(cacheName);
+    }
 
     public void setClientId(String consumerClientId) {
         getConfiguration().setClientId(consumerClientId);

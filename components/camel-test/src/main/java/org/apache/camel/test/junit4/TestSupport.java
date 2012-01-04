@@ -437,8 +437,8 @@ public abstract class TestSupport extends Assert {
         
         if (file.isDirectory()) {
             File[] files = file.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                recursivelyDeleteDirectory(files[i]);
+            for (File child : files) {
+                recursivelyDeleteDirectory(child);
             }
         }
         boolean success = file.delete();

@@ -174,8 +174,7 @@ public final class MailUtils {
         boolean replaced = false;
         StringBuilder sb = new StringBuilder();
         String[] parts = contentType.split(";");
-        for (int i = 0; i < parts.length; i++) {
-            String part = parts[i];
+        for (String part : parts) {
             part = part.trim();
             if (!part.startsWith("charset")) {
                 part = part.trim();
@@ -218,8 +217,7 @@ public final class MailUtils {
         }
 
         String[] parts = contentType.split(";");
-        for (int i = 0; i < parts.length; i++) {
-            String part = parts[i];
+        for (String part : parts) {
             part = part.trim();
             if (part.startsWith("charset")) {
                 return ObjectHelper.after(part, "charset=");

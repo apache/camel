@@ -147,8 +147,7 @@ public class HdfsConfiguration {
                 String eit = (String) hdfsSettings.get(key);
                 if (eit != null) {
                     String[] strstrategies = eit.split(",");
-                    for (int i = 0; i < strstrategies.length; i++) {
-                        String strstrategy = strstrategies[i];
+                    for (String strstrategy : strstrategies) {
                         String tokens[] = strstrategy.split(":");
                         if (tokens.length != 2) {
                             throw new IllegalArgumentException("Wrong Split Strategy " + key + "=" + eit);

@@ -29,7 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.karaf.testing.Helper;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,12 +41,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.workingDirectory;
 
 @RunWith(JUnit4TestRunner.class)
 public class SqlRouteTest extends OSGiIntegrationTestSupport {

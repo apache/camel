@@ -486,15 +486,13 @@ public class RunMojo extends AbstractExecMojo {
             // Interrupt all threads we know about as of this instant (harmless
             // if spuriously went dead (! isAlive())
             // or if something else interrupted it ( isInterrupted() ).
-            for (Iterator iter = threads.iterator(); iter.hasNext();) {
-                Thread thread = (Thread)iter.next();
+            for (Thread thread : threads) {
                 getLog().debug("interrupting thread " + thread);
                 thread.interrupt();
             }
             // Now join with a timeout and call stop() (assuming flags are set
             // right)
-            for (Iterator iter = threads.iterator(); iter.hasNext();) {
-                Thread thread = (Thread)iter.next();
+            for (Thread thread : threads) {
                 if (!thread.isAlive()) {
                     continue; // and, presumably it won't show up in
                     // getActiveThreads() next iteration
@@ -557,8 +555,7 @@ public class RunMojo extends AbstractExecMojo {
     private void setSystemProperties() {
         if (systemProperties != null) {
             originalSystemProperties = System.getProperties();
-            for (int i = 0; i < systemProperties.length; i++) {
-                Property systemProperty = systemProperties[i];
+            for (Property systemProperty : systemProperties) {
                 String value = systemProperty.getValue();
                 System.setProperty(systemProperty.getKey(), value == null ? "" : value);
             }
@@ -651,8 +648,7 @@ public class RunMojo extends AbstractExecMojo {
     private Collection<Artifact> getAllNonTestScopedDependencies() throws MojoExecutionException {
         List<Artifact> answer = new ArrayList<Artifact>();
 
-        for (Iterator artifacts = getAllDependencies().iterator(); artifacts.hasNext();) {
-            Artifact artifact = (Artifact)artifacts.next();
+        for (Artifact artifact : getAllDependencies()) {
 
             // do not add test artifacts
             if (!artifact.getScope().equals(Artifact.SCOPE_TEST)) {
@@ -762,8 +758,7 @@ public class RunMojo extends AbstractExecMojo {
         // this.getExecutableToolAssembly();
 
         Artifact executableTool = null;
-        for (Iterator iter = this.pluginDependencies.iterator(); iter.hasNext();) {
-            Artifact pluginDep = (Artifact)iter.next();
+        for (Artifact pluginDep : this.pluginDependencies) {
             if (this.executableDependency.matches(pluginDep)) {
                 executableTool = pluginDep;
                 break;

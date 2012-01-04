@@ -16,14 +16,29 @@
  */
 package org.apache.camel.builder.xml;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
+import org.easymock.Capture;
+import org.easymock.CaptureType;
+import org.slf4j.Logger;
+
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 
 
 /**
- * @version 
+ * @version
  */
 public class XPathTransformTest extends ContextTestSupport {
 
@@ -41,4 +56,69 @@ public class XPathTransformTest extends ContextTestSupport {
         String out = context.getTypeConverter().convertTo(String.class, doc);
         assertEquals("<root><firstname>Servicemix</firstname><lastname>Camel</lastname></root>", out);
     }
+
+    public void testXPathNamespaceTracingEnabledJavaDSL() throws Exception {
+        Logger l = createNiceMock(Logger.class);
+
+        expect(l.isTraceEnabled()).andReturn(true).anyTimes();
+
+        l.trace(contains("Namespaces discovered in message"), anyObject());
+        expectLastCall().times(1);
+        replay(l);
+
+        String body = "<aRoot xmlns:nsa=\"http://namespacec.net\"><nsa:a xmlns:nsa=\"http://namespacea.net\">Hello|there|Camel</nsa:a>"
+                + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
+                + "<a xmlns=\"http://defaultNamespace.net\">Hello|there|Camel</a><a>Hello|there|Camel</a></aRoot>"; 
+        Document doc = context.getTypeConverter().convertTo(Document.class, body);
+        Field logField = XPathBuilder.class.getDeclaredField("LOG");
+        logField.setAccessible(true);
+
+        Field modifiers = Field.class.getDeclaredField("modifiers");
+        modifiers.setAccessible(true);
+        modifiers.setInt(logField, logField.getModifiers() & ~Modifier.FINAL);
+
+        logField.set(null, l);
+
+        NodeList list = XPathBuilder.xpath("//*", NodeList.class).traceNamespaces().evaluate(context, doc, NodeList.class);
+        assertNotNull(list);
+
+        verify(l);
+    }
+
+    public void testXPathNamespaceTracingDisabledJavaDSL() throws Exception {
+        Logger l = createNiceMock(Logger.class);
+
+        expect(l.isTraceEnabled()).andReturn(true).anyTimes();
+
+        Capture<String> captures = new Capture<String>(CaptureType.ALL);
+        l.trace(capture(captures), anyObject());
+        expectLastCall().anyTimes();
+
+        replay(l);
+
+        String body = "<aRoot xmlns:nsa=\"http://namespacec.net\"><nsa:a xmlns:nsa=\"http://namespacea.net\">Hello|there|Camel</nsa:a>"
+                + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
+                + "<a xmlns=\"http://defaultNamespace.net\">Hello|there|Camel</a><a>Hello|there|Camel</a></aRoot>";
+        Document doc = context.getTypeConverter().convertTo(Document.class, body);
+        Field logField = XPathBuilder.class.getDeclaredField("LOG");
+        logField.setAccessible(true);
+
+        Field modifiers = Field.class.getDeclaredField("modifiers");
+        modifiers.setAccessible(true);
+        modifiers.setInt(logField, logField.getModifiers() & ~Modifier.FINAL);
+
+        logField.set(null, l);
+
+        NodeList list = XPathBuilder.xpath("//*", NodeList.class).evaluate(context, doc, NodeList.class);
+        assertNotNull(list);
+
+        verify(l);
+
+        for (String c : captures.getValues()) {
+            if (c.contains("Namespaces discovered in message")) {
+                throw new AssertionError("Did not expect LOG.trace with 'Namespaces discovered in message'");
+            }
+        }
+    }
+
 }
