@@ -267,7 +267,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
                 onException(Exception.class)
                     .handled(true)
                     .recipientList(header("error"))
-                .end();
+                    .end();
 
                 from("direct:bar").routeId("bar")
                     .recipientList(header("bar")).throwException(new IllegalArgumentException("Forced"));
