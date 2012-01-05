@@ -304,4 +304,121 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         log.info("Shutting down...");
     }
+
+    public void testRouteAddRemoteRouteWithRecipientListAndRouteScopedOnCompletion() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        result.assertIsSatisfied();
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+
+        // number of producer caches
+        Set<ObjectName> names = mbeanServer.queryNames(on, null);
+        assertEquals(1, names.size());
+
+        log.info("Adding 2nd route");
+
+        // add a 2nd route
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:bar").routeId("bar")
+                    .onCompletion()
+                        .recipientList(header("done"))
+                    .end().end()
+                    .recipientList(header("bar"));
+            }
+        });
+
+        // and send a message to it
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        Map headers = new HashMap();
+        headers.put("done", "mock:done");
+        headers.put("bar", "mock:bar");
+        template.sendBodyAndHeaders("direct:bar", "Hello World", headers);
+
+        assertMockEndpointsSatisfied();
+
+        // there should be two more producer cache
+        names = mbeanServer.queryNames(on, null);
+        assertEquals(3, names.size());
+
+        // now stop and remove the 2nd route
+        log.info("Stopping 2nd route");
+        context.stopRoute("bar");
+
+        log.info("Removing 2nd route");
+        boolean removed = context.removeRoute("bar");
+        assertTrue(removed);
+
+        // the producer cache should have been removed
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        names = mbeanServer.queryNames(on, null);
+        assertEquals(1, names.size());
+
+        log.info("Shutting down...");
+    }
+
+    public void testRouteAddRemoteRouteWithRecipientListAndContextScopedOnCompletion() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        result.assertIsSatisfied();
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+
+        // number of producer caches
+        Set<ObjectName> names = mbeanServer.queryNames(on, null);
+        assertEquals(1, names.size());
+
+        log.info("Adding 2nd route");
+
+        // add a 2nd route
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onCompletion()
+                    .recipientList(header("done"))
+                    .end();
+
+                from("direct:bar").routeId("bar")
+                    .recipientList(header("bar"));
+            }
+        });
+
+        // and send a message to it
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:done").expectedMessageCount(1);
+
+        Map headers = new HashMap();
+        headers.put("done", "mock:done");
+        headers.put("bar", "mock:bar");
+        template.sendBodyAndHeaders("direct:bar", "Hello World", headers);
+
+        assertMockEndpointsSatisfied();
+
+        // there should be two more producer cache
+        names = mbeanServer.queryNames(on, null);
+        assertEquals(3, names.size());
+
+        // now stop and remove the 2nd route
+        log.info("Stopping 2nd route");
+        context.stopRoute("bar");
+
+        log.info("Removing 2nd route");
+        boolean removed = context.removeRoute("bar");
+        assertTrue(removed);
+
+        // only the producer cache from the 2nd route should have been removed (the on completion is context scoped)
+        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,name=ProducerCache*");
+        names = mbeanServer.queryNames(on, null);
+        assertEquals(2, names.size());
+
+        log.info("Shutting down...");
+    }
 }

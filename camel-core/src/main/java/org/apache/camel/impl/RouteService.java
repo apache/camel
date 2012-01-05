@@ -31,9 +31,11 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
@@ -338,12 +340,20 @@ public class RouteService extends ChildServiceSupport {
                         services.add((Service) errorHandler);
                     }
                 }
+            } else if (output instanceof OnCompletionDefinition) {
+                OnCompletionDefinition onCompletionDefinition = (OnCompletionDefinition) output;
+                if (onCompletionDefinition.isRouteScoped()) {
+                    Processor onCompletionProcessor = onCompletionDefinition.getOnCompletion(route.getId());
+                    if (onCompletionProcessor != null && onCompletionProcessor instanceof Service) {
+                        services.add((Service) onCompletionProcessor);
+                    }
+                }
             }
         }
     }
 
     /**
-     * Gather all child services by navigating the service to recursivly gather all child services.
+     * Gather all child services by navigating the service to recursively gather all child services.
      */
     private static void doGetChildServices(Set<Service> services, Service service) throws Exception {
         services.add(service);
