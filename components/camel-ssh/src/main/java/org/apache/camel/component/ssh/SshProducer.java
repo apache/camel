@@ -17,6 +17,7 @@
 package org.apache.camel.component.ssh;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 
 public class SshProducer extends DefaultProducer {
@@ -29,9 +30,16 @@ public class SshProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String command = exchange.getIn().getBody(String.class);
+        final Message in = exchange.getIn();
+        final Message out = exchange.getOut();
+
+        String command = in.getBody(String.class);
         byte[] result = endpoint.sendExecCommand(command);
 
-        exchange.getOut().setBody(result);
+        out.setBody(result);
+
+        // propagate headers and attachments
+        out.getHeaders().putAll(in.getHeaders());
+        out.setAttachments(in.getAttachments());
     }
 }
