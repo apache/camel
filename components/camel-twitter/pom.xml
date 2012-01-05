@@ -47,25 +47,12 @@
       <dependency>
          <groupId>org.twitter4j</groupId>
          <artifactId>twitter4j-core</artifactId>
-         <version>2.2.5</version>
+         <version>${twitter4j-version}</version>
       </dependency>
       <dependency>
          <groupId>org.twitter4j</groupId>
          <artifactId>twitter4j-stream</artifactId>
-         <version>2.2.5</version>
-      </dependency>
-      <!-- to allow Spring annotations (jmx) to be tested -->
-      <dependency>
-         <groupId>org.springframework</groupId>
-         <artifactId>spring-context</artifactId>
-         <optional>true</optional>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.springframework</groupId>
-         <artifactId>spring-aop</artifactId>
-         <optional>true</optional>
-         <scope>test</scope>
+         <version>${twitter4j-version}</version>
       </dependency>
       <!-- testing -->
       <dependency>
