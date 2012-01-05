@@ -111,4 +111,12 @@ public class SshComponent extends DefaultComponent {
     public void setKeyType(String keyType) {
         getConfiguration().setKeyType(keyType);
     }
+
+    public long getTimeout() {
+        return getConfiguration().getTimeout();
+    }
+
+    public void setTimeout(long timeout) {
+        getConfiguration().setTimeout(timeout);
+    }
 }

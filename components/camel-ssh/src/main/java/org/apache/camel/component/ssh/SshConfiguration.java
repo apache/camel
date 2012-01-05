@@ -22,16 +22,17 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.sshd.common.KeyPairProvider;
 
-public class SshConfiguration implements Cloneable  {
+public class SshConfiguration implements Cloneable {
     public static final int DEFAULT_SSH_PORT = 22;
 
     private String username;
     private String host;
-    private int port;
+    private int port = DEFAULT_SSH_PORT;
     private String password;
     private String pollCommand;
     private KeyPairProvider keyPairProvider;
     private String keyType;
+    private long timeout = 30000;
 
     public SshConfiguration() {
     }
@@ -40,13 +41,7 @@ public class SshConfiguration implements Cloneable  {
         configure(uri);
     }
 
-    protected void setDefaultPort() {
-        setPort(DEFAULT_SSH_PORT);
-    }
-
     public void configure(URI uri) {
-        setDefaultPort();
-
         // UserInfo can contain both username and password as: user:pwd@sshserver
         // see: http://en.wikipedia.org/wiki/URI_scheme
         String username = uri.getUserInfo();
@@ -133,5 +128,13 @@ public class SshConfiguration implements Cloneable  {
 
     public void setKeyType(String keyType) {
         this.keyType = keyType;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 }

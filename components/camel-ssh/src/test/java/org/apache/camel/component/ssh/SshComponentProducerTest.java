@@ -107,15 +107,40 @@ public class SshComponentProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testConnectionTimeout() throws Exception {
+        final String msg = "test\n";
+
+        MockEndpoint mock = getMockEndpoint("mock:password");
+        mock.expectedMinimumMessageCount(0);
+
+        MockEndpoint mockError = getMockEndpoint("mock:error");
+        mockError.expectedMinimumMessageCount(1);
+
+        sshd.stop();
+        sshd = null;
+
+        template.sendBody("direct:ssh", msg);
+
+        Thread.sleep(4000);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                onException(Exception.class)
+                        .handled(true)
+                        .to("mock:error")
+                        .to("log:error?showAll=true");
+
                 from("direct:ssh")
-                    .to("ssh://smx:smx@localhost:" + port)
-                    .to("mock:password")
-                    .to("log:password?showAll=true");
+                        .to("ssh://smx:smx@localhost:" + port + "?timeout=3000")
+                        .to("mock:password")
+                        .to("log:password?showAll=true");
 
                 SshComponent sshComponent = new SshComponent();
                 sshComponent.setHost("localhost");

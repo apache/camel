@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ssh;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
@@ -34,9 +35,14 @@ public class SshProducer extends DefaultProducer {
         final Message out = exchange.getOut();
 
         String command = in.getBody(String.class);
-        byte[] result = endpoint.sendExecCommand(command);
 
-        out.setBody(result);
+        try {
+            byte[] result = endpoint.sendExecCommand(command);
+
+            out.setBody(result);
+        } catch (Exception e) {
+            throw new CamelExchangeException(e.getMessage(), exchange, e);
+        }
 
         // propagate headers and attachments
         out.getHeaders().putAll(in.getHeaders());

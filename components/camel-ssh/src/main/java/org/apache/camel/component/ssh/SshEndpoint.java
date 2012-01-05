@@ -27,9 +27,9 @@ import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
 import org.apache.sshd.client.future.AuthFuture;
+import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.future.OpenFuture;
 import org.apache.sshd.common.KeyPairProvider;
-import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,20 +76,36 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public byte[] sendExecCommand(String command) throws Exception {
         byte[] result = null;
 
-        ClientSession session = client.connect(getHost(), getPort()).await().getSession();
+        final ConnectFuture connectFuture = client.connect(getHost(), getPort());
+
+        connectFuture.await(getTimeout());
+
+        if (!connectFuture.isDone() || !connectFuture.isConnected()) {
+            final String msg = "Failed to connect to " + getHost() + ":" + getPort() + " within timeout " + getTimeout() + "ms";
+            log.debug(msg);
+            throw new Exception(msg);
+        }
+
+        log.debug("Connected to " + getHost() + ":" + getPort());
+
+        ClientSession session = connectFuture.getSession();
 
         AuthFuture authResult;
 
         KeyPairProvider keyPairProvider = getKeyPairProvider();
         if (keyPairProvider != null) {
+            log.debug("Attempting to authenticate username " + getUsername() + " using Key...");
             KeyPair pair = keyPairProvider.loadKey(getKeyType());
-            authResult = session.authPublicKey(getUsername(), pair).await();
+            authResult = session.authPublicKey(getUsername(), pair);
         } else {
-            authResult = session.authPassword(getUsername(), getPassword()).await();
+            log.debug("Attempting to authenticate username " + getUsername() + " using Password...");
+            authResult = session.authPassword(getUsername(), getPassword());
         }
 
-        if (authResult.isFailure()) {
-            log.error("Failed to authenticate");
+        authResult.await(getTimeout());
+
+        if (!authResult.isDone() || authResult.isFailure()) {
+            log.debug("Failed to successfully authenticate");
             throw new Exception("Failed to successfully authenticate");
         }
 
@@ -104,10 +120,12 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         ByteArrayOutputStream err = new ByteArrayOutputStream();
         channel.setErr(err);
 
-        OpenFuture openFuture = channel.open().await();
+        OpenFuture openFuture = channel.open();
+
+        openFuture.await(getTimeout());
+
         if (openFuture.isOpened()) {
-            int ret = channel.waitFor(ClientChannel.CLOSED, 0);
-            log.info("ret = " + ret);
+            channel.waitFor(ClientChannel.CLOSED, 0);
 
             //session.close(false);
             //session.waitFor(ClientSession.CLOSED, 0);
@@ -198,5 +216,13 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
     public void setKeyType(String keyType) {
         getConfiguration().setKeyType(keyType);
+    }
+
+    public long getTimeout() {
+        return getConfiguration().getTimeout();
+    }
+
+    public void setTimeout(long timeout) {
+        getConfiguration().setTimeout(timeout);
     }
 }
