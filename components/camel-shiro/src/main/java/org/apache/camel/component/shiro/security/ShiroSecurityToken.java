@@ -24,7 +24,6 @@ public class ShiroSecurityToken implements Serializable {
     private String password;
     
     public ShiroSecurityToken(String username, String password) {
-        super();
         this.username = username;
         this.password = password;
     }

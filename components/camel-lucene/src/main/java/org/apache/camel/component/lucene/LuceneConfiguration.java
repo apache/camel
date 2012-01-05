@@ -41,7 +41,6 @@ public class LuceneConfiguration {
     }
 
     public LuceneConfiguration(URI uri) throws Exception {
-        this();
         this.uri = uri;
     }
 

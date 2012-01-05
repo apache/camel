@@ -37,7 +37,6 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
     }
 
     public OsgiPackageScanClassResolver(Bundle bundle) {
-        super();
         this.bundle = bundle;
         // add the BundleDelegatingClassLoader to the class loaders
         addClassLoader(new BundleDelegatingClassLoader(bundle));

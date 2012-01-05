@@ -30,7 +30,6 @@ public final class ResourceUtils {
     private static final String CLASSPATH_PREFIX = "classpath:";
 
     private ResourceUtils() {
-        super();
     }
 
     public static boolean isClasspathResource(String path) {

@@ -32,8 +32,6 @@ public class SSLEngineFactory {
     private static SSLContext sslContext;
     
     public SSLEngineFactory(String keyStoreFormat, String securityProvider, File keyStoreFile, File trustStoreFile, char[] passphrase) throws Exception {
-        super();        
-        
         KeyStore ks = KeyStore.getInstance(keyStoreFormat);
 
         ks.load(IOConverter.toInputStream(keyStoreFile), passphrase);

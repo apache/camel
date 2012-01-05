@@ -53,7 +53,6 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
     protected transient Logger log = LoggerFactory.getLogger(getClass());
 
     public AbstractJdbcMessageIdRepository() {
-        super();
     }
 
     public AbstractJdbcMessageIdRepository(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {

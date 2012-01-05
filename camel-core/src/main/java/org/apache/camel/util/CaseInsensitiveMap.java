@@ -39,17 +39,14 @@ public class CaseInsensitiveMap extends HashMap<String, Object> {
     private static final long serialVersionUID = -8538318195477618308L;
 
     // holds a map of lower case key -> original key
-    private Map<String, String> originalKeys;
+    private Map<String, String> originalKeys = new HashMap<String, String>();
     // holds a snapshot view of current entry set
     private transient Set<Map.Entry<String, Object>> entrySetView;
 
     public CaseInsensitiveMap() {
-        super();
-        originalKeys = new HashMap<String, String>();
     }
 
     public CaseInsensitiveMap(Map<? extends String, ?> map) {
-        this();
         putAll(map);
     }
 

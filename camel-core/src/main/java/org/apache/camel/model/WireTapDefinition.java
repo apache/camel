@@ -72,12 +72,10 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
     }
 
     public WireTapDefinition(String uri) {
-        this();
         setUri(uri);
     }
 
     public WireTapDefinition(Endpoint endpoint) {
-        this();
         setEndpoint(endpoint);
     }
 

@@ -30,11 +30,9 @@ public class CacheEventListener implements net.sf.ehcache.event.CacheEventListen
     CacheConsumer cacheConsumer;
 
     public CacheEventListener() {
-        super();
     }
 
     public CacheEventListener(CacheConsumer cacheConsumer) {
-        super();
         this.cacheConsumer = cacheConsumer;
     }
 

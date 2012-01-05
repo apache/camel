@@ -42,7 +42,6 @@ public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssemb
     private final MetadataMBeanInfoAssembler assembler;
 
     public SpringManagementMBeanAssembler() {
-        super();
         this.assembler = new MetadataMBeanInfoAssembler();
         this.assembler.setAttributeSource(new AnnotationJmxAttributeSource());
     }

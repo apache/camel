@@ -44,7 +44,6 @@ public final class ApnsUtils {
     private static Random random = new Random();
 
     private ApnsUtils() {
-        super();
     }
 
     public static byte[] createRandomDeviceTokenBytes() {

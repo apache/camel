@@ -27,7 +27,6 @@ public class HazelcastSedaConfiguration {
     private boolean transferExchange;
 
     public HazelcastSedaConfiguration() {
-        super();
     }
 
     public int getConcurrentConsumers() {

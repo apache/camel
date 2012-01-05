@@ -540,7 +540,6 @@ public class QuickfixjEngineTest {
 
         public EventRecord(QuickfixjEventCategory eventCategory,
                            SessionID sessionID, Message message) {
-            super();
             this.eventCategory = eventCategory;
             this.sessionID = sessionID;
             this.message = message;

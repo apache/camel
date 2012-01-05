@@ -47,7 +47,6 @@ public class SpringWebserviceComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceComponent.class);
 
     public SpringWebserviceComponent() {
-        super();
     }
 
     public SpringWebserviceComponent(CamelContext context) {

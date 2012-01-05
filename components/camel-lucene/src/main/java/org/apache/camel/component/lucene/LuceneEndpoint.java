@@ -29,7 +29,6 @@ public class LuceneEndpoint extends DefaultEndpoint {
     boolean insertFlag;
 
     public LuceneEndpoint() {
-        super();
     }
 
     public LuceneEndpoint(String endpointUri, CamelContext camelContext) {

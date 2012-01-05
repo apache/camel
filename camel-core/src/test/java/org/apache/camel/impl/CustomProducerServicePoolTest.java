@@ -41,9 +41,8 @@ public class CustomProducerServicePoolTest extends ContextTestSupport {
 
         private MyEndpoint(String endpointUri, CamelContext camelContext) {
             // FIXME: another endpoint that works without a Component
-            super();
-            this.setCamelContext(camelContext);
-            this.setEndpointUri(endpointUri);
+            setCamelContext(camelContext);
+            setEndpointUri(endpointUri);
         }
 
         public Producer createProducer() throws Exception {

@@ -35,7 +35,6 @@ public class MyOSGiModule extends MyModule {
     private Properties properties;
     
     MyOSGiModule(BundleContext bundleContext) throws IOException {
-        super();
         provider = new OSGiCamelContextProvider(bundleContext);
         properties = new Properties();
         URL jndiPropertiesUrl;

@@ -19,7 +19,6 @@ package com.notnoop.apns.internal;
 public final class ApnsFeedbackParsingUtilsAcessor {
 
     private ApnsFeedbackParsingUtilsAcessor() {
-        super();
     }
     
     public static byte[] pack(byte[]... args) {

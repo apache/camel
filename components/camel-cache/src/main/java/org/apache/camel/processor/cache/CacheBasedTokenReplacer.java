@@ -39,7 +39,6 @@ public class CacheBasedTokenReplacer extends CacheValidate implements Processor 
     private Ehcache cache;
 
     public CacheBasedTokenReplacer(String cacheName, String key, String replacementToken) {
-        super();
         if (cacheName.contains("cache://")) {
             this.setCacheName(cacheName.replace("cache://", ""));
         } else {

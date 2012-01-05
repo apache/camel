@@ -39,7 +39,6 @@ public class DelimitedEndpoint extends FixedLengthEndpoint {
     private boolean ignoreFirstRecord = true;
 
     public DelimitedEndpoint() {
-        super();
     }
 
     public DelimitedEndpoint(String endpointUri, Component component, String resourceUri) {

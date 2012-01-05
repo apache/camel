@@ -62,11 +62,9 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     private EventEndpoint eventEndpoint;
 
     public SpringCamelContext() {
-        super();
     }
 
     public SpringCamelContext(ApplicationContext applicationContext) {
-        this();
         setApplicationContext(applicationContext);
     }
 

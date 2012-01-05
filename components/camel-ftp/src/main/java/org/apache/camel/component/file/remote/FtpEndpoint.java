@@ -41,7 +41,6 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     protected int dataTimeout;
 
     public FtpEndpoint() {
-        super();
     }
 
     public FtpEndpoint(String uri, RemoteFileComponent<FTPFile> component, RemoteFileConfiguration configuration) {

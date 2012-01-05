@@ -33,7 +33,6 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
     }
 
     public OsgiDefaultCamelContext(BundleContext bundleContext, Registry registry) {
-        super();
         this.bundleContext = bundleContext;
         this.registry = registry;
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);

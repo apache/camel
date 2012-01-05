@@ -31,7 +31,6 @@ import org.apache.camel.impl.DefaultComponent;
 public class JavaSpaceComponent extends DefaultComponent {
 
     public JavaSpaceComponent() {
-        super();
     }
 
     public JavaSpaceComponent(CamelContext context) {

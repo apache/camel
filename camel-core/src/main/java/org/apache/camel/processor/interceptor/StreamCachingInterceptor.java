@@ -30,7 +30,6 @@ import org.apache.camel.util.MessageHelper;
 public class StreamCachingInterceptor extends DelegateAsyncProcessor {
 
     public StreamCachingInterceptor() {
-        super();
     }
 
     public StreamCachingInterceptor(Processor processor) {
