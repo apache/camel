@@ -97,9 +97,26 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
         return getExpression().getLabel();
     }
 
+    /**
+     * Creates the {@link FilterProcessor} from the expression node.
+     *
+     * @param routeContext  the route context
+     * @return the created {@link FilterProcessor}
+     * @throws Exception is thrown if error creating the processor
+     */
     protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, false);
-        return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
+        return new FilterProcessor(createPredicate(routeContext), childProcessor);
+    }
+
+    /**
+     * Creates the {@link Predicate} from the expression node.
+     *
+     * @param routeContext  the route context
+     * @return the created predicate
+     */
+    protected Predicate createPredicate(RouteContext routeContext) {
+        return getExpression().createPredicate(routeContext);
     }
 
     @Override
