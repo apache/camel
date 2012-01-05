@@ -138,6 +138,7 @@
     <module>camel-stringtemplate</module>
     <module>camel-syslog</module>
     <module>camel-tagsoup</module>
+    <module>camel-twitter</module>
     <module>camel-velocity</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmlsecurity</module>
