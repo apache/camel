@@ -149,7 +149,7 @@ public class BundleTracker implements BundleTrackerCustomizer {
                 return;
             }
             if (DEBUG) {
-                System.out.println("BundleTracker.open"); //$NON-NLS-1$
+                System.out.println("BundleTracker.open");
             }
             t = new Tracked();
             synchronized (t) {
@@ -192,7 +192,7 @@ public class BundleTracker implements BundleTrackerCustomizer {
                 return;
             }
             if (DEBUG) {
-                System.out.println("BundleTracker.close"); //$NON-NLS-1$
+                System.out.println("BundleTracker.close");
             }
             outgoing.close();
             bundles = getBundles();
@@ -400,7 +400,7 @@ public class BundleTracker implements BundleTrackerCustomizer {
             final Bundle bundle = event.getBundle();
             final int state = bundle.getState();
             if (DEBUG) {
-                System.out.println("BundleTracker.Tracked.bundleChanged[" + state + "]: " + bundle); //$NON-NLS-1$ //$NON-NLS-2$
+                System.out.println("BundleTracker.Tracked.bundleChanged[" + state + "]: " + bundle);
             }
 
             if ((state & mask) != 0) {
