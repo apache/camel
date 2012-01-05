@@ -263,7 +263,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
             for (Entry<Integer, List> entry : sortValues.entrySet()) {
                 // Get list of values
-                List<String> val = (List<String>)entry.getValue();
+                List<String> val = entry.getValue();
 
                 // For one to one relation
                 // There is only one item in the list

@@ -86,7 +86,7 @@ public class RouteboxDirectProducerOnlyTest extends RouteboxDemoTestSupport {
 
         //Thread.sleep(2000);
         
-        book = (Book) sendFindBookRequest(template, "direct:start", "findBook", "Sir Arthur Conan Doyle");
+        book = sendFindBookRequest(template, "direct:start", "findBook", "Sir Arthur Conan Doyle");
         LOG.debug("Received book with author {} and title {}", book.getAuthor(), book.getTitle());        
         assertEquals("The Adventures of Sherlock Holmes", book.getTitle());
         

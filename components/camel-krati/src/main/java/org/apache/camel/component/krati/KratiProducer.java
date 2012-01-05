@@ -113,7 +113,7 @@ public class KratiProducer extends DefaultProducer {
         Object value = ((KratiEndpoint) getEndpoint()).getValue();
 
         if (exchange.getIn().getHeader(KratiConstants.VALUE) != null) {
-            value = (String) exchange.getIn().getHeader(KratiConstants.VALUE);
+            value = exchange.getIn().getHeader(KratiConstants.VALUE);
         }
 
         if (exchange.getIn().getBody() != null) {

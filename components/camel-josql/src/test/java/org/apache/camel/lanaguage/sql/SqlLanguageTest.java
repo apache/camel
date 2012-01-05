@@ -36,7 +36,7 @@ public class SqlLanguageTest extends SqlTest {
         Expression expression = language.createExpression("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'London'");        
         List value = expression.evaluate(exchange, List.class);
 
-        List list = (List)value;
+        List list = value;
         assertEquals("List size", 2, list.size());
 
         for (Object person : list) {
@@ -52,7 +52,7 @@ public class SqlLanguageTest extends SqlTest {
         Expression expression = language.createExpression("SELECT * FROM org.apache.camel.builder.sql.Person where name = :fooHeader");
         List value = expression.evaluate(exchange, List.class);
 
-        List<Person> list = (List<Person>)value;
+        List<Person> list = value;
         assertEquals("List size", 1, list.size());
 
         for (Person person : list) {

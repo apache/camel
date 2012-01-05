@@ -112,7 +112,7 @@ public class SimpleBeanFixture {
      * Gets the mxbean for our remote object using the specified name
      */
     protected ISimpleMXBean getMXBean(ObjectName aObjectName) {
-        return (ISimpleMXBean) MBeanServerInvocationHandler.newProxyInstance(
+        return MBeanServerInvocationHandler.newProxyInstance(
                 server,
                 aObjectName,
                 ISimpleMXBean.class,

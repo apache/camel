@@ -97,7 +97,7 @@ public class CometdComponent extends DefaultComponent {
      */
     public void connect(CometdProducerConsumer prodcon) throws Exception {
         // Make sure that there is a connector for the requested endpoint.
-        CometdEndpoint endpoint = (CometdEndpoint) prodcon.getEndpoint();
+        CometdEndpoint endpoint = prodcon.getEndpoint();
         String connectorKey = endpoint.getProtocol() + ":" + endpoint.getUri().getHost() + ":" + endpoint.getPort();
 
         synchronized (connectors) {

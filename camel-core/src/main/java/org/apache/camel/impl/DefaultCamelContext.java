@@ -1651,7 +1651,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // allow us to do custom work before delegating to service helper
         try {
             if (service instanceof Service) {
-                ServiceHelper.stopAndShutdownService((Service)service);
+                ServiceHelper.stopAndShutdownService(service);
             } else if (service instanceof Collection) {
                 ServiceHelper.stopAndShutdownServices((Collection<?>)service);
             }

@@ -58,7 +58,7 @@ public final class Client {
                                                                 Service.Mode.MESSAGE);
 
         // Use Dispatch as BindingProvider
-        BindingProvider bp = (BindingProvider)dispatch;
+        BindingProvider bp = dispatch;
 
         MessageFactory factory = ((SOAPBinding)bp.getBinding()).getMessageFactory();
 

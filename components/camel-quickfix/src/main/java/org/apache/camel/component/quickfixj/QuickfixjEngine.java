@@ -265,7 +265,7 @@ public class QuickfixjEngine {
         }
         MessageStoreFactory messageStoreFactory;
         if (impliedMessageStoreFactories.size() == 1) {
-            messageStoreFactory = (MessageStoreFactory) impliedMessageStoreFactories.iterator().next();
+            messageStoreFactory = impliedMessageStoreFactories.iterator().next();
         } else {
             messageStoreFactory = new MemoryStoreFactory();
         }
@@ -302,7 +302,7 @@ public class QuickfixjEngine {
         }
         LogFactory sessionLogFactory;
         if (impliedLogFactories.size() == 1) {
-            sessionLogFactory = (LogFactory) impliedLogFactories.iterator().next();
+            sessionLogFactory = impliedLogFactories.iterator().next();
         } else {
             // Default
             sessionLogFactory = new ScreenLogFactory(settings);
@@ -345,7 +345,7 @@ public class QuickfixjEngine {
         Iterator<SessionID> sessionIdItr = settings.sectionIterator();
         while (sessionIdItr.hasNext()) {
             try {
-                if (connectorRole.equals(settings.getString((SessionID) sessionIdItr.next(),
+                if (connectorRole.equals(settings.getString(sessionIdItr.next(),
                         SessionFactory.SETTING_CONNECTION_TYPE))) {
                     hasRole = true;
                     break;

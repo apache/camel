@@ -61,7 +61,7 @@ public class SplitterParallelIssueTest extends ContextTestSupport {
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 int num = exchange.getIn().getBody(int.class);
-                                final long sleep = (long) (num * delay);
+                                final long sleep = num * delay;
                                 log.info("Sleep for " + sleep + "ms");
                                 Thread.sleep(sleep);
                             }

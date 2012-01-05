@@ -113,7 +113,7 @@ public class ZipDataFormatTest extends ContextTestSupport {
     private static class ZippedMessageProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            byte[] body = (byte[]) exchange.getIn().getBody(byte[].class);
+            byte[] body = exchange.getIn().getBody(byte[].class);
             
             Inflater inflater = new Inflater();
             inflater.setInput(body);

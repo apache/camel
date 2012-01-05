@@ -73,13 +73,13 @@ public class DefaultHttpRegistry implements HttpRegistry {
     @SuppressWarnings("rawtypes")
     public void register(CamelServlet provider, Map properties) {
         LOG.debug("Registering provider through OSGi service listener {}", properties);
-        CamelServlet camelServlet = (CamelServlet)provider;
+        CamelServlet camelServlet = provider;
         camelServlet.setServletName((String) properties.get("servlet-name"));
         register(camelServlet);
     }
 
     public void unregister(CamelServlet provider, Map<String, Object> properties) {
-        unregister((CamelServlet)provider);
+        unregister(provider);
     }
     
     @Override

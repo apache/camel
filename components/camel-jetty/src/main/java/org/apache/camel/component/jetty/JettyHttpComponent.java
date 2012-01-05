@@ -345,7 +345,7 @@ public class JettyHttpComponent extends HttpComponent {
     }
 
     private void enableSessionSupport(Server server, String connectorKey) throws Exception {
-        ServletContextHandler context = (ServletContextHandler)server.getChildHandlerByClass(ServletContextHandler.class);
+        ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         if (context.getSessionHandler() == null) {
             SessionHandler sessionHandler = new SessionHandler();
             if (context.isStarted()) {
@@ -357,8 +357,7 @@ public class JettyHttpComponent extends HttpComponent {
     }
     
     private void setFilters(JettyHttpEndpoint endpoint, Server server, String connectorKey) {
-        ServletContextHandler context = (ServletContextHandler) server
-            .getChildHandlerByClass(ServletContextHandler.class);
+        ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         List<Filter> filters = endpoint.getFilters();
         for (Filter filter : filters) {
             FilterHolder filterHolder = new FilterHolder();
@@ -376,8 +375,7 @@ public class JettyHttpComponent extends HttpComponent {
     }
     
     private void enableMultipartFilter(HttpEndpoint endpoint, Server server, String connectorKey) throws Exception {
-        ServletContextHandler context = (ServletContextHandler) server
-                .getChildHandlerByClass(ServletContextHandler.class);
+        ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         CamelContext camelContext = this.getCamelContext();
         FilterHolder filterHolder = new FilterHolder();
         filterHolder.setInitParameter("deleteFiles", "true");

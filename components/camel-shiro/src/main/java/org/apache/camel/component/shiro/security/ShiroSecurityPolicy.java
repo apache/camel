@@ -73,14 +73,14 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
     public ShiroSecurityPolicy(String iniResourcePath) {
         this();
         Factory<SecurityManager> factory = new IniSecurityManagerFactory(iniResourcePath);
-        securityManager = (SecurityManager) factory.getInstance();
+        securityManager = factory.getInstance();
         SecurityUtils.setSecurityManager(securityManager);
     }
     
     public ShiroSecurityPolicy(Ini ini) {
         this();
         Factory<SecurityManager> factory = new IniSecurityManagerFactory(ini);
-        securityManager = (SecurityManager) factory.getInstance();
+        securityManager = factory.getInstance();
         SecurityUtils.setSecurityManager(securityManager);
     }
     

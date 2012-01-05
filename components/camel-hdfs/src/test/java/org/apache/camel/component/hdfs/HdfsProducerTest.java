@@ -206,7 +206,7 @@ public class HdfsProducerTest extends CamelTestSupport {
         Writable key = (Writable) ReflectionUtils.newInstance(reader.getKeyClass(), conf);
         Text value = (Text) ReflectionUtils.newInstance(reader.getValueClass(), conf);
         reader.next(key, value);
-        String rTxt = ((Text) value).toString();
+        String rTxt = value.toString();
         Assert.assertEquals(rTxt, txt);
     }
 

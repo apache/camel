@@ -65,7 +65,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                             assertEquals("Get a wrong http method", "GET", httpMethod);
                             String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
                             // The parameter of the invocation is stored in the body of in message
-                            String id = (String) inMessage.getBody(String.class);
+                            String id = inMessage.getBody(String.class);
                             if ("/customerservice/customers/126".equals(path)) {                            
                                 Customer customer = new Customer();
                                 customer.setId(Long.parseLong(id));

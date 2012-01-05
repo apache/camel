@@ -53,7 +53,7 @@ public class HttpAsyncTest extends HttpAsyncTestSupport {
         // This allows us to do this in a single code line instead of using the
         // JDK Future API to get hold of it, but you can also use that if you want
         // Adding the (String) To make the CS happy
-        String response = (String) template.extractFutureBody(future, String.class);
+        String response = template.extractFutureBody(future, String.class);
         assertEquals("Bye World", response);
 
         assertMockEndpointsSatisfied();

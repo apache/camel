@@ -406,7 +406,7 @@ public abstract class MainSupport extends ServiceSupport {
             }
             RouteDotGenerator generator = new RouteDotGenerator(outputDir);
             LOG.info("Generating DOT file for routes: " + outputDir + " for: " + camelContext + " with name: " + name);
-            generator.drawRoutes((ModelCamelContext)camelContext);
+            generator.drawRoutes(camelContext);
         }
     }
 
