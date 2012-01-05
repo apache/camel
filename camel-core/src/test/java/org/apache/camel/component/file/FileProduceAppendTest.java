@@ -29,9 +29,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileProduceAppendTest extends ContextTestSupport {
 
     public void testAppendText() throws Exception {
-    	// we expect this file with the content 'Hello'
+        // we expect this file with the content 'Hello'
     	assertFileExists("target/test-file-append/hello.txt");
-    	
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/test-file-append/hello.txt", "Hello World");
@@ -42,9 +42,9 @@ public class FileProduceAppendTest extends ContextTestSupport {
     }
 
     public void testAppendFile() throws Exception {
-    	// we expect this file with the content 'Hello'
+        // we expect this file with the content 'Hello'
     	assertFileExists("target/test-file-append/hello.txt");
-    	
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedFileExists("target/test-file-append/hello.txt", "Hello World");
@@ -74,5 +74,4 @@ public class FileProduceAppendTest extends ContextTestSupport {
             }
         };
     }
-
 }
