@@ -28,7 +28,6 @@ import org.apache.camel.component.file.GenericFileComponent;
 public abstract class RemoteFileComponent<T> extends GenericFileComponent<T> {
 
     public RemoteFileComponent() {
-        super();
     }
 
     public RemoteFileComponent(CamelContext context) {

@@ -27,7 +27,6 @@ public class CamelListener {
     private final HazelcastDefaultConsumer consumer;
 
     public CamelListener(HazelcastDefaultConsumer consumer, String cacheName) {
-        super();
         this.cacheName = cacheName;
         this.consumer = consumer;
     }

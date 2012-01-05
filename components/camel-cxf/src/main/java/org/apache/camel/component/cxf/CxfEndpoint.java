@@ -166,7 +166,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public CxfEndpoint() {
-        super();
     }
     
     public CxfEndpoint copy() {

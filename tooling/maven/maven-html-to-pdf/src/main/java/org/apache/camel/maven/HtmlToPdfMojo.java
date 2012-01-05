@@ -52,6 +52,8 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
  */
 public class HtmlToPdfMojo extends AbstractMojo {
 
+    private static final String XSLT_SYSTEM_PROPERTY_KEY = "javax.xml.transform.TransformerFactory";
+
     /**
      * The URL to the confluence page to convert.
      *
@@ -157,6 +159,14 @@ public class HtmlToPdfMojo extends AbstractMojo {
      * @parameter
      */
     private String classifier;
+
+    /**
+     * The XSL transformer factory class name to be used which will be set through the <code>javax.xml.transform.TransformerFactory</code> system property.
+     *
+     * @parameter
+     */
+    private String transformerFactoryClassName;
+
 
     public void execute() throws MojoExecutionException {
         File outputDir = new File(pdf).getParentFile();
@@ -283,6 +293,13 @@ public class HtmlToPdfMojo extends AbstractMojo {
     }
 
     private String downloadContent() throws MalformedURLException, MojoExecutionException {
+        // avoid the usage of default xslt by jdk as that could cause problems
+        String previousTransformerFactoryClassName = null;
+        if (transformerFactoryClassName != null) {
+            previousTransformerFactoryClassName = System.setProperty(XSLT_SYSTEM_PROPERTY_KEY, transformerFactoryClassName);
+            getLog().info("Set the XSL transformer factory class name to be '" + transformerFactoryClassName + "'");
+        }
+
         String contentTag = "<div class=\"" + contentDivClass + "\"";
 
         getLog().info("Downloading: " + page);
@@ -304,7 +321,20 @@ public class HtmlToPdfMojo extends AbstractMojo {
                 getLog().error("Download or validation of '" + page + "' failed: " + e);
                 return null;
             }
-        }        
+        } finally {
+            // avoid any side effects by other camel modules (for example while running the tests) and reset the system property 
+            if (transformerFactoryClassName != null) {
+                if (previousTransformerFactoryClassName == null) {
+                    // remove the set system property
+                    System.getProperties().remove(XSLT_SYSTEM_PROPERTY_KEY);
+                    getLog().info("Removed the set XSL transformer factory class name '" + transformerFactoryClassName + "' from the system properties");
+                } else {
+                    // reset the previous system property value to whatever it was before
+                    System.setProperty(XSLT_SYSTEM_PROPERTY_KEY, previousTransformerFactoryClassName);
+                    getLog().info("Resetted the XSL transformer factory class name to be '" + previousTransformerFactoryClassName + "'");
+                }
+            }
+        }
         throw new MojoExecutionException("The '" + page + "' page did not have a " + contentTag + " element.");
     }
 

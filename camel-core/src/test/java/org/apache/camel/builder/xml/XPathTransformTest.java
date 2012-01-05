@@ -57,12 +57,12 @@ public class XPathTransformTest extends ContextTestSupport {
         assertEquals("<root><firstname>Servicemix</firstname><lastname>Camel</lastname></root>", out);
     }
 
-    public void testXPathNamespaceTracingEnabledJavaDSL() throws Exception {
+    public void testXPathNamespaceLoggingEnabledJavaDSL() throws Exception {
         Logger l = createNiceMock(Logger.class);
 
-        expect(l.isTraceEnabled()).andReturn(true).anyTimes();
+        expect(l.isInfoEnabled()).andReturn(true).anyTimes();
 
-        l.trace(contains("Namespaces discovered in message"), anyObject());
+        l.info(contains("Namespaces discovered in message"), anyObject());
         expectLastCall().times(1);
         replay(l);
 
@@ -79,19 +79,19 @@ public class XPathTransformTest extends ContextTestSupport {
 
         logField.set(null, l);
 
-        NodeList list = XPathBuilder.xpath("//*", NodeList.class).traceNamespaces().evaluate(context, doc, NodeList.class);
+        NodeList list = XPathBuilder.xpath("//*", NodeList.class).logNamespaces().evaluate(context, doc, NodeList.class);
         assertNotNull(list);
 
         verify(l);
     }
 
-    public void testXPathNamespaceTracingDisabledJavaDSL() throws Exception {
+    public void testXPathNamespaceLoggingDisabledJavaDSL() throws Exception {
         Logger l = createNiceMock(Logger.class);
 
-        expect(l.isTraceEnabled()).andReturn(true).anyTimes();
+        expect(l.isInfoEnabled()).andReturn(true).anyTimes();
 
         Capture<String> captures = new Capture<String>(CaptureType.ALL);
-        l.trace(capture(captures), anyObject());
+        l.info(capture(captures), anyObject());
         expectLastCall().anyTimes();
 
         replay(l);
@@ -116,7 +116,7 @@ public class XPathTransformTest extends ContextTestSupport {
 
         for (String c : captures.getValues()) {
             if (c.contains("Namespaces discovered in message")) {
-                throw new AssertionError("Did not expect LOG.trace with 'Namespaces discovered in message'");
+                throw new AssertionError("Did not expect LOG.info with 'Namespaces discovered in message'");
             }
         }
     }

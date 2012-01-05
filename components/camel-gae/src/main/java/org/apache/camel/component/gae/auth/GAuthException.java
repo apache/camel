@@ -20,7 +20,6 @@ package org.apache.camel.component.gae.auth;
 public class GAuthException extends RuntimeException {
 
     public GAuthException() {
-        super();
     }
 
     public GAuthException(String message) {

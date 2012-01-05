@@ -28,7 +28,6 @@ import org.apache.camel.impl.DefaultComponent;
 public class SesComponent extends DefaultComponent {
 
     public SesComponent() {
-        super();
     }
 
     public SesComponent(CamelContext context) {

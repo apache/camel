@@ -74,6 +74,7 @@
               <replaceValue><![CDATA[
                   <h3>Version ${project.version}</h3>
               ]]></replaceValue>
+              <transformerFactoryClassName>org.apache.xalan.xsltc.trax.TransformerFactoryImpl</transformerFactoryClassName>
             </configuration>
           </plugin>
           <plugin>

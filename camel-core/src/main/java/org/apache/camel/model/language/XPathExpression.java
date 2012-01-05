@@ -43,8 +43,8 @@ public class XPathExpression extends NamespaceAwareExpression {
     private String factoryRef;
     @XmlAttribute(name = "objectModel")
     private String objectModel;
-    @XmlAttribute(name = "traceNamespaces")
-    private Boolean traceNamespaces;
+    @XmlAttribute(name = "logNamespaces")
+    private Boolean logNamespaces;
 
     @XmlTransient
     private Class<?> resultType;
@@ -110,16 +110,16 @@ public class XPathExpression extends NamespaceAwareExpression {
         return objectModel;
     }
 
-    public void setTraceNamespaces(Boolean traceNamespaces) {
-        this.traceNamespaces = traceNamespaces;
+    public void setLogNamespaces(Boolean logNamespaces) {
+        this.logNamespaces = logNamespaces;
     }
 
-    public Boolean getTraceNamespaces() {
-        return traceNamespaces;
+    public Boolean getLogNamespaces() {
+        return logNamespaces;
     }
 
-    public boolean isTraceNamespaces() {
-        return traceNamespaces != null && traceNamespaces;
+    public boolean isLogNamespaces() {
+        return logNamespaces != null && logNamespaces;
     }
 
     @Override
@@ -155,8 +155,8 @@ public class XPathExpression extends NamespaceAwareExpression {
         if (objectModel != null) {
             setProperty(expression, "objectModelUri", objectModel);
         }
-        if (isTraceNamespaces()) {
-            ObjectHelper.cast(XPathBuilder.class, expression).setTraceNamespaces(true);
+        if (isLogNamespaces()) {
+            ObjectHelper.cast(XPathBuilder.class, expression).setLogNamespaces(true);
         }
         // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
         super.configureExpression(camelContext, expression);
@@ -177,8 +177,8 @@ public class XPathExpression extends NamespaceAwareExpression {
         if (objectModel != null) {
             setProperty(predicate, "objectModelUri", objectModel);
         }
-        if (isTraceNamespaces()) {
-            ObjectHelper.cast(XPathBuilder.class, predicate).setTraceNamespaces(true);
+        if (isLogNamespaces()) {
+            ObjectHelper.cast(XPathBuilder.class, predicate).setLogNamespaces(true);
         }
         // moved the super configuration to the bottom so that the namespace init picks up the newly set XPath Factory
         super.configurePredicate(camelContext, predicate);

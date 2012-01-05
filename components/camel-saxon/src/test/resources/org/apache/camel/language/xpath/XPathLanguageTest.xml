@@ -33,7 +33,7 @@
     <route>
       <from uri="seda:testSaxonWithFlag"/>
       <setBody>
-        <xpath saxon="true" resultType="java.lang.String" traceNamespaces="true">tokenize(a, '\|')</xpath>
+        <xpath saxon="true" resultType="java.lang.String" logNamespaces="true">tokenize(a, '\|')</xpath>
       </setBody>
       <log message="Test Saxon with flag: ${body}"/>
       <to uri="mock:testSaxonWithFlagResult"/>
@@ -42,7 +42,7 @@
     <route>
       <from uri="seda:testSaxonWithFactory"/>
       <setBody>
-        <xpath factoryRef="saxonFactory" resultType="java.lang.String" traceNamespaces="true">tokenize(a, '\|')</xpath>
+        <xpath factoryRef="saxonFactory" resultType="java.lang.String" logNamespaces="true">tokenize(a, '\|')</xpath>
       </setBody>
       <log message="Test Saxon with factory: ${body}"/>
       <to uri="mock:testSaxonWithFactoryResult"/>

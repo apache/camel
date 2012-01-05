@@ -134,6 +134,7 @@
         <include>org.apache.camel:camel-test</include>
         <include>org.apache.camel:camel-testng</include>
         <include>org.apache.camel:camel-tagsoup</include>
+        <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-velocity</include>
         <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xmlsecurity</include>

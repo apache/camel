@@ -19,7 +19,6 @@ package org.apache.camel.component.apns.util;
 public final class AssertUtils {
 
     private AssertUtils() {
-        super();
     }
 
     public static void notNull(Object object, String message) {

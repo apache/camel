@@ -89,7 +89,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     private static XPathFactory defaultXPathFactory;
 
     private final Queue<XPathExpression> pool = new ConcurrentLinkedQueue<XPathExpression>();
-    private final Queue<XPathExpression> poolTraceNamespaces = new ConcurrentLinkedQueue<XPathExpression>();
+    private final Queue<XPathExpression> poolLogNamespaces = new ConcurrentLinkedQueue<XPathExpression>();
     private final String text;
     private final ThreadLocal<MessageVariableResolver> variableResolver = new ThreadLocal<MessageVariableResolver>();
     private final ThreadLocal<Exchange> exchange = new ThreadLocal<Exchange>();
@@ -103,7 +103,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     private QName resultQName = XPathConstants.NODESET;
     private String objectModelUri;
     private DefaultNamespaceContext namespaceContext;
-    private boolean traceNamespaces;
+    private boolean logNamespaces;
     private XPathFunctionResolver functionResolver;
     private XPathFunction bodyFunction;
     private XPathFunction headerFunction;
@@ -397,8 +397,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
      *
      * @return the current builder.
      */
-    public XPathBuilder traceNamespaces() {
-        setTraceNamespaces(true);
+    public XPathBuilder logNamespaces() {
+        setLogNamespaces(true);
         return this;
     }
 
@@ -626,12 +626,12 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         }
     }
 
-    public void setTraceNamespaces(boolean traceNamespaces) {
-        this.traceNamespaces = traceNamespaces;
+    public void setLogNamespaces(boolean logNamespaces) {
+        this.logNamespaces = logNamespaces;
     }
 
-    public boolean isTraceNamespaces() {
-        return traceNamespaces;
+    public boolean isLogNamespaces() {
+        return logNamespaces;
     }
 
     public String getObjectModelUri() {
@@ -681,8 +681,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             LOG.trace("Acquired XPathExpression from pool");
         }
         try {
-            if (traceNamespaces && LOG.isTraceEnabled()) {
-                traceNamespaces(exchange);
+            if (logNamespaces && LOG.isInfoEnabled()) {
+                logNamespaces(exchange);
             }
             return doInEvaluateAs(xpathExpression, exchange, resultQName);
         } finally {
@@ -692,13 +692,13 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         }
     }
 
-    private void traceNamespaces(Exchange exchange) {
+    private void logNamespaces(Exchange exchange) {
         InputStream is = null;
         NodeList answer = null;
         XPathExpression xpathExpression = null;
 
         try {
-            xpathExpression = poolTraceNamespaces.poll();
+            xpathExpression = poolLogNamespaces.poll();
             if (xpathExpression == null) {
                 xpathExpression = createTraceNamespaceExpression();
             }
@@ -723,11 +723,11 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
                 answer = (NodeList) xpathExpression.evaluate(document, XPathConstants.NODESET);
             }
         } catch (Exception e) {
-            LOG.trace("Unable to trace discovered namespaces in XPath expression", e);
+            LOG.warn("Unable to trace discovered namespaces in XPath expression", e);
         } finally {
             // IOHelper can handle if is is null
             IOHelper.close(is);
-            poolTraceNamespaces.add(xpathExpression);
+            poolLogNamespaces.add(xpathExpression);
         }
 
         if (answer != null) {
@@ -756,7 +756,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             map.get(prefix).add(namespaces.item(i).getNodeValue());
         }
 
-        LOG.trace("Namespaces discovered in message: {}.", map);
+        LOG.info("Namespaces discovered in message: {}.", map);
     }
 
     protected Object doInEvaluateAs(XPathExpression xpathExpression, Exchange exchange, QName resultQName) {
@@ -817,8 +817,10 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         // XPathFactory is not thread safe
         XPath xPath = getXPathFactory().newXPath();
 
-        if (LOG.isTraceEnabled()) {
+        if (!logNamespaces && LOG.isTraceEnabled()) {
             LOG.trace("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext().toString());
+        } else if (logNamespaces && LOG.isInfoEnabled()) {
+            LOG.info("Creating new XPath expression in pool. Namespaces on XPath expression: {}", getNamespaceContext().toString());
         }
         xPath.setNamespaceContext(getNamespaceContext());
         xPath.setXPathVariableResolver(getVariableResolver());
@@ -981,7 +983,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
 
     public void stop() throws Exception {
         pool.clear();
-        poolTraceNamespaces.clear();
+        poolLogNamespaces.clear();
     }
 
     protected synchronized void initDefaultXPathFactory() throws XPathFactoryConfigurationException {

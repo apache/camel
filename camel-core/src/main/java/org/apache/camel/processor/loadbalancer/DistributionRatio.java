@@ -22,14 +22,10 @@ public class DistributionRatio {
     private int runtimeWeight;
     
     public DistributionRatio(int processorPosition, int distributionWeight) {
-        super();
-        this.processorPosition = processorPosition;
-        this.distributionWeight = distributionWeight;
-        this.runtimeWeight = distributionWeight;
+        this(processorPosition, distributionWeight, distributionWeight);
     }
 
     public DistributionRatio(int processorPosition, int distributionWeight, int runtimeWeight) {
-        super();
         this.processorPosition = processorPosition;
         this.distributionWeight = distributionWeight;
         this.runtimeWeight = runtimeWeight;

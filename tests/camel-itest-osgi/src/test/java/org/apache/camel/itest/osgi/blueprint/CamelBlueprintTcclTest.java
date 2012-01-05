@@ -112,7 +112,6 @@ public class CamelBlueprintTcclTest extends OSGiBlueprintTestSupport {
         private final ClassLoader tccl;
 
         public ThreadContextClassLoaderBean() {
-            super();
             tccl = Thread.currentThread().getContextClassLoader();
         }
 

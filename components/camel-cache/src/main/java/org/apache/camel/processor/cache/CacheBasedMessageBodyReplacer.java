@@ -34,7 +34,6 @@ public class CacheBasedMessageBodyReplacer extends CacheValidate implements Proc
     private String key;
 
     public CacheBasedMessageBodyReplacer(String cacheName, String key) {
-        super();
         if (cacheName.contains("cache://")) {
             this.setCacheName(cacheName.replace("cache://", ""));
         } else {

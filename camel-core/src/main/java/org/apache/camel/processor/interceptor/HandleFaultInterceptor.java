@@ -25,7 +25,6 @@ import org.apache.camel.processor.DelegateAsyncProcessor;
 public class HandleFaultInterceptor extends DelegateAsyncProcessor {
 
     public HandleFaultInterceptor() {
-        super();
     }
 
     public HandleFaultInterceptor(Processor processor) {

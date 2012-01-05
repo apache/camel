@@ -26,8 +26,8 @@ import org.springframework.beans.factory.xml.ParserContext;
 
 
 public class CxfRsClientFactoryBeanDefinitionParser extends AbstractCxfBeanDefinitionParser {
+
     public CxfRsClientFactoryBeanDefinitionParser() {
-        super();
         setBeanClass(SpringJAXRSClientFactoryBean.class);
     }
 

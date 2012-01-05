@@ -38,7 +38,6 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
     private String deleteString = "DELETE FROM CAMEL_MESSAGEPROCESSED WHERE processorName = ? AND messageId = ?";
 
     public JdbcMessageIdRepository() {
-        super();
     }
 
     public JdbcMessageIdRepository(DataSource dataSource, String processorName) {

@@ -40,7 +40,6 @@ class HL7MLLPDecoder extends CumulativeProtocolDecoder {
     private HL7MLLPConfig config;
 
     HL7MLLPDecoder(HL7MLLPConfig config) {
-        super();
         this.config = config;
     }
 

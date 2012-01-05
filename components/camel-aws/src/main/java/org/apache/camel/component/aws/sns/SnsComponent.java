@@ -28,7 +28,6 @@ import org.apache.camel.impl.DefaultComponent;
 public class SnsComponent extends DefaultComponent {
     
     public SnsComponent() {
-        super();
     }
 
     public SnsComponent(CamelContext context) {

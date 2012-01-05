@@ -38,7 +38,6 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean impleme
     private int loggingSizeLimit;
     
     public SpringJAXRSServerFactoryBean() {
-        super();
     }
 
     public SpringJAXRSServerFactoryBean(JAXRSServiceFactoryBean sf) {

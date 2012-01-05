@@ -73,6 +73,7 @@ public class InterceptSendToEndpoint implements Endpoint {
     public EndpointConfiguration getEndpointConfiguration() {
         return delegate.getEndpointConfiguration();
     }
+
     public String getEndpointKey() {
         return delegate.getEndpointKey();
     }
@@ -133,7 +134,16 @@ public class InterceptSendToEndpoint implements Endpoint {
                     return;
                 }
 
-                if (!skip) {
+                // determine if we should skip or not
+                boolean shouldSkip = skip;
+
+                // if then interceptor had a when predicate, then we should only skip if it matched
+                Boolean whenMatches = (Boolean) exchange.removeProperty(Exchange.INTERCEPT_SEND_TO_ENDPOINT_WHEN_MATCHED);
+                if (whenMatches != null) {
+                    shouldSkip = skip && whenMatches;
+                }
+
+                if (!shouldSkip) {
                     if (exchange.hasOut()) {
                         // replace OUT with IN as detour changed something
                         exchange.setIn(exchange.getOut());

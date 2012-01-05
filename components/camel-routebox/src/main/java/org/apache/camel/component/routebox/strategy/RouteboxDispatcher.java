@@ -45,7 +45,6 @@ public class RouteboxDispatcher {
     private ProducerTemplate producer;
     
     public RouteboxDispatcher(ProducerTemplate producer) {
-        super();
         this.producer = producer;
     }
 

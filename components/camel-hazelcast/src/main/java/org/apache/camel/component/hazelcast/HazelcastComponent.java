@@ -40,7 +40,6 @@ public class HazelcastComponent extends DefaultComponent {
     private Boolean createOwnInstance;
 
     public HazelcastComponent() {
-        super();
     }
 
     public HazelcastComponent(final CamelContext context) {

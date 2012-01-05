@@ -17,8 +17,11 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -31,6 +34,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
@@ -58,8 +62,26 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
     private ExecutorService executorService;
+    @XmlTransient
+    private Boolean routeScoped;
+    // TODO: in Camel 3.0 the OnCompletionDefinition should not contain state and OnCompletion processors
+    @XmlTransient
+    private final Map<String, Processor> onCompletions = new HashMap<String, Processor>();
 
     public OnCompletionDefinition() {
+    }
+
+    public boolean isRouteScoped() {
+        // is context scoped by default
+        return routeScoped != null ? routeScoped : false;
+    }
+
+    public Processor getOnCompletion(String routeId) {
+        return onCompletions.get(routeId);
+    }
+
+    public Collection<Processor> getOnCompletions() {
+        return onCompletions.values();
     }
 
     @Override
@@ -84,14 +106,25 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        // assign whether this was a route scoped onCompletion or not
+        // we need to know this later when setting the parent, as only route scoped should have parent
+        // Note: this logic can possible be removed when the Camel routing engine decides at runtime
+        // to apply onCompletion in a more dynamic fashion than current code base
+        // and therefore is in a better position to decide among context/route scoped OnCompletion at runtime
+        if (routeScoped == null) {
+            routeScoped = super.getParent() != null;
+        }
+
         if (isOnCompleteOnly() && isOnFailureOnly()) {
             throw new IllegalArgumentException("Both onCompleteOnly and onFailureOnly cannot be true. Only one of them can be true. On node: " + this);
         }
 
         Processor childProcessor = this.createChildProcessor(routeContext, true);
-
         // wrap the on completion route in a unit of work processor
         childProcessor = new UnitOfWorkProcessor(routeContext, childProcessor);
+
+        String id = routeContext.getRoute().getId();
+        onCompletions.put(id, childProcessor);
 
         Predicate when = null;
         if (onWhen != null) {

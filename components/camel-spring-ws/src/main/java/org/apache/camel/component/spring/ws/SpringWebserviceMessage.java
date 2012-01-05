@@ -23,7 +23,6 @@ public class SpringWebserviceMessage extends DefaultMessage {
     private WebServiceMessage webServiceMessage;
 
     public SpringWebserviceMessage(WebServiceMessage webServiceMessage) {
-        super();
         this.webServiceMessage = webServiceMessage;
     }
 

@@ -33,10 +33,6 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>    
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-tagsoup</artifactId>
     </dependency>    
     <dependency>
@@ -46,11 +42,18 @@
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+	<dependency>
+      <groupId>xalan</groupId>
+      <artifactId>xalan</artifactId>
+      <version>${xalan-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>xml-apis</groupId>
+          <artifactId>xml-apis</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 </project>

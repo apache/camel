@@ -44,7 +44,6 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     private CamelLogger noReplyLogger;
 
     public ServerChannelHandler(NettyConsumer consumer) {
-        super();
         this.consumer = consumer;    
         this.noReplyLogger = new CamelLogger(LOG, consumer.getConfiguration().getNoReplyLogLevel());
     }

@@ -26,7 +26,6 @@ import org.apache.camel.component.file.GenericFileProducer;
 public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
     public SftpEndpoint() {
-        super();
     }
 
     public SftpEndpoint(String uri, SftpComponent component, RemoteFileConfiguration configuration) {

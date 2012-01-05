@@ -40,10 +40,6 @@ public class ApnsProducerWithoutTokensHeaderTest extends CamelTestSupport {
 
     private ApnsServerStub server;
 
-    public ApnsProducerWithoutTokensHeaderTest() {
-        super();
-    }
-
     @Before
     public void startup() {
         server = ApnsUtils.prepareAndStartServer(FixedCertificates.TEST_GATEWAY_PORT, FixedCertificates.TEST_FEEDBACK_PORT);

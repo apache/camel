@@ -41,10 +41,6 @@ public class ApnsProducerTest extends CamelTestSupport {
 
     private ApnsServerStub server;
 
-    public ApnsProducerTest() {
-        super();
-    }
-
     @Before
     public void startup() {
         server = ApnsUtils.prepareAndStartServer(FixedCertificates.TEST_GATEWAY_PORT, FixedCertificates.TEST_FEEDBACK_PORT);

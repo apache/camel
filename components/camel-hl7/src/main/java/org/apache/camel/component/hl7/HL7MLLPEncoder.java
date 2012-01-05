@@ -37,7 +37,6 @@ class HL7MLLPEncoder implements ProtocolEncoder {
     private HL7MLLPConfig config;
 
     HL7MLLPEncoder(HL7MLLPConfig config) {
-        super();
         this.config = config;
     }
 
