@@ -33,6 +33,8 @@ public class SshConfiguration implements Cloneable {
     private KeyPairProvider keyPairProvider;
     private String keyType;
     private long timeout = 30000;
+    private int maximumReconnectAttempts;
+    private long reconnectDelay = 1000;
 
     public SshConfiguration() {
     }
@@ -136,5 +138,21 @@ public class SshConfiguration implements Cloneable {
 
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    public int getMaximumReconnectAttempts() {
+        return maximumReconnectAttempts;
+    }
+
+    public void setMaximumReconnectAttempts(int maximumReconnectAttempts) {
+        this.maximumReconnectAttempts = (maximumReconnectAttempts < 0) ? 0 : maximumReconnectAttempts;
+    }
+
+    public long getReconnectDelay() {
+        return reconnectDelay;
+    }
+
+    public void setReconnectDelay(long reconnectDelay) {
+        this.reconnectDelay = (reconnectDelay < 0) ? 0 : reconnectDelay;
     }
 }

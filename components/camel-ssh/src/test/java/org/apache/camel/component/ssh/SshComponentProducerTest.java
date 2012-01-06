@@ -127,6 +127,38 @@ public class SshComponentProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+
+    @Test
+    public void testRetry() throws Exception {
+        final String msg = "test\n";
+
+        MockEndpoint mock = getMockEndpoint("mock:password");
+        mock.expectedMinimumMessageCount(1);
+
+        MockEndpoint mockError = getMockEndpoint("mock:error");
+        mockError.expectedMinimumMessageCount(0);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    sshd.stop(true);
+                    Thread.sleep(1000);
+                    sshd.start();
+                    log.info("sshd started");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+
+        template.sendBody("direct:ssh", msg);
+
+        Thread.sleep(4000);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -138,7 +170,7 @@ public class SshComponentProducerTest extends CamelTestSupport {
                         .to("log:error?showAll=true");
 
                 from("direct:ssh")
-                        .to("ssh://smx:smx@localhost:" + port + "?timeout=3000")
+                        .to("ssh://smx:smx@localhost:" + port + "?timeout=5000&maximumReconnectAttempts=3")
                         .to("mock:password")
                         .to("log:password?showAll=true");
 
