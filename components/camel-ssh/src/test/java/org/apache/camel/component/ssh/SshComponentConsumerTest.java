@@ -40,8 +40,7 @@ public class SshComponentConsumerTest extends SshComponentTestSupport {
             @Override
             public void configure() {
                 from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=5000&pollCommand=test%0D")
-                        .to("mock:result")
-                        .to("log:foo?showAll=true");
+                        .to("mock:result");
             }
         };
     }

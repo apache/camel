@@ -91,8 +91,6 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
 
         template.sendBody("direct:ssh", msg);
 
-        Thread.sleep(4000);
-
         assertMockEndpointsSatisfied();
     }
 
@@ -103,13 +101,11 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
             public void configure() {
                 onException(Exception.class)
                         .handled(true)
-                        .to("mock:error")
-                        .to("log:error?showAll=true");
+                        .to("mock:error");
 
                 from("direct:ssh")
-                        .to("ssh://smx:smx@localhost:" + port + "?timeout=3000&maximumReconnectAttempts=3")
-                        .to("mock:password")
-                        .to("log:password?showAll=true");
+                        .to("ssh://smx:smx@localhost:" + port + "?timeout=3000")
+                        .to("mock:password");
 
                 SshComponent sshComponent = new SshComponent();
                 sshComponent.setHost("localhost");
@@ -122,8 +118,7 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
 
                 from("direct:ssh-rsa")
                         .to("ssh-rsa:test")
-                        .to("mock:rsa")
-                        .to("log:rsa?showAll=true");
+                        .to("mock:rsa");
             }
         };
     }
