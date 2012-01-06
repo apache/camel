@@ -22,6 +22,7 @@ import java.security.KeyPair;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
@@ -85,18 +86,10 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         // Wait getTimeout milliseconds for connect operation to complete
         connectFuture.await(getTimeout());
 
-        int numberOfConnectRetriesRemaining = getMaximumReconnectAttempts();
-        while (!connectFuture.isDone() || !connectFuture.isConnected()) {
-            if (numberOfConnectRetriesRemaining == 0) {
-                final String msg = "Failed to connect to " + getHost() + ":" + getPort() + " within timeout " + getTimeout() + "ms";
-                log.debug(msg);
-                throw new Exception(msg);
-            }
-            log.info("Connection attempt failed. Retrying");
-            numberOfConnectRetriesRemaining--;
-            Thread.sleep(getReconnectDelay());
-            connectFuture = client.connect(getHost(), getPort());
-            connectFuture.await(getTimeout());
+        if (!connectFuture.isDone() || !connectFuture.isConnected()) {
+            final String msg = "Failed to connect to " + getHost() + ":" + getPort() + " within timeout " + getTimeout() + "ms";
+            log.debug(msg);
+            throw new RuntimeCamelException(msg);
         }
 
         log.debug("Connected to {}:{}", getHost(), getPort());
@@ -117,8 +110,8 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         authResult.await(getTimeout());
 
         if (!authResult.isDone() || authResult.isFailure()) {
-            log.debug("Failed to successfully authenticate");
-            throw new Exception("Failed to successfully authenticate");
+            log.debug("Failed to authenticate");
+            throw new RuntimeCamelException("Failed to authenticate username " + getUsername());
         }
 
         ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_EXEC, command);
@@ -232,21 +225,5 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
     public void setTimeout(long timeout) {
         getConfiguration().setTimeout(timeout);
-    }
-
-    public int getMaximumReconnectAttempts() {
-        return getConfiguration().getMaximumReconnectAttempts();
-    }
-
-    public void setMaximumReconnectAttempts(int maximumReconnectAttempts) {
-        getConfiguration().setMaximumReconnectAttempts(maximumReconnectAttempts);
-    }
-
-    public long getReconnectDelay() {
-        return getConfiguration().getReconnectDelay();
-    }
-
-    public void setReconnectDelay(long reconnectDelay) {
-        getConfiguration().setReconnectDelay(reconnectDelay);
     }
 }

@@ -41,7 +41,7 @@ public class SshComponent extends DefaultComponent {
 
         SshEndpoint endpoint = new SshEndpoint(uri, this, newConfig);
         setProperties(endpoint.getConfiguration(), parameters);
-        setProperties(endpoint, parameters);
+        //setProperties(endpoint, parameters);
         return endpoint;
     }
 
@@ -118,21 +118,5 @@ public class SshComponent extends DefaultComponent {
 
     public void setTimeout(long timeout) {
         getConfiguration().setTimeout(timeout);
-    }
-
-    public int getMaximumReconnectAttempts() {
-        return getConfiguration().getMaximumReconnectAttempts();
-    }
-
-    public void setMaximumReconnectAttempts(int maximumReconnectAttempts) {
-        getConfiguration().setMaximumReconnectAttempts(maximumReconnectAttempts);
-    }
-
-    public long getReconnectDelay() {
-        return getConfiguration().getReconnectDelay();
-    }
-
-    public void setReconnectDelay(long reconnectDelay) {
-        getConfiguration().setReconnectDelay(reconnectDelay);
     }
 }
