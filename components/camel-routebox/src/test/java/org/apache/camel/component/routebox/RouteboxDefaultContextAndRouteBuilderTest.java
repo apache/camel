@@ -84,7 +84,7 @@ public class RouteboxDefaultContextAndRouteBuilderTest extends RouteboxDemoTestS
         String response = sendAddToCatalogRequest(template, routeboxUri, "addToCatalog", book);
         assertEquals("Book with Author " + book.getAuthor() + " and title " + book.getTitle() + " added to Catalog", response);
         
-        book = (Book) sendFindBookRequest(template, routeboxUri, "findBook", "Sir Arthur Conan Doyle");
+        book = sendFindBookRequest(template, routeboxUri, "findBook", "Sir Arthur Conan Doyle");
         LOG.debug("Received book with author {} and title {}", book.getAuthor(), book.getTitle());        
         assertEquals("The Adventures of Sherlock Holmes", book.getTitle());
         

@@ -272,7 +272,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                         if (obj != null) {
 
                             // Relation OneToOne
-                            value = (String)values.get(0);
+                            value = values.get(0);
                             Object result = null;
 
                             if (value != null) {
@@ -315,7 +315,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                                         obj = clazz.newInstance();
                                     }
 
-                                    value = (String)values.get(i);
+                                    value = values.get(i);
 
                                     // Get pattern defined for the field
                                     String pattern = keyValuePairField.pattern();

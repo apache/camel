@@ -186,7 +186,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         BindingOperationInfo boi = camelExchange.getProperty(BindingOperationInfo.class.getName(), 
                                                              BindingOperationInfo.class);
         if (boi != null) {
-            Service service = (Service)cxfExchange.get(Service.class); 
+            Service service = cxfExchange.get(Service.class); 
             if (service != null) {
                 MethodDispatcher md = (MethodDispatcher)service
                     .get(MethodDispatcher.class.getName());

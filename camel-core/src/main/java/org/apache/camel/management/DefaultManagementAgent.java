@@ -372,7 +372,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
 
         // look for the first mbean server that has match default domain name
-        List<MBeanServer> servers = (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
+        List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
 
         for (MBeanServer server : servers) {
             LOG.debug("Found MBeanServer with default domain {}", server.getDefaultDomain());

@@ -30,7 +30,7 @@ public final class JAXRSClient {
     private BookStore bookStore;
     
     public JAXRSClient() {       
-        bookStore = (BookStore) JAXRSClientFactory.create(
+        bookStore = JAXRSClientFactory.create(
             "http://localhost:9002/rest",
             BookStore.class,
             Collections.singletonList(new TestResponseExceptionMapper()));        

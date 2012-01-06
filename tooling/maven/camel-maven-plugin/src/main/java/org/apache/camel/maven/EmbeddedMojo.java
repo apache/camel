@@ -251,7 +251,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
         args.add("-duration");
         args.add(getDuration());
 
-        return (String[]) args.toArray(new String[0]);
+        return args.toArray(new String[0]);
     }
 
     public ClassLoader createClassLoader(ClassLoader parent) throws MalformedURLException {

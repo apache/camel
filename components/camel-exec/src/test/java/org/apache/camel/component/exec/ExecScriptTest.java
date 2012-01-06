@@ -66,7 +66,7 @@ public class ExecScriptTest extends AbstractJUnit4SpringContextTests {
             String classpathArg = getClasspathArg();
             Exchange exchange = executeScript(scriptFile, NO_TIMEOUT, classpathArg, PRINT_IN_STDOUT);
             if (exchange != null) {
-                String out = (String)exchange.getIn().getBody(String.class);
+                String out = exchange.getIn().getBody(String.class);
                 String err = (String)exchange.getIn().getHeader(EXEC_STDERR);
 
                 assertNotNull(out);

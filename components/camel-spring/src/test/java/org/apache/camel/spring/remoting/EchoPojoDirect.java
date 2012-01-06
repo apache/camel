@@ -29,7 +29,7 @@ public class EchoPojoDirect {
 
     @Consume(uri = "direct:start")
     public String onEcho(String name) {
-        return (String) service.echo(name);
+        return service.echo(name);
     }
     
 }

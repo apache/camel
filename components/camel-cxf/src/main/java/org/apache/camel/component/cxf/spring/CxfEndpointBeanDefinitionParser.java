@@ -85,7 +85,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
             || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)
             || "features".equals(name) || "schemaLocations".equals(name)
             || "handlers".equals(name)) {
-            List<?> list = (List<?>)ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
+            List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else {
             setFirstChildAsProperty(el, ctx, bean, name);

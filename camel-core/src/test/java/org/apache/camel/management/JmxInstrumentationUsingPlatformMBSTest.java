@@ -55,7 +55,7 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
     @Override
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {
-            List<MBeanServer> servers = (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
+            List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
 
             for (MBeanServer server : servers) {
                 if (domainName.equals(server.getDefaultDomain())) {

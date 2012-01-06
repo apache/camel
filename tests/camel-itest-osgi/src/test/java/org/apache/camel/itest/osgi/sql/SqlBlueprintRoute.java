@@ -110,7 +110,7 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
         template.sendBody("direct:insert", new Object[]{10, "test", "test"});
         mock.assertIsSatisfied();
         try {
-            String projectName = (String) jdbcTemplate.queryForObject("select project from projects where id = 10", String.class);
+            String projectName = jdbcTemplate.queryForObject("select project from projects where id = 10", String.class);
             assertEquals("test", projectName);
         } catch (EmptyResultDataAccessException e) {
             fail("no row inserted");

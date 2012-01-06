@@ -114,7 +114,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     }
 
     public void connect(RestletConsumer consumer) throws Exception {
-        RestletEndpoint endpoint = (RestletEndpoint)consumer.getEndpoint();
+        RestletEndpoint endpoint = consumer.getEndpoint();
         addServerIfNecessary(endpoint);
 
         if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
@@ -129,7 +129,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     }
 
     public void disconnect(RestletConsumer consumer) throws Exception {
-        RestletEndpoint endpoint = (RestletEndpoint)consumer.getEndpoint();
+        RestletEndpoint endpoint = consumer.getEndpoint();
 
         List<MethodBasedRouter> routers = new ArrayList<MethodBasedRouter>();
 

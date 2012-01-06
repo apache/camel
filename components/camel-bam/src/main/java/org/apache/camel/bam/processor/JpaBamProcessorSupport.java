@@ -178,7 +178,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
      * Create a new instance of the entity for the given key
      */
     protected T createEntity(Exchange exchange, Object key) {
-        return (T)exchange.getContext().getInjector().newInstance(getEntityType());
+        return exchange.getContext().getInjector().newInstance(getEntityType());
     }
 
     protected void processEntity(Exchange exchange, T entity) throws Exception {

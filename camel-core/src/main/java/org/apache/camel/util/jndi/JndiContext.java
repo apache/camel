@@ -413,7 +413,7 @@ public class JndiContext implements Context, Serializable {
 
         public Object nextElement() {
             Map.Entry<String, Object> entry = getNext();
-            return new NameClassPair((String)entry.getKey(), entry.getValue().getClass().getName());
+            return new NameClassPair(entry.getKey(), entry.getValue().getClass().getName());
         }
     }
 
@@ -427,7 +427,7 @@ public class JndiContext implements Context, Serializable {
 
         public Object nextElement() {
             Map.Entry<String, Object> entry = getNext();
-            return new Binding((String)entry.getKey(), entry.getValue());
+            return new Binding(entry.getKey(), entry.getValue());
         }
     }
 

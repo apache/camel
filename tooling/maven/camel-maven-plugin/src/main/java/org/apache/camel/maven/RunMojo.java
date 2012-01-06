@@ -620,7 +620,7 @@ public class RunMojo extends AbstractExecMojo {
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
 
         getLog().info("Classpath = " + classpathURLs);
-        return new URLClassLoader((URL[])classpathURLs.toArray(new URL[classpathURLs.size()]));
+        return new URLClassLoader(classpathURLs.toArray(new URL[classpathURLs.size()]));
     }
 
     /**

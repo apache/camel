@@ -31,7 +31,7 @@ public class SetSoapVersionInterceptor extends AbstractSoapInterceptor {
     public void handleMessage(SoapMessage message) throws Fault {
         if (message.getExchange() != null) { 
             if (message.getExchange().getInMessage() instanceof SoapMessage) {
-                ((SoapMessage)message).setVersion(((SoapMessage)message.getExchange().getInMessage()).getVersion());
+                message.setVersion(((SoapMessage)message.getExchange().getInMessage()).getVersion());
             } 
         }
     }

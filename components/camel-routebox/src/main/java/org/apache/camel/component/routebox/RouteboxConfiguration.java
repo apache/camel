@@ -111,7 +111,7 @@ public class RouteboxConfiguration {
         }
         
         if (parameters.containsKey("routeBuilders")) {
-            routeBuilders = (List<RouteBuilder>) component.resolveAndRemoveReferenceParameter(parameters, "routeBuilders", List.class);
+            routeBuilders = component.resolveAndRemoveReferenceParameter(parameters, "routeBuilders", List.class);
         }
         
         if (parameters.containsKey("innerRegistry")) {
@@ -134,7 +134,7 @@ public class RouteboxConfiguration {
         producerUri = component.resolveAndRemoveReferenceParameter(parameters, "producerUri", URI.class, new URI("routebox:" + getEndpointName()));        
         
         dispatchStrategy = component.resolveAndRemoveReferenceParameter(parameters, "dispatchStrategy", RouteboxDispatchStrategy.class, null);
-        dispatchMap = (HashMap<String, String>) component.resolveAndRemoveReferenceParameter(parameters, "dispatchMap", HashMap.class, new HashMap<String, String>());
+        dispatchMap = component.resolveAndRemoveReferenceParameter(parameters, "dispatchMap", HashMap.class, new HashMap<String, String>());
         if (dispatchStrategy == null && dispatchMap == null) {
             LOG.warn("No Routebox Dispatch Map or Strategy has been set. Routebox may not have more than one inner route.");
         }        

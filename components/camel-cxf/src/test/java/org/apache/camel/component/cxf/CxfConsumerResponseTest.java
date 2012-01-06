@@ -89,7 +89,7 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
                         // Get the parameter list
                         List<?> parameter = in.getBody(List.class);
                         // Put the result back
-                        exchange.getOut().setBody((Boolean)parameter.get(0));
+                        exchange.getOut().setBody(parameter.get(0));
                     }
                 })
                 .when(header(CxfConstants.OPERATION_NAME).isEqualTo(PING_OPERATION)).process(new Processor() {
