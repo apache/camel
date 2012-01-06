@@ -694,6 +694,11 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-velocity/${project.version}</bundle>
   </feature>
+  <feature name="camel-websocket" version='${project.version}' resolver='(obr)' start-level='50'>
+     <feature>jetty</feature>
+     <feature version='${project.version}'>camel-core</feature>
+     <bundle>mvn:org.apache.camel/camel-websocket/${project.version}</bundle>
+  </feature>
   <feature name='camel-xmlbeans' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlbeans/${xmlbeans-bundle-version}</bundle>
