@@ -23,7 +23,6 @@ import org.mockito.Mock;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
 
 public class WebsocketConfigurationTest {
 
@@ -61,10 +60,6 @@ public class WebsocketConfigurationTest {
         assertNotNull(websocketEndpoint);
         assertNotNull(REMAINING);
         assertNotNull(wsConfig.getGlobalStore());
-        // System.out.println(URI);
-        // System.out.println(component);
-        // System.out.println(REMAINING);
-        // System.out.println(wsConfig.getGlobalStore());
 
     }
 
