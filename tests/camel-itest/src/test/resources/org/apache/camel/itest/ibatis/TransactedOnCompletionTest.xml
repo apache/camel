@@ -22,7 +22,7 @@
 		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 	">
 
-	<import resource="hsqldb-context.xml" />
+	<import resource="database-context.xml" />
 
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
 		<route>
