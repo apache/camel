@@ -76,14 +76,20 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public byte[] sendExecCommand(String command) throws Exception {
         byte[] result = null;
 
-        final ConnectFuture connectFuture = client.connect(getHost(), getPort());
-
+        ConnectFuture connectFuture = client.connect(getHost(), getPort());
+        int numberOfConnectRetriesRemaining = getConfiguration().getMaximumReconnectAttempts();
         connectFuture.await(getTimeout());
-
-        if (!connectFuture.isDone() || !connectFuture.isConnected()) {
-            final String msg = "Failed to connect to " + getHost() + ":" + getPort() + " within timeout " + getTimeout() + "ms";
-            log.debug(msg);
-            throw new Exception(msg);
+        while (!connectFuture.isDone() || !connectFuture.isConnected()) {
+            if (numberOfConnectRetriesRemaining == 0) {
+                final String msg = "Failed to connect to " + getHost() + ":" + getPort() + " within timeout " + getTimeout() + "ms";
+                log.debug(msg);
+                throw new Exception(msg);
+            }
+            log.info("Connection attempt failed.  Retrying");
+            numberOfConnectRetriesRemaining--;
+            Thread.sleep(getReconnectDelay());
+            connectFuture = client.connect(getHost(), getPort());
+            connectFuture.await(getTimeout());
         }
 
         log.debug("Connected to " + getHost() + ":" + getPort());
@@ -102,11 +108,16 @@ public class SshEndpoint extends ScheduledPollEndpoint {
             authResult = session.authPassword(getUsername(), getPassword());
         }
 
-        authResult.await(getTimeout());
 
-        if (!authResult.isDone() || authResult.isFailure()) {
-            log.debug("Failed to successfully authenticate");
-            throw new Exception("Failed to successfully authenticate");
+        int numberOfAuthRetriesRemaining = getConfiguration().getMaximumReconnectAttempts();
+        authResult.await(getTimeout());
+        while (!authResult.isDone() || authResult.isFailure()) {
+            if (numberOfAuthRetriesRemaining == 0) {
+                log.debug("Failed to successfully authenticate");
+                throw new Exception("Failed to successfully authenticate");
+            }
+            authResult.await(getTimeout());
+            numberOfAuthRetriesRemaining--;
         }
 
         ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_EXEC, command);
@@ -126,10 +137,6 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
         if (openFuture.isOpened()) {
             channel.waitFor(ClientChannel.CLOSED, 0);
-
-            //session.close(false);
-            //session.waitFor(ClientSession.CLOSED, 0);
-
             result = out.toByteArray();
         }
 
@@ -224,5 +231,21 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
     public void setTimeout(long timeout) {
         getConfiguration().setTimeout(timeout);
+    }
+
+    public int getMaximumReconnectAttempts() {
+        return getConfiguration().getMaximumReconnectAttempts();
+    }
+
+    public void setMaximumReconnectAttempts(int maximumReconnectAttempts) {
+        getConfiguration().setMaximumReconnectAttempts(maximumReconnectAttempts);
+    }
+
+    public long getReconnectDelay() {
+        return getConfiguration().getReconnectDelay();
+    }
+
+    public void setReconnectDelay(long reconnectDelay) {
+        getConfiguration().setReconnectDelay(reconnectDelay);
     }
 }
