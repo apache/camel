@@ -32,10 +32,7 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 public class TwitterConsumerPolling extends ScheduledPollConsumer implements TwitterConsumer {
 
     private Twitter4JConsumer twitter4jConsumer;
-
     private long lastStatusUpdateID = 1;
-
-    private int delay;
 
     public TwitterConsumerPolling(TwitterEndpoint endpoint, Processor processor,
                                   Twitter4JConsumer twitter4jConsumer) {
@@ -43,8 +40,7 @@ public class TwitterConsumerPolling extends ScheduledPollConsumer implements Twi
 
         this.twitter4jConsumer = twitter4jConsumer;
 
-        delay = endpoint.getProperties().getDelay();
-
+        int delay = endpoint.getProperties().getDelay();
         setInitialDelay(0);
         setDelay(delay);
         setTimeUnit(TimeUnit.SECONDS);

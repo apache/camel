@@ -30,8 +30,7 @@ public class SampleConsumer extends StreamingConsumer {
     public SampleConsumer(TwitterEndpoint te) {
         super(te);
 
-        TwitterStream twitterStream = new TwitterStreamFactory(te.getProperties().getConfiguration())
-            .getInstance();
+        TwitterStream twitterStream = new TwitterStreamFactory(te.getProperties().getConfiguration()).getInstance();
         twitterStream.addListener(this);
         twitterStream.sample();
     }

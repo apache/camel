@@ -14,41 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.camel.component.twitter.util;
+package org.apache.camel.component.twitter;
 
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-/**
- * Encapsolates all options provided on the endpoint URI.
- * 
- */
-public class TwitterProperties {
+public class TwitterConfiguration {
 
     private String consumerKey;
-
     private String consumerSecret;
-
     private String accessToken;
-
     private String accessTokenSecret;
-
     private String user;
-
     private String keywords;
-
     private int delay = 60;
-
     private String type;
-
     private String locations;
 
     public void checkComplete() {
         if (consumerKey.isEmpty() || consumerSecret.isEmpty() || accessToken.isEmpty()
             || accessTokenSecret.isEmpty()) {
-            throw new IllegalArgumentException(
-                                               "consumerKey, consumerSecret, accessToken, and accessTokenSecret must be set!");
+            throw new IllegalArgumentException("consumerKey, consumerSecret, accessToken, and accessTokenSecret must be set!");
         }
     }
 

@@ -22,23 +22,18 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerDirect;
-import org.apache.camel.component.twitter.util.TwitterProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 
-
+/**
+ * Twitter direct endpoint
+ */
 public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TwitterEndpointDirect.class);
-
     private Twitter twitter;
+    private TwitterConfiguration properties;
 
-    private TwitterProperties properties;
-
-    public TwitterEndpointDirect(String uri, TwitterComponent component, TwitterProperties properties) {
+    public TwitterEndpointDirect(String uri, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
         this.properties = properties;
     }
@@ -54,19 +49,14 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
 
     public void initiate() {
         properties.checkComplete();
-
-        try {
-            twitter = new TwitterFactory(properties.getConfiguration()).getInstance();
-        } catch (Exception e) {
-            LOG.error("Could not instantiate Twitter!  Exception: " + e.getMessage());
-        } 
+        twitter = new TwitterFactory(properties.getConfiguration()).getInstance();
     }
 
     public Twitter getTwitter() {
         return twitter;
     }
 
-    public TwitterProperties getProperties() {
+    public TwitterConfiguration getProperties() {
         return properties;
     }
 }

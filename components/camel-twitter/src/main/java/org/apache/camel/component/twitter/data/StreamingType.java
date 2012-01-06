@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.twitter.data;
 
-
-
 public enum StreamingType {
     SAMPLE, FILTER, UNKNOWN;
 

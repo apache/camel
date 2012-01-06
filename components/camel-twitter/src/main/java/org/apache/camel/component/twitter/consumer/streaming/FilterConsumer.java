@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.twitter.consumer.streaming;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
@@ -32,8 +31,7 @@ public class FilterConsumer extends StreamingConsumer {
     public FilterConsumer(TwitterEndpoint te) {
         super(te);
 
-        TwitterStream twitterStream = new TwitterStreamFactory(te.getProperties().getConfiguration())
-            .getInstance();
+        TwitterStream twitterStream = new TwitterStreamFactory(te.getProperties().getConfiguration()).getInstance();
         twitterStream.addListener(this);
 
         String allLocationsString = te.getProperties().getLocations();

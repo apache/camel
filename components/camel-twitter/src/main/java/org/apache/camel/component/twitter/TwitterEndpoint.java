@@ -17,7 +17,6 @@
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.twitter.util.TwitterProperties;
 
 import twitter4j.Twitter;
 
@@ -27,5 +26,5 @@ public interface TwitterEndpoint extends Endpoint {
 
     Twitter getTwitter();
 
-    TwitterProperties getProperties();
+    TwitterConfiguration getProperties();
 }

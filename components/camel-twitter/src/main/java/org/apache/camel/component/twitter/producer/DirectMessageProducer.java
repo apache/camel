@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.twitter.producer;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.TwitterEndpoint;
@@ -30,7 +31,6 @@ import org.slf4j.LoggerFactory;
 public class DirectMessageProducer extends DefaultProducer implements Processor {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DirectMessageProducer.class);
-
     private TwitterEndpoint te;
 
     public DirectMessageProducer(TwitterEndpoint te) {
@@ -44,9 +44,11 @@ public class DirectMessageProducer extends DefaultProducer implements Processor 
         String text = exchange.getIn().getBody(String.class);
 
         if (toUsername.isEmpty()) {
-            LOG.error("Can't send direct message -- no 'user' provided!");
+            throw new CamelExchangeException("Username not configured on TwitterEndpoint", exchange);
         } else {
+            LOG.debug("Sending to: {} message: {}", toUsername, text);
             te.getTwitter().sendDirectMessage(toUsername, text);
         }
     }
+
 }

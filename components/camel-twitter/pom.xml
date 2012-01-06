@@ -41,10 +41,6 @@
          <artifactId>camel-core</artifactId>
       </dependency>
       <dependency>
-         <groupId>org.apache.camel</groupId>
-         <artifactId>camel-test</artifactId>
-      </dependency>
-      <dependency>
          <groupId>org.twitter4j</groupId>
          <artifactId>twitter4j-core</artifactId>
          <version>${twitter4j-version}</version>
@@ -56,6 +52,11 @@
       </dependency>
       <!-- testing -->
       <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-test</artifactId>
+         <scope>test</scope>
+      </dependency>
+      <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
          <scope>test</scope>
@@ -64,7 +65,7 @@
      	 <groupId>org.slf4j</groupId>
          <artifactId>slf4j-log4j12</artifactId>
          <scope>test</scope>
-    </dependency>
+      </dependency>
    </dependencies>
    
    <build>

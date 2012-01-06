@@ -37,9 +37,7 @@ import twitter4j.TwitterException;
 public class StreamingConsumer implements Twitter4JConsumer, StatusListener {
 
     TwitterEndpoint te;
-
     private List<Status> receivedStatuses = new ArrayList<Status>();
-
     private boolean clear;
 
     public StreamingConsumer(TwitterEndpoint te) {

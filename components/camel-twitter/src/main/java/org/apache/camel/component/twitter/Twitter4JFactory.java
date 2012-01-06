@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.twitter;
 
 import java.util.regex.Pattern;
@@ -177,7 +176,7 @@ public final class Twitter4JFactory {
             
         }
 
-        LOG.warn("A producer type was not provided (or an incorrect pairing was used).  Defaulting to a MOCK!");
+        LOG.warn("A producer type was not provided (or an incorrect pairing was used). Defaulting to a MOCK!");
         throw new IllegalArgumentException("Cannot create any producer with uri " + uri 
                                            + "A producer type was not provided (or an incorrect pairing was used).");
     }
