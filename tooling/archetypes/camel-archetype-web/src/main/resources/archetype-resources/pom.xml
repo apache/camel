@@ -56,7 +56,14 @@
       <artifactId>spring-web</artifactId>
       <version>${spring-version}</version>
     </dependency>
-     
+
+    <!-- for testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <version>${camel-version}</version>
+      <scope>test</scope>
+    </dependency>
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
