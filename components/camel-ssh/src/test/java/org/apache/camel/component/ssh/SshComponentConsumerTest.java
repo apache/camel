@@ -18,10 +18,6 @@ package org.apache.camel.component.ssh;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.sshd.SshServer;
-import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.junit.Test;
 
 public class SshComponentConsumerTest extends SshComponentTestSupport {
