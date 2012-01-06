@@ -113,7 +113,7 @@
     <jsch-version>0.1.44-1</jsch-version>
     <juel-version>2.1.2</juel-version>
     <junit-version>4.8.1</junit-version>
-    <karaf-version>2.2.4</karaf-version>
+    <karaf-version>2.2.5</karaf-version>
     <krati-version>0.4.1</krati-version>
     <log4j-version>1.2.16</log4j-version>
     <lucene-version>3.0.3</lucene-version>
