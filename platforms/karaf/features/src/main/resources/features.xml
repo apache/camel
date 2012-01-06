@@ -679,6 +679,11 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-tagsoup/${project.version}</bundle>
   </feature>
+  <feature name='camel-twitter' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.twitter4j/${twitter4j-bundle-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-twitter/${project.version}</bundle>
+  </feature>
   <feature name='camel-velocity' version='${project.version}' resolver='(obr)' start-level='50'>
     <!-- the jetty feature provides the geronimo-servlet_2.5_spec -->
     <!-- TODO replace the jetty feature by a Karaf spec feature -->
