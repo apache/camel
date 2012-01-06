@@ -14,23 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.util;
+package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.FileFilter;
 
+import org.apache.camel.util.AntPathMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.StringUtils;
 
 /**
- * File filter using Spring's {@link AntPathMatcher}.
+ * File filter using {@link AntPathMatcher}.
  * <p/>
  * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
  */
-public class SpringAntPathMatcherFileFilter implements FileFilter {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SpringAntPathMatcherFileFilter.class);
+public class AntPathMatcherFileFilter implements FileFilter {
+    private static final transient Logger LOG = LoggerFactory.getLogger(AntPathMatcherFileFilter.class);
 
     private AntPathMatcher matcher = new AntPathMatcher();
     private String[] excludes;
@@ -48,7 +47,7 @@ public class SpringAntPathMatcherFileFilter implements FileFilter {
      */
     public boolean acceptPathName(String path) {
         // must use single / as path separators
-        path = StringUtils.replace(path, File.separator, "/");
+        path = path.replace(File.separatorChar, '/');
 
         LOG.trace("Filtering file: {}", path);
 
