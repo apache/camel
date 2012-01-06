@@ -77,22 +77,25 @@ public class SshEndpoint extends ScheduledPollEndpoint {
         byte[] result = null;
 
         ConnectFuture connectFuture = client.connect(getHost(), getPort());
-        int numberOfConnectRetriesRemaining = getConfiguration().getMaximumReconnectAttempts();
+
+        // Wait getTimeout milliseconds for connect operation to complete
         connectFuture.await(getTimeout());
+
+        int numberOfConnectRetriesRemaining = getConfiguration().getMaximumReconnectAttempts();
         while (!connectFuture.isDone() || !connectFuture.isConnected()) {
             if (numberOfConnectRetriesRemaining == 0) {
                 final String msg = "Failed to connect to " + getHost() + ":" + getPort() + " within timeout " + getTimeout() + "ms";
                 log.debug(msg);
                 throw new Exception(msg);
             }
-            log.info("Connection attempt failed.  Retrying");
+            log.info("Connection attempt failed. Retrying");
             numberOfConnectRetriesRemaining--;
             Thread.sleep(getReconnectDelay());
             connectFuture = client.connect(getHost(), getPort());
             connectFuture.await(getTimeout());
         }
 
-        log.debug("Connected to " + getHost() + ":" + getPort());
+        log.debug("Connected to {}:{}", getHost(), getPort());
 
         ClientSession session = connectFuture.getSession();
 
@@ -100,11 +103,11 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
         KeyPairProvider keyPairProvider = getKeyPairProvider();
         if (keyPairProvider != null) {
-            log.debug("Attempting to authenticate username " + getUsername() + " using Key...");
+            log.debug("Attempting to authenticate username '{}' using Key...", getUsername());
             KeyPair pair = keyPairProvider.loadKey(getKeyType());
             authResult = session.authPublicKey(getUsername(), pair);
         } else {
-            log.debug("Attempting to authenticate username " + getUsername() + " using Password...");
+            log.debug("Attempting to authenticate username '{}' using Password...", getUsername());
             authResult = session.authPassword(getUsername(), getPassword());
         }
 

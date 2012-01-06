@@ -63,7 +63,7 @@ public class SshComponentProducerTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:password");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived(new Object[]{msg});
+        mock.expectedBodiesReceived(msg);
 
         template.sendBody("direct:ssh", msg);
 
@@ -76,7 +76,7 @@ public class SshComponentProducerTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:password");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived(new Object[]{msg});
+        mock.expectedBodiesReceived(msg);
 
         template.sendBody("direct:ssh", msg);
 
@@ -87,7 +87,7 @@ public class SshComponentProducerTest extends CamelTestSupport {
 
         mock.reset();
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived(new Object[]{msg});
+        mock.expectedBodiesReceived(msg);
 
         template.sendBody("direct:ssh", msg);
 
@@ -100,7 +100,7 @@ public class SshComponentProducerTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:rsa");
         mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived(new Object[]{msg});
+        mock.expectedBodiesReceived(msg);
 
         template.sendBody("direct:ssh-rsa", msg);
 
@@ -126,7 +126,6 @@ public class SshComponentProducerTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 
     @Test
     public void testRetry() throws Exception {
