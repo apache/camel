@@ -145,6 +145,7 @@
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
     <module>camel-zookeeper</module>
+    <module>camel-websocket</module>
   </modules>
   
 </project>
