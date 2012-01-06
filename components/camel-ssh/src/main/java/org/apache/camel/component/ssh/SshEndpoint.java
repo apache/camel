@@ -76,12 +76,16 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     public byte[] sendExecCommand(String command) throws Exception {
         byte[] result = null;
 
+        if (getConfiguration() == null) {
+            throw new IllegalStateException("configuration must be set");
+        }
+
         ConnectFuture connectFuture = client.connect(getHost(), getPort());
 
         // Wait getTimeout milliseconds for connect operation to complete
         connectFuture.await(getTimeout());
 
-        int numberOfConnectRetriesRemaining = getConfiguration().getMaximumReconnectAttempts();
+        int numberOfConnectRetriesRemaining = getMaximumReconnectAttempts();
         while (!connectFuture.isDone() || !connectFuture.isConnected()) {
             if (numberOfConnectRetriesRemaining == 0) {
                 final String msg = "Failed to connect to " + getHost() + ":" + getPort() + " within timeout " + getTimeout() + "ms";
@@ -97,11 +101,10 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
         log.debug("Connected to {}:{}", getHost(), getPort());
 
+        AuthFuture authResult;
         ClientSession session = connectFuture.getSession();
 
-        AuthFuture authResult;
-
-        KeyPairProvider keyPairProvider = getKeyPairProvider();
+        final KeyPairProvider keyPairProvider = getKeyPairProvider();
         if (keyPairProvider != null) {
             log.debug("Attempting to authenticate username '{}' using Key...", getUsername());
             KeyPair pair = keyPairProvider.loadKey(getKeyType());
@@ -111,16 +114,11 @@ public class SshEndpoint extends ScheduledPollEndpoint {
             authResult = session.authPassword(getUsername(), getPassword());
         }
 
-
-        int numberOfAuthRetriesRemaining = getConfiguration().getMaximumReconnectAttempts();
         authResult.await(getTimeout());
-        while (!authResult.isDone() || authResult.isFailure()) {
-            if (numberOfAuthRetriesRemaining == 0) {
-                log.debug("Failed to successfully authenticate");
-                throw new Exception("Failed to successfully authenticate");
-            }
-            authResult.await(getTimeout());
-            numberOfAuthRetriesRemaining--;
+
+        if (!authResult.isDone() || authResult.isFailure()) {
+            log.debug("Failed to successfully authenticate");
+            throw new Exception("Failed to successfully authenticate");
         }
 
         ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_EXEC, command);

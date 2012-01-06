@@ -169,7 +169,7 @@ public class SshComponentProducerTest extends CamelTestSupport {
                         .to("log:error?showAll=true");
 
                 from("direct:ssh")
-                        .to("ssh://smx:smx@localhost:" + port + "?timeout=5000&maximumReconnectAttempts=3")
+                        .to("ssh://smx:smx@localhost:" + port + "?timeout=3000&maximumReconnectAttempts=3")
                         .to("mock:password")
                         .to("log:password?showAll=true");
 
