@@ -136,6 +136,7 @@
         <include>org.apache.camel:camel-tagsoup</include>
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-velocity</include>
+        <include>org.apache.camel:camel-websocket</include>
         <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
