@@ -16,33 +16,37 @@
  */
 package org.apache.camel.component.ssh;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
-import org.junit.Test;
 
-public class SshComponentConsumerTest extends SshComponentTestSupport {
-    @Test
-    public void testPollingConsumer() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived("test\r");
+public class SshComponentTestSupport extends CamelTestSupport {
+    protected SshServer sshd;
+    protected int port;
 
-        assertMockEndpointsSatisfied();
+    @Override
+    public void setUp() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(22000);
+
+        sshd = SshServer.setUpDefaultServer();
+        sshd.setPort(port);
+        sshd.setKeyPairProvider(new FileKeyPairProvider(new String[]{"src/test/resources/hostkey.pem"}));
+        sshd.setCommandFactory(new TestEchoCommandFactory());
+        sshd.setPasswordAuthenticator(new BogusPasswordAuthenticator());
+        sshd.setPublickeyAuthenticator(new BogusPublickeyAuthenticator());
+        sshd.start();
+
+        super.setUp();
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                from("ssh://smx:smx@localhost:" + port + "?useFixedDelay=true&delay=5000&pollCommand=test%0D")
-                        .to("mock:result")
-                        .to("log:foo?showAll=true");
-            }
-        };
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        if (sshd != null) {
+            sshd.stop(true);
+            Thread.sleep(50);
+        }
     }
 }

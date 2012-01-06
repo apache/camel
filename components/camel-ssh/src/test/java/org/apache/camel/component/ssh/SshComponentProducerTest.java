@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.ssh;
 
-import java.util.concurrent.CountDownLatch;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -25,38 +23,9 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.KeyPairProvider;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
-import org.apache.sshd.server.Command;
 import org.junit.Test;
 
-public class SshComponentProducerTest extends CamelTestSupport {
-    private SshServer sshd;
-    private int port;
-
-    @Override
-    public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(22000);
-
-        sshd = SshServer.setUpDefaultServer();
-        sshd.setPort(port);
-        sshd.setKeyPairProvider(new FileKeyPairProvider(new String[]{"src/test/resources/hostkey.pem"}));
-        sshd.setCommandFactory(new TestEchoCommandFactory());
-        sshd.setPasswordAuthenticator(new BogusPasswordAuthenticator());
-        sshd.setPublickeyAuthenticator(new BogusPublickeyAuthenticator());
-        sshd.start();
-
-        super.setUp();
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-
-        if (sshd != null) {
-            sshd.stop(true);
-            Thread.sleep(50);
-        }
-    }
-
+public class SshComponentProducerTest extends SshComponentTestSupport {
     @Test
     public void testProducer() throws Exception {
         final String msg = "test\n";
@@ -127,37 +96,6 @@ public class SshComponentProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    public void testRetry() throws Exception {
-        final String msg = "test\n";
-
-        MockEndpoint mock = getMockEndpoint("mock:password");
-        mock.expectedMinimumMessageCount(1);
-
-        MockEndpoint mockError = getMockEndpoint("mock:error");
-        mockError.expectedMinimumMessageCount(0);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    sshd.stop(true);
-                    Thread.sleep(1000);
-                    sshd.start();
-                    log.info("sshd started");
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
-
-        template.sendBody("direct:ssh", msg);
-
-        Thread.sleep(4000);
-
-        assertMockEndpointsSatisfied();
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -188,28 +126,5 @@ public class SshComponentProducerTest extends CamelTestSupport {
                         .to("log:rsa?showAll=true");
             }
         };
-    }
-
-    public static class TestEchoCommandFactory extends EchoCommandFactory {
-        @Override
-        public Command createCommand(String command) {
-            return new TestEchoCommand(command);
-        }
-
-        public static class TestEchoCommand extends EchoCommand {
-            public static CountDownLatch latch = new CountDownLatch(1);
-
-            public TestEchoCommand(String command) {
-                super(command);
-            }
-
-            @Override
-            public void destroy() {
-                if (latch != null) {
-                    latch.countDown();
-                }
-                super.destroy();
-            }
-        }
     }
 }
