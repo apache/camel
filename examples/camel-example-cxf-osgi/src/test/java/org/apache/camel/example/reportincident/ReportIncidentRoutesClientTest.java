@@ -16,12 +16,10 @@
  */
 package org.apache.camel.example.reportincident;
 
-import java.io.File;
-import java.io.FileOutputStream;
-
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -34,17 +32,15 @@ public class ReportIncidentRoutesClientTest extends CamelSpringTestSupport {
 
     // should be the same address as we have in our route
     private static final String URL = "http://localhost:{{port}}/cxf/camel-example-cxf-osgi/webservices/incident";
-
+    
     @BeforeClass
-    public static void setupFreePort() throws Exception {
-        // find a free port number from 9100 onwards, and write that in the custom.properties file
-        // which we will use for the unit tests, to avoid port number in use problems
-        int port = AvailablePortFinder.getNextAvailable(9100);
-        String s = "port=" + port;
-        File custom = new File("target/custom.properties");
-        FileOutputStream fos = new FileOutputStream(custom);
-        fos.write(s.getBytes());
-        fos.close();
+    public static void setUpBeforeClass() {
+        System.setProperty("port", String.valueOf(AvailablePortFinder.getNextAvailable(9100)));
+    }
+    
+    @AfterClass
+    public static void tearDownBeforeClass() {
+        System.clearProperty("port");
     }
 
     protected static ReportIncidentEndpoint createCXFClient(String url) {
@@ -83,10 +79,9 @@ public class ReportIncidentRoutesClientTest extends CamelSpringTestSupport {
         // assert we got a Accept back
         assertEquals("Accepted", out.getCode());
     }
-
+    
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(new String[] {"camel-context.xml"});
     }
-
 }
