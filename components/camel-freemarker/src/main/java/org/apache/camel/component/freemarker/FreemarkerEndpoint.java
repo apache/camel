@@ -20,7 +20,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -91,7 +90,6 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void onExchange(Exchange exchange) throws Exception {
         String path = getResourceUri();
         ObjectHelper.notNull(configuration, "configuration");
@@ -116,7 +114,7 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
             exchange.getIn().removeHeader(FreemarkerConstants.FREEMARKER_TEMPLATE);
         }
 
-        Map variableMap = ExchangeHelper.createVariableMap(exchange);
+        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
         // let freemarker parse and generate the result in buffer
         Template template;
 
@@ -138,9 +136,7 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
         // now lets output the results to the exchange
         Message out = exchange.getOut();
         out.setBody(buffer.toString());
-        Map<String, Object> headers = (Map<String, Object>) variableMap.get("headers");
-        for (Entry<String, Object> entry : headers.entrySet()) {
-            out.setHeader(entry.getKey(), entry.getValue());
-        }
+        out.setHeaders(exchange.getIn().getHeaders());
+        out.setAttachments(exchange.getIn().getAttachments());
     }
 }

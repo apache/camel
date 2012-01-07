@@ -16,37 +16,32 @@
  */
 package org.apache.camel.component.velocity;
 
+import javax.activation.DataHandler;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class VelocityTest extends CamelTestSupport {
+    
     @Test
-    public void testReceivesFooResponse() throws Exception {
-        assertRespondsWith("foo", "<hello>foo</hello>");
-    }
-
-    @Test
-    public void testReceivesBarResponse() throws Exception {
-        assertRespondsWith("bar", "<hello>bar</hello>");
-    }
-
-    protected void assertRespondsWith(final String value, String expectedBody) throws InvalidPayloadException {
-        Exchange response = template.request("direct:a", new Processor() {
+    public void testVelocityLetter() throws Exception {
+        final DataHandler dataHandler = new DataHandler("my attachment", "text/plain");
+        Exchange exchange = template.request("direct:a", new Processor() {
+            @Override
             public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                in.setBody("answer");
-                in.setHeader("cheese", value);
+                exchange.getIn().addAttachment("item", dataHandler);
+                exchange.getIn().setBody("Monday");
+                exchange.getIn().setHeader("name", "Christian");
+                exchange.setProperty("item", "7");
             }
         });
-        assertOutMessageBodyEquals(response, expectedBody);
+
+        assertEquals("Dear Christian. You ordered item 7 on Monday.", exchange.getOut().getBody());
+        assertEquals("Christian", exchange.getOut().getHeader("name"));
+        assertSame(dataHandler, exchange.getOut().getAttachment("item"));
     }
 
     protected RouteBuilder createRouteBuilder() {

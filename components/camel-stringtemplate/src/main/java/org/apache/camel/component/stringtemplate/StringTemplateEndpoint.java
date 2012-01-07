@@ -18,7 +18,6 @@ package org.apache.camel.component.stringtemplate;
 
 import java.io.StringWriter;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.antlr.stringtemplate.AutoIndentWriter;
 import org.antlr.stringtemplate.StringTemplate;
@@ -53,7 +52,6 @@ public class StringTemplateEndpoint extends ResourceBasedEndpoint {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void onExchange(Exchange exchange) throws Exception {
         StringWriter buffer = new StringWriter();
         Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
@@ -68,10 +66,8 @@ public class StringTemplateEndpoint extends ResourceBasedEndpoint {
         // now lets output the results to the exchange
         Message out = exchange.getOut();
         out.setBody(buffer.toString());
-        out.setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE, getResource());
-        Map<String, Object> headers = (Map<String, Object>) variableMap.get("headers");
-        for (Entry<String, Object> entry : headers.entrySet()) {
-            out.setHeader(entry.getKey(), entry.getValue());
-        }
+        out.setHeaders(exchange.getIn().getHeaders());
+        out.setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE, getResourceUri());
+        out.setAttachments(exchange.getIn().getAttachments());
     }
 }
