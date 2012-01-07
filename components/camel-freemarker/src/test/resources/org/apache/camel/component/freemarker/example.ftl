@@ -16,4 +16,4 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 -->
-<hello>${headers.cheese}</hello>
+Dear ${headers.name}. You ordered item ${exchange.properties.item} on ${body}.
