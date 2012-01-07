@@ -16,38 +16,33 @@
  */
 package org.apache.camel.component.stringtemplate;
 
+import javax.activation.DataHandler;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class StringTemplateTest extends CamelTestSupport {
-
+    
     @Test
-    public void testReceivesFooResponse() throws Exception {
-        assertRespondsWith("foo", "<hello>foo</hello>");
-    }
-
-    @Test
-    public void testReceivesBarResponse() throws Exception {
-        assertRespondsWith("bar", "<hello>bar</hello>");
-    }
-
-    protected void assertRespondsWith(final String value, String expectedBody) throws InvalidPayloadException {
+    public void test() throws Exception {
+        final DataHandler dataHandler = new DataHandler("my attachment", "text/plain");
+        
         Exchange response = template.request("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                Message in = exchange.getIn();
-                in.setBody("answer");
-                in.setHeader("cheese", value);
+                exchange.getIn().addAttachment("item", dataHandler);
+                exchange.getIn().setBody("Monday");
+                exchange.getIn().setHeader("name", "Christian");
+                exchange.setProperty("item", "7");
             }
         });
-        assertOutMessageBodyEquals(response, expectedBody);
+        
+        assertEquals("Dear Christian. You ordered item 7 on Monday.", response.getOut().getBody());
+        assertEquals("org/apache/camel/component/stringtemplate/template.tm", response.getOut().getHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE_URI));
+        assertEquals("Christian", response.getOut().getHeader("name"));
+        assertSame(dataHandler, response.getOut().getAttachment("item"));
     }
 
     protected RouteBuilder createRouteBuilder() {
