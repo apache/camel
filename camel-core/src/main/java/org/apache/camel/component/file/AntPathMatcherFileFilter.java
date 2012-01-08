@@ -72,7 +72,12 @@ public class AntPathMatcherFileFilter implements FileFilter {
             }
         }
 
-        // nothing to include so we cant accept it
+        if (excludes != null && includes == null) {
+            // if the user specified excludes but no includes, presumably we should include by default
+            return true;
+        }
+
+        // nothing to include so we can't accept it
         return false;
     }
 

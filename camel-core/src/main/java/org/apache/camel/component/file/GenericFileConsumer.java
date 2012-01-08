@@ -455,6 +455,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer imple
             }
         }
 
+        if (endpoint.getAntFilter() != null) {
+            if (!endpoint.getAntFilter().accept(file)) {
+                return false;
+            }
+        }
+
         if (ObjectHelper.isNotEmpty(endpoint.getExclude())) {
             if (name.matches(endpoint.getExclude())) {
                 return false;
