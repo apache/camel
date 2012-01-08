@@ -1,5 +1,5 @@
 Camel Router with Scala DSL Project
-=====================
+===================================
 
 To compile you run:
 
@@ -7,7 +7,7 @@ To compile you run:
 
 To run this route:
 
-    mvn camel:run
+    mvn exec:java
     
 For more help see the Apache Camel documentation
 
