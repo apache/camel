@@ -16,22 +16,21 @@
  */
 package ${package}
 
-import org.apache.camel.Exchange
-import org.apache.camel.scala.dsl.builder.RouteBuilder
+import org.apache.camel.main.Main
+import org.apache.camel.scala.dsl.builder.RouteBuilderSupport
 
 /**
- * A Camel Router using the Scala DSL
+ * A Main to run Camel with MyRouteBuilder
  */
-class MyRouteBuilder extends RouteBuilder {
+object MyRouteMain extends RouteBuilderSupport {
 
-    // an example of a Processor method
-   val myProcessorMethod = (exchange: Exchange) => {
-     exchange.getIn.setBody("block test")
-   }
-   
-   // a route using Scala blocks
-   "timer://foo?period=5s" ==> {
-      process(myProcessorMethod)
-      to("log:block")
-   }
+  def main(args: Array[String]) {
+    val main = new Main()
+    // enable hangup support so you need to use ctrl + c to stop the running app
+    main.enableHangupSupport();
+    main.addRouteBuilder(new MyRouteBuilder())
+    // must use run to start the main application
+    main.run();
+  }
 }
+

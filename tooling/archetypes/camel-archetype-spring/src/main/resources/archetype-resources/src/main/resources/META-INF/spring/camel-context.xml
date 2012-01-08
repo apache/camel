@@ -26,11 +26,9 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <camel:camelContext xmlns="http://camel.apache.org/schema/spring">
-    <camel:package>${package}</camel:package>
     <!-- here is a sample which processes the input files
          (leaving them in place - see the 'noop' flag)
-         then performs content based routing on the message
-         using XPath -->
+         then performs content based routing on the message using XPath -->
     <camel:route>
       <camel:from uri="file:src/data?noop=true"/>
       <camel:choice>

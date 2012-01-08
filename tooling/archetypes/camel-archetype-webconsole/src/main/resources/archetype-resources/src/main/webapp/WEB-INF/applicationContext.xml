@@ -48,8 +48,6 @@
         routing on the messages using XPath.
     -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <!-- scan pacakge for RouteBuilder Java DSL classes -->
-        <package>${package}</package>
         
         <route>
             <from uri="file:src/data?noop=true"/>

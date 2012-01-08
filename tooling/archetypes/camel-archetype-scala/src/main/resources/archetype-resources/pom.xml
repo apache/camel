@@ -40,12 +40,7 @@
       <artifactId>camel-scala</artifactId>
       <version>${camel-version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-      <version>${camel-version}</version>
-    </dependency> 
-       
+
     <!-- scala -->
     <dependency>
       <groupId>org.scala-lang</groupId>
@@ -126,13 +121,15 @@
         </configuration>
       </plugin>
       
-      <!-- allows the route to be run via 'mvn camel:run' -->
+      <!-- allows the route to be run via 'mvn exec:java' -->
       <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${camel-version}</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>${package}.MyRouteMain</mainClass>
+        </configuration>
       </plugin>
-            
+
     </plugins>
   </build>
 
