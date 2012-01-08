@@ -62,13 +62,19 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
                 try {
                     // we will receive an exception if the table doesn't exists or we cannot access it
                     jdbcTemplate.execute(tableExistsString);
-                    log.debug("table for JdbcMessageIdRepository already exists");
+                    log.debug("Expected table for JdbcMessageIdRepository exist");
                 } catch (DataAccessException e) {
                     if (createTableIfNotExists) {
-                        log.debug("creating table for JdbcMessageIdRepository because it doesn't exists...");
-                        // we will fail if we cannot create it
-                        jdbcTemplate.execute(createString);
-                        log.info("table created with query '{}'", createString);
+                        try {
+                            log.debug("creating table for JdbcMessageIdRepository because it doesn't exist...");
+                            jdbcTemplate.execute(createString);
+                            log.info("table created with query '{}'", createString);
+                        } catch (DataAccessException dae) {
+                            // we will fail if we cannot create it
+                            log.error("Can't create table for JdbcMessageIdRepository with query '{}' because of: {}. This may be a permissions problem. Please create this table and try again.",
+                                    createString, e.getMessage());
+                            throw dae;
+                        }
                     } else {
                         throw e;
                     }
