@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
 
     public void testRunLoggingLevel() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader("file:target/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -38,7 +38,7 @@ public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/files?runLoggingLevel=INFO")
+                from("file:target/files?fileName=hello.txt&runLoggingLevel=INFO")
                     .to("mock:result");
             }
         };
