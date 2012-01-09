@@ -131,9 +131,9 @@
         <include>org.apache.camel:camel-stream</include>
         <include>org.apache.camel:camel-stringtemplate</include>
         <include>org.apache.camel:camel-syslog</include>
+        <include>org.apache.camel:camel-tagsoup</include>
         <include>org.apache.camel:camel-test</include>
         <include>org.apache.camel:camel-testng</include>
-        <include>org.apache.camel:camel-tagsoup</include>
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-velocity</include>
         <include>org.apache.camel:camel-websocket</include>
