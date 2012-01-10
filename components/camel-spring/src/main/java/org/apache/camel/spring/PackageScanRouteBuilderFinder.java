@@ -94,9 +94,14 @@ public class PackageScanRouteBuilderFinder {
     }
 
     /**
-     * Returns true if the object is non-abstract and supports a zero argument constructor
+     * Returns <tt>true</tt>if the class is a public, non-abstract class
      */
     protected boolean isValidClass(Class type) {
+        // should skip non public classes
+        if (!Modifier.isPublic(type.getModifiers())) {
+            return false;
+        }
+
         if (!Modifier.isAbstract(type.getModifiers()) && !type.isInterface()) {
             return true;
         }
