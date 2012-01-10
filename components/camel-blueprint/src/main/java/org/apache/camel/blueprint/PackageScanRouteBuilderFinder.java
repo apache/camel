@@ -38,14 +38,12 @@ public class PackageScanRouteBuilderFinder {
     private final String[] packages;
     private final PackageScanClassResolver resolver;
     private final BlueprintContainer blueprintContainer;
-//    private final BeanPostProcessor beanPostProcessor;
 
     public PackageScanRouteBuilderFinder(BlueprintCamelContext camelContext, String[] packages, ClassLoader classLoader,
-                                         /*BeanPostProcessor postProcessor,*/ PackageScanClassResolver resolver) {
+                                         PackageScanClassResolver resolver) {
         this.camelContext = camelContext;
         this.blueprintContainer = camelContext.getBlueprintContainer();
         this.packages = packages;
-//        this.beanPostProcessor = postProcessor;
         this.resolver = resolver;
         // add our provided loader as well
         resolver.addClassLoader(classLoader);
@@ -72,10 +70,6 @@ public class PackageScanRouteBuilderFinder {
 
             // type is valid so create and instantiate the builder
             RoutesBuilder builder = instantiateBuilder(aClass);
-//            if (beanPostProcessor != null) {
-            // Inject the annotated resource
-//                beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
-//            }
             LOG.debug("Adding instantiated RouteBuilder: {}", builder);
             list.add(builder);
         }
@@ -98,9 +92,14 @@ public class PackageScanRouteBuilderFinder {
     }
 
     /**
-     * Returns true if the object is non-abstract and supports a zero argument constructor
+     * Returns <tt>true</tt>if the class is a public, non-abstract class
      */
     protected boolean isValidClass(Class type) {
+        // should skip non public classes
+        if (!Modifier.isPublic(type.getModifiers())) {
+            return false;
+        }
+
         if (!Modifier.isAbstract(type.getModifiers()) && !type.isInterface()) {
             return true;
         }
