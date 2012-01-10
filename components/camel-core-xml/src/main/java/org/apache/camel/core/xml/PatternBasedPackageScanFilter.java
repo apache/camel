@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.spi.PackageScanFilter;
+import org.apache.camel.util.AntPathMatcher;
 
 /**
  * {@link PatternBasedPackageScanFilter} uses an underlying
