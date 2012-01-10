@@ -1,0 +1,88 @@
+
+#dot-widget-container{
+	
+	width: 13em;
+	height: auto;
+	border: 2px solid #CDDDE9; 
+	position: relative;
+	visibility: visible !important;
+}
+#dot-widget-title-bar{
+	background-color: #CDDDE9; 
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+}
+#dot-widget-network-indicator{
+	height: 8px;
+	width: 8px;
+	padding-left: 0.3em;
+}
+#dot-widget-title-text{
+	vertical-align: middle;
+	font-weight: bold;
+	font-size: 14pt;
+	padding-left: 2px;
+}
+#dot-widget-contents{
+	padding: 8px 5px 8px 5px;
+}
+#dot-widget-learn-how{
+	font-size: 11pt;
+}
+#dot-sync-cancel,
+#dot-sync-status{
+	font-size: 11pt;
+}
+#dot-success-checkmark{
+	display: none;
+}
+#dot-roller{
+	display: none;
+	padding-right: 4px;
+}
+.dot-sync-error{
+	color: red;
+}
+#dot-sync-details{
+	display: none;
+	padding-left: 0.2em;
+}
+#dot-sync-status{
+	height: 2em;
+	margin-top: 0.8em;
+	margin-bottom: 0.8em;
+}
+.dot-needs-offline-cache #dot-widget-learn-how,
+.dot-needs-browser-restart{
+	text-align: center;
+	line-height: 1.2;
+	font-size: 16pt !important;
+}
+.dot-needs-offline-cache #dot-sync-status,
+.dot-needs-offline-cache #dot-widget-browser-restart{
+	display: none;
+}
+.dot-needs-browser-restart{
+    font-size: 14pt !important;
+    padding-bottom: 1em;
+    padding-top: 1em;
+}
+#dot-learn-how-body{
+	padding: 3em;
+	background-color: #CDDDE9; 
+}
+#dot-learn-how-contents{
+	border: 1px solid black; 
+	background-color: white; 
+	padding: 0.4em 0.6em 0.4em 0.6em;
+	font-size: 16pt;
+}
+#dot-learn-how-contents h1{
+	font-size: 24pt;
+}
+#dot-learn-how-contents h2{
+	font-size: 18pt;
+}
+#dot-learn-how-contents li{
+	padding-bottom: 0.6em;
+}

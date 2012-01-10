@@ -1,0 +1,29 @@
+style (anything that could affect painting)
+- backgroundColor
+* backgroundImage
+* color
+- font
+- noClip
+- display (show, block, inline, none; not laid out and not painted)
+- visibility (visible, hidden; laid out but not painted)
+- defaultSize (used by SplitPanel, HorizontalTree)
+- border
+- backgroundColorOdd (used by List, HorizontalTree)
+- scrollTopImage (used by ScrollBar)
+- scrollMiddleImage (used by ScrollBar)
+- scrollBottomImage (used by ScrollBar)
+- scrollHandleTopImage (used by ScrollBar)
+- scrollHandleMiddleImage (used by ScrollBar)
+- scrollHandleBottomImage (used by ScrollBar)
+
+attributes (not related to painting)
+- regions (used by SplitPanel)
+  - size (% or px)
+  - contents (component)
+- orientation (TH.HORIZONTAL, TH.VERTICAL; used by SplitPanel, Splitter)
+- text (used by Label)
+
+events
+- dragstart (fired by ResizeNib, Splitter; start position)
+- dragstop (fired by ResizeNib, Splitter; startPos, currentPos)
+- drag (fired by ResizeNib, Splitter; startPos, currentPos)

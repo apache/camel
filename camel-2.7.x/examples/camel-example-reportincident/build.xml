@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<project name="camel-example-reportincident" default="run" basedir=".">
+
+	<import file="../common_build.xml"/>
+
+	<fail unless="env.CXF_HOME" message="You must download CXF and set your CXF_HOME to run this demo."/>
+	<fail unless="env.SPRING_HOME" message="You must download Spring2.5 and set your CXF_HOME to run this demo."/>
+	<fail unless="env.JETTY_HOME" message="You must download Jetty7 and set your JETTY_HOME to run this demo."/>
+
+	<property name="project.name" value="camel-example-reportincident"/>
+
+	<property name="jetty.home" value="${env.JETTY_HOME}"/>
+	<path id="jetty.classpath">
+	    <fileset dir="${jetty.home}/lib">
+	      <include name="jetty*.jar"/>
+	      <include name="**/jetty-client-*.jar"/>
+	    </fileset>
+	 </path>
+
+
+	<path id="sample.build.classpath">
+		<fileset dir="${camel.lib}">
+			<include name="**/camel-cxf-*.jar"/>
+			<include name="**/camel-http-*.jar"/>
+			<include name="**/camel-jetty-*.jar"/>
+			<exclude name="**/*-tests.jar"/>
+		</fileset>
+		<path refid="camel.spring.classpath"/>
+		<path refid="spring.classpath"/>
+		<path refid="jetty.classpath"/>
+		<path refid="camel.core.classpath"/>
+		<path refid="cxf.classpath"/>
+	</path>
+
+	<property name="cxf.home" value="${env.CXF_HOME}"/>
+	<path id="cxf.classpath">
+		<fileset dir="${cxf.home}">
+			<include name="**/cxf-*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="generate.code">
+		<echo level="info" message="Generating code using wsdl2java..."/>
+		<wsdl2java file="src/main/resources/etc/report_incident.wsdl"/>
+	</target>
+
+	<target name="run" depends="generate.code,build"
+		description="Compile and run the sample of reportincident component">
+		<camelrun mainClass="org.apache.camel.example.reportincident.ReportIncidentRoutes" />
+	</target>
+
+	<available property="wsdl.dir" value="${build.resources.dir}" file="${build.resources.dir}/etc/report_incident.wsdl" />
+	<property name="wsdl.dir" location="."/>
+
+	<macrodef name="wsdl2java">
+		<attribute name="srcdestdir" default="${build.dir}/generated/src/main/java"/>
+		<attribute name="destdir" default="${build.classes.dir}"/>
+		<attribute name="file"/>
+		<attribute name="dir" default="${wsdl.dir}"/>
+		<sequential>
+			<mkdir dir="@{destdir}"/>
+			<mkdir dir="@{srcdestdir}"/>
+			<java failonerror="true" classname="org.apache.cxf.tools.wsdlto.WSDLToJava" fork="yes">
+				<classpath>
+					<path refid="cxf.classpath" />
+				</classpath>
+				<sysproperty key="exitOnFinish" value="true"/>
+				<arg value="-verbose"/>
+				<arg value="-d"/>
+				<arg value="@{srcdestdir}"/>
+				<arg value="@{dir}/@{file}"/>
+			</java>
+		</sequential>
+	</macrodef>
+
+</project>
