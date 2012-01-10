@@ -17,12 +17,12 @@
 package org.apache.camel.component.twitter.util;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.apache.camel.Converter;
-import org.apache.camel.component.twitter.data.Status;
+
+import twitter4j.DirectMessage;
+import twitter4j.Status;
+import twitter4j.Tweet;
 
 /**
  * Utility for converting between Twitter4J and camel-twitter data layers.
@@ -37,20 +37,25 @@ public final class TwitterConverter {
 
     @Converter
     public static String toString(Status status) throws ParseException {
-        return status.toString();
+    	StringBuilder s = new StringBuilder();
+        s.append(status.getCreatedAt()).append(" (").append(status.getUser().getScreenName()).append(") ");
+        s.append(status.getText());
+        return s.toString();
     }
 
     @Converter
-    public static Status convertStatus(twitter4j.Status s) {
-        return new Status(s);
+    public static String toString(Tweet tweet) throws ParseException {
+    	StringBuilder s = new StringBuilder();
+        s.append(tweet.getCreatedAt()).append(" (").append(tweet.getFromUser()).append(") ");
+        s.append(tweet.getText());
+        return s.toString();
     }
 
     @Converter
-    public static List<Status> convertStatuses(List<twitter4j.Status> ls) {
-        List<Status> newLs = new ArrayList<Status>(ls.size());
-        for (Iterator<twitter4j.Status> i = ls.iterator(); i.hasNext();) {
-            newLs.add(convertStatus(i.next()));
-        }
-        return newLs;
+    public static String toString(DirectMessage dm) throws ParseException {
+    	StringBuilder s = new StringBuilder();
+        s.append(dm.getCreatedAt()).append(" (").append(dm.getSenderScreenName()).append(") ");
+        s.append(dm.getText());
+        return s.toString();
     }
 }

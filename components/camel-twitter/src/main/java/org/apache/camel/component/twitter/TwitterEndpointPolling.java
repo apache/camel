@@ -39,6 +39,7 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
         this.properties = properties;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Twitter4JConsumer twitter4jConsumer = Twitter4JFactory.getConsumer(this, getEndpointUri());
         TwitterConsumer tc = new TwitterConsumerPolling(this, processor, twitter4jConsumer);
@@ -46,11 +47,13 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
         return tc;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return Twitter4JFactory.getProducer(this, getEndpointUri());
     }
 
-    public void initiate() {
+    @Override
+    protected void doStart() {
         properties.checkComplete();
         twitter = new TwitterFactory(properties.getConfiguration()).getInstance();
     }

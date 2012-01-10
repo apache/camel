@@ -16,21 +16,19 @@
  */
 package org.apache.camel.component.twitter.consumer.timeline;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-import org.apache.camel.component.twitter.data.Status;
-import org.apache.camel.component.twitter.util.TwitterConverter;
 
+import twitter4j.Status;
 import twitter4j.TwitterException;
 
 /**
  * Consumes the public timeline
  * 
  */
-public class PublicConsumer implements Twitter4JConsumer {
+public class PublicConsumer extends Twitter4JConsumer {
 
     TwitterEndpoint te;
 
@@ -38,16 +36,15 @@ public class PublicConsumer implements Twitter4JConsumer {
         this.te = te;
     }
 
-    public Iterator<Status> requestPollingStatus(long lastStatusUpdateId) throws TwitterException {
+    public List<Status> pollConsume() throws TwitterException {
         return getPublicTimeline();
     }
 
-    public Iterator<Status> requestDirectStatus() throws TwitterException {
+    public List<Status> directConsume() throws TwitterException {
         return getPublicTimeline();
     }
 
-    private Iterator<Status> getPublicTimeline() throws TwitterException {
-        List<twitter4j.Status> statusList = te.getTwitter().getPublicTimeline();
-        return TwitterConverter.convertStatuses(statusList).iterator();
+    private List<Status> getPublicTimeline() throws TwitterException {
+        return te.getTwitter().getPublicTimeline();
     }
 }

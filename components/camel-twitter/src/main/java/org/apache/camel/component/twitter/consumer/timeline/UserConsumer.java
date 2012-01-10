@@ -16,21 +16,19 @@
  */
 package org.apache.camel.component.twitter.consumer.timeline;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-import org.apache.camel.component.twitter.data.Status;
-import org.apache.camel.component.twitter.util.TwitterConverter;
 
 import twitter4j.Paging;
+import twitter4j.Status;
 import twitter4j.TwitterException;
 
 /**
  * Consumes the timeline of a given user.
  */
-public class UserConsumer implements Twitter4JConsumer {
+public class UserConsumer extends Twitter4JConsumer {
 
     TwitterEndpoint te;
 
@@ -38,14 +36,16 @@ public class UserConsumer implements Twitter4JConsumer {
         this.te = te;
     }
 
-    public Iterator<Status> requestPollingStatus(long lastStatusUpdateId) throws TwitterException {
-        List<twitter4j.Status> statusList = te.getTwitter().getUserTimeline(te.getProperties().getUser(),
-                                                                            new Paging(lastStatusUpdateId));
-        return TwitterConverter.convertStatuses(statusList).iterator();
+    public List<Status> pollConsume() throws TwitterException {
+        List<Status> list = te.getTwitter().getUserTimeline(
+        		te.getProperties().getUser(), new Paging(lastId));
+        for (Status s : list) {
+    		checkLastId(s.getId());
+    	}
+        return list;
     }
 
-    public Iterator<Status> requestDirectStatus() throws TwitterException {
-        List<twitter4j.Status> statusList = te.getTwitter().getUserTimeline(te.getProperties().getUser());
-        return TwitterConverter.convertStatuses(statusList).iterator();
+    public List<Status> directConsume() throws TwitterException {
+        return te.getTwitter().getUserTimeline(te.getProperties().getUser());
     }
 }

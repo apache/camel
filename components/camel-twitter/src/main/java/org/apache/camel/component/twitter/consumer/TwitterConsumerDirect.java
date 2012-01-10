@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.twitter.consumer;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.direct.DirectConsumer;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.component.twitter.data.Status;
 
 /**
  * Camel DirectConsumer implementation.
@@ -43,17 +43,10 @@ public class TwitterConsumerDirect extends DirectConsumer implements TwitterCons
     protected void doStart() throws Exception {
         super.doStart();
 
-        Iterator<Status> statusIterator = twitter4jConsumer.requestDirectStatus();
-        while (statusIterator.hasNext()) {
-            Status tStatus = statusIterator.next();
-
-            Exchange e = getEndpoint().createExchange();
-
-            e.getIn().setHeader("screenName", tStatus.getUser().getScreenName());
-            e.getIn().setHeader("date", tStatus.getDate());
-
-            e.getIn().setBody(tStatus);
-
+        Iterator<? extends Serializable> i = twitter4jConsumer.directConsume().iterator();
+        while (i.hasNext()) {
+        	Exchange e = getEndpoint().createExchange();
+            e.getIn().setBody(i.next());
             getProcessor().process(e);
         }
     }

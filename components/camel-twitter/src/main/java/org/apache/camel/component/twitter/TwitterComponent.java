@@ -42,7 +42,6 @@ public class TwitterComponent extends DefaultComponent {
             break;
         }
 
-        endpoint.initiate();
         return endpoint;
     }
 

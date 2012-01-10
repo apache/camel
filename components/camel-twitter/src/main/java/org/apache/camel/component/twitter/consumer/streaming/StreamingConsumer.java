@@ -18,14 +18,12 @@ package org.apache.camel.component.twitter.consumer.streaming;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-import org.apache.camel.component.twitter.data.Status;
-import org.apache.camel.component.twitter.util.TwitterConverter;
 
+import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 import twitter4j.TwitterException;
@@ -34,7 +32,7 @@ import twitter4j.TwitterException;
  * Super class providing consuming capabilities for the streaming API.
  * 
  */
-public class StreamingConsumer implements Twitter4JConsumer, StatusListener {
+public class StreamingConsumer extends Twitter4JConsumer implements StatusListener {
 
     TwitterEndpoint te;
     private List<Status> receivedStatuses = new ArrayList<Status>();
@@ -44,12 +42,12 @@ public class StreamingConsumer implements Twitter4JConsumer, StatusListener {
         this.te = te;
     }
 
-    public Iterator<Status> requestPollingStatus(long lastStatusUpdateId) throws TwitterException {
+    public List<Status> pollConsume() throws TwitterException {
         clear = true;
-        return Collections.unmodifiableList(receivedStatuses).iterator();
+        return Collections.unmodifiableList(receivedStatuses);
     }
 
-    public Iterator<Status> requestDirectStatus() throws TwitterException {
+    public List<Status> directConsume() throws TwitterException {
         // not used
         return null;
     }
@@ -61,12 +59,12 @@ public class StreamingConsumer implements Twitter4JConsumer, StatusListener {
     }
 
     @Override
-    public void onStatus(twitter4j.Status status) {
+    public void onStatus(Status status) {
         if (clear) {
             receivedStatuses.clear();
             clear = false;
         }
-        receivedStatuses.add(TwitterConverter.convertStatus(status));
+        receivedStatuses.add(status);
     }
 
     @Override

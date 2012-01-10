@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.twitter.consumer.search;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-import org.apache.camel.component.twitter.data.Status;
 
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -33,7 +30,7 @@ import twitter4j.TwitterException;
  * Consumes search requests
  * 
  */
-public class SearchConsumer implements Twitter4JConsumer {
+public class SearchConsumer extends Twitter4JConsumer {
 
     TwitterEndpoint te;
 
@@ -41,28 +38,25 @@ public class SearchConsumer implements Twitter4JConsumer {
         this.te = te;
     }
 
-    public Iterator<Status> requestPollingStatus(long lastStatusUpdateId) throws TwitterException {
+    public List<Tweet> pollConsume() throws TwitterException {
         String keywords = te.getProperties().getKeywords();
         Query query = new Query(keywords);
-        query.setSinceId(lastStatusUpdateId);
+        query.setSinceId(lastId);
         return search(query);
     }
 
-    public Iterator<Status> requestDirectStatus() throws TwitterException {
+    public List<Tweet> directConsume() throws TwitterException {
         String keywords = te.getProperties().getKeywords();
         return search(new Query(keywords));
     }
 
-    private Iterator<Status> search(Query query) throws TwitterException {
+    private List<Tweet> search(Query query) throws TwitterException {
         QueryResult qr = te.getTwitter().search(query);
         List<Tweet> tweets = qr.getTweets();
 
-        List<Status> statusCamel = new ArrayList<Status>(tweets.size());
-        Iterator<Tweet> i = tweets.iterator();
-        while (i.hasNext()) {
-            statusCamel.add(new Status(i.next()));
-        }
-
-        return statusCamel.iterator();
+        for (Tweet t : tweets) {
+    		checkLastId(t.getId());
+    	}
+        return tweets;
     }
 }
