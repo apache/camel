@@ -82,7 +82,7 @@ public class DefaultCxfMesssageMapper implements CxfMessageMapper {
         Map<String, Object> camelHeaders = exchange.getOut().getHeaders();
         
         Map<String, List<String>> cxfHeaders =
-            CastUtils.cast((Map)cxfMessage.get(Message.PROTOCOL_HEADERS));
+            CastUtils.cast((Map<?, ?>)cxfMessage.get(Message.PROTOCOL_HEADERS));
                       
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {

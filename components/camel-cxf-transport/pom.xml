@@ -171,6 +171,10 @@
                   <wsdl>${basedir}/src/test/resources/person.wsdl</wsdl>
                 </wsdlOption>
               </wsdlOptions>
+              <defaultOptions>
+                  <markGenerated>true</markGenerated>
+                  <faultSerialVersionUID>1</faultSerialVersionUID>
+              </defaultOptions>
             </configuration>
             <goals>
               <goal>wsdl2java</goal>
