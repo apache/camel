@@ -245,7 +245,7 @@ public class HttpProducer extends DefaultProducer {
         if (contentType != null && contentType.equals(HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT)) {
             return HttpHelper.deserializeJavaObjectFromStream(response);
         } else {
-				    return response;
+            return response;
         }
     }
 
