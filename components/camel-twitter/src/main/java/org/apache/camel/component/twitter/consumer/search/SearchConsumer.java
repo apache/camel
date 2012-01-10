@@ -55,8 +55,8 @@ public class SearchConsumer extends Twitter4JConsumer {
         List<Tweet> tweets = qr.getTweets();
 
         for (Tweet t : tweets) {
-    		checkLastId(t.getId());
-    	}
+            checkLastId(t.getId());
+        }
         return tweets;
     }
 }

@@ -29,9 +29,9 @@ public abstract class Twitter4JConsumer {
     // Can't assume that the end of the list will be the most recent ID.
     // The Twitter API sometimes returns them slightly out of order.
     protected void checkLastId(long newId) {
-    	if (newId > lastId) {
-			lastId = newId;
-		}
+        if (newId > lastId) {
+            lastId = newId;
+        }
     }
 
     public abstract List<? extends Serializable> pollConsume() throws TwitterException;

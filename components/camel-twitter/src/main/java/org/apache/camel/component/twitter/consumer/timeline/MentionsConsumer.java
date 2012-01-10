@@ -39,8 +39,8 @@ public class MentionsConsumer extends Twitter4JConsumer {
     public List<Status> pollConsume() throws TwitterException {
         List<Status> list = te.getTwitter().getMentions(new Paging(lastId));
         for (Status s : list) {
-    		checkLastId(s.getId());
-    	}
+            checkLastId(s.getId());
+        }
         return list;
     }
 

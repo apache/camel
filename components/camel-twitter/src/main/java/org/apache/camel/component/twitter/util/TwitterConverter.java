@@ -37,7 +37,7 @@ public final class TwitterConverter {
 
     @Converter
     public static String toString(Status status) throws ParseException {
-    	StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder();
         s.append(status.getCreatedAt()).append(" (").append(status.getUser().getScreenName()).append(") ");
         s.append(status.getText());
         return s.toString();
@@ -45,7 +45,7 @@ public final class TwitterConverter {
 
     @Converter
     public static String toString(Tweet tweet) throws ParseException {
-    	StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder();
         s.append(tweet.getCreatedAt()).append(" (").append(tweet.getFromUser()).append(") ");
         s.append(tweet.getText());
         return s.toString();
@@ -53,7 +53,7 @@ public final class TwitterConverter {
 
     @Converter
     public static String toString(DirectMessage dm) throws ParseException {
-    	StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder();
         s.append(dm.getCreatedAt()).append(" (").append(dm.getSenderScreenName()).append(") ");
         s.append(dm.getText());
         return s.toString();

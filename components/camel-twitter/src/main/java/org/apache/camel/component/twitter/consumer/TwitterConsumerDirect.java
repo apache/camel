@@ -45,7 +45,7 @@ public class TwitterConsumerDirect extends DirectConsumer implements TwitterCons
 
         Iterator<? extends Serializable> i = twitter4jConsumer.directConsume().iterator();
         while (i.hasNext()) {
-        	Exchange e = getEndpoint().createExchange();
+            Exchange e = getEndpoint().createExchange();
             e.getIn().setBody(i.next());
             getProcessor().process(e);
         }
