@@ -67,11 +67,6 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean impleme
         beanId = id;
     }
     
-    // to walk round the issue of setting the serviceClass in CXF
-    public void setServiceClass(Class clazz) {
-        setResourceClasses(clazz);
-    }
-    
     // add this mothod for testing
     List<String> getSchemaLocations() {
         return schemaLocations;

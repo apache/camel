@@ -264,7 +264,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
             } else {
                 // maybe we can iterate the body and that way create a list for the parameters
                 // then end users do not need to trouble with List
-                Iterator it = exchange.getIn().getBody(Iterator.class);
+                Iterator<?> it = exchange.getIn().getBody(Iterator.class);
                 if (it != null && it.hasNext()) {
                     list = exchange.getContext().getTypeConverter().convertTo(List.class, it);
                     if (list != null) {

@@ -42,7 +42,7 @@ public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
         if ("properties".equals(name) 
             || "extensionMappings".equals(name)
             || "languageMappings".equals(name)) {
-            Map map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
+            Map<?, ?> map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, map);
         } else if ("executor".equals(name)) {
             setFirstChildAsProperty(el, ctx, bean, "serviceFactory.executor");
@@ -52,12 +52,12 @@ public class CxfRsServerFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
             setFirstChildAsProperty(el, ctx, bean, "bindingConfig");
         } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name)
             || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)) {
-            List list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
+            List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else if ("features".equals(name) || "schemaLocations".equals(name) 
             || "providers".equals(name) || "serviceBeans".equals(name)
             || "modelBeans".equals(name)) {
-            List list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
+            List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else if ("model".equals(name)) {
             List<UserResource> resources = ResourceUtils.getResourcesFromElement(el);

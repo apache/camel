@@ -32,7 +32,7 @@ public final class MyCxfCustomerConverter {
     }
     
     @Converter 
-    public static String cxfPayloadToString(final CxfPayload payload) {
+    public static String cxfPayloadToString(final CxfPayload<?> payload) {
         XmlConverter converter = new XmlConverter();
         StringBuilder buf = new StringBuilder();
         for (Object element : payload.getBody()) {

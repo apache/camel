@@ -42,7 +42,7 @@ public class AbstractBeanDefinitionParser extends AbstractBPBeanDefinitionParser
         return id;
     }
     
-    public MutableBeanMetadata createBeanMetadata(Element element, ParserContext context, Class runtimeClass) {
+    public MutableBeanMetadata createBeanMetadata(Element element, ParserContext context, Class<?> runtimeClass) {
         MutableBeanMetadata answer = context.createMetadata(MutableBeanMetadata.class);
         answer.setRuntimeClass(runtimeClass);
         answer.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));

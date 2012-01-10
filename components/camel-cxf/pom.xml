@@ -269,6 +269,10 @@
             <phase>generate-sources</phase>
             <configuration>
               <sourceRoot>${basedir}/target/generated</sourceRoot>
+              <defaultOptions>
+                  <markGenerated>true</markGenerated>
+                  <faultSerialVersionUID>1</faultSerialVersionUID>
+              </defaultOptions>
               <wsdlOptions>
                 <wsdlOption>
                   <wsdl>${basedir}/src/test/resources/mtom.wsdl</wsdl>

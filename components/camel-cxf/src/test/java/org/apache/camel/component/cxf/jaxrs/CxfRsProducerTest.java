@@ -114,7 +114,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         });
      
         // get the response message 
-        List<Customer> response = CastUtils.cast((List) exchange.getOut().getBody());
+        List<Customer> response = CastUtils.cast((List<?>) exchange.getOut().getBody());
         
         assertNotNull("The response should not be null ", response);
         assertEquals("Get a wrong customer id ", String.valueOf(response.get(0).getId()), "113");

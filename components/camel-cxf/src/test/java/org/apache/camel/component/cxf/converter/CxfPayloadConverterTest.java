@@ -91,7 +91,7 @@ public class CxfPayloadConverterTest extends ExchangeTestSupport {
     public void testToCxfPayload() {
         // use default type converter
         exchange.getIn().setBody(inputStream);
-        CxfPayload payload = exchange.getIn().getBody(CxfPayload.class);
+        CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
         assertTrue(payload instanceof CxfPayload);
         assertEquals("Get a wrong size of body", 1, payload.getBody().size());
     }

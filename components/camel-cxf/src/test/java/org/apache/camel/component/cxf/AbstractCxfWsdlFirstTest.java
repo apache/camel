@@ -109,7 +109,7 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
         Exchange exchange = sendJaxWsMessageWithHolders("hello");
         assertEquals("The request should be handled sucessfully ", exchange.isFailed(), false);
         org.apache.camel.Message out = exchange.getOut();
-        List result =  out.getBody(List.class);
+        List<Object> result =  out.getBody(List.class);
         assertEquals("The result list should not be empty", result.size(), 4);
         Holder<String> name = (Holder<String>) result.get(3);
         assertEquals("we should get the right answer from router", "Bonjour", name.value);
@@ -122,9 +122,8 @@ public abstract class AbstractCxfWsdlFirstTest extends CamelSpringTestSupport {
 
     protected Exchange sendJaxWsMessageWithHolders(final String personIdString) {
         Exchange exchange = template.send("direct:producer", new Processor() {
-            @SuppressWarnings("unchecked")
             public void process(final Exchange exchange) {
-                final List params = new ArrayList();
+                final List<Object> params = new ArrayList<Object>();
                 Holder<String> personId = new Holder<String>();
                 personId.value = personIdString;
                 params.add(personId);

@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
 import org.junit.Test;
 
@@ -39,7 +40,6 @@ public class CxfProducerContextTest extends CxfProducerTest {
     private static final String TEST_KEY = "sendSimpleMessage-test";
     private static final String TEST_VALUE = "exchange property value should get passed through request context";
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testExchangePropertyPropagation() throws Exception {
         Exchange exchange = sendSimpleMessage();
@@ -47,7 +47,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
         // No direct access to native CXF Message but we can verify the 
         // request context from the Camel exchange
         assertNotNull(exchange);
-        Map<String, Object> requestContext = (Map)exchange.getProperty(Client.REQUEST_CONTEXT);
+        Map<String, Object> requestContext = CastUtils.cast((Map<?, ?>)exchange.getProperty(Client.REQUEST_CONTEXT));
         assertNotNull(requestContext);
         String actualValue = (String)requestContext.get(TEST_KEY);
         assertEquals("exchange property should get propagated to the request context", TEST_VALUE, actualValue);

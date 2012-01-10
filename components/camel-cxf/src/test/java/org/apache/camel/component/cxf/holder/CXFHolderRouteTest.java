@@ -34,7 +34,7 @@ public class CXFHolderRouteTest extends CxfHolderConsumerTest {
                     @SuppressWarnings("unchecked")
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
-                        List parameters = in.getBody(List.class);
+                        List<Object> parameters = in.getBody(List.class);
                         int amount = (Integer) parameters.remove(1);
                         Holder<String> customer = (Holder<String>)parameters.get(1);
                         if (customer.value.length() == 0) {
