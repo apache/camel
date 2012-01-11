@@ -129,6 +129,8 @@ public class SedaProducer extends DefaultAsyncProducer {
                     exchange.setException(new ExchangeTimedOutException(exchange, timeout));
                     // count down to indicate timeout
                     latch.countDown();
+                    // remove   timed out Exchange from queue
+                    queue.remove(copy);
                 }
             } else {
                 if (log.isTraceEnabled()) {

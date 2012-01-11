@@ -27,10 +27,10 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SedaTimeoutDisabledTest extends ContextTestSupport {
 
-    public void testSedaNoTineout() throws Exception {
+    public void testSedaNoTimeout() throws Exception {
         Future<String> out = template.asyncRequestBody("seda:foo?timeout=0", "World", String.class);
-        // use 60 sec failsafe in case something hangs
-        assertEquals("Bye World", out.get(60, TimeUnit.SECONDS));
+        // use 5 sec failsafe in case something hangs
+        assertEquals("Bye World", out.get(5, TimeUnit.SECONDS));
     }
 
     @Override
@@ -38,7 +38,7 @@ public class SedaTimeoutDisabledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").to("mock:before").delay(2000).transform(body().prepend("Bye ")).to("mock:result");
+                from("seda:foo").to("mock:before").delay(500).transform(body().prepend("Bye ")).to("mock:result");
             }
         };
     }
