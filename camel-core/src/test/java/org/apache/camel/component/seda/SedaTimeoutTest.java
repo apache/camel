@@ -44,9 +44,9 @@ public class SedaTimeoutTest extends ContextTestSupport {
             assertIsInstanceOf(CamelExecutionException.class, e.getCause());
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause().getCause());
 
-            SedaEndpoint se = (SedaEndpoint)context.getRoute("seda").getEndpoint();
+            SedaEndpoint se = (SedaEndpoint)context.getEndpoint("seda:foo");
             assertNotNull("Consumer endpoint cannot be null", se);
-            assertEquals("Timeout Exchanges should be removed from queue", 0, se.getCurrentQueueSize());
+            assertEquals("Timeout Exchanges should be removed from queue", 0, se.getQueue().size());
         }
     }
 
