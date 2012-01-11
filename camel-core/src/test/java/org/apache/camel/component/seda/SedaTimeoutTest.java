@@ -28,21 +28,32 @@ import org.apache.camel.builder.RouteBuilder;
  * @version 
  */
 public class SedaTimeoutTest extends ContextTestSupport {
+    private int timeout = 100;
 
-    public void testSedaNoTineout() throws Exception {
+    public void testSedaNoTimeout() throws Exception {
         Future<String> out = template.asyncRequestBody("seda:foo", "World", String.class);
         assertEquals("Bye World", out.get());
     }
 
-    public void testSedaTineout() throws Exception {
-        Future<String> out = template.asyncRequestBody("seda:foo?timeout=100", "World", String.class);
+    public void testSedaTimeout() throws Exception {
+        Future<String> out = template.asyncRequestBody("seda:foo?timeout=" + timeout, "World", String.class);
         try {
             out.get();
             fail("Should have thrown an exception");
         } catch (ExecutionException e) {
             assertIsInstanceOf(CamelExecutionException.class, e.getCause());
             assertIsInstanceOf(ExchangeTimedOutException.class, e.getCause().getCause());
+
+            SedaEndpoint se = (SedaEndpoint)context.getRoute("seda").getEndpoint();
+            assertNotNull("Consumer endpoint cannot be null", se);
+            assertEquals("Timeout Exchanges should be removed from queue", 0, se.getCurrentQueueSize());
         }
+    }
+
+    public void testSedaTimeoutWithStoppedRoute() throws Exception {
+        context.stopRoute("seda");
+        timeout = 500;
+        testSedaTimeout();
     }
 
     @Override
@@ -50,7 +61,11 @@ public class SedaTimeoutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").to("mock:before").delay(250).transform(body().prepend("Bye ")).to("mock:result");
+                from("seda:foo").routeId("seda")
+                    .to("mock:before")
+                    .delay(250)
+                    .transform(body().prepend("Bye "))
+                    .to("mock:result");
             }
         };
     }
