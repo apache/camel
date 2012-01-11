@@ -25,8 +25,8 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>2.7-SNAPSHOT</version>
-         <relativePath>../../parent</relativePath>
+        <version>2.7.6-SNAPSHOT</version>
+        <relativePath>../../parent</relativePath>
     </parent>
 
     <artifactId>camel-itest-karaf</artifactId>
