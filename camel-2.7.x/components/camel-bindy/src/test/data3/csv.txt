@@ -1,7 +1,0 @@
-order nr,client ref,first name, last name,instrument code,instrument name,order type, instrument type, quantity,currency,date
-01,A0,Albert,Cartier,ISIN,,,,,EUR,08-01-2009
-02,A1,Jacques,Preud'Homme,,,BUY,,2500,USD,08-01-2009
-03,A2,Jacques,Delporte,,BE12345678,SELL,,1500,EUR,08-01-2009
-,blable,,,,,,,,,
-,,,,,,,,
-,,,,,
