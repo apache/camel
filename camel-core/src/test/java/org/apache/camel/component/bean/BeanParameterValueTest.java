@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
@@ -83,6 +84,19 @@ public class BeanParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testBeanParameterNoBody() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Is Hadrian 21 years old?");
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("SomeTest", true);
+        headers.put("SomeAge", 21);
+        headers.put("SomeName", "Hadrian");
+
+        template.sendBodyAndHeaders("direct:nobody", null, headers);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -122,6 +136,10 @@ public class BeanParameterValueTest extends ContextTestSupport {
                 from("direct:heads")
                     .to("bean:foo?method=heads(${body}, ${headers})")
                     .to("mock:result");
+
+                from("direct:nobody")
+                    .to("bean:foo?method=nobody(${header.SomeAge}, ${header.SomeName}, ${header.SomeTest})")
+                    .to("mock:result");
             }
         };
     }
@@ -152,5 +170,15 @@ public class BeanParameterValueTest extends ContextTestSupport {
             return headers.get("hello") + " " + body;
         }
 
+        public String nobody(int age, String name, boolean question) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(question ? "Is " : "");
+            sb.append(name);
+            sb.append(question ? " " : "is ");
+            sb.append(age);
+            sb.append(" years old");
+            sb.append(question ? "?" : ".");
+            return sb.toString();
+        }
     }
 }
