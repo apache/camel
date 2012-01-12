@@ -99,7 +99,7 @@
         <dependency>
             <groupId>com.googlecode.pojosr</groupId>
             <artifactId>de.kalpatec.pojosr.framework</artifactId>
-            <version>0.1.7-SNAPSHOT</version>
+            <version>0.1.6</version>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>
