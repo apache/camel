@@ -155,7 +155,6 @@
           <excludes>
             <!-- TODO FIXME ASAP -->
             <exclude>**/XXXTest.*</exclude>            
-            <exclude>**/LRUSoftCacheTest.*</exclude>  <!-- CAMEL-4069 -->          
           </excludes>
         </configuration>
       </plugin>
