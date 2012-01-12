@@ -477,6 +477,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getBodyFunction() {
         if (bodyFunction == null) {
             bodyFunction = new XPathFunction() {
+                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange == null) {
                         return null;
@@ -495,6 +496,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getHeaderFunction() {
         if (headerFunction == null) {
             headerFunction = new XPathFunction() {
+                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -517,6 +519,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getOutBodyFunction() {
         if (outBodyFunction == null) {
             outBodyFunction = new XPathFunction() {
+                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange.get() != null && exchange.get().hasOut()) {
                         return exchange.get().getOut().getBody();
@@ -535,6 +538,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getOutHeaderFunction() {
         if (outHeaderFunction == null) {
             outHeaderFunction = new XPathFunction() {
+                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange.get() != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -557,6 +561,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getPropertiesFunction() {
         if (propertiesFunction == null) {
             propertiesFunction = new XPathFunction() {
+                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -585,6 +590,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     public XPathFunction getSimpleFunction() {
         if (simpleFunction == null) {
             simpleFunction = new XPathFunction() {
+                @SuppressWarnings("rawtypes")
                 public Object evaluate(List list) throws XPathFunctionException {
                     if (exchange != null && !list.isEmpty()) {
                         Object value = list.get(0);
@@ -917,7 +923,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
         }
 
         if (body instanceof WrappedFile) {
-            body = ((WrappedFile) body).getFile();
+            body = ((WrappedFile<?>) body).getFile();
         }
         if (body instanceof File) {
             // input stream is needed for File to avoid locking the file in case of errors etc
@@ -931,11 +937,10 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
     /**
      * Strategy method to extract the document from the exchange.
      */
-    @SuppressWarnings("unchecked")
     protected Object getDocument(Exchange exchange, Object body) {
         Object answer = null;
 
-        Class type = getDocumentType();
+        Class<?> type = getDocumentType();
         if (type != null) {
             // try to get the body as the desired type
             answer = exchange.getContext().getTypeConverter().convertTo(type, exchange, body);
@@ -996,7 +1001,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware, Serv
             if (defaultXPathFactory == null) {
                 // read system property and see if there is a factory set
                 Properties properties = System.getProperties();
-                for (Map.Entry prop : properties.entrySet()) {
+                for (Map.Entry<Object, Object> prop : properties.entrySet()) {
                     String key = (String) prop.getKey();
                     if (key.startsWith(XPathFactory.DEFAULT_PROPERTY_NAME)) {
                         String uri = ObjectHelper.after(key, ":");

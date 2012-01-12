@@ -106,7 +106,7 @@ public class AdviceWithBuilder<T extends ProcessorDefinition> {
      *
      * @return the builder to build the nodes.
      */
-    public ProcessorDefinition replace() {
+    public ProcessorDefinition<?> replace() {
         RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {
@@ -138,7 +138,7 @@ public class AdviceWithBuilder<T extends ProcessorDefinition> {
      *
      * @return the builder to build the nodes.
      */
-    public ProcessorDefinition before() {
+    public ProcessorDefinition<?> before() {
         RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {
@@ -156,7 +156,7 @@ public class AdviceWithBuilder<T extends ProcessorDefinition> {
      *
      * @return the builder to build the nodes.
      */
-    public ProcessorDefinition after() {
+    public ProcessorDefinition<?> after() {
         RouteDefinition route = builder.getOriginalRoute();
         PipelineDefinition answer = new PipelineDefinition();
         if (id != null) {

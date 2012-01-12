@@ -40,7 +40,7 @@ public class BindyComplexKeyValuePairStandaloneTest {
     private static final transient Logger LOG = LoggerFactory.getLogger(BindyComplexKeyValuePairStandaloneTest.class);
 
     protected Map<String, Object> model = new HashMap<String, Object>();
-    protected Set<Class> models = new HashSet<Class>();
+    protected Set<Class<?>> models = new HashSet<Class<?>>();
     BindyKeyValuePairFactory factory;
     int counter;
 

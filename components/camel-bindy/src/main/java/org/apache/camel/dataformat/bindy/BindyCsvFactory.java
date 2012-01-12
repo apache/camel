@@ -221,7 +221,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     }
 
-    @SuppressWarnings("unchecked")
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder buffer = new StringBuilder();
@@ -236,7 +235,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             LOG.debug("Separator converted: '0x{}', from: {}", Integer.toHexString(separator), this.getSeparator());
         }
 
-        for (Class clazz : models) {
+        for (Class<?> clazz : models) {
             if (model.containsKey(clazz.getName())) {
 
                 Object obj = model.get(clazz.getName());
@@ -253,15 +252,15 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
 
         // Transpose result
-        List<List> l = new ArrayList<List>();
+        List<List<String>> l = new ArrayList<List<String>>();
         if (isOneToMany) {
             l = product(results);
         } else {
             // Convert Map<Integer, List> into List<List>
-            TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(results);
+            TreeMap<Integer, List<String>> sortValues = new TreeMap<Integer, List<String>>(results);
             List<String> temp = new ArrayList<String>();
 
-            for (Entry<Integer, List> entry : sortValues.entrySet()) {
+            for (Entry<Integer, List<String>> entry : sortValues.entrySet()) {
                 // Get list of values
                 List<String> val = entry.getValue();
 
@@ -281,13 +280,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
 
         if (l != null) {
-            Iterator it = l.iterator();
+            Iterator<List<String>> it = l.iterator();
             while (it.hasNext()) {
-                List<String> tokens = (ArrayList<String>)it.next();
-                Iterator itx = tokens.iterator();
+                List<String> tokens = it.next();
+                Iterator<String> itx = tokens.iterator();
 
                 while (itx.hasNext()) {
-                    String res = (String)itx.next();
+                    String res = itx.next();
                     if (res != null) {
                         // the field may be enclosed in quotes if a quote was configured
                         if (quote != null) {
@@ -313,10 +312,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         return buffer.toString();
     }
 
-    private List<List> product(Map<Integer, List<String>> values) {
-        TreeMap<Integer, List> sortValues = new TreeMap<Integer, List>(values);
+    private List<List<String>> product(Map<Integer, List<String>> values) {
+        TreeMap<Integer, List<String>> sortValues = new TreeMap<Integer, List<String>>(values);
 
-        List<List> product = new ArrayList<List>();
+        List<List<String>> product = new ArrayList<List<String>>();
         Map<Integer, Integer> index = new HashMap<Integer, Integer>();
 
         int idx = 0;
@@ -366,7 +365,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
      * If a relation @OneToMany is defined, than we iterate recursively through this function
      * The result is placed in the Map<Integer, List> results
      */
-    private void generateCsvPositionMap(Class clazz, Object obj, Map<Integer, List<String>> results) throws Exception {
+    private void generateCsvPositionMap(Class<?> clazz, Object obj, Map<Integer, List<String>> results) throws Exception {
 
         String result = "";
 
@@ -382,12 +381,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     // Retrieve the format, pattern and precision associated to
                     // the type
-                    Class type = field.getType();
+                    Class<?> type = field.getType();
                     String pattern = datafield.pattern();
                     int precision = datafield.precision();
 
                     // Create format
-                    Format format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
+                    Format<?> format = FormatFactory.getFormat(type, pattern, getLocale(), precision);
 
                     // Get field value
                     Object value = field.get(obj);
@@ -448,10 +447,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 // Will be used during generation of CSV
                 isOneToMany = true;
 
-                ArrayList list = (ArrayList)field.get(obj);
+                ArrayList<?> list = (ArrayList<?>)field.get(obj);
                 if (list != null) {
 
-                    Iterator it = list.iterator();
+                    Iterator<?> it = list.iterator();
                     while (it.hasNext()) {
                         Object target = it.next();
                         generateCsvPositionMap(target.getClass(), target, results);

@@ -155,7 +155,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private boolean implicitId;
 
 
-    public Class getObjectType() {
+    public Class<BlueprintCamelContext> getObjectType() {
         return BlueprintCamelContext.class;
     }
 
@@ -451,11 +451,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.camelJMXAgent = camelJMXAgent;
     }
 
-    public List getBeans() {
+    public List<?> getBeans() {
         return beans;
     }
 
-    public void setBeans(List beans) {
+    public void setBeans(List<?> beans) {
         this.beans = beans;
     }
 

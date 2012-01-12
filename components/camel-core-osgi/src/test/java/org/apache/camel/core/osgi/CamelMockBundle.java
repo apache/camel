@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.apache.camel.util.CastUtils;
 import org.springframework.osgi.mock.MockBundle;
 
 /**
@@ -33,11 +34,11 @@ public class CamelMockBundle extends MockBundle {
     public static final String META_INF_LANGUAGE_RESOLVER = "META-INF/services/org/apache/camel/language/resolver/";
     public static final String META_INF_DATAFORMAT = "META-INF/services/org/apache/camel/dataformat/";
 
-    private static class ListEnumeration implements Enumeration {
-        private final List list;                    
+    private static class ListEnumeration<E> implements Enumeration<E> {
+        private final List<E> list;                    
         private int index;
         
-        public ListEnumeration(List list) {
+        public ListEnumeration(List<E> list) {
             this.list = list;
         }
 
@@ -45,8 +46,8 @@ public class CamelMockBundle extends MockBundle {
             return list != null && index < list.size();
         }
 
-        public Object nextElement() {
-            Object result = null;
+        public E nextElement() {
+            E result = null;
             if (list != null) { 
                 result =  list.get(index);
                 index++;
@@ -60,16 +61,16 @@ public class CamelMockBundle extends MockBundle {
         setClassLoader(getClass().getClassLoader());
     }
 
-    private Enumeration getListEnumeration(String prefix, String entrys[]) {
+    private Enumeration<String> getListEnumeration(String prefix, String entrys[]) {
         List<String> list = new ArrayList<String>();
         for (String entry : entrys) {            
             list.add(prefix + entry);
         }
-        return new ListEnumeration(list);
+        return new ListEnumeration<String>(list);
     }
 
-    public Enumeration getEntryPaths(String path) {
-        Enumeration result = null;
+    public Enumeration<String> getEntryPaths(String path) {
+        Enumeration<String> result = null;
         if (META_INF_COMPONENT.equals(path)) {
             String[] entries = new String[] {"timer_test", "file_test"};
             result = getListEnumeration(META_INF_COMPONENT, entries);
@@ -86,20 +87,20 @@ public class CamelMockBundle extends MockBundle {
         return result;
     }
     
-    public Enumeration findEntries(String path, String filePattern, boolean recurse) {
+    public Enumeration<URL> findEntries(String path, String filePattern, boolean recurse) {
         if (path.equals("/org/apache/camel/core/osgi/test") && filePattern.equals("*.class")) {
             List<URL> urls = new ArrayList<URL>();
             URL url = getClass().getClassLoader().getResource("org/apache/camel/core/osgi/test/MyTypeConverter.class");
             urls.add(url);
             url = getClass().getClassLoader().getResource("org/apache/camel/core/osgi/test/MyRouteBuilder.class");
             urls.add(url);
-            return new ListEnumeration(urls);
+            return new ListEnumeration<URL>(urls);
         } else {
-            return super.findEntries(path, filePattern, recurse);
+            return CastUtils.cast(super.findEntries(path, filePattern, recurse));
         }
     }
 
-    public Class loadClass(String name) throws ClassNotFoundException {
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
         if (isLoadableClass(name)) {
             return super.loadClass(name);
         } else {

@@ -32,7 +32,7 @@ import org.springframework.util.StringUtils;
  * @version 
  */
 public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
-    private final Class type;
+    private final Class<?> type;
     private final boolean assignId;
 
     /**
@@ -42,12 +42,12 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
      * @param assignId whether to allow assigning id from the id attribute on the type
      *                 (there must be getter/setter id on type class).
      */
-    public BeanDefinitionParser(Class type, boolean assignId) {
+    public BeanDefinitionParser(Class<?> type, boolean assignId) {
         this.type = type;
         this.assignId = assignId;
     }
 
-    protected Class getBeanClass(Element element) {
+    protected Class<?> getBeanClass(Element element) {
         return type;
     }
 

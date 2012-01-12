@@ -531,7 +531,7 @@ public class MailBinding {
 
     protected Map<String, Object> extractHeadersFromMail(Message mailMessage, Exchange exchange) throws MessagingException {
         Map<String, Object> answer = new HashMap<String, Object>();
-        Enumeration names = mailMessage.getAllHeaders();
+        Enumeration<?> names = mailMessage.getAllHeaders();
 
         while (names.hasMoreElements()) {
             Header header = (Header) names.nextElement();

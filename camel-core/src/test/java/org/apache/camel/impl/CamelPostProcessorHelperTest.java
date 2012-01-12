@@ -122,7 +122,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         Class<?>[] parameterTypes = method.getParameterTypes();
-        for (Class type : parameterTypes) {
+        for (Class<?> type : parameterTypes) {
             String propertyName = ObjectHelper.getPropertyName(method);
             Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
@@ -145,7 +145,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         Class<?>[] parameterTypes = method.getParameterTypes();
-        for (Class type : parameterTypes) {
+        for (Class<?> type : parameterTypes) {
             String propertyName = ObjectHelper.getPropertyName(method);
             Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
@@ -172,7 +172,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         Class<?>[] parameterTypes = method.getParameterTypes();
-        for (Class type : parameterTypes) {
+        for (Class<?> type : parameterTypes) {
             String propertyName = ObjectHelper.getPropertyName(method);
             Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);

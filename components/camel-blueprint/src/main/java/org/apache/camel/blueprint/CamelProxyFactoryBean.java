@@ -93,7 +93,7 @@ public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
         try {
             producer = endpoint.createProducer();
             ServiceHelper.startService(producer);
-            Class clazz = blueprintContainer.loadClass(getServiceInterface());
+            Class<?> clazz = blueprintContainer.loadClass(getServiceInterface());
             serviceProxy = ProxyHelper.createProxy(endpoint, producer, clazz);
         } catch (Exception e) {
             throw new FailedToCreateProducerException(endpoint, e);

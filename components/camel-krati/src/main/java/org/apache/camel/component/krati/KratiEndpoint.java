@@ -48,7 +48,7 @@ public class KratiEndpoint extends DefaultEndpoint {
     protected Serializer keySerializer = new KratiDefaultSerializer();
     protected Serializer valueSerializer = new KratiDefaultSerializer();
     protected SegmentFactory segmentFactory = new ChannelSegmentFactory();
-    protected HashFunction hashFunction = new FnvHashFunction();
+    protected HashFunction<byte[]> hashFunction = new FnvHashFunction();
 
     protected String path;
 
@@ -72,7 +72,7 @@ public class KratiEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        DataStore dataStore = null;
+        DataStore<byte[], byte[]> dataStore = null;
         KratiDataStoreRegistration registration = dataStoreRegistry.get(path);
         if (registration != null) {
             dataStore = registration.getDataStore();
@@ -85,7 +85,7 @@ public class KratiEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        DataStore dataStore = null;
+        DataStore<byte[], byte[]> dataStore = null;
         KratiDataStoreRegistration registration = dataStoreRegistry.get(path);
         if (registration != null) {
             dataStore = registration.getDataStore();
@@ -168,11 +168,11 @@ public class KratiEndpoint extends DefaultEndpoint {
         this.segmentFactory = segmentFactory;
     }
 
-    public HashFunction getHashFunction() {
+    public HashFunction<byte[]> getHashFunction() {
         return hashFunction;
     }
 
-    public void setHashFunction(HashFunction hashFunction) {
+    public void setHashFunction(HashFunction<byte[]> hashFunction) {
         this.hashFunction = hashFunction;
     }
 

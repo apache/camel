@@ -113,13 +113,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         contextClassLoaderOnStart = Thread.currentThread().getContextClassLoader();
     }
 
-    public Object getObject() throws Exception {
+    public T getObject() throws Exception {
         return getContext();
     }
 
-    public Class getObjectType() {
-        return CamelContext.class;
-    }
+    public abstract Class<T> getObjectType();
 
     public boolean isSingleton() {
         return true;

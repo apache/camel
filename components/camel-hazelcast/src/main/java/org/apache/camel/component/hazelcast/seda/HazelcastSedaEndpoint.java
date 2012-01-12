@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
 
-    private final BlockingQueue queue;
+    private final BlockingQueue<Object> queue;
     private final HazelcastSedaConfiguration configuration;
     private HazelcastInstance hazelcastInstance;
 
@@ -54,7 +54,7 @@ public class HazelcastSedaEndpoint extends HazelcastDefaultEndpoint {
         return new HazelcastSedaConsumer(this, processor);
     }
 
-    public BlockingQueue getQueue() {
+    public BlockingQueue<Object> getQueue() {
         return queue;
     }
 

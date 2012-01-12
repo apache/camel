@@ -64,7 +64,7 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
             String id = (String) componentId;
             ComponentMetadata meta = container.getComponentMetadata(id);
             if (meta instanceof ExtendedBeanMetadata) {
-                Class clazz = ((ExtendedBeanMetadata) meta).getRuntimeClass();
+                Class<?> clazz = ((ExtendedBeanMetadata) meta).getRuntimeClass();
                 if (clazz != null && AbstractPropertyPlaceholder.class.isAssignableFrom(clazz)) {
                     ids.add(id);
                 }

@@ -218,7 +218,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("error", "mock:error");
         headers.put("bar", "mock:bar");
         template.sendBodyAndHeaders("direct:bar", "Hello World", headers);
@@ -278,7 +278,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("error", "mock:error");
         headers.put("bar", "mock:bar");
         template.sendBodyAndHeaders("direct:bar", "Hello World", headers);
@@ -336,7 +336,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:done").expectedMessageCount(1);
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("done", "mock:done");
         headers.put("bar", "mock:bar");
         template.sendBodyAndHeaders("direct:bar", "Hello World", headers);
@@ -395,7 +395,7 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:done").expectedMessageCount(1);
 
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("done", "mock:done");
         headers.put("bar", "mock:bar");
         template.sendBodyAndHeaders("direct:bar", "Hello World", headers);

@@ -117,7 +117,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @return the builder
      * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
      */
-    public <T extends ProcessorDefinition> AdviceWithBuilder weaveById(String pattern) {
+    public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveById(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
         return new AdviceWithBuilder<T>(this, pattern, null, null);
     }
@@ -131,7 +131,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @return the builder
      * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
      */
-    public <T extends ProcessorDefinition> AdviceWithBuilder weaveByToString(String pattern) {
+    public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToString(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
         return new AdviceWithBuilder<T>(this, null, pattern, null);
     }
@@ -142,7 +142,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @param type the processor type
      * @return the builder
      */
-    public <T extends ProcessorDefinition> AdviceWithBuilder weaveByType(Class<T> type) {
+    public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByType(Class<T> type) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
         return new AdviceWithBuilder<T>(this, null, null, type);
     }
@@ -152,7 +152,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      *
      * @return the builder
      */
-    public <T extends ProcessorDefinition> ProcessorDefinition weaveAddFirst() {
+    public <T extends ProcessorDefinition<?>> ProcessorDefinition<?> weaveAddFirst() {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
         return new AdviceWithBuilder<T>(this, "*", null, null).selectFirst().before();
     }
@@ -162,7 +162,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      *
      * @return the builder
      */
-    public <T extends ProcessorDefinition> ProcessorDefinition weaveAddLast() {
+    public <T extends ProcessorDefinition<?>> ProcessorDefinition<?> weaveAddLast() {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
         return new AdviceWithBuilder<T>(this, "*", null, null).selectLast().after();
     }

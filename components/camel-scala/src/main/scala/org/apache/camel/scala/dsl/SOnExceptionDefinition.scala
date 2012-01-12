@@ -25,9 +25,9 @@ import org.apache.camel.Exchange
 /**
  * Scala enrichment for Camel's OnExceptionDefinition
  */
-case class SOnExceptionDefinition(override val target: OnExceptionDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[OnExceptionDefinition] {
+case class SOnExceptionDefinition[E <: Throwable](override val target: OnExceptionDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[OnExceptionDefinition] {
 
-  override def apply(block: => Unit) = super.apply(block).asInstanceOf[SOnExceptionDefinition]
+  override def apply(block: => Unit) = super.apply(block).asInstanceOf[SOnExceptionDefinition[E]]
 
   def handled = wrap(target.handled(true))
   def handled(predicate: Exchange => Any) = wrap(target.handled(predicateBuilder(predicate)))
@@ -45,6 +45,6 @@ case class SOnExceptionDefinition(override val target: OnExceptionDefinition)(im
 
   def useOriginalMessage = wrap(target.useOriginalMessage)
 
-  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SOnExceptionDefinition]
+  override def wrap(block: => Unit) = super.wrap(block).asInstanceOf[SOnExceptionDefinition[E]]
   
 }

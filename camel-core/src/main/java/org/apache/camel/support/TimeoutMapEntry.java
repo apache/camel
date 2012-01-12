@@ -73,7 +73,7 @@ public class TimeoutMapEntry<K, V> implements Comparable<Object>, Map.Entry<K, V
             return 0;
         }
         if (that instanceof TimeoutMapEntry) {
-            return compareTo((TimeoutMapEntry) that);
+            return compareTo((TimeoutMapEntry<K, V>) that);
         }
         return 1;
     }

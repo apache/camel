@@ -42,16 +42,16 @@ public class JibxDataFormat extends DataFormatDefinition {
         super("jibx");
     }
 
-    public JibxDataFormat(Class unmarshallClass) {
+    public JibxDataFormat(Class<?> unmarshallClass) {
         this();
         setUnmarshallClass(unmarshallClass);
     }
 
-    public Class getUnmarshallClass() {
+    public Class<?> getUnmarshallClass() {
         return unmarshallClass;
     }
 
-    public void setUnmarshallClass(Class unmarshallClass) {
+    public void setUnmarshallClass(Class<?> unmarshallClass) {
         this.unmarshallClass = unmarshallClass;
     }
 

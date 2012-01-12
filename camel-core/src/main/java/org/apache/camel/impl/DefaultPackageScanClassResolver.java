@@ -164,10 +164,9 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
-    @SuppressWarnings("unchecked")
-    public Set<Class<?>> findImplementations(Class parent, String... packageNames) {
+    public Set<Class<?>> findImplementations(Class<?> parent, String... packageNames) {
         if (packageNames == null) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
         if (log.isDebugEnabled()) {
@@ -185,10 +184,9 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
-    @SuppressWarnings("unchecked")
     public Set<Class<?>> findByFilter(PackageScanFilter filter, String... packageNames) {
         if (packageNames == null) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         }
 
         Set<Class<?>> classes = new LinkedHashSet<Class<?>>();

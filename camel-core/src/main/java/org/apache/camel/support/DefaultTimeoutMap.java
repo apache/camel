@@ -252,7 +252,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         return true;
     }
 
-    protected void updateExpireTime(TimeoutMapEntry entry) {
+    protected void updateExpireTime(TimeoutMapEntry<K, V> entry) {
         long now = currentTime();
         entry.setExpireTime(entry.getTimeout() + now);
     }

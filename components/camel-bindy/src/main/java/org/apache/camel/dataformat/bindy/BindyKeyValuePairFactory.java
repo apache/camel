@@ -165,7 +165,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         }
 
         // Iterate over the model
-        for (Class clazz : models) {
+        for (Class<?> clazz : models) {
 
             Object obj = model.get(clazz.getName());
 
@@ -179,7 +179,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
     }
 
-    private void generateModelFromKeyValueMap(Class clazz, Object obj, Map<Integer, List<String>> results, int line, Map<String, List<Object>> lists) throws Exception {
+    private void generateModelFromKeyValueMap(Class<?> clazz, Object obj, Map<Integer, List<String>> results, int line, Map<String, List<Object>> lists) throws Exception {
 
         for (Field field : clazz.getDeclaredFields()) {
 
@@ -379,7 +379,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 if (!targetClass.equals("")) {
                     // Class cl = Class.forName(targetClass); Does not work in
                     // OSGI when class is defined in another bundle
-                    Class cl = null;
+                    Class<?> cl = null;
 
                     try {
                         cl = Thread.currentThread().getContextClassLoader().loadClass(targetClass);
@@ -550,7 +550,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         return builder.toString();
     }
 
-    private Object formatField(Format format, String value, int tag, int line) throws Exception {
+    private Object formatField(Format<?> format, String value, int tag, int line) throws Exception {
 
         Object obj = null;
 

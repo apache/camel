@@ -26,7 +26,7 @@ case class STryDefinition(override val target: TryDefinition)(implicit val build
   
   override def apply(block: => Unit) : STryDefinition = super.apply(block).asInstanceOf[STryDefinition]
   
-  def handle[Target](exception: Class[Target]) = {
+  def handle[E <: Throwable](exception: Class[E]) = {
     target.doCatch(exception)
     this
   }

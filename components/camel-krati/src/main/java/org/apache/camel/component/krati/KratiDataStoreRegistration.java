@@ -26,10 +26,10 @@ public class KratiDataStoreRegistration {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(KratiDataStoreRegistration.class);
 
-    private final DataStore dataStore;
+    private final DataStore<byte[], byte[]> dataStore;
     private int registrationCount;
 
-    public KratiDataStoreRegistration(DataStore dataStore) {
+    public KratiDataStoreRegistration(DataStore<byte[], byte[]> dataStore) {
         this.dataStore = dataStore;
     }
 
@@ -50,7 +50,7 @@ public class KratiDataStoreRegistration {
         }
     }
 
-    public DataStore getDataStore() {
+    public DataStore<byte[], byte[]> getDataStore() {
         register();
         return dataStore;
     }

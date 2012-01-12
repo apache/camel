@@ -92,11 +92,11 @@ public class MainRunner implements InitializingBean, Runnable {
         this.asyncRun = asyncRun;
     }
 
-    public Class getMain() {
+    public Class<?> getMain() {
         return main;
     }
 
-    public void setMain(Class main) {
+    public void setMain(Class<?> main) {
         this.main = main;
     }
 

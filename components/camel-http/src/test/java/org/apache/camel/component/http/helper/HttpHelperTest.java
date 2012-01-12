@@ -38,7 +38,7 @@ public class HttpHelperTest {
 
     @Test
     public void testAppendHeader() throws Exception {
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         HttpHelper.appendHeader(headers, "foo", "a");
         HttpHelper.appendHeader(headers, "bar", "b");
         HttpHelper.appendHeader(headers, "baz", "c");
@@ -51,7 +51,7 @@ public class HttpHelperTest {
 
     @Test
     public void testAppendHeaderMultipleValues() throws Exception {
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         HttpHelper.appendHeader(headers, "foo", "a");
         HttpHelper.appendHeader(headers, "bar", "b");
         HttpHelper.appendHeader(headers, "bar", "c");

@@ -35,7 +35,7 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         return fallbackTypeConverters;
     }
     
-    public void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter) {
+    public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         typeConverters.add(typeConverter);
     }
 
@@ -43,7 +43,7 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         fallbackTypeConverters.add(typeConverter);
     }
 
-    public TypeConverter lookup(Class toType, Class fromType) {       
+    public TypeConverter lookup(Class<?> toType, Class<?> fromType) {       
         return null;
     }
 

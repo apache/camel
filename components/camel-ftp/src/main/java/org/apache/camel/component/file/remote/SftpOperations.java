@@ -450,6 +450,8 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
         try {
             final List<ChannelSftp.LsEntry> list = new ArrayList<ChannelSftp.LsEntry>();
+
+            @SuppressWarnings("rawtypes")
             Vector files = channel.ls(path);
             // can return either null or an empty list depending on FTP servers
             if (files != null) {
@@ -713,6 +715,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         String onlyName = FileUtil.stripPath(name);
 
         try {
+            @SuppressWarnings("rawtypes")
             Vector files = channel.ls(directory);
             // can return either null or an empty list depending on FTP servers
             if (files == null) {
@@ -741,6 +744,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     protected boolean fastExistsFile(String name) throws GenericFileOperationFailedException {
         LOG.trace("fastExistsFile({})", name);
         try {
+            @SuppressWarnings("rawtypes")
             Vector files = channel.ls(name);
             if (files == null) {
                 return false;

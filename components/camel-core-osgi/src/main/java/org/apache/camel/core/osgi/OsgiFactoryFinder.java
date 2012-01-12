@@ -48,7 +48,7 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
             propertyPrefix = "";
         }
 
-        Class clazz = classMap.get(propertyPrefix + key);
+        Class<?> clazz = classMap.get(propertyPrefix + key);
         if (clazz == null) {
             BundleEntry entry = getResource(key, checkClass);
             if (entry != null) {
@@ -111,7 +111,7 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
         return entry;
     }
 
-    private boolean checkCompat(Bundle bundle, Class clazz) {
+    private boolean checkCompat(Bundle bundle, Class<?> clazz) {
         if (clazz == null) {
             return true;
         }

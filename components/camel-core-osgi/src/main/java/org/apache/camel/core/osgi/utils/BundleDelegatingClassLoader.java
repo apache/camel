@@ -56,7 +56,7 @@ public class BundleDelegatingClassLoader extends ClassLoader {
         return resource;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected Enumeration findResources(String name) throws IOException {
         LOG.trace("FindResource: {}", name);
         return bundle.getResources(name);
@@ -64,7 +64,7 @@ public class BundleDelegatingClassLoader extends ClassLoader {
 
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         LOG.trace("LoadClass: {}, resolve: {}", name, resolve);
-        Class clazz;
+        Class<?> clazz;
         try {
             clazz = findClass(name);
         } catch (ClassNotFoundException cnfe) {

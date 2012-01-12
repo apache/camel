@@ -220,7 +220,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the JiBX data format with unmarshall class.
      */
-    public T jibx(Class unmarshallClass) {
+    public T jibx(Class<?> unmarshallClass) {
         return dataFormat(new JibxDataFormat(unmarshallClass));
     }
 

@@ -82,7 +82,7 @@ public abstract class AbstractTransactionTest extends CamelSpringTestSupport {
         return assertIsInstanceOf(ConditionalExceptionProcessor.class, processor);
     }
 
-    protected Processor findProcessorByClass(Processor processor, Class findClass) {
+    protected Processor findProcessorByClass(Processor processor, Class<?> findClass) {
         while (true) {
             processor = unwrapDeadLetter(processor);
 

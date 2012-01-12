@@ -29,14 +29,13 @@ import org.apache.camel.Processor;
  */
 public class ClassComponent extends BeanComponent {
 
-    @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanEndpoint endpoint = new BeanEndpoint(uri, this);
         endpoint.setBeanName(remaining);
 
         // bean name is the FQN
         String name = endpoint.getBeanName();
-        Class clazz = getCamelContext().getClassResolver().resolveMandatoryClass(name);
+        Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(name);
         // create bean
         Object bean = getCamelContext().getInjector().newInstance(clazz);
 

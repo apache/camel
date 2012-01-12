@@ -89,8 +89,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         this.executor = executor;
     }
 
-    @SuppressWarnings("unchecked")
-    public Future<V> submit(Callable task) {
+    public Future<V> submit(Callable<V> task) {
         if (task == null) {
             throw new IllegalArgumentException("Task must be provided");
         }
@@ -113,10 +112,9 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         return completionQueue.take();
     }
 
-    @SuppressWarnings("unchecked")
     public Future<V> poll() {
         index.incrementAndGet();
-        Future answer = completionQueue.poll();
+        Future<V> answer = completionQueue.poll();
         if (answer == null) {
             // decrease counter if we didnt get any data
             index.decrementAndGet();
@@ -124,10 +122,9 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         return answer;
     }
 
-    @SuppressWarnings("unchecked")
     public Future<V> poll(long timeout, TimeUnit unit) throws InterruptedException {
         index.incrementAndGet();
-        Future answer = completionQueue.poll(timeout, unit);
+        Future<V> answer = completionQueue.poll(timeout, unit);
         if (answer == null) {
             // decrease counter if we didnt get any data
             index.decrementAndGet();

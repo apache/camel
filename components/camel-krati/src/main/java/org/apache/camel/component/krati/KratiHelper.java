@@ -50,9 +50,9 @@ public final class KratiHelper {
      * @param valueSerializer The serializer used for values,defaults to {@link org.apache.camel.component.krati.serializer.KratiDefaultSerializer}.
      * @return
      */
-    public static DataStore createDataStore(String path, int initialCapacity, int segmentFileSize, SegmentFactory segmentFactory,
-                                            HashFunction hashFunction, Serializer keySerializer, Serializer valueSerializer) {
-        DataStore result = null;
+    public static DataStore<byte[], byte[]> createDataStore(String path, int initialCapacity, int segmentFileSize, SegmentFactory segmentFactory,
+                                            HashFunction<byte[]> hashFunction, Serializer keySerializer, Serializer valueSerializer) {
+        DataStore<byte[], byte[]> result = null;
         File homeDir = new File(path);
         homeDir.mkdirs();
         try {
@@ -60,7 +60,7 @@ public final class KratiHelper {
             storeConfig.setSegmentFactory(segmentFactory);
             storeConfig.setHashFunction(hashFunction);
             storeConfig.setSegmentFileSizeMB(segmentFileSize);
-            DataStore dynamicDataStore = new DynamicDataStore(storeConfig);
+            DataStore<byte[], byte[]> dynamicDataStore = new DynamicDataStore(storeConfig);
             result = new SerializableObjectStore(dynamicDataStore, keySerializer, valueSerializer);
         } catch (Exception e) {
             throw new RuntimeCamelException("Failed to create Krati DataStore.", e);
@@ -77,8 +77,8 @@ public final class KratiHelper {
      * @param segmentFactory  The segment factory, defaults to {@link krati.core.segment.ChannelSegmentFactory}.
      * @return
      */
-    public static DataSet createDataSet(String path, int initialCapacity, SegmentFactory segmentFactory) {
-        DataSet result = null;
+    public static DataSet<byte[]> createDataSet(String path, int initialCapacity, SegmentFactory segmentFactory) {
+        DataSet<byte[]> result = null;
         File homeDir = new File(path);
         homeDir.mkdirs();
         try {

@@ -54,7 +54,7 @@ public class ValueHolder<V> {
             return false;
         }
 
-        ValueHolder that = (ValueHolder) o;
+        ValueHolder<?> that = (ValueHolder<?>) o;
 
         if (value != null ? !value.equals(that.value) : that.value != null) {
             return false;

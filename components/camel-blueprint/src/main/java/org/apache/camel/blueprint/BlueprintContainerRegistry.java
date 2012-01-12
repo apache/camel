@@ -74,7 +74,7 @@ public class BlueprintContainerRegistry implements Registry {
         for (String id : ids) {
             try {
                 ComponentMetadata metadata = blueprintContainer.getComponentMetadata(id);
-                Class cl = null;
+                Class<?> cl = null;
                 if (metadata instanceof BeanMetadata) {
                     BeanMetadata beanMetadata = (BeanMetadata)metadata;
                     cl = bundle.loadClass(beanMetadata.getClassName());

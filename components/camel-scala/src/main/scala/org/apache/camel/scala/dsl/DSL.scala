@@ -45,7 +45,7 @@ trait DSL {
 
   def filter(predicate: Exchange => Any) : SFilterDefinition
 
-  def handle[E](block: => Unit)(implicit manifest: Manifest[E]) : SOnExceptionDefinition
+  def handle[E <: Throwable](block: => Unit)(implicit manifest: Manifest[E]) : SOnExceptionDefinition[E]
 
   def id(id : String): DSL
   def idempotentConsumer(expression: Exchange => Any): SIdempotentConsumerDefinition

@@ -149,7 +149,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 BufferedReader in = new BufferedReader(new InputStreamReader(configFile.openStream()));
                 String className = in.readLine();
                 in.close();
-                Class cls = bundle.loadClass(className);
+                Class<?> cls = bundle.loadClass(className);
                 if (!ScriptEngineFactory.class.isAssignableFrom(cls)) {
                     throw new IllegalStateException("Invalid ScriptEngineFactory: " + cls.getName());
                 }

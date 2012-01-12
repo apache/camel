@@ -89,7 +89,7 @@ public abstract class AbstractCastorDataFormat implements DataFormat {
             }
             if (getClassNames() != null) {
                 for (String name : getClassNames()) {
-                    Class clazz = resolver.resolveClass(name);
+                    Class<?> clazz = resolver.resolveClass(name);
                     xmlContext.addClass(clazz);
                 }
             }

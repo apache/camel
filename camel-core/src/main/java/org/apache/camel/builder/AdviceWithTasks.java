@@ -124,7 +124,7 @@ public final class AdviceWithTasks {
         return doReplace(route, matchBy, replace, it);
     }
 
-    public static AdviceWithTask replaceByType(final RouteDefinition route, final Class type, final ProcessorDefinition replace,
+    public static AdviceWithTask replaceByType(final RouteDefinition route, final Class<?> type, final ProcessorDefinition replace,
                                                boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
         MatchBy matchBy = new MatchByType(type);
         Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
@@ -174,7 +174,7 @@ public final class AdviceWithTasks {
         return doRemove(route, matchBy, it);
     }
 
-    public static AdviceWithTask removeByType(final RouteDefinition route, final Class type,
+    public static AdviceWithTask removeByType(final RouteDefinition route, final Class<?> type,
                                               boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
         MatchBy matchBy = new MatchByType(type);
         Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
@@ -222,7 +222,7 @@ public final class AdviceWithTasks {
         return doBefore(route, matchBy, before, it);
     }
 
-    public static AdviceWithTask beforeByType(final RouteDefinition route, final Class type, final ProcessorDefinition before,
+    public static AdviceWithTask beforeByType(final RouteDefinition route, final Class<?> type, final ProcessorDefinition before,
                                               boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
         MatchBy matchBy = new MatchByType(type);
         Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);
@@ -272,7 +272,7 @@ public final class AdviceWithTasks {
         return doAfter(route, matchBy, after, it);
     }
 
-    public static AdviceWithTask afterByType(final RouteDefinition route, final Class type, final ProcessorDefinition after,
+    public static AdviceWithTask afterByType(final RouteDefinition route, final Class<?> type, final ProcessorDefinition after,
                                              boolean selectFirst, boolean selectLast, int selectFrom, int selectTo) {
         MatchBy matchBy = new MatchByType(type);
         Iterator<ProcessorDefinition> it = AdviceWithTasks.createMatchByIterator(route, matchBy, selectFirst, selectLast, selectFrom, selectTo);

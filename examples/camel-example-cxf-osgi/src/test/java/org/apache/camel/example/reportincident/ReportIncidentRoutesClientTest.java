@@ -32,11 +32,11 @@ public class ReportIncidentRoutesClientTest extends CamelSpringTestSupport {
 
     // should be the same address as we have in our route
     private static final String URL = "http://localhost:%s/cxf/camel-example-cxf-osgi/webservices/incident";
-    private static final int port = AvailablePortFinder.getNextAvailable(9100);
+    private static final int PORT = AvailablePortFinder.getNextAvailable(9100);
     
     @BeforeClass
     public static void setUpBeforeClass() {
-        System.setProperty("port", String.valueOf(port));
+        System.setProperty("port", String.valueOf(PORT));
     }
     
     @AfterClass
@@ -66,7 +66,7 @@ public class ReportIncidentRoutesClientTest extends CamelSpringTestSupport {
         input.setPhone("0045 2962 7576");
 
         // create the webservice client and send the request
-        ReportIncidentEndpoint client = createCXFClient(String.format(URL, port));
+        ReportIncidentEndpoint client = createCXFClient(String.format(URL, PORT));
         OutputReportIncident out = client.reportIncident(input);
 
         // assert we got a OK back

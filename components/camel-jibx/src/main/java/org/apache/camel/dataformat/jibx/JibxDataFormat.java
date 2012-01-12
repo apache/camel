@@ -28,12 +28,12 @@ import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IUnmarshallingContext;
 
 public class JibxDataFormat implements DataFormat {
-    private Class unmarshallClass;
+    private Class<?> unmarshallClass;
 
     public JibxDataFormat() {
     }
 
-    public JibxDataFormat(Class unmarshallClass) {
+    public JibxDataFormat(Class<?> unmarshallClass) {
         this.setUnmarshallClass(unmarshallClass);
     }
 
@@ -50,11 +50,11 @@ public class JibxDataFormat implements DataFormat {
         return unmarshallingContext.unmarshalDocument(stream, null);
     }
 
-    public Class getUnmarshallClass() {
+    public Class<?> getUnmarshallClass() {
         return unmarshallClass;
     }
 
-    public void setUnmarshallClass(Class unmarshallClass) {
+    public void setUnmarshallClass(Class<?> unmarshallClass) {
         this.unmarshallClass = unmarshallClass;
     }
 

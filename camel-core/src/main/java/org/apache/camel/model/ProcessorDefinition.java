@@ -473,7 +473,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         log.trace("Resolving property placeholders for: {}", definition);
 
         // find all getter/setter which we can use for property placeholders
-        Map<Object, Object> properties = new HashMap<Object, Object>();
+        Map<String, Object> properties = new HashMap<String, Object>();
         IntrospectionSupport.getProperties(definition, properties, null);
 
         ProcessorDefinition processorDefinition = null;
@@ -548,14 +548,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         log.trace("Resolving known fields for: {}", definition);
 
         // find all String getter/setter
-        Map<Object, Object> properties = new HashMap<Object, Object>();
+        Map<String, Object> properties = new HashMap<String, Object>();
         IntrospectionSupport.getProperties(definition, properties, null);
 
         if (!properties.isEmpty()) {
             log.trace("There are {} properties on: {}", properties.size(), definition);
 
             // lookup and resolve known constant fields for String based properties
-            for (Map.Entry entry : properties.entrySet()) {
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
                 // the name is always a String
                 String name = (String) entry.getKey();
                 Object value = entry.getValue();
@@ -2271,7 +2271,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param exceptionType  the exception to catch
      * @return the exception builder to configure
      */
-    public OnExceptionDefinition onException(Class exceptionType) {
+    public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
         addOutput(answer);
         return answer;
@@ -2284,7 +2284,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param exceptions list of exceptions to catch
      * @return the exception builder to configure
      */
-    public OnExceptionDefinition onException(Class... exceptions) {
+    public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
         OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
         addOutput(answer);
         return answer;

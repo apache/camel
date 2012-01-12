@@ -28,5 +28,5 @@ public interface Block {
      *
      * @param processorDefinition the processor definition
      */
-    void addOutput(ProcessorDefinition processorDefinition);
+    void addOutput(ProcessorDefinition<?> processorDefinition);
 }

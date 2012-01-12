@@ -96,10 +96,9 @@ public class LoadBalancerDefinition extends IdentifiedType implements LoadBalanc
     /**
      * Factory method to create the load balancer instance
      */
-    @SuppressWarnings("unchecked")
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         if (loadBalancerTypeName != null) {
-            Class type = routeContext.getCamelContext().getClassResolver().resolveClass(loadBalancerTypeName);
+            Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(loadBalancerTypeName);
             if (type == null) {
                 throw new IllegalArgumentException("Cannot find class: " + loadBalancerTypeName + " in the classpath");
             }

@@ -43,7 +43,7 @@ public final class BeanConverter {
                 return Void.TYPE;
             }
 
-            Class from = bi.getArgs()[0].getClass();
+            Class<?> from = bi.getArgs()[0].getClass();
             Object body = bi.getArgs()[0];
 
             // maybe from is already the type we want

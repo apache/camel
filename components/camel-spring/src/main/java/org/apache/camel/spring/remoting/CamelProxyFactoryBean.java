@@ -34,7 +34,7 @@ import org.springframework.remoting.support.UrlBasedRemoteAccessor;
 /**
  * A {@link FactoryBean} to create a Proxy to a a Camel Pojo Endpoint.
  */
-public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements FactoryBean, CamelContextAware, DisposableBean, ApplicationContextAware {
+public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements FactoryBean<Object>, CamelContextAware, DisposableBean, ApplicationContextAware {
     private String serviceRef;
     private CamelContext camelContext;
     private String camelContextId;
@@ -83,7 +83,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
         ServiceHelper.stopService(producer);
     }
 
-    public Class getServiceInterface() {
+    public Class<?> getServiceInterface() {
         return super.getServiceInterface();
     }
 
@@ -95,7 +95,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
         return serviceProxy;
     }
 
-    public Class getObjectType() {
+    public Class<?> getObjectType() {
         return getServiceInterface();
     }
 

@@ -54,7 +54,7 @@ public class PackageScanRouteBuilderFinder {
      */
     public void appendBuilders(List<RoutesBuilder> list) throws IllegalAccessException, InstantiationException {
         Set<Class<?>> classes = resolver.findImplementations(RoutesBuilder.class, packages);
-        for (Class aClass : classes) {
+        for (Class<?> aClass : classes) {
             LOG.trace("Found RouteBuilder class: {}", aClass);
 
             // certain beans should be ignored
@@ -94,7 +94,7 @@ public class PackageScanRouteBuilderFinder {
     /**
      * Returns <tt>true</tt>if the class is a public, non-abstract class
      */
-    protected boolean isValidClass(Class type) {
+    protected boolean isValidClass(Class<?> type) {
         // should skip non public classes
         if (!Modifier.isPublic(type.getModifiers())) {
             return false;
@@ -106,8 +106,7 @@ public class PackageScanRouteBuilderFinder {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
-    protected RoutesBuilder instantiateBuilder(Class type) throws IllegalAccessException, InstantiationException {
+    protected RoutesBuilder instantiateBuilder(Class<?> type) throws IllegalAccessException, InstantiationException {
         return (RoutesBuilder) camelContext.getInjector().newInstance(type);
     }
 }

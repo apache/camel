@@ -41,7 +41,7 @@ public enum ErrorHandlerType {
      *
      * @return the class which represents the selected type.
      */
-    public Class getTypeAsClass() {
+    public Class<?> getTypeAsClass() {
         switch (this) {
         case DefaultErrorHandler:
             return DefaultErrorHandlerBuilder.class;

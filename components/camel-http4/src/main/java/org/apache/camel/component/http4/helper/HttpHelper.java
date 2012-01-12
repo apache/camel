@@ -298,15 +298,15 @@ public final class HttpHelper {
      * @param key      the key
      * @param value    the value
      */
-    @SuppressWarnings("unchecked")
-    public static void appendHeader(Map headers, String key, Object value) {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static void appendHeader(Map<String, Object> headers, String key, Object value) {
         if (headers.containsKey(key)) {
             Object existing = headers.get(key);
-            List list;
+            List<Object> list;
             if (existing instanceof List) {
                 list = (List) existing;
             } else {
-                list = new ArrayList();
+                list = new ArrayList<Object>();
                 list.add(existing);
             }
             list.add(value);

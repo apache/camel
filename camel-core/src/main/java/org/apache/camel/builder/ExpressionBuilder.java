@@ -144,9 +144,8 @@ public final class ExpressionBuilder {
      */
     public static Expression headerExpression(final String headerName, final String name) {
         return new ExpressionAdapter() {
-            @SuppressWarnings("unchecked")
             public Object evaluate(Exchange exchange) {
-                Class type;
+                Class<?> type;
                 try {
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(name);
                 } catch (ClassNotFoundException e) {
@@ -714,9 +713,8 @@ public final class ExpressionBuilder {
      */
     public static Expression bodyExpression(final String name) {
         return new ExpressionAdapter() {
-            @SuppressWarnings("unchecked")
             public Object evaluate(Exchange exchange) {
-                Class type;
+                Class<?> type;
                 try {
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(name);
                 } catch (ClassNotFoundException e) {
@@ -738,9 +736,8 @@ public final class ExpressionBuilder {
      */
     public static Expression mandatoryBodyExpression(final String name) {
         return new ExpressionAdapter() {
-            @SuppressWarnings("unchecked")
             public Object evaluate(Exchange exchange) {
-                Class type;
+                Class<?> type;
                 try {
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(name);
                 } catch (ClassNotFoundException e) {
@@ -964,8 +961,7 @@ public final class ExpressionBuilder {
     /**
      * Returns an expression which converts the given expression to the given type
      */
-    @SuppressWarnings("unchecked")
-    public static Expression convertToExpression(final Expression expression, final Class type) {
+    public static Expression convertToExpression(final Expression expression, final Class<?> type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 if (type != null) {
@@ -1087,11 +1083,11 @@ public final class ExpressionBuilder {
      * <p/>
      * The expression is evaluted as a {@link List} object to allow sorting.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static Expression sortExpression(final Expression expression, final Comparator comparator) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                List list = expression.evaluate(exchange, List.class);
+                List<?> list = expression.evaluate(exchange, List.class);
                 Collections.sort(list, comparator);
                 return list;
             }

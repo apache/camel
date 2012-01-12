@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.mina2;
 
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
-import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

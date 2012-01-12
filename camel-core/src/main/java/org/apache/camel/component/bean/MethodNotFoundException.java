@@ -28,7 +28,6 @@ public class MethodNotFoundException extends CamelExchangeException {
 
     private final Object bean;
     private final String methodName;
-    @SuppressWarnings("rawtypes")
 
     public MethodNotFoundException(Exchange exchange, Object pojo, String methodName) {
         super("Method with name: " + methodName + " not found on bean: " + pojo + " of type: " + ObjectHelper.className(pojo), exchange);

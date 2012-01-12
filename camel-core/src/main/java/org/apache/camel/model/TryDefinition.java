@@ -33,7 +33,6 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
@@ -102,9 +101,9 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * @param exceptionType  the exception(s)
      * @return the try builder
      */
-    public TryDefinition doCatch(Class... exceptionType) {
+    public TryDefinition doCatch(Class<? extends Throwable>... exceptionType) {
         popBlock();
-        List<Class> list = CastUtils.cast(Arrays.asList(exceptionType));
+        List<Class<? extends Throwable>> list = Arrays.asList(exceptionType);
         CatchDefinition answer = new CatchDefinition(list);
         addOutput(answer);
         pushBlock(answer);

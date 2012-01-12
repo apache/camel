@@ -64,7 +64,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     // partial support
     private QName partNamespace;
     private String partClass;
-    private Class partialClass;
+    private Class<Object> partialClass;
 
     public JaxbDataFormat() {
     }
@@ -105,13 +105,12 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         }
     }
 
-    @SuppressWarnings("unchecked")
     void marshal(Exchange exchange, Object graph, OutputStream stream, Marshaller marshaller)
         throws XMLStreamException, JAXBException {
 
         Object e = graph;
         if (partialClass != null && getPartNamespace() != null) {
-            e = new JAXBElement(getPartNamespace(), partialClass, graph);
+            e = new JAXBElement<Object>(getPartNamespace(), partialClass, graph);
         }
 
         if (needFiltering(exchange)) {
@@ -128,7 +127,6 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         return filteringWriter;
     }
 
-    @SuppressWarnings("unchecked")
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
         try {
             // must create a new instance of unmarshaller as its not thread safe
@@ -262,7 +260,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             context = createContext();
         }
         if (partClass != null) {
-            partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClass);
+            partialClass = camelContext.getClassResolver().resolveMandatoryClass(partClass, Object.class);
         }
     }
 
