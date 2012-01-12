@@ -241,14 +241,7 @@ public abstract class CamelTestSupport extends TestSupport {
         return true;
     }
 
-    /**
-     * Lets post process this test instance to process any Camel annotations.
-     * Note that using Spring Test or Guice is a more powerful approach.
-     */
     protected void postProcessTest() throws Exception {
-        CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
-        processor.setCamelContext(context);
-        processor.postProcessBeforeInitialization(this, "this");
     }
 
     protected void stopCamelContext() throws Exception {

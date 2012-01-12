@@ -27,6 +27,7 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
+import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.CastUtils;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -62,6 +63,17 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         if (applicationContext != null) {
             applicationContext.destroy();
         }
+    }
+
+    /**
+     * Lets post process this test instance to process any Camel annotations.
+     * Note that using Spring Test or Guice is a more powerful approach.
+     */
+    @Override
+    protected void postProcessTest() throws Exception {
+        CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
+        processor.setCamelContext(context);
+        processor.postProcessBeforeInitialization(this, "this");
     }
 
     @SuppressWarnings("unchecked")

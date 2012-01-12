@@ -44,7 +44,7 @@
     <!-- for testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
+      <artifactId>camel-test-blueprint</artifactId>
       <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>

@@ -29,11 +29,12 @@
 
   <camelContext id="blueprintContext" trace="false" xmlns="http://camel.apache.org/schema/blueprint">
     <route id="timerToLog">
-      <from uri="timer:foo?period=5000"/>
+      <from uri="direct:start"/>
       <setBody>
           <method ref="helloBean" method="hello"/>
       </setBody>
       <log message="The message contains ${body}"/>
+      <to uri="mock:a" />
     </route>
   </camelContext>
 
