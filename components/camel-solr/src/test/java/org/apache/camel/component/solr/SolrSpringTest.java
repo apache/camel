@@ -38,6 +38,10 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration (locations = {"/SolrSpringTest-context.xml"})
 public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
 
+    static {
+        System.setProperty("SolrServer.Port", Integer.toString(SolrComponentTestSupport.PORT));
+    }
+
     private static JettySolrRunner solrRunner;
     private static CommonsHttpSolrServer solrServer;
 
@@ -92,10 +96,10 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
         System.setProperty("solr.directoryFactory", "solr.RAMDirectoryFactory");
 
         // Start a Solr instance.
-        solrRunner = new JettySolrRunner("/solr", 8899);
+        solrRunner = new JettySolrRunner("/solr", SolrComponentTestSupport.PORT);
         solrRunner.start();
 
-        solrServer = new CommonsHttpSolrServer("http://localhost:8899/solr");
+        solrServer = new CommonsHttpSolrServer("http://localhost:" + SolrComponentTestSupport.PORT + "/solr");
     }
 
     @AfterClass
