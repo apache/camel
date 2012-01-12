@@ -147,7 +147,7 @@
     <solr-version>3.5.0</solr-version>
     <spring-integration-version>2.0.5.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
-    <spring-version>3.0.6.RELEASE</spring-version>
+    <spring-version>3.0.7.RELEASE</spring-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.0.7.RELEASE</spring-security-version>
     <spring-ws-version>2.0.3.RELEASE</spring-ws-version>
