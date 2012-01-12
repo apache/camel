@@ -4,6 +4,8 @@
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+    <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route id="XMLRoute">
             <from uri="direct:xml-start" />
@@ -25,12 +27,12 @@
                         book.cat.collect{ it.text() } as String[]
                     </groovy>
                 </setHeader>
-                <to uri="solr://localhost:8899/solr"/>
+                <to uri="solr://localhost:{{SolrServer.Port}}/solr"/>
             </split>
             <setHeader headerName="SolrOperation">
                 <constant>COMMIT</constant>
             </setHeader>
-            <to uri="solr://localhost:8899/solr"/>
+            <to uri="solr://localhost:{{SolrServer.Port}}/solr"/>
         </route>
 
         <route id="PDFRoute">
@@ -41,11 +43,11 @@
             <setHeader headerName="SolrParam.literal.id">
                 <simple>${body.name}</simple>
             </setHeader>
-            <to uri="solr://localhost:8899/solr?requestHandler=/update/extract" />
+            <to uri="solr://localhost:{{SolrServer.Port}}/solr?requestHandler=/update/extract" />
             <setHeader headerName="SolrOperation">
                 <constant>COMMIT</constant>
             </setHeader>
-            <to uri="solr://localhost:8899/solr"/>
+            <to uri="solr://localhost:{{SolrServer.Port}}/solr"/>
         </route>
     </camelContext>
 

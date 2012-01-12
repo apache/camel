@@ -24,13 +24,20 @@ import org.apache.camel.Exchange;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrException;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class SolrUpdateTest extends SolrComponentTestSupport {
 
-    @EndpointInject(uri = "solr://localhost:8999/solr")
-    protected SolrEndpoint solrEndpoint;
+    private SolrEndpoint solrEndpoint;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        solrEndpoint = getMandatoryEndpoint(SOLR_ROUTE_URI, SolrEndpoint.class);
+    }
 
     @Test
     public void indexSingleDocumentOnlyWithId() throws Exception {
