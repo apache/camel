@@ -636,8 +636,10 @@
   </feature>
   <feature name='camel-spring-security' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-spring</feature>
+    <feature version='[3,4)'>spring-web</feature>
     <bundle dependency='true'>mvn:org.springframework.security/spring-security-core/${spring-security-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.security/spring-security-config/${spring-security-version}</bundle>
+    <bundle dependency='true'>mvn:org.springframework.security/spring-security-web/${spring-security-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-security/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-ws' version='${project.version}' resolver='(obr)' start-level='50'>
