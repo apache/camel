@@ -1368,10 +1368,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
 
         doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
-        firstStartDone = true;
+
+        // if the context was configured with auto startup = false, and we are already started,
+        // then we may need to start the routes on the 2nd start call
+        if (firstStartDone && !isAutoStartup() && isStarted()) {
+            // invoke this logic to warmup the routes and if possible also start the routes
+            doStartOrResumeRoutes(routeServices, true, true, false, true);
+        }
 
         // super will invoke doStart which will prepare internal services and start routes etc.
         try {
+            firstStartDone = true;
             super.start();
         } catch (VetoCamelContextStartException e) {
             if (e.isRethrowException()) {
@@ -1605,16 +1612,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // filter out already started routes
         Map<String, RouteService> filtered = new LinkedHashMap<String, RouteService>();
         for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
-            boolean startable;
+            boolean startable = false;
 
             Consumer consumer = entry.getValue().getRoutes().iterator().next().getConsumer();
             if (consumer instanceof SuspendableService) {
                 // consumer could be suspended, which is not reflected in the RouteService status
                 startable = ((SuspendableService) consumer).isSuspended();
-            } else if (consumer instanceof StatefulService) {
+            }
+
+            if (!startable && consumer instanceof StatefulService) {
                 // consumer could be stopped, which is not reflected in the RouteService status
                 startable = ((StatefulService) consumer).getStatus().isStartable();
-            } else {
+            } else if (!startable) {
                 // no consumer so use state from route service
                 startable = entry.getValue().getStatus().isStartable();
             }
