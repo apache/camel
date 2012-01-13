@@ -69,6 +69,7 @@ public class PropertiesComponent extends DefaultComponent {
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser();
     private String[] locations;
+    private boolean ignoreMissingLocation;
     private boolean cache = true;
     private String propertyPrefix;
     private String propertySuffix;
@@ -93,10 +94,15 @@ public class PropertiesComponent extends DefaultComponent {
 
         // override default locations
         String locations = getAndRemoveParameter(parameters, "locations", String.class);
+        Boolean ignoreMissingLocationLoc = getAndRemoveParameter(parameters, "ignoreMissingLocation", Boolean.class);
         if (locations != null) {
             LOG.trace("Overriding default locations with location: {}", locations);
             paths = locations.split(",");
         }
+        if (ignoreMissingLocationLoc != null) {
+            ignoreMissingLocation = ignoreMissingLocationLoc;
+        }
+
         String endpointUri = parseUri(remaining, paths);
         LOG.debug("Endpoint uri parsed as: {}", endpointUri);
         return getCamelContext().getEndpoint(endpointUri);
@@ -117,7 +123,7 @@ public class PropertiesComponent extends DefaultComponent {
             CacheKey key = new CacheKey(locations);
             prop = cache ? cacheMap.get(key) : null;
             if (prop == null) {
-                prop = propertiesResolver.resolveProperties(getCamelContext(), locations);
+                prop = propertiesResolver.resolveProperties(getCamelContext(), ignoreMissingLocation, locations);
                 if (cache) {
                     cacheMap.put(key, prop);
                 }
@@ -201,7 +207,15 @@ public class PropertiesComponent extends DefaultComponent {
     public void setFallbackToUnaugmentedProperty(boolean fallbackToUnaugmentedProperty) {
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
     }
-    
+
+    public boolean isIgnoreMissingLocation() {
+        return ignoreMissingLocation;
+    }
+
+    public void setIgnoreMissingLocation(boolean ignoreMissingLocation) {
+        this.ignoreMissingLocation = ignoreMissingLocation;
+    }
+
     public String getPrefixToken() {
         return prefixToken;
     }

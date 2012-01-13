@@ -38,21 +38,21 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultPropertiesResolver implements PropertiesResolver {
 
-    public Properties resolveProperties(CamelContext context, String... uri) throws Exception {
+    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
         Properties answer = new Properties();
 
         for (String path : uri) {
             if (path.startsWith("ref:")) {
-                Properties prop = loadPropertiesFromRegistry(context, path);
+                Properties prop = loadPropertiesFromRegistry(context, ignoreMissingLocation, path);
                 prop = prepareLoadedProperties(prop);
                 answer.putAll(prop);
             } else if (path.startsWith("file:")) {
-                Properties prop = loadPropertiesFromFilePath(context, path);
+                Properties prop = loadPropertiesFromFilePath(context, ignoreMissingLocation, path);
                 prop = prepareLoadedProperties(prop);
                 answer.putAll(prop);
             } else {
                 // default to classpath
-                Properties prop = loadPropertiesFromClasspath(context, path);
+                Properties prop = loadPropertiesFromClasspath(context, ignoreMissingLocation, path);
                 prop = prepareLoadedProperties(prop);
                 answer.putAll(prop);
             }
@@ -61,17 +61,21 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         return answer;
     }
 
-    protected Properties loadPropertiesFromFilePath(CamelContext context, String path) throws IOException {
-        Properties answer = null;
+    protected Properties loadPropertiesFromFilePath(CamelContext context, boolean ignoreMissingLocation, String path) throws IOException {
+        Properties answer = new Properties();
 
         if (path.startsWith("file:")) {
             path = ObjectHelper.after(path, "file:");
         }
 
-        InputStream is = new FileInputStream(path);
+        InputStream is = null;
         try {
-            answer = new Properties();
+            is = new FileInputStream(path);
             answer.load(is);
+        } catch (FileNotFoundException e) {
+            if (!ignoreMissingLocation) {
+                throw e;
+            }
         } finally {
             IOHelper.close(is);
         }
@@ -79,8 +83,8 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
         return answer;
     }
 
-    protected Properties loadPropertiesFromClasspath(CamelContext context, String path) throws IOException {
-        Properties answer = null;
+    protected Properties loadPropertiesFromClasspath(CamelContext context, boolean ignoreMissingLocation, String path) throws IOException {
+        Properties answer = new Properties();
 
         if (path.startsWith("classpath:")) {
             path = ObjectHelper.after(path, "classpath:");
@@ -88,28 +92,28 @@ public class DefaultPropertiesResolver implements PropertiesResolver {
 
         InputStream is = context.getClassResolver().loadResourceAsStream(path);
         if (is == null) {
-            throw new FileNotFoundException("Properties file " + path + " not found in classpath");
+            if (!ignoreMissingLocation) {
+                throw new FileNotFoundException("Properties file " + path + " not found in classpath");
+            }
+        } else {
+            try {
+                answer.load(is);
+            } finally {
+                IOHelper.close(is);
+            }
         }
-
-        try {
-            answer = new Properties();
-            answer.load(is);
-        } finally {
-            IOHelper.close(is);
-        }
-
         return answer;
     }
 
-    protected Properties loadPropertiesFromRegistry(CamelContext context, String path) throws IOException {
+    protected Properties loadPropertiesFromRegistry(CamelContext context, boolean ignoreMissingLocation, String path) throws IOException {
         if (path.startsWith("ref:")) {
             path = ObjectHelper.after(path, "ref:");
         }
         Properties answer = context.getRegistry().lookup(path, Properties.class);
-        if (answer == null) {
+        if (answer == null && (!ignoreMissingLocation)) {
             throw new FileNotFoundException("Properties " + path + " not found in registry");
         }
-        return answer;
+        return answer != null ? answer : new Properties();
     }
 
     /**

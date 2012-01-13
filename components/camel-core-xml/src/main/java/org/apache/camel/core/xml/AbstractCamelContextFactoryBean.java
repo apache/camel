@@ -395,6 +395,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             PropertiesComponent pc = new PropertiesComponent();
             pc.setLocation(def.getLocation());
 
+            if (def.isIgnoreMissingLocation() != null) {
+                pc.setIgnoreMissingLocation(def.isIgnoreMissingLocation());
+            }
+
             // if using a custom resolver
             if (ObjectHelper.isNotEmpty(def.getPropertiesResolverRef())) {
                 PropertiesResolver resolver = CamelContextHelper.mandatoryLookup(getContext(), def.getPropertiesResolverRef(),
