@@ -58,13 +58,13 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
     private BundleContext bundleContext;
 
-	@Override
+    @Override
     protected void setUp() throws Exception {
         System.setProperty("org.bundles.framework.storage", "target/bundles/" + System.currentTimeMillis());
         List<BundleDescriptor> bundles = new ClasspathScanner().scanForBundles("(Bundle-SymbolicName=*)");
         TinyBundle bundle = createTestBundle();
         bundles.add(getBundleDescriptor("target/test-bundle.jar", bundle));
-        Map config = new HashMap();
+        Map<String, List<BundleDescriptor>> config = new HashMap<String, List<BundleDescriptor>>();
         config.put(PojoServiceRegistryFactory.BUNDLE_DESCRIPTORS, bundles);
         PojoServiceRegistry reg = new PojoServiceRegistryFactoryImpl().newPojoServiceRegistry(config);
         bundleContext = reg.getBundleContext();
@@ -95,7 +95,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     protected void tearDown() throws Exception {
         super.tearDown();
         bundleContext.getBundle().stop();
-	}
+    }
 
     protected <T> T getOsgiService(Class<T> type, long timeout) {
         return getOsgiService(type, null, timeout);
@@ -129,7 +129,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             // This is buggy, as the service reference may change i think
             Object svc = type.cast(tracker.waitForService(timeout));
             if (svc == null) {
-                Dictionary dic = bundleContext.getBundle().getHeaders();
+                Dictionary<?, ?> dic = bundleContext.getBundle().getHeaders();
                 System.err.println("Test bundle headers: " + explode(dic));
 
                 for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, null))) {
@@ -153,8 +153,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     /*
      * Explode the dictionary into a ,-delimited list of key=value pairs
      */
-    private static String explode(Dictionary dictionary) {
-        Enumeration keys = dictionary.keys();
+    private static String explode(Dictionary<?, ?> dictionary) {
+        Enumeration<?> keys = dictionary.keys();
         StringBuffer result = new StringBuffer();
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
@@ -169,7 +169,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     /*
      * Provides an iterable collection of references, even if the original array is null
      */
-    private static final Collection<ServiceReference> asCollection(ServiceReference[] references) {
+    private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
         List<ServiceReference> result = new LinkedList<ServiceReference>();
         if (references != null) {
             for (ServiceReference reference : references) {
@@ -186,7 +186,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         fos.close();
         JarInputStream jis = new JarInputStream(new FileInputStream(file));
         Map<String, String> headers = new HashMap<String, String>();
-        for (Map.Entry entry : jis.getManifest().getMainAttributes().entrySet()) {
+        for (Map.Entry<Object, Object> entry : jis.getManifest().getMainAttributes().entrySet()) {
             headers.put(entry.getKey().toString(), entry.getValue().toString());
         }
         return new BundleDescriptor(
@@ -202,8 +202,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     public static long copy(final InputStream input, final OutputStream output, int buffersize) throws IOException {
         final byte[] buffer = new byte[buffersize];
         int n;
-        long count=0;
-        while (-1 != (n = input.read(buffer))) {
+        long count = 0;
+        while ((n = input.read(buffer)) != -1) {
             output.write(buffer, 0, n);
             count += n;
         }

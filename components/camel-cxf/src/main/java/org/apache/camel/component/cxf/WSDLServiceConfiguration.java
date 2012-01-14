@@ -61,7 +61,7 @@ public class WSDLServiceConfiguration extends AbstractServiceConfiguration {
             if (services.size() > 1) {
                 throw new IllegalArgumentException("service name must be specified, there is more than one service in the WSDL" + serviceFactoryBean.getWsdlURL());
             }
-            serviceQName = (QName)services.keySet().iterator().next();
+            serviceQName = services.keySet().iterator().next();
         } 
         return serviceQName;
     }
@@ -84,7 +84,7 @@ public class WSDLServiceConfiguration extends AbstractServiceConfiguration {
                                                    + serviceFactoryBean.getServiceQName()
                                                    + " of the WSDL" + serviceFactoryBean.getWsdlURL());
             }
-            endpointQName = new QName(service.getQName().getNamespaceURI(), (String)ports.keySet().iterator().next());
+            endpointQName = new QName(service.getQName().getNamespaceURI(), ports.keySet().iterator().next());
 
         }
         return endpointQName;

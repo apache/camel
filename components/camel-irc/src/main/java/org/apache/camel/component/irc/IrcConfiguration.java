@@ -475,7 +475,7 @@ public class IrcConfiguration implements Cloneable {
             Object value = pair.getValue();
             // the value may be a list since the same key has multiple values
             if (value instanceof List) {
-                List list = (List)value;
+                List<?> list = (List<?>)value;
                 for (Object s : list) {
                     addQueryParameter(result, pair.getKey(), s);
                 }

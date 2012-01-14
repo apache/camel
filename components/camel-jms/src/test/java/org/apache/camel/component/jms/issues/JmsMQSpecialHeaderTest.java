@@ -46,13 +46,12 @@ public class JmsMQSpecialHeaderTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testUsingSpecialIBMJMSHeaderAndStandardJMSHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello IBM");
         mock.message(0).header("JMS_IBM_Character_Set").isEqualTo("ISO8859_1");
         
-        Map headers = new HashMap();
+        Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("JMSPriority", 3);
         headers.put("JMS_IBM_Character_Set", "ISO8859_1");
 

@@ -908,7 +908,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (object instanceof Service) {
             startService((Service)object);
         } else if (object instanceof Collection<?>) {
-            startServices((Collection)object);
+            startServices((Collection<?>)object);
         }
     }
 
@@ -1700,7 +1700,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         service.start();
     }
     
-    private void startServices(Collection services) throws Exception {
+    private void startServices(Collection<?> services) throws Exception {
         for (Object element : services) {
             if (element instanceof Service) {
                 startService((Service)element);

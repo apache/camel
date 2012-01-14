@@ -55,13 +55,12 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
     public void testBrowsableOneFile() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "A", Exchange.FILE_NAME, "a.txt");
 
-        FtpEndpoint endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
+        FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl(), FtpEndpoint.class);
         assertNotNull(endpoint);
 
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
-        @SuppressWarnings("unchecked")
         List<Exchange> list = endpoint.getExchanges();
         assertNotNull(list);
         assertEquals(1, list.size());
@@ -81,13 +80,12 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl(), "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(getFtpUrl(), "B", Exchange.FILE_NAME, "b.txt");
 
-        FtpEndpoint endpoint = context.getEndpoint(getFtpUrl() + "&sortBy=file:name", FtpEndpoint.class);
+        FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl() + "&sortBy=file:name", FtpEndpoint.class);
         assertNotNull(endpoint);
 
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
-        @SuppressWarnings("unchecked")
         List<Exchange> list = endpoint.getExchanges();
         assertNotNull(list);
         assertEquals(2, list.size());
@@ -111,13 +109,12 @@ public class FtpBrowsableEndpointTest extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl(), "B", Exchange.FILE_NAME, "foo/b.txt");
         template.sendBodyAndHeader(getFtpUrl(), "C", Exchange.FILE_NAME, "bar/c.txt");
 
-        FtpEndpoint endpoint = context.getEndpoint(getFtpUrl() + "&recursive=true&sortBy=file:name", FtpEndpoint.class);
+        FtpEndpoint<?> endpoint = context.getEndpoint(getFtpUrl() + "&recursive=true&sortBy=file:name", FtpEndpoint.class);
         assertNotNull(endpoint);
 
         MemoryIdempotentRepository repo = (MemoryIdempotentRepository) endpoint.getInProgressRepository();
         assertEquals(0, repo.getCacheSize());
 
-        @SuppressWarnings("unchecked")
         List<Exchange> list = endpoint.getExchanges();
         assertNotNull(list);
         assertEquals(3, list.size());

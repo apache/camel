@@ -339,7 +339,7 @@ public class DotMojo extends AbstractMavenReport {
         if (runCamel) {
             getLog().info("Running Camel embedded to load jndi.properties file from the classpath");
 
-            List list = project.getTestClasspathElements();
+            List<?> list = project.getTestClasspathElements();
             getLog().debug("Using classpath: " + list);
 
             EmbeddedMojo mojo = new EmbeddedMojo();

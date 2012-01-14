@@ -32,7 +32,7 @@ public abstract class ScanTestSupport extends TestCase {
 
     protected void validateMatchingSetContains(Set<Class<?>> scannedClasses, Class<?>... matchingClasses) {
         HashSet<Class<?>> expectedSet = new HashSet<Class<?>>();
-        for (Class expected : matchingClasses) {
+        for (Class<?> expected : matchingClasses) {
             expectedSet.add(expected);
         }
         validateMatchingSetContains(scannedClasses, expectedSet);
@@ -62,7 +62,7 @@ public abstract class ScanTestSupport extends TestCase {
     public Set<Class<?>> getMatchingClasses(Set<Class<?>> scannedClasses, PatternBasedPackageScanFilter filter) {
         Set<Class<?>> matching = new HashSet<Class<?>>();
 
-        for (Class candidate : scannedClasses) {
+        for (Class<?> candidate : scannedClasses) {
             if (filter.matches(candidate)) {
                 matching.add(candidate);
             }

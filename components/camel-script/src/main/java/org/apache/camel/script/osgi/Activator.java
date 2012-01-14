@@ -117,7 +117,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     protected void registerScriptEngines(Bundle bundle, List<BundleScriptEngineResolver> resolvers) {
         URL configURL = null;
-        for (Enumeration e = bundle.findEntries(META_INF_SERVICES_DIR, SCRIPT_ENGINE_SERVICE_FILE, false); e != null && e.hasMoreElements();) {
+        for (Enumeration<?> e = bundle.findEntries(META_INF_SERVICES_DIR, SCRIPT_ENGINE_SERVICE_FILE, false); e != null && e.hasMoreElements();) {
             configURL = (URL) e.nextElement();
         }
         if (configURL != null) {

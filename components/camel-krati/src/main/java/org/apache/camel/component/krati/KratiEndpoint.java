@@ -45,8 +45,10 @@ public class KratiEndpoint extends DefaultEndpoint {
 
     protected int initialCapacity = 100;
     protected int segmentFileSize = 64;
-    protected Serializer keySerializer = new KratiDefaultSerializer();
-    protected Serializer valueSerializer = new KratiDefaultSerializer();
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected Serializer<Object> keySerializer = new KratiDefaultSerializer();
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected Serializer<Object> valueSerializer = new KratiDefaultSerializer();
     protected SegmentFactory segmentFactory = new ChannelSegmentFactory();
     protected HashFunction<byte[]> hashFunction = new FnvHashFunction();
 
@@ -55,11 +57,6 @@ public class KratiEndpoint extends DefaultEndpoint {
     public KratiEndpoint(String uri, KratiComponent component) throws URISyntaxException {
         super(uri, component);
         this.path = getPath(uri);
-    }
-
-    public KratiEndpoint(String endpointUri) throws URISyntaxException {
-        super(endpointUri);
-        this.path = getPath(endpointUri);
     }
 
     @Override
@@ -72,20 +69,20 @@ public class KratiEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        DataStore<byte[], byte[]> dataStore = null;
+        DataStore<Object, Object> dataStore = null;
         KratiDataStoreRegistration registration = dataStoreRegistry.get(path);
         if (registration != null) {
             dataStore = registration.getDataStore();
         }
         if (dataStore == null || !dataStore.isOpen()) {
-            dataStore = KratiHelper.createDataStore(path, initialCapacity, segmentFileSize, segmentFactory, hashFunction, keySerializer, valueSerializer);
+            dataStore = KratiHelper.<Object, Object>createDataStore(path, initialCapacity, segmentFileSize, segmentFactory, hashFunction, keySerializer, valueSerializer);
             dataStoreRegistry.put(path, new KratiDataStoreRegistration(dataStore));
         }
         return new KratiProducer(this, dataStore);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        DataStore<byte[], byte[]> dataStore = null;
+        DataStore<Object, Object> dataStore = null;
         KratiDataStoreRegistration registration = dataStoreRegistry.get(path);
         if (registration != null) {
             dataStore = registration.getDataStore();

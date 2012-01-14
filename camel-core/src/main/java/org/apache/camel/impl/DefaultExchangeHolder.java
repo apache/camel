@@ -210,13 +210,13 @@ public class DefaultExchangeHolder implements Serializable {
 
                 // if the converter is a map/collection we need to check its content as well
                 if (converted instanceof Collection) {
-                    Collection valueCol = (Collection) converted;
+                    Collection<?> valueCol = (Collection<?>) converted;
                     if (!collectionContainsAllSerializableObjects(valueCol, exchange)) {
                         logCannotSerializeObject(type, entry.getKey(), entry.getValue());
                         continue;
                     }
                 } else if (converted instanceof Map) {
-                    Map valueMap = (Map) converted;
+                    Map<?, ?> valueMap = (Map<?, ?>) converted;
                     if (!mapContainsAllSerializableObjects(valueMap, exchange)) {
                         logCannotSerializeObject(type, entry.getKey(), entry.getValue());
                         continue;
@@ -248,7 +248,7 @@ public class DefaultExchangeHolder implements Serializable {
         }
     }
 
-    private static boolean collectionContainsAllSerializableObjects(Collection col, Exchange exchange) {
+    private static boolean collectionContainsAllSerializableObjects(Collection<?> col, Exchange exchange) {
         for (Object value : col) {
             if (value != null) {
                 Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, value);
@@ -260,7 +260,7 @@ public class DefaultExchangeHolder implements Serializable {
         return true;
     }
 
-    private static boolean mapContainsAllSerializableObjects(Map map, Exchange exchange) {
+    private static boolean mapContainsAllSerializableObjects(Map<?, ?> map, Exchange exchange) {
         for (Object value : map.values()) {
             if (value != null) {
                 Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, value);

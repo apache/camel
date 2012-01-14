@@ -87,7 +87,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     private Map<String, String> namespacePrefixes = new HashMap<String, String>();
     private ResultFormat resultsFormat = ResultFormat.DOM;
     private Properties properties = new Properties();
-    private Class resultType;
+    private Class<?> resultType;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
     private boolean stripsAllWhiteSpace = true;
     private ModuleURIResolver moduleURIResolver;
@@ -285,7 +285,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return this;
     }
 
-    public XQueryBuilder resultType(Class resultType) {
+    public XQueryBuilder resultType(Class<?> resultType) {
         setResultType(resultType);
         return this;
     }
@@ -405,11 +405,11 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         this.resultsFormat = resultsFormat;
     }
 
-    public Class getResultType() {
+    public Class<?> getResultType() {
         return resultType;
     }
 
-    public void setResultType(Class resultType) {
+    public void setResultType(Class<?> resultType) {
         this.resultType = resultType;
     }
 

@@ -53,7 +53,7 @@ public class DynamicRouter extends RoutingSlip {
     private final class DynamicRoutingSlipIterator implements RoutingSlipIterator {
 
         private final Expression slip;
-        private Iterator current;
+        private Iterator<?> current;
 
         private DynamicRoutingSlipIterator(Expression slip) {
             this.slip = slip;

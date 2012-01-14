@@ -45,7 +45,6 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 
@@ -279,7 +278,6 @@ public abstract class CamelTestSupport extends TestSupport {
         return new JndiRegistry(createJndiContext());
     }
 
-    @SuppressWarnings("unchecked")
     protected Context createJndiContext() throws Exception {
         Properties properties = new Properties();
 
@@ -292,7 +290,7 @@ public abstract class CamelTestSupport extends TestSupport {
             // set the default initial factory
             properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
         }
-        return new InitialContext(new Hashtable(properties));
+        return new InitialContext(new Hashtable<Object, Object>(properties));
     }
 
     /**
@@ -497,7 +495,7 @@ public abstract class CamelTestSupport extends TestSupport {
      * @param id           the id of the definition
      * @param shortName    the short name of the definition
      */
-    protected void debugBefore(Exchange exchange, Processor processor, ProcessorDefinition definition,
+    protected void debugBefore(Exchange exchange, Processor processor, ProcessorDefinition<?> definition,
                                String id, String shortName) {
     }
 
@@ -511,7 +509,7 @@ public abstract class CamelTestSupport extends TestSupport {
      * @param shortName    the short name of the definition
      * @param timeTaken    time taken to process the processor in millis
      */
-    protected void debugAfter(Exchange exchange, Processor processor, ProcessorDefinition definition,
+    protected void debugAfter(Exchange exchange, Processor processor, ProcessorDefinition<?> definition,
                               String id, String shortName, long timeTaken) {
     }
 
@@ -521,12 +519,12 @@ public abstract class CamelTestSupport extends TestSupport {
     private class DebugBreakpoint extends BreakpointSupport {
 
         @Override
-        public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+        public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
             CamelTestSupport.this.debugBefore(exchange, processor, definition, definition.getId(), definition.getShortName());
         }
 
         @Override
-        public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
+        public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
             CamelTestSupport.this.debugAfter(exchange, processor, definition, definition.getId(), definition.getShortName(), timeTaken);
         }
     }

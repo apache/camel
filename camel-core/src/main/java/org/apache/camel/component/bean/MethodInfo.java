@@ -369,7 +369,7 @@ public class MethodInfo {
                 // the parameter values is between the parenthesis
                 String methodParameters = ObjectHelper.between(methodName, "(", ")");
                 // use an iterator to walk the parameter values
-                Iterator it = null;
+                Iterator<?> it = null;
                 if (methodParameters != null) {
                     it = ObjectHelper.createIterator(methodParameters);
                 }

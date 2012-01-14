@@ -159,7 +159,6 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         return doResolvePolicy(routeContext, getRef(), type);
     }
 
-    @SuppressWarnings("unchecked")
     protected static Policy doResolvePolicy(RouteContext routeContext, String ref, Class<? extends Policy> type) {
         // explicit ref given so lookup by it
         if (ObjectHelper.isNotEmpty(ref)) {
@@ -172,7 +171,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         Policy answer = null;
         if (type != null) {
             // try find by type, note that this method is not supported by all registry
-            Map types = routeContext.lookupByType(type);
+            Map<String, ?> types = routeContext.lookupByType(type);
             if (types.size() == 1) {
                 // only one policy defined so use it
                 Object found = types.values().iterator().next();
@@ -191,10 +190,10 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         // this logic only applies if we are a transacted policy
         // still no policy found then try lookup the platform transaction manager and use it as policy
         if (answer == null && type == TransactedPolicy.class) {
-            Class tmClazz = routeContext.getCamelContext().getClassResolver().resolveClass("org.springframework.transaction.PlatformTransactionManager");
+            Class<?> tmClazz = routeContext.getCamelContext().getClassResolver().resolveClass("org.springframework.transaction.PlatformTransactionManager");
             if (tmClazz != null) {
                 // see if we can find the platform transaction manager in the registry
-                Map<String, Object> maps = routeContext.lookupByType(tmClazz);
+                Map<String, ?> maps = routeContext.lookupByType(tmClazz);
                 if (maps.size() == 1) {
                     // only one platform manager then use it as default and create a transacted
                     // policy with it and default to required
@@ -205,7 +204,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
                     // use reflection as performance is no a concern during route building
                     Object transactionManager = maps.values().iterator().next();
                     LOG.debug("One instance of PlatformTransactionManager found in registry: {}", transactionManager);
-                    Class txClazz = routeContext.getCamelContext().getClassResolver().resolveClass("org.apache.camel.spring.spi.SpringTransactionPolicy");
+                    Class<?> txClazz = routeContext.getCamelContext().getClassResolver().resolveClass("org.apache.camel.spring.spi.SpringTransactionPolicy");
                     if (txClazz != null) {
                         LOG.debug("Creating a new temporary SpringTransactionPolicy using the PlatformTransactionManager: {}", transactionManager);
                         TransactedPolicy txPolicy = ObjectHelper.newInstance(txClazz, TransactedPolicy.class);

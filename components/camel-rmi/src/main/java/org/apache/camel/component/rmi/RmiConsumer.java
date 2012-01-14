@@ -48,7 +48,7 @@ public class RmiConsumer extends DefaultConsumer implements InvocationHandler {
 
     @Override
     protected void doStart() throws Exception {
-        Class[] interfaces = new Class[endpoint.getRemoteInterfaces().size()];
+        Class<?>[] interfaces = new Class[endpoint.getRemoteInterfaces().size()];
         endpoint.getRemoteInterfaces().toArray(interfaces);
         proxy = (Remote)Proxy.newProxyInstance(endpoint.getClassLoader(), interfaces, this);
         stub = UnicastRemoteObject.exportObject(proxy, endpoint.getPort());

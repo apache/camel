@@ -328,7 +328,6 @@ public final class HttpHelper {
      * @param value the parameter value
      * @return the extracted parameter value, see more details in javadoc.
      */
-    @SuppressWarnings("unchecked")
     public static Object extractHttpParameterValue(String value) {
         if (value == null || ObjectHelper.isEmpty(value)) {
             return value;
@@ -340,7 +339,7 @@ public final class HttpHelper {
         if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
             // remove the [ ] markers
             trimmed = trimmed.substring(1, trimmed.length() - 1);
-            List list = new ArrayList<String>();
+            List<String> list = new ArrayList<String>();
             String[] values = trimmed.split(",");
             for (String s : values) {
                 list.add(s.trim());

@@ -359,7 +359,7 @@ public class DotMojo extends AbstractMavenReport {
                 getLog().info("Running Camel embedded to load Spring XML files from default path: META-INF/spring/*.xml");
             }
 
-            List list = project.getTestClasspathElements();
+            List<?> list = project.getTestClasspathElements();
             getLog().debug("Using classpath: " + list);
 
             EmbeddedMojo mojo = new EmbeddedMojo();

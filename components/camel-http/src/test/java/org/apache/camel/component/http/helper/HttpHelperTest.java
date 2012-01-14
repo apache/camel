@@ -59,7 +59,7 @@ public class HttpHelperTest {
         assertEquals(2, headers.size());
         assertEquals("a", headers.get("foo"));
 
-        List list = (List) headers.get("bar");
+        List<?> list = (List<?>) headers.get("bar");
         assertNotNull(list);
         assertEquals(2, list.size());
         assertEquals("b", list.get(0));

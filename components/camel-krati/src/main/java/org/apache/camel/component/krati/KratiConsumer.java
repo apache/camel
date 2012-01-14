@@ -41,13 +41,13 @@ public class KratiConsumer extends ScheduledPollConsumer implements BatchConsume
     private static final transient Logger LOG = LoggerFactory.getLogger(KratiConsumer.class);
 
     protected final KratiEndpoint endpoint;
-    protected DataStore dataStore;
+    protected DataStore<Object, Object> dataStore;
     protected int maxMessagesPerPoll = 10;
 
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
 
-    public KratiConsumer(KratiEndpoint endpoint, Processor processor, DataStore dataStore) {
+    public KratiConsumer(KratiEndpoint endpoint, Processor processor, DataStore<Object, Object> dataStore) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.dataStore = dataStore;
@@ -60,7 +60,7 @@ public class KratiConsumer extends ScheduledPollConsumer implements BatchConsume
 
         Queue<Exchange> queue = new LinkedList<Exchange>();
 
-        Iterator keyIterator = dataStore.keyIterator();
+        Iterator<Object> keyIterator = dataStore.keyIterator();
         while (keyIterator.hasNext()) {
             Object key = keyIterator.next();
             Object value = dataStore.get(key);

@@ -39,7 +39,7 @@ public class FileSorterRefTest extends ContextTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("mySorter", new MyFileSorter());
+        jndi.bind("mySorter", new MyFileSorter<Object>());
         return jndi;
     }
 
@@ -73,8 +73,8 @@ public class FileSorterRefTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
-    public class MyFileSorter implements Comparator<GenericFile> {
-        public int compare(GenericFile o1, GenericFile o2) {
+    public class MyFileSorter<T> implements Comparator<GenericFile<T>> {
+        public int compare(GenericFile<T> o1, GenericFile<T> o2) {
             return o1.getFileName().compareToIgnoreCase(o2.getFileName());
         }
     }

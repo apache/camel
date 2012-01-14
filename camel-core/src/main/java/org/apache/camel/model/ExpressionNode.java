@@ -133,7 +133,7 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
         }
 
         if (exp instanceof ExpressionClause) {
-            ExpressionClause clause = (ExpressionClause) exp;
+            ExpressionClause<?> clause = (ExpressionClause<?>) exp;
             if (clause.getExpressionType() != null) {
                 // if using the Java DSL then the expression may have been set using the
                 // ExpressionClause which is a fancy builder to define expressions and predicates

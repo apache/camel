@@ -65,7 +65,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
+                IdempotentRepository<String> repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 from("direct:start")
                     .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
@@ -96,7 +96,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
+                IdempotentRepository<String> repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 // START SNIPPET: e1
                 from("direct:start")

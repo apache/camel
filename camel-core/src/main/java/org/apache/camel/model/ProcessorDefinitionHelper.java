@@ -43,6 +43,7 @@ public final class ProcessorDefinitionHelper {
      * @param type     the type to look for
      * @return         the found definitions, or <tt>null</tt> if not found
      */
+    @SuppressWarnings("rawtypes")
     public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition> outputs, Class<T> type) {
         List<T> found = new ArrayList<T>();
         doFindType(outputs, type, found);
@@ -57,6 +58,7 @@ public final class ProcessorDefinitionHelper {
      * @param type     the type to look for
      * @return         the first found type, or <tt>null</tt> if not found
      */
+    @SuppressWarnings("rawtypes")
     public static <T> T findFirstTypeInOutputs(List<ProcessorDefinition> outputs, Class<T> type) {
         List<T> found = new ArrayList<T>();
         doFindType(outputs, type, found);
@@ -123,7 +125,7 @@ public final class ProcessorDefinitionHelper {
             return null;
         }
 
-        ProcessorDefinition def = node;
+        ProcessorDefinition<?> def = node;
         // drill to the top
         while (def != null && def.getParent() != null) {
             def = def.getParent();
@@ -138,7 +140,7 @@ public final class ProcessorDefinitionHelper {
 
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static <T> void doFindType(List<ProcessorDefinition> outputs, Class<T> type, List<T> found) {
         if (outputs == null || outputs.isEmpty()) {
             return;
@@ -186,7 +188,7 @@ public final class ProcessorDefinitionHelper {
      * @param excludeAbstract   whether or not to exclude abstract outputs (e.g. skip onException etc.)
      * @return <tt>true</tt> if has outputs, otherwise <tt>false</tt> is returned
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static boolean hasOutputs(List<ProcessorDefinition> outputs, boolean excludeAbstract) {
         if (outputs == null || outputs.isEmpty()) {
             return false;
@@ -227,7 +229,7 @@ public final class ProcessorDefinitionHelper {
      * @throws NoSuchBeanException is thrown if lookup of executor service in {@link org.apache.camel.spi.Registry} was not found
      */
     public static ExecutorService getConfiguredExecutorService(RouteContext routeContext, String name,
-                                                               ExecutorServiceAwareDefinition definition) throws NoSuchBeanException {
+                                                               ExecutorServiceAwareDefinition<?> definition) throws NoSuchBeanException {
         ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
         ObjectHelper.notNull(manager, "ExecutorServiceManager", routeContext.getCamelContext());
 
@@ -272,7 +274,7 @@ public final class ProcessorDefinitionHelper {
      * @throws NoSuchBeanException is thrown if lookup of executor service in {@link org.apache.camel.spi.Registry} was not found
      */
     public static ScheduledExecutorService getConfiguredScheduledExecutorService(RouteContext routeContext, String name,
-                                                               ExecutorServiceAwareDefinition definition) throws IllegalArgumentException, NoSuchBeanException {
+                                                               ExecutorServiceAwareDefinition<?> definition) throws IllegalArgumentException, NoSuchBeanException {
         ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
         ObjectHelper.notNull(manager, "ExecutorServiceManager", routeContext.getCamelContext());
 

@@ -118,7 +118,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
         if (authMethodPriority != null) {
             List<String> authPrefs = new ArrayList<String>();
-            Iterator it = getCamelContext().getTypeConverter().convertTo(Iterator.class, authMethodPriority);
+            Iterator<?> it = getCamelContext().getTypeConverter().convertTo(Iterator.class, authMethodPriority);
             int i = 1;
             while (it.hasNext()) {
                 Object value = it.next();

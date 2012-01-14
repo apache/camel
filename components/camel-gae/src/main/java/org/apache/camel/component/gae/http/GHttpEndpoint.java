@@ -83,7 +83,6 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
      *            decoded query string. Replaces the query part of
      *            <code>uri</code> if not <code>null</code>.
      */
-    @SuppressWarnings("unchecked")
     static URL getEndpointUrl(String uri, String query) throws Exception {
         Map<String, Object> parameters = null;
         URI uriObj = new URI(uri);
@@ -97,7 +96,7 @@ public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSup
         } else { // ghttp or anything else
             uriObj = new URI(HTTP_SCHEME + ":" + uriObj.getRawSchemeSpecificPart());
         }
-        return URISupport.createRemainingURI(uriObj, (Map)parameters).toURL();
+        return URISupport.createRemainingURI(uriObj, parameters).toURL();
     }
     
     public URL getEndpointUrl() throws Exception {

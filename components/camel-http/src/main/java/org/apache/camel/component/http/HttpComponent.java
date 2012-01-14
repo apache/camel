@@ -25,7 +25,6 @@ import java.util.Set;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -219,7 +218,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // create the configurer to use for this endpoint (authMethods contains the used methods created by the configurer)
         final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
-        URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(httpClientParameters));
+        URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), httpClientParameters);
        
         // create the endpoint
         HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, clientParams, httpConnectionManager, configurer);
@@ -254,7 +253,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         setProperties(endpoint, parameters);
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
+        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), parameters);
         
         // validate http uri that end-user did not duplicate the http part that can be a common error
         String part = httpUri.getSchemeSpecificPart();

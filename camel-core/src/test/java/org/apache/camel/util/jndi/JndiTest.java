@@ -32,13 +32,12 @@ import org.apache.camel.TestSupport;
 public class JndiTest extends TestSupport {
     protected Context context;
 
-    @SuppressWarnings("unchecked")
     public static Context createInitialContext() throws Exception {
         InputStream in = JndiTest.class.getClassLoader().getResourceAsStream("jndi-example.properties");
         assertNotNull("Cannot find jndi-example.properties on the classpath!", in);
         Properties properties = new Properties();
         properties.load(in);
-        return new InitialContext(new Hashtable(properties));
+        return new InitialContext(new Hashtable<Object, Object>(properties));
 
     }
 

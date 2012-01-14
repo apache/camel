@@ -65,7 +65,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     public interface ExtendedUserInfo extends UserInfo, UIKeyboardInteractive {
     }
 
-    public void setEndpoint(GenericFileEndpoint endpoint) {
+    public void setEndpoint(GenericFileEndpoint<ChannelSftp.LsEntry> endpoint) {
         this.endpoint = (SftpEndpoint) endpoint;
     }
 

@@ -27,7 +27,6 @@ import com.ning.http.client.filter.ResponseFilter;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -90,7 +89,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         }
         
         // restructure uri to be based on the parameters left as we don't want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), CastUtils.cast(parameters));
+        URI httpUri = URISupport.createRemainingURI(new URI(addressUri), parameters);
         endpoint.setHttpUri(httpUri);
         
         return endpoint;

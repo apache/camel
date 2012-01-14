@@ -69,6 +69,7 @@ public class KratiDefaultSerializer<T extends Serializable> implements Serialize
      * @return an object constructed from the raw bytes.
      * @throws SerializationException if the object cannot be constructed from the raw bytes.
      */
+    @SuppressWarnings("unchecked")
     public T deserialize(byte[] binary) throws SerializationException {
         T result = null;
         ObjectInputStream ois = null;

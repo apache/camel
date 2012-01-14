@@ -67,11 +67,11 @@ public class JettyHttpProducerConcurrentTest extends BaseJettyTest {
         getMockEndpoint("mock:result").assertNoDuplicates(body());
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future> responses = new ConcurrentHashMap<Integer, Future>();
+        Map<Integer, Future<String>> responses = new ConcurrentHashMap<Integer, Future<String>>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future out = executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
+            Future<String> out = executor.submit(new Callable<String>() {
+                public String call() throws Exception {
                     return template.requestBody("jetty://http://localhost:{{port}}/echo", "" + index, String.class);
                 }
             });
@@ -84,7 +84,7 @@ public class JettyHttpProducerConcurrentTest extends BaseJettyTest {
 
         // get all responses
         Set<Object> unique = new HashSet<Object>();
-        for (Future future : responses.values()) {
+        for (Future<String> future : responses.values()) {
             unique.add(future.get());
         }
 

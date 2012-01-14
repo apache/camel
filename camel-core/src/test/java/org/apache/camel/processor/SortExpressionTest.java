@@ -34,7 +34,7 @@ public class SortExpressionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List list = mock.getExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getExchanges().get(0).getIn().getBody(List.class);
         assertEquals("Claus", list.get(0));
         assertEquals("Hadrian", list.get(1));
         assertEquals("William", list.get(2));
@@ -48,7 +48,7 @@ public class SortExpressionTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List list = mock.getExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getExchanges().get(0).getIn().getBody(List.class);
         assertEquals("William", list.get(0));
         assertEquals("Hadrian", list.get(1));
         assertEquals("Claus", list.get(2));
@@ -69,7 +69,7 @@ public class SortExpressionTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e3
-    public static class MyReverseComparator implements Comparator {
+    public static class MyReverseComparator implements Comparator<Object> {
 
         // must have default constructor when used by spring bean testing
         public MyReverseComparator() {

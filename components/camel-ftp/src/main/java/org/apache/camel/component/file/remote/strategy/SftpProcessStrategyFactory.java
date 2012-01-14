@@ -89,7 +89,7 @@ public final class SftpProcessStrategyFactory {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static <LsEntry> GenericFileExclusiveReadLockStrategy<LsEntry> getExclusiveReadLockStrategy(Map<String, Object> params) {
         GenericFileExclusiveReadLockStrategy<LsEntry> strategy = (GenericFileExclusiveReadLockStrategy<LsEntry>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {

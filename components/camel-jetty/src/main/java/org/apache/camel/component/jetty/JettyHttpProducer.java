@@ -154,7 +154,7 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
 
             if (headerValue != null) {
                 // use an iterator as there can be multiple values. (must not use a delimiter)
-                final Iterator it = ObjectHelper.createIterator(headerValue, null);
+                final Iterator<?> it = ObjectHelper.createIterator(headerValue, null);
 
                 // the values to add as a request header
                 final List<String> values = new ArrayList<String>();

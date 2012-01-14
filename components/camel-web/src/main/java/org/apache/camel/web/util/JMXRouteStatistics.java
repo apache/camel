@@ -38,7 +38,6 @@ public class JMXRouteStatistics implements RouteStatistics {
 
     private static final Logger LOG = LoggerFactory.getLogger(JMXRouteStatistics.class);
 
-    @SuppressWarnings("unchecked")
     public Object getRouteStatistic(CamelContext camelContext, String routeID, String attribute) {
         // only possible if JMX is enabled
         if (!(camelContext.getManagementStrategy() instanceof ManagedManagementStrategy)) {
@@ -50,7 +49,7 @@ public class JMXRouteStatistics implements RouteStatistics {
             String domain = camelContext.getManagementStrategy().getManagementAgent().getMBeanObjectDomainName();
 
             ObjectName objName = new ObjectName(domain + ":type=routes,*");
-            List<ObjectName> cacheList = new LinkedList(server.queryNames(objName, null));
+            List<ObjectName> cacheList = new LinkedList<ObjectName>(server.queryNames(objName, null));
             for (Iterator<ObjectName> iter = cacheList.iterator(); iter.hasNext();) {
                 objName = iter.next();
                 String keyProps = objName.getCanonicalKeyPropertyListString();

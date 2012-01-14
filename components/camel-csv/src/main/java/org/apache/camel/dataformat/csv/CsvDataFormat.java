@@ -64,14 +64,14 @@ public class CsvDataFormat implements DataFormat {
         csv.setWriter(out);
 
         try {
-            List list = ExchangeHelper.convertToType(exchange, List.class, object);
+            List<?> list = ExchangeHelper.convertToType(exchange, List.class, object);
             if (list != null) {
                 for (Object child : list) {
-                    Map row = ExchangeHelper.convertToMandatoryType(exchange, Map.class, child);
+                    Map<?, ?> row = ExchangeHelper.convertToMandatoryType(exchange, Map.class, child);
                     doMarshalRecord(exchange, row, out, csv);
                 }
             } else {
-                Map row = ExchangeHelper.convertToMandatoryType(exchange, Map.class, object);
+                Map<?, ?> row = ExchangeHelper.convertToMandatoryType(exchange, Map.class, object);
                 doMarshalRecord(exchange, row, out, csv);
             }
         } finally {
@@ -79,10 +79,10 @@ public class CsvDataFormat implements DataFormat {
         }
     }
 
-    private void doMarshalRecord(Exchange exchange, Map row, Writer out, CSVWriter csv) throws Exception {
+    private void doMarshalRecord(Exchange exchange, Map<?, ?> row, Writer out, CSVWriter csv) throws Exception {
         if (autogenColumns) {
             // no specific config has been set so lets add fields
-            Set set = row.keySet();
+            Set<?> set = row.keySet();
             updateFieldsInConfig(set, exchange);
         }
         csv.writeRecord(row);

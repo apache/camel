@@ -371,7 +371,7 @@ public class RouteBuilderTest extends TestSupport {
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             Pipeline line = assertIsInstanceOf(Pipeline.class, channel.getNextProcessor());
-            Iterator it = line.getProcessors().iterator();
+            Iterator<?> it = line.getProcessors().iterator();
 
             // EvaluateExpressionProcessor should be wrapped in error handler
             Object first = it.next();
@@ -486,7 +486,7 @@ public class RouteBuilderTest extends TestSupport {
             Channel channel = unwrapChannel(consumer.getProcessor());
 
             Pipeline line = assertIsInstanceOf(Pipeline.class, channel.getNextProcessor());
-            Iterator it = line.getProcessors().iterator();
+            Iterator<?> it = line.getProcessors().iterator();
 
             assertIsInstanceOf(ThreadsProcessor.class, it.next());
             // output should be wrapped in a pipeline

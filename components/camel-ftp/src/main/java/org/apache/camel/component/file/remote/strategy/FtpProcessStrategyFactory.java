@@ -28,6 +28,7 @@ import org.apache.camel.component.file.strategy.GenericFileNoOpProcessStrategy;
 import org.apache.camel.component.file.strategy.GenericFileRenameExclusiveReadLockStrategy;
 import org.apache.camel.component.file.strategy.GenericFileRenameProcessStrategy;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.net.ftp.FTPFile;
 
 public final class FtpProcessStrategyFactory {
 
@@ -90,7 +91,7 @@ public final class FtpProcessStrategyFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private static <FTPFile> GenericFileExclusiveReadLockStrategy<FTPFile> getExclusiveReadLockStrategy(Map<String, Object> params) {
+    private static GenericFileExclusiveReadLockStrategy<FTPFile> getExclusiveReadLockStrategy(Map<String, Object> params) {
         GenericFileExclusiveReadLockStrategy<FTPFile> strategy = (GenericFileExclusiveReadLockStrategy<FTPFile>) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
@@ -109,7 +110,7 @@ public final class FtpProcessStrategyFactory {
                 }
                 return readLockStrategy;
             } else if ("changed".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy readLockStrategy = new FtpChangedExclusiveReadLockStrategy();
+                GenericFileExclusiveReadLockStrategy<FTPFile> readLockStrategy = new FtpChangedExclusiveReadLockStrategy();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);

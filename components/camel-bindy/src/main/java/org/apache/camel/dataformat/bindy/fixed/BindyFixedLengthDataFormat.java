@@ -67,7 +67,7 @@ public class BindyFixedLengthDataFormat implements DataFormat {
         // the body is not a prepared list so help a bit here and create one for us
         if (exchange.getContext().getTypeConverter().convertTo(List.class, body) == null) {
             models = new ArrayList<Map<String, Object>>();
-            Iterator it = ObjectHelper.createIterator(body);
+            Iterator<?> it = ObjectHelper.createIterator(body);
             while (it.hasNext()) {
                 Object model = it.next();
                 String name = model.getClass().getName();

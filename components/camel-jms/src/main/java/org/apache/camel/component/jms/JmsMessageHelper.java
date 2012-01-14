@@ -64,7 +64,7 @@ public final class JmsMessageHelper {
         // clear a single property, but must clear them all and redo
         // the properties
         Map<String, Object> map = new LinkedHashMap<String, Object>();
-        Enumeration en = jmsMessage.getPropertyNames();
+        Enumeration<?> en = jmsMessage.getPropertyNames();
         while (en.hasMoreElements()) {
             String key = (String) en.nextElement();
             if (name.equals(key)) {
@@ -92,7 +92,7 @@ public final class JmsMessageHelper {
      * @throws JMSException can be thrown
      */
     public static boolean hasProperty(Message jmsMessage, String name) throws JMSException {
-        Enumeration en = jmsMessage.getPropertyNames();
+        Enumeration<?> en = jmsMessage.getPropertyNames();
         while (en.hasMoreElements()) {
             String key = (String) en.nextElement();
             if (name.equals(key)) {

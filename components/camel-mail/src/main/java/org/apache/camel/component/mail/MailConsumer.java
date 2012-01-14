@@ -374,7 +374,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         // to be unique
         StringBuilder buffer = new StringBuilder();
         try {
-            Enumeration it = message.getAllHeaders();
+            Enumeration<?> it = message.getAllHeaders();
             while (it.hasMoreElements()) {
                 Header header = (Header)it.nextElement();
                 buffer.append(header.getName()).append("=").append(header.getValue()).append("\n");

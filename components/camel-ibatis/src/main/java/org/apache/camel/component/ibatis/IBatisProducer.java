@@ -97,7 +97,7 @@ public class IBatisProducer extends DefaultProducer {
         Object in = exchange.getIn().getBody();
         if (in != null) {
             // lets handle arrays or collections of objects
-            Iterator iter = ObjectHelper.createIterator(in);
+            Iterator<?> iter = ObjectHelper.createIterator(in);
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Inserting: {} using statement: {}", value, statement);
@@ -118,7 +118,7 @@ public class IBatisProducer extends DefaultProducer {
         Object in = exchange.getIn().getBody();
         if (in != null) {
             // lets handle arrays or collections of objects
-            Iterator iter = ObjectHelper.createIterator(in);
+            Iterator<?> iter = ObjectHelper.createIterator(in);
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Updating: {} using statement: {}", value, statement);
@@ -139,7 +139,7 @@ public class IBatisProducer extends DefaultProducer {
         Object in = exchange.getIn().getBody();
         if (in != null) {
             // lets handle arrays or collections of objects
-            Iterator iter = ObjectHelper.createIterator(in);
+            Iterator<?> iter = ObjectHelper.createIterator(in);
             while (iter.hasNext()) {
                 Object value = iter.next();
                 LOG.trace("Deleting: {} using statement: {}", value, statement);

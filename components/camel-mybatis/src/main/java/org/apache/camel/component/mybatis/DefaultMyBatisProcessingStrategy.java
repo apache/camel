@@ -40,7 +40,7 @@ public class DefaultMyBatisProcessingStrategy implements MyBatisProcessingStrate
         }
     }
 
-    public List poll(MyBatisConsumer consumer, MyBatisEndpoint endpoint) throws Exception {
+    public List<?> poll(MyBatisConsumer consumer, MyBatisEndpoint endpoint) throws Exception {
         SqlSession session = endpoint.getSqlSessionFactory().openSession();
         try {
             return session.selectList(endpoint.getStatement(), null);

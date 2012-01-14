@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLEventReader;
@@ -157,7 +156,6 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
             throw new UnsupportedOperationException();
         }
 
-        @SuppressWarnings("unchecked")
         T getNextElement() {
             XMLEvent xmlEvent;
             boolean found = false;
@@ -178,18 +176,11 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
                 return null;
             }
 
-            Object answer;
             try {
-                answer = unmarshaller.unmarshal(reader, clazz);
-                if (answer != null && answer.getClass() == JAXBElement.class) {
-                    JAXBElement jbe = (JAXBElement) answer;
-                    answer = jbe.getValue();
-                }
+                return unmarshaller.unmarshal(reader, clazz).getValue();
             } catch (JAXBException e) {
                 throw new RuntimeCamelException(e);
             }
-
-            return (T) answer;
         }
 
         @Override

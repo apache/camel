@@ -2419,7 +2419,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type bean(Class beanType) {
+    public Type bean(Class<?> beanType) {
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType.getName());
         addOutput(answer);
@@ -2435,7 +2435,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type bean(Class beanType, String method) {
+    public Type bean(Class<?> beanType, String method) {
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType.getName());
         answer.setMethod(method);
@@ -2707,7 +2707,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type convertBodyTo(Class type) {
+    public Type convertBodyTo(Class<?> type) {
         addOutput(new ConvertBodyDefinition(type));
         return (Type) this;
     }
@@ -2720,7 +2720,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type convertBodyTo(Class type, String charset) {
+    public Type convertBodyTo(Class<?> type, String charset) {
         addOutput(new ConvertBodyDefinition(type, charset));
         return (Type) this;
     }
@@ -2743,8 +2743,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type sort(Expression expression, Comparator comparator) {
-        addOutput(new SortDefinition(expression, comparator));
+    public <T> Type sort(Expression expression, Comparator<T> comparator) {
+        addOutput(new SortDefinition<T>(expression, comparator));
         return (Type) this;
     }
 
@@ -2753,8 +2753,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    public ExpressionClause<SortDefinition> sort() {
-        SortDefinition answer = new SortDefinition();
+    public <T> ExpressionClause<SortDefinition<T>> sort() {
+        SortDefinition<T> answer = new SortDefinition<T>();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
     }

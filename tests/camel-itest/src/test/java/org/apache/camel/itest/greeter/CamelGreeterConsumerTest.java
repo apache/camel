@@ -59,7 +59,7 @@ public class CamelGreeterConsumerTest extends AbstractJUnit4SpringContextTests {
         Object result = template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut , 
                                                    params, CxfConstants.OPERATION_NAME, "greetMe");
         assertTrue("Result is a list instance ", result instanceof List);
-        assertEquals("Get the wrong response", ((List)result).get(0), "HelloWillem");
+        assertEquals("Get the wrong response", ((List<?>)result).get(0), "HelloWillem");
         try {
             template.sendBodyAndHeader("cxf://bean:serviceEndpoint", ExchangePattern.InOut , 
                                             params, CxfConstants.OPERATION_NAME, "pingMe");

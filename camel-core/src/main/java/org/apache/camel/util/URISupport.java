@@ -167,7 +167,7 @@ public final class URISupport {
     }
 
     @SuppressWarnings("unchecked")
-    public static String createQueryString(Map<Object, Object> options) throws URISyntaxException {
+    public static String createQueryString(Map<String, Object> options) throws URISyntaxException {
         try {
             if (options.size() > 0) {
                 StringBuilder rc = new StringBuilder();
@@ -225,7 +225,7 @@ public final class URISupport {
      * <p/>
      * Used by various Camel components
      */
-    public static URI createRemainingURI(URI originalURI, Map<Object, Object> params) throws URISyntaxException {
+    public static URI createRemainingURI(URI originalURI, Map<String, Object> params) throws URISyntaxException {
         String s = createQueryString(params);
         if (s.length() == 0) {
             s = null;
@@ -242,7 +242,6 @@ public final class URISupport {
      * @throws URISyntaxException in thrown if the uri syntax is invalid
      * @throws UnsupportedEncodingException 
      */
-    @SuppressWarnings("unchecked")
     public static String normalizeUri(String uri) throws URISyntaxException, UnsupportedEncodingException {
 
         URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
@@ -267,7 +266,7 @@ public final class URISupport {
         path = UnsafeUriCharactersEncoder.encode(path);
 
         // in case there are parameters we should reorder them
-        Map parameters = URISupport.parseParameters(u);
+        Map<String, Object> parameters = URISupport.parseParameters(u);
         if (parameters.isEmpty()) {
             // no parameters then just return
             return buildUri(scheme, path, null);
@@ -276,7 +275,7 @@ public final class URISupport {
             List<String> keys = new ArrayList<String>(parameters.keySet());
             Collections.sort(keys);
 
-            Map<Object, Object> sorted = new LinkedHashMap<Object, Object>(parameters.size());
+            Map<String, Object> sorted = new LinkedHashMap<String, Object>(parameters.size());
             for (String key : keys) {
                 sorted.put(key, parameters.get(key));
             }

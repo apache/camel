@@ -29,9 +29,9 @@ public class KratiProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(KratiProducer.class);
 
     protected KratiEndpoint endpoint;
-    protected DataStore dataStore;
+    protected DataStore<Object, Object> dataStore;
 
-    public KratiProducer(KratiEndpoint endpoint, DataStore dataStore) {
+    public KratiProducer(KratiEndpoint endpoint, DataStore<Object, Object> dataStore) {
         super(endpoint);
         this.endpoint = endpoint;
         this.dataStore = dataStore;

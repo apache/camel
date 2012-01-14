@@ -84,11 +84,13 @@ public class WrappedJMSCacheLoader implements CacheLoaderWrapper {
         return jmsCacheLoader.load(arg0, arg1);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public Map loadAll(Collection arg0) {
         return jmsCacheLoader.loadAll(arg0);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public Map loadAll(Collection arg0, Object arg1) {
         return jmsCacheLoader.loadAll(arg0, arg1);

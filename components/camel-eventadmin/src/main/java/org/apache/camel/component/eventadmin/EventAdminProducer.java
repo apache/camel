@@ -89,19 +89,18 @@ public class EventAdminProducer extends DefaultProducer {
         Event event = context.getTypeConverter().convertTo(Event.class, exchange, in.getBody());
         if (event == null) {
             String topic = getTopic(exchange);
-            Dictionary props = getProperties(exchange);
+            Dictionary<?, ?> props = getProperties(exchange);
             event = new Event(topic, props);
         }
         return event;
     }
 
-    protected Dictionary getProperties(Exchange exchange) {
+    protected Dictionary<?, ?> getProperties(Exchange exchange) {
         Message in = exchange.getIn();
         CamelContext context = endpoint.getCamelContext();
-        Map map = context.getTypeConverter().convertTo(Map.class, exchange, in.getBody());
+        Map<?, ?> map = context.getTypeConverter().convertTo(Map.class, exchange, in.getBody());
         Dictionary<String, Object> dict = new Hashtable<String, Object>();
-        for (Object object : map.entrySet()) {
-            Entry entry = (Entry) object;
+        for (Entry<?, ?> entry : map.entrySet()) {
             String keyString = CamelContextHelper.convertTo(context, String.class, entry.getKey());
             if (keyString != null) {
                 Object val = entry.getValue();

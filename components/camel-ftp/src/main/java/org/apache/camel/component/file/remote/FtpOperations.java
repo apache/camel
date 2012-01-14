@@ -137,7 +137,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
         // must set soTimeout after connect
         if (endpoint instanceof FtpEndpoint) {
-            FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
+            FtpEndpoint<?> ftpEndpoint = (FtpEndpoint<?>) endpoint;
             if (ftpEndpoint.getSoTimeout() > 0) {
                 log.trace("Using SoTimeout=" + ftpEndpoint.getSoTimeout());
                 try {
@@ -169,7 +169,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         // site commands
         if (endpoint.getConfiguration().getSiteCommand() != null) {
             // commands can be separated using new line
-            Iterator it = ObjectHelper.createIterator(endpoint.getConfiguration().getSiteCommand(), "\n");
+            Iterator<?> it = ObjectHelper.createIterator(endpoint.getConfiguration().getSiteCommand(), "\n");
             while (it.hasNext()) {
                 Object next = it.next();
                 String command = endpoint.getCamelContext().getTypeConverter().convertTo(String.class, next);

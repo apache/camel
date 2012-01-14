@@ -120,17 +120,16 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         return answer;
     }
 
-    @SuppressWarnings("unchecked")
     private Iterable<ProcessorExchangePair> createProcessorExchangePairsIterable(final Exchange exchange, final Object value) {
-        final Iterator iterator = ObjectHelper.createIterator(value);
-        return new Iterable() {
+        final Iterator<?> iterator = ObjectHelper.createIterator(value);
+        return new Iterable<ProcessorExchangePair>() {
             // create a copy which we use as master to copy during splitting
             // this avoids any side effect reflected upon the incoming exchange
             private final Exchange copy = ExchangeHelper.createCopy(exchange, true);
             private final RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
 
-            public Iterator iterator() {
-                return new Iterator() {
+            public Iterator<ProcessorExchangePair> iterator() {
+                return new Iterator<ProcessorExchangePair>() {
                     private int index;
                     private boolean closed;
 
@@ -154,7 +153,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
                         return answer;
                     }
 
-                    public Object next() {
+                    public ProcessorExchangePair next() {
                         Object part = iterator.next();
                         // create a correlated copy as the new exchange to be routed in the splitter from the copy
                         // and do not share the unit of work

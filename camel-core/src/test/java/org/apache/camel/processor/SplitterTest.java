@@ -221,8 +221,8 @@ public class SplitterTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(4);
         resultEndpoint.expectedBodiesReceived("A", "B", "C", "D");
         final List<String> data = Arrays.asList("A", "B", "C", "D");
-        Iterable itb = new Iterable() {
-            public Iterator iterator() {
+        Iterable<String> itb = new Iterable<String>() {
+            public Iterator<String> iterator() {
                 return data.iterator();
             }
         };

@@ -345,7 +345,7 @@ public class MailBinding {
 
                     // Mail messages can repeat the same header...
                     if (ObjectConverter.isCollection(headerValue)) {
-                        Iterator iter = ObjectHelper.createIterator(headerValue);
+                        Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                         while (iter.hasNext()) {
                             Object value = iter.next();
                             mimeMessage.addHeader(headerName, asString(exchange, value));
@@ -365,7 +365,7 @@ public class MailBinding {
             if (headerValue != null && isRecipientHeader(headerName)) {
                 // special handling of recipients
                 if (ObjectConverter.isCollection(headerValue)) {
-                    Iterator iter = ObjectHelper.createIterator(headerValue);
+                    Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                     while (iter.hasNext()) {
                         Object recipient = iter.next();
                         appendRecipientToMimeMessage(mimeMessage, headerName, asString(exchange, recipient));

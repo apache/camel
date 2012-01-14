@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import java.util.concurrent.ExecutorService;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,7 +37,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 @XmlRootElement(name = "threadPool")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelThreadPoolFactoryBean extends AbstractCamelThreadPoolFactoryBean implements FactoryBean, ApplicationContextAware {
+public class CamelThreadPoolFactoryBean extends AbstractCamelThreadPoolFactoryBean implements FactoryBean<ExecutorService>, ApplicationContextAware {
 
     @XmlTransient
     private ApplicationContext applicationContext;

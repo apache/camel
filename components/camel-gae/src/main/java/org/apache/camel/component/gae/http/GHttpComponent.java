@@ -19,6 +19,12 @@ package org.apache.camel.component.gae.http;
 import java.net.URI;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.appengine.api.urlfetch.HTTPRequest;
+import com.google.appengine.api.urlfetch.HTTPResponse;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.InboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBinding;
@@ -43,9 +49,9 @@ public class GHttpComponent extends ServletComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         boolean throwException = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class, true); 
         boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class, true); 
-        OutboundBinding outboundBinding = resolveAndRemoveReferenceParameter(
+        OutboundBinding<GHttpEndpoint, HTTPRequest, HTTPResponse> outboundBinding = resolveAndRemoveReferenceParameter(
                 parameters, "outboundBindingRef", OutboundBinding.class, new GHttpBinding());
-        InboundBinding inboundBinding = resolveAndRemoveReferenceParameter(
+        InboundBinding<GHttpEndpoint, HttpServletRequest, HttpServletResponse> inboundBinding = resolveAndRemoveReferenceParameter(
                 parameters, "inboundBindingRef", InboundBinding.class, new GHttpBinding());
         GHttpEndpoint endpoint = (GHttpEndpoint)super.createEndpoint(uri, remaining, parameters);
         endpoint.setThrowExceptionOnFailure(throwException);

@@ -28,7 +28,7 @@ public class UriConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testFtpConfigurationDefaults() {
-        FtpEndpoint endpoint = context.getEndpoint("ftp://hostname", FtpEndpoint.class);
+        FtpEndpoint<?> endpoint = context.getEndpoint("ftp://hostname", FtpEndpoint.class);
         RemoteFileConfiguration config = endpoint.getConfiguration();
 
         assertEquals("ftp", config.getProtocol());
@@ -87,7 +87,7 @@ public class UriConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testFtpExplicitConfiguration() {
-        FtpEndpoint endpoint = context.getEndpoint("ftp://user@hostname:1021/some/file?password=secret&binary=true", FtpEndpoint.class);
+        FtpEndpoint<?> endpoint = context.getEndpoint("ftp://user@hostname:1021/some/file?password=secret&binary=true", FtpEndpoint.class);
         RemoteFileConfiguration config = endpoint.getConfiguration();
 
         assertEquals("ftp", config.getProtocol());
@@ -162,7 +162,7 @@ public class UriConfigurationTest extends CamelTestSupport {
     }
 
     private void assertRemoteFileEndpointFile(String endpointUri, String expectedFile) {
-        RemoteFileEndpoint endpoint = resolveMandatoryEndpoint(context, endpointUri, RemoteFileEndpoint.class);
+        RemoteFileEndpoint<?> endpoint = resolveMandatoryEndpoint(context, endpointUri, RemoteFileEndpoint.class);
         assertNotNull("Could not find endpoint: " + endpointUri, endpoint);
 
         String file = endpoint.getConfiguration().getDirectory();
@@ -185,7 +185,7 @@ public class UriConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testPasswordInContextPathConfiguration() {
-        FtpEndpoint endpoint = context.getEndpoint("ftp://user:secret@hostname:1021/some/file", FtpEndpoint.class);
+        FtpEndpoint<?> endpoint = context.getEndpoint("ftp://user:secret@hostname:1021/some/file", FtpEndpoint.class);
         RemoteFileConfiguration config = endpoint.getConfiguration();
         
         assertEquals("ftp", config.getProtocol());
@@ -197,7 +197,7 @@ public class UriConfigurationTest extends CamelTestSupport {
     
     @Test
     public void testStartingDirectoryWithDot() throws Exception {
-        FtpEndpoint endpoint = context.getEndpoint("ftp://user@hostname?password=secret", FtpEndpoint.class);
+        FtpEndpoint<?> endpoint = context.getEndpoint("ftp://user@hostname?password=secret", FtpEndpoint.class);
         FtpConfiguration config = endpoint.getConfiguration();
         config.setHost("somewhere");
         config.setDirectory("temp.dir");
@@ -210,7 +210,7 @@ public class UriConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testPathSeparatorAuto() {
-        FtpEndpoint endpoint = context.getEndpoint("ftp://hostname/foo/bar?separator=Auto", FtpEndpoint.class);
+        FtpEndpoint<?> endpoint = context.getEndpoint("ftp://hostname/foo/bar?separator=Auto", FtpEndpoint.class);
         RemoteFileConfiguration config = endpoint.getConfiguration();
 
         assertEquals("ftp", config.getProtocol());
@@ -224,7 +224,7 @@ public class UriConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testPathSeparatorUnix() {
-        FtpEndpoint endpoint = context.getEndpoint("ftp://hostname/foo/bar?separator=UNIX", FtpEndpoint.class);
+        FtpEndpoint<?> endpoint = context.getEndpoint("ftp://hostname/foo/bar?separator=UNIX", FtpEndpoint.class);
         RemoteFileConfiguration config = endpoint.getConfiguration();
 
         assertEquals("ftp", config.getProtocol());
@@ -238,7 +238,7 @@ public class UriConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testPathSeparatorWindows() {
-        FtpEndpoint endpoint = context.getEndpoint("ftp://hostname/foo/bar?separator=Windows", FtpEndpoint.class);
+        FtpEndpoint<?> endpoint = context.getEndpoint("ftp://hostname/foo/bar?separator=Windows", FtpEndpoint.class);
         RemoteFileConfiguration config = endpoint.getConfiguration();
 
         assertEquals("ftp", config.getProtocol());

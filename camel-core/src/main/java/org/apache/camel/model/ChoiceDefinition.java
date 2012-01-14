@@ -235,7 +235,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
         }
         for (WhenDefinition when : whenClauses) {
             if (when.getExpression() instanceof ExpressionClause) {
-                ExpressionClause clause = (ExpressionClause) when.getExpression();
+                ExpressionClause<?> clause = (ExpressionClause<?>) when.getExpression();
                 if (clause.getExpressionType() != null) {
                     // if using the Java DSL then the expression may have been set using the
                     // ExpressionClause which is a fancy builder to define expressions and predicates

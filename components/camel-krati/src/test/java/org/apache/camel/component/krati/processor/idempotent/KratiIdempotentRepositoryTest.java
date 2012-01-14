@@ -30,8 +30,8 @@ import org.junit.Test;
 public class KratiIdempotentRepositoryTest extends CamelTestSupport {
 
     private String path = "target/test/idempotent";
-    private DataSet dataSet = KratiHelper.createDataSet(path, 2, new ChannelSegmentFactory());
-    private Serializer serializer = new KratiDefaultSerializer();
+    private DataSet<byte[]> dataSet = KratiHelper.createDataSet(path, 2, new ChannelSegmentFactory());
+    private Serializer<String> serializer = new KratiDefaultSerializer<String>();
     private KratiIdempotentRepository repository;
 
     private String key01 = "123";

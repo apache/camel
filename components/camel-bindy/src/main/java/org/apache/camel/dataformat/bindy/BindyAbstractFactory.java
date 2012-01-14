@@ -197,7 +197,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     /**
      * Format the object into a string according to the format rue defined
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public String formatString(Format format, Object value) throws Exception {
         String strValue = "";
 
