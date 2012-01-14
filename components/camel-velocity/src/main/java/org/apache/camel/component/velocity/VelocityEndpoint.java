@@ -69,25 +69,26 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
     private synchronized VelocityEngine getVelocityEngine() throws Exception {
         if (velocityEngine == null) {
             velocityEngine = new VelocityEngine();
-            Properties properties = new Properties();
-            // load the velocity properties from property file
-            if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
-                Resource resource = getResourceLoader().getResource(getPropertiesFile());
-                InputStream reader = resource.getInputStream();
-                properties.load(reader);
-                log.info("Loaded the velocity configuration file " + getPropertiesFile());
-            }
 
             // set the class resolver as a property so we can access it from CamelVelocityClasspathResourceLoader
             velocityEngine.addProperty("CamelClassResolver", getCamelContext().getClassResolver());
 
-            // set regular properties
+            // set default properties
+            Properties properties = new Properties();
             properties.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
             properties.setProperty(Velocity.RESOURCE_LOADER, "file, class");
             properties.setProperty("class.resource.loader.description", "Camel Velocity Classpath Resource Loader");
             properties.setProperty("class.resource.loader.class", CamelVelocityClasspathResourceLoader.class.getName());
             properties.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
             properties.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
+
+            // load the velocity properties from property file which may overrides the default ones
+            if (ObjectHelper.isNotEmpty(getPropertiesFile())) {
+                Resource resource = getResourceLoader().getResource(getPropertiesFile());
+                InputStream reader = resource.getInputStream();
+                properties.load(reader);
+                log.info("Loaded the velocity configuration file " + getPropertiesFile());
+            }
 
             log.debug("Initializing VelocityEngine with properties {}", properties);
             // help the velocityEngine to load the CamelVelocityClasspathResourceLoader 
