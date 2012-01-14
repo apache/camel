@@ -63,6 +63,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         SqsConsumer sqsConsumer = new SqsConsumer(this, processor);
         configureConsumer(sqsConsumer);
+        sqsConsumer.setMaxMessagesPerPoll(maxMessagesPerPoll);
         return sqsConsumer;
     }
 
