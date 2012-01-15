@@ -46,8 +46,7 @@ public class RecipientListBeanTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    // @Ignore("CAMEL-4894") @Test
-    public void fixmeTestRecipientListWithParams() throws Exception {
+    public void testRecipientListWithParams() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello b");
 
@@ -65,7 +64,7 @@ public class RecipientListBeanTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").recipientList(bean("myBean", "foo")).to("mock:result");
-                from("direct:params").recipientList(bean("myBean", "bar(header.one, header.two)"), ",").to("mock:result");
+                from("direct:params").recipientList(bean("myBean", "bar(${header.one}, ${header.two})"), ",").to("mock:result");
 
                 from("direct:a").transform(constant("Hello a"));
                 from("direct:b").transform(constant("Hello b"));
@@ -80,15 +79,10 @@ public class RecipientListBeanTest extends ContextTestSupport {
             return body.split(",");
         }
 
-        public String foo(int one, String two) {
-            String [] recipients = two.split(",");
-            int count = Math.min(one, recipients.length);
-            StringBuilder answer = new StringBuilder();
-            for (int i = 0; i < count; i++) {
-                answer.append(i > 0 ? "," : "");
-                answer.append(recipients[i]);
-            }
-            return answer.toString();
+        public String bar(int one, String two) {
+            assertEquals(21, one);
+            assertEquals("direct:a,direct:b,direct:c", two);
+            return "direct:c,direct:b";
         }
     }
 
