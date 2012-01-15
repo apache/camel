@@ -27,7 +27,6 @@ import org.junit.Test;
  */
 public class HttpAsyncTest extends HttpAsyncTestSupport {
  
-    @SuppressWarnings("unchecked")
     @Test
     public void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
         // START SNIPPET: e2

@@ -47,7 +47,7 @@ public final class AdviceWithTasks {
 
         String getId();
 
-        boolean match(ProcessorDefinition processor);
+        boolean match(ProcessorDefinition<?> processor);
     }
 
     /**
@@ -65,7 +65,7 @@ public final class AdviceWithTasks {
             return id;
         }
 
-        public boolean match(ProcessorDefinition processor) {
+        public boolean match(ProcessorDefinition<?> processor) {
             return EndpointHelper.matchPattern(processor.getId(), id);
         }
     }
@@ -85,7 +85,7 @@ public final class AdviceWithTasks {
             return toString;
         }
 
-        public boolean match(ProcessorDefinition processor) {
+        public boolean match(ProcessorDefinition<?> processor) {
             return EndpointHelper.matchPattern(processor.toString(), toString);
         }
     }
@@ -105,7 +105,7 @@ public final class AdviceWithTasks {
             return type.getSimpleName();
         }
 
-        public boolean match(ProcessorDefinition processor) {
+        public boolean match(ProcessorDefinition<?> processor) {
             return type.isAssignableFrom(processor.getClass());
         }
     }

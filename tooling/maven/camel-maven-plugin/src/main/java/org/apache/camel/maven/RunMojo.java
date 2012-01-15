@@ -132,7 +132,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * @parameter expression="${project.remoteArtifactRepositories}"
      */
-    private List remoteRepositories;
+    private List<?> remoteRepositories;
 
     /**
      * @component

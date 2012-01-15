@@ -97,6 +97,7 @@ public class JmsInOutBeanReturnNullTest extends CamelTestSupport {
 
     public static final class MyBean implements Serializable {
 
+        private static final long serialVersionUID = 1L;
         public String name;
 
         public MyBean(String name) {

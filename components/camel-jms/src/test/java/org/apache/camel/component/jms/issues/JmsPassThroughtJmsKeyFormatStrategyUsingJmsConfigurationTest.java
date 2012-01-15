@@ -81,7 +81,7 @@ public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extend
                 from(uri)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            Map headers = exchange.getIn().getHeaders();
+                            Map<String, Object> headers = exchange.getIn().getHeaders();
                             assertEquals("VALUE_1", headers.get("HEADER_1"));
                             assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
                         }
@@ -90,7 +90,7 @@ public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extend
                     .setHeader("HEADER_2", constant("VALUE_2"))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            Map headers = exchange.getIn().getHeaders();
+                            Map<String, Object> headers = exchange.getIn().getHeaders();
                             assertEquals("START", headers.get("HEADER_3"));
                             assertEquals("START", exchange.getIn().getHeader("HEADER_3"));
                         }

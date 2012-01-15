@@ -64,7 +64,7 @@ public class CacheConfiguration implements Cloneable {
         
         setCacheName(uri.getHost());
         
-        Map cacheSettings = URISupport.parseParameters(uri);
+        Map<String, Object> cacheSettings = URISupport.parseParameters(uri);
         if (cacheSettings.containsKey("maxElementsInMemory")) {
             setMaxElementsInMemory(Integer.valueOf((String) cacheSettings.get("maxElementsInMemory")).intValue());
         }

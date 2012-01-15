@@ -57,19 +57,19 @@ public class TraceHandlerTestHandler implements TraceEventHandler {
         eventMessages.add(message);
     }
 
-    public static void recordComplete(StringBuilder message, ProcessorDefinition node, Exchange exchange) {
+    public static void recordComplete(StringBuilder message, ProcessorDefinition<?> node, Exchange exchange) {
         message.append("Complete: ");
         message.append(node.getLabel() + ": ");
         message.append(exchange.getIn().getBody());
     }
 
-    public static void recordIn(StringBuilder message, ProcessorDefinition node, Exchange exchange) {
+    public static void recordIn(StringBuilder message, ProcessorDefinition<?> node, Exchange exchange) {
         message.append("In: ");
         message.append(node.getLabel() + ": ");
         message.append(exchange.getIn().getBody());
     }
 
-    public static void recordOut(StringBuilder message, ProcessorDefinition node, Exchange exchange) {
+    public static void recordOut(StringBuilder message, ProcessorDefinition<?> node, Exchange exchange) {
         message.append("Out: ");
         message.append(node.getLabel() + ": ");
         if (null != exchange.getOut()) {
@@ -83,7 +83,7 @@ public class TraceHandlerTestHandler implements TraceEventHandler {
         }
     }
 
-    public void traceExchange(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
+    public void traceExchange(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
         if (traceAllNodes || !node.getLabel().contains("TraceTestProcessor")) {
             StringBuilder message = new StringBuilder();
             recordComplete(message, node, exchange);
@@ -91,7 +91,7 @@ public class TraceHandlerTestHandler implements TraceEventHandler {
         }
     }
 
-    public Object traceExchangeIn(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
+    public Object traceExchangeIn(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
         if (traceAllNodes || !node.getLabel().contains("TraceTestProcessor")) {
             StringBuilder message = new StringBuilder();
             recordIn(message, node, exchange);
@@ -101,7 +101,7 @@ public class TraceHandlerTestHandler implements TraceEventHandler {
         }
     }
 
-    public void traceExchangeOut(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception {
+    public void traceExchangeOut(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception {
         if (traceAllNodes || !node.getLabel().contains("TraceTestProcessor")) {
             if (StringBuilder.class.equals(traceState.getClass())) {
                 StringBuilder message = (StringBuilder) traceState;

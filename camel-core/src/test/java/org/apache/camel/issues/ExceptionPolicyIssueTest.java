@@ -50,6 +50,8 @@ public class ExceptionPolicyIssueTest extends ContextTestSupport {
 
     private static final class MyUnmarshalException extends Exception {
 
+        private static final long serialVersionUID = 1L;
+
         private MyUnmarshalException(String message, Throwable cause) {
             super(message, cause);
         }

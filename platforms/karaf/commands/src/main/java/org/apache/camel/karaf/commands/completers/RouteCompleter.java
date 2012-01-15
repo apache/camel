@@ -34,7 +34,7 @@ public class RouteCompleter implements Completer {
         this.camelController = camelController;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public int complete(String buffer, int cursor, List candidates) {
         try {
             StringsCompleter delegate = new StringsCompleter();

@@ -59,7 +59,7 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
 
     private static class MyTracer implements InterceptStrategy {
 
-        public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
+        public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition,
                                                      Processor target, Processor nextTarget) throws Exception {
             assertNotNull(target);
             counter++;

@@ -41,7 +41,7 @@ public class DebugSingleStepTest extends ContextTestSupport {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
-            public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+            public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
                 String body = exchange.getIn().getBody(String.class);
                 logs.add("Single stepping at " + definition.getLabel() + " with body: " + body);
             }

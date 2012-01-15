@@ -29,7 +29,6 @@ import org.apache.camel.Ordered;
  */
 public class OrderedComparatorTest extends TestCase {
 
-    @SuppressWarnings("unchecked")
     public void testOrderedComparator() throws Exception {
         List<Ordered> answer = new ArrayList<Ordered>();
         answer.add(new MyOrder(0));
@@ -47,7 +46,6 @@ public class OrderedComparatorTest extends TestCase {
         assertEquals(5, answer.get(4).getOrder());
     }
 
-    @SuppressWarnings("unchecked")
     public void testOrderedComparatorReverse() throws Exception {
         List<Ordered> answer = new ArrayList<Ordered>();
         answer.add(new MyOrder(0));
@@ -65,7 +63,6 @@ public class OrderedComparatorTest extends TestCase {
         assertEquals(0, answer.get(4).getOrder());
     }
 
-    @SuppressWarnings("unchecked")
     public void testOrderedComparatorHigh() throws Exception {
         List<Ordered> answer = new ArrayList<Ordered>();
         answer.add(new MyOrder(0));
@@ -85,7 +82,6 @@ public class OrderedComparatorTest extends TestCase {
         assertEquals(200, answer.get(5).getOrder());
     }
 
-    @SuppressWarnings("unchecked")
     public void testOrderedComparatorHighReverse() throws Exception {
         List<Ordered> answer = new ArrayList<Ordered>();
         answer.add(new MyOrder(0));
@@ -105,7 +101,6 @@ public class OrderedComparatorTest extends TestCase {
         assertEquals(Ordered.HIGHEST, answer.get(5).getOrder());
     }
 
-    @SuppressWarnings("unchecked")
     public void testOrderedComparatorLow() throws Exception {
         List<Ordered> answer = new ArrayList<Ordered>();
         answer.add(new MyOrder(0));
@@ -125,7 +120,6 @@ public class OrderedComparatorTest extends TestCase {
         assertEquals(Ordered.LOWEST, answer.get(5).getOrder());
     }
 
-    @SuppressWarnings("unchecked")
     public void testOrderedComparatorLowReverse() throws Exception {
         List<Ordered> answer = new ArrayList<Ordered>();
         answer.add(new MyOrder(0));

@@ -57,7 +57,7 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
         return result;
     }    
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected SplitDefinition firstSplitterType(List<ProcessorDefinition> outputs) {
         SplitDefinition result = null;
         

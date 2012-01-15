@@ -166,7 +166,7 @@ public class BeanParameterValueTest extends ContextTestSupport {
             return body;
         }
 
-        public String heads(String body, Map headers) {
+        public String heads(String body, Map<?, ?> headers) {
             return headers.get("hello") + " " + body;
         }
 

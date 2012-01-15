@@ -111,7 +111,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         return exchange.getContext().getTypeConverter().convertTo(type, result);
     }
 
-    @SuppressWarnings("unchecked")
     public Object evaluate(Exchange exchange) {
         try {
             LOG.debug("Evaluation: {} for exchange: {}", expression, exchange);
@@ -147,7 +146,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         }
     }
 
-    public List evaluateAsList(Exchange exchange) throws Exception {
+    public List<?> evaluateAsList(Exchange exchange) throws Exception {
         initialize(exchange);
 
         return getExpression().evaluate(createDynamicContext(exchange));
@@ -205,7 +204,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     public boolean matches(Exchange exchange) {
         try {
-            List list = evaluateAsList(exchange);
+            List<?> list = evaluateAsList(exchange);
             return matches(exchange, list);
         } catch (Exception e) {
             throw new RuntimeExpressionException(e);
@@ -213,7 +212,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     public void assertMatches(String text, Exchange exchange) throws AssertionError {
-        List list;
+        List<?> list;
 
         try {
             list = evaluateAsList(exchange);
@@ -597,7 +596,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         }
     }
 
-    protected boolean matches(Exchange exchange, List results) {
+    protected boolean matches(Exchange exchange, List<?> results) {
         return ObjectHelper.matches(results);
     }
 

@@ -85,7 +85,7 @@ public class ParentChildInterceptStrategyTest extends ContextTestSupport {
         public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition<?> definition,
                                                      final Processor target, final Processor nextTarget) throws Exception {
             String targetId = definition.hasCustomIdAssigned() ? definition.getId() : definition.getLabel();
-            ProcessorDefinition parent = definition.getParent();
+            ProcessorDefinition<?> parent = definition.getParent();
             String parentId = "";
             if (parent != null) {
                 parentId = parent.hasCustomIdAssigned() ? parent.getId() : parent.getLabel();

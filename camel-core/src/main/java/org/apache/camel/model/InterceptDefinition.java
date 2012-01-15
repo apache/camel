@@ -75,7 +75,7 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
         routeContext.getInterceptStrategies().add(new InterceptStrategy() {
             private Processor interceptedTarget;
 
-            public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition definition,
+            public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition,
                                                          Processor target, Processor nextTarget) throws Exception {
                 // prefer next target over target as next target is the real target
                 interceptedTarget = nextTarget != null ? nextTarget : target;

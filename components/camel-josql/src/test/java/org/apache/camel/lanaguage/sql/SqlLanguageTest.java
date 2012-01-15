@@ -34,31 +34,26 @@ public class SqlLanguageTest extends SqlTest {
         Language language = assertResolveLanguage(getLanguageName());
 
         Expression expression = language.createExpression("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'London'");        
-        List value = expression.evaluate(exchange, List.class);
+        List<?> value = expression.evaluate(exchange, List.class);
+        assertEquals("List size", 2, value.size());
 
-        List list = value;
-        assertEquals("List size", 2, list.size());
-
-        for (Object person : list) {
+        for (Object person : value) {
             log.info("Found: " + person);
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testExpressionWithHeaderVariable() throws Exception {
         Language language = assertResolveLanguage(getLanguageName());
 
         Expression expression = language.createExpression("SELECT * FROM org.apache.camel.builder.sql.Person where name = :fooHeader");
-        List value = expression.evaluate(exchange, List.class);
+        List<?> value = expression.evaluate(exchange, List.class);
+        assertEquals("List size", 1, value.size());
 
-        List<Person> list = value;
-        assertEquals("List size", 1, list.size());
-
-        for (Person person : list) {
+        for (Object person : value) {
             log.info("Found: " + person);
 
-            assertEquals("name", "James", person.getName());
+            assertEquals("name", "James", ((Person) person).getName());
         }
     }
 

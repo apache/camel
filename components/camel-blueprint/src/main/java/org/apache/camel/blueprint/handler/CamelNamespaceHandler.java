@@ -732,7 +732,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked", "rawtypes"})
         private void findOutputComponents(List<ProcessorDefinition> defs, Set<String> components, Set<String> languages, Set<String> dataformats) {
             if (defs != null) {
                 for (ProcessorDefinition def : defs) {

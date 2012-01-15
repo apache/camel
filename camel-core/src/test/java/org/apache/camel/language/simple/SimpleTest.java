@@ -142,7 +142,7 @@ public class SimpleTest extends LanguageTestSupport {
         map.put("dude", "Hey dude");
         map.put("code", 4321);
 
-        List<Map> lines = new ArrayList<Map>();
+        List<Map<String, Object>> lines = new ArrayList<Map<String, Object>>();
         lines.add(map);
 
         exchange.getIn().setBody(lines);
@@ -158,7 +158,7 @@ public class SimpleTest extends LanguageTestSupport {
         map.put("camel", new OrderLine(123, "Camel in Action"));
         map.put("amq", new OrderLine(456, "ActiveMQ in Action"));
 
-        List<Map> lines = new ArrayList<Map>();
+        List<Map<String, Object>> lines = new ArrayList<Map<String, Object>>();
         lines.add(map);
 
         exchange.getIn().setBody(lines);
@@ -414,7 +414,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testHeaders() throws Exception {
-        Map headers = exchange.getIn().getHeaders();
+        Map<String, Object> headers = exchange.getIn().getHeaders();
         assertEquals(2, headers.size());
 
         assertExpression("headers", headers);

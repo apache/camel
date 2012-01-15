@@ -55,7 +55,7 @@ public class SimpleRegistryTest extends TestCase {
     }
     
     public void testLookupByType() {
-        Map map = registry.lookupByType(String.class);
+        Map<?, ?> map = registry.lookupByType(String.class);
         assertEquals(1, map.size());
         assertEquals("b", map.get("a"));
         map = registry.lookupByType(Object.class);
@@ -65,7 +65,7 @@ public class SimpleRegistryTest extends TestCase {
     }
  
     public void testLookupByWrongType() {
-        Map map = registry.lookupByType(Float.class);
+        Map<?, ?> map = registry.lookupByType(Float.class);
         assertEquals(0, map.size());
     }
 

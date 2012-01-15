@@ -151,7 +151,7 @@ public class CsvDataFormat implements DataFormat {
         this.autogenColumns = autogenColumns;
     }
 
-    private synchronized void updateFieldsInConfig(Set set, Exchange exchange) {
+    private synchronized void updateFieldsInConfig(Set<?> set, Exchange exchange) {
         for (Object value : set) {
             if (value != null) {
                 String text = exchange.getContext().getTypeConverter().convertTo(String.class, value);

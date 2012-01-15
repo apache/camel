@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ScriptRouteBuilder extends RouteBuilder {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScriptRouteBuilder.class);
-    protected ProcessorDefinition node;
+    protected ProcessorDefinition<?> node;
 
     public ScriptRouteBuilder() {
     }
@@ -47,24 +47,24 @@ public abstract class ScriptRouteBuilder extends RouteBuilder {
         this.node = route;
     }
 
-    public ProcessorDefinition to(String uri) {
+    public ProcessorDefinition<?> to(String uri) {
         return getNode().to(uri);
     }
     
-    public ProcessorDefinition to(Endpoint endpoint) {
+    public ProcessorDefinition<?> to(Endpoint endpoint) {
         return getNode().to(endpoint);
     }
 
-    public ProcessorDefinition getNode() {
+    public ProcessorDefinition<?> getNode() {
         if (node == null) {
             throw new IllegalStateException("You must define a route first via the from() method");
         }
         return node;
     }
 
-    public void setNode(ProcessorDefinition node) {
+    public void setNode(ProcessorDefinition<?> node) {
         this.node = node;
 
-        LOG.info("Node is now: " + node);
+        LOG.info("Node is now: {}", node);
     }
 }

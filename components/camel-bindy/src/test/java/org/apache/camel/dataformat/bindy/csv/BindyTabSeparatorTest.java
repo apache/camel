@@ -41,8 +41,8 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<Map> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
-        PurchaseOrder order = (PurchaseOrder) rows.get(0).get(PurchaseOrder.class.getName());
+        List<Map<?, PurchaseOrder>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
+        PurchaseOrder order = rows.get(0).get(PurchaseOrder.class.getName());
 
         assertEquals(123, order.getId());
         assertEquals("Camel in Action", order.getName());

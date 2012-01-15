@@ -38,6 +38,6 @@ public interface TraceInterceptorFactory {
      * @param tracer    the tracer
      * @return the created trace interceptor
      */
-    Processor createTraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer);
+    Processor createTraceInterceptor(ProcessorDefinition<?> node, Processor target, TraceFormatter formatter, Tracer tracer);
 
 }

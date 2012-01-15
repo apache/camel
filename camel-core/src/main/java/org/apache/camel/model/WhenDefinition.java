@@ -78,7 +78,7 @@ public class WhenDefinition extends ExpressionNode {
     }
 
     @Override
-    public ProcessorDefinition endParent() {
+    public ProcessorDefinition<?> endParent() {
         // when using when in the DSL we don't want to end back to this when, but instead
         // the parent of this, so return the parent
         return this.getParent();

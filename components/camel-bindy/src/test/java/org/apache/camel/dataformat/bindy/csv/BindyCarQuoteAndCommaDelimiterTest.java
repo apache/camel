@@ -51,7 +51,7 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Map map1 = (Map) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        Map<?, ?> map1 = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
 
         Car rec1 = (Car) map1.values().iterator().next();
 

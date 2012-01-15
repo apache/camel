@@ -36,6 +36,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     private static final String ERROR_QUEUE = "mock:error";
 
     public static class MyPolicyException extends Exception {
+        private static final long serialVersionUID = 1L;
     }
 
     // START SNIPPET e2

@@ -50,8 +50,8 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
 
         assertEquals("Should not fail", false, out.isFailed());
 
-        Map foo = myBean.foo;
-        Map bar = myBean.bar;
+        Map<?, ?> foo = myBean.foo;
+        Map<?, ?> bar = myBean.bar;
         assertNotNull("myBean.foo", foo);
         assertNotNull("myBean.bar", bar);
 
@@ -79,8 +79,8 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
     }
 
     public static class MyBean {
-        private Map foo;
-        private Map bar;
+        private Map<?, ?> foo;
+        private Map<?, ?> bar;
         private String body;
 
         @Override
@@ -88,7 +88,7 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
             return "MyBean[foo: " + foo + " bar: " + bar + " body: " + body + "]";
         }
 
-        public void myMethod(@Properties Map foo, @Headers Map bar, @Body String body) {
+        public void myMethod(@Properties Map<?, ?> foo, @Headers Map<?, ?> bar, @Body String body) {
             this.foo = foo;
             this.bar = bar;
             this.body = body;

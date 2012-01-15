@@ -30,11 +30,11 @@ public class RegistryTest extends TestCase {
     protected JndiRegistry registry;
 
     public void testBind() throws Exception {
-        List foo = Arrays.asList("a", "b", "c");
+        List<?> foo = Arrays.asList("a", "b", "c");
 
         registry.bind("foo", foo);
 
-        List list = registry.lookup("foo", List.class);
+        List<?> list = registry.lookup("foo", List.class);
         assertEquals("Should be same!", foo, list);
     }
 

@@ -30,7 +30,7 @@ import org.apache.camel.spi.Condition;
  */
 public class ConditionSupport implements Condition {
 
-    public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+    public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
         return false;
     }
 

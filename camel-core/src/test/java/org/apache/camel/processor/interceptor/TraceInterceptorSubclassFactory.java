@@ -31,7 +31,7 @@ public class TraceInterceptorSubclassFactory implements TraceInterceptorFactory 
         this.eventMessages = eventMessages;
     }
 
-    public TraceInterceptor createTraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
+    public TraceInterceptor createTraceInterceptor(ProcessorDefinition<?> node, Processor target, TraceFormatter formatter, Tracer tracer) {
         return new TracerInterceptorSubclass(node, target, formatter, tracer, eventMessages, this);
     }
 
@@ -48,7 +48,7 @@ public class TraceInterceptorSubclassFactory implements TraceInterceptorFactory 
         private boolean traceThisNode = true;
         private TraceInterceptorSubclassFactory factory;
 
-        public TracerInterceptorSubclass(ProcessorDefinition node, Processor target, TraceFormatter formatter,
+        public TracerInterceptorSubclass(ProcessorDefinition<?> node, Processor target, TraceFormatter formatter,
                                          Tracer tracer, List<StringBuilder> eventMessages, TraceInterceptorSubclassFactory factory) {
             super(node, target, formatter, tracer);
             this.eventMessages = eventMessages;

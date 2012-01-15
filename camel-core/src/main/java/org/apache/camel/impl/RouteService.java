@@ -330,7 +330,7 @@ public class RouteService extends ChildServiceSupport {
      * Gather all route scoped services from the given route, such as route scoped error handler.
      */
     private void doGetRouteScopedServices(List<Service> services, Route route) {
-        for (ProcessorDefinition output : route.getRouteContext().getRoute().getOutputs()) {
+        for (ProcessorDefinition<?> output : route.getRouteContext().getRoute().getOutputs()) {
             if (output instanceof OnExceptionDefinition) {
                 OnExceptionDefinition onExceptionDefinition = (OnExceptionDefinition) output;
                 if (onExceptionDefinition.isRouteScoped()) {

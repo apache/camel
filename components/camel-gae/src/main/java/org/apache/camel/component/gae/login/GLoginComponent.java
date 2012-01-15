@@ -47,9 +47,8 @@ public class GLoginComponent extends DefaultComponent {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        OutboundBinding outboundBinding = resolveAndRemoveReferenceParameter(
+        OutboundBinding<GLoginEndpoint, GLoginData, GLoginData> outboundBinding = resolveAndRemoveReferenceParameter(
                 parameters, "outboundBindingRef", GLoginBinding.class, new GLoginBinding());
         GLoginService service = resolveAndRemoveReferenceParameter(
                 parameters, "serviceRef", GLoginService.class, new GLoginServiceImpl());

@@ -40,7 +40,7 @@ public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Map map = (Map) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        Map<?, ?> map = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
         WeatherModel model = (WeatherModel) map.values().iterator().next();
 
         assertEquals(123, model.getId());
@@ -58,7 +58,7 @@ public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Map map = (Map) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        Map<?, ?> map = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
         WeatherModel model = (WeatherModel) map.values().iterator().next();
 
         assertEquals(123, model.getId());
@@ -76,7 +76,7 @@ public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Map map = (Map) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        Map<?, ?> map = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
         WeatherModel model = (WeatherModel) map.values().iterator().next();
 
         assertEquals(123, model.getId());
@@ -94,7 +94,7 @@ public class BindyUnmarshalCommaIssueTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Map map = (Map) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        Map<?, ?> map = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
         WeatherModel model = (WeatherModel) map.values().iterator().next();
 
         assertEquals(123, model.getId());

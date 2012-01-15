@@ -75,9 +75,11 @@ public class ErrorHandlerSupportTest extends TestCase {
     }
 
     private static class ParentException extends Exception {
+        private static final long serialVersionUID = 1L;
     }
 
     private static class ChildException extends ParentException {
+        private static final long serialVersionUID = 1L;
     }
 
     private static class ShuntErrorHandlerSupport extends ErrorHandlerSupport {

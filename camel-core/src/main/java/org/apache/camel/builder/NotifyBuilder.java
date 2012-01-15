@@ -1058,7 +1058,7 @@ public class NotifyBuilder {
         return doWhenBodies(bodyList, false, true);
     }
 
-    private NotifyBuilder doWhenBodies(final List bodies, final boolean received, final boolean exact) {
+    private NotifyBuilder doWhenBodies(final List<?> bodies, final boolean received, final boolean exact) {
         stack.add(new EventPredicateSupport() {
             private boolean matches;
             private int current;

@@ -83,11 +83,11 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     // START SNIPPET: e3
     public static class MyFactory implements ProcessorFactory {
 
-        public Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition definition, boolean mandatory) throws Exception {
+        public Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition<?> definition, boolean mandatory) throws Exception {
             return null;
         }
 
-        public Processor createProcessor(RouteContext routeContext, ProcessorDefinition definition) throws Exception {
+        public Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> definition) throws Exception {
             if (definition instanceof SplitDefinition) {
                 // add additional output to the splitter
                 SplitDefinition split = (SplitDefinition) definition;

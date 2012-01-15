@@ -46,10 +46,9 @@ public class ContextScanRouteBuilderFinder {
      * Appends all the {@link org.apache.camel.builder.RouteBuilder} instances that can be found in the context
      */
     public void appendBuilders(List<RoutesBuilder> list) {
-        Map beans = applicationContext.getBeansOfType(RoutesBuilder.class, true, true);
+        Map<String, RoutesBuilder> beans = applicationContext.getBeansOfType(RoutesBuilder.class, true, true);
 
-        for (Object object : beans.entrySet()) {
-            Entry entry = (Entry) object;
+        for (Entry<String, RoutesBuilder> entry : beans.entrySet()) {
             Object bean = entry.getValue();
             Object key = entry.getKey();
 

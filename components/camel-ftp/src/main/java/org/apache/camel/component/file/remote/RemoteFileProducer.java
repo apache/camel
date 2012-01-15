@@ -52,8 +52,8 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         ExchangeHelper.copyResults(exchange, remoteExchange);
     }
 
-    protected RemoteFileOperations getOperations() {
-        return (RemoteFileOperations) operations;
+    protected RemoteFileOperations<T> getOperations() {
+        return (RemoteFileOperations<T>) operations;
     }
 
     @Override

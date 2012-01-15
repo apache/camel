@@ -61,7 +61,7 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
         result.assertIsSatisfied();
 
         // check the model
-        Map map = (Map) result.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        Map<?, ?> map = (Map<?, ?>) result.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
         BindySimpleFixedLengthUnmarshallTest.Order order = (BindySimpleFixedLengthUnmarshallTest.Order) map.values().iterator().next();
         Assert.assertEquals(10, order.getOrderNr());
         // the field is not trimmed

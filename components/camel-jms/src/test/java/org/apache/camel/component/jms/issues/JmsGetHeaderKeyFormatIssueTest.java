@@ -65,7 +65,7 @@ public class JmsGetHeaderKeyFormatIssueTest extends CamelTestSupport {
                 from(uri)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            Map headers = exchange.getIn().getHeaders();
+                            Map<String, Object> headers = exchange.getIn().getHeaders();
                             assertEquals("VALUE_1", headers.get("HEADER_1"));
                             assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
                         }
@@ -73,7 +73,7 @@ public class JmsGetHeaderKeyFormatIssueTest extends CamelTestSupport {
                     .setHeader("HEADER_1", constant("VALUE_2"))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            Map headers = exchange.getIn().getHeaders();
+                            Map<String, Object> headers = exchange.getIn().getHeaders();
                             assertEquals("VALUE_2", headers.get("HEADER_1"));
                             assertEquals("VALUE_2", exchange.getIn().getHeader("HEADER_1"));
                         }

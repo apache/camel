@@ -49,25 +49,25 @@ public class DebugTest extends ContextTestSupport {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
-            public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+            public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
                 String body = exchange.getIn().getBody(String.class);
                 logs.add("Breakpoint at " + definition + " with body: " + body);
             }
 
-            public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition definition) {
+            public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition<?> definition) {
                 String body = exchange.getIn().getBody(String.class);
                 logs.add("Breakpoint event " + event.getClass().getSimpleName() + " with body: " + body);
             }
         };
 
         camelCondition = new ConditionSupport() {
-            public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+            public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
                 return body().contains("Camel").matches(exchange);
             }
         };
 
         mockCondition = new ConditionSupport() {
-            public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+            public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
                 // match when sending to mocks
                 if (definition instanceof ToDefinition) {
                     ToDefinition to = (ToDefinition) definition;

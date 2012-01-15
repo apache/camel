@@ -123,7 +123,7 @@ public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSuppo
         // should be prepared, check parents has been set
         assertNotNull("Parent should be set on outputs");
         route = context.getRouteDefinition("foo");
-        for (ProcessorDefinition output : route.getOutputs()) {
+        for (ProcessorDefinition<?> output : route.getOutputs()) {
             assertNotNull("Parent should be set on output", output.getParent());
             assertEquals(route, output.getParent());
         }

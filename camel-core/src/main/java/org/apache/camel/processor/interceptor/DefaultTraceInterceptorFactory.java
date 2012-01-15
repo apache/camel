@@ -21,7 +21,7 @@ import org.apache.camel.model.ProcessorDefinition;
 
 public class DefaultTraceInterceptorFactory implements TraceInterceptorFactory {
 
-    public Processor createTraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
+    public Processor createTraceInterceptor(ProcessorDefinition<?> node, Processor target, TraceFormatter formatter, Tracer tracer) {
         return new TraceInterceptor(node, target, formatter, tracer);
     }
 

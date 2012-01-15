@@ -160,7 +160,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     }
 
     @Override
-    public ProcessorDefinition end() {
+    public ProcessorDefinition<?> end() {
         // pop parent block, as we added our self as block to parent when synchronized was defined in the route
         getParent().popBlock();
         return super.end();

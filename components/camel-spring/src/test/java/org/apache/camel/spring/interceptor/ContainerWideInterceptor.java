@@ -33,7 +33,7 @@ public class ContainerWideInterceptor implements InterceptStrategy {
     private static final transient Logger LOG = LoggerFactory.getLogger(ContainerWideInterceptor.class);
     private static int count;
 
-    public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition definition,
+    public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition<?> definition,
                                                  final Processor target, final Processor nextTarget) throws Exception {
 
         // as this is based on an unit test we are a bit lazy and just create an inlined processor

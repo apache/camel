@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class SimpleOgnlMapIssueTest extends ContextTestSupport {
 
-    @SuppressWarnings("unchecked")
     public void testSimpleOgnlIssueKing() throws Exception {
         getMockEndpoint("mock:king").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -39,7 +38,6 @@ public class SimpleOgnlMapIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @SuppressWarnings("unchecked")
     public void testSimpleOgnlIssueOther() throws Exception {
         getMockEndpoint("mock:king").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);

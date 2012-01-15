@@ -375,8 +375,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
         } else {
-            for (Map.Entry entry : endpoints.entrySet()) {
-                oldEndpoint = (Endpoint)entry.getValue();
+            for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
+                oldEndpoint = entry.getValue();
                 if (EndpointHelper.matchEndpoint(oldEndpoint.getEndpointUri(), uri)) {
                     answer.add(oldEndpoint);
                     stopServices(oldEndpoint);

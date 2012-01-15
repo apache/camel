@@ -17,6 +17,7 @@
 package org.apache.camel.processor.onexception;
 
 public class MyFunctionalException extends Exception {
+    private static final long serialVersionUID = 1L;
 
     public MyFunctionalException(String message) {
         super(message);

@@ -96,6 +96,20 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     // -------------------------------------------------------------------------
 
     /**
+     * Handles the given exception
+     *
+     * @param exceptionType  the exception
+     * @return the try builder
+     */
+    @SuppressWarnings("unchecked")
+    public TryDefinition doCatch(Class<? extends Throwable> exceptionType) {
+        // this method is introduced to avoid compiler warnings about the
+        // generic Class arrays in the case we've got only one single Class
+        // to build a TryDefinition for
+        return doCatch((Class<? extends Throwable>[])new Class[] {exceptionType});
+    }
+
+    /**
      * Handles the given exception(s)
      *
      * @param exceptionType  the exception(s)

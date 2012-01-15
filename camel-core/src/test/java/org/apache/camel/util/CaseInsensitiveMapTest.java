@@ -487,7 +487,7 @@ public class CaseInsensitiveMapTest extends TestCase {
 
         // retain maps so we can profile that the map doesn't duplicate
         // camel keys as they are intern
-        List<Map> maps = new ArrayList<Map>();
+        List<Map<?, ?>> maps = new ArrayList<Map<?, ?>>();
 
         for (int i = 0; i < 10000; i++) {
             Map<String, Object> copy = new CaseInsensitiveMap(map);

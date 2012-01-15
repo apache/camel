@@ -65,7 +65,7 @@ public class PrinterConfiguration {
         path = ObjectHelper.removeStartingCharacters(path, '\\');
         setPrintername(path);
         
-        Map printSettings = URISupport.parseParameters(uri);
+        Map<String, Object> printSettings = URISupport.parseParameters(uri);
         setFlavor((String)printSettings.get("flavor"));
         setMimeType((String)printSettings.get("mimeType"));
         setDocFlavor(assignDocFlavor(flavor, mimeType));

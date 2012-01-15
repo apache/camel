@@ -104,7 +104,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         assertEquals(1, response.getResults().getNumFound());
 
         SolrDocument doc = response.getResults().get(0);
-        assertArrayEquals(categories, ((List) doc.getFieldValue("cat")).toArray());
+        assertArrayEquals(categories, ((List<?>) doc.getFieldValue("cat")).toArray());
     }
 
     @Test

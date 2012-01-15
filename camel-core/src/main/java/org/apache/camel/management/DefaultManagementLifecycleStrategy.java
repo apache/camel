@@ -94,8 +94,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultManagementLifecycleStrategy extends ServiceSupport implements LifecycleStrategy, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementLifecycleStrategy.class);
-    private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
-            new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();
+    private final Map<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>> wrappedProcessors =
+            new HashMap<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>>();
     private final List<PreRegisterService> preServices = new ArrayList<PreRegisterService>();
     private final TimerListenerManager timerListenerManager = new TimerListenerManager();
     private CamelContext camelContext;
@@ -393,7 +393,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         Object answer = null;
 
         if (service instanceof ManagementAware) {
-            return ((ManagementAware) service).getManagedObject(service);
+            return ((ManagementAware<Service>) service).getManagedObject(service);
         } else if (service instanceof Tracer) {
             // special for tracer
             Object mo = this.managedTracers.get(service);
@@ -440,7 +440,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         // a bit of magic here as the processors we want to manage have already been registered
         // in the wrapped processors map when Camel have instrumented the route on route initialization
         // so the idea is now to only manage the processors from the map
-        KeyValueHolder<ProcessorDefinition, InstrumentationProcessor> holder = wrappedProcessors.get(processor);
+        KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor> holder = wrappedProcessors.get(processor);
         if (holder == null) {
             // skip as its not an well known processor we want to manage anyway, such as Channel/UnitOfWork/Pipeline etc.
             return null;
@@ -583,8 +583,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         // Create a map (ProcessorType -> PerformanceCounter)
         // to be passed to InstrumentationInterceptStrategy.
-        Map<ProcessorDefinition, PerformanceCounter> registeredCounters =
-                new HashMap<ProcessorDefinition, PerformanceCounter>();
+        Map<ProcessorDefinition<?>, PerformanceCounter> registeredCounters =
+                new HashMap<ProcessorDefinition<?>, PerformanceCounter>();
 
         // Each processor in a route will have its own performance counter.
         // These performance counter will be embedded to InstrumentationProcessor
@@ -592,7 +592,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         RouteDefinition route = routeContext.getRoute();
 
         // register performance counters for all processors and its children
-        for (ProcessorDefinition processor : route.getOutputs()) {
+        for (ProcessorDefinition<?> processor : route.getOutputs()) {
             registerPerformanceCounters(routeContext, processor, registeredCounters);
         }
 
@@ -601,9 +601,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         routeContext.setManagedInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
     }
 
-    @SuppressWarnings("unchecked")
-    private void registerPerformanceCounters(RouteContext routeContext, ProcessorDefinition processor,
-                                             Map<ProcessorDefinition, PerformanceCounter> registeredCounters) {
+    @SuppressWarnings("rawtypes")
+    private void registerPerformanceCounters(RouteContext routeContext, ProcessorDefinition<?> processor,
+                                             Map<ProcessorDefinition<?>, PerformanceCounter> registeredCounters) {
 
         // traverse children if any exists
         List<ProcessorDefinition> children = processor.getOutputs();
@@ -633,7 +633,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     /**
      * Should the given processor be registered.
      */
-    protected boolean registerProcessor(ProcessorDefinition processor) {
+    protected boolean registerProcessor(ProcessorDefinition<?> processor) {
         // skip on exception
         if (processor instanceof OnExceptionDefinition) {
             return false;

@@ -62,7 +62,7 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
 
     protected class ConsumerProcessor implements Processor {
         public void process(final Exchange exchange) throws Exception {
-            org.springframework.integration.Message request = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
+            org.springframework.integration.Message<?> request = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
             if (exchange.getPattern().isOutCapable()) {
                 exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL , replyChannel);

@@ -157,7 +157,7 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
 
     @SuppressWarnings({"deprecation", "unchecked"})
     public Object getManagedObjectForProcessor(CamelContext context, Processor processor,
-                                               ProcessorDefinition definition, Route route) {
+                                               ProcessorDefinition<?> definition, Route route) {
         ManagedProcessor answer = null;
 
         // unwrap delegates as we want the real target processor

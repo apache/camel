@@ -35,8 +35,7 @@ public final class FtpProcessStrategyFactory {
     private FtpProcessStrategyFactory() {
     }
 
-    @SuppressWarnings("unchecked")
-    public static <FTPFile> GenericFileProcessStrategy<FTPFile> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
+    public static GenericFileProcessStrategy<FTPFile> createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
         Expression moveExpression = (Expression) params.get("move");

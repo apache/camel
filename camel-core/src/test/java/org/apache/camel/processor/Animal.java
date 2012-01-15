@@ -23,7 +23,7 @@ import java.io.Serializable;
  */
 // START SNIPPET: e1
 public class Animal implements Serializable {
-
+    private static final long serialVersionUID = 1L;
     private int id;
     private String name;
 

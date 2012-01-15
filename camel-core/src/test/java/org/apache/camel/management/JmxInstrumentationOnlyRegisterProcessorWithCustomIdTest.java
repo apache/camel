@@ -40,7 +40,7 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
     }
 
     public void testCustomId() throws Exception {
-        Set s = server.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
+        Set<ObjectName> s = server.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 6, s.size());
 
         s = server.queryNames(new ObjectName(domainName + ":type=context,*"), null);
