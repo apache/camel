@@ -99,7 +99,7 @@
         <dependency>
             <groupId>com.googlecode.pojosr</groupId>
             <artifactId>de.kalpatec.pojosr.framework</artifactId>
-            <version>0.1.6</version>
+            <version>0.1.8</version>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>
@@ -123,19 +123,5 @@
         </dependency>
 
     </dependencies>
-
-    <build>
-      <plugins>
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <excludes>
-              <!-- TODO FIXME ASAP -->
-              <exclude>**/DebugBlueprintTest.*</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-      </plugins>
-    </build>
 
 </project>
