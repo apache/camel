@@ -42,8 +42,8 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPattern() throws Exception {
-        context.getExecutorServiceManager().setThreadNamePattern("#${counter} - ${name}");
-        assertEquals("#${counter} - ${name}", context.getExecutorServiceManager().getThreadNamePattern());
+        context.getExecutorServiceManager().setThreadNamePattern("##counter# - #name#");
+        assertEquals("##counter# - #name#", context.getExecutorServiceManager().getThreadNamePattern());
         String foo = context.getExecutorServiceManager().resolveThreadName("foo");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
 
@@ -55,7 +55,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPatternCamelId() throws Exception {
-        context.getExecutorServiceManager().setThreadNamePattern("#${camelId} - #${counter} - ${name}");
+        context.getExecutorServiceManager().setThreadNamePattern("##camelId# - ##counter# - #name#");
         String foo = context.getExecutorServiceManager().resolveThreadName("foo");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
 
@@ -67,14 +67,14 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPatternWithDollar() throws Exception {
-        context.getExecutorServiceManager().setThreadNamePattern("Hello - ${name}");
+        context.getExecutorServiceManager().setThreadNamePattern("Hello - #name#");
         String foo = context.getExecutorServiceManager().resolveThreadName("foo$bar");
 
         assertEquals("Hello - foo$bar", foo);
     }
 
     public void testGetThreadNameCustomPatternLongName() throws Exception {
-        context.getExecutorServiceManager().setThreadNamePattern("#${counter} - ${longName}");
+        context.getExecutorServiceManager().setThreadNamePattern("##counter# - #longName#");
         String foo = context.getExecutorServiceManager().resolveThreadName("foo?beer=Carlsberg");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
 
@@ -86,7 +86,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPatternWithParameters() throws Exception {
-        context.getExecutorServiceManager().setThreadNamePattern("#${counter} - ${name}");
+        context.getExecutorServiceManager().setThreadNamePattern("##counter# - #name#");
         String foo = context.getExecutorServiceManager().resolveThreadName("foo?beer=Carlsberg");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
 
@@ -98,7 +98,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPatternNoCounter() throws Exception {
-        context.getExecutorServiceManager().setThreadNamePattern("Cool ${name}");
+        context.getExecutorServiceManager().setThreadNamePattern("Cool #name#");
         String foo = context.getExecutorServiceManager().resolveThreadName("foo");
         String bar = context.getExecutorServiceManager().resolveThreadName("bar");
 
@@ -108,16 +108,16 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     }
 
     public void testGetThreadNameCustomPatternInvalid() throws Exception {
-        context.getExecutorServiceManager().setThreadNamePattern("Cool ${xxx}");
+        context.getExecutorServiceManager().setThreadNamePattern("Cool #xxx#");
         try {
             context.getExecutorServiceManager().resolveThreadName("foo");
             fail("Should thrown an exception");
         } catch (IllegalArgumentException e) {
-            assertEquals("Pattern is invalid: Cool ${xxx}", e.getMessage());
+            assertEquals("Pattern is invalid: Cool #xxx#", e.getMessage());
         }
 
         // reset it so we can shutdown properly
-        context.getExecutorServiceManager().setThreadNamePattern("Camel Thread ${counter} - ${name}");
+        context.getExecutorServiceManager().setThreadNamePattern("Camel Thread #counter# - #name#");
     }
 
     public void testDefaultThreadPool() throws Exception {

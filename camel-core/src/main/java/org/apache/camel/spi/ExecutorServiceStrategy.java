@@ -90,12 +90,12 @@ public interface ExecutorServiceStrategy extends ShutdownableService {
     /**
      * Sets the thread name pattern used for creating the full thread name.
      * <p/>
-     * The default pattern is: <tt>Camel (${camelId}) thread #${counter} - ${name}</tt>
+     * The default pattern is: <tt>Camel (#camelId#) thread #counter# - #name#</tt>
      * <p/>
-     * Where <tt>${camelId}</tt> is the name of the {@link org.apache.camel.CamelContext}
-     * <br/>and <tt>${counter}</tt> is a unique incrementing counter.
-     * <br/>and <tt>${name}</tt> is the regular thread name.
-     * <br/>You can also use <tt>${longName}</tt> is the long thread name which can includes endpoint parameters etc.
+     * Where <tt>#camelId#</tt> is the name of the {@link org.apache.camel.CamelContext}
+     * <br/>and <tt>#counter#</tt> is a unique incrementing counter.
+     * <br/>and <tt>#name#</tt> is the regular thread name.
+     * <br/>You can also use <tt>#longName#</tt> is the long thread name which can includes endpoint parameters etc.
      *
      * @param pattern  the pattern
      * @throws IllegalArgumentException if the pattern is invalid.

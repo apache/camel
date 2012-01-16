@@ -17,6 +17,8 @@
 package org.apache.camel.util.concurrent;
 
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.util.ObjectHelper;
 
@@ -24,8 +26,9 @@ import org.apache.camel.util.ObjectHelper;
  * Various helper method for thread naming.
  */
 public final class ThreadHelper {
-    public static final String DEFAULT_PATTERN = "Camel Thread ${counter} - ${name}";
-    
+    public static final String DEFAULT_PATTERN = "Camel Thread ##counter# - #name#";
+    private static final Pattern INVALID_PATTERN = Pattern.compile(".*#\\w+#.*");
+
     private static AtomicLong threadCounter = new AtomicLong();
     
     private ThreadHelper() {
@@ -37,6 +40,8 @@ public final class ThreadHelper {
 
     /**
      * Creates a new thread name with the given pattern
+     * <p/>
+     * See {@link org.apache.camel.spi.ExecutorServiceManager#setThreadNamePattern(String)} for supported patterns.
      *
      * @param pattern the pattern
      * @param name    the name
@@ -47,24 +52,21 @@ public final class ThreadHelper {
             pattern = DEFAULT_PATTERN;
         }
 
-        // the name could potential have a $ sign we want to keep
-        if (name.indexOf("$") > -1) {
-            name = name.replaceAll("\\$", "CAMEL_REPLACE_ME");
-        }
-
-        // we support ${longName} and ${name} as name placeholders
+        // we support #longName# and #name# as name placeholders
         String longName = name;
         String shortName = name.contains("?") ? ObjectHelper.before(name, "?") : name;
+        // must quote the names to have it work as literal replacement
+        shortName = Matcher.quoteReplacement(shortName);
+        longName = Matcher.quoteReplacement(longName);
 
-        String answer = pattern.replaceFirst("\\$\\{counter\\}", "" + nextThreadCounter());
-        answer = answer.replaceFirst("\\$\\{longName\\}", longName);
-        answer = answer.replaceFirst("\\$\\{name\\}", shortName);
-        if (answer.indexOf("$") > -1 || answer.indexOf("${") > -1 || answer.indexOf("}") > -1) {
+        // replace tokens
+        String answer = pattern.replaceFirst("#counter#", "" + nextThreadCounter());
+        answer = answer.replaceFirst("#longName#", longName);
+        answer = answer.replaceFirst("#name#", shortName);
+
+        // are there any #word# combos left, if so they should be considered invalid tokens
+        if (INVALID_PATTERN.matcher(answer).matches()) {
             throw new IllegalArgumentException("Pattern is invalid: " + pattern);
-        }
-
-        if (answer.indexOf("CAMEL_REPLACE_ME") > -1) {
-            answer = answer.replaceAll("CAMEL_REPLACE_ME", "\\$");
         }
 
         return answer;
