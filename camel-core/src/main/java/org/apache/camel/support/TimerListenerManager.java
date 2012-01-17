@@ -111,7 +111,10 @@ public class TimerListenerManager extends ServiceSupport implements Runnable {
     @Override
     protected void doStop() throws Exception {
         // executor service will be shutdown by CamelContext
-        task.cancel(true);
+        if (task != null) {
+            task.cancel(true);
+            task = null;
+        }
     }
 
 }
