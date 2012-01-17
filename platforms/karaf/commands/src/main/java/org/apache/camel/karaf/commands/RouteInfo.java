@@ -92,11 +92,27 @@ public class RouteInfo extends OsgiCommandSupport {
                 System.out.println(StringEscapeUtils.unescapeJava("\tTotal Processing Time: " + totalProcessingTime + "ms"));
                 Long lastProcessingTime = (Long) mBeanServer.getAttribute(routeMBean, "LastProcessingTime");
                 System.out.println(StringEscapeUtils.unescapeJava("\tLast Processing Time: " + lastProcessingTime + "ms"));
-                Date firstExchangeTimestamp = (Date) mBeanServer.getAttribute(routeMBean, "FirstExchangeCompletedTimestamp");
+
+                // Test for null to see if a any exchanges have been processed first to avoid NPE
+                Object firstExchangeTimestampObj = mBeanServer.getAttribute(routeMBean, "FirstExchangeCompletedTimestamp");
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date: " + format.format(firstExchangeTimestamp)));
-                Date lastExchangeCompletedTimestamp = (Date) mBeanServer.getAttribute(routeMBean, "LastExchangeCompletedTimestamp");
-                System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date: " + format.format(lastExchangeCompletedTimestamp)));
+                if (firstExchangeTimestampObj == null) {
+                    // Print an empty value for scripting
+                    System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date:"));
+                } else {
+                    Date firstExchangeTimestamp = (Date) firstExchangeTimestampObj;
+                    System.out.println(StringEscapeUtils.unescapeJava("\tFirst Exchange Date: " + format.format(firstExchangeTimestamp)));
+                }
+
+                // Again, check for null to avoid NPE
+                Object lastExchangeCompletedTimestampObj = mBeanServer.getAttribute(routeMBean, "LastExchangeCompletedTimestamp");
+                if (lastExchangeCompletedTimestampObj == null) {
+                    // Print an empty value for scripting
+                    System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date:"));
+                } else {
+                    Date lastExchangeCompletedTimestamp = (Date) lastExchangeCompletedTimestampObj;
+                    System.out.println(StringEscapeUtils.unescapeJava("\tLast Exchange Completed Date: " + format.format(lastExchangeCompletedTimestamp)));
+                }
             }
         }
         System.out.println("");
