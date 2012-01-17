@@ -16,7 +16,17 @@
  */
 package org.apache.camel.builder;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.component.bean.pojomessage.Person;
+import org.apache.camel.component.bean.pojomessage.PojoProxyHelperRequestReplyTest.PersonHandler;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -34,13 +44,46 @@ public class ExpressionClauseTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testAttachments() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.expectedBodiesReceivedInAnyOrder("log4j.properties", "jndi-example.properties");
+
+        template.send("direct:begin", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Message m = exchange.getIn();
+                m.setBody("Hello World");
+                m.addAttachment("log4j", new DataHandler(new FileDataSource("src/test/resources/log4j.properties")));
+                m.addAttachment("jndi-example", new DataHandler(new FileDataSource("src/test/resources/jndi-example.properties")));
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("mock:result");
+                from("direct:begin")
+                    .split().attachments()
+                    // extract just the name from the DataHandler/DataSource to simplify assertions
+                    .bean(new Extractor())
+                    .to("mock:result");
             }
         };
+    }
+    
+    public final class Extractor {
+        public String extractName(DataHandler body) {
+            DataSource ds = (body != null) ? body.getDataSource() : null;
+            if (ds != null && ds instanceof FileDataSource) {
+                return ((FileDataSource)ds).getName();
+            }
+            return null;
+        }
     }
 }
