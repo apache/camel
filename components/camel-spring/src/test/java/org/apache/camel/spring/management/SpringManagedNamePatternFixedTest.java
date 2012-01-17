@@ -14,37 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.spring.management;
 
-import org.apache.camel.spi.CamelContextNameStrategy;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.CamelContext;
+import org.apache.camel.management.ManagedNamePatternFixedTest;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * Strategy to used an explicit (fixed) name for {@link org.apache.camel.CamelContext}.
- *
  * @version 
  */
-public class ExplicitCamelContextNameStrategy implements CamelContextNameStrategy {
+public class SpringManagedNamePatternFixedTest extends ManagedNamePatternFixedTest {
 
-    private final String name;
-
-    public ExplicitCamelContextNameStrategy(String name) {
-        ObjectHelper.notEmpty(name, "CamelContext name ");
-        this.name = name;
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedNamePatternFixedTest.xml");
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getNextName() {
-        return name;
-    }
-
-    @Override
-    public boolean isFixedName() {
-        return true;
-    }
 }

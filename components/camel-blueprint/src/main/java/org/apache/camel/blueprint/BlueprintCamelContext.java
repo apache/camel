@@ -21,6 +21,7 @@ import org.apache.camel.core.osgi.OsgiCamelContextHelper;
 import org.apache.camel.core.osgi.OsgiCamelContextNameStrategy;
 import org.apache.camel.core.osgi.OsgiClassResolver;
 import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
+import org.apache.camel.core.osgi.OsgiManagementNameStrategy;
 import org.apache.camel.core.osgi.OsgiPackageScanClassResolver;
 import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;

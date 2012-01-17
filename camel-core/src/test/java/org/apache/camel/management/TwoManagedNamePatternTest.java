@@ -22,43 +22,45 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 
 /**
  * @version 
  */
-public class TwoManagedCamelContextAutoAssignedNameClashTest extends TestSupport {
+public class TwoManagedNamePatternTest extends TestSupport {
 
     private CamelContext camel1;
     private CamelContext camel2;
 
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext(String name, String pattern) throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
+        context.setName(name);
+        context.getManagementNameStrategy().setNamePattern(pattern);
         DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
         naming.setHostName("localhost");
         naming.setDomainName("org.apache.camel");
         return context;
     }
 
-    public void testTwoManagedCamelContextClash() throws Exception {
-        camel1 = createCamelContext();
+    public void testManagedNamePattern() throws Exception {
+        camel1 = createCamelContext("foo", "aaa-#name#");
+        camel2 = createCamelContext("bar", "bbb-#name#");
+
         camel1.start();
-        assertTrue("Should be started", camel1.getStatus().isStarted());
+        camel2.start();
 
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + camel1.getManagementName() + ",type=context,name=\"camel-1\"");
+
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/aaa-foo,type=context,name=\"foo\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 
-        // now cheat and reset the counter so we can test for a clash
-        DefaultCamelContextNameStrategy.setCounter(0);
-
-        camel2 = createCamelContext();
-        camel2.start();
-        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=localhost/" + camel2.getManagementName() + ",type=context,name=\"camel-1\"");
+        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=localhost/bbb-bar,type=context,name=\"bar\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on2));
 
-        assertTrue("Should still be registered after name clash", mbeanServer.isRegistered(on));
-        assertTrue("Should still be registered after name clash", mbeanServer.isRegistered(on2));
+        camel1.stop();
+        camel2.stop();
+
+        assertFalse("Should be unregistered", mbeanServer.isRegistered(on));
+        assertFalse("Should be unregistered", mbeanServer.isRegistered(on2));
     }
 
     @Override

@@ -40,6 +40,7 @@ public class DefaultCamelContextNameStrategy implements CamelContextNameStrategy
         this.name = getNextName();
     }
 
+    @Override
     public String getName() {
         if (name == null) {
             name = getNextName();
@@ -47,8 +48,14 @@ public class DefaultCamelContextNameStrategy implements CamelContextNameStrategy
         return name;
     }
 
+    @Override
     public String getNextName() {
         return prefix + "-" + getNextCounter();
+    }
+
+    @Override
+    public boolean isFixedName() {
+        return false;
     }
 
     public static int getNextCounter() {

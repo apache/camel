@@ -92,6 +92,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute(required = false)
     private String useBreadcrumb;
     @XmlAttribute(required = false)
+    private String managementNamePattern;
+    @XmlAttribute(required = false)
     private Boolean useBlueprintPropertyResolver;
     @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
@@ -305,6 +307,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setUseBreadcrumb(String useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
+    }
+
+    public String getManagementNamePattern() {
+        return managementNamePattern;
+    }
+
+    public void setManagementNamePattern(String managementNamePattern) {
+        this.managementNamePattern = managementNamePattern;
     }
 
     public Boolean getLazyLoadTypeConverters() {

@@ -102,6 +102,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -136,6 +137,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final transient Logger log = LoggerFactory.getLogger(getClass());
     private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
+    private ManagementNameStrategy managementNameStrategy = new DefaultManagementNameStrategy(this);
     private String managementName;
     private ClassLoader applicationContextClassLoader;
     private Map<EndpointKey, Endpoint> endpoints;
@@ -258,6 +260,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setNameStrategy(CamelContextNameStrategy nameStrategy) {
         this.nameStrategy = nameStrategy;
+    }
+
+    public ManagementNameStrategy getManagementNameStrategy() {
+        return managementNameStrategy;
+    }
+
+    public void setManagementNameStrategy(ManagementNameStrategy managementNameStrategy) {
+        this.managementNameStrategy = managementNameStrategy;
     }
 
     public String getManagementName() {
@@ -2426,6 +2436,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      */
     public static void setContextCounter(int value) {
         DefaultCamelContextNameStrategy.setCounter(value);
+        DefaultManagementNameStrategy.setCounter(value);
     }
 
     private static UuidGenerator createDefaultUuidGenerator() {

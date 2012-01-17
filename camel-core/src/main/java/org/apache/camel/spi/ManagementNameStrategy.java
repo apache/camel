@@ -17,11 +17,39 @@
 package org.apache.camel.spi;
 
 /**
- * Strategy for assigning name to a {@link org.apache.camel.CamelContext}.
+ * Strategy for assigning the name part of the {@link javax.management.ObjectName}
+ * for a managed {@link org.apache.camel.CamelContext}.
+ * <p/>
+ * A strategy is needed as you can run multiple CamelContext in the same JVM, and want them
+ * to be enlisted in the JVM wide JMXMBeanServer. And this requires a strategy to be able
+ * to calculate unique names, in case of clashes. Or to enforce an explicit fixed name,
+ * to ensure the JMX name is not using dynamic counters etc.
+ * <p/>
+ * This strategy supports a naming pattern which supports at least the following tokens
+ * <ul>
+ *   <li>#camelId# - the camel id (eg the camel name)</li>
+ *   <li>#name# - same as #camelId#</li>
+ *   <li>#counter# - an incrementing counter</li>
+ * </ul>
  *
- * @see ManagementNameStrategy
+ * @see CamelContextNameStrategy
+ * @see org.apache.camel.impl.DefaultManagementNameStrategy
  */
-public interface CamelContextNameStrategy {
+public interface ManagementNameStrategy {
+
+    /**
+     * Gets the custom name pattern.
+     *
+     * @return the custom name pattern, or <tt>null</tt> if using the default pattern strategy.
+     */
+    String getNamePattern();
+
+    /**
+     * Sets a custom name pattern, which will be used instead of any default patterns.
+     *
+     * @param pattern a custom name pattern.
+     */
+    void setNamePattern(String pattern);
 
     /**
      * Gets the name
@@ -45,7 +73,7 @@ public interface CamelContextNameStrategy {
 
     /**
      * Whether the name will be fixed, or allow re-calculation such as by using an unique counter.
-     * 
+     *
      * @return <tt>true</tt> for fixed names, <tt>false</tt> for names which can re-calculated
      */
     boolean isFixedName();
