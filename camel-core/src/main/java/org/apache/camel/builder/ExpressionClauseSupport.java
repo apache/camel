@@ -164,6 +164,13 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
+     * An expression of the inbound message attachments
+     */
+    public T attachments() {
+        return expression(ExpressionBuilder.attachmentValuesExpression());
+    }
+
+    /**
      * An expression of the exchange pattern
      */
     public T exchangePattern() {
