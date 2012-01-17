@@ -124,4 +124,16 @@
 
     </dependencies>
 
+  <build>
+    <plugins>
+      <!-- TODO: use per test fork mode as otherwise this component fails -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>pertest</forkMode>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
