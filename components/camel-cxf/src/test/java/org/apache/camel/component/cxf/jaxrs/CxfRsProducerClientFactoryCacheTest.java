@@ -70,7 +70,7 @@ public class CxfRsProducerClientFactoryCacheTest extends Assert {
     }
     
     @Test
-    public void testGetConstumerWithHttpCentralClientAPI() throws Exception {
+    public void testGetCostumerWithHttpCentralClientAPI() throws Exception {
         doRunTest(template2);
         doRunTest(template1);
     }
