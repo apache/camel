@@ -126,7 +126,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         return new Iterable() {
             // create a copy which we use as master to copy during splitting
             // this avoids any side effect reflected upon the incoming exchange
-            private final Exchange copy = ExchangeHelper.createCopy(exchange, true);
+            private final Exchange copy = copyExchangeNoAttachments(exchange, true);
             private final RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
 
             public Iterator iterator() {
@@ -220,5 +220,11 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
     public Expression getExpression() {
         return expression;
+    }
+    
+    static private Exchange copyExchangeNoAttachments(Exchange exchange, boolean preserveExchangeId) {
+        Exchange answer = ExchangeHelper.createCopy(exchange, preserveExchangeId);
+        answer.getIn().setAttachments(null);
+        return answer;
     }
 }

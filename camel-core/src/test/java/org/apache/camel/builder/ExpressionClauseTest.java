@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import java.util.Map;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -28,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.bean.pojomessage.Person;
 import org.apache.camel.component.bean.pojomessage.PojoProxyHelperRequestReplyTest.PersonHandler;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version 
@@ -60,6 +63,8 @@ public class ExpressionClauseTest extends ContextTestSupport {
         });
 
         assertMockEndpointsSatisfied();
+        Map<String, DataHandler> attachments = mock.getExchanges().get(0).getIn().getAttachments();
+        assertTrue(attachments == null || attachments.size() == 0);
     }
 
     @Override
