@@ -35,6 +35,35 @@
             <to uri="solr://localhost:{{SolrServer.Port}}/solr"/>
         </route>
 
+        <route id="XMLRoute-Streaming">
+            <from uri="direct:xml-start-streaming" />
+            <split>
+                <xpath>/bookstore/book</xpath>
+                <convertBodyTo type="java.lang.String"/>
+                <setHeader headerName="SolrOperation">
+                    <constant>INSERT_STREAMING</constant>
+                </setHeader>
+                <setHeader headerName="SolrField.id">
+                    <xpath resultType="java.lang.String">//title/text()</xpath>
+                </setHeader>
+                <setHeader headerName="SolrField.title">
+                    <xpath resultType="java.lang.String">//title/text()</xpath>
+                </setHeader>
+                <setHeader headerName="SolrField.cat">
+                    <groovy>
+                        def book = new XmlParser().parseText(request.body)
+                        book.cat.collect{ it.text() } as String[]
+                    </groovy>
+                </setHeader>
+                <to uri="solr://localhost:{{SolrServer.Port}}/solr"/>
+            </split>
+            <delay><constant>500</constant></delay>
+            <setHeader headerName="SolrOperation">
+                <constant>COMMIT</constant>
+            </setHeader>
+            <to uri="solr://localhost:{{SolrServer.Port}}/solr"/>
+        </route>
+
         <route id="PDFRoute">
             <from uri="direct:pdf-start" />
             <setHeader headerName="SolrOperation">
@@ -49,6 +78,23 @@
             </setHeader>
             <to uri="solr://localhost:{{SolrServer.Port}}/solr"/>
         </route>
+
+        <route id="PDFRoute-Streaming">
+            <from uri="direct:pdf-start-streaming" />
+            <setHeader headerName="SolrOperation">
+                <constant>INSERT_STREAMING</constant>
+            </setHeader>
+            <setHeader headerName="SolrParam.literal.id">
+                <simple>${body.name}</simple>
+            </setHeader>
+            <to uri="solr://localhost:{{SolrServer.Port}}/solr?requestHandler=/update/extract" />
+            <delay><constant>500</constant></delay>
+            <setHeader headerName="SolrOperation">
+                <constant>COMMIT</constant>
+            </setHeader>
+            <to uri="solr://localhost:{{SolrServer.Port}}/solr"/>
+        </route>
+
     </camelContext>
 
 </beans>

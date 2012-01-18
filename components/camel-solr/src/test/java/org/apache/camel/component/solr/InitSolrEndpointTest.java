@@ -27,7 +27,17 @@ public class InitSolrEndpointTest extends CamelTestSupport {
     @Test
     public void endpointCreatedCorrectlyWithAllOptions() throws Exception {
         SolrEndpoint solrEndpoint = context.getEndpoint(solrUrl + getFullOptions(), SolrEndpoint.class);
+        assertEquals("queue size incorrect", 5, solrEndpoint.getStreamingQueueSize());
+        assertEquals("thread count incorrect", 1, solrEndpoint.getStreamingThreadCount());
         assertNotNull(solrEndpoint);
+    }
+
+    @Test
+    public void streamingEndpointCreatedCorrectly() throws Exception {
+        SolrEndpoint solrEndpoint = context.getEndpoint(solrUrl, SolrEndpoint.class);
+        assertNotNull(solrEndpoint);
+        assertEquals("queue size incorrect", SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE, solrEndpoint.getStreamingQueueSize());
+        assertEquals("thread count incorrect", SolrConstants.DEFAULT_STREAMING_THREAD_COUNT, solrEndpoint.getStreamingThreadCount());
     }
 
     @Test(expected = ResolveEndpointFailedException.class)
@@ -36,7 +46,8 @@ public class InitSolrEndpointTest extends CamelTestSupport {
     }
 
     private String getFullOptions() {
-        return "?maxRetries=1&soTimeout=100&connectionTimeout=100"
+        return "?streamingQueueSize=5&streamingThreadCount=1"
+                + "&maxRetries=1&soTimeout=100&connectionTimeout=100"
                 + "&defaultMaxConnectionsPerHost=100&maxTotalConnections=100"
                 + "&followRedirects=false&allowCompression=true"
                 + "&requestHandler=/update";
