@@ -51,6 +51,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.blueprint.CamelContextFactoryBean;
 import org.apache.camel.blueprint.CamelRouteContextFactoryBean;
+import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.impl.CamelPostProcessorHelper;
@@ -75,6 +76,7 @@ import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.blueprint.KeyStoreParametersFactoryBean;
 import org.apache.camel.util.blueprint.SSLContextParametersFactoryBean;
@@ -233,7 +235,32 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         regProcessor.addDependsOn(".camelBlueprint.processor.bean." + contextId);
         regProcessor.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
         context.getComponentDefinitionRegistry().registerComponentDefinition(regProcessor);
+
+        // lets inject the namespaces into any namespace aware POJOs
+        injectNamespaces(element, binder);
+
         return ctx;
+    }
+
+    protected void injectNamespaces(Element element, Binder<Node> binder) {
+        NodeList list = element.getChildNodes();
+        Namespaces namespaces = null;
+        int size = list.getLength();
+        for (int i = 0; i < size; i++) {
+            Node child = list.item(i);
+            if (child instanceof Element) {
+                Element childElement = (Element) child;
+                Object object = binder.getJAXBNode(child);
+                if (object instanceof NamespaceAware) {
+                    NamespaceAware namespaceAware = (NamespaceAware) object;
+                    if (namespaces == null) {
+                        namespaces = new Namespaces(element);
+                    }
+                    namespaces.configure(namespaceAware);
+                }
+                injectNamespaces(childElement, binder);
+            }
+        }
     }
 
     private Metadata parseRouteContextNode(Element element, ParserContext context) {
