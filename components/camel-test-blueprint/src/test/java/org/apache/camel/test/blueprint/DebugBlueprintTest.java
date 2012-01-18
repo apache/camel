@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import org.junit.Test;
 
+// START SNIPPET: example
 public class DebugBlueprintTest extends CamelBlueprintTestSupport {
 
     @Override
@@ -42,3 +43,4 @@ public class DebugBlueprintTest extends CamelBlueprintTestSupport {
     }
 
 }
+// END SNIPPET: example

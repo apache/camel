@@ -15,8 +15,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
+<!-- START SNIPPET: example -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
-
 
 	<camelContext id="camelContext" xmlns="http://camel.apache.org/schema/blueprint" trace="true" autoStartup="true" >
 
@@ -30,3 +30,4 @@
 	</camelContext>
 
 </blueprint>
+<!-- END SNIPPET: example -->
