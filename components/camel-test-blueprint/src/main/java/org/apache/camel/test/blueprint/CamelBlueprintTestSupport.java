@@ -75,6 +75,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     protected TinyBundle createTestBundle() {
         TinyBundle bundle = TinyBundles.newBundle();
         for (URL url : getBlueprintDescriptors()) {
+            if (url == null) {
+                throw new IllegalArgumentException("getBlueprintDescriptors() returns null");
+            }
             bundle.add("OSGI-INF/blueprint/blueprint-" + url.getFile().replace("/", "-"), url);
         }
         bundle.set("Manifest-Version", "2")
