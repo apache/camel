@@ -182,7 +182,7 @@
           <version>2.2</version>
           <configuration>
             <downloadSources>true</downloadSources>
-            <downloadJavadocs>true</downloadJavadocs>
+            <downloadJavadocs>false</downloadJavadocs>
           </configuration>
         </plugin>
   
