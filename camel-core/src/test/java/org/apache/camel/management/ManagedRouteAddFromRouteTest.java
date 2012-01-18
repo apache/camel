@@ -39,6 +39,10 @@ public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // put a message pre-early on the seda queue, to trigger the route, which
+                // then would add a 2nd route during CamelContext startup. This is a test
+                // to ensure the foo route is not started too soon, and thus adding the 2nd
+                // route works as expected
                 SedaEndpoint seda = context.getEndpoint("seda:start", SedaEndpoint.class);
                 seda.getQueue().put(new DefaultExchange(context));
 
@@ -70,7 +74,9 @@ public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
-        template.sendBody("seda:start", "Hello World");
+
+        // should route the message we put on the seda queue before
+
         result.assertIsSatisfied();
 
         // find the 2nd route
