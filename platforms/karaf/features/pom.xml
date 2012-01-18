@@ -106,7 +106,7 @@
       <regexp-bundle-version>1.3_2</regexp-bundle-version>
       <rhino-bundle-version>1.7R2_2</rhino-bundle-version>
       <rome-bundle-version>1.0_2</rome-bundle-version>
-      <saxon-bundle-version>9.1.0.8_2</saxon-bundle-version>
+      <saxon-bundle-version>9.3.0.11_SNAPSHOT</saxon-bundle-version>
       <scala-bundle-version>2.9.1_1</scala-bundle-version>
       <scriptengines-version>1.1</scriptengines-version>
       <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
