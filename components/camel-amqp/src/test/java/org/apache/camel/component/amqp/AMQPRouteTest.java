@@ -33,7 +33,7 @@ import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
 /**
  * @version 
  */
-//@Ignore("AMQP testing is a bit unstable")
+@Ignore("AMQP testing is a bit unstable")
 public class AMQPRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
     
