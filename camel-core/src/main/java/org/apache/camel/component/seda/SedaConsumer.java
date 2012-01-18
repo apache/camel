@@ -138,6 +138,18 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         BlockingQueue<Exchange> queue = endpoint.getQueue();
         // loop while we are allowed, or if we are stopping loop until the queue is empty
         while (queue != null && (isRunAllowed())) {
+
+            // do not poll during CamelContext is starting, as we should only poll when CamelContext is fully started
+            if (getEndpoint().getCamelContext().getStatus().isStarting()) {
+                LOG.trace("CamelContext is starting so skip polling");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    LOG.debug("Sleep interrupted, are we stopping? {}", isStopping() || isStopped());
+                }
+                continue;
+            }
+
             // do not poll if we are suspended
             if (isSuspending() || isSuspended()) {
                 LOG.trace("Consumer is suspended so skip polling");
