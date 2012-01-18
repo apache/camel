@@ -200,9 +200,6 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      */
     public Predicate<ComputeMetadata> getComputePredicate(final Exchange exchange) {
         final String nodeId = getNodeId(exchange);
-        final String imageId = getImageId(exchange);
-        final String group = getGroup(exchange);
-        final NodeState queryState = getNodeState(exchange);
 
         Predicate<ComputeMetadata> predicate = new Predicate<ComputeMetadata>() {
             public boolean apply(ComputeMetadata metadata) {

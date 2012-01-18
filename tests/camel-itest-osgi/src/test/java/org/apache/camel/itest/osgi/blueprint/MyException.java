@@ -21,6 +21,8 @@ package org.apache.camel.itest.osgi.blueprint;
  */
 public class MyException extends Exception {
 
+    private static final long serialVersionUID = 1L;
+
     public MyException() {
     }
 

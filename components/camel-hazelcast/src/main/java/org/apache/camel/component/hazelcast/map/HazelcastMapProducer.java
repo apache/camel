@@ -32,11 +32,9 @@ public class HazelcastMapProducer extends DefaultProducer {
 
     private final IMap<String, Object> cache;
     private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
-    private HazelcastInstance hazelcastInstance;
 
     public HazelcastMapProducer(HazelcastInstance hazelcastInstance, HazelcastMapEndpoint endpoint, String cacheName) {
         super(endpoint);
-        this.hazelcastInstance = hazelcastInstance;
         this.cache = hazelcastInstance.getMap(cacheName);
     }
 

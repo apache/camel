@@ -50,7 +50,7 @@ public class TemporalRule extends ServiceSupport {
     private long expectedMillis;
     private long overdueMillis;
     private Processor overdueAction;
-    private OutputDefinition overdueProcessors = new OutputDefinition();
+    private OutputDefinition<?> overdueProcessors = new OutputDefinition();
 
     public TemporalRule(TimeExpression first, TimeExpression second) {
         this.first = first;
@@ -66,11 +66,11 @@ public class TemporalRule extends ServiceSupport {
         return this;
     }
 
-    public OutputDefinition errorIfOver(Time builder) {
+    public OutputDefinition<?> errorIfOver(Time builder) {
         return errorIfOver(builder.toMillis());
     }
 
-    public OutputDefinition errorIfOver(long millis) {
+    public OutputDefinition<?> errorIfOver(long millis) {
         overdueMillis = millis;
         return overdueProcessors;
     }

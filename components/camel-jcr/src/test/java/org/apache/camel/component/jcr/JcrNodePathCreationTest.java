@@ -49,7 +49,7 @@ public class JcrNodePathCreationTest extends CamelTestSupport {
         assertNotNull("Out body was null; expected JCR node UUID", uuid);
         Session session = repository.login(new SimpleCredentials("user", "pass".toCharArray()));
         try {
-            Node node = session.getNodeByUUID(uuid);
+            Node node = session.getNodeByIdentifier(uuid);
             assertNotNull(node);
             assertEquals("/home/test/node/with/path", node.getPath());
         } finally {

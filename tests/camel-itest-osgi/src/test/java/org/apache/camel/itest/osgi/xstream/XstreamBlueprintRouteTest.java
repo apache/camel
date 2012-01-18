@@ -44,7 +44,6 @@ public class XstreamBlueprintRouteTest extends OSGiBlueprintTestSupport {
     @Test
     public void testUnmarshal() throws Exception {
         getInstalledBundle("CamelBlueprintXstreamTestBundle").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintXstreamTestBundle)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintXstreamTestBundle)", 10000);
 
         MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);

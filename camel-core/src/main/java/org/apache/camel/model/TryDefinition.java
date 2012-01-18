@@ -106,7 +106,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         // this method is introduced to avoid compiler warnings about the
         // generic Class arrays in the case we've got only one single Class
         // to build a TryDefinition for
-        return doCatch((Class<? extends Throwable>[])new Class[] {exceptionType});
+        return doCatch(new Class[] {exceptionType});
     }
 
     /**

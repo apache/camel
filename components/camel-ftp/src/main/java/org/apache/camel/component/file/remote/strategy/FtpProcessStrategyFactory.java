@@ -47,7 +47,7 @@ public final class FtpProcessStrategyFactory {
 
         if (isDelete) {
             GenericFileDeleteProcessStrategy<FTPFile> strategy = new GenericFileDeleteProcessStrategy<FTPFile>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<FTPFile>) getExclusiveReadLockStrategy(params));
+            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (preMoveExpression != null) {
                 GenericFileExpressionRenamer<FTPFile> renamer = new GenericFileExpressionRenamer<FTPFile>();
                 renamer.setExpression(preMoveExpression);
@@ -61,7 +61,7 @@ public final class FtpProcessStrategyFactory {
             return strategy;
         } else if (isMove || isNoop) {
             GenericFileRenameProcessStrategy<FTPFile> strategy = new GenericFileRenameProcessStrategy<FTPFile>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<FTPFile>) getExclusiveReadLockStrategy(params));
+            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (!isNoop && moveExpression != null) {
                 // move on commit is only possible if not noop
                 GenericFileExpressionRenamer<FTPFile> renamer = new GenericFileExpressionRenamer<FTPFile>();
@@ -84,7 +84,7 @@ public final class FtpProcessStrategyFactory {
         } else {
             // default strategy will do nothing
             GenericFileNoOpProcessStrategy<FTPFile> strategy = new GenericFileNoOpProcessStrategy<FTPFile>();
-            strategy.setExclusiveReadLockStrategy((GenericFileExclusiveReadLockStrategy<FTPFile>) getExclusiveReadLockStrategy(params));
+            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             return strategy;
         }
     }

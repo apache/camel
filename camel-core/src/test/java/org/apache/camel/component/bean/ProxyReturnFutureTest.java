@@ -29,7 +29,6 @@ public class ProxyReturnFutureTest extends ContextTestSupport {
 
     // START SNIPPET: e2
     public void testFutureEcho() throws Exception {
-        @SuppressWarnings("unchecked")
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
 
         Future<String> future = service.asText(4);
@@ -44,7 +43,6 @@ public class ProxyReturnFutureTest extends ContextTestSupport {
     // END SNIPPET: e2
 
     public void testFutureEchoCallTwoTimes() throws Exception {
-        @SuppressWarnings("unchecked")
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
 
         Future<String> future = service.asText(4);

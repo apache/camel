@@ -93,7 +93,7 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
     
     @Test
     public void testLuceneIndexProducer() throws Exception {
-        MockEndpoint mockEndpoint = new MockEndpoint("mock:result");
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
 
         context.stop();
         context.addRoutes(new RouteBuilder() {
@@ -120,7 +120,7 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
 
     @Test
     public void testLucenePhraseQueryProducer() throws Exception {
-        MockEndpoint mockSearchEndpoint = new MockEndpoint("mock:searchResult");
+        MockEndpoint mockSearchEndpoint = getMockEndpoint("mock:searchResult");
         
         context.stop();
         context.addRoutes(new RouteBuilder() {
@@ -159,7 +159,7 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
     
     @Test
     public void testLuceneWildcardQueryProducer() throws Exception {
-        MockEndpoint mockSearchEndpoint = new MockEndpoint("mock:searchResult");
+        MockEndpoint mockSearchEndpoint = getMockEndpoint("mock:searchResult");
         
         context.stop();
         context.addRoutes(new RouteBuilder() {

@@ -56,7 +56,6 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
     @Test
     public void testListBody() throws Exception {
         getInstalledBundle("CamelBlueprintSqlTestBundle").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
 
         MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
@@ -81,10 +80,8 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
     @Test
     public void testLowNumberOfParameter() throws Exception {
         getInstalledBundle("CamelBlueprintSqlTestBundle").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
 
-        MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
         try {
             ProducerTemplate template = ctx.createProducerTemplate();
             template.sendBody("direct:list", "ASF");
@@ -99,7 +96,6 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
     @Test
     public void testInsert() throws Exception {
         getInstalledBundle("CamelBlueprintSqlTestBundle").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
         DataSource ds = getOsgiService(DataSource.class, 10000);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);

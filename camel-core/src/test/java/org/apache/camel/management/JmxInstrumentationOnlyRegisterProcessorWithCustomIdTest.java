@@ -49,7 +49,7 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
         s = server.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
         assertEquals("Could not find 1 processor: " + s, 1, s.size());
         // should be mock foo
-        ObjectName on = (ObjectName) s.iterator().next();
+        ObjectName on = s.iterator().next();
         String id = (String) server.getAttribute(on, "ProcessorId");
         assertEquals("myfoo", id);
 
