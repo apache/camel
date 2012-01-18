@@ -53,21 +53,9 @@
 
     <dependency>
       <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon</artifactId>
+      <artifactId>saxon9he</artifactId>
     </dependency>
-    <dependency>
-      <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon-dom</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon-sql</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon-xpath</artifactId>
-    </dependency>
-
+    
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>

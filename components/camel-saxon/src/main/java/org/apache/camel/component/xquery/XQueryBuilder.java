@@ -43,16 +43,15 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Node;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.query.DynamicQueryContext;
-import net.sf.saxon.query.ModuleURIResolver;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Whitespace;
-
 import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -70,6 +69,8 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Creates an XQuery builder.
@@ -489,7 +490,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
                     throw new NoTypeConversionAvailableException(body, Source.class);
                 }
 
-                DocumentInfo doc = getStaticQueryContext().buildDocument(source);
+                DocumentInfo doc = config.buildDocument(source);
                 dynamicQueryContext.setContextItem(doc);
             } finally {
                 // can deal if is is null
@@ -611,7 +612,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             configuration.setHostLanguage(Configuration.XQUERY);
             configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
 
-            staticQueryContext = new StaticQueryContext(getConfiguration());
+            staticQueryContext = getConfiguration().newStaticQueryContext();
             if (moduleURIResolver != null) {
                 staticQueryContext.setModuleURIResolver(moduleURIResolver);
             }

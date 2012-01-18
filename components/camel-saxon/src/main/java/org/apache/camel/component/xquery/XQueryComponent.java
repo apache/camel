@@ -19,7 +19,7 @@ package org.apache.camel.component.xquery;
 import java.net.URL;
 import java.util.Map;
 
-import net.sf.saxon.query.ModuleURIResolver;
+import net.sf.saxon.lib.ModuleURIResolver;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
