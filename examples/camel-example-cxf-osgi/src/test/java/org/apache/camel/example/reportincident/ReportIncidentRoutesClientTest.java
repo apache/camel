@@ -32,7 +32,7 @@ public class ReportIncidentRoutesClientTest extends CamelSpringTestSupport {
 
     // should be the same address as we have in our route
     private static final String URL = "http://localhost:%s/cxf/camel-example-cxf-osgi/webservices/incident";
-    private static final int PORT = AvailablePortFinder.getNextAvailable(9100);
+    private static final int PORT = AvailablePortFinder.getNextAvailable();
     
     @BeforeClass
     public static void setUpBeforeClass() {

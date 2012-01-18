@@ -40,9 +40,9 @@ public class RmiTest extends CamelSpringTestSupport {
 
     @BeforeClass
     public static void setupFreePort() throws Exception {
-        // find a free port number from 9100 onwards, and write that in the custom.properties file
+        // find a free port number, and write that in the custom.properties file
         // which we will use for the unit tests, to avoid port number in use problems
-        port = AvailablePortFinder.getNextAvailable(9100);
+        port = AvailablePortFinder.getNextAvailable();
         String s = "port=" + port;
 
         File custom = new File("target/custom.properties");
