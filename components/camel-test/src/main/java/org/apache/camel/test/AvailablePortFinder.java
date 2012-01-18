@@ -20,14 +20,10 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.util.NoSuchElementException;
-import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Finds currently available server ports.
@@ -169,4 +165,5 @@ public final class AvailablePortFinder {
 
         return false;
     }
+
 }
