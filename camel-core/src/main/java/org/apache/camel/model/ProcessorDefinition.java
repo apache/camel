@@ -2820,7 +2820,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * The difference between this and {@link #enrich(String)} is that this uses a consumer
      * to obtain the additional data, where as enrich uses a producer.
      * <p/>
-     * This method will block until data is avialable, use the method with timeout if you do not
+     * This method will <tt>block</tt> until data is available, use the method with timeout if you do not
      * want to risk waiting a long time before data is available from the resourceUri.
      *
      * @param resourceUri           URI of resource endpoint for obtaining additional data.
@@ -2829,7 +2829,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri) {
-        addOutput(new PollEnrichDefinition(null, resourceUri, 0));
+        addOutput(new PollEnrichDefinition(null, resourceUri, -1));
         return (Type) this;
     }
 
@@ -2841,7 +2841,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * The difference between this and {@link #enrich(String)} is that this uses a consumer
      * to obtain the additional data, where as enrich uses a producer.
      * <p/>
-     * This method will block until data is avialable, use the method with timeout if you do not
+     * This method will <b>block</b> until data is available, use the method with timeout if you do not
      * want to risk waiting a long time before data is available from the resourceUri.
      *
      * @param resourceUri           URI of resource endpoint for obtaining additional data.
@@ -2851,7 +2851,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, AggregationStrategy aggregationStrategy) {
-        addOutput(new PollEnrichDefinition(aggregationStrategy, resourceUri, 0));
+        addOutput(new PollEnrichDefinition(aggregationStrategy, resourceUri, -1));
         return (Type) this;
     }
 
