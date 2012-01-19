@@ -29,6 +29,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.model.ExecutorServiceAwareDefinition;
 import org.apache.camel.spi.ExecutorServiceStrategy;
@@ -52,6 +54,7 @@ import org.slf4j.LoggerFactory;
 public final class ExecutorServiceHelper {
 
     public static final String DEFAULT_PATTERN = "Camel Thread ${counter} - ${name}";
+    private static final Pattern INVALID_PATTERN = Pattern.compile(".*\\$\\{\\w+\\}.*");
     private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceHelper.class);
     private static AtomicLong threadCounter = new AtomicLong();
 
@@ -74,24 +77,21 @@ public final class ExecutorServiceHelper {
             pattern = DEFAULT_PATTERN;
         }
 
-        // the name could potential have a $ sign we want to keep
-        if (name.indexOf("$") > -1) {
-            name = name.replaceAll("\\$", "CAMEL_REPLACE_ME");
-        }
-
         // we support ${longName} and ${name} as name placeholders
         String longName = name;
         String shortName = name.contains("?") ? ObjectHelper.before(name, "?") : name;
 
+        // must quote the names to have it work as literal replacement
+        shortName = Matcher.quoteReplacement(shortName);
+        longName = Matcher.quoteReplacement(longName);
+
         String answer = pattern.replaceFirst("\\$\\{counter\\}", "" + nextThreadCounter());
         answer = answer.replaceFirst("\\$\\{longName\\}", longName);
         answer = answer.replaceFirst("\\$\\{name\\}", shortName);
-        if (answer.indexOf("$") > -1 || answer.indexOf("${") > -1 || answer.indexOf("}") > -1) {
-            throw new IllegalArgumentException("Pattern is invalid: " + pattern);
-        }
 
-        if (answer.indexOf("CAMEL_REPLACE_ME") > -1) {
-            answer = answer.replaceAll("CAMEL_REPLACE_ME", "\\$");
+        // are there any ${word} combos left, if so they should be considered invalid tokens
+        if (INVALID_PATTERN.matcher(answer).matches()) {
+            throw new IllegalArgumentException("Pattern is invalid: " + pattern);
         }
 
         return answer;

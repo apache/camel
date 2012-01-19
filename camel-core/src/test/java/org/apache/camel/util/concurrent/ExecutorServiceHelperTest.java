@@ -34,6 +34,13 @@ public class ExecutorServiceHelperTest extends TestCase {
         assertTrue(name.endsWith("foo"));
     }
 
+    public void testGetThreadNameWithDollar() {
+        String name = ExecutorServiceHelper.getThreadName("Camel Thread ${counter} - ${name}", "foo$bar");
+
+        assertTrue(name.startsWith("Camel Thread"));
+        assertTrue(name.endsWith("foo$bar"));
+    }
+
     public void testNewScheduledThreadPool() {
         ScheduledExecutorService pool = ExecutorServiceHelper.newScheduledThreadPool(1, "MyPool ${name}", "foo", true);
         assertNotNull(pool);
