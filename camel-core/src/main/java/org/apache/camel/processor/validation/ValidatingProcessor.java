@@ -209,7 +209,9 @@ public class ValidatingProcessor implements Processor {
 
     protected SchemaFactory createSchemaFactory() {
         SchemaFactory factory = SchemaFactory.newInstance(schemaLanguage);
-        factory.setResourceResolver(getResourceResolver());
+        if (getResourceResolver() != null) {
+            factory.setResourceResolver(getResourceResolver());
+        }
         return factory;
     }
 
