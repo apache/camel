@@ -39,10 +39,12 @@ public class OsgiClassResolver extends DefaultClassResolver {
     }
     
     public Class<?> resolveClass(String name) {
+        LOG.trace("Resolve class {}", name);
         name = ObjectHelper.normalizeClassName(name);
         Class<?> clazz = ObjectHelper.loadSimpleType(name);
         if (clazz == null) {
             clazz = doLoadClass(name, bundleContext.getBundle());
+            LOG.trace("Loading class {} using BundleContext {} -> {}", new Object[]{name, bundleContext.getBundle(), clazz});
         }
         return clazz;
     }
