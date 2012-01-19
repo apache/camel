@@ -107,7 +107,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def pipeline = SPipelineDefinition(target.pipeline)
   def policy(policy: Policy) = wrap(target.policy(policy))
-  def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = 0) =
+  def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = -1) =
     wrap(target.pollEnrich(uri, timeout, strategy))
   def process(function: Exchange => Unit) = wrap(target.process(new ScalaProcessor(function)))
   def process(processor: Processor) = wrap(target.process(processor))

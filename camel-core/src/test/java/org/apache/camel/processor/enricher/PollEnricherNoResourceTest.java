@@ -33,17 +33,6 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void testNoResourceB() throws Exception {
-        // there should be no message body
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").message(0).body().isNull();
-        getMockEndpoint("mock:result").expectedHeaderReceived(Exchange.TO_ENDPOINT, "seda://bar");
-
-        template.sendBody("direct:b", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
-
     public void testResourceA() throws Exception {
         template.sendBody("seda:foo", "Bye World");
 
@@ -60,8 +49,6 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
 
     public void testResourceB() throws Exception {
         template.sendBody("seda:bar", "Bye World");
-
-        Thread.sleep(250);
 
         // there should be a message body
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");

@@ -50,7 +50,6 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
     private AggregationStrategy aggregationStrategy;
 
     public PollEnrichDefinition() {
-        this(null, null, 0);
     }
 
     public PollEnrichDefinition(AggregationStrategy aggregationStrategy, String resourceUri, long timeout) {
@@ -96,7 +95,8 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
         if (timeout != null) {
             enricher = new PollEnricher(null, endpoint.createPollingConsumer(), timeout);
         } else {
-            enricher = new PollEnricher(null, endpoint.createPollingConsumer(), 0);
+            // if no timeout then we should block, and there use a negative timeout
+            enricher = new PollEnricher(null, endpoint.createPollingConsumer(), -1);
         }
 
         if (aggregationStrategyRef != null) {
