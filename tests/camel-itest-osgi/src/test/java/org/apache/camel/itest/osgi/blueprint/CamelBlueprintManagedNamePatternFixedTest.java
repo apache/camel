@@ -28,7 +28,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
-import org.osgi.service.blueprint.container.BlueprintContainer;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
@@ -43,7 +42,6 @@ public class CamelBlueprintManagedNamePatternFixedTest extends OSGiBlueprintTest
     @Test
     public void testManagedNamePatternFixed() throws Exception {
         getInstalledBundle("CamelBlueprintTestBundleFixed").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundleFixed)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundleFixed)", 10000);
 
         ProducerTemplate template = ctx.createProducerTemplate();

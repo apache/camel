@@ -23,11 +23,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarInputStream;
@@ -130,16 +131,16 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             tracker.open(true);
             // Note that the tracker is not closed to keep the reference
             // This is buggy, as the service reference may change i think
-            Object svc = type.cast(tracker.waitForService(timeout));
+            Object svc = tracker.waitForService(timeout);
             if (svc == null) {
                 Dictionary<?, ?> dic = bundleContext.getBundle().getHeaders();
                 System.err.println("Test bundle headers: " + explode(dic));
 
-                for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, null))) {
+                for (ServiceReference<?> ref : asCollection(bundleContext.getAllServiceReferences(null, null))) {
                     System.err.println("ServiceReference: " + ref);
                 }
 
-                for (ServiceReference ref : asCollection(bundleContext.getAllServiceReferences(null, flt))) {
+                for (ServiceReference<?> ref : asCollection(bundleContext.getAllServiceReferences(null, flt))) {
                     System.err.println("Filtered ServiceReference: " + ref);
                 }
 
@@ -153,8 +154,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         }
     }
 
-    /*
-     * Explode the dictionary into a ,-delimited list of key=value pairs
+    /**
+     * Explode the dictionary into a <code>,</code> delimited list of <code>key=value</code> pairs.
      */
     private static String explode(Dictionary<?, ?> dictionary) {
         Enumeration<?> keys = dictionary.keys();
@@ -169,17 +170,11 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         return result.toString();
     }
 
-    /*
-     * Provides an iterable collection of references, even if the original array is null
+    /**
+     * Provides an iterable collection of references, even if the original array is <code>null</code>.
      */
-    private static Collection<ServiceReference> asCollection(ServiceReference[] references) {
-        List<ServiceReference> result = new LinkedList<ServiceReference>();
-        if (references != null) {
-            for (ServiceReference reference : references) {
-                result.add(reference);
-            }
-        }
-        return result;
+    private static Collection<ServiceReference<?>> asCollection(ServiceReference<?>[] references) {
+        return references  == null ? new ArrayList<ServiceReference<?>>(0) : Arrays.asList(references);
     }
 
     private BundleDescriptor getBundleDescriptor(String path, TinyBundle bundle) throws Exception {

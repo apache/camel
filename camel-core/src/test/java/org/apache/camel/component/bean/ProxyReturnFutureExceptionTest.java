@@ -29,7 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 public class ProxyReturnFutureExceptionTest extends ContextTestSupport {
 
     public void testFutureEchoException() throws Exception {
-        @SuppressWarnings("unchecked")
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
 
         Future<String> future = service.asText(4);

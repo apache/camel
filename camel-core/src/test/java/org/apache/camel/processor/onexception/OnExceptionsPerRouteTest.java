@@ -47,6 +47,7 @@ public class OnExceptionsPerRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
+            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
                 from("direct:start")
                     .onException(IllegalArgumentException.class, IOException.class)

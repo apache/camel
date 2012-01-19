@@ -34,35 +34,29 @@ import org.apache.camel.util.ResourceHelper;
 public class DefaultLSResourceResolver implements LSResourceResolver {
 
     private final CamelContext camelContext;
-    private final String resourceUri;
     private final String resourcePath;
 
     public DefaultLSResourceResolver(CamelContext camelContext, String resourceUri) {
         this.camelContext = camelContext;
-        this.resourceUri = resourceUri;
         this.resourcePath = FileUtil.onlyPath(resourceUri);
     }
 
     @Override
     public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
-        return new DefaultLSInput(baseURI, namespaceURI, publicId, systemId, type);
+        return new DefaultLSInput(publicId, systemId, baseURI);
     }
     
     private final class DefaultLSInput implements LSInput {
         
-        private final String type;
-        private final String namespaceURI;
         private final String publicId;
         private final String systemId;
         private final String baseURI;
         private final String uri;
 
-        private DefaultLSInput(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
-            this.baseURI = baseURI;
-            this.namespaceURI = namespaceURI;
+        private DefaultLSInput(String publicId, String systemId, String baseURI) {
             this.publicId = publicId;
             this.systemId = systemId;
-            this.type = type;
+            this.baseURI = baseURI;
 
             if (resourcePath != null) {
                 uri = resourcePath + "/" + systemId;

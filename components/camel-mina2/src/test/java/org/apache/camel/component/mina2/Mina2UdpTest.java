@@ -66,15 +66,7 @@ public class Mina2UdpTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                int port2 = getNextPort();
-
-                //from("mina2:udp://127.0.0.1:" + getPort() + "?sync=false").to("mina2:udp://127.0.0.1:" + port2 + "?sync=false");
-                //from("mina2:udp://127.0.0.1:" + port2 + "?sync=false").to("mock:result");
-
-                //from("mina2:udp://127.0.0.1:10111?sync=false").to("mina2:udp://127.0.0.1:10112?sync=false");
-                //from("mina2:udp://127.0.0.1:10112?sync=false").to("mock:result");
                 from("mina2:udp://127.0.0.1:10111?sync=false&minaLogger=true").to("mock:result");
-                //from("mina2:udp://127.0.0.1:10111").to("mock:result");
             }
         };
     }
