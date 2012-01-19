@@ -29,7 +29,7 @@ public class Mina2TcpWithIoOutProcessorExceptionTest extends BaseMina2Test {
     @Test
     public void testExceptionThrownInProcessor() {
         String body = "Hello World";
-        Object result = template.requestBody("mina2:tcp://localhost:{{port}}?textline=true&sync=true", body);
+        Object result = template.requestBody(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=true", getPort()), body);
         // The exception should be passed to the client
         assertNotNull("the result should not be null", result);
         assertEquals("result is IllegalArgumentException", result, "java.lang.IllegalArgumentException: Forced exception");
@@ -42,7 +42,7 @@ public class Mina2TcpWithIoOutProcessorExceptionTest extends BaseMina2Test {
                 // use no delay for fast unit testing
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2));
 
-                from("mina2:tcp://localhost:{{port}}?textline=true&sync=true").process(new Processor() {
+                from(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=true", getPort())).process(new Processor() {
 
                     public void process(Exchange e) {
                         assertEquals("Hello World", e.getIn().getBody(String.class));

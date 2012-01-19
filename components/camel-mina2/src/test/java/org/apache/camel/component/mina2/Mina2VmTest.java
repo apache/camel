@@ -31,7 +31,7 @@ public class Mina2VmTest extends BaseMina2Test {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader("mina2:vm://localhost:{{port}}?sync=false&minaLogger=true", body, "cheese", 123);
+        template.sendBodyAndHeader(String.format("mina2:vm://localhost:%1$s?sync=false&minaLogger=true", getPort()), body, "cheese", 123);
 
         assertMockEndpointsSatisfied();
     }
@@ -40,7 +40,7 @@ public class Mina2VmTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina2:vm://localhost:{{port}}?sync=false&minaLogger=true").to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
+                from(String.format("mina2:vm://localhost:%1$s?sync=false&minaLogger=true", getPort())).to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
             }
         };
     }

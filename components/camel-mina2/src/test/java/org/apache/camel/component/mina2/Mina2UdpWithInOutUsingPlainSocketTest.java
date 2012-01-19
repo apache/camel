@@ -67,7 +67,7 @@ public class Mina2UdpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina2:udp://127.0.0.1:{{port}}?sync=true").process(new Processor() {
+                from(String.format("mina2:udp://127.0.0.1:%1$s?sync=true", getPort())).process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
                         String s = exchange.getIn().getBody(String.class);

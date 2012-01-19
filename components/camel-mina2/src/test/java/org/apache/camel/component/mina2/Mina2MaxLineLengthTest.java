@@ -34,7 +34,7 @@ public class Mina2MaxLineLengthTest extends BaseMina2Test {
         }
 
         // START SNIPPET: e3
-        String out = (String) template.requestBody("mina2:tcp://localhost:{{port}}?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000", request);
+        String out = (String) template.requestBody(String.format("mina2:tcp://localhost:%1$s?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000", getPort()), request);
         assertEquals(request, out);
         // END SNIPPET: e3
     }
@@ -46,10 +46,10 @@ public class Mina2MaxLineLengthTest extends BaseMina2Test {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // lets setup a server on port {{port}}
+                // lets setup a server on port %1$s
                 // we set the sync option so we will send a reply
                 // and we let the request-reply be processed in the MyServerProcessor
-                from("mina2:tcp://localhost:{{port}}?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000").process(new MyServerProcessor());
+                from(String.format("mina2:tcp://localhost:%1$s?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000", getPort())).process(new MyServerProcessor());
                 // END SNIPPET: e1
             }
         };

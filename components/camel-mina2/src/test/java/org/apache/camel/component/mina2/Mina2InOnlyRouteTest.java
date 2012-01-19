@@ -42,7 +42,7 @@ public class Mina2InOnlyRouteTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from("mina2:tcp://localhost:{{port}}?sync=true").process(new Processor() {
+                from(String.format("mina2:tcp://localhost:%1$s?sync=true", getPort())).process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
@@ -50,7 +50,10 @@ public class Mina2InOnlyRouteTest extends BaseMina2Test {
                     }
                 });
 
-                from("timer://start?period=10000&delay=2000").setBody(constant("Chad")).to("mina2:tcp://localhost:{{port}}?sync=true&lazySessionCreation=true").to("mock:result");
+                from("timer://start?period=10000&delay=2000")
+                    .setBody(constant("Chad"))
+                    .to(String.format("mina2:tcp://localhost:%1$s?sync=true&lazySessionCreation=true", getPort()))
+                    .to("mock:result");
             }
         };
     }

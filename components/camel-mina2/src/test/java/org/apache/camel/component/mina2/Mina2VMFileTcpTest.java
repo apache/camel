@@ -39,10 +39,10 @@ public class Mina2VMFileTcpTest extends BaseMina2Test {
 
             public void configure() {
                 // lets setup a server
-                from("mina2:vm://localhost:{{port}}?sync=false&textline=true").to("mock:results");
+                from(String.format("mina2:vm://localhost:%1$s?sync=false&textline=true", getPort())).to("mock:results");
 
                 from("file:src/test/data?noop=true&fileName=message1.txt").
-                    to("mina2:vm://localhost:{{port}}?sync=false&textline=true");
+                    to(String.format("mina2:vm://localhost:%1$s?sync=false&textline=true", getPort()));
             }
         };
     }

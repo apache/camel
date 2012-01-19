@@ -34,7 +34,7 @@ public class MessageIOSessionTest extends BaseMina2Test {
     public void testIoSession() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBody("mina2:tcp://localhost:{{port}}?textline=true", "Hello World");
+        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true", getPort()), "Hello World");
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
@@ -47,7 +47,7 @@ public class MessageIOSessionTest extends BaseMina2Test {
     public void testLocalAndRemoteAddressHeaders() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBody("mina2:tcp://localhost:{{port}}?textline=true", "Hello World");
+        template.sendBody(String.format("mina2:tcp://localhost:%1$s?textline=true", getPort()), "Hello World");
         assertMockEndpointsSatisfied();
 
         Message message = mock.getExchanges().get(0).getIn();
@@ -63,7 +63,9 @@ public class MessageIOSessionTest extends BaseMina2Test {
 
             @Override
             public void configure() throws Exception {
-                from("mina2:tcp://localhost:{{port}}?textline=true").to("log://mytest").to("mock:result");
+                from(String.format("mina2:tcp://localhost:%1$s?textline=true", getPort()))
+                    .to("log://mytest")
+                    .to("mock:result");
             }
         };
     }

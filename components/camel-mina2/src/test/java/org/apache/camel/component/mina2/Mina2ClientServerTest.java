@@ -21,15 +21,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class Mina2ClientServerTest extends BaseMina2Test {
 
     @Test
     public void testSendToServer() throws InterruptedException {
         // START SNIPPET: e3
-        String out = (String) template.requestBody("mina2:tcp://localhost:{{port}}?textline=true", "Chad");
+        String out = (String) template.requestBody(String.format("mina2:tcp://localhost:%1$s?textline=true", getPort()), "Chad");
         assertEquals("Hello Chad", out);
         // END SNIPPET: e3
     }
@@ -41,9 +38,9 @@ public class Mina2ClientServerTest extends BaseMina2Test {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // lets setup a server on port {{port}}
+                // lets setup a server on port %1$s
                 // and we let the request-reply be processed in the MyServerProcessor
-                from("mina2:tcp://localhost:{{port}}?textline=true").process(new MyServerProcessor());
+                from(String.format("mina2:tcp://localhost:%1$s?textline=true", getPort())).process(new MyServerProcessor());
                 // END SNIPPET: e1
             }
         };

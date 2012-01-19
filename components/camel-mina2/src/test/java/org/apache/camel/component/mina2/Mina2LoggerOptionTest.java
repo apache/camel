@@ -33,9 +33,8 @@ public class Mina2LoggerOptionTest extends BaseMina2Test {
 
     @Test
     public void testLoggerOptionTrue() throws Exception {
-        final String uri = "mina2:tcp://localhost:{{port}}?textline=true&minaLogger=true&sync=false";
+        final String uri = String.format("mina2:tcp://localhost:%1$s?textline=true&minaLogger=true&sync=false", getPort());
         context.addRoutes(new RouteBuilder() {
-
             public void configure() throws Exception {
                 from(uri).to("mock:result");
             }
@@ -64,7 +63,7 @@ public class Mina2LoggerOptionTest extends BaseMina2Test {
 
     @Test
     public void testLoggerOptionFalse() throws Exception {
-        final String uri = "mina2:tcp://localhost:{{port}}?textline=true&minaLogger=false&sync=false";
+        final String uri = String.format("mina2:tcp://localhost:%1$s?textline=true&minaLogger=false&sync=false", getPort());
         context.addRoutes(new RouteBuilder() {
 
             public void configure() throws Exception {
@@ -96,7 +95,7 @@ public class Mina2LoggerOptionTest extends BaseMina2Test {
 
     @Test
     public void testNoLoggerOption() throws Exception {
-        final String uri = "mina2:tcp://localhost:{{port}}?textline=true&sync=false";
+        final String uri = String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false", getPort());
         context.addRoutes(new RouteBuilder() {
 
             public void configure() throws Exception {

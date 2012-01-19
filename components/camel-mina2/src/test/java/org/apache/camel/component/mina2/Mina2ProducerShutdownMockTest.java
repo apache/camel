@@ -47,8 +47,7 @@ public class Mina2ProducerShutdownMockTest extends BaseMina2Test {
         replay(mockConnector);
 
         // normal camel code to get a producer
-        Endpoint endpoint = context.getEndpoint(
-            "mina2:tcp://localhost:{{port}}?textline=true&sync=false");
+        Endpoint endpoint = context.getEndpoint(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false", getPort()));
         Exchange exchange = endpoint.createExchange();
         Producer producer = endpoint.createProducer();
         producer.start();
@@ -79,7 +78,7 @@ public class Mina2ProducerShutdownMockTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina2:tcp://localhost:{{port}}?textline=true&sync=false").to("mock:result");
+                from(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=false", getPort())).to("mock:result");
             }
         };
     }

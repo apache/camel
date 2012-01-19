@@ -20,9 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class Mina2TcpTextlineDelimiterTest extends BaseMina2Test {
 
     @Test
@@ -31,7 +28,7 @@ public class Mina2TcpTextlineDelimiterTest extends BaseMina2Test {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader("mina2:tcp://localhost:{{port}}?sync=false&textline=true&textlineDelimiter=UNIX", body, "cheese", 123);
+        template.sendBodyAndHeader(String.format("mina2:tcp://localhost:%1$s?sync=false&textline=true&textlineDelimiter=UNIX", getPort()), body, "cheese", 123);
 
         assertMockEndpointsSatisfied();
     }
@@ -40,7 +37,10 @@ public class Mina2TcpTextlineDelimiterTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina2:tcp://localhost:{{port}}?sync=false&textline=true&textlineDelimiter=UNIX").to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
+                from(String.format("mina2:tcp://localhost:%1$s?sync=false&textline=true&textlineDelimiter=UNIX", getPort()))
+                    .to("log:before?showAll=true")
+                    .to("mock:result")
+                    .to("log:after?showAll=true");
             }
         };
     }

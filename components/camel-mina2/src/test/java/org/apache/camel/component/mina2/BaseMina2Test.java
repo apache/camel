@@ -16,21 +16,10 @@
  */
 package org.apache.camel.component.mina2;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Properties;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-/**
- *
- */
 public class BaseMina2Test extends CamelTestSupport {
 
     private static volatile int port;
@@ -40,41 +29,7 @@ public class BaseMina2Test extends CamelTestSupport {
         port = AvailablePortFinder.getNextAvailable();
     }
 
-    @AfterClass
-    public static void savePort() throws Exception {
-        File file = new File("./target/minaport.txt");
-        file = file.getAbsoluteFile();
-
-        // save to file, do not append
-        FileOutputStream fos = new FileOutputStream(file, false);
-        try {
-            fos.write(String.valueOf(port).getBytes());
-        } finally {
-            fos.close();
-        }
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.addComponent("properties", new PropertiesComponent("ref:prop"));
-        return context;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
-        Properties prop = new Properties();
-        prop.setProperty("port", "" + getPort());
-        jndi.bind("prop", prop);
-
-        return jndi;
-    }
-
     protected int getNextPort() {
-//      port = AvailablePortFinder.getNextAvailable();
-//      return port;
         return AvailablePortFinder.getNextAvailable();
     }
 
