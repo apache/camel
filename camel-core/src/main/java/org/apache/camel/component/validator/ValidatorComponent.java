@@ -50,8 +50,7 @@ public class ValidatorComponent extends DefaultComponent {
         configureValidator(validator, uri, remaining, parameters);
 
         // force loading of schema at create time otherwise concurrent
-        // processing could
-        // cause thread safe issues for the javax.xml.validation.SchemaFactory
+        // processing could cause thread safe issues for the javax.xml.validation.SchemaFactory
         validator.loadSchema();
 
         return new ProcessorEndpoint(uri, this, validator);
@@ -61,6 +60,8 @@ public class ValidatorComponent extends DefaultComponent {
         LSResourceResolver resourceResolver = resolveAndRemoveReferenceParameter(parameters, "resourceResolver", LSResourceResolver.class);
         if (resourceResolver != null) {
             validator.setResourceResolver(resourceResolver);
+        } else {
+            validator.setResourceResolver(new DefaultLSResourceResolver(getCamelContext(), remaining));
         }
 
         setProperties(validator, parameters);

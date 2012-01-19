@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+        attributeFormDefault="unqualified"
+        elementFormDefault="qualified"
+        targetNamespace="org.health.check.person"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="health" type="org:healthType" xmlns:org="org.health.check.person"/>
+    <xs:complexType name="healthType">
+        <xs:sequence>
+            <xs:element type="xs:string" name="lastCheck"/>
+            <xs:element type="xs:string" name="status"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
