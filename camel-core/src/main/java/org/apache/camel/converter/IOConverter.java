@@ -335,7 +335,7 @@ public final class IOConverter {
                 @Override
                 protected Class<?> resolveClass(ObjectStreamClass objectStreamClass) throws IOException, ClassNotFoundException {
                     // need to let Camel be able to resolve class using ClassResolver SPI, to let class loading
-                    // work in OSGi and other runtimes
+                    // work in OSGi and other containers
                     Class<?>  answer = null;
                     String name = objectStreamClass.getName();
                     if (exchange != null) {
