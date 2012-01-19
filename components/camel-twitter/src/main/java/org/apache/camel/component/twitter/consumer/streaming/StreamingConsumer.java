@@ -35,8 +35,8 @@ import twitter4j.TwitterException;
 public class StreamingConsumer extends Twitter4JConsumer implements StatusListener {
 
     TwitterEndpoint te;
-    private List<Status> receivedStatuses = new ArrayList<Status>();
-    private boolean clear;
+    private final List<Status> receivedStatuses = new ArrayList<Status>();
+    private volatile boolean clear;
 
     public StreamingConsumer(TwitterEndpoint te) {
         this.te = te;
@@ -44,7 +44,7 @@ public class StreamingConsumer extends Twitter4JConsumer implements StatusListen
 
     public List<Status> pollConsume() throws TwitterException {
         clear = true;
-        return Collections.unmodifiableList(receivedStatuses);
+        return Collections.unmodifiableList(new ArrayList<Status>(receivedStatuses));
     }
 
     public List<Status> directConsume() throws TwitterException {
@@ -54,8 +54,6 @@ public class StreamingConsumer extends Twitter4JConsumer implements StatusListen
 
     @Override
     public void onException(Exception ex) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -69,20 +67,14 @@ public class StreamingConsumer extends Twitter4JConsumer implements StatusListen
 
     @Override
     public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void onTrackLimitationNotice(int numberOfLimitedStatuses) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void onScrubGeo(long userId, long upToStatusId) {
-        // TODO Auto-generated method stub
-
     }
 
 }

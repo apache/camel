@@ -30,6 +30,7 @@ public class TwitterConfiguration {
     private int delay = 60;
     private String type;
     private String locations;
+    private String userIds;
 
     public void checkComplete() {
         if (consumerKey.isEmpty() || consumerSecret.isEmpty() || accessToken.isEmpty()
@@ -117,5 +118,13 @@ public class TwitterConfiguration {
 
     public void setLocations(String locations) {
         this.locations = locations;
+    }
+
+    public String getUserIds() {
+        return userIds;
+    }
+
+    public void setUserIds(String userIds) {
+        this.userIds = userIds;
     }
 }
