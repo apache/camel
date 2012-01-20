@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.krati;
 
 import java.io.Serializable;
@@ -29,12 +28,18 @@ public class KeyObject implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         KeyObject keyObject = (KeyObject) o;
 
-        if (id != null ? !id.equals(keyObject.id) : keyObject.id != null) return false;
+        if (id != null ? !id.equals(keyObject.id) : keyObject.id != null) {
+            return false;
+        }
 
         return true;
     }
