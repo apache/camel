@@ -137,7 +137,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
-     * An expression of the inbound headers
+     * An expression of the inbound message attachments
      */
     public T attachments() {
         return delegate.attachments();
