@@ -28,9 +28,9 @@ public class KratiProducerTest extends CamelTestSupport {
     @Test
     public void testPut() throws InterruptedException {
         ProducerTemplate template = context.createProducerTemplate();
-        template.sendBodyAndHeader("direct:put", "TEST1", KratiConstants.KEY, "1");
-        template.sendBodyAndHeader("direct:put", "TEST2", KratiConstants.KEY, "2");
-        template.sendBodyAndHeader("direct:put", "TEST3", KratiConstants.KEY, "3");
+        template.sendBodyAndHeader("direct:put", new ValueObject("TEST1"), KratiConstants.KEY, new KeyObject("1"));
+        template.sendBodyAndHeader("direct:put", new ValueObject("TEST2"), KratiConstants.KEY, new KeyObject("2"));
+        template.sendBodyAndHeader("direct:put", new ValueObject("TEST3"), KratiConstants.KEY, new KeyObject("3"));
         MockEndpoint endpoint = context.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedMessageCount(3);
         endpoint.assertIsSatisfied();
@@ -40,11 +40,11 @@ public class KratiProducerTest extends CamelTestSupport {
     @Test
     public void testPutAndGet() throws InterruptedException {
         ProducerTemplate template = context.createProducerTemplate();
-        template.sendBodyAndHeader("direct:put", "TEST1", KratiConstants.KEY, "1");
-        template.sendBodyAndHeader("direct:put", "TEST2", KratiConstants.KEY, "2");
-        template.sendBodyAndHeader("direct:put", "TEST3", KratiConstants.KEY, "3");
-        Object result = template.requestBodyAndHeader("direct:get", null, KratiConstants.KEY, "3");
-        assertEquals("TEST3", result);
+        template.sendBodyAndHeader("direct:put", new ValueObject("TEST1"), KratiConstants.KEY, new KeyObject("1"));
+        template.sendBodyAndHeader("direct:put", new ValueObject("TEST2"), KratiConstants.KEY, new KeyObject("2"));
+        template.sendBodyAndHeader("direct:put", new ValueObject("TEST3"), KratiConstants.KEY, new KeyObject("3"));
+        Object result = template.requestBodyAndHeader("direct:get", null, KratiConstants.KEY, new KeyObject("3"));
+        assertEquals(new ValueObject("TEST3"), result);
     }
 
     @Test
