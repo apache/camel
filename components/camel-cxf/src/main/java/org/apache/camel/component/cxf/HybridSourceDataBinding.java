@@ -55,7 +55,6 @@ public class HybridSourceDataBinding extends JAXBDataBinding {
     private static final Logger LOG = LogUtils.getL7dLogger(SourceDataBinding.class);
     
     public HybridSourceDataBinding() {
-        super();
     }
     
     @SuppressWarnings("unchecked")

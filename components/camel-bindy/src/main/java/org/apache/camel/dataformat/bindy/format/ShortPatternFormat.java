@@ -21,7 +21,6 @@ import java.util.Locale;
 public class ShortPatternFormat extends NumberPatternFormat<Short> {
 
     public ShortPatternFormat() {
-        super();
     }
 
     public ShortPatternFormat(String pattern, Locale locale) {

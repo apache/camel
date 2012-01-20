@@ -204,7 +204,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Date startDate;
 
     public DefaultCamelContext() {
-        super();
         this.executorServiceManager = new DefaultExecutorServiceManager(this);
 
         // create endpoint registry at first since end users may access endpoints before CamelContext is started

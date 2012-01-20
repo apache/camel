@@ -37,7 +37,6 @@ public class SpringJAXRSClientFactoryBean extends JAXRSClientFactoryBean
     private int loggingSizeLimit;
 
     public SpringJAXRSClientFactoryBean() {
-        super();
     }
     
     public boolean isLoggingFeatureEnabled() {

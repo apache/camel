@@ -34,7 +34,6 @@ import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 public class CxfRsComponent extends HeaderFilterStrategyComponent {
 
     public CxfRsComponent() {
-        super();
     }
     
     public CxfRsComponent(CamelContext context) {

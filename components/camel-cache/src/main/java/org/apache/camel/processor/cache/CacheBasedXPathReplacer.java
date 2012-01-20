@@ -52,7 +52,6 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
     private DOMResult result;
 
     public CacheBasedXPathReplacer(String cacheName, String key, String xpath) {
-        super();
         if (cacheName.contains("cache://")) {
             this.setCacheName(cacheName.replace("cache://", ""));
         } else {

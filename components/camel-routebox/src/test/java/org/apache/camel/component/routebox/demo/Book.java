@@ -21,11 +21,9 @@ public class Book {
     private String title;
     
     public Book() {
-        super();
     }
 
     public Book(String author, String title) {
-        super();
         this.author = author;
         this.title = title;
     }

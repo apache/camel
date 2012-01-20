@@ -37,7 +37,6 @@ import org.apache.camel.model.language.ExpressionDefinition;
 public class NoOutputExpressionNode extends ExpressionNode {
 
     public NoOutputExpressionNode() {
-        super();
     }
 
     public NoOutputExpressionNode(ExpressionDefinition expression) {

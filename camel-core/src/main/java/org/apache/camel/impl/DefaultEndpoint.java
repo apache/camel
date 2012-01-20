@@ -116,7 +116,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * component.
      */
     protected DefaultEndpoint() {
-        super();
     }
 
     public int hashCode() {

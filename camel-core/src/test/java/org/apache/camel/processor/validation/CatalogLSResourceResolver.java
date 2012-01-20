@@ -33,7 +33,6 @@ public class CatalogLSResourceResolver implements LSResourceResolver {
     }
 
     public CatalogLSResourceResolver(CatalogResolver catalogResolver) {
-        super();
         this.catalogResolver = catalogResolver;
     }
 

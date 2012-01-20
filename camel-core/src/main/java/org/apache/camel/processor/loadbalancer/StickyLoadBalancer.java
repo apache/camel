@@ -43,7 +43,6 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
     }
 
     public StickyLoadBalancer(Expression correlationExpression, QueueLoadBalancer loadBalancer) {
-        super();
         this.correlationExpression = correlationExpression;
         this.loadBalancer = loadBalancer;
     }

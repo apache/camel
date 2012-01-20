@@ -47,7 +47,6 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
     }
     
     public CxfSpringEndpoint() {
-        super();
     }
 
     /**

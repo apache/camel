@@ -19,7 +19,6 @@ package org.apache.camel.component.apns.util;
 public final class StringUtils {
 
     private StringUtils() {
-        super();
     }
 
     public static boolean isNotEmpty(String stringValue) {

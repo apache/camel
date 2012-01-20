@@ -43,7 +43,6 @@ public final class MethodInfo {
      * @param out return types
      */
     public MethodInfo(String name, String soapAction, TypeInfo[] in, TypeInfo out) {
-        super();
         this.name = name;
         this.soapAction = soapAction;
         this.in = in;

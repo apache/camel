@@ -38,10 +38,6 @@ public class ApnsConsumerIdleMessageTest extends CamelTestSupport {
     
     ApnsServerStub server;
 
-    public ApnsConsumerIdleMessageTest() {
-        super();
-    }
-
     @Before
     public void startup() throws InterruptedException {
         server = ApnsUtils.prepareAndStartServer(FixedCertificates.TEST_GATEWAY_PORT, FixedCertificates.TEST_FEEDBACK_PORT);

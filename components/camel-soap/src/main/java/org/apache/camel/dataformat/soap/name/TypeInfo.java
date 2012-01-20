@@ -33,7 +33,6 @@ final class TypeInfo {
      * @param elName
      */
     public TypeInfo(final String typeName, final QName elName) {
-        super();
         this.typeName = typeName;
         this.elName = elName;
     }

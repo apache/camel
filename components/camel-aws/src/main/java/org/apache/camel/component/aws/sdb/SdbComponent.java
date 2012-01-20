@@ -28,7 +28,6 @@ import org.apache.camel.impl.DefaultComponent;
 public class SdbComponent extends DefaultComponent {
 
     public SdbComponent() {
-        super();
     }
 
     public SdbComponent(CamelContext context) {

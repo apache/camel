@@ -25,7 +25,6 @@ public class InactiveDevice implements Serializable {
     private Date date;
 
     public InactiveDevice(String deviceToken, Date date) {
-        super();
         this.deviceToken = deviceToken;
         this.date = date;
     }

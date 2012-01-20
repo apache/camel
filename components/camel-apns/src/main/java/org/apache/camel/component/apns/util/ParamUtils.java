@@ -19,7 +19,6 @@ package org.apache.camel.component.apns.util;
 public final class ParamUtils {
 
     private ParamUtils() {
-        super();
     }
 
     public static void checkNotNull(Object param, String paramValue) {

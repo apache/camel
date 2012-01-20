@@ -28,7 +28,6 @@ import org.apache.camel.impl.DefaultComponent;
 public class S3Component extends DefaultComponent {
     
     public S3Component() {
-        super();
     }
 
     public S3Component(CamelContext context) {

@@ -78,7 +78,6 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
      * Remember to set the context path when using this constructor
      */
     public SoapJaxbDataFormat() {
-        super();
     }
 
     /**

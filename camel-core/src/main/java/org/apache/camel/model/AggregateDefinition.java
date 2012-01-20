@@ -107,21 +107,18 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     public AggregateDefinition(Predicate predicate) {
-        this();
         if (predicate != null) {
             setExpression(new ExpressionDefinition(predicate));
         }
     }    
     
     public AggregateDefinition(Expression correlationExpression) {
-        this();
         if (correlationExpression != null) {
             setExpression(new ExpressionDefinition(correlationExpression));
         }
     }
 
     public AggregateDefinition(ExpressionDefinition correlationExpression) {
-        this();
         this.expression = correlationExpression;
     }
 

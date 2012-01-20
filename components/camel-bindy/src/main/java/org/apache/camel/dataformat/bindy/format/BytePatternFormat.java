@@ -21,7 +21,6 @@ import java.util.Locale;
 public class BytePatternFormat extends NumberPatternFormat<Byte> {
 
     public BytePatternFormat() {
-        super();
     }
 
     public BytePatternFormat(String pattern, Locale locale) {

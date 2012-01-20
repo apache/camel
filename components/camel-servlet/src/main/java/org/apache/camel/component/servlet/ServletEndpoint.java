@@ -33,7 +33,6 @@ public class ServletEndpoint extends HttpEndpoint {
     private String servletName;
 
     public ServletEndpoint() {
-        super();
     }
 
     public ServletEndpoint(String endPointURI, ServletComponent component, URI httpUri, HttpClientParams params, HttpConnectionManager httpConnectionManager,

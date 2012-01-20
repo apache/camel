@@ -39,7 +39,6 @@ public class JXPathExpression extends ExpressionSupport {
      * @param type the expected result type
      */
     public JXPathExpression(String expression, Class<?> type) {
-        super();
         this.expression = expression;
         this.type = type;
     }

@@ -381,12 +381,6 @@ public class BundleTracker implements BundleTrackerCustomizer {
      * @since 1.4
      */
     class Tracked extends AbstractTracked implements SynchronousBundleListener {
-        /**
-         * Tracked constructor.
-         */
-        Tracked() {
-            super();
-        }
 
         /**
          * <code>BundleListener</code> method for the <code>BundleTracker</code>

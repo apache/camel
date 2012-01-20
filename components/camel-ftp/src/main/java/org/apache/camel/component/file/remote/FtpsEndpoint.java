@@ -46,7 +46,6 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     protected SSLContextParameters sslContextParameters;
 
     public FtpsEndpoint() {
-        super();
     }
 
     public FtpsEndpoint(String uri, RemoteFileComponent<FTPFile> remoteFileComponent, RemoteFileConfiguration configuration) {

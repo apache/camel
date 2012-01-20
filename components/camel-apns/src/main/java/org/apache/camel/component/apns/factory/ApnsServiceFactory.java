@@ -54,7 +54,6 @@ public class ApnsServiceFactory implements CamelContextAware {
     private ApnsDelegate apnsDelegate;
 
     public ApnsServiceFactory() {
-        super();
     }
 
     public ApnsServiceFactory(CamelContext camelContext) {

@@ -27,12 +27,10 @@ public class BookCatalog {
     private HashMap<String, Book> map;
 
     public BookCatalog() {
-        super();
-        this.map = new HashMap<String, Book>();
+        this(new HashMap<String, Book>());
     }
-    
+
     public BookCatalog(HashMap<String, Book> map) {
-        super();
         this.map = map;
     }
 

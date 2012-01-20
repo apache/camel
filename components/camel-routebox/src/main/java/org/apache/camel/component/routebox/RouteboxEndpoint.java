@@ -24,7 +24,6 @@ public abstract class RouteboxEndpoint extends DefaultEndpoint {
     RouteboxConfiguration config;
 
     public RouteboxEndpoint() {
-        super();
     }
     
     @Deprecated

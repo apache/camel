@@ -264,7 +264,6 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         private Message outMessage;
 
         public CamelOutputStream(Message m) {
-            super();
             outMessage = m;
         }
 

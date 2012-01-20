@@ -123,7 +123,6 @@ public class HttpTestServer {
             final HttpExpectationVerifier expectationVerifier,
             final HttpParams params,
             final SSLContext sslcontext) {
-        super();
         this.handlerRegistry = new HttpRequestHandlerRegistry();
         this.workers = Collections.synchronizedSet(new HashSet<Worker>());
         this.httpservice = new HttpService(
@@ -323,10 +322,6 @@ public class HttpTestServer {
     class ListenerThread extends Thread {
 
         private volatile Exception exception;
-
-        ListenerThread() {
-            super();
-        }
 
         @Override
         public void run() {

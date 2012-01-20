@@ -46,7 +46,6 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
     protected final Producer producer;
 
     public AbstractCamelInvocationHandler(Endpoint endpoint, Producer producer) {
-        super();
         this.endpoint = endpoint;
         this.producer = producer;
     }
