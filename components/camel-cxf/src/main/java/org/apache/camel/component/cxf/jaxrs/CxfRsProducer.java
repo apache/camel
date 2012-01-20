@@ -99,7 +99,7 @@ public class CxfRsProducer extends DefaultProducer {
         cfb.setBus(((CxfRsEndpoint)getEndpoint()).getBus());
         WebClient client = cfb.createWebClient();
         String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
-        Class responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
+        Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
         Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
         String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
 
@@ -158,7 +158,7 @@ public class CxfRsProducer extends DefaultProducer {
                 if (genericType instanceof ParameterizedType) {
                     // Get the collection member type first
                     Type[] actualTypeArguments = ((ParameterizedType) genericType).getActualTypeArguments();
-                    response = client.invokeAndGetCollection(httpMethod, body, (Class) actualTypeArguments[0]);
+                    response = client.invokeAndGetCollection(httpMethod, body, (Class<?>) actualTypeArguments[0]);
                     
                 } else {
                     throw new CamelExchangeException("Header " + CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE + " not found in message", exchange);
@@ -251,7 +251,7 @@ public class CxfRsProducer extends DefaultProducer {
         return answer;
     }
 
-    private Method findRightMethod(List<Class<?>> resourceClasses, String methodName, Class[] parameterTypes) throws NoSuchMethodException {
+    private Method findRightMethod(List<Class<?>> resourceClasses, String methodName, Class<?>[] parameterTypes) throws NoSuchMethodException {
         Method answer = null;
         for (Class<?> clazz : resourceClasses) {
             try {

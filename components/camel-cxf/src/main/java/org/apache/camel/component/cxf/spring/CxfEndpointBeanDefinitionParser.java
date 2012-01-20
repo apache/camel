@@ -24,6 +24,7 @@ import org.w3c.dom.Element;
 
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.cxf.common.util.StringUtils;
+import org.apache.cxf.helpers.CastUtils;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 
@@ -69,12 +70,11 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void mapElement(ParserContext ctx, BeanDefinitionBuilder bean, Element el, String name) {
         if ("properties".equals(name)) {
-            Map map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
-            Map props = getPropertyMap(bean, false);
+            Map<String, Object> map = CastUtils.cast(ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition()));
+            Map<String, Object> props = getPropertyMap(bean, false);
             if (props != null) {
                 map.putAll(props);
             }

@@ -138,6 +138,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private List<AbstractFeature> features 
         = new ModCountCopyOnWriteArrayList<AbstractFeature>();
 
+    @SuppressWarnings("rawtypes")
     private List<Handler> handlers;
     private List<String> schemaLocations;
     private String transportId;
@@ -345,6 +346,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (factoryBean instanceof JaxWsClientFactoryBean && handlers != null) {
             AnnotationHandlerChainBuilder builder = new AnnotationHandlerChainBuilder();
             JaxWsServiceFactoryBean sf = (JaxWsServiceFactoryBean)factoryBean.getServiceFactory();
+            @SuppressWarnings("rawtypes")
             List<Handler> chain = new ArrayList<Handler>(handlers);
 
             chain.addAll(builder.buildHandlerChainFromClass(sf.getServiceClass(),
@@ -358,7 +360,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 resourceManager = new DefaultResourceManager(resolvers);
                 resourceManager.addResourceResolver(new WebServiceContextResourceResolver());
                 ResourceInjector injector = new ResourceInjector(resourceManager);
-                for (Handler h : chain) {
+                for (Handler<?> h : chain) {
                     if (Proxy.isProxyClass(h.getClass()) && getServiceClass() != null) {
                         injector.inject(h, getServiceClass());
                         injector.construct(h, getServiceClass());
@@ -944,10 +946,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return features;
     }
     
-    public void setHandlers(List<Handler> h) {
+    public void setHandlers(@SuppressWarnings("rawtypes") List<Handler> h) {
         handlers = h;
     }
 
+    @SuppressWarnings("rawtypes")
     public List<Handler> getHandlers() {
         return handlers;
     }

@@ -414,7 +414,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             String contextKey) {
         
         // extract from header
-        Map context = (Map)camelHeaders.get(contextKey);
+        Map<String, ?> context = (Map<String, ?>)camelHeaders.get(contextKey);
         if (context != null) {
             cxfContext.putAll(context);
             if (LOG.isTraceEnabled()) {
@@ -426,7 +426,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
         
         // extract from exchange property
-        context = (Map)camelExchange.getProperty(contextKey);
+        context = (Map<String, ?>)camelExchange.getProperty(contextKey);
         if (context != null) {
             cxfContext.putAll(context);
             if (LOG.isTraceEnabled()) {
@@ -450,10 +450,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
      * @param camelMessage
      * @param exchange provides context for filtering
      */
-    @SuppressWarnings("unchecked")
     protected void propagateHeadersFromCxfToCamel(Message cxfMessage,
             org.apache.camel.Message camelMessage, Exchange exchange) {
-        Map<String, List<String>> cxfHeaders = (Map)cxfMessage.get(Message.PROTOCOL_HEADERS);
+        Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)cxfMessage.get(Message.PROTOCOL_HEADERS));
         Map<String, Object> camelHeaders = camelMessage.getHeaders();
         camelHeaders.put(CxfConstants.CAMEL_CXF_MESSAGE, cxfMessage);
 
@@ -537,12 +536,12 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // use a treemap to keep ordering and ignore key case
         Map<String, List<String>> transportHeaders = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
         if (camelExchange != null) {
-            Map<String, List<String>> h = (Map)camelExchange.getProperty(Message.PROTOCOL_HEADERS);
+            Map<String, List<String>> h = CastUtils.cast((Map<?, ?>)camelExchange.getProperty(Message.PROTOCOL_HEADERS));
             if (h != null) {
                 transportHeaders.putAll(h);
             }
         }
-        Map<String, List<String>> headers = (Map)camelHeaders.get(Message.PROTOCOL_HEADERS);
+        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>)camelHeaders.get(Message.PROTOCOL_HEADERS));
         if (headers != null) {
             transportHeaders.putAll(headers);
         }
@@ -679,7 +678,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             Object part = inObjects.get(partInfo);
             
             if (part instanceof Holder) {
-                part = ((Holder)part).value;
+                part = ((Holder<?>)part).value;
             }
                         
             if (part instanceof Source) {

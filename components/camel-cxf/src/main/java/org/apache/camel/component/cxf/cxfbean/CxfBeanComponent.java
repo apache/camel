@@ -34,10 +34,9 @@ public class CxfBeanComponent extends HeaderFilterStrategyComponent {
 
     private Map<String, CxfBeanEndpoint> endpoints = new HashMap<String, CxfBeanEndpoint>();
         
-    @SuppressWarnings("unchecked")
     @Override
     protected Endpoint createEndpoint(String uri, String remaining,
-            Map parameters) throws Exception {
+            Map<String, Object> parameters) throws Exception {
 
         // Extract the comma separated list of providers in advance of the auto-extraction
         // that a DefaultEndpoint will perform (as the default one does not understand lists).

@@ -40,17 +40,17 @@ public class CxfRsClientFactoryBeanDefinitionParser extends AbstractCxfBeanDefin
     @Override
     protected void mapElement(ParserContext ctx, BeanDefinitionBuilder bean, Element el, String name) {
         if ("properties".equals(name) || "headers".equals(name)) {
-            Map map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
+            Map<?, ?> map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, map);         
         } else if ("binding".equals(name)) {
             setFirstChildAsProperty(el, ctx, bean, "bindingConfig");
         } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name)
             || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)) {
-            List list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
+            List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else if ("features".equals(name) || "providers".equals(name)
                    || "schemaLocations".equals(name) || "modelBeans".equals(name)) {
-            List list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
+            List<?> list = ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else if ("model".equals(name)) {
             List<UserResource> resources = ResourceUtils.getResourcesFromElement(el);

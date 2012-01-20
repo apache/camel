@@ -23,6 +23,7 @@ import javax.wsdl.Service;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.service.factory.AbstractServiceConfiguration;
 import org.apache.cxf.wsdl.WSDLManager;
 
@@ -53,7 +54,7 @@ public class WSDLServiceConfiguration extends AbstractServiceConfiguration {
     
     protected QName getServiceQName()  {
         if (serviceQName == null) {
-            Map services = getDefinition().getServices();
+            Map<QName, ?> services = CastUtils.cast(getDefinition().getServices());
             if (services.size() == 0) {
                 throw new IllegalArgumentException("There is no service in the WSDL" + serviceFactoryBean.getWsdlURL());
             }
@@ -72,7 +73,7 @@ public class WSDLServiceConfiguration extends AbstractServiceConfiguration {
                 throw new IllegalArgumentException("There is no service " + serviceFactoryBean.getServiceQName() 
                                                    + " in WSDL " + serviceFactoryBean.getWsdlURL());
             }
-            Map ports = service.getPorts();
+            Map<String, ?> ports = CastUtils.cast(service.getPorts());
             if (ports.size() == 0) {
                 throw new IllegalArgumentException("There is no port/endpoint in the service "
                                                    + serviceFactoryBean.getServiceQName() + "of WSDL"
