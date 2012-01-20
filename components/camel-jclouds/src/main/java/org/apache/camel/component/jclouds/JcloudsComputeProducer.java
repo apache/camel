@@ -31,16 +31,21 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.options.RunScriptOptions;
-import org.jclouds.domain.Credentials;
+import org.jclouds.domain.LoginCredentials;
 
 
 public class JcloudsComputeProducer extends JcloudsProducer {
 
-    private ComputeService computeService;
+    private final ComputeService computeService;
 
     public JcloudsComputeProducer(JcloudsEndpoint endpoint, ComputeService computeService) {
         super(endpoint);
         this.computeService = computeService;
+    }
+
+    @Override
+    public JcloudsComputeEndpoint getEndpoint() {
+        return (JcloudsComputeEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -53,23 +58,16 @@ public class JcloudsComputeProducer extends JcloudsProducer {
 
         if (JcloudsConstants.LIST_NODES.equals(operation)) {
             listNodes(exchange);
-
         } else if (JcloudsConstants.LIST_IMAGES.equals(operation)) {
             listImages(exchange);
-
         } else if (JcloudsConstants.LIST_HARDWARE.equals(operation)) {
             listHardware(exchange);
-
         } else if (JcloudsConstants.RUN_SCRIPT.equals(operation)) {
             runScriptOnNode(exchange);
-
         } else if (JcloudsConstants.CREATE_NODE.equals(operation)) {
             createNode(exchange);
-
         } else if (JcloudsConstants.DESTROY_NODE.equals(operation)) {
             destroyNode(exchange);
-        } else {
-
         }
     }
 
@@ -121,17 +119,17 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         String nodeId = getNodeId(exchange);
         String user = getUser(exchange);
 
-        Credentials credentials = null;
+        LoginCredentials credentials = null;
 
         if (user != null) {
-            credentials = new Credentials(user, null);
+            credentials = LoginCredentials.builder().user(user).build();
         }
         ExecResponse execResponse = null;
 
         if (credentials == null) {
             execResponse = computeService.runScriptOnNode(nodeId, script);
         } else {
-            execResponse = computeService.runScriptOnNode(nodeId, script, RunScriptOptions.Builder.overrideCredentialsWith(credentials).runAsRoot(false));
+            execResponse = computeService.runScriptOnNode(nodeId, script, RunScriptOptions.Builder.overrideLoginCredentials(credentials).runAsRoot(false));
         }
 
         if (execResponse == null) {
@@ -140,9 +138,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
 
         exchange.setProperty(JcloudsConstants.RUN_SCRIPT_ERROR, execResponse.getError());
         exchange.setProperty(JcloudsConstants.RUN_SCRIPT_EXIT_CODE, execResponse.getExitCode());
-        if (execResponse != null) {
-            exchange.getOut().setBody(execResponse.getOutput());
-        }
+        exchange.getOut().setBody(execResponse.getOutput());
     }
 
     /**
@@ -261,7 +257,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      * @return
      */
     public String getOperation(Exchange exchange) {
-        String operation = ((JcloudsComputeEndpoint) getEndpoint()).getOperation();
+        String operation = getEndpoint().getOperation();
 
         if (exchange.getIn().getHeader(JcloudsConstants.OPERATION) != null) {
             operation = (String) exchange.getIn().getHeader(JcloudsConstants.OPERATION);
@@ -277,7 +273,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      */
     public NodeState getNodeState(Exchange exchange) {
         NodeState nodeState = null;
-        String state = ((JcloudsComputeEndpoint) getEndpoint()).getNodeState();
+        String state = getEndpoint().getNodeState();
         if (state != null) {
             nodeState = NodeState.valueOf(state);
         }
@@ -303,7 +299,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      * @return
      */
     protected String getImageId(Exchange exchange) {
-        String imageId = ((JcloudsComputeEndpoint) getEndpoint()).getImageId();
+        String imageId = getEndpoint().getImageId();
 
         if (exchange.getIn().getHeader(JcloudsConstants.IMAGE_ID) != null) {
             imageId = (String) exchange.getIn().getHeader(JcloudsConstants.IMAGE_ID);
@@ -318,7 +314,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      * @return
      */
     protected String getHardwareId(Exchange exchange) {
-        String hardwareId = ((JcloudsComputeEndpoint) getEndpoint()).getHardwareId();
+        String hardwareId = getEndpoint().getHardwareId();
 
         if (exchange.getIn().getHeader(JcloudsConstants.HARDWARE_ID) != null) {
             hardwareId = (String) exchange.getIn().getHeader(JcloudsConstants.HARDWARE_ID);
@@ -333,7 +329,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      * @return
      */
     protected String getLocationId(Exchange exchange) {
-        String locationId = ((JcloudsComputeEndpoint) getEndpoint()).getLocationId();
+        String locationId = getEndpoint().getLocationId();
 
         if (exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID) != null) {
             locationId = (String) exchange.getIn().getHeader(JcloudsConstants.LOCATION_ID);
@@ -348,7 +344,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      * @return
      */
     protected String getNodeId(Exchange exchange) {
-        String nodeId = ((JcloudsComputeEndpoint) getEndpoint()).getNodeId();
+        String nodeId = getEndpoint().getNodeId();
 
         if (exchange.getIn().getHeader(JcloudsConstants.NODE_ID) != null) {
             nodeId = (String) exchange.getIn().getHeader(JcloudsConstants.NODE_ID);
@@ -363,7 +359,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      * @return
      */
     protected String getGroup(Exchange exchange) {
-        String group = ((JcloudsComputeEndpoint) getEndpoint()).getGroup();
+        String group = getEndpoint().getGroup();
 
         if (exchange.getIn().getHeader(JcloudsConstants.GROUP) != null) {
             group = (String) exchange.getIn().getHeader(JcloudsConstants.GROUP);
@@ -378,7 +374,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
      * @return
      */
     protected String getUser(Exchange exchange) {
-        String user = ((JcloudsComputeEndpoint) getEndpoint()).getUser();
+        String user = getEndpoint().getUser();
 
         if (exchange.getIn().getHeader(JcloudsConstants.USER) != null) {
             user = (String) exchange.getIn().getHeader(JcloudsConstants.USER);
