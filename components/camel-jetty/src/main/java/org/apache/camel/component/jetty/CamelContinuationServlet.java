@@ -63,6 +63,10 @@ public class CamelContinuationServlet extends CamelServlet {
             return;
         }
 
+        if ("TRACE".equals(request.getMethod()) && !consumer.isTraceEnabled()) {
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        }
+        
         final Exchange result = (Exchange) request.getAttribute(EXCHANGE_ATTRIBUTE_NAME);
         if (result == null) {
             // no asynchronous result so leverage continuation
