@@ -26,9 +26,13 @@ import org.apache.camel.impl.DefaultConsumer;
 public class HttpConsumer extends DefaultConsumer implements SuspendableService {
     private final HttpEndpoint endpoint;
     private volatile boolean suspended;
+    private boolean traceEnabled;
 
     public HttpConsumer(HttpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        if (endpoint.isTraceEnabled()) {
+            setTraceEnabled(true);
+        }
         this.endpoint = endpoint;
     }
 
@@ -71,4 +75,11 @@ public class HttpConsumer extends DefaultConsumer implements SuspendableService 
         return suspended;
     }
 
+    public boolean isTraceEnabled() {        
+        return this.traceEnabled;
+    }
+
+    public void setTraceEnabled(boolean traceEnabled) {
+        this.traceEnabled = traceEnabled;
+    }
 }
