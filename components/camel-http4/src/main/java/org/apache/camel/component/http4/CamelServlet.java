@@ -49,6 +49,10 @@ public class CamelServlet extends HttpServlet {
                 return;
             }
 
+            if ("TRACE".equals(request.getMethod()) && !consumer.isTraceEnabled()) {
+                response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            }
+            
             // Have the camel process the HTTP exchange.
             DefaultExchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
             if (((HttpEndpoint)consumer.getEndpoint()).isBridgeEndpoint()) {
