@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +46,7 @@ public class XmlConfigTestSupport extends TestSupport {
             FromDefinition fromType = inputs.get(0);
             assertEquals("from URI", "seda:test.a", fromType.getUri());
 
-            List<ProcessorDefinition> outputs = route.getOutputs();
+            List<?> outputs = route.getOutputs();
             assertEquals("Number of outputs", 1, outputs.size());
         }
     }
