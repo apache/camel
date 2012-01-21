@@ -493,9 +493,8 @@ public class RunMojo extends AbstractExecMojo {
         boolean foundNonDaemon;
         do {
             foundNonDaemon = false;
-            Collection threads = getActiveThreads(threadGroup);
-            for (Iterator iter = threads.iterator(); iter.hasNext();) {
-                Thread thread = (Thread)iter.next();
+            Collection<Thread> threads = getActiveThreads(threadGroup);
+            for (Thread thread : threads) {
                 if (thread.isDaemon()) {
                     continue;
                 }
