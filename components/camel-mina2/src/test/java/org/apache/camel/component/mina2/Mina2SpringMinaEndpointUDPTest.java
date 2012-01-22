@@ -31,7 +31,7 @@ public class Mina2SpringMinaEndpointUDPTest extends CamelSpringTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        template.sendBody("myMinaEndpoint", "Hello World\n");
+        template.sendBody("myMinaEndpoint", "Hello World" + LS);
 
         assertMockEndpointsSatisfied();
     }

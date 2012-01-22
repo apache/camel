@@ -87,7 +87,7 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         try {
             os = soc.getOutputStream();
             // must append newline at the end to flag end of textline to Camel-Mina
-            os.write((input + "\n").getBytes());
+            os.write((input + LS).getBytes());
 
             is = soc.getInputStream();
             int len = is.read(buf);
@@ -109,7 +109,7 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         StringBuilder sb = new StringBuilder();
         for (byte b : buf) {
             char ch = (char) b;
-            if (ch == '\n' || ch == 0) {
+            if (LS.indexOf(ch) > -1) {
                 // newline denotes end of text (added in the end in the processor below)
                 break;
             } else {
