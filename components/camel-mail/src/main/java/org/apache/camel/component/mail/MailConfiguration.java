@@ -49,6 +49,7 @@ public class MailConfiguration implements Cloneable {
     private boolean unseen = true;
     private boolean ignoreUriScheme;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
+    private String replyTo;
     private int fetchSize = -1;
     private boolean debugMode;
     private long connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
@@ -371,6 +372,14 @@ public class MailConfiguration implements Cloneable {
 
     public Map<Message.RecipientType, String> getRecipients() {
         return recipients;
+    }
+    
+    public String getReplyTo() {
+        return replyTo;
+    }
+
+    public void setReplyTo(String replyTo) {
+        this.replyTo = replyTo;
     }
 
     public int getFetchSize() {
