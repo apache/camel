@@ -82,7 +82,17 @@ public class MailBinding {
             // fallback to endpoint configuration
             setRecipientFromEndpointConfiguration(mimeMessage, endpoint);
         }
-
+        
+        // set the replyTo if it was passed in as an option in the uri. Note: if it is in both the URI
+        // and headers the headers win.
+        String replyTo = exchange.getIn().getHeader("Reply-To", String.class);
+        if (replyTo == null) {
+            replyTo = endpoint.getConfiguration().getReplyTo();
+        }
+        if (replyTo != null) {
+            mimeMessage.setReplyTo(new InternetAddress[]{new InternetAddress(replyTo)});
+        }
+        
         // must have at least one recipients otherwise we do not know where to send the mail
         if (mimeMessage.getAllRecipients() == null) {
             throw new IllegalArgumentException("The mail message does not have any recipients set.");
