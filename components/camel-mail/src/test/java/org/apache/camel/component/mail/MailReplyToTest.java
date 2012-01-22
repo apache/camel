@@ -37,16 +37,17 @@ public class MailReplyToTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived("Reply-To", "noReply@localhost");
+        mock.expectedHeaderReceived("Reply-To", "noReply1@localhost,noReply2@localhost");
         mock.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader("direct:a", body, "Reply-To", "noReply@localhost");
+        template.sendBodyAndHeader("direct:a", body, "Reply-To", "noReply1@localhost,noReply2@localhost");
 
         mock.assertIsSatisfied();
 
         Mailbox mailbox = Mailbox.get("christian@localhost");
         assertEquals(1, mailbox.size());
-        assertEquals("noReply@localhost", ((InternetAddress) mailbox.get(0).getReplyTo()[0]).getAddress());
+        assertEquals("noReply1@localhost", ((InternetAddress) mailbox.get(0).getReplyTo()[0]).getAddress());
+        assertEquals("noReply2@localhost", ((InternetAddress) mailbox.get(0).getReplyTo()[1]).getAddress());
         assertEquals(body, mailbox.get(0).getContent());
     }
     
@@ -58,7 +59,7 @@ public class MailReplyToTest extends CamelTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived("Reply-To", "noReply@localhost");
+        mock.expectedHeaderReceived("Reply-To", "noReply1@localhost, noReply2@localhost");
         mock.expectedBodiesReceived(body);
 
         template.sendBody("direct:b", body);
@@ -67,7 +68,8 @@ public class MailReplyToTest extends CamelTestSupport {
 
         Mailbox mailbox = Mailbox.get("christian@localhost");
         assertEquals(1, mailbox.size());
-        assertEquals("noReply@localhost", ((InternetAddress) mailbox.get(0).getReplyTo()[0]).getAddress());
+        assertEquals("noReply1@localhost", ((InternetAddress) mailbox.get(0).getReplyTo()[0]).getAddress());
+        assertEquals("noReply2@localhost", ((InternetAddress) mailbox.get(0).getReplyTo()[1]).getAddress());
         assertEquals(body, mailbox.get(0).getContent());
     }
 
@@ -78,7 +80,7 @@ public class MailReplyToTest extends CamelTestSupport {
                     .to("smtp://christian@localhost?subject=Camel");
                 
                 from("direct:b")
-                    .to("smtp://christian@localhost?subject=Camel&replyTo=noReply@localhost");
+                    .to("smtp://christian@localhost?subject=Camel&replyTo=noReply1@localhost,noReply2@localhost");
 
                 from("pop3://localhost?username=christian&password=secret&consumer.delay=1000")
                     .to("mock:result");
