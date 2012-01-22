@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -90,7 +91,11 @@ public class MailBinding {
             replyTo = endpoint.getConfiguration().getReplyTo();
         }
         if (replyTo != null) {
-            mimeMessage.setReplyTo(new InternetAddress[]{new InternetAddress(replyTo)});
+            ArrayList<InternetAddress> replyToAddresses = new ArrayList<InternetAddress>();
+            for (String reply : splitRecipients(replyTo)) {
+                replyToAddresses.add(new InternetAddress(reply.trim()));
+            }
+            mimeMessage.setReplyTo(replyToAddresses.toArray(new InternetAddress[replyToAddresses.size()]));
         }
         
         // must have at least one recipients otherwise we do not know where to send the mail
@@ -554,16 +559,16 @@ public class MailBinding {
         return answer;
     }
 
-    private static void appendRecipientToMimeMessage(MimeMessage mimeMessage, String type, String recipient)
-        throws MessagingException {
-
+    private static void appendRecipientToMimeMessage(MimeMessage mimeMessage, String type, String recipient) throws MessagingException {
+        for (String line : splitRecipients(recipient)) {
+            mimeMessage.addRecipients(asRecipientType(type), line.trim());
+        }
+    }
+    
+    private static String[] splitRecipients(String recipients) {
         // we support that multi recipient can be given as a string separated by comma or semicolon
         // regex ignores comma and semicolon inside of double quotes
-        String[] lines = recipient.split("[,;]++(?=(?:(?:[^\\\"]*+\\\"){2})*+[^\\\"]*+$)");
-        for (String line : lines) {
-            line = line.trim();
-            mimeMessage.addRecipients(asRecipientType(type), line);
-        }
+        return recipients.split("[,;]++(?=(?:(?:[^\\\"]*+\\\"){2})*+[^\\\"]*+$)");
     }
 
     /**
