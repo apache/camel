@@ -46,7 +46,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
 
     public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
         this.filters = filters;
-        this.otherwise = AsyncProcessorTypeConverter.convert(otherwise);
+        this.otherwise = otherwise != null ? AsyncProcessorTypeConverter.convert(otherwise) : null;
     }
 
     public void process(Exchange exchange) throws Exception {
