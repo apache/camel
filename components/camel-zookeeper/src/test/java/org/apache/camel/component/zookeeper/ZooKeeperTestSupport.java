@@ -36,7 +36,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 
-import org.apache.log4j.Logger;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -48,8 +47,12 @@ import org.apache.zookeeper.data.Stat;
 import org.apache.zookeeper.server.NIOServerCnxn;
 import org.apache.zookeeper.server.ZooKeeperServer;
 import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ZooKeeperTestSupport extends CamelTestSupport {
 
@@ -57,7 +60,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
     
     protected static TestZookeeperClient client;
 
-    private static final Logger LOG = Logger.getLogger(ZooKeeperTestSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ZooKeeperTestSupport.class);
  
     protected String testPayload = "This is a test";
 
@@ -143,7 +146,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
 
         public static int x;
 
-        private final Logger log = Logger.getLogger(getClass());
+        private final Logger log = LoggerFactory.getLogger(getClass());
 
         private ZooKeeper zk;
 
@@ -228,7 +231,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
                     return true;
                 }
             } catch (IOException e) {
-                LOG.info("server " + hp + " not up " + e);
+                LOG.info("server {} not up {}", hp, e);
             }
 
             if (System.currentTimeMillis() > start + timeout) {
