@@ -35,7 +35,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
+
 import org.apache.log4j.Logger;
+
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -47,8 +50,10 @@ import org.apache.zookeeper.data.Stat;
 import org.apache.zookeeper.server.NIOServerCnxn;
 import org.apache.zookeeper.server.ZooKeeperServer;
 import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import static org.ops4j.pax.exam.OptionUtils.combine;
@@ -254,7 +259,7 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
             outstream.write(cmd.getBytes());
             outstream.flush();
 
-            reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+            reader = IOHelper.buffered(new InputStreamReader(sock.getInputStream()));
             StringBuffer sb = new StringBuffer();
             String line;
             while ((line = reader.readLine()) != null) {

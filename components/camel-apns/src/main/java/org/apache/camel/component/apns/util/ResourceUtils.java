@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.apns.util;
 
-import java.io.BufferedInputStream;
 import java.io.Closeable;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.notnoop.exceptions.RuntimeIOException;
+
+import org.apache.camel.util.IOHelper;
 
 public final class ResourceUtils {
 
@@ -52,7 +53,7 @@ public final class ResourceUtils {
             }
         } else {
             try {
-                is = new BufferedInputStream(new FileInputStream(path));
+                is = IOHelper.buffered(new FileInputStream(path));
             } catch (FileNotFoundException e) {
                 throw new RuntimeIOException(e);
             }

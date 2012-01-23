@@ -31,6 +31,8 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import org.apache.camel.util.IOHelper;
+
 public final class TidyMarkupTestSupport {
     
     private TidyMarkupTestSupport() {
@@ -39,7 +41,7 @@ public final class TidyMarkupTestSupport {
     
     public static String loadFileAsString(File file) throws Exception {
         StringBuilder fileContent = new StringBuilder();
-        BufferedReader input = new BufferedReader(new FileReader(file));
+        BufferedReader input = IOHelper.buffered(new FileReader(file));
         try {
             String line = null;
             while ((line = input.readLine()) != null) {

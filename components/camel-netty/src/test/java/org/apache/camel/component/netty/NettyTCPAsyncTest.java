@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -29,6 +28,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.util.IOHelper;
+
 import org.junit.Test;
 
 public class NettyTCPAsyncTest extends BaseNettyTest {
@@ -40,18 +41,17 @@ public class NettyTCPAsyncTest extends BaseNettyTest {
     private void sendFile(String uri) throws Exception {
         producerTemplate.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
-             // Read from an input stream
-                InputStream is = new BufferedInputStream(
-                    new FileInputStream("./src/test/resources/test.txt"));
+                // Read from an input stream
+                InputStream is = IOHelper.buffered(new FileInputStream("./src/test/resources/test.txt"));
 
                 byte buffer[] = IOConverter.toBytes(is);
                 is.close();
-                
+
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
                 in.setBody(buffer);
-            }            
+            }
         });
     }
 

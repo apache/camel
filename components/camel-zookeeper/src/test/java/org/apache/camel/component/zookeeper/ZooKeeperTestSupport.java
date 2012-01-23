@@ -34,6 +34,8 @@ import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IOHelper;
+
 import org.apache.log4j.Logger;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
@@ -258,7 +260,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
             outstream.write(cmd.getBytes());
             outstream.flush();
 
-            reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+            reader = IOHelper.buffered(new InputStreamReader(sock.getInputStream()));
             StringBuffer sb = new StringBuffer();
             String line;
             while ((line = reader.readLine()) != null) {

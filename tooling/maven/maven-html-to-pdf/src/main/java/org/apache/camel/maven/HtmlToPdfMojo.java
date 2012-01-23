@@ -16,8 +16,6 @@
  */
 package org.apache.camel.maven;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -33,10 +31,13 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.dataformat.tagsoup.TidyMarkupDataFormat;
+import org.apache.camel.util.IOHelper;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -251,7 +252,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
     }
 
     private void storeDummyFile() throws FileNotFoundException {
-        PrintWriter out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(getHTMLFileName())));
+        PrintWriter out = new PrintWriter(IOHelper.buffered(new FileOutputStream(getHTMLFileName())));
         out.println("<html>");
         out.println("<body>Generation of the offline PDF version of the manual failed, however you could try "
                     + "<a href=\"http://camel.apache.org/book-in-one-page.html\">the online HTML version</a>.</body>");
@@ -261,7 +262,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
     }
 
     private void storeHTMLFile(String content) throws FileNotFoundException {
-        PrintWriter out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(getHTMLFileName())));
+        PrintWriter out = new PrintWriter(IOHelper.buffered(new FileOutputStream(getHTMLFileName())));
         out.println("<html>");
         out.println("<head>");
         out.println("   <base href=\"" + page + "\"/>");
@@ -308,7 +309,7 @@ public class HtmlToPdfMojo extends AbstractMojo {
         try {
             TidyMarkupDataFormat dataFormat = new TidyMarkupDataFormat();
             dataFormat.setMethod("html");
-            Node doc = dataFormat.asNodeTidyMarkup(new BufferedInputStream(url.openStream()));
+            Node doc = dataFormat.asNodeTidyMarkup(IOHelper.buffered(url.openStream()));
             XPath xpath = XPathFactory.newInstance().newXPath();
             Node nd = (Node)xpath.evaluate("//div[@class='" + contentDivClass + "']", doc, XPathConstants.NODE);
             if (nd != null) {

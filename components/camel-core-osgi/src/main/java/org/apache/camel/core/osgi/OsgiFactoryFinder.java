@@ -26,6 +26,7 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.impl.DefaultFactoryFinder;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.IOHelper;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -57,7 +58,7 @@ public class OsgiFactoryFinder extends DefaultFactoryFinder {
                 // lets load the file
                 BufferedInputStream reader = null;
                 try {
-                    reader = new BufferedInputStream(in);
+                    reader = IOHelper.buffered(in);
                     Properties properties = new Properties();
                     properties.load(reader);
                     String className = properties.getProperty(propertyPrefix + "class");

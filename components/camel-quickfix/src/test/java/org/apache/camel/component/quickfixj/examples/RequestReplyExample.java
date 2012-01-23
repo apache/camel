@@ -36,6 +36,8 @@ import org.apache.camel.component.quickfixj.QuickfixjProducer;
 import org.apache.camel.component.quickfixj.examples.transform.QuickfixjMessageJsonTransformer;
 import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecrementer;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.IOHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +105,7 @@ public class RequestReplyExample {
         
         URL orderStatusUrl = new URL(orderStatusServiceUrl + "?sessionID=FIX.4.2:TRADER->MARKET&orderID=abc");
         HttpURLConnection connection = (HttpURLConnection) orderStatusUrl.openConnection();
-        BufferedReader orderStatusReply = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        BufferedReader orderStatusReply = IOHelper.buffered(new InputStreamReader(connection.getInputStream()));
         String line = orderStatusReply.readLine();
         if (!line.equals("\"message\": {")) {
             throw new Exception("Don't appear to be a JSON response");
