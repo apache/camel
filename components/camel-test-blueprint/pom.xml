@@ -80,30 +80,32 @@
         <dependency>
             <groupId>org.apache.aries.blueprint</groupId>
             <artifactId>org.apache.aries.blueprint</artifactId>
+          <version>${aries-blueprint-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.aries</groupId>
             <artifactId>org.apache.aries.util</artifactId>
-            <version>0.3</version>
+            <version>${aries-blueprint-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.aries.proxy</groupId>
             <artifactId>org.apache.aries.proxy.impl</artifactId>
-            <version>0.3</version>
+            <version>${aries-blueprint-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.aries.proxy</groupId>
             <artifactId>org.apache.aries.proxy.api</artifactId>
-            <version>0.3</version>
+            <version>${aries-blueprint-version}</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.pojosr</groupId>
             <artifactId>de.kalpatec.pojosr.framework</artifactId>
-            <version>0.1.8</version>
+            <version>${pojosr-version}</version>
         </dependency>
         <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>
             <artifactId>pax-swissbox-tinybundles</artifactId>
+            <version>${pax-tiny-bundle-version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -119,7 +121,8 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.6.1</version>
+            <version>${slf4j-version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

@@ -130,6 +130,7 @@
     <pax-runner-version>1.6.1</pax-runner-version>
     <pax-tiny-bundle-version>1.3.1</pax-tiny-bundle-version>
     <pax-logging-version>1.5.3</pax-logging-version>
+    <pojosr-version>0.1.8</pojosr-version>
     <protobuf-version>2.3.0</protobuf-version>
     <qpid-version>0.12</qpid-version>
     <quartz-version>1.8.5</quartz-version>
