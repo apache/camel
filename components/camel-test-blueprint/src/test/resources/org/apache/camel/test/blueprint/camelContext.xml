@@ -16,18 +16,22 @@
     limitations under the License.
 -->
 <!-- START SNIPPET: example -->
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
-	<camelContext id="camelContext" xmlns="http://camel.apache.org/schema/blueprint" trace="true" autoStartup="true" >
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
-		<route>
-			<from uri="direct:start" />
-			<transform>
-				<simple>Hello ${body}</simple>
-			</transform>
-			<to uri="mock:a" />
-		</route>
-	</camelContext>
+    <route>
+      <from uri="direct:start"/>
+      <transform>
+        <simple>Hello ${body}</simple>
+      </transform>
+      <to uri="mock:a"/>
+    </route>
+
+  </camelContext>
 
 </blueprint>
-<!-- END SNIPPET: example -->
+  <!-- END SNIPPET: example -->
