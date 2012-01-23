@@ -16,20 +16,20 @@
  */
 package org.apache.camel.test.blueprint;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-
 import org.junit.Test;
 
 // START SNIPPET: example
+// to use camel-test-blueprint, then extend the CamelBlueprintTestSupport class,
+// and add your unit tests methods as shown below.
 public class DebugBlueprintTest extends CamelBlueprintTestSupport {
 
+    // override this method, and return the location of our Blueprint XML file to be used for testing
     @Override
-    protected Collection<URL> getBlueprintDescriptors() {
-        return Collections.singleton(getClass().getResource("camelContext.xml"));
+    protected String getBlueprintDescriptor() {
+        return "org/apache/camel/test/blueprint/camelContext.xml";
     }
 
+    // here we have regular Junit @Test method
     @Test
     public void testRoute() throws Exception {
         // set mock expectations

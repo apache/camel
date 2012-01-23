@@ -16,10 +16,6 @@
  */
 package org.apache.camel.test.blueprint.xpath;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
 
@@ -29,8 +25,8 @@ public class XPathFilterWithNamespaceTest extends CamelBlueprintTestSupport {
     protected String notMatchingBody = "<person name='Hiram' city='Tampa' xmlns='http://example.com/person'/>";
 
     @Override
-    protected Collection<URL> getBlueprintDescriptors() {
-        return Collections.singleton(getClass().getResource("xpathFilterWithNamespaceTest.xml"));
+    protected String getBlueprintDescriptor() {
+        return "org/apache/camel/test/blueprint/xpath/xpathFilterWithNamespaceTest.xml";
     }
 
     @Test

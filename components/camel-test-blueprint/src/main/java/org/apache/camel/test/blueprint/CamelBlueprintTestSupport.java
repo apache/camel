@@ -18,10 +18,8 @@ package org.apache.camel.test.blueprint;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +27,7 @@ import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarInputStream;
@@ -40,6 +39,8 @@ import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
 import de.kalpatec.pojosr.framework.launch.PojoServiceRegistryFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundle;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundles;
 import org.osgi.framework.BundleContext;
@@ -51,7 +52,7 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * @version 
+ * Base class for OSGi Blueprint unit tests with Camel.
  */
 public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
@@ -61,10 +62,13 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        deleteDirectory("target/test-bundle");
+        createDirectory("target/test-bundle");
+
         System.setProperty("org.bundles.framework.storage", "target/bundles/" + System.currentTimeMillis());
         List<BundleDescriptor> bundles = new ClasspathScanner().scanForBundles("(Bundle-SymbolicName=*)");
         TinyBundle bundle = createTestBundle();
-        bundles.add(getBundleDescriptor("target/test-bundle.jar", bundle));
+        bundles.add(getBundleDescriptor("target/test-bundle/test-bundle.jar", bundle));
         Map<String, List<BundleDescriptor>> config = new HashMap<String, List<BundleDescriptor>>();
         config.put(PojoServiceRegistryFactory.BUNDLE_DESCRIPTORS, bundles);
         PojoServiceRegistry reg = new PojoServiceRegistryFactoryImpl().newPojoServiceRegistry(config);
@@ -73,12 +77,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         super.setUp();
     }
 
-    protected TinyBundle createTestBundle() {
+    protected TinyBundle createTestBundle() throws FileNotFoundException {
         TinyBundle bundle = TinyBundles.newBundle();
         for (URL url : getBlueprintDescriptors()) {
-            if (url == null) {
-                throw new IllegalArgumentException("getBlueprintDescriptors() returns null");
-            }
             bundle.add("OSGI-INF/blueprint/blueprint-" + url.getFile().replace("/", "-"), url);
         }
         bundle.set("Manifest-Version", "2")
@@ -88,7 +89,48 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         return bundle;
     }
 
-    protected abstract Collection<URL> getBlueprintDescriptors();
+    /**
+     * Gets the bundle descriptors as {@link URL} resources.
+     * <p/>
+     * It is preferred to override the {@link #getBlueprintDescriptor()} method, and return the
+     * location as a String, which is easier to deal with than a {@link Collection} type.
+     * 
+     * @return the bundle descriptors.
+     * @throws FileNotFoundException is thrown if a bundle descriptor cannot be found
+     */
+    protected Collection<URL> getBlueprintDescriptors() throws FileNotFoundException {
+        List<URL> answer = new ArrayList<URL>();
+        String descriptor = getBlueprintDescriptor();
+        if (descriptor != null) {
+            // there may be more resources separated by comma
+            Iterator<Object> it = ObjectHelper.createIterator(descriptor);
+            while (it.hasNext()) {
+                String s = (String) it.next();
+                URL url = ObjectHelper.loadResourceAsURL(s);
+                if (url == null) {
+                    throw new FileNotFoundException("Resource " + s + " not found in classpath");
+                }
+                answer.add(url);
+            }
+            return answer;
+        } else {
+            throw new IllegalArgumentException("No bundle descriptor configured. Override getBlueprintDescriptor() or getBlueprintDescriptors() method");
+        }
+    }
+
+    /**
+     * Gets the bundle descriptor from the classpath.
+     * <p/>
+     * Return the location(s) of the bundle descriptors from the classpath.
+     * Separate multiple locations by comma, or return a single location.
+     * <p/>
+     * For example override this method and return <tt>OSGI-INF/blueprint/myApp.xml</tt>
+     * 
+     * @return the location of the bundle descriptor file.
+     */
+    protected String getBlueprintDescriptor() {
+        return null;
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -179,33 +221,24 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
     private BundleDescriptor getBundleDescriptor(String path, TinyBundle bundle) throws Exception {
         File file = new File(path);
-        FileOutputStream fos = new FileOutputStream(file);
-        copy(bundle.build(), fos);
-        fos.close();
-        JarInputStream jis = new JarInputStream(new FileInputStream(file));
+        FileOutputStream fos = new FileOutputStream(file, true);
+        IOHelper.copy(bundle.build(), fos);
+        IOHelper.close(fos);
+
+        FileInputStream fis = new FileInputStream(file);
+        JarInputStream jis = new JarInputStream(fis);
         Map<String, String> headers = new HashMap<String, String>();
         for (Map.Entry<Object, Object> entry : jis.getManifest().getMainAttributes().entrySet()) {
             headers.put(entry.getKey().toString(), entry.getValue().toString());
         }
+
+        IOHelper.close(fis);
+        IOHelper.close(jis);
+
         return new BundleDescriptor(
                 getClass().getClassLoader(),
                 new URL("jar:" + file.toURI().toString() + "!/"),
                 headers);
-    }
-
-    public static long copy(final InputStream input, final OutputStream output) throws IOException {
-        return copy(input, output, 8024);
-    }
-
-    public static long copy(final InputStream input, final OutputStream output, int buffersize) throws IOException {
-        final byte[] buffer = new byte[buffersize];
-        int n;
-        long count = 0;
-        while ((n = input.read(buffer)) != -1) {
-            output.write(buffer, 0, n);
-            count += n;
-        }
-        return count;
     }
 
 }
