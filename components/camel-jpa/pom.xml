@@ -105,6 +105,17 @@
 
   <build>
     <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>derby.stream.error.file</name>
+              <value>target/derby.log</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
 
       <!-- lets enhance the classes for OpenJPA (shame it can't do it at runtime!) -->
       <plugin>
