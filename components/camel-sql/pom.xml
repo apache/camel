@@ -90,6 +90,12 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <forkMode>pertest</forkMode>
+          <systemProperties>
+            <property>
+              <name>derby.stream.error.file</name>
+              <value>target/derby.log</value>
+            </property>
+          </systemProperties>
         </configuration>
       </plugin>
     </plugins>
