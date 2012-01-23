@@ -17,80 +17,81 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.apache.camel</groupId>
-		<artifactId>camel-parent</artifactId>
-		<version>2.10-SNAPSHOT</version>
-        <relativePath>../../parent</relativePath>
-	</parent>
-	<artifactId>camel-sql</artifactId>
-    <packaging>bundle</packaging>
-	<name>Camel :: SQL</name>
-	<description>Camel SQL support</description>
-	
-	<properties>
-		<camel.osgi.export.pkg>
-			org.apache.camel.component.sql.*;${camel.osgi.version},
-			org.apache.camel.processor.aggregate.jdbc.*;${camel.osgi.version},
-			org.apache.camel.processor.idempotent.jdbc.*;${camel.osgi.version}
-		</camel.osgi.export.pkg>
-		<camel.osgi.import.pkg>
-			!org.apache.camel.component.sql.*,
-			!org.apache.camel.processor.aggregate.jdbc.*,
-			!org.apache.camel.processor.idempotent.jdbc.*,
-            ${camel.osgi.import.defaults},
-			*
-		</camel.osgi.import.pkg>
-	</properties>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-parent</artifactId>
+    <version>2.10-SNAPSHOT</version>
+    <relativePath>../../parent</relativePath>
+  </parent>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-		</dependency>
-		
-		<!-- test dependencies -->
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-test</artifactId>			
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>test</scope>
-        </dependency>
-	    <dependency>
-	      <groupId>org.apache.derby</groupId>
-	      <artifactId>derby</artifactId>
-	      <scope>test</scope>
-	    </dependency>
-	</dependencies>
-	
-    <build>
-        <plugins>
-            <!-- use per test fork mode to avoid side effects -->
-            <plugin>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <configuration>
-                <forkMode>pertest</forkMode>
-              </configuration>
-            </plugin>
-      </plugins>
-    </build>
+  <artifactId>camel-sql</artifactId>
+  <packaging>bundle</packaging>
+  <name>Camel :: SQL</name>
+  <description>Camel SQL support</description>
+
+  <properties>
+    <camel.osgi.export.pkg>
+      org.apache.camel.component.sql.*;${camel.osgi.version},
+      org.apache.camel.processor.aggregate.jdbc.*;${camel.osgi.version},
+      org.apache.camel.processor.idempotent.jdbc.*;${camel.osgi.version}
+    </camel.osgi.export.pkg>
+    <camel.osgi.import.pkg>
+      !org.apache.camel.component.sql.*,
+      !org.apache.camel.processor.aggregate.jdbc.*,
+      !org.apache.camel.processor.idempotent.jdbc.*,
+      ${camel.osgi.import.defaults},
+      *
+    </camel.osgi.import.pkg>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+    </dependency>
+
+    <!-- test dependencies -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>			
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- use per test fork mode to avoid side effects -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>pertest</forkMode>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
