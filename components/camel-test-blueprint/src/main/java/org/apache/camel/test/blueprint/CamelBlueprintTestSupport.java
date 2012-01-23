@@ -39,6 +39,7 @@ import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
 import de.kalpatec.pojosr.framework.launch.PojoServiceRegistryFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundle;
@@ -114,6 +115,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             Iterator<Object> it = ObjectHelper.createIterator(descriptor);
             while (it.hasNext()) {
                 String s = (String) it.next();
+                // remove leading / to be able to load resource from the classpath
+                s = FileUtil.stripLeadingSeparator(s);
                 URL url = ObjectHelper.loadResourceAsURL(s);
                 if (url == null) {
                     throw new FileNotFoundException("Resource " + s + " not found in classpath");

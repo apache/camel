@@ -60,6 +60,11 @@
       <version>${slf4j-version}</version>
     </dependency>
     <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j-version}</version>
+    </dependency>
+    <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>${log4j-version}</version>
@@ -94,6 +99,15 @@
           </instructions>
         </configuration>
       </plugin>
+
+      <!-- must use fork mode pertest for unit testing with camel-test-blueprint -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>pertest</forkMode>
+        </configuration>
+      </plugin>
+
     </plugins>
 
   </build>
