@@ -65,7 +65,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         deleteDirectory("target/test-bundle");
         createDirectory("target/test-bundle");
 
-        System.setProperty("org.bundles.framework.storage", "target/bundles/" + System.currentTimeMillis());
+        // ensure pojosr stores bundles in an unique target directory
+        System.setProperty("org.osgi.framework.storage", "target/bundles/" + System.currentTimeMillis());
         List<BundleDescriptor> bundles = new ClasspathScanner().scanForBundles("(Bundle-SymbolicName=*)");
         TinyBundle bundle = createTestBundle();
         bundles.add(getBundleDescriptor("target/test-bundle/test-bundle.jar", bundle));
@@ -75,6 +76,13 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         bundleContext = reg.getBundleContext();
 
         super.setUp();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        bundleContext.getBundle().stop();
+        System.clearProperty("org.osgi.framework.storage");
     }
 
     protected TinyBundle createTestBundle() throws FileNotFoundException {
@@ -94,7 +102,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      * <p/>
      * It is preferred to override the {@link #getBlueprintDescriptor()} method, and return the
      * location as a String, which is easier to deal with than a {@link Collection} type.
-     * 
+     *
      * @return the bundle descriptors.
      * @throws FileNotFoundException is thrown if a bundle descriptor cannot be found
      */
@@ -124,8 +132,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      * Return the location(s) of the bundle descriptors from the classpath.
      * Separate multiple locations by comma, or return a single location.
      * <p/>
-     * For example override this method and return <tt>OSGI-INF/blueprint/myApp.xml</tt>
-     * 
+     * For example override this method and return <tt>OSGI-INF/blueprint/camel-context.xml</tt>
+     *
      * @return the location of the bundle descriptor file.
      */
     protected String getBlueprintDescriptor() {
@@ -135,12 +143,6 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         return getOsgiService(CamelContext.class);
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        bundleContext.getBundle().stop();
     }
 
     protected <T> T getOsgiService(Class<T> type, long timeout) {
