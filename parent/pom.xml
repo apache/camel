@@ -58,7 +58,7 @@
     <concurrentlinkedhashmap.version>1.2</concurrentlinkedhashmap.version>
     <!-- When updating cxf-version, may need to change CXF version range in 
          platforms/karaf/features/src/main/resources/features.xml -->
-    <cxf-version>2.4.5</cxf-version>
+    <cxf-version>2.4.6</cxf-version>
     <cxf-xjc-utils-version>2.4.0</cxf-xjc-utils-version>
     <derby-version>10.8.2.2</derby-version>
     <dnsjava-version>2.1.1</dnsjava-version>
