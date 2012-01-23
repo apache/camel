@@ -30,8 +30,8 @@ public class PendingExchangesTwoRouteShutdownGracefulTest extends ContextTestSup
     private static String bar = "";
 
     public void testShutdownGraceful() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMinimumMessageCount(1);
 
         template.sendBody("seda:foo", "A");
         template.sendBody("seda:foo", "B");
