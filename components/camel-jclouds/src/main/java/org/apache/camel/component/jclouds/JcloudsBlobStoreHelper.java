@@ -58,8 +58,7 @@ public final class JcloudsBlobStoreHelper {
             } catch (IOException e) {
                 LOG.error("Error while writing blob", e);
             } finally {
-                IOHelper.close(oos);
-                IOHelper.close(baos);
+                IOHelper.close(oos, baos);
             }
         }
 
@@ -98,8 +97,7 @@ public final class JcloudsBlobStoreHelper {
                 e) {
             e.printStackTrace();
         } finally {
-            IOHelper.close(ois);
-            IOHelper.close(is);
+            IOHelper.close(ois, is);
         }
         return result;
     }

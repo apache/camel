@@ -237,8 +237,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             headers.put(entry.getKey().toString(), entry.getValue().toString());
         }
 
-        IOHelper.close(fis);
-        IOHelper.close(jis);
+        IOHelper.close(fis, jis);
 
         return new BundleDescriptor(
                 getClass().getClassLoader(),

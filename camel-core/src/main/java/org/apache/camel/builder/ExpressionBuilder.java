@@ -480,8 +480,7 @@ public final class ExpressionBuilder {
                     StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     exception.printStackTrace(pw);
-                    IOHelper.close(pw);
-                    IOHelper.close(sw);
+                    IOHelper.close(pw, sw);
                     return sw.toString();
                 } else {
                     return null;

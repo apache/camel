@@ -82,8 +82,7 @@ public class PGPDataFormat implements DataFormat {
         try {
             encOut.write(compressedData);
         } finally {
-            IOHelper.close(encOut);
-            IOHelper.close(outputStream);
+            IOHelper.close(encOut, outputStream);
         }
     }
 
