@@ -30,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.concurrent.RejectableScheduledThreadPoolExecutor;
+import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 
 /**
@@ -82,7 +84,7 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
             workQueue = new LinkedBlockingQueue<Runnable>(maxQueueSize);
         }
 
-        ThreadPoolExecutor answer = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, workQueue);
+        ThreadPoolExecutor answer = new RejectableThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTime, timeUnit, workQueue);
         answer.setThreadFactory(threadFactory);
         if (rejectedExecutionHandler == null) {
             rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
@@ -98,7 +100,7 @@ public class DefaultThreadPoolFactory implements ThreadPoolFactory {
             rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
         }
 
-        ScheduledThreadPoolExecutor answer = new ScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
+        ScheduledThreadPoolExecutor answer = new RejectableScheduledThreadPoolExecutor(profile.getPoolSize(), threadFactory, rejectedExecutionHandler);
         // TODO: when JDK7 we should setRemoveOnCancelPolicy(true)
 
         // need to wrap the thread pool in a sized to guard against the problem that the

@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -102,6 +103,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
         } else {
             thread.setCallerRunsWhenRejected(getCallerRunsWhenRejected());
         }
+        thread.setRejectedPolicy(getRejectedPolicy());
 
         List<Processor> pipe = new ArrayList<Processor>(2);
         pipe.add(thread);

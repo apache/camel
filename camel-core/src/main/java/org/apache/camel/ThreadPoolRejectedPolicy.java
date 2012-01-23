@@ -29,8 +29,6 @@ import javax.xml.bind.annotation.XmlType;
  * a new task.
  * <p/>
  * Camel will by default use <tt>CallerRuns</tt>.
- *
- * @version 
  */
 @XmlType
 @XmlEnum(String.class)
@@ -40,13 +38,58 @@ public enum ThreadPoolRejectedPolicy {
 
     public RejectedExecutionHandler asRejectedExecutionHandler() {
         if (this == Abort) {
-            return new ThreadPoolExecutor.AbortPolicy();
+            return new RejectedExecutionHandler() {
+                @Override
+                public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                    if (r instanceof Rejectable) {
+                        ((Rejectable) r).reject();
+                    }
+                }
+
+                @Override
+                public String toString() {
+                    return "Abort";
+                }
+            };
         } else if (this == CallerRuns) {
-            return new ThreadPoolExecutor.CallerRunsPolicy();
+            return new ThreadPoolExecutor.CallerRunsPolicy() {
+                @Override
+                public String toString() {
+                    return "CallerRuns";
+                }
+            };
         } else if (this == DiscardOldest) {
-            return new ThreadPoolExecutor.DiscardOldestPolicy();
+            return new RejectedExecutionHandler() {
+                @Override
+                public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                    if (!executor.isShutdown()) {
+                        Runnable rejected = executor.getQueue().poll();
+                        if (rejected instanceof Rejectable) {
+                            ((Rejectable) rejected).reject();
+                        }
+                        executor.execute(r);
+                    }
+                }
+
+                @Override
+                public String toString() {
+                    return "DiscardOldest";
+                }
+            };
         } else if (this == Discard) {
-            return new ThreadPoolExecutor.DiscardPolicy();
+            return new RejectedExecutionHandler() {
+                @Override
+                public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+                    if (r instanceof Rejectable) {
+                        ((Rejectable) r).reject();
+                    }
+                }
+
+                @Override
+                public String toString() {
+                    return "Discard";
+                }
+            };
         }
         throw new IllegalArgumentException("Unknown ThreadPoolRejectedPolicy: " + this);
     }

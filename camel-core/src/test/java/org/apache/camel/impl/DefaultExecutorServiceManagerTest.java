@@ -237,7 +237,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         // should inherit the default values
         assertEquals(10, tp.getCorePoolSize());
         assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertIsInstanceOf(ThreadPoolExecutor.CallerRunsPolicy.class, tp.getRejectedExecutionHandler());
+        assertEquals("CallerRuns", tp.getRejectedExecutionHandler().toString());
     }
 
     public void testGetThreadPoolProfileInheritCustomDefaultValues() throws Exception {
@@ -263,7 +263,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         // should inherit the default values
         assertEquals(1, tp.getCorePoolSize());
         assertEquals(30, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertIsInstanceOf(ThreadPoolExecutor.AbortPolicy.class, tp.getRejectedExecutionHandler());
+        assertEquals("Abort", tp.getRejectedExecutionHandler().toString());
     }
 
     public void testGetThreadPoolProfileInheritCustomDefaultValues2() throws Exception {
@@ -285,7 +285,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         // should inherit the default values
         assertEquals(50, tp.getMaximumPoolSize());
         assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertIsInstanceOf(ThreadPoolExecutor.CallerRunsPolicy.class, tp.getRejectedExecutionHandler());
+        assertEquals("CallerRuns", tp.getRejectedExecutionHandler().toString());
     }
 
     public void testNewThreadPoolProfile() throws Exception {
