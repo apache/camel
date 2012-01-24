@@ -37,15 +37,19 @@
   </prerequisites>
 
   <properties>
+    <!-- unify the encoding for all the modules -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
     <jdk.version>1.6</jdk.version>
     <compiler.fork>1.6</compiler.fork>
+
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.1.13</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
-    <maven-bundle-version>2.3.4</maven-bundle-version>
 
+    <maven-bundle-version>2.3.4</maven-bundle-version>
     <openjpa-version>2.1.1</openjpa-version>
   </properties>
 
