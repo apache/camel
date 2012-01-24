@@ -28,8 +28,13 @@
   <name>Camel Router Application</name>
   <description>Camel project that deploys the Camel Web Console, REST API, and your routes as a WAR</description>
   <url>http://www.myorganization.org</url>
-  
+
   <packaging>war</packaging>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
 
   <dependencies>
     <dependency>
@@ -38,8 +43,8 @@
       <version>${camel-version}</version>
       <type>war</type>
       <scope>runtime</scope>
-    </dependency>    
-    
+    </dependency>
+
     <!-- Dependencies for using ActiveMQ -->
     <dependency>
       <groupId>org.apache.activemq</groupId>
@@ -60,40 +65,39 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
       <version>${camel-version}</version>
-    </dependency>  
-  
-    <!-- Dependencies for stream processing in Camel
-         http://camel.apache.org/stream.html -->
+    </dependency>
+
+    <!-- Dependencies for stream processing in Camel http://camel.apache.org/stream.html -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-stream</artifactId>
       <version>${camel-version}</version>
     </dependency>
 
-    <!-- for testing -->
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j-version}</version>
+    </dependency>
+
+    <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
       <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- logging -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-version}</version> 
-    </dependency>   
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${slf4j-version}</version> 
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId> 
-      <artifactId>log4j</artifactId> 
-      <version>${log4j-version}</version> 
-    </dependency>
-    
   </dependencies>
 
   <build>
@@ -109,28 +113,25 @@
           <target>1.6</target>
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
         <version>${camel-version}</version>
       </plugin>
-
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-version}</version>
-
         <configuration>
           <webAppConfig>
             <contextPath>/</contextPath>
           </webAppConfig>
-
           <systemProperties>
+
             <!-- enable easy JMX connection to JConsole -->
             <systemProperty>
               <name>com.sun.management.jmxremote</name>
-              <value/>
+              <value />
             </systemProperty>
           </systemProperties>
           <scanIntervalSeconds>10</scanIntervalSeconds>
@@ -138,5 +139,5 @@
       </plugin>
     </plugins>
   </build>
-  
+
 </project>

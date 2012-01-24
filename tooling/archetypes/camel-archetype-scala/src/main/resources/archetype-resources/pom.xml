@@ -29,6 +29,11 @@
   <name>Camel :: A RouteBuilder for the Scala DSL</name>
   <url>http://www.myorganization.org</url>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -48,18 +53,11 @@
       <version>${scala-version}</version>
     </dependency>
 
-    <!-- for testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <version>${camel-version}</version>
-      <scope>test</scope>
-    </dependency>
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>${slf4j-version}</version> 
+      <version>${slf4j-version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -67,9 +65,17 @@
       <version>${slf4j-version}</version>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId> 
-      <artifactId>log4j</artifactId> 
-      <version>${log4j-version}</version> 
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j-version}</version>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <version>${camel-version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -77,6 +83,7 @@
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
     <plugins>
+
       <!-- the Maven compiler plugin will compile Java source files -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -87,6 +94,7 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+
       <!-- the Maven Scala plugin will compile Scala source files -->
       <plugin>
         <groupId>org.scala-tools</groupId>
@@ -101,8 +109,8 @@
           </execution>
         </executions>
       </plugin>
-      
-      <!-- configure the eclipse plugin to generate eclipse project descriptors for a Scala project --> 
+
+      <!-- configure the eclipse plugin to generate eclipse project descriptors for a Scala project -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>
@@ -120,7 +128,7 @@
           </classpathContainers>
         </configuration>
       </plugin>
-      
+
       <!-- allows the route to be run via 'mvn exec:java' -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -129,7 +137,6 @@
           <mainClass>${package}.MyRouteMain</mainClass>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
 
