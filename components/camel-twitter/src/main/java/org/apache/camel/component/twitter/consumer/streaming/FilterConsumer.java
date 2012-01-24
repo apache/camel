@@ -30,10 +30,7 @@ public class FilterConsumer extends StreamingConsumer {
 
     public FilterConsumer(TwitterEndpoint te) {
         super(te);
-        TwitterStream twitterStream = new TwitterStreamFactory(te.getProperties().getConfiguration()).getInstance();
-        twitterStream.addListener(this);
-        FilterQuery filterQuery = createFilter(te);
-        twitterStream.filter(filterQuery);
+        twitterStream.filter(createFilter(te));
     }
 
     private FilterQuery createFilter(TwitterEndpoint te) {

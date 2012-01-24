@@ -14,18 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.twitter.data;
+package org.apache.camel.component.twitter.consumer;
 
-public enum EndpointType {
+import twitter4j.Status;
 
-    POLLING, DIRECT, EVENT;
-
-    public static EndpointType fromUri(String uri) {
-        for (EndpointType endpointType : EndpointType.values()) {
-            if (endpointType.name().equalsIgnoreCase(uri)) {
-                return endpointType;
-            }
-        }
-        return EndpointType.DIRECT;
-    }
+public interface TweeterStatusListener {
+    void onStatus(Status status);
 }

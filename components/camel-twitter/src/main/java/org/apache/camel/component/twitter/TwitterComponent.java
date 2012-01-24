@@ -37,11 +37,13 @@ public class TwitterComponent extends DefaultComponent {
         case POLLING:
             endpoint = new TwitterEndpointPolling(uri, this, properties);
             break;
+        case EVENT:
+            endpoint = new TwitterEndpointEvent(uri, this, properties);
+            break;
         default:
             endpoint = new TwitterEndpointDirect(uri, this, properties);
             break;
         }
-
         return endpoint;
     }
 

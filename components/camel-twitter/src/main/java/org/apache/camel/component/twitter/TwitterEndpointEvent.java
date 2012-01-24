@@ -21,19 +21,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-import org.apache.camel.component.twitter.consumer.TwitterConsumerDirect;
-import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
+import org.apache.camel.component.twitter.consumer.TwitterConsumerEvent;
 
-/**
- * Twitter direct endpoint
- */
-public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndpoint {
+import twitter4j.Twitter;
+
+public class TwitterEndpointEvent extends DirectEndpoint implements TwitterEndpoint {
 
     private Twitter twitter;
     private TwitterConfiguration properties;
 
-    public TwitterEndpointDirect(String uri, TwitterComponent component, TwitterConfiguration properties) {
+    public TwitterEndpointEvent(String uri, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
         this.properties = properties;
     }
@@ -41,12 +38,12 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Twitter4JConsumer twitter4jConsumer = Twitter4JFactory.getConsumer(this, getEndpointUri());
-        return new TwitterConsumerDirect(this, processor, twitter4jConsumer);
+        return new TwitterConsumerEvent(this, processor, twitter4jConsumer);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return Twitter4JFactory.getProducer(this, getEndpointUri());
+        throw new UnsupportedOperationException("Producer not supported");
     }
 
     @Override
