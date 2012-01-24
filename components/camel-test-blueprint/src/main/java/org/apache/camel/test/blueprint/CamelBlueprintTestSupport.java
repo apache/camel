@@ -38,10 +38,12 @@ import de.kalpatec.pojosr.framework.launch.ClasspathScanner;
 import de.kalpatec.pojosr.framework.launch.PojoServiceRegistry;
 import de.kalpatec.pojosr.framework.launch.PojoServiceRegistryFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.CamelTestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.After;
+import org.junit.Before;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundle;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundles;
 import org.osgi.framework.BundleContext;
@@ -61,8 +63,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
     private BundleContext bundleContext;
 
+    @Before
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         deleteDirectory("target/test-bundle");
         createDirectory("target/test-bundle");
 
@@ -79,8 +82,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         super.setUp();
     }
 
+    @After
     @Override
-    protected void tearDown() throws Exception {
+    public void tearDown() throws Exception {
         super.tearDown();
         bundleContext.getBundle().stop();
         System.clearProperty("org.osgi.framework.storage");

@@ -25,10 +25,10 @@
 
     <route>
       <from uri="direct:start"/>
-      <transform>
-        <simple>Hello ${body}</simple>
-      </transform>
-      <to uri="mock:a"/>
+      <filter>
+        <simple>${header.foo} == 'bar'</simple>
+        <to uri="mock:result"/>
+      </filter>
     </route>
 
   </camelContext>
