@@ -20,9 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.test.junit4.CamelTestSupport;
-
-import org.junit.Test;
+import org.apache.camel.test.CamelTestSupport;
 
 /**
  * @version 
@@ -45,7 +43,6 @@ public class DebugTest extends CamelTestSupport {
     }
     // END SNIPPET: e1
 
-    @Test
     public void testDebugger() throws Exception {
         // set mock expectations
         getMockEndpoint("mock:a").expectedMessageCount(1);
@@ -58,7 +55,6 @@ public class DebugTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
     public void testTwo() throws Exception {
         // set mock expectations
         getMockEndpoint("mock:a").expectedMessageCount(2);
