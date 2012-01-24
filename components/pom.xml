@@ -141,12 +141,12 @@
     <module>camel-tagsoup</module>
     <module>camel-twitter</module>
     <module>camel-velocity</module>
+    <module>camel-websocket</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmlsecurity</module>
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
     <module>camel-zookeeper</module>
-    <module>camel-websocket</module>
   </modules>
   
 </project>
