@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultCamelBeanPostProcessor {
 
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected static final transient Logger LOG = LoggerFactory.getLogger(DefaultCamelBeanPostProcessor.class);
     protected CamelPostProcessorHelper camelPostProcessorHelper;
     protected CamelContext camelContext;
 
@@ -70,7 +70,7 @@ public class DefaultCamelBeanPostProcessor {
      * @throws Exception is thrown if error post processing bean
      */
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws Exception {
-        log.trace("Camel bean processing before initialization for bean: {}", beanName);
+        LOG.trace("Camel bean processing before initialization for bean: {}", beanName);
 
         // some beans cannot be post processed at this given time, so we gotta check beforehand
         if (!canPostProcessBean(bean, beanName)) {
@@ -84,7 +84,7 @@ public class DefaultCamelBeanPostProcessor {
             CamelContextAware contextAware = (CamelContextAware)bean;
             CamelContext context = getOrLookupCamelContext();
             if (context == null) {
-                log.warn("No CamelContext defined yet so cannot inject into bean: " + beanName);
+                LOG.warn("No CamelContext defined yet so cannot inject into bean: " + beanName);
             } else {
                 contextAware.setCamelContext(context);
             }
@@ -106,7 +106,7 @@ public class DefaultCamelBeanPostProcessor {
      * @throws Exception is thrown if error post processing bean
      */
     public Object postProcessAfterInitialization(Object bean, String beanName) throws Exception {
-        log.trace("Camel bean processing after initialization for bean: {}", beanName);
+        LOG.trace("Camel bean processing after initialization for bean: {}", beanName);
 
         // some beans cannot be post processed at this given time, so we gotta check beforehand
         if (!canPostProcessBean(bean, beanName)) {
@@ -147,7 +147,7 @@ public class DefaultCamelBeanPostProcessor {
             CamelContextAware camelContextAware = (CamelContextAware) bean;
             CamelContext context = camelContextAware.getCamelContext();
             if (context != null) {
-                log.trace("CamelContext already set on bean with id [{}]. Will keep existing CamelContext on bean.", beanName);
+                LOG.trace("CamelContext already set on bean with id [{}]. Will keep existing CamelContext on bean.", beanName);
                 return false;
             }
         }
@@ -207,7 +207,7 @@ public class DefaultCamelBeanPostProcessor {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes != null) {
             if (parameterTypes.length != 1) {
-                log.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
             } else {
                 String propertyName = ObjectHelper.getPropertyName(method);
                 Object value = getPostProcessorHelper().getInjectionValue(parameterTypes[0], endpointUri, endpointRef, propertyName, bean, beanName);

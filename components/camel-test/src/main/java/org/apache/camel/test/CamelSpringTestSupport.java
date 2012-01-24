@@ -71,7 +71,8 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
         processor.setApplicationContext(applicationContext);
         processor.setCamelContext(context);
-        processor.postProcessBeforeInitialization(this, "this");
+        processor.postProcessBeforeInitialization(this, getClass().getName());
+        processor.postProcessAfterInitialization(this, getClass().getName());
     }
 
     @SuppressWarnings("unchecked")
