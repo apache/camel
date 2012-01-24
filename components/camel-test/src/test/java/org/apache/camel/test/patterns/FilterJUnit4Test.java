@@ -16,7 +16,11 @@
  */
 package org.apache.camel.test.patterns;
 
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -28,24 +32,30 @@ import org.junit.Test;
 // START SNIPPET: example
 public class FilterJUnit4Test extends CamelTestSupport {
 
+    @EndpointInject(uri = "mock:result")
+    protected MockEndpoint resultEndpoint;
+
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
+
     @Test
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
 
-        getMockEndpoint("mock:result").expectedBodiesReceived(expectedBody);
+        resultEndpoint.expectedBodiesReceived(expectedBody);
 
-        template.sendBodyAndHeader("direct:start", expectedBody, "foo", "bar");
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
 
-        assertMockEndpointsSatisfied();
+        resultEndpoint.assertIsSatisfied();
     }
 
     @Test
     public void testSendNotMatchingMessage() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(0);
+        resultEndpoint.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
+        template.sendBodyAndHeader("<notMatched/>", "foo", "notMatchedHeaderValue");
 
-        assertMockEndpointsSatisfied();
+        resultEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -56,5 +66,6 @@ public class FilterJUnit4Test extends CamelTestSupport {
             }
         };
     }
+
 }
 // END SNIPPET: example

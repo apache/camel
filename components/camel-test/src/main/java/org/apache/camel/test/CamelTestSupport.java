@@ -37,6 +37,7 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.BreakpointSupport;
+import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
@@ -240,7 +241,14 @@ public abstract class CamelTestSupport extends TestSupport {
         return true;
     }
 
+    /**
+     * Lets post process this test instance to process any Camel annotations.
+     * Note that using Spring Test or Guice is a more powerful approach.
+     */
     protected void postProcessTest() throws Exception {
+        // use the default bean post processor from camel-core
+        DefaultCamelBeanPostProcessor processor = new DefaultCamelBeanPostProcessor(context);
+        processor.postProcessBeforeInitialization(this, "this");
     }
 
     protected void stopCamelContext() throws Exception {

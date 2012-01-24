@@ -60,7 +60,9 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
             applicationContext = threadAppContext.get();
         }
 
+        // use the bean post processor from camel-spring
         CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
+        processor.setApplicationContext(applicationContext);
         processor.setCamelContext(context);
         processor.postProcessBeforeInitialization(this, "this");
     }

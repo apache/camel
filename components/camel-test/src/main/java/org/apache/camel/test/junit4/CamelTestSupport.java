@@ -37,6 +37,7 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.BreakpointSupport;
+import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
@@ -348,6 +349,10 @@ public abstract class CamelTestSupport extends TestSupport {
         template = threadTemplate.get();
         consumer = threadConsumer.get();
         camelContextService = threadService.get();
+
+        // use the default bean post processor from camel-core
+        DefaultCamelBeanPostProcessor processor = new DefaultCamelBeanPostProcessor(context);
+        processor.postProcessBeforeInitialization(this, "this");
     }
 
     protected void stopCamelContext() throws Exception {

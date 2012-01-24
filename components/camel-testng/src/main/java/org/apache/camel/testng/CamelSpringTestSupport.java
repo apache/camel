@@ -27,6 +27,7 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.InvertingPackageScanFilter;
+import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.CastUtils;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -36,10 +37,6 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 
-
-/**
- * @version $Revision$
- */
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
     protected static ThreadLocal<AbstractApplicationContext> threadAppContext
         = new ThreadLocal<AbstractApplicationContext>();
@@ -53,6 +50,12 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         if (isCreateCamelContextPerClass()) {
             applicationContext = threadAppContext.get();
         }
+
+        // use the bean post processor from camel-spring
+        CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
+        processor.setApplicationContext(applicationContext);
+        processor.setCamelContext(context);
+        processor.postProcessBeforeInitialization(this, "this");
     }
 
     @Override

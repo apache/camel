@@ -23,9 +23,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.testng.CamelTestSupport;
 import org.testng.annotations.Test;
 
-/**
- * @version $Revision$
- */
 public class DebugTest extends CamelTestSupport {
 
     @Override

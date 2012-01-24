@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.javaconfig.config;
+package org.apache.camel.spring;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.BeansException;
 
-@Configuration
-public class ContextConfig extends SingleRouteCamelConfiguration {
+/**
+ * A generic {@link org.springframework.beans.BeansException}.
+ */
+public final class GenericBeansException extends BeansException {
 
-    @Bean
-    public RouteBuilder route() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:start").filter(header("foo").isEqualTo("bar")).to("mock:result");
-            }
-        };
+    public GenericBeansException(String msg) {
+        super(msg);
     }
+
+    public GenericBeansException(String msg, Throwable cause) {
+        super(msg, cause);
+    }
+
 }
