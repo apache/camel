@@ -24,7 +24,6 @@ import org.apache.camel.component.twitter.consumer.TwitterConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerPolling;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
 
 /**
  * Twitter polling endpoint

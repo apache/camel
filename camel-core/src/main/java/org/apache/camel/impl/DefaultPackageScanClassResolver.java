@@ -122,10 +122,9 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         this.classLoaders.addAll(classLoaders);
     }
 
-    @SuppressWarnings("unchecked")
     public Set<Class<?>> findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
         if (packageNames == null) {
-            return Collections.EMPTY_SET;
+            return Collections.<Class<?>>emptySet();
         }
 
         if (log.isDebugEnabled()) {
@@ -143,10 +142,9 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
-    @SuppressWarnings("unchecked")
     public Set<Class<?>> findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames) {
         if (packageNames == null) {
-            return Collections.EMPTY_SET;
+            return Collections.<Class<?>>emptySet();
         }
 
         if (log.isDebugEnabled()) {

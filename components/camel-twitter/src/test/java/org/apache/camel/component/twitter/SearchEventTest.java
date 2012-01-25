@@ -22,11 +22,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.twitter.mocks.TwitterStreamMock;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SearchEventTest extends CamelTwitterTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SearchEventTest.class);
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;

@@ -19,8 +19,6 @@ package org.apache.camel.component.twitter.consumer.streaming;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 
 import twitter4j.FilterQuery;
-import twitter4j.TwitterStream;
-import twitter4j.TwitterStreamFactory;
 
 /**
  * Consumes the filter stream

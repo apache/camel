@@ -356,6 +356,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(text, uri, value.getUri());
     }
 
+    @SuppressWarnings("rawtypes")
     protected void assertChildTo(ProcessorDefinition<?> route, String... uris) {
         List<ProcessorDefinition> list = assertListSize(route.getOutputs(), uris.length);
         int idx = 0;
@@ -364,6 +365,7 @@ public class XmlParseTest extends XmlTestSupport {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     protected void assertChildTo(ProcessorDefinition<?> route, String uri, int toIdx) {
         List<ProcessorDefinition> list = route.getOutputs();
         assertTo("to and idx=" + toIdx, list.get(toIdx), uri);

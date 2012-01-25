@@ -49,7 +49,6 @@ public class JMXRemoteTest extends SimpleBeanFixture {
         connector.stop();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void initServer() throws Exception {
         registry = LocateRegistry.createRegistry(61000);
@@ -58,7 +57,7 @@ public class JMXRemoteTest extends SimpleBeanFixture {
         // create MBean server
         server = MBeanServerFactory.createMBeanServer(DOMAIN);
         // create JMXConnectorServer MBean
-        connector = JMXConnectorServerFactory.newJMXConnectorServer(url, Collections.EMPTY_MAP, server);
+        connector = JMXConnectorServerFactory.newJMXConnectorServer(url, Collections.<String, Object>emptyMap(), server);
         connector.start();
     }
 

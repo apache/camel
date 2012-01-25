@@ -113,12 +113,11 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {
 
         public void setExcludedClasses(Set<Class<?>> excludedClasses) {
-            excludedClasses = excludedClasses == null ? Collections.EMPTY_SET : excludedClasses;
-            addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(excludedClasses)));
+            Set<Class<?>> parents = excludedClasses == null ? Collections.<Class<?>>emptySet() : excludedClasses;
+            addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(parents)));
         }
 
     }

@@ -56,6 +56,9 @@ import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
 
 public class TwitterMock implements Twitter {
+
+    private static final long serialVersionUID = 1L;
+
     @Override
     public String getScreenName() throws TwitterException, IllegalStateException {
         return null;

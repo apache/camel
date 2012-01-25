@@ -147,7 +147,6 @@ public class BeanInfo {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public MethodInvocation createInvocation(Object pojo, Exchange exchange)
         throws AmbiguousMethodCallException, MethodNotFoundException {
         MethodInfo methodInfo = null;
@@ -166,7 +165,7 @@ public class BeanInfo {
             if ("class".equals(name) || "getClass".equals(name)) {
                 try {
                     Method method = pojo.getClass().getMethod("getClass");
-                    methodInfo = new MethodInfo(exchange.getContext(), pojo.getClass(), method, Collections.EMPTY_LIST, Collections.EMPTY_LIST, false, false);
+                    methodInfo = new MethodInfo(exchange.getContext(), pojo.getClass(), method, Collections.<ParameterInfo>emptyList(), Collections.<ParameterInfo>emptyList(), false, false);
                 } catch (NoSuchMethodException e) {
                     throw new MethodNotFoundException(exchange, pojo, "getClass");
                 }

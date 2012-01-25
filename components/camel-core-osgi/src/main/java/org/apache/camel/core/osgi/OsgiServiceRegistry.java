@@ -70,10 +70,9 @@ public class OsgiServiceRegistry implements Registry, LifecycleStrategy {
         return service;
     }
 
-    @SuppressWarnings("unchecked")
     public <T> Map<String, T> lookupByType(Class<T> type) {
         // not implemented so we return an empty map
-        return Collections.EMPTY_MAP;
+        return Collections.<String, T>emptyMap();
     }
 
     public void onComponentAdd(String name, Component component) {

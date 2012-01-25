@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Service;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.impl.CamelPostProcessorHelper;
@@ -55,8 +54,6 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     private CamelContext camelContext;
     @XmlTransient
     private ApplicationContext applicationContext;
-    @XmlTransient
-    private CamelPostProcessorHelper camelPostProcessorHelper;
     @XmlTransient
     private String camelId;
 
@@ -132,7 +129,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
                             ServiceHelper.startService(service);
                             if (prototypeBeans.add(beanName)) {
                                 // do not spam the log with WARN so do this only once per bean name
-                                LOG.warn("The bean with id [" + beanName + "] is prototype scoped and cannot stop the injected service when bean is destroyed: "
+                                CamelBeanPostProcessor.LOG.warn("The bean with id [" + beanName + "] is prototype scoped and cannot stop the injected service when bean is destroyed: "
                                         + service + ". You may want to stop the service manually from the bean.");
                             }
                         }

@@ -23,6 +23,8 @@ import org.springframework.beans.BeansException;
  */
 public final class GenericBeansException extends BeansException {
 
+    private static final long serialVersionUID = 1L;
+
     public GenericBeansException(String msg) {
         super(msg);
     }

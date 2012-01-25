@@ -30,6 +30,8 @@ import twitter4j.User;
 import twitter4j.UserMentionEntity;
 
 public class StatusMock implements Status {
+
+    private static final long serialVersionUID = 1L;
     private final String text;
 
     public StatusMock(String text) {
