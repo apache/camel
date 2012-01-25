@@ -26,7 +26,7 @@
   <packaging>jar</packaging>
   <version>${version}</version>
 
-  <name>A Camel ${name} Data format</name>
+  <name>Camel ${name} Data format</name>
   <url>http://www.myorganization.org</url>
 
   <properties>

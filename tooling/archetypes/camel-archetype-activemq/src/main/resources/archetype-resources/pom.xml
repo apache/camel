@@ -26,7 +26,7 @@
   <packaging>jar</packaging>
   <version>${version}</version>
 
-  <name>A Camel Route</name>
+  <name>ActiveMQ embedded with Camel</name>
   <url>http://www.myorganization.org</url>
 
   <properties>

@@ -25,7 +25,7 @@
   <artifactId>${artifactId}</artifactId>
   <version>${version}</version>
 
-  <name>Camel Router Application</name>
+  <name>Camel Web Application</name>
   <description>Camel project that deploys the Camel routes as a WAR</description>
   <url>http://www.myorganization.org</url>
 
@@ -107,23 +107,21 @@
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-version}</version>
-
         <configuration>
           <webAppConfig>
             <contextPath>/</contextPath>
           </webAppConfig>
-
           <systemProperties>
-
             <!-- enable easy JMX connection to JConsole -->
             <systemProperty>
               <name>com.sun.management.jmxremote</name>
-              <value />
+              <value/>
             </systemProperty>
           </systemProperties>
           <scanIntervalSeconds>10</scanIntervalSeconds>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
 
