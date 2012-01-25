@@ -35,6 +35,7 @@
     <module>camel-test</module>
     <module>camel-testng</module>
     <module>camel-test-blueprint</module>
+    <module>camel-test-spring</module>
     <module>camel-core-osgi</module>
     <module>camel-core-xml</module>
     <module>camel-blueprint</module>

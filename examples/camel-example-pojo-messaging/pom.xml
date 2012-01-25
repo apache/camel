@@ -81,7 +81,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-test</artifactId>
+			<artifactId>camel-test-spring</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
