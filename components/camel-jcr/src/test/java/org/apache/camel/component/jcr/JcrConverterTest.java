@@ -69,11 +69,9 @@ public class JcrConverterTest extends Assert {
         assertJcrConverterAvailable(StringValue.class, "plain text");
     }
 
-    @SuppressWarnings("unchecked")
-    private void assertJcrConverterAvailable(Class expected, Object object) {
+    private void assertJcrConverterAvailable(Class<?> expected, Object object) {
         Value value = converter.convertTo(Value.class, object);
         assertNotNull(value);
         assertTrue(expected.isAssignableFrom(value.getClass()));
     }
-
 }

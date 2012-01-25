@@ -61,8 +61,7 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
         if (!config.exists()) {
             throw new Exception("missing config file: " + config.getPath());
         }
-        repository = new TransientRepository(CONFIG_FILE,
-                "target/repository_with_auth");
+        repository = new TransientRepository(CONFIG_FILE, "target/repository");
 
         // set up a user to authenticate
         SessionImpl session = (SessionImpl) repository
@@ -85,8 +84,7 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
                     .getSupportedPrivileges(permissionsPath), true);
             accessControlManager.setPolicy(permissionsPath, acl);
         } else {
-            throw new Exception("could not set access control for path "
-                    + permissionsPath);
+            throw new Exception("could not set access control for path " + permissionsPath);
         }
 
         session.save();
