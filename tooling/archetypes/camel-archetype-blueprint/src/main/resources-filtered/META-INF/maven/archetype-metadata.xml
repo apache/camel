@@ -31,7 +31,10 @@
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="maven-bundle-plugin-version">
-      <defaultValue>2.3.4</defaultValue>
+      <defaultValue>${maven-bundle-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="maven-surefire-plugin-version">
+      <defaultValue>${maven-surefire-plugin}</defaultValue>
     </requiredProperty>
     <requiredProperty key="slf4j-version">
       <defaultValue>${slf4j-version}</defaultValue>
