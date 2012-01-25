@@ -115,14 +115,7 @@
         </configuration>
       </plugin>
 
-      <!-- plugin to run using mvn camel:run -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${camel-version}</version>
-      </plugin>
-
-      <!-- plugin to run using mvn jetty:run -->
+       <!-- plugin to run using mvn jetty:run -->
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
