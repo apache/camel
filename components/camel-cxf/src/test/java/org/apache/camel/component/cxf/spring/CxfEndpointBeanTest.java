@@ -17,8 +17,8 @@
 package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.component.cxf.CxfEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.component.cxf.CxfProducer;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.transport.http.HTTPConduit;
 import org.junit.Test;
