@@ -17,7 +17,11 @@
 package org.apache.camel.management.mbean;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import javax.management.MBeanServer;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -26,6 +30,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
@@ -212,6 +217,38 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
         // add will remove existing route first
         context.addRouteDefinition(def);
+    }
+
+    public String dumpRouteStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<routeStat").append(String.format(" id=\"%s\"", route.getId()));
+        // use substring as we only want the attributes
+        String stat = dumpStatsAsXml(fullStats);
+        sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+
+        // gather all the processors for this route, which requires JMX
+        if (includeProcessors) {
+            sb.append("  <processorStats>\n");
+            MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+            if (server != null) {
+                ObjectName query = ObjectName.getInstance("org.apache.camel:context=*/" + getContext().getManagementName() + ",type=processors,*");
+                Set<ObjectName> names = server.queryNames(query, null);
+                for (ObjectName on : names) {
+                    ManagedProcessorMBean processor = MBeanServerInvocationHandler.newProxyInstance(server, on, ManagedProcessorMBean.class, true);
+                    // the processor must belong to this route
+                    if (getRouteId().equals(processor.getRouteId())) {
+                        sb.append("    <processorStat").append(String.format(" id=\"%s\"", processor.getProcessorId()));
+                        // use substring as we only want the attributes
+                        sb.append(" ").append(processor.dumpStatsAsXml(fullStats).substring(7)).append("\n");
+                    }
+                }
+            }
+            sb.append("  </processorStats>\n");
+        }
+
+        sb.append("</routeStat>");
+        return sb.toString();
     }
 
 }
