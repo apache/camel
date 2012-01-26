@@ -141,7 +141,7 @@
     <scala-version>2.9.1</scala-version>
     <scala-plugin-version>2.15.2</scala-plugin-version>
     <servicemix-specs-version>1.9.0</servicemix-specs-version>
-    <shiro-bundle-version>1.1.0_2</shiro-bundle-version>
+    <shiro-version>1.2.0</shiro-version>
     <slf4j-version>1.6.1</slf4j-version>
     <smack-version>3.2.1</smack-version>
     <snmp4j-version>1.8.1_5</snmp4j-version>
