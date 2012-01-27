@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class FallbackTypeConverterDoesNotThrowExceptionTest extends CamelTestSupport {
+public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestSupport {
 
     @Test
     public void testJaxbModel() throws InterruptedException {
