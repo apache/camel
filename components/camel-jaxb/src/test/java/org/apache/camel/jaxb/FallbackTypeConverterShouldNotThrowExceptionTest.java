@@ -14,17 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example;
+package org.apache.camel.jaxb;
 
 import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.example.Bar;
+import org.apache.camel.example.Foo;
 import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 
-public class FallbackTypeConverterDoesNotThrowExceptionTest extends CamelTestSupport {
+public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestSupport {
 
     @Test
     public void testJaxbModel() throws InterruptedException {
