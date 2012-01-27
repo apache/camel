@@ -46,7 +46,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,11 +94,13 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
                     return marshall(type, exchange, value);
                 }
             }
-            return null;
         } catch (Exception e) {
-            throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+            // do only warn about the failed conversion but don't rethrow it as unchecked
+            LOG.warn("Type conversion for '" + value + "' to the type '" + type.getCanonicalName() + "' failed", e);
         }
 
+        // should return null if didn't even try to convert at all or for whatever reason the conversion is failed
+        return null;
     }
 
     public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
