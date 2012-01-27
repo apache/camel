@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import org.apache.camel.test.junit4.TestSupport;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
@@ -38,6 +39,11 @@ public class Mina2ReverseProtocolHandler extends IoHandlerAdapter {
         StringBuilder buf = new StringBuilder(str.length());
         for (int i = str.length() - 1; i >= 0; i--) {
             buf.append(str.charAt(i));
+        }
+
+        if (TestSupport.isPlatform("windows")) {
+            // seems to be only required on windows to make it work!
+            buf.append(System.getProperty("line.separator"));
         }
 
         // and write it back.

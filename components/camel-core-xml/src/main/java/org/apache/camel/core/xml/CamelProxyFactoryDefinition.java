@@ -34,7 +34,7 @@ public class CamelProxyFactoryDefinition extends IdentifiedType {
     @XmlAttribute
     private String serviceRef;
     @XmlAttribute
-    private Class serviceInterface;
+    private Class<?> serviceInterface;
     @XmlAttribute
     private String camelContextId;
 

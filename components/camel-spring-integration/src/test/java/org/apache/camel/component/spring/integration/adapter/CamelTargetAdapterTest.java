@@ -46,7 +46,7 @@ public class CamelTargetAdapterTest extends CamelSpringTestSupport {
     public void testSendingTwoWayMessage() throws Exception {
 
         MessageChannel requestChannel = applicationContext.getBean("channelB", MessageChannel.class);
-        Message message = new GenericMessage<Object>(MESSAGE_BODY);
+        Message<?> message = new GenericMessage<Object>(MESSAGE_BODY);
         //Need to subscribe the responseChannel first
         DirectChannel responseChannel = (DirectChannel) applicationContext.getBean("channelC");
         responseChannel.subscribe(new MessageHandler() {

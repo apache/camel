@@ -25,7 +25,7 @@ import org.apache.camel.Ordered;
  *
  * @version 
  */
-public final class OrderedComparator implements Comparator {
+public final class OrderedComparator implements Comparator<Object> {
 
     private final boolean reverse;
 

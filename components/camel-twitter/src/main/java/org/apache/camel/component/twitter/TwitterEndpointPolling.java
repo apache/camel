@@ -22,31 +22,23 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerPolling;
-import org.apache.camel.component.twitter.util.TwitterProperties;
 import org.apache.camel.impl.DefaultPollingEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
 
 /**
- * Scheduled polling endpoint
- * 
+ * Twitter polling endpoint
  */
 public class TwitterEndpointPolling extends DefaultPollingEndpoint implements TwitterEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TwitterEndpointPolling.class);
-
     private Twitter twitter;
+    private TwitterConfiguration properties;
 
-    private TwitterProperties properties;
-
-    public TwitterEndpointPolling(String uri, TwitterComponent component, TwitterProperties properties) {
+    public TwitterEndpointPolling(String uri, TwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
         this.properties = properties;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Twitter4JConsumer twitter4jConsumer = Twitter4JFactory.getConsumer(this, getEndpointUri());
         TwitterConsumer tc = new TwitterConsumerPolling(this, processor, twitter4jConsumer);
@@ -54,18 +46,14 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
         return tc;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return Twitter4JFactory.getProducer(this, getEndpointUri());
     }
 
-    public void initiate() {
-        properties.checkComplete();
-
-        try {
-            twitter = new TwitterFactory(properties.getConfiguration()).getInstance();
-        } catch (Exception e) {
-            LOG.error("Could not instantiate Twitter!  Exception: " + e.getMessage());
-        } 
+    @Override
+    protected void doStart() {
+        twitter = properties.getTwitterInstance();
     }
 
     public Twitter getTwitter() {
@@ -76,7 +64,7 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
         return true;
     }
 
-    public TwitterProperties getProperties() {
+    public TwitterConfiguration getProperties() {
         return properties;
     }
 }

@@ -37,7 +37,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
-import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -56,7 +55,6 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
     @Test
     public void testListBody() throws Exception {
         getInstalledBundle("CamelBlueprintSqlTestBundle").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
 
         MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
@@ -81,10 +79,8 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
     @Test
     public void testLowNumberOfParameter() throws Exception {
         getInstalledBundle("CamelBlueprintSqlTestBundle").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
 
-        MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);
         try {
             ProducerTemplate template = ctx.createProducerTemplate();
             template.sendBody("direct:list", "ASF");
@@ -99,7 +95,6 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
     @Test
     public void testInsert() throws Exception {
         getInstalledBundle("CamelBlueprintSqlTestBundle").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintSqlTestBundle)", 10000);
         DataSource ds = getOsgiService(DataSource.class, 10000);
         JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);

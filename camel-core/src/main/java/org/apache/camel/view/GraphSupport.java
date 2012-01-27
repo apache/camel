@@ -100,14 +100,14 @@ public class GraphSupport {
         list.add(route);
     }
 
-    protected boolean isMulticastNode(ProcessorDefinition node) {
+    protected boolean isMulticastNode(ProcessorDefinition<?> node) {
         return node instanceof MulticastDefinition || node instanceof ChoiceDefinition;
     }
 
     /**
      * Is the given node a pipeline
      */
-    protected boolean isPipeline(ProcessorDefinition node) {
+    protected boolean isPipeline(ProcessorDefinition<?> node) {
         if (node instanceof MulticastDefinition) {
             return false;
         }

@@ -34,7 +34,7 @@ public class TokenizerTest extends ExchangeTestSupport {
     public void testTokenizeHeader() throws Exception {
         Expression exp = TokenizeLanguage.tokenize("names", ",");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(3, names.size());
 
         assertEquals("Claus", names.get(0));
@@ -47,7 +47,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         exchange.getIn().setBody("Hadrian,Charles");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(2, names.size());
 
         assertEquals("Hadrian", names.get(0));
@@ -59,7 +59,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         exchange.getIn().setBody("The little fox");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(3, names.size());
 
         assertEquals("The", names.get(0));
@@ -72,7 +72,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         exchange.getIn().setHeader("quote", "Camel rocks");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(2, names.size());
 
         assertEquals("Camel", names.get(0));
@@ -86,7 +86,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         lan.setToken(",");
         Expression exp = lan.createExpression();
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(3, names.size());
 
         assertEquals("Claus", names.get(0));
@@ -104,7 +104,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         exchange.getIn().setBody("2011-11-11\n!James@!Claus@\n2 records");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(2, names.size());
 
         assertEquals("James", names.get(0));
@@ -116,7 +116,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         exchange.getIn().setBody("2011-11-11\n[START]James[END]\n[START]Claus[END]\n2 records");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(2, names.size());
 
         assertEquals("James", names.get(0));
@@ -128,7 +128,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         exchange.getIn().setBody("2011-11-11\n[START]James[END]\n[START]Claus[END]\n2 records");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(2, names.size());
 
         assertEquals("[START]James[END]", names.get(0));
@@ -140,7 +140,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         exchange.getIn().setBody("<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person>James</person>", names.get(0));
@@ -154,7 +154,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         exchange.getIn().setBody("<persons><person>James</person><person>Claus</person><person>Jonathan</person><person>Hadrian</person></persons>");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person>James</person>", names.get(0));
@@ -169,7 +169,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         exchange.getIn().setBody("<?xml version=\"1.0\"?><!-- bla bla --><persons>\n<person>James</person>\n<person>Claus</person>\n"
                 + "<!-- more bla bla --><person>Jonathan</person>\n<person>Hadrian</person>\n</persons>   ");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person>James</person>", names.get(0));
@@ -183,7 +183,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         exchange.getIn().setBody("<?xml version=\"1.0\"?><!-- bla bla --><persons></persons>   ");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(0, names.size());
     }
 
@@ -192,7 +192,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         exchange.getIn().setBody("");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(0, names.size());
     }
 
@@ -201,7 +201,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         exchange.getIn().setBody(null);
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertNull(names);
     }
 
@@ -211,7 +211,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person>James</person>\n<person>Claus</person>\n"
                 + "<person>Jonathan</person>\n<person>Hadrian</person>\n</persons>\n");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person xmlns=\"http:acme.com/persons\">James</person>", names.get(0));
@@ -226,7 +226,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person>James</person>\n<person>Claus</person>\n"
                 + "<person>Jonathan</person>\n<person>Hadrian</person>\n</persons>\n");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person>James</person>", names.get(0));
@@ -241,7 +241,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\" xmlns:foo=\"http:foo.com\">\n<person>James</person>\n<person>Claus</person>\n"
                 + "<person>Jonathan</person>\n<person>Hadrian</person>\n</persons>\n");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person xmlns=\"http:acme.com/persons\" xmlns:foo=\"http:foo.com\">James</person>", names.get(0));
@@ -256,7 +256,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         exchange.getIn().setBody("<?xml version=\"1.0\"?><persons>\n<person xmlns=\"http:acme.com/persons\">James</person>\n<person xmlns=\"http:acme.com/persons\">Claus</person>\n"
                 + "<person xmlns=\"http:acme.com/persons\">Jonathan</person>\n<person xmlns=\"http:acme.com/persons\">Hadrian</person>\n</persons>\n");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person xmlns=\"http:acme.com/persons\">James</person>", names.get(0));
@@ -271,7 +271,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person xmlns:foo=\"http:foo.com\">James</person>\n<person>Claus</person>\n"
                 + "<person>Jonathan</person>\n<person xmlns:bar=\"http:bar.com\">Hadrian</person>\n</persons>\n");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person xmlns:foo=\"http:foo.com\" xmlns=\"http:acme.com/persons\">James</person>", names.get(0));
@@ -286,7 +286,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         exchange.getIn().setBody("<?xml version=\"1.0\"?><persons xmlns=\"http:acme.com/persons\">\n<person xmlns:foo=\"http:foo.com\">James</person>\n"
                 + "<person>Claus</person>\n<person>Jonathan</person>\n<person xmlns:bar=\"http:bar.com\">Hadrian</person>\n</persons>\n");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person xmlns:foo=\"http:foo.com\">James</person>", names.get(0));
@@ -301,7 +301,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         exchange.getIn().setBody("<persons><person id=\"1\">James</person><person id=\"2\">Claus</person><person id=\"3\">Jonathan</person>"
                 + "<person id=\"4\">Hadrian</person></persons>");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person id=\"1\">James</person>", names.get(0));
@@ -316,7 +316,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         exchange.getIn().setBody("<persons xmlns=\"http:acme.com/persons\"><person id=\"1\">James</person><person id=\"2\">Claus</person>"
                 + "<person id=\"3\">Jonathan</person><person id=\"4\">Hadrian</person></persons>");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person id=\"1\" xmlns=\"http:acme.com/persons\">James</person>", names.get(0));
@@ -331,7 +331,7 @@ public class TokenizerTest extends ExchangeTestSupport {
         exchange.getIn().setBody("<persons riders=\"true\" xmlns=\"http:acme.com/persons\"><person id=\"1\">James</person><person id=\"2\">Claus</person>"
                 + "<person id=\"3\">Jonathan</person><person id=\"4\">Hadrian</person></persons>");
 
-        List names = exp.evaluate(exchange, List.class);
+        List<?> names = exp.evaluate(exchange, List.class);
         assertEquals(4, names.size());
 
         assertEquals("<person id=\"1\" xmlns=\"http:acme.com/persons\">James</person>", names.get(0));

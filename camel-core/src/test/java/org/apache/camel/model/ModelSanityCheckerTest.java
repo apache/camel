@@ -50,7 +50,7 @@ public class ModelSanityCheckerTest extends TestCase {
         assertTrue("There should be > 140 classes, was: " + classes.size(), classes.size() > 140);
 
         // check each class is okay
-        for (Class clazz : classes) {
+        for (Class<?> clazz : classes) {
 
             // skip ProcessorDefinition as its special
             if (clazz == ProcessorDefinition.class) {

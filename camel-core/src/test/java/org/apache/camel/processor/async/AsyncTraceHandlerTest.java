@@ -78,12 +78,12 @@ public class AsyncTraceHandlerTest extends ContextTestSupport {
     private static class MyTraceHandler implements TraceEventHandler {
 
         @Override
-        public void traceExchange(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
+        public void traceExchange(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
             // noop
         }
 
         @Override
-        public Object traceExchangeIn(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
+        public Object traceExchangeIn(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
             if (node.getId().equals("async")) {
                 beforeThreadName = Thread.currentThread().getName();
             }
@@ -91,7 +91,7 @@ public class AsyncTraceHandlerTest extends ContextTestSupport {
         }
 
         @Override
-        public void traceExchangeOut(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception {
+        public void traceExchangeOut(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception {
             if (node.getId().equals("async")) {
                 afterThreadName = Thread.currentThread().getName();
             }

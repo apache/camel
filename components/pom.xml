@@ -34,6 +34,8 @@
 	<!-- we want to test these modules first to catch any errors early as possible -->
     <module>camel-test</module>
     <module>camel-testng</module>
+    <module>camel-test-blueprint</module>
+    <module>camel-test-spring</module>
     <module>camel-core-osgi</module>
     <module>camel-core-xml</module>
     <module>camel-blueprint</module>
@@ -141,6 +143,7 @@
     <module>camel-tagsoup</module>
     <module>camel-twitter</module>
     <module>camel-velocity</module>
+    <module>camel-websocket</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmlsecurity</module>
     <module>camel-xmpp</module>

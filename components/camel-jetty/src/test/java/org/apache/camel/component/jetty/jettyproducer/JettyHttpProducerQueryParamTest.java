@@ -45,7 +45,7 @@ public class JettyHttpProducerQueryParamTest extends BaseJettyTest {
         assertNotNull(exchange);
 
         String body = exchange.getOut().getBody(String.class);
-        Map headers = exchange.getOut().getHeaders();
+        Map<?, ?> headers = exchange.getOut().getHeaders();
 
         assertEquals("Bye World", body);
         assertEquals("Carlsberg", headers.get("beer"));
@@ -69,7 +69,7 @@ public class JettyHttpProducerQueryParamTest extends BaseJettyTest {
         assertNotNull(exchange);
 
         String body = exchange.getOut().getBody(String.class);
-        Map headers = exchange.getOut().getHeaders();
+        Map<?, ?> headers = exchange.getOut().getHeaders();
 
         assertEquals("Bye World", body);
         assertEquals("Carlsberg", headers.get("beer"));

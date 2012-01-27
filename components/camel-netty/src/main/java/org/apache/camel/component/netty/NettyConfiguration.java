@@ -40,7 +40,6 @@ import org.jboss.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("unchecked")
 public class NettyConfiguration implements Cloneable {
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
 
@@ -469,10 +468,10 @@ public class NettyConfiguration implements Cloneable {
         return host + ":" + port;
     }
 
-    private <T> void addToHandlersList(List configured, List handlers, Class<? extends T> handlerType) {
+    private <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
         if (handlers != null) {
             for (int x = 0; x < handlers.size(); x++) {
-                Object handler = handlers.get(x);
+                T handler = handlers.get(x);
                 if (handlerType.isInstance(handler)) {
                     configured.add(handler);
                 }

@@ -61,6 +61,49 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         }
     }
 
+    public void testIgnoreMissingPropertyFilesOnClasspath() throws Exception {
+        System.setProperty("bar.end", "mock:bar");
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("properties:bar.end?locations=org/apache/camel/component/properties/unknown.properties&ignoreMissingLocation=true");
+            }
+        });
+        context.start();
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testIgnoreMissingPropertyFilesFromRegistry() throws Exception {
+        System.setProperty("bar.end", "mock:bar");
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("properties:bar.end?locations=ref:unknown.properties&ignoreMissingLocation=true");
+            }
+        });
+        context.start();
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testIgnoreMissingPropertyFilesFromFilePath() throws Exception {
+        System.setProperty("bar.end", "mock:bar");
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("properties:bar.end?locations=file:unknown.properties&ignoreMissingLocation=true");
+            }
+        });
+        context.start();
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;

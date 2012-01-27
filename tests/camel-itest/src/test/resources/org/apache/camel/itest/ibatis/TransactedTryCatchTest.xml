@@ -22,7 +22,7 @@
 		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
 	">
 
-    <import resource="hsqldb-context.xml"/>
+    <import resource="database-context.xml"/>
 
     <bean id="rethrowCaughtException" class="org.apache.camel.itest.ibatis.ExceptionRethrower"/>
 

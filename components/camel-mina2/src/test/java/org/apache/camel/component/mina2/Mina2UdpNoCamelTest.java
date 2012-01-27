@@ -72,7 +72,7 @@ public class Mina2UdpNoCamelTest {
         UDPClient client = new UDPClient();
         client.connect("127.0.0.1", 1234);
         for (int i = 0; i < 222; i++) {
-            client.sendNoMina("Hello Mina " + i + "\n");
+            client.sendNoMina("Hello Mina " + i + System.getProperty("line.separator"));
         }
         Thread.sleep(2000);
         assertEquals(222, server.numMessagesReceived);
@@ -130,7 +130,6 @@ public class Mina2UdpNoCamelTest {
          * @param args The command line args.
          */
         private final NioDatagramConnector connector;
-        private IoSession session;
         private DatagramSocket socket;
         private InetAddress address;
         private int localPort = 1234;
@@ -139,7 +138,6 @@ public class Mina2UdpNoCamelTest {
         private UDPClient() {
             connector = new NioDatagramConnector();
             connector.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
-            //connector.getFilterChain().addLast("logger", new LoggingFilter());
             connector.setHandler(this);
 
         }
@@ -147,8 +145,6 @@ public class Mina2UdpNoCamelTest {
         public void connect(String host, int port) {
             localPort = port;
             localHost = host;
-            session = connector.connect(new InetSocketAddress(localHost, localPort)).awaitUninterruptibly().
-                getSession();
             try {
                 socket = new DatagramSocket();
                 address = InetAddress.getByName(localHost);
@@ -161,10 +157,6 @@ public class Mina2UdpNoCamelTest {
                     Level.SEVERE, null, ex);
             }
 
-        }
-
-        public void send(String msg) {
-            session.write(msg);
         }
 
         public void sendNoMina(String msg) {

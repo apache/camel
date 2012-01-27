@@ -31,13 +31,13 @@ public class ProxyReturnFutureTest extends ContextTestSupport {
     public void testFutureEcho() throws Exception {
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
 
-        Future future = service.asText(4);
+        Future<String> future = service.asText(4);
         log.info("Got future");
 
         assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");
 
-        String reply = (String) future.get(5, TimeUnit.SECONDS);
+        String reply = future.get(5, TimeUnit.SECONDS);
         assertEquals("Four", reply);
     }
     // END SNIPPET: e2
@@ -45,7 +45,7 @@ public class ProxyReturnFutureTest extends ContextTestSupport {
     public void testFutureEchoCallTwoTimes() throws Exception {
         Echo service = ProxyHelper.createProxy(context.getEndpoint("direct:echo"), Echo.class);
 
-        Future future = service.asText(4);
+        Future<String> future = service.asText(4);
         log.info("Got future");
         assertFalse("Should not be done", future.isDone());
         log.info("Waiting for future to be done ...");

@@ -35,7 +35,7 @@ public final class BundleContextUtils {
      * @param clazz the class to find the bundle context from
      * @return the bundle context or <code>null</code> if it can't be found
      */
-    public static BundleContext getBundleContext(Class clazz) {
+    public static BundleContext getBundleContext(Class<?> clazz) {
 
         // Ideally we should use FrameworkUtil.getBundle(clazz).getBundleContext()
         // but that does not exist in OSGi 4.1, so until we upgrade, we keep that one

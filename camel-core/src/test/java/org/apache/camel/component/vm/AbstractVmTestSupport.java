@@ -39,15 +39,15 @@ public abstract class AbstractVmTestSupport extends ContextTestSupport {
         super.setUp();
         
         context2 = new DefaultCamelContext();
-        
-        RouteBuilder routeBuilder = createRouteBuilderForSecondContext();
-        if (routeBuilder != null) {
-            context2.addRoutes(routeBuilder);            
-        }
-        
         template2 = context2.createProducerTemplate();
         
         ServiceHelper.startServices(template2, context2);
+
+        // add routes after CamelContext has been started
+        RouteBuilder routeBuilder = createRouteBuilderForSecondContext();
+        if (routeBuilder != null) {
+            context2.addRoutes(routeBuilder);
+        }
     }
     
     @Override

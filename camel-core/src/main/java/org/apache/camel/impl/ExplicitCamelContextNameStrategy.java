@@ -33,7 +33,18 @@ public class ExplicitCamelContextNameStrategy implements CamelContextNameStrateg
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getNextName() {
+        return name;
+    }
+
+    @Override
+    public boolean isFixedName() {
+        return true;
     }
 }

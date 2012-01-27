@@ -20,14 +20,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.impl.ScheduledPollConsumer;
-import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -38,7 +36,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class MyBatisConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
+public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MyBatisConsumer.class);
 
@@ -116,10 +114,6 @@ public class MyBatisConsumer extends ScheduledPollConsumer implements BatchConsu
         return processBatch(CastUtils.cast(answer));
     }
 
-    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
-        this.maxMessagesPerPoll = maxMessagesPerPoll;
-    }
-
     public int processBatch(Queue<Object> exchanges) throws Exception {
         final MyBatisEndpoint endpoint = getEndpoint();
 
@@ -159,54 +153,6 @@ public class MyBatisConsumer extends ScheduledPollConsumer implements BatchConsu
         }
 
         return total;
-    }
-
-    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
-        // store a reference what to do in case when shutting down and we have pending messages
-        this.shutdownRunningTask = shutdownRunningTask;
-        // do not defer shutdown
-        return false;
-    }
-
-    public int getPendingExchangesSize() {
-        int answer;
-        // only return the real pending size in case we are configured to complete all tasks
-        if (ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask) {
-            answer = pendingExchanges;
-        } else {
-            answer = 0;
-        }
-
-        if (answer == 0 && isPolling()) {
-            // force at least one pending exchange if we are polling as there is a little gap
-            // in the processBatch method and until an exchange gets enlisted as in-flight
-            // which happens later, so we need to signal back to the shutdown strategy that
-            // there is a pending exchange. When we are no longer polling, then we will return 0
-            log.trace("Currently polling so returning 1 as pending exchanges");
-            answer = 1;
-        }
-
-        return answer;
-    }
-
-    public void prepareShutdown() {
-        // noop
-    }
-
-    public boolean isBatchAllowed() {
-        // stop if we are not running
-        boolean answer = isRunAllowed();
-        if (!answer) {
-            return false;
-        }
-
-        if (shutdownRunningTask == null) {
-            // we are not shutting down so continue to run
-            return true;
-        }
-
-        // we are shutting down so only continue if we are configured to complete all tasks
-        return ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask;
     }
 
     private Exchange createExchange(Object data) {

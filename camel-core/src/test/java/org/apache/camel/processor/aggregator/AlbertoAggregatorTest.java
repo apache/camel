@@ -52,7 +52,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
         karamazovBrothers.add("Alexei");
         karamazovBrothers.add("Dimitri");
 
-        Map<String, List> allBrothers = new HashMap<String, List>();
+        Map<String, List<String>> allBrothers = new HashMap<String, List<String>>();
         allBrothers.put("Marx", marxBrothers);
         allBrothers.put("Karamazov", karamazovBrothers);
 
@@ -100,11 +100,11 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                     Exchange answer = newExchange;
 
                     if (oldExchange != null) {
-                        Map<String, List> brothers = oldExchange.getIn().getBody(Map.class);
+                        Map<String, List<?>> brothers = oldExchange.getIn().getBody(Map.class);
                         brothers.put(newExchange.getIn().getHeader(SURNAME_HEADER, String.class), newExchange.getIn().getBody(List.class));
                         answer = oldExchange;
                     } else {
-                        Map<String, List> brothers = new HashMap<String, List>();
+                        Map<String, List<?>> brothers = new HashMap<String, List<?>>();
                         brothers.put(newExchange.getIn().getHeader(SURNAME_HEADER, String.class), newExchange.getIn().getBody(List.class));
                         newExchange.getIn().setBody(brothers);
                     }

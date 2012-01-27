@@ -29,9 +29,9 @@ public class KratiProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(KratiProducer.class);
 
     protected KratiEndpoint endpoint;
-    protected DataStore dataStore;
+    protected DataStore<Object, Object> dataStore;
 
-    public KratiProducer(KratiEndpoint endpoint, DataStore dataStore) {
+    public KratiProducer(KratiEndpoint endpoint, DataStore<Object, Object> dataStore) {
         super(endpoint);
         this.endpoint = endpoint;
         this.dataStore = dataStore;
@@ -39,7 +39,7 @@ public class KratiProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         String operation = getOperation(exchange);
-        String key = getKey(exchange);
+        Object key = getKey(exchange);
 
         LOG.trace("Processing {} operation on '[{}]'", operation, exchange);
         if (KratiConstants.KRATI_OPERATION_GET.equals(operation) && key != null) {
@@ -94,11 +94,11 @@ public class KratiProducer extends DefaultProducer {
      * @param exchange
      * @return
      */
-    public String getKey(Exchange exchange) {
-        String key = ((KratiEndpoint) getEndpoint()).getKey();
+    public Object getKey(Exchange exchange) {
+        Object key = ((KratiEndpoint) getEndpoint()).getKey();
 
         if (exchange.getIn().getHeader(KratiConstants.KEY) != null) {
-            key = (String) exchange.getIn().getHeader(KratiConstants.KEY);
+            key =  exchange.getIn().getHeader(KratiConstants.KEY);
         }
         return key;
     }

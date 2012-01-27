@@ -88,7 +88,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>${commons-codec}</version>       
+            <version>${commons-codec-version}</version>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
@@ -104,7 +104,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>
+            <artifactId>camel-test-spring</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

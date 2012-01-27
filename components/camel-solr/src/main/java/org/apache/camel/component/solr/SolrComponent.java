@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultComponent;
 public class SolrComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new SolrEndpoint(uri, this, remaining);
+        Endpoint endpoint = new SolrEndpoint(uri, this, remaining, parameters);
         setProperties(endpoint, parameters);
         return endpoint;
     }

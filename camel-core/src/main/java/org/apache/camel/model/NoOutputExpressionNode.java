@@ -52,9 +52,9 @@ public class NoOutputExpressionNode extends ExpressionNode {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public List<ProcessorDefinition> getOutputs() {
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override

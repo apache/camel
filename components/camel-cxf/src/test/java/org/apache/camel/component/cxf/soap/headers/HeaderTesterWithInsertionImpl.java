@@ -26,6 +26,7 @@ import javax.xml.ws.handler.MessageContext;
 import org.w3c.dom.Node;
 
 import org.apache.cxf.headers.Header;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.outofband.header.OutofBandHeader;
 
 
@@ -38,7 +39,7 @@ public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
             if (ctx != null 
                 && !ctx.containsKey(Header.HEADER_LIST)
                 || (ctx.containsKey(Header.HEADER_LIST) 
-                    && ((List)ctx.get(Header.HEADER_LIST)).size() == 0)) {
+                    && ((List<?>)ctx.get(Header.HEADER_LIST)).size() == 0)) {
                 return true;
             }
             return false;
@@ -46,7 +47,7 @@ public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
         
         boolean success = false;
         if (ctx != null && ctx.containsKey(Header.HEADER_LIST)) {
-            List oobHdr = (List) ctx.get(Header.HEADER_LIST);
+            List<Header> oobHdr = CastUtils.cast((List<?>) ctx.get(Header.HEADER_LIST));
             if (oobHdr.size() != 2) {
                 throw new RuntimeException("test failed expected 2 soap headers but found " + oobHdr.size());
             }
@@ -65,8 +66,8 @@ public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
         if (hdr instanceof Header && ((Header) hdr).getObject() instanceof Node) {
             Header hdr1 = (Header) hdr;
             try {
-                JAXBElement job = 
-                    (JAXBElement)JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
+                JAXBElement<?> job = 
+                    (JAXBElement<?>)JAXBContext.newInstance(org.apache.cxf.outofband.header.ObjectFactory.class)
                         .createUnmarshaller()
                         .unmarshal((Node) hdr1.getObject());
                 OutofBandHeader ob = (OutofBandHeader) job.getValue();

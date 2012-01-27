@@ -18,75 +18,76 @@ package org.apache.camel.component.twitter.consumer.streaming;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.component.twitter.consumer.TweeterStatusListener;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
-import org.apache.camel.component.twitter.data.Status;
-import org.apache.camel.component.twitter.util.TwitterConverter;
 
+import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 import twitter4j.TwitterException;
+import twitter4j.TwitterStream;
 
 /**
  * Super class providing consuming capabilities for the streaming API.
  * 
  */
-public class StreamingConsumer implements Twitter4JConsumer, StatusListener {
-
+public class StreamingConsumer extends Twitter4JConsumer implements StatusListener {
+    protected final TwitterStream twitterStream;
     TwitterEndpoint te;
+    private final List<Status> receivedStatuses = new ArrayList<Status>();
+    private volatile boolean clear;
+    private TweeterStatusListener tweeterStatusListener;
 
-    private List<Status> receivedStatuses = new ArrayList<Status>();
-
-    private boolean clear;
 
     public StreamingConsumer(TwitterEndpoint te) {
         this.te = te;
+        twitterStream = te.getProperties().getTwitterStreamInstance();
+        twitterStream.addListener(this);
     }
 
-    public Iterator<Status> requestPollingStatus(long lastStatusUpdateId) throws TwitterException {
+    public List<Status> pollConsume() throws TwitterException {
         clear = true;
-        return Collections.unmodifiableList(receivedStatuses).iterator();
+        return Collections.unmodifiableList(new ArrayList<Status>(receivedStatuses));
     }
 
-    public Iterator<Status> requestDirectStatus() throws TwitterException {
+    public List<Status> directConsume() throws TwitterException {
         // not used
         return null;
     }
 
     @Override
     public void onException(Exception ex) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
-    public void onStatus(twitter4j.Status status) {
-        if (clear) {
-            receivedStatuses.clear();
-            clear = false;
+    public void onStatus(Status status) {
+        if (tweeterStatusListener != null) {
+            tweeterStatusListener.onStatus(status);
+        } else {
+            if (clear) {
+                receivedStatuses.clear();
+                clear = false;
+            }
+            receivedStatuses.add(status);
         }
-        receivedStatuses.add(TwitterConverter.convertStatus(status));
     }
 
     @Override
     public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void onTrackLimitationNotice(int numberOfLimitedStatuses) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
     public void onScrubGeo(long userId, long upToStatusId) {
-        // TODO Auto-generated method stub
-
     }
 
+    public void registerTweetListener(TweeterStatusListener tweeterStatusListener) {
+        this.tweeterStatusListener = tweeterStatusListener;
+    }
 }

@@ -130,7 +130,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
             }
 
             // put the message back the outputChannel if we need
-            org.springframework.integration.Message siOutMessage =
+            org.springframework.integration.Message<?> siOutMessage =
                 SpringIntegrationBinding.storeToSpringIntegrationMessage(exchange.getOut());
 
             // send the message to spring integration

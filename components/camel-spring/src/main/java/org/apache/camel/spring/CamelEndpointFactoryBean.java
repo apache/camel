@@ -37,7 +37,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelEndpointFactoryBean extends AbstractCamelEndpointFactoryBean implements FactoryBean, ApplicationContextAware {
+public class CamelEndpointFactoryBean extends AbstractCamelEndpointFactoryBean implements FactoryBean<Endpoint>, ApplicationContextAware {
     @XmlTransient
     private ApplicationContext applicationContext;
 

@@ -18,7 +18,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>9</version>
+    <version>10</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -37,15 +37,19 @@
   </prerequisites>
 
   <properties>
+    <!-- unify the encoding for all the modules -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
     <site-repo-url>scpexe://people.apache.org/www/camel.apache.org/maven/</site-repo-url>
     <jdk.version>1.6</jdk.version>
     <compiler.fork>1.6</compiler.fork>
+
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.1.13</jaxb-version>
     <jaxb-api-version>2.1</jaxb-api-version>
-    <maven-bundle-version>2.3.4</maven-bundle-version>
 
+    <maven-bundle-version>2.3.4</maven-bundle-version>
     <openjpa-version>2.1.1</openjpa-version>
   </properties>
 
@@ -182,7 +186,7 @@
           <version>2.2</version>
           <configuration>
             <downloadSources>true</downloadSources>
-            <downloadJavadocs>true</downloadJavadocs>
+            <downloadJavadocs>false</downloadJavadocs>
           </configuration>
         </plugin>
   
@@ -523,6 +527,11 @@
             <exclude>**/test/data*/**/*</exclude>
             <exclude>.gitignore</exclude>
             <exclude>.git/**/*</exclude>
+            <!-- tooling/camel-manual/src/styles/print.css use a different license -->
+            <exclude>**/src/styles/print.css</exclude>
+            <!-- cxf does not handle comments here -->
+            <excludes>**/src/main/resources/META-INF/cxf/cxf.extension</excludes>
+            <excludes>**/src/main/resources/META-INF/cxf/bus-extensions.txt</excludes>
             <!-- generated files -->
             <exclude>**/target/**/*</exclude>
             <exclude>**/eclipse-classes/**/*</exclude>
@@ -686,13 +695,6 @@
                     </xslt>
                     <copy file="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new" tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml" overwrite="yes"/>
 
-                    <!-- Add warning flags that we want -->
-                    <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs">
-                      <entry key="org.eclipse.jdt.core.compiler.problem.missingSerialVersion" value="ignore"/>
-                      <entry key="org.eclipse.jdt.core.compiler.problem.unusedImport" value="ignore"/>
-                      <entry key="org.eclipse.jdt.core.compiler.problem.annotationSuperInterface" value="ignore"/>
-                      <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference" value="ignore"/>
-                    </propertyfile>
 
                     <!-- Add code format rules -->
                     <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs" append="true" fixlastline="true">

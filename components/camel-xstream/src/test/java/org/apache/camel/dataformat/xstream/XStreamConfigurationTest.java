@@ -177,6 +177,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
 
     public static class PurchaseOrderConverter implements Converter {
 
+        @SuppressWarnings("rawtypes")
         public boolean canConvert(Class type) {
             return PurchaseOrder.class.isAssignableFrom(type);
         }
@@ -213,6 +214,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
             return null;
         }
 
+        @SuppressWarnings("rawtypes")
         public boolean canConvert(Class type) {
             return false;
         }
@@ -238,6 +240,7 @@ public class XStreamConfigurationTest extends CamelTestSupport {
             return null;
         }
 
+        @SuppressWarnings("rawtypes")
         public boolean canConvert(Class type) {
             return false;
         }

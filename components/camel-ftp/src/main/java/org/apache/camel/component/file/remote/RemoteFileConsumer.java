@@ -42,8 +42,8 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         return (RemoteFileEndpoint<T>) super.getEndpoint();
     }
 
-    protected RemoteFileOperations getOperations() {
-        return (RemoteFileOperations) operations;
+    protected RemoteFileOperations<T> getOperations() {
+        return (RemoteFileOperations<T>) operations;
     }
 
     protected boolean prePollCheck() throws Exception {
@@ -152,7 +152,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
      * Returns human readable server information for logging purpose
      */
     protected String remoteServer() {
-        return ((RemoteFileEndpoint) endpoint).remoteServerInformation();
+        return ((RemoteFileEndpoint<?>) endpoint).remoteServerInformation();
     }
 
     @Override

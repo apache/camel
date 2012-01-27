@@ -45,10 +45,9 @@ import org.apache.camel.TimerListener;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.impl.ConsumerCache;
-import org.apache.camel.impl.DefaultCamelContextNameStrategy;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.EndpointRegistry;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedConsumerCache;
@@ -66,11 +65,11 @@ import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.interceptor.Tracer;
-import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementAware;
+import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -94,8 +93,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultManagementLifecycleStrategy extends ServiceSupport implements LifecycleStrategy, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementLifecycleStrategy.class);
-    private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
-            new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();
+    private final Map<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>> wrappedProcessors =
+            new HashMap<Processor, KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor>>();
     private final List<PreRegisterService> preServices = new ArrayList<PreRegisterService>();
     private final TimerListenerManager timerListenerManager = new TimerListenerManager();
     private CamelContext camelContext;
@@ -121,12 +120,13 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
         Object mc = getManagementObjectStrategy().getManagedObjectForCamelContext(context);
 
-        String managementName = context.getManagementName() != null ? context.getManagementName() : context.getName();
+        String name = context.getName();
+        String managementName = context.getManagementNameStrategy().getName();
 
         try {
             boolean done = false;
             while (!done) {
-                ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(context);
+                ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(managementName, name);
                 boolean exists = getManagementStrategy().isManaged(mc, on);
                 if (!exists) {
                     done = true;
@@ -134,28 +134,20 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                     // okay there exists already a CamelContext with this name, we can try to fix it by finding a free name
                     boolean fixed = false;
                     // if we use the default name strategy we can find a free name to use
-                    String name = findFreeName(mc, context.getNameStrategy(), managementName);
-                    if (name != null) {
+                    String newName = findFreeName(mc, context.getManagementNameStrategy(), name);
+                    if (newName != null) {
                         // use this as the fixed name
                         fixed = true;
                         done = true;
-                        managementName = name;
+                        managementName = newName;
                     }
                     // we could not fix it so veto starting camel
                     if (!fixed) {
                         throw new VetoCamelContextStartException("CamelContext (" + context.getName() + ") with ObjectName[" + on + "] is already registered."
                             + " Make sure to use unique names on CamelContext when using multiple CamelContexts in the same MBeanServer.", context);
                     } else {
-                        if (context.getNameStrategy() instanceof DefaultCamelContextNameStrategy) {
-                            // use this as the fixed name
-                            LOG.warn("Reassigned auto assigned name on CamelContext from: " + context.getName()
-                                    + " to: " + name + " due to clash with existing name already registered in MBeanServer.");
-                            // now set the fixed name we are using onwards
-                            context.setNameStrategy(new ExplicitCamelContextNameStrategy(name));
-                        } else {
-                            LOG.warn("This CamelContext(" + context.getName() + ") will be registered using the name: " + managementName
-                                + " due to clash with an existing name already registered in MBeanServer.");
-                        }
+                        LOG.warn("This CamelContext(" + context.getName() + ") will be registered using the name: " + managementName
+                            + " due to clash with an existing name already registered in MBeanServer.");
                     }
                 }
             }
@@ -169,7 +161,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         }
 
         // set the name we are going to use
-        context.setManagementName(managementName);
+        if (context instanceof DefaultCamelContext) {
+            ((DefaultCamelContext) context).setManagementName(managementName);
+        }
 
         try {
             manageObject(mc);
@@ -186,27 +180,25 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         enlistPreRegisteredServices();
     }
 
-    private String findFreeName(Object mc, CamelContextNameStrategy strategy, String managementName) throws MalformedObjectNameException {
+    private String findFreeName(Object mc, ManagementNameStrategy strategy, String name) throws MalformedObjectNameException {
+        // we cannot find a free name for fixed named strategies
+        if (strategy.isFixedName()) {
+            return null;
+        }
+
+        // okay try to find a free name
         boolean done = false;
-        String name = null;
-        // start from 2 as the existing name is considered the 1st
-        int counter = 2;
+        String newName = null;
         while (!done) {
             // compute the next name
-            if (strategy instanceof DefaultCamelContextNameStrategy) {
-                // prefer to use the default naming strategy to compute the next free name
-                name = ((DefaultCamelContextNameStrategy) strategy).getNextName();
-            } else {
-                // if explicit name then use a counter prefix
-                name = managementName + "-" + counter++;
-            }
-            ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(name);
+            newName = strategy.getNextName();
+            ObjectName on = getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(newName, name);
             done = !getManagementStrategy().isManaged(mc, on);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Using name: {} in ObjectName[{}] exists? {}", new Object[]{name, on, done});
             }
         }
-        return name;
+        return newName;
     }
 
     /**
@@ -393,7 +385,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         Object answer = null;
 
         if (service instanceof ManagementAware) {
-            return ((ManagementAware) service).getManagedObject(service);
+            return ((ManagementAware<Service>) service).getManagedObject(service);
         } else if (service instanceof Tracer) {
             // special for tracer
             Object mo = this.managedTracers.get(service);
@@ -440,7 +432,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         // a bit of magic here as the processors we want to manage have already been registered
         // in the wrapped processors map when Camel have instrumented the route on route initialization
         // so the idea is now to only manage the processors from the map
-        KeyValueHolder<ProcessorDefinition, InstrumentationProcessor> holder = wrappedProcessors.get(processor);
+        KeyValueHolder<ProcessorDefinition<?>, InstrumentationProcessor> holder = wrappedProcessors.get(processor);
         if (holder == null) {
             // skip as its not an well known processor we want to manage anyway, such as Channel/UnitOfWork/Pipeline etc.
             return null;
@@ -583,8 +575,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         // Create a map (ProcessorType -> PerformanceCounter)
         // to be passed to InstrumentationInterceptStrategy.
-        Map<ProcessorDefinition, PerformanceCounter> registeredCounters =
-                new HashMap<ProcessorDefinition, PerformanceCounter>();
+        Map<ProcessorDefinition<?>, PerformanceCounter> registeredCounters =
+                new HashMap<ProcessorDefinition<?>, PerformanceCounter>();
 
         // Each processor in a route will have its own performance counter.
         // These performance counter will be embedded to InstrumentationProcessor
@@ -592,7 +584,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         RouteDefinition route = routeContext.getRoute();
 
         // register performance counters for all processors and its children
-        for (ProcessorDefinition processor : route.getOutputs()) {
+        for (ProcessorDefinition<?> processor : route.getOutputs()) {
             registerPerformanceCounters(routeContext, processor, registeredCounters);
         }
 
@@ -601,9 +593,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         routeContext.setManagedInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
     }
 
-    @SuppressWarnings("unchecked")
-    private void registerPerformanceCounters(RouteContext routeContext, ProcessorDefinition processor,
-                                             Map<ProcessorDefinition, PerformanceCounter> registeredCounters) {
+    @SuppressWarnings("rawtypes")
+    private void registerPerformanceCounters(RouteContext routeContext, ProcessorDefinition<?> processor,
+                                             Map<ProcessorDefinition<?>, PerformanceCounter> registeredCounters) {
 
         // traverse children if any exists
         List<ProcessorDefinition> children = processor.getOutputs();
@@ -633,7 +625,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     /**
      * Should the given processor be registered.
      */
-    protected boolean registerProcessor(ProcessorDefinition processor) {
+    protected boolean registerProcessor(ProcessorDefinition<?> processor) {
         // skip on exception
         if (processor instanceof OnExceptionDefinition) {
             return false;

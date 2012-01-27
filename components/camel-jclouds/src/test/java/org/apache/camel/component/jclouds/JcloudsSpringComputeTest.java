@@ -56,7 +56,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         List<Exchange> exchanges = result.getExchanges();
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
-                Set images = (Set) exchange.getIn().getBody();
+                Set<?> images = exchange.getIn().getBody(Set.class);
                 assertTrue(images.size() > 0);
                 for (Object obj : images) {
                     assertTrue(obj instanceof Image);
@@ -73,7 +73,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         List<Exchange> exchanges = result.getExchanges();
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
-                Set hardwares = (Set) exchange.getIn().getBody();
+                Set<?> hardwares = exchange.getIn().getBody(Set.class);
                 assertTrue(hardwares.size() > 0);
                 for (Object obj : hardwares) {
                     assertTrue(obj instanceof Hardware);
@@ -90,7 +90,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         List<Exchange> exchanges = result.getExchanges();
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
-                Set nodeMetadatas = (Set) exchange.getIn().getBody();
+                Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
                 assertEquals("Nodes should be 0", 0, nodeMetadatas.size());
             }
         }
@@ -106,7 +106,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         List<Exchange> exchanges = result.getExchanges();
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
-                Set nodeMetadatas = (Set) exchange.getIn().getBody();
+                Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
                 assertEquals("Nodes should be 1", 1, nodeMetadatas.size());
             }
         }
@@ -131,20 +131,20 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         List<Exchange> exchanges = result.getExchanges();
 
         Exchange exchange = exchanges.get(3);
-        Set<NodeMetadata> nodeMetadatas = (Set<NodeMetadata>) exchange.getIn().getBody();
+        Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
         assertEquals("Nodes should be 2", 2, nodeMetadatas.size());
         NodeMetadata nodeMetadata = nodeMetadatas.toArray(new NodeMetadata[0])[0];
         assertEquals("other", nodeMetadata.getGroup());
 
         exchange = exchanges.get(4);
-        nodeMetadatas = (Set<NodeMetadata>) exchange.getIn().getBody();
+        nodeMetadatas = exchange.getIn().getBody(Set.class);
         assertEquals("Nodes should be 1", 1, nodeMetadatas.size());
         nodeMetadata = nodeMetadatas.toArray(new NodeMetadata[0])[0];
         assertEquals("other", nodeMetadata.getGroup());
         assertEquals("3", nodeMetadata.getId());
 
         exchange = exchanges.get(5);
-        nodeMetadatas = (Set<NodeMetadata>) exchange.getIn().getBody();
+        nodeMetadatas = exchange.getIn().getBody(Set.class);
         assertEquals("Nodes should be 1", 1, nodeMetadatas.size());
         nodeMetadata = nodeMetadatas.toArray(new NodeMetadata[0])[0];
         assertEquals("other", nodeMetadata.getGroup());
@@ -159,7 +159,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
         List<Exchange> exchanges = result.getExchanges();
         if (exchanges != null && !exchanges.isEmpty()) {
             for (Exchange exchange : exchanges) {
-                Set nodeMetadatas = (Set) exchange.getIn().getBody();
+                Set<?> nodeMetadatas = exchange.getIn().getBody(Set.class);
                 assertEquals("There should be no node running", 1, nodeMetadatas.size());
 
                 for (Object obj : nodeMetadatas) {

@@ -31,12 +31,12 @@ import org.springframework.beans.factory.SmartFactoryBean;
  * You can still specify the spring extension file in the cfgFiles list and it will override 
  * the extensions which is load by CXF bus.
  */ 
-public class SpringBusFactoryBean implements SmartFactoryBean {
+public class SpringBusFactoryBean implements SmartFactoryBean<Bus> {
     private String[] cfgFiles;
     private boolean includeDefaultBus;
     private SpringBusFactory bf;
 
-    public Object getObject() throws Exception {
+    public Bus getObject() throws Exception {
         bf = new SpringBusFactory();
         if (cfgFiles != null) {
             return bf.createBus(cfgFiles, includeDefaultBus);
@@ -45,7 +45,7 @@ public class SpringBusFactoryBean implements SmartFactoryBean {
         }
     }
 
-    public Class getObjectType() {
+    public Class<?> getObjectType() {
         return Bus.class;
     }
 

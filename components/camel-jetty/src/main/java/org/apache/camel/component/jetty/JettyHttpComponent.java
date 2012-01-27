@@ -36,7 +36,6 @@ import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -195,9 +194,9 @@ public class JettyHttpComponent extends HttpComponent {
 
         String address = uri.startsWith("jetty:") ? remaining : uri;
         URI addressUri = new URI(UnsafeUriCharactersEncoder.encode(address));
-        URI endpointUri = URISupport.createRemainingURI(addressUri, CastUtils.cast(httpClientParameters));
+        URI endpointUri = URISupport.createRemainingURI(addressUri, httpClientParameters);
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(addressUri, CastUtils.cast(parameters));
+        URI httpUri = URISupport.createRemainingURI(addressUri, parameters);
      
         // create endpoint after all known parameters have been extracted from parameters
         JettyHttpEndpoint endpoint = new JettyHttpEndpoint(this, endpointUri.toString(), httpUri);

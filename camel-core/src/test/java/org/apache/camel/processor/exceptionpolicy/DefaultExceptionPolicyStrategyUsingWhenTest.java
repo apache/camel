@@ -31,6 +31,7 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
     private static final String ERROR_USER_QUEUE = "mock:usererror";
 
     public static class MyUserException extends Exception {
+        private static final long serialVersionUID = 1L;
 
         public MyUserException(String message) {
             super(message);

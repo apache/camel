@@ -103,11 +103,10 @@ public class ActivityMonitorEngine extends ServiceSupport implements Runnable {
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected void fireExpiredEvent(final ActivityState activityState) {
         LOG.debug("Trying to fire expiration of: {}", activityState);
 
-        template.execute(new JpaCallback() {
+        template.execute(new JpaCallback<Object>() {
             public Object doInJpa(EntityManager entityManager) throws PersistenceException {
                 // let's try locking the object first
                 if (isUseLocking()) {

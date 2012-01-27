@@ -18,7 +18,7 @@ package org.apache.camel.component.xquery;
 
 import javax.xml.transform.stream.StreamSource;
 
-import net.sf.saxon.query.ModuleURIResolver;
+import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.trans.XPathException;
 
 /**

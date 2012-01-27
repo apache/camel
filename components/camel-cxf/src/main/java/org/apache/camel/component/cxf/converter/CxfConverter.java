@@ -60,8 +60,8 @@ public final class CxfConverter {
     }
     
     @Converter
-    public static List<Class> toClassesList(final String[] classNames) throws ClassNotFoundException {
-        List<Class> answer = new ArrayList<Class>();
+    public static List<Class<?>> toClassesList(final String[] classNames) throws ClassNotFoundException {
+        List<Class<?>> answer = new ArrayList<Class<?>>();
         for (String className : classNames) {
             answer.add(ClassLoaderUtils.loadClass(className.trim(), CxfConverter.class));
         }
@@ -69,7 +69,7 @@ public final class CxfConverter {
     }
     
     @Converter
-    public static List<Class> toClassList(String classeString) throws ClassNotFoundException {
+    public static List<Class<?>> toClassList(String classeString) throws ClassNotFoundException {
         String[] classNames = classeString.split(",|;");
         return toClassesList(classNames);        
     }
@@ -82,7 +82,7 @@ public final class CxfConverter {
     @Converter
     public static Object[] toArray(Object object) {
         if (object instanceof Collection) {
-            return ((Collection)object).toArray();
+            return ((Collection<?>)object).toArray();
         } else {
             Object answer[];
             if (object == null) {

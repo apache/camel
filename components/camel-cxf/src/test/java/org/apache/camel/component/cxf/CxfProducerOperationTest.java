@@ -82,7 +82,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
                 para1.add("para1");
                 final List<String> para2 = new ArrayList<String>();
                 para2.add("para2");                
-                List<List> parameters = new ArrayList<List>();
+                List<List<String>> parameters = new ArrayList<List<String>>();
                 parameters.add(para1);
                 parameters.add(para2);
                 // The object array version is working too

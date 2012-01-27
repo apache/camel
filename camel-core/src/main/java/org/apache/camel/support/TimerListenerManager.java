@@ -41,7 +41,7 @@ public class TimerListenerManager extends ServiceSupport implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(TimerListenerManager.class);
     private final Set<TimerListener> listeners = new LinkedHashSet<TimerListener>();
     private ScheduledExecutorService executorService;
-    private volatile ScheduledFuture task;
+    private volatile ScheduledFuture<?> task;
     private long interval = 1000L;
 
     public TimerListenerManager() {
@@ -111,7 +111,10 @@ public class TimerListenerManager extends ServiceSupport implements Runnable {
     @Override
     protected void doStop() throws Exception {
         // executor service will be shutdown by CamelContext
-        task.cancel(true);
+        if (task != null) {
+            task.cancel(true);
+            task = null;
+        }
     }
 
 }

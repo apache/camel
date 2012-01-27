@@ -19,9 +19,34 @@ package org.apache.camel.spi;
 /**
  * Strategy for assigning name to a {@link org.apache.camel.CamelContext}.
  *
- * @version 
+ * @see ManagementNameStrategy
  */
 public interface CamelContextNameStrategy {
 
+    /**
+     * Gets the name
+     * <p/>
+     * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter,
+     * or the name is always fixed.
+     *
+     * @return the name.
+     */
     String getName();
+
+    /**
+     * Gets the next calculated name, if this strategy is not using fixed names.
+     * <p/>
+     * The {@link #isFixedName()} determines if the name can be re-calculated such as when using a counter,
+     * or the name is always fixed.
+     *
+     * @return the next name
+     */
+    String getNextName();
+
+    /**
+     * Whether the name will be fixed, or allow re-calculation such as by using an unique counter.
+     * 
+     * @return <tt>true</tt> for fixed names, <tt>false</tt> for names which can re-calculated
+     */
+    boolean isFixedName();
 }

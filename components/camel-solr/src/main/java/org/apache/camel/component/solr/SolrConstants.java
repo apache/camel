@@ -25,9 +25,15 @@ public final class SolrConstants {
     public static final String OPERATION_ROLLBACK = "ROLLBACK";
     public static final String OPERATION_OPTIMIZE = "OPTIMIZE";
     public static final String OPERATION_INSERT = "INSERT";
+    public static final String OPERATION_INSERT_STREAMING = "INSERT_STREAMING";
     public static final String OPERATION_ADD_BEAN = "ADD_BEAN";
     public static final String OPERATION_DELETE_BY_ID = "DELETE_BY_ID";
     public static final String OPERATION_DELETE_BY_QUERY = "DELETE_BY_QUERY";
+
+    public static final String PARAM_STREAMING_QUEUE_SIZE = "streamingQueueSize";
+    public static final String PARAM_STREAMING_THREAD_COUNT = "streamingThreadCount";
+    public static final int DEFUALT_STREAMING_QUEUE_SIZE = 10;
+    public static final int DEFAULT_STREAMING_THREAD_COUNT = 2;
 
     private SolrConstants() {
         throw new AssertionError();

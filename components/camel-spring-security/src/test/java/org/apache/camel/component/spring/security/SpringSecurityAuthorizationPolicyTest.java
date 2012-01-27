@@ -31,7 +31,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSupport {
@@ -90,7 +90,7 @@ public class SpringSecurityAuthorizationPolicyTest extends CamelSpringTestSuppor
         if (roles != null && roles.length > 0) {
             List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(roles.length);
             for (String role : roles) {
-                authorities.add(new GrantedAuthorityImpl(role));
+                authorities.add(new SimpleGrantedAuthority(role));
             }
             authToken = new UsernamePasswordAuthenticationToken(username, password, authorities);
         } else {

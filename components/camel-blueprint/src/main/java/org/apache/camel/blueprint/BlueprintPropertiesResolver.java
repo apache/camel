@@ -40,7 +40,7 @@ public class BlueprintPropertiesResolver implements PropertiesResolver {
     }
 
     @Override
-    public Properties resolveProperties(CamelContext context, String... urls) throws Exception {
+    public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... urls) throws Exception {
         Properties answer = new Properties();
 
         boolean explicit = false;
@@ -53,7 +53,7 @@ public class BlueprintPropertiesResolver implements PropertiesResolver {
                 explicit = true;
             } else {
                 // delegate the url
-                answer.putAll(delegate.resolveProperties(context, url));
+                answer.putAll(delegate.resolveProperties(context, ignoreMissingLocation, url));
             }
         }
 

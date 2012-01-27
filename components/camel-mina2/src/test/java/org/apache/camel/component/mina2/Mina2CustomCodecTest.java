@@ -41,7 +41,7 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Bye World");
 
-        Object out = template.requestBody("mina2:tcp://localhost:{{port}}?sync=true&codec=#myCodec", "Hello World");
+        Object out = template.requestBody(String.format("mina2:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()), "Hello World");
         assertEquals("Bye World", out);
 
         mock.assertIsSatisfied();
@@ -49,9 +49,8 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
 
     @Test
     public void testTCPEncodeUTF8InputIsString() throws Exception {
-        final String myUri = "mina2:tcp://localhost:" + getNextPort() + "?encoding=UTF-8&sync=false";
+        final String myUri = String.format("mina2:tcp://localhost:%1$s?encoding=UTF-8&sync=false", getNextPort());
         context.addRoutes(new RouteBuilder() {
-
             public void configure() {
                 from(myUri).to("mock:result");
             }
@@ -72,7 +71,7 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
     @Test
     public void testBadConfiguration() throws Exception {
         try {
-            template.sendBody("mina2:tcp://localhost:{{port}}?sync=true&codec=#XXX", "Hello World");
+            template.sendBody(String.format("mina2:tcp://localhost:%1$s?sync=true&codec=#XXX", getPort()), "Hello World");
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
             // ok
@@ -89,7 +88,7 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from("mina2:tcp://localhost:{{port}}?sync=true&codec=#myCodec").transform(constant("Bye World")).to("mock:result");
+                from(String.format("mina2:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort())).transform(constant("Bye World")).to("mock:result");
             }
         };
     }

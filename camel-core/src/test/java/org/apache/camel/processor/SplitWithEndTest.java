@@ -35,8 +35,8 @@ public class SplitWithEndTest extends ContextTestSupport {
         // use navigate to find that the end works as expected
         Navigate<Processor> nav = context.getRoutes().get(0).navigate();
         List<Processor> node = nav.next();
-        node = ((Navigate) node.get(0)).next();
-        node = ((Navigate) node.get(0)).next();
+        node = ((Navigate<Processor>) node.get(0)).next();
+        node = ((Navigate<Processor>) node.get(0)).next();
 
         // there should be 4 outputs as the end in the otherwise should
         // ensure that the transform and last send is not within the choice

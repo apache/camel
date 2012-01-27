@@ -54,12 +54,12 @@ public class SqlBuilder implements Expression, Predicate {
     }
 
     public boolean matches(Exchange exchange) {
-        List list = evaluateQuery(exchange);
+        List<?> list = evaluateQuery(exchange);
         return matches(exchange, list);
     }
 
     public void assertMatches(String text, Exchange exchange) throws AssertionError {
-        List list = evaluateQuery(exchange);
+        List<?> list = evaluateQuery(exchange);
         if (!matches(exchange, list)) {
             throw new AssertionError(this + " failed on " + exchange + " as found " + list);
         }
@@ -101,14 +101,14 @@ public class SqlBuilder implements Expression, Predicate {
 
     // Implementation methods
     // -----------------------------------------------------------------------
-    protected boolean matches(Exchange exchange, List list) {
+    protected boolean matches(Exchange exchange, List<?> list) {
         return ObjectHelper.matches(list);
     }
 
-    protected List evaluateQuery(Exchange exchange) {
+    protected List<?> evaluateQuery(Exchange exchange) {
         configureQuery(exchange);
         Message in = exchange.getIn();
-        List list = in.getBody(List.class);
+        List<?> list = in.getBody(List.class);
         if (list == null) {
             list = Collections.singletonList(in.getBody());
         }

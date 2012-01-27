@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -42,10 +45,26 @@ public class RecipientListBeanTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+
+    public void testRecipientListWithParams() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello b");
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("one", 21);
+        headers.put("two", "direct:a,direct:b,direct:c");
+
+        String out = template.requestBodyAndHeaders("direct:params", "Hello World", headers, String.class);
+        assertEquals("Hello b", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").recipientList(bean("myBean", "foo")).to("mock:result");
+                from("direct:params").recipientList(bean("myBean", "bar(${header.one}, ${header.two})"), ",").to("mock:result");
 
                 from("direct:a").transform(constant("Hello a"));
                 from("direct:b").transform(constant("Hello b"));
@@ -58,6 +77,12 @@ public class RecipientListBeanTest extends ContextTestSupport {
 
         public String[] foo(String body) {
             return body.split(",");
+        }
+
+        public String bar(int one, String two) {
+            assertEquals(21, one);
+            assertEquals("direct:a,direct:b,direct:c", two);
+            return "direct:c,direct:b";
         }
     }
 

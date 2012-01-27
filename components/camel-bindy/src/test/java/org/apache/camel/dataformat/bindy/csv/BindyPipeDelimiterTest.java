@@ -40,8 +40,8 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Map map1 = (Map) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-        Map map2 = (Map) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(1);
+        Map<?, ?> map1 = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        Map<?, ?> map2 = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(1);
 
         MyData rec1 = (MyData) map1.values().iterator().next();
         MyData rec2 = (MyData) map2.values().iterator().next();

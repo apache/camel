@@ -23,9 +23,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.testng.CamelTestSupport;
 import org.testng.annotations.Test;
 
-/**
- * @version $Revision$
- */
 public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
 
     @Override
@@ -41,7 +38,7 @@ public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
 
     @Override
     protected void debugBefore(Exchange exchange, Processor processor,
-                               ProcessorDefinition definition, String id, String shortName) {
+                               ProcessorDefinition<?> definition, String id, String shortName) {
         // this method is invoked before we are about to enter the given processor
         // from your Java editor you can just add a breakpoint in the code line below
         log.info("Before " + definition + " with body " + exchange.getIn().getBody());

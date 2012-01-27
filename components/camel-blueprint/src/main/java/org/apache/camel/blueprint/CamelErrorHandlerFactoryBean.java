@@ -104,7 +104,6 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Class<? extends ErrorHandlerBuilder> getObjectType() {
         return type.getTypeAsClass();
     }

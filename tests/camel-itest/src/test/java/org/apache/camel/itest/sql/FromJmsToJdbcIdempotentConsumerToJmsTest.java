@@ -54,17 +54,6 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         dataSource = context.getRegistry().lookup("myNonXADataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
-
-        setupRepository();
-    }
-    
-    protected void setupRepository() {
-        try {
-            jdbcTemplate.execute("DROP TABLE CAMEL_MESSAGEPROCESSED");
-        } catch (Exception e) {
-            // ignore
-        }
-        jdbcTemplate.execute("CREATE TABLE CAMEL_MESSAGEPROCESSED (processorName VARCHAR(20), messageId VARCHAR(10))");
     }
 
     @Test

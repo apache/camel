@@ -36,7 +36,6 @@ public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTest
 
     private static int counter;
 
-    @SuppressWarnings("unchecked")
     public void testRedeliverWithDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
 
@@ -51,13 +50,13 @@ public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTest
 
         // use executors to simulate two different clients sending
         // a request to Camel
-        Callable task1 = Executors.callable(new Runnable() {
+        Callable<?> task1 = Executors.callable(new Runnable() {
             public void run() {
                 template.sendBody("direct:start", "Message 1");
             }
         });
 
-        Callable task2 = Executors.callable(new Runnable() {
+        Callable<?> task2 = Executors.callable(new Runnable() {
             public void run() {
                 template.sendBody("direct:start", "Message 2");
             }

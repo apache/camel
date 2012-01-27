@@ -35,7 +35,6 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.processor.OnCompletionProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
@@ -331,7 +330,7 @@ public class RouteService extends ChildServiceSupport {
      * Gather all route scoped services from the given route, such as route scoped error handler.
      */
     private void doGetRouteScopedServices(List<Service> services, Route route) {
-        for (ProcessorDefinition output : route.getRouteContext().getRoute().getOutputs()) {
+        for (ProcessorDefinition<?> output : route.getRouteContext().getRoute().getOutputs()) {
             if (output instanceof OnExceptionDefinition) {
                 OnExceptionDefinition onExceptionDefinition = (OnExceptionDefinition) output;
                 if (onExceptionDefinition.isRouteScoped()) {

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.printer;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -25,6 +24,8 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -44,13 +45,12 @@ public class PrinterPrintTest extends CamelTestSupport {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
-                InputStream is = new BufferedInputStream(
-                        new FileInputStream("./src/test/resources/test.txt"));
+                InputStream is = IOHelper.buffered(new FileInputStream("./src/test/resources/test.txt"));
 
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
                 for (int i = 0; i < n; i++) {
-                    buffer[i] = (byte) is.read();
+                    buffer[i] = (byte)is.read();
                 }
 
                 is.close();
@@ -66,13 +66,12 @@ public class PrinterPrintTest extends CamelTestSupport {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
-                InputStream is = new BufferedInputStream(
-                        new FileInputStream("./src/test/resources/asf-logo.gif"));
+                InputStream is = IOHelper.buffered(new FileInputStream("./src/test/resources/asf-logo.gif"));
 
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
                 for (int i = 0; i < n; i++) {
-                    buffer[i] = (byte) is.read();
+                    buffer[i] = (byte)is.read();
                 }
 
                 is.close();
@@ -88,13 +87,12 @@ public class PrinterPrintTest extends CamelTestSupport {
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
-                InputStream is = new BufferedInputStream(
-                        new FileInputStream("./src/test/resources/asf-logo.JPG"));
+                InputStream is = IOHelper.buffered(new FileInputStream("./src/test/resources/asf-logo.JPG"));
 
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
                 for (int i = 0; i < n; i++) {
-                    buffer[i] = (byte) is.read();
+                    buffer[i] = (byte)is.read();
                 }
 
                 is.close();

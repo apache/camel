@@ -33,7 +33,6 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
@@ -97,14 +96,28 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     // -------------------------------------------------------------------------
 
     /**
+     * Handles the given exception
+     *
+     * @param exceptionType  the exception
+     * @return the try builder
+     */
+    @SuppressWarnings("unchecked")
+    public TryDefinition doCatch(Class<? extends Throwable> exceptionType) {
+        // this method is introduced to avoid compiler warnings about the
+        // generic Class arrays in the case we've got only one single Class
+        // to build a TryDefinition for
+        return doCatch(new Class[] {exceptionType});
+    }
+
+    /**
      * Handles the given exception(s)
      *
      * @param exceptionType  the exception(s)
      * @return the try builder
      */
-    public TryDefinition doCatch(Class... exceptionType) {
+    public TryDefinition doCatch(Class<? extends Throwable>... exceptionType) {
         popBlock();
-        List<Class> list = CastUtils.cast(Arrays.asList(exceptionType));
+        List<Class<? extends Throwable>> list = Arrays.asList(exceptionType);
         CatchDefinition answer = new CatchDefinition(list);
         addOutput(answer);
         pushBlock(answer);

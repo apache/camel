@@ -26,16 +26,13 @@ import org.junit.Test;
 
 /**
  * To test timeout.
- *
- * @version 
  */
 public class Mina2ExchangeTimeOutTest extends BaseMina2Test {
 
     @Test
     public void testUsingTimeoutParameter() throws Exception {
-
         // use a timeout value of 2 seconds (timeout is in millis) so we should actually get a response in this test
-        Endpoint endpoint = context.getEndpoint("mina2:tcp://localhost:{{port}}?textline=true&sync=true&timeout=500");
+        Endpoint endpoint = context.getEndpoint(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=true&timeout=500", getPort()));
         Producer producer = endpoint.createProducer();
         producer.start();
         Exchange exchange = producer.createExchange();
@@ -53,17 +50,17 @@ public class Mina2ExchangeTimeOutTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina2:tcp://localhost:{{port}}?textline=true&sync=true&timeout=30000").process(new Processor() {
-
-                    public void process(Exchange e) throws Exception {
-                        assertEquals("Hello World", e.getIn().getBody(String.class));
-                        // MinaProducer has a default timeout of 3 seconds so we just wait 2 seconds
-                        // (template.requestBody is a MinaProducer behind the doors)
-                        Thread.sleep(2000);
-
-                        e.getOut().setBody("Okay I will be faster in the future");
-                    }
-                });
+                from(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=true&timeout=30000", getPort()))
+                    .process(new Processor() {
+                        public void process(Exchange e) throws Exception {
+                            assertEquals("Hello World", e.getIn().getBody(String.class));
+                            // MinaProducer has a default timeout of 3 seconds so we just wait 2 seconds
+                            // (template.requestBody is a MinaProducer behind the doors)
+                            Thread.sleep(2000);
+    
+                            e.getOut().setBody("Okay I will be faster in the future");
+                        }
+                    });
             }
         };
     }

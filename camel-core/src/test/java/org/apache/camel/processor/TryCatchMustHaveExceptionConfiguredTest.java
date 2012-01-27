@@ -28,6 +28,7 @@ public class TryCatchMustHaveExceptionConfiguredTest extends ContextTestSupport 
     public void testTryCatchMustHaveExceptionConfigured() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
+            @SuppressWarnings("unchecked")
             public void configure() throws Exception {
                 from("direct:a")
                     .doTry()

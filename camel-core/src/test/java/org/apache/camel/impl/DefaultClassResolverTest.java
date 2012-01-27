@@ -28,7 +28,7 @@ public class DefaultClassResolverTest extends TestCase {
 
     public void testResolveClass() {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        Class clazz = resolver.resolveClass("java.lang.Integer");
+        Class<?> clazz = resolver.resolveClass("java.lang.Integer");
         assertNotNull(clazz);
     }
 
@@ -40,7 +40,7 @@ public class DefaultClassResolverTest extends TestCase {
 
     public void testResolveClassClassLoader() {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        Class clazz = resolver.resolveClass("java.lang.Integer", DefaultClassResolverTest.class.getClassLoader());
+        Class<?> clazz = resolver.resolveClass("java.lang.Integer", DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 
@@ -52,7 +52,7 @@ public class DefaultClassResolverTest extends TestCase {
 
     public void testResolveMandatoryClass() throws Exception {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        Class clazz = resolver.resolveMandatoryClass("java.lang.Integer");
+        Class<?> clazz = resolver.resolveMandatoryClass("java.lang.Integer");
         assertNotNull(clazz);
     }
 
@@ -64,7 +64,7 @@ public class DefaultClassResolverTest extends TestCase {
 
     public void testResolveMandatoryClassClassLoader() throws Exception {
         DefaultClassResolver resolver = new DefaultClassResolver();
-        Class clazz = resolver.resolveMandatoryClass("java.lang.Integer", DefaultClassResolverTest.class.getClassLoader());
+        Class<?> clazz = resolver.resolveMandatoryClass("java.lang.Integer", DefaultClassResolverTest.class.getClassLoader());
         assertNotNull(clazz);
     }
 

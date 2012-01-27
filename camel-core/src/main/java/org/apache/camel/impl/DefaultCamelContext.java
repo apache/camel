@@ -102,6 +102,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -136,6 +137,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final transient Logger log = LoggerFactory.getLogger(getClass());
     private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
+    private ManagementNameStrategy managementNameStrategy = new DefaultManagementNameStrategy(this);
     private String managementName;
     private ClassLoader applicationContextClassLoader;
     private Map<EndpointKey, Endpoint> endpoints;
@@ -260,6 +262,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.nameStrategy = nameStrategy;
     }
 
+    public ManagementNameStrategy getManagementNameStrategy() {
+        return managementNameStrategy;
+    }
+
+    public void setManagementNameStrategy(ManagementNameStrategy managementNameStrategy) {
+        this.managementNameStrategy = managementNameStrategy;
+    }
+
     public String getManagementName() {
         return managementName;
     }
@@ -375,8 +385,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             answer.add(oldEndpoint);
             stopServices(oldEndpoint);
         } else {
-            for (Map.Entry entry : endpoints.entrySet()) {
-                oldEndpoint = (Endpoint)entry.getValue();
+            for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
+                oldEndpoint = entry.getValue();
                 if (EndpointHelper.matchEndpoint(oldEndpoint.getEndpointUri(), uri)) {
                     answer.add(oldEndpoint);
                     stopServices(oldEndpoint);
@@ -908,7 +918,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (object instanceof Service) {
             startService((Service)object);
         } else if (object instanceof Collection<?>) {
-            startServices((Collection)object);
+            startServices((Collection<?>)object);
         }
     }
 
@@ -1368,10 +1378,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
 
         doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
-        firstStartDone = true;
+
+        // if the context was configured with auto startup = false, and we are already started,
+        // then we may need to start the routes on the 2nd start call
+        if (firstStartDone && !isAutoStartup() && isStarted()) {
+            // invoke this logic to warmup the routes and if possible also start the routes
+            doStartOrResumeRoutes(routeServices, true, true, false, true);
+        }
 
         // super will invoke doStart which will prepare internal services and start routes etc.
         try {
+            firstStartDone = true;
             super.start();
         } catch (VetoCamelContextStartException e) {
             if (e.isRethrowException()) {
@@ -1605,16 +1622,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // filter out already started routes
         Map<String, RouteService> filtered = new LinkedHashMap<String, RouteService>();
         for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
-            boolean startable;
+            boolean startable = false;
 
             Consumer consumer = entry.getValue().getRoutes().iterator().next().getConsumer();
             if (consumer instanceof SuspendableService) {
                 // consumer could be suspended, which is not reflected in the RouteService status
                 startable = ((SuspendableService) consumer).isSuspended();
-            } else if (consumer instanceof StatefulService) {
+            }
+
+            if (!startable && consumer instanceof StatefulService) {
                 // consumer could be stopped, which is not reflected in the RouteService status
                 startable = ((StatefulService) consumer).getStatus().isStartable();
-            } else {
+            } else if (!startable) {
                 // no consumer so use state from route service
                 startable = entry.getValue().getStatus().isStartable();
             }
@@ -1691,7 +1710,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         service.start();
     }
     
-    private void startServices(Collection services) throws Exception {
+    private void startServices(Collection<?> services) throws Exception {
         for (Object element : services) {
             if (element instanceof Service) {
                 startService((Service)element);
@@ -2417,6 +2436,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      */
     public static void setContextCounter(int value) {
         DefaultCamelContextNameStrategy.setCounter(value);
+        DefaultManagementNameStrategy.setCounter(value);
     }
 
     private static UuidGenerator createDefaultUuidGenerator() {

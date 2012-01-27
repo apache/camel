@@ -50,7 +50,7 @@ public interface ManagementObjectStrategy {
     Object getManagedObjectForProducer(CamelContext context, Producer producer);
 
     Object getManagedObjectForProcessor(CamelContext context, Processor processor,
-                                        ProcessorDefinition definition, Route route);
+                                        ProcessorDefinition<?> definition, Route route);
 
     Object getManagedObjectForService(CamelContext context, Service service);
 

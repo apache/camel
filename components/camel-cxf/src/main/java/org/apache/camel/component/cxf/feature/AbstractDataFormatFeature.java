@@ -45,9 +45,9 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
     }
     
     protected void removeInterceptorWhichIsInThePhases(List<Interceptor<? extends Message>> interceptors, String[] phaseNames, Set<String> needToBeKept) {
-        for (Interceptor i : interceptors) {
+        for (Interceptor<? extends Message> i : interceptors) {
             if (i instanceof PhaseInterceptor) {
-                PhaseInterceptor p = (PhaseInterceptor) i;
+                PhaseInterceptor<? extends Message> p = (PhaseInterceptor<? extends Message>) i;
                 for (String phaseName : phaseNames) {
                     if (p.getPhase().equals(phaseName)) {
                         // To support the old API
@@ -73,10 +73,10 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
     }
 
     protected void removeInterceptorWhichIsOutThePhases(List<Interceptor<? extends Message>> interceptors, String[] phaseNames, Set<String> needToBeKept) {
-        for (Interceptor i : interceptors) {
+        for (Interceptor<? extends Message> i : interceptors) {
             boolean outside = false;
             if (i instanceof PhaseInterceptor) {
-                PhaseInterceptor p = (PhaseInterceptor) i;
+                PhaseInterceptor<? extends Message> p = (PhaseInterceptor<? extends Message>) i;
                 for (String phaseName : phaseNames) {
                     if (p.getPhase().equals(phaseName)) {
                         outside = true;
@@ -97,8 +97,9 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
         }
     }
 
-    protected void removeInterceptors(List<Interceptor<? extends Message>> interceptors, Collection<Class> toBeRemovedInterceptors) {
-        for (Interceptor interceptor : interceptors) {
+    protected void removeInterceptors(List<Interceptor<? extends Message>> interceptors, 
+                                      Collection<Class<?>> toBeRemovedInterceptors) {
+        for (Interceptor<? extends Message> interceptor : interceptors) {
             if (toBeRemovedInterceptors.contains(interceptor.getClass())) {
                 getLogger().info("removing the interceptor " + interceptor);
                 interceptors.remove(interceptor);
@@ -107,8 +108,8 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
     }
     
     protected void removeInterceptor(List<Interceptor<? extends Message>> interceptors, 
-                                     Class<? extends Interceptor> cls) {
-        for (Interceptor interceptor : interceptors) {
+                                     Class<? extends Interceptor<? extends Message>> cls) {
+        for (Interceptor<? extends Message> interceptor : interceptors) {
             if (interceptor.getClass().equals(cls)) {
                 interceptors.remove(interceptor);
             }
@@ -116,13 +117,13 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
     }
     
     public void addInIntercepters(List<Interceptor<? extends Message>> interceptors) {
-        for (Interceptor interceptor : interceptors) {
+        for (Interceptor<? extends Message> interceptor : interceptors) {
             inInterceptorNames.add(interceptor.getClass().getName());
         }
     }
     
     public void addOutInterceptors(List<Interceptor<? extends Message>> interceptors) {
-        for (Interceptor interceptor : interceptors) {
+        for (Interceptor<? extends Message> interceptor : interceptors) {
             outInterceptorNames.add(interceptor.getClass().getName());
         }
     }

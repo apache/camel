@@ -19,18 +19,56 @@ package org.apache.camel.component.solr;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrException;
+import org.apache.solr.common.SolrInputDocument;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class SolrUpdateTest extends SolrComponentTestSupport {
 
-    @EndpointInject(uri = "solr://localhost:8999/solr")
-    protected SolrEndpoint solrEndpoint;
+    private SolrEndpoint solrEndpoint;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        solrEndpoint = getMandatoryEndpoint(SOLR_ROUTE_URI, SolrEndpoint.class);
+    }
+
+    @Test
+    public void testInsertSolrInputDocument() throws Exception {
+
+        SolrInputDocument doc = new SolrInputDocument();
+        doc.addField("id", "MA147LL/A", 1.0f);
+        template.sendBodyAndHeader("direct:start", doc, SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+
+        solrCommit();
+
+        QueryResponse response = executeSolrQuery("id:MA147LL/A");
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
+    }
+
+    @Test
+    public void testInsertStreaming() throws Exception {
+
+        Exchange exchange = createExchangeWithBody(null);
+        exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT_STREAMING);
+        exchange.getIn().setHeader("SolrField.id", "MA147LL/A");
+        template.send("direct:start", exchange);
+
+        Thread.sleep(500);
+
+        solrCommit();
+
+        QueryResponse response = executeSolrQuery("id:MA147LL/A");
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
+    }
 
     @Test
     public void indexSingleDocumentOnlyWithId() throws Exception {
@@ -98,7 +136,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
         assertEquals(1, response.getResults().getNumFound());
 
         SolrDocument doc = response.getResults().get(0);
-        assertArrayEquals(categories, ((List) doc.getFieldValue("cat")).toArray());
+        assertArrayEquals(categories, ((List<?>) doc.getFieldValue("cat")).toArray());
     }
 
     @Test

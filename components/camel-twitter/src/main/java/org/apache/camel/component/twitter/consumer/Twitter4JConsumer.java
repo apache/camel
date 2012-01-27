@@ -16,16 +16,25 @@
  */
 package org.apache.camel.component.twitter.consumer;
 
-import java.util.Iterator;
-
-import org.apache.camel.component.twitter.data.Status;
+import java.io.Serializable;
+import java.util.List;
 
 import twitter4j.TwitterException;
 
 
-public interface Twitter4JConsumer {
+public abstract class Twitter4JConsumer {
+    
+    protected long lastId = 1;
+    
+    // Can't assume that the end of the list will be the most recent ID.
+    // The Twitter API sometimes returns them slightly out of order.
+    protected void checkLastId(long newId) {
+        if (newId > lastId) {
+            lastId = newId;
+        }
+    }
 
-    Iterator<Status> requestPollingStatus(long lastStatusUpdateId) throws TwitterException;
+    public abstract List<? extends Serializable> pollConsume() throws TwitterException;
 
-    Iterator<Status> requestDirectStatus() throws TwitterException;
+    public abstract List<? extends Serializable> directConsume() throws TwitterException;
 }

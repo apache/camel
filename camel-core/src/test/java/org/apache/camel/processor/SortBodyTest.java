@@ -33,7 +33,7 @@ public class SortBodyTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List list = mock.getExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getExchanges().get(0).getIn().getBody(List.class);
         assertEquals("Claus", list.get(0));
         assertEquals("Hadrian", list.get(1));
         assertEquals("William", list.get(2));

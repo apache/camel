@@ -41,9 +41,9 @@ public class FileEndpointReferenceRouteTest extends Assert {
         }
     }
     
-    public static class MyFileFilter implements GenericFileFilter {
+    public static class MyFileFilter<T> implements GenericFileFilter<T> {
 
-        public boolean accept(GenericFile file) {
+        public boolean accept(GenericFile<T> file) {
             // we only want report files 
             return file.getFileName().startsWith("report");
         }
@@ -59,8 +59,8 @@ public class FileEndpointReferenceRouteTest extends Assert {
         
         @Provides
         @JndiBind("fileFilter")
-        public GenericFileFilter getfileFilter() {
-            return new MyFileFilter();
+        public GenericFileFilter<?> getfileFilter() {
+            return new MyFileFilter<Object>();
         }
         
 

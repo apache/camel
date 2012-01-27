@@ -70,7 +70,7 @@ public class DefaultTraceEventHandler implements TraceEventHandler, Service {
     }
 
     @Override
-    public void traceExchange(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
+    public void traceExchange(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
         if (tracer.getDestination() != null || tracer.getDestinationUri() != null) {
 
             // create event exchange and add event information
@@ -123,13 +123,13 @@ public class DefaultTraceEventHandler implements TraceEventHandler, Service {
     }
 
     @Override
-    public Object traceExchangeIn(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
+    public Object traceExchangeIn(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception {
         traceExchange(node, target, traceInterceptor, exchange);
         return null;
     }
 
     @Override
-    public void traceExchangeOut(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception {
+    public void traceExchangeOut(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception {
         traceExchange(node, target, traceInterceptor, exchange);
     }
 

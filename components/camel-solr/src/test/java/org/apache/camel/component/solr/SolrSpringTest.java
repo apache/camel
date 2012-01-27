@@ -38,19 +38,49 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 @ContextConfiguration (locations = {"/SolrSpringTest-context.xml"})
 public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
 
+    static {
+        System.setProperty("SolrServer.Port", Integer.toString(SolrComponentTestSupport.PORT));
+    }
+
     private static JettySolrRunner solrRunner;
     private static CommonsHttpSolrServer solrServer;
 
     @Produce(uri = "direct:xml-start")
     protected ProducerTemplate xmlRoute;
 
+    @Produce(uri = "direct:xml-start-streaming")
+    protected ProducerTemplate xmlRouteStreaming;
+
     @Produce(uri = "direct:pdf-start")
     protected ProducerTemplate pdfRoute;
+
+    @Produce(uri = "direct:pdf-start-streaming")
+    protected ProducerTemplate pdfRouteStreaming;
 
     @DirtiesContext
     @Test
     public void endToEndIndexXMLDocuments() throws Exception {
         xmlRoute.sendBody(new File("src/test/resources/data/books.xml"));
+
+        // Check things were indexed.
+        QueryResponse response = executeSolrQuery("*:*");
+
+        assertEquals(0, response.getStatus());
+        assertEquals(4, response.getResults().getNumFound());
+
+        // Check fields were indexed correctly.
+        response = executeSolrQuery("title:Learning XML");
+
+        SolrDocument doc = response.getResults().get(0);
+        assertEquals("Learning XML", doc.getFieldValue("id"));
+        assertEquals(Arrays.asList("Web", "Technology", "Computers"), doc.getFieldValue("cat"));
+    }
+
+
+    @DirtiesContext
+    @Test
+    public void endToEndIndexXMLDocumentsStreaming() throws Exception {
+        xmlRouteStreaming.sendBody(new File("src/test/resources/data/books.xml"));
 
         // Check things were indexed.
         QueryResponse response = executeSolrQuery("*:*");
@@ -82,6 +112,22 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
         assertEquals(Arrays.asList("application/pdf"), doc.getFieldValue("content_type"));
     }
 
+    @DirtiesContext
+    @Test
+    public void endToEndIndexPDFDocumentStreaming() throws Exception {
+        pdfRouteStreaming.sendBody(new File("src/test/resources/data/tutorial.pdf"));
+
+        QueryResponse response = executeSolrQuery("*:*");
+
+        assertEquals(0, response.getStatus());
+        assertEquals(1, response.getResults().getNumFound());
+
+        SolrDocument doc = response.getResults().get(0);
+        assertEquals("Solr", doc.getFieldValue("subject"));
+        assertEquals("tutorial.pdf", doc.getFieldValue("id"));
+        assertEquals(Arrays.asList("application/pdf"), doc.getFieldValue("content_type"));
+    }
+
     @BeforeClass
     public static void beforeClass() throws Exception {
         // Set appropriate paths for Solr to use.
@@ -92,10 +138,10 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
         System.setProperty("solr.directoryFactory", "solr.RAMDirectoryFactory");
 
         // Start a Solr instance.
-        solrRunner = new JettySolrRunner("/solr", 8899);
+        solrRunner = new JettySolrRunner("/solr", SolrComponentTestSupport.PORT);
         solrRunner.start();
 
-        solrServer = new CommonsHttpSolrServer("http://localhost:8899/solr");
+        solrServer = new CommonsHttpSolrServer("http://localhost:" + SolrComponentTestSupport.PORT + "/solr");
     }
 
     @AfterClass

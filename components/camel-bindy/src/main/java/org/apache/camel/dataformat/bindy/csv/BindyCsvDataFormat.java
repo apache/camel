@@ -77,7 +77,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         // the body is not a prepared list so help a bit here and create one for us
         if (exchange.getContext().getTypeConverter().convertTo(List.class, body) == null) {
             models = new ArrayList<Map<String, Object>>();
-            Iterator it = ObjectHelper.createIterator(body);
+            Iterator<Object> it = ObjectHelper.createIterator(body);
             while (it.hasNext()) {
                 Object model = it.next();
                 String name = model.getClass().getName();

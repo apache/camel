@@ -46,7 +46,7 @@ public class SpringDebugBeforeTest extends CamelSpringTestSupport {
     }
 
     @Override
-    protected void debugBefore(Exchange exchange, Processor processor, ProcessorDefinition definition, String id, String label) {
+    protected void debugBefore(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, String id, String label) {
         before.add(id);
     }
 

@@ -80,8 +80,7 @@ public class KestrelComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
-    @SuppressWarnings("unchecked")
-    protected KestrelEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected KestrelEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // Copy the configuration as each endpoint can override defaults
         KestrelConfiguration config = getConfiguration().copy();
 

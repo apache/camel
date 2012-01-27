@@ -27,7 +27,6 @@ import org.junit.Test;
 /**
  * Test case for {@link Jt400Component}
  */
-@SuppressWarnings("unchecked")
 public class Jt400ComponentTest extends Assert {
 
     private Jt400Component component;
@@ -44,7 +43,7 @@ public class Jt400ComponentTest extends Assert {
     public void testCreateDatqEndpoint() throws Exception {
         Endpoint endpoint = component
             .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.dtaq",
-                            "/user:password@host/qsys.lib/library.lib/queue.dtaq", new HashMap());
+                            "/user:password@host/qsys.lib/library.lib/queue.dtaq", new HashMap<String, Object>());
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Jt400DataQueueEndpoint);
     }
@@ -56,7 +55,7 @@ public class Jt400ComponentTest extends Assert {
     public void testCreatePgmEndpoint() throws Exception {
         Endpoint endpoint = component
             .createEndpoint("jt400://user:password@host/qsys.lib/library.lib/queue.pgm",
-                            "/user:password@host/qsys.lib/library.lib/queue.pgm", new HashMap());
+                            "/user:password@host/qsys.lib/library.lib/queue.pgm", new HashMap<String, Object>());
         assertNotNull(endpoint);
         assertTrue(endpoint instanceof Jt400PgmEndpoint);
     }
@@ -68,7 +67,7 @@ public class Jt400ComponentTest extends Assert {
     public void testCreateEndpointForOtherObjectType() throws Exception {
         try {
             component.createEndpoint("jt400://user:password@host/qsys.lib/library.lib/program.xxx",
-                                     "/user:password@host/qsys.lib/library.lib/program.xxx", new HashMap());
+                                     "/user:password@host/qsys.lib/library.lib/program.xxx", new HashMap<String, Object>());
             fail("Exception should been thrown when trying to create an endpoint for an unsupported object type");
         } catch (CamelException e) {
             // this is just what we expected

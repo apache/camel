@@ -107,14 +107,14 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
                     Class<Converter> converterClass = resolver.resolveMandatoryClass(name, Converter.class);
                     Converter converter;
 
-                    Constructor con = null;
+                    Constructor<Converter> con = null;
                     try {
                         con = converterClass.getDeclaredConstructor(new Class[] {XStream.class});
                     } catch (Exception e) {
                          //swallow as we null check in a moment.
                     }
                     if (con != null) {
-                        converter = (Converter) con.newInstance(xstream);
+                        converter = con.newInstance(xstream);
                     } else {
                         converter = converterClass.newInstance();
                         try { 

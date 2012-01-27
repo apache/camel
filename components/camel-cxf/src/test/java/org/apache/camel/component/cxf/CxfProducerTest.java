@@ -107,7 +107,7 @@ public class CxfProducerTest extends Assert {
         org.apache.camel.Message out = exchange.getOut();
         String result = out.getBody(String.class);
         LOG.info("Received output text: " + result);
-        Map<String, Object> responseContext = CastUtils.cast((Map)out.getHeader(Client.RESPONSE_CONTEXT));
+        Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>)out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
         assertEquals("We should get the response context here", "UTF-8", responseContext.get(org.apache.cxf.message.Message.ENCODING));
         assertEquals("reply body on Camel", "echo " + TEST_MESSAGE, result);
@@ -130,7 +130,7 @@ public class CxfProducerTest extends Assert {
         org.apache.camel.Message out = exchange.getOut();
         String result = out.getBody(String.class);
         LOG.info("Received output text: " + result);
-        Map<String, Object> responseContext = CastUtils.cast((Map)out.getHeader(Client.RESPONSE_CONTEXT));
+        Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>)out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
         assertEquals("Get the wrong wsdl opertion name", "{http://apache.org/hello_world_soap_http}greetMe", responseContext.get("javax.xml.ws.wsdl.operation").toString());
         assertEquals("reply body on Camel", "Hello " + TEST_MESSAGE, result);

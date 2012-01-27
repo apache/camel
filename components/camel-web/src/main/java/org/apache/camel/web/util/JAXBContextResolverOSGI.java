@@ -40,7 +40,7 @@ public final class JAXBContextResolverOSGI implements ContextResolver<JAXBContex
         
     }
     
-    public JAXBContext getContext(Class objectType) {
+    public JAXBContext getContext(Class<?> objectType) {
         Package aPackage = objectType.getPackage();
         if (aPackage != null) {
             String name = aPackage.getName();

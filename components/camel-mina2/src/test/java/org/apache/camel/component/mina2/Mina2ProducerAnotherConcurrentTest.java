@@ -80,9 +80,9 @@ public class Mina2ProducerAnotherConcurrentTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from("direct:start").to("mina2:tcp://localhost:{{port}}?sync=true");
+                from("direct:start").to(String.format("mina2:tcp://localhost:%1$s?sync=true", getPort()));
 
-                from("mina2:tcp://localhost:{{port}}?sync=true").process(new Processor() {
+                from(String.format("mina2:tcp://localhost:%1$s?sync=true", getPort())).process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);

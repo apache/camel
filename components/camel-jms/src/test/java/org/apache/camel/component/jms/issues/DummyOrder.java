@@ -23,6 +23,7 @@ import java.io.Serializable;
  */
 public class DummyOrder implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private long orderId;
     private long itemId;
     private int quantity;

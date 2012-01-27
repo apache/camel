@@ -27,7 +27,7 @@ public class AnotherExampleBean {
     private String name;
     private double price;
     private Date date;
-    private Collection children;
+    private Collection<?> children;
     private Boolean goldCustomer;
     private boolean little;
 
@@ -67,11 +67,11 @@ public class AnotherExampleBean {
         this.date = date;
     }
 
-    public Collection getChildren() {
+    public Collection<?> getChildren() {
         return children;
     }
 
-    public void setChildren(Collection children) {
+    public void setChildren(Collection<?> children) {
         this.children = children;
     }
 

@@ -100,7 +100,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
                 }
             });
         }
-        org.springframework.integration.Message siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
+        org.springframework.integration.Message<?> siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
         // send the message to spring integration
         log.debug("Sending {} to OutputChannel: {}", siOutmessage, outputChannel);

@@ -27,20 +27,16 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 public class MyPostProcessor implements BeanPostProcessor {
     
     public Object postProcessBeforeInitialization(Object bean, String name) throws BeansException {
-        System.out.println("Invoked before Initialization on " + bean + " name " + name);
         if (bean instanceof Cheese) {
             Cheese cheese = (Cheese) bean;
-            System.out.println("Before Initialization Invoking Cheese");
             cheese.doCheese();
         }
         return bean;
     }
 
     public Object postProcessAfterInitialization(Object bean, String name) throws BeansException {
-        System.out.println("Invoked after Initialization on " + bean + " name " + name);
         if (bean instanceof Cheese) {
             Cheese cheese = (Cheese) bean;
-            System.out.println("After Initialization Invoking Cheese");
             cheese.doCheese();
         }
         return bean;

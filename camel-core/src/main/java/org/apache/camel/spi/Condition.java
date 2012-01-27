@@ -40,7 +40,7 @@ public interface Condition {
      * @param definition the present location in the route where the {@link Exchange} is located at
      * @return <tt>true</tt> to match, <tt>false</tt> otherwise
      */
-    boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition definition);
+    boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition);
 
     /**
      * Does the condition match

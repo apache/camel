@@ -35,7 +35,7 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myFilter", new MyFileFilter());
+        jndi.bind("myFilter", new MyFileFilter<Object>());
         return jndi;
     }
 
@@ -72,8 +72,8 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
     }
 
     // START SNIPPET: e1
-    public class MyFileFilter implements GenericFileFilter {
-        public boolean accept(GenericFile file) {
+    public class MyFileFilter<T> implements GenericFileFilter<T> {
+        public boolean accept(GenericFile<T> file) {
             // we don't accept any files starting with skip in the name
             return !file.getFileName().startsWith("skip");
         }

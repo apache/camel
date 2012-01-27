@@ -274,9 +274,8 @@ public class SignatureTests extends CamelTestSupport {
         return mock;
     }
 
-    @SuppressWarnings("unchecked")
     public Exchange doTestSignatureRoute(RouteBuilder builder) throws Exception {
-        return doSignatureRouteTest(builder, null, Collections.EMPTY_MAP);
+        return doSignatureRouteTest(builder, null, Collections.<String, Object>emptyMap());
     }
 
     public Exchange doSignatureRouteTest(RouteBuilder builder, Exchange e, Map<String, Object> headers) throws Exception {

@@ -40,9 +40,9 @@
 			<artifactId>camel-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.servicemix.bundles</groupId>
-			<artifactId>org.apache.servicemix.bundles.shiro</artifactId>
-			<version>${shiro-bundle-version}</version>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-core</artifactId>
+			<version>${shiro-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>

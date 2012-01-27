@@ -28,7 +28,7 @@
     <route>
       <from uri="direct:start"/>
       <filter>
-        <xpath>/foo:person[@name='James']</xpath>
+        <xpath logNamespaces="true">/foo:person[@name='James']</xpath>
         <to uri="mock:result"/>
       </filter>
     </route>

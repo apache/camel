@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified"
+           elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:p="org.person"
+           targetNamespace="org.person"
+           xmlns:h="org.health.check.person">
+    <xs:import schemaLocation="health.xsd" namespace="org.health.check.person"/>
+    <xs:element name="person" type="p:personType">
+</xs:element>
+<xs:complexType name="personType">
+    <xs:sequence>
+        <xs:element type="xs:string" name="firstName"/>
+        <xs:element type="xs:string" name="lastName"/>
+        <xs:element type="xs:string" name="city"/>
+        <xs:element ref="h:health" maxOccurs="1" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="user"/>
+</xs:complexType>
+</xs:schema>

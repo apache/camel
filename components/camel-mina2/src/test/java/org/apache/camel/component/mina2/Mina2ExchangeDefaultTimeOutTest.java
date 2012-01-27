@@ -32,7 +32,7 @@ public class Mina2ExchangeDefaultTimeOutTest extends BaseMina2Test {
     @Test
     public void testDefaultTimeOut() {
         try {
-            String result = (String) template.requestBody("mina2:tcp://localhost:{{port}}?textline=true&sync=true", "Hello World");
+            String result = (String) template.requestBody(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=true", getPort()), "Hello World");
             assertEquals("Okay I will be faster in the future", result);
         } catch (RuntimeCamelException e) {
             fail("Should not get a RuntimeCamelException");
@@ -43,7 +43,7 @@ public class Mina2ExchangeDefaultTimeOutTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina2:tcp://localhost:{{port}}?textline=true&sync=true").process(new Processor() {
+                from(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=true", getPort())).process(new Processor() {
 
                     public void process(Exchange e) throws Exception {
                         assertEquals("Hello World", e.getIn().getBody(String.class));

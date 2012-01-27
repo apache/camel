@@ -40,11 +40,11 @@ public class ReportIncidentRoutesTest {
 
     @BeforeClass
     public static void setupFreePort() throws Exception {
-        // find a free port number from 9100 onwards, and write that in the custom.properties file
+        // find a free port number, and write that in the custom.properties file
         // which we will use for the unit tests, to avoid port number in use problems
-        int port = AvailablePortFinder.getNextAvailable(9100);
+        int port = AvailablePortFinder.getNextAvailable();
         String s = "proxy.port=" + port;
-        int port2 = AvailablePortFinder.getNextAvailable(port + 1);
+        int port2 = AvailablePortFinder.getNextAvailable();
         String s2 = "real.port=" + port2;
 
         File custom = new File("target/custom.properties");

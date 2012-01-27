@@ -66,7 +66,7 @@ public interface Breakpoint {
      * @param processor  the {@link Processor} about to be processed
      * @param definition the {@link org.apache.camel.model.ProcessorDefinition} definition of the processor
      */
-    void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition);
+    void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition);
 
     /**
      * Callback invoked when the breakpoint was hit and the {@link Exchange} has been processed (after).
@@ -76,7 +76,7 @@ public interface Breakpoint {
      * @param definition the {@link org.apache.camel.model.ProcessorDefinition} definition of the processor
      * @param timeTaken  time in millis it took to process the {@link Exchange} - time spend in breakpoint callbacks may affect this time
      */
-    void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken);
+    void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken);
 
     /**
      * Callback invoked when the breakpoint was hit and any of the {@link Exchange} {@link EventObject event}s occurred.
@@ -87,6 +87,6 @@ public interface Breakpoint {
      *                   may be <tt>null</tt> if not possible to resolve from tracing
      * @see org.apache.camel.management.event.AbstractExchangeEvent
      */
-    void onEvent(Exchange exchange, EventObject event, ProcessorDefinition definition);
+    void onEvent(Exchange exchange, EventObject event, ProcessorDefinition<?> definition);
 
 }

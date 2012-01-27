@@ -30,14 +30,14 @@ import junit.framework.TestCase;
 public class CollectionHelperTest extends TestCase {
 
     private String[] names = new String[]{"Claus", "Willem", "Jonathan"};
-    private List list = Arrays.asList(names);
+    private List<String> list = Arrays.asList(names);
 
     public void testCollectionAsCommaDelimitedString() {
         assertEquals("Claus,Willem,Jonathan", CollectionHelper.collectionAsCommaDelimitedString(names));
         assertEquals("Claus,Willem,Jonathan", CollectionHelper.collectionAsCommaDelimitedString(list));
 
         assertEquals("", CollectionHelper.collectionAsCommaDelimitedString((String[]) null));
-        assertEquals("", CollectionHelper.collectionAsCommaDelimitedString((Collection) null));
+        assertEquals("", CollectionHelper.collectionAsCommaDelimitedString((Collection<?>) null));
 
         assertEquals("Claus", CollectionHelper.collectionAsCommaDelimitedString(new String[]{"Claus"}));
     }
@@ -54,7 +54,7 @@ public class CollectionHelperTest extends TestCase {
     }
 
     public void testAppendValue() {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         CollectionHelper.appendValue(map, "foo", 123);
         assertEquals(1, map.size());
 
@@ -64,7 +64,7 @@ public class CollectionHelperTest extends TestCase {
         CollectionHelper.appendValue(map, "bar", 789);
         assertEquals(2, map.size());
 
-        List values = (List) map.get("foo");
+        List<?> values = (List<?>) map.get("foo");
         assertEquals(2, values.size());
         assertEquals(123, values.get(0));
         assertEquals(456, values.get(1));

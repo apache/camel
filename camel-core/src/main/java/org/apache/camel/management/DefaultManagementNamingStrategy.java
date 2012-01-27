@@ -78,22 +78,23 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         }
     }
 
-    public ObjectName getObjectNameForCamelContext(String name) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForCamelContext(String managementName, String name) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(name)).append(",");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(managementName)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_CONTEXT + ",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(name));
         return createObjectName(buffer);
     }
 
     public ObjectName getObjectNameForCamelContext(CamelContext context) throws MalformedObjectNameException {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
-        buffer.append(KEY_TYPE + "=" + TYPE_CONTEXT + ",");
-        buffer.append(KEY_NAME + "=").append(ObjectName.quote(context.getName()));
-        return createObjectName(buffer);
+        // prefer to use the given management name if previously assigned
+        String managementName = context.getManagementName();
+        if (managementName == null) {
+            managementName = context.getManagementNameStrategy().getName();
+        }
+        String name = context.getName();
+        return getObjectNameForCamelContext(managementName, name);
     }
 
     public ObjectName getObjectNameForEndpoint(Endpoint endpoint) throws MalformedObjectNameException {

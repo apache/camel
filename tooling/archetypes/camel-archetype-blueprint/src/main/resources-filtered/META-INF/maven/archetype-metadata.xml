@@ -31,7 +31,10 @@
       <defaultValue>${maven-compiler-plugin-version}</defaultValue>
     </requiredProperty>
     <requiredProperty key="maven-bundle-plugin-version">
-      <defaultValue>2.3.4</defaultValue>
+      <defaultValue>${maven-bundle-version}</defaultValue>
+    </requiredProperty>
+    <requiredProperty key="maven-surefire-plugin-version">
+      <defaultValue>2.11</defaultValue>
     </requiredProperty>
     <requiredProperty key="slf4j-version">
       <defaultValue>${slf4j-version}</defaultValue>
@@ -54,6 +57,12 @@
       <directory>src/test/java</directory>
       <includes>
         <include>**/*.java</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/test/resources</directory>
+      <includes>
+        <include>**/*</include>
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">

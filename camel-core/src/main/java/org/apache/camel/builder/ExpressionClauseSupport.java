@@ -117,8 +117,7 @@ public class ExpressionClauseSupport<T> {
     /**
      * An expression of an inbound message body converted to the expected type
      */
-    @SuppressWarnings("unchecked")
-    public T body(Class expectedType) {
+    public T body(Class<?> expectedType) {
         return expression(ExpressionBuilder.bodyExpression(expectedType));
     }
 
@@ -132,8 +131,7 @@ public class ExpressionClauseSupport<T> {
     /**
      * An expression of an outbound message body converted to the expected type
      */
-    @SuppressWarnings("unchecked")
-    public T outBody(Class expectedType) {
+    public T outBody(Class<?> expectedType) {
         return expression(ExpressionBuilder.outBodyExpression(expectedType));
     }
 
@@ -163,6 +161,13 @@ public class ExpressionClauseSupport<T> {
      */
     public T outHeaders() {
         return expression(ExpressionBuilder.outHeadersExpression());
+    }
+
+    /**
+     * An expression of the inbound message attachments
+     */
+    public T attachments() {
+        return expression(ExpressionBuilder.attachmentValuesExpression());
     }
 
     /**

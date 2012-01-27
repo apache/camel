@@ -124,7 +124,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
 
         // use another thread to perform the shutdowns so we can support timeout
-        Future future = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout));
+        Future<?> future = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout));
         try {
             if (timeout > 0) {
                 future.get(timeout, timeUnit);

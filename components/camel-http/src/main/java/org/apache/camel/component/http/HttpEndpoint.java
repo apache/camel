@@ -59,6 +59,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private int proxyPort;
     private String authMethodPriority;
     private boolean transferException;
+    private boolean traceEnabled;
 
     public HttpEndpoint() {
     }
@@ -118,7 +119,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
         if (authMethodPriority != null) {
             List<String> authPrefs = new ArrayList<String>();
-            Iterator it = getCamelContext().getTypeConverter().convertTo(Iterator.class, authMethodPriority);
+            Iterator<?> it = getCamelContext().getTypeConverter().convertTo(Iterator.class, authMethodPriority);
             int i = 1;
             while (it.hasNext()) {
                 Object value = it.next();
@@ -318,5 +319,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
+    }
+
+    public boolean isTraceEnabled() {
+        return this.traceEnabled;
+    }
+
+    public void setTraceEnabled(boolean traceEnabled) {
+        this.traceEnabled = traceEnabled;
     }
 }

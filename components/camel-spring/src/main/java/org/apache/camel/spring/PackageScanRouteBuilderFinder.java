@@ -57,7 +57,7 @@ public class PackageScanRouteBuilderFinder {
      */
     public void appendBuilders(List<RoutesBuilder> list) throws IllegalAccessException, InstantiationException {
         Set<Class<?>> classes = resolver.findImplementations(RoutesBuilder.class, packages);
-        for (Class aClass : classes) {
+        for (Class<?> aClass : classes) {
             LOG.trace("Found RouteBuilder class: {}", aClass);
 
             // certain beans should be ignored
@@ -72,7 +72,8 @@ public class PackageScanRouteBuilderFinder {
             }
 
             // type is valid so create and instantiate the builder
-            RoutesBuilder builder = instantiateBuilder(aClass);
+            @SuppressWarnings("unchecked")
+            RoutesBuilder builder = instantiateBuilder((Class<? extends RoutesBuilder>) aClass);
             if (beanPostProcessor != null) {
                 // Inject the annotated resource
                 beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
@@ -86,7 +87,7 @@ public class PackageScanRouteBuilderFinder {
      * Lets ignore beans that are explicitly configured in the Spring XML files
      */
     protected boolean shouldIgnoreBean(Class<?> type) {
-        Map beans = applicationContext.getBeansOfType(type, true, true);
+        Map<String, ?> beans = applicationContext.getBeansOfType(type, true, true);
         if (beans == null || beans.isEmpty()) {
             return false;
         }
@@ -94,17 +95,21 @@ public class PackageScanRouteBuilderFinder {
     }
 
     /**
-     * Returns true if the object is non-abstract and supports a zero argument constructor
+     * Returns <tt>true</tt>if the class is a public, non-abstract class
      */
-    protected boolean isValidClass(Class type) {
+    protected boolean isValidClass(Class<?> type) {
+        // should skip non public classes
+        if (!Modifier.isPublic(type.getModifiers())) {
+            return false;
+        }
+
         if (!Modifier.isAbstract(type.getModifiers()) && !type.isInterface()) {
             return true;
         }
         return false;
     }
 
-    @SuppressWarnings("unchecked")
-    protected RoutesBuilder instantiateBuilder(Class type) throws IllegalAccessException, InstantiationException {
-        return (RoutesBuilder) camelContext.getInjector().newInstance(type);
+    protected RoutesBuilder instantiateBuilder(Class<? extends RoutesBuilder> type) throws IllegalAccessException, InstantiationException {
+        return camelContext.getInjector().newInstance(type);
     }
 }

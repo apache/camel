@@ -34,11 +34,9 @@ public class HazelcastQueueProducer extends DefaultProducer {
 
     private IQueue<Object> queue;
     private HazelcastComponentHelper helper = new HazelcastComponentHelper();
-    private HazelcastInstance hazelcastInstance;
 
     public HazelcastQueueProducer(HazelcastInstance hazelcastInstance, Endpoint endpoint, String queueName) {
         super(endpoint);
-        this.hazelcastInstance = hazelcastInstance;
         this.queue = hazelcastInstance.getQueue(queueName);
     }
 

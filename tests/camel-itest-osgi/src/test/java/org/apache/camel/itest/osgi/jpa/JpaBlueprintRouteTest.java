@@ -30,7 +30,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
-import org.osgi.service.blueprint.container.BlueprintContainer;
 
 //import static org.ops4j.pax.exam.CoreOptions.equinox;
 //import static org.ops4j.pax.exam.CoreOptions.felix;
@@ -45,7 +44,6 @@ public class JpaBlueprintRouteTest extends OSGiBlueprintTestSupport {
     @Test
     public void testBlueprintRouteJpa() throws Exception {
         getInstalledBundle("CamelBlueprintJpaTestBundle").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintJpaTestBundle)", 30000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintJpaTestBundle)", 20000);
 
         MockEndpoint mock = ctx.getEndpoint("mock:result", MockEndpoint.class);

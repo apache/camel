@@ -182,8 +182,7 @@ public final class IOHelper {
     }
     
     public static void copyAndCloseInput(InputStream input, OutputStream output) throws IOException {
-        copy(input, output);
-        close(input, null, LOG);
+        copyAndCloseInput(input, output, DEFAULT_BUFFER_SIZE);
     }
     
     public static void copyAndCloseInput(InputStream input, OutputStream output, int bufferSize) throws IOException {
@@ -232,6 +231,17 @@ public final class IOHelper {
      */
     public static void close(Closeable closeable) {
         close(closeable, null, LOG);
+    }
+
+    /**
+     * Closes the given resources if they are available.
+     * 
+     * @param closeables the objects to close
+     */
+    public static void close(Closeable... closeables) {
+        for (Closeable closeable : closeables) {
+            close(closeable, null, LOG);
+        }
     }
 
     public static void validateCharset(String charset) throws UnsupportedCharsetException {

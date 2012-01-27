@@ -38,7 +38,7 @@ public class AuthTokenLoginFailureTest extends JcrAuthTestBase {
         Session session = getRepository().login(
                 new SimpleCredentials("admin", "admin".toCharArray()));
         try {
-            Node node = session.getNodeByUUID(uuid);
+            Node node = session.getNodeByIdentifier(uuid);
             assertNotNull(node);
             assertEquals(BASE_REPO_PATH + "/node", node.getPath());
         } finally {

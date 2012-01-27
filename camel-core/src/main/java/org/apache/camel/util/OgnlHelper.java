@@ -164,14 +164,23 @@ public final class OgnlHelper {
      * Regular expression with repeating groups is a pain to get right
      * and then nobody understands the reg exp afterwards.
      * So we use a bit ugly/low-level Java code to split the OGNL into methods.
+     *
+     * @param ognl the ognl expression
+     * @return a list of methods, will return an empty list, if ognl expression has no methods
      */
     public static List<String> splitOgnl(String ognl) {
         List<String> methods = new ArrayList<String>();
 
+        // return an empty list if ognl is empty
+        if (ObjectHelper.isEmpty(ognl)) {
+            return methods;
+        }
+
         StringBuilder sb = new StringBuilder();
 
         int j = 0; // j is used as counter per method
-        boolean squareBracket = false; // special to keep track if we are inside a square bracket block - (eg [foo])
+        boolean squareBracket = false; // special to keep track if we are inside a square bracket block, eg: [foo]
+        boolean parenthesisBracket = false; // special to keep track if we are inside a parenthesis block, eg: bar(${body}, ${header.foo})
         for (int i = 0; i < ognl.length(); i++) {
             char ch = ognl.charAt(i);
             // special for starting a new method
@@ -179,12 +188,16 @@ public final class OgnlHelper {
                     || (ch != '.' && ch != '?' && ch != ']')) {
                 sb.append(ch);
                 // special if we are doing square bracket
-                if (ch == '[') {
+                if (ch == '[' && !parenthesisBracket) {
                     squareBracket = true;
+                } else if (ch == '(') {
+                    parenthesisBracket = true;
+                } else if (ch == ')') {
+                    parenthesisBracket = false;
                 }
                 j++; // advance
             } else {
-                if (ch == '.' && !squareBracket) {
+                if (ch == '.' && !squareBracket && !parenthesisBracket) {
                     // only treat dot as a method separator if not inside a square bracket block
                     // as dots can be used in key names when accessing maps
 
@@ -205,7 +218,7 @@ public final class OgnlHelper {
 
                     // reset j to begin a new method
                     j = 0;
-                } else if (ch == ']') {
+                } else if (ch == ']' && !parenthesisBracket) {
                     // append ending ] to method name
                     sb.append(ch);
                     String s = sb.toString();
@@ -223,9 +236,14 @@ public final class OgnlHelper {
                     squareBracket = false;
                 }
 
-                // and dont lose the char if its not an ] end marker (as we already added that)
-                if (ch != ']') {
+                // and don't lose the char if its not an ] end marker (as we already added that)
+                if (ch != ']' || parenthesisBracket) {
                     sb.append(ch);
+                }
+
+                // check for end of parenthesis
+                if (ch == ')') {
+                    parenthesisBracket = false;
                 }
 
                 // only advance if already begun on the new method

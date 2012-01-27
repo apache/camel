@@ -42,7 +42,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         super(null, false);
     }
 
-    protected Class getBeanClass(Element element) {
+    protected Class<?> getBeanClass(Element element) {
         ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
 
         if (ObjectHelper.isNotEmpty(element.getAttribute("type"))) {
@@ -177,7 +177,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
     
     protected class RedeliveryPolicyDefinitionParser extends BeanDefinitionParser {
 
-        public RedeliveryPolicyDefinitionParser(Class type) {
+        public RedeliveryPolicyDefinitionParser(Class<?> type) {
             super(type, false);
         }
 

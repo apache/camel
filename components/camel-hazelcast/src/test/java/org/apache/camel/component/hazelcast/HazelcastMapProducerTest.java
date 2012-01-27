@@ -30,6 +30,7 @@ import org.junit.Test;
 
 public class HazelcastMapProducerTest extends CamelTestSupport implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private IMap<String, Object> map;
 
     @Override

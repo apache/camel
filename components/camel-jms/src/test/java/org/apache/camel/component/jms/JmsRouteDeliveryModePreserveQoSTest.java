@@ -44,7 +44,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // should be persistent by default
-        Map map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
+        Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
         assertNotNull(map);
         assertEquals(DeliveryMode.PERSISTENT, map.get("JMSDeliveryMode"));
     }
@@ -59,7 +59,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // should preserve non persistent
-        Map map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
+        Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
         assertNotNull(map);
         assertEquals(DeliveryMode.NON_PERSISTENT, map.get("JMSDeliveryMode"));
     }
@@ -74,7 +74,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // should preserve non persistent
-        Map map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
+        Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
         assertNotNull(map);
         assertEquals(DeliveryMode.NON_PERSISTENT, map.get("JMSDeliveryMode"));
     }
@@ -89,7 +89,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // should preserve persistent
-        Map map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
+        Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
         assertNotNull(map);
         assertEquals(DeliveryMode.PERSISTENT, map.get("JMSDeliveryMode"));
     }
@@ -104,7 +104,7 @@ public class JmsRouteDeliveryModePreserveQoSTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // should preserve persistent
-        Map map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
+        Map<String, Object> map = mock.getReceivedExchanges().get(0).getIn().getHeaders();
         assertNotNull(map);
         assertEquals(DeliveryMode.PERSISTENT, map.get("JMSDeliveryMode"));
     }

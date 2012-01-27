@@ -104,7 +104,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     /**
      * An expression of an outbound message body converted to the expected type
      */
-    public T outBody(Class expectedType) {
+    public T outBody(Class<?> expectedType) {
         return delegate.outBody(expectedType);
     }
 
@@ -134,6 +134,13 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      */
     public T outHeaders() {
         return delegate.outHeaders();
+    }
+
+    /**
+     * An expression of the inbound message attachments
+     */
+    public T attachments() {
+        return delegate.attachments();
     }
 
     /**

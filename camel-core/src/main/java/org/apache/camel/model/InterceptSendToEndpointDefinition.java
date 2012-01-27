@@ -153,7 +153,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         }
 
         // if there is a when definition at first, then its a predicate for this interceptor
-        ProcessorDefinition first = getOutputs().get(0);
+        ProcessorDefinition<?> first = getOutputs().get(0);
         if (first instanceof WhenDefinition && !(first instanceof WhenSkipSendToEndpointDefinition)) {
             WhenDefinition when = (WhenDefinition) first;
 
@@ -170,7 +170,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
             // move this outputs to the when, expect the first one
             // as the first one is the interceptor itself
             for (int i = 1; i < outputs.size(); i++) {
-                ProcessorDefinition out = outputs.get(i);
+                ProcessorDefinition<?> out = outputs.get(i);
                 newWhen.addOutput(out);
             }
             // remove the moved from the original output, by just keeping the first one

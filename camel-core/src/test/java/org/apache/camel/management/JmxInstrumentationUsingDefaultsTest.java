@@ -19,7 +19,6 @@ package org.apache.camel.management;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import javax.management.MBeanServer;

@@ -58,8 +58,10 @@ public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+            @SuppressWarnings("unchecked")
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")

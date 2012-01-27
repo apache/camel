@@ -39,7 +39,7 @@ public class SplitterUsingBeanReturningMessageTest extends ContextTestSupport {
     }
 
     public static class MyOtherSplitterBean {
-        public List split(Exchange exchange) {
+        public List<?> split(Exchange exchange) {
 
             Message in = exchange.getIn();
             assertNotNull(in.toString());

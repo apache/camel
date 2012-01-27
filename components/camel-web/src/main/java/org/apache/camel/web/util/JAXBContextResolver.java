@@ -41,7 +41,7 @@ public  class JAXBContextResolver implements ContextResolver<JAXBContext> {
         this.context = JAXBContext.newInstance(packages);
     }
 
-    public JAXBContext getContext(Class objectType) {
+    public JAXBContext getContext(Class<?> objectType) {
         Package aPackage = objectType.getPackage();
         if (aPackage != null) {
             String name = aPackage.getName();

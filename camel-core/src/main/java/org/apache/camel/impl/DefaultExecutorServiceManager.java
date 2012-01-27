@@ -123,7 +123,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     @Override
     public void setThreadNamePattern(String threadNamePattern) {
         // must set camel id here in the pattern and let the other placeholders be resolved on demand
-        String name = threadNamePattern.replaceFirst("\\$\\{camelId\\}", this.camelContext.getName());
+        String name = threadNamePattern.replaceFirst("#camelId#", this.camelContext.getName());
         this.threadNamePattern = name;
     }
     
@@ -282,7 +282,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     protected void doStart() throws Exception {
         if (threadNamePattern == null) {
             // set default name pattern which includes the camel context name
-            threadNamePattern = "Camel (" + camelContext.getName() + ") thread #${counter} - ${name}";
+            threadNamePattern = "Camel (" + camelContext.getName() + ") thread ##counter# - #name#";
         }
     }
 
@@ -335,7 +335,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
         // extract id from source
         if (source instanceof NamedNode) {
-            id = ((OptionalIdentifiedDefinition) source).idOrCreate(this.camelContext.getNodeIdFactory());
+            id = ((OptionalIdentifiedDefinition<?>) source).idOrCreate(this.camelContext.getNodeIdFactory());
             // and let source be the short name of the pattern
             sourceId = ((NamedNode) source).getShortName();
         } else if (source instanceof String) {
@@ -353,7 +353,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
         // extract route id if possible
         if (source instanceof ProcessorDefinition) {
-            RouteDefinition route = ProcessorDefinitionHelper.getRoute((ProcessorDefinition) source);
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute((ProcessorDefinition<?>) source);
             if (route != null) {
                 routeId = route.idOrCreate(this.camelContext.getNodeIdFactory());
             }

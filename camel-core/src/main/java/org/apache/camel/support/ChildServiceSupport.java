@@ -120,11 +120,10 @@ public abstract class ChildServiceSupport extends ServiceSupport {
         }
     }
     
-    @SuppressWarnings("unchecked")
     protected void addChildService(Object childService) {
         synchronized (this) {
             if (childServices == null) {
-                childServices = new LinkedHashSet();
+                childServices = new LinkedHashSet<Object>();
             }
         }
         childServices.add(childService);

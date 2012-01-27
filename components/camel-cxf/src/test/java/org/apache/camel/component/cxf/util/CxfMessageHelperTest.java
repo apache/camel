@@ -85,7 +85,7 @@ public class CxfMessageHelperTest extends Assert {
         exchange.getIn().setHeader("soapAction", "urn:hello:world");
         message = CxfMessageHelper.getCxfInMessage(headerFilterStrategy, exchange, false);
         // test message
-        Map<String, List<String>> headers = CastUtils.cast((Map)message.get(Message.PROTOCOL_HEADERS));
+        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));
         
         // verify there is no duplicate
         assertNotNull("The headers must be present", headers);

@@ -36,7 +36,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
-import org.apache.camel.core.xml.scan.PatternBasedPackageScanFilter;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
@@ -114,13 +113,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         contextClassLoaderOnStart = Thread.currentThread().getContextClassLoader();
     }
 
-    public Object getObject() throws Exception {
+    public T getObject() throws Exception {
         return getContext();
     }
 
-    public Class getObjectType() {
-        return CamelContext.class;
-    }
+    public abstract Class<T> getObjectType();
 
     public boolean isSingleton() {
         return true;
@@ -398,6 +395,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             PropertiesComponent pc = new PropertiesComponent();
             pc.setLocation(def.getLocation());
 
+            if (def.isIgnoreMissingLocation() != null) {
+                pc.setIgnoreMissingLocation(def.isIgnoreMissingLocation());
+            }
+
             // if using a custom resolver
             if (ObjectHelper.isNotEmpty(def.getPropertiesResolverRef())) {
                 PropertiesResolver resolver = CamelContextHelper.mandatoryLookup(getContext(), def.getPropertiesResolverRef(),
@@ -496,6 +497,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getUseBreadcrumb();
 
+    public abstract String getManagementNamePattern();
+
     public abstract Boolean getLazyLoadTypeConverters();
 
     public abstract CamelJMXAgentDefinition getCamelJMXAgent();
@@ -553,6 +556,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getUseBreadcrumb() != null) {
             ctx.setUseBreadcrumb(CamelContextHelper.parseBoolean(getContext(), getUseBreadcrumb()));
+        }
+        if (getManagementNamePattern() != null) {
+            ctx.getManagementNameStrategy().setNamePattern(getManagementNamePattern());
         }
         if (getShutdownRoute() != null) {
             ctx.setShutdownRoute(getShutdownRoute());

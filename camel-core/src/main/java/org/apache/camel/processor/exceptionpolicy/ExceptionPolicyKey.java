@@ -27,14 +27,14 @@ import org.apache.camel.model.WhenDefinition;
 public final class ExceptionPolicyKey {
 
     private final String routeId;
-    private final Class exceptionClass;
+    private final Class<? extends Throwable> exceptionClass;
     private final WhenDefinition when;
 
     /**
      * @deprecated will be removed in the near future, use the other constructor
      */
     @Deprecated
-    public ExceptionPolicyKey(Class exceptionClass, WhenDefinition when) {
+    public ExceptionPolicyKey(Class<? extends Throwable> exceptionClass, WhenDefinition when) {
         this(null, exceptionClass, when);
     }
 
@@ -45,7 +45,7 @@ public final class ExceptionPolicyKey {
      * @param exceptionClass   the exception class
      * @param when             optional predicate when the exception clause should trigger
      */
-    public ExceptionPolicyKey(String routeId, Class exceptionClass, WhenDefinition when) {
+    public ExceptionPolicyKey(String routeId, Class<? extends Throwable> exceptionClass, WhenDefinition when) {
         this.routeId = routeId;
         this.exceptionClass = exceptionClass;
         this.when = when;
@@ -67,7 +67,7 @@ public final class ExceptionPolicyKey {
      * @deprecated will be removed in the near future. Use the constructor instead.
      */
     @Deprecated
-    public static ExceptionPolicyKey newInstance(Class exceptionClass) {
+    public static ExceptionPolicyKey newInstance(Class<? extends Throwable> exceptionClass) {
         return new ExceptionPolicyKey(exceptionClass, null);
     }
 
@@ -75,7 +75,7 @@ public final class ExceptionPolicyKey {
      * @deprecated will be removed in the near future. Use the constructor instead.
      */
     @Deprecated
-    public static ExceptionPolicyKey newInstance(Class exceptionClass, WhenDefinition when) {
+    public static ExceptionPolicyKey newInstance(Class<? extends Throwable> exceptionClass, WhenDefinition when) {
         return new ExceptionPolicyKey(exceptionClass, when);
     }
 

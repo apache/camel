@@ -18,6 +18,8 @@ package org.apache.camel.component.gae.mail;
 
 import java.util.Map;
 
+import com.google.appengine.api.mail.MailService.Message;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.OutboundBinding;
 import org.apache.camel.impl.DefaultComponent;
@@ -32,7 +34,7 @@ public class GMailComponent extends DefaultComponent {
     @Override
     @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        OutboundBinding binding = resolveAndRemoveReferenceParameter(
+        OutboundBinding<GMailEndpoint, Message, Void> binding = resolveAndRemoveReferenceParameter(
                 parameters, "outboundBindingRef", OutboundBinding.class, new GMailBinding());
         GMailEndpoint endpoint = new GMailEndpoint(uri, this, remaining);
         endpoint.setOutboundBinding(binding);

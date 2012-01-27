@@ -55,7 +55,7 @@ public class BindyInlinedQuotesCsvUnmarshallTest extends AbstractJUnit4SpringCon
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        Map map = (Map) result.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        Map<?, ?> map = (Map<?, ?>) result.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
         BindyDoubleQuotesCsvUnmarshallTest.Order order = (BindyDoubleQuotesCsvUnmarshallTest.Order) map.values().iterator().next();
         Assert.assertEquals(10, order.getOrderNr());
         Assert.assertEquals("Pauline", order.getFirstName());

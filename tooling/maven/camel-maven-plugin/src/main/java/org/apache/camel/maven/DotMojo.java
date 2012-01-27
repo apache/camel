@@ -31,6 +31,8 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.apache.camel.util.IOHelper;
+
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
@@ -39,6 +41,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
+
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -359,7 +362,7 @@ public class DotMojo extends AbstractMavenReport {
                 getLog().info("Running Camel embedded to load Spring XML files from default path: META-INF/spring/*.xml");
             }
 
-            List list = project.getTestClasspathElements();
+            List<?> list = project.getTestClasspathElements();
             getLog().debug("Using classpath: " + list);
 
             EmbeddedMojo mojo = new EmbeddedMojo();
@@ -529,7 +532,7 @@ public class DotMojo extends AbstractMavenReport {
     private void addFileToBuffer(PrintWriter out, File file) throws MojoExecutionException {
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(file));
+            reader = IOHelper.buffered(new FileReader(file));
             while (true) {
                 String line = reader.readLine();
                 if (line == null) {

@@ -31,6 +31,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class HazelcastMapProducerForSpringTest extends CamelSpringTestSupport implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private IMap<String, Object> map;
 
     @Override

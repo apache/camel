@@ -41,6 +41,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -99,6 +100,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setNameStrategy(CamelContextNameStrategy nameStrategy);
 
     /**
+     * Gets the current management name strategy
+     *
+     * @return management name strategy
+     */
+    ManagementNameStrategy getManagementNameStrategy();
+
+    /**
+     * Sets a custom management name strategy
+     *
+     * @param nameStrategy name strategy
+     */
+    void setManagementNameStrategy(ManagementNameStrategy nameStrategy);
+
+    /**
      * Gets the name this {@link CamelContext} was registered in JMX.
      * <p/>
      * The reason that a {@link CamelContext} can have a different name in JMX is the fact to remedy for name clash
@@ -108,13 +123,6 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the management name
      */
     String getManagementName();
-
-    /**
-     * Sets the name this {@link CamelContext} was registered in JMX.
-     *
-     * @param name  the actual name used when registering this {@link CamelContext} in JMX
-     */
-    void setManagementName(String name);
 
     /**
      * Gets the version of the this context.
@@ -351,7 +359,11 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Adds a collection of routes to this context using the given builder
-     * to build them
+     * to build them.
+     * <p/>
+     * <b>Important:</b> The added routes will <b>only</b> be started, if {@link CamelContext}
+     * is already started. You may want to check the state of {@link CamelContext} before
+     * adding the routes, using the {@link org.apache.camel.CamelContext#getStatus()} method.
      *
      * @param builder the builder which will create the routes and add them to this context
      * @throws Exception if the routes could not be created for whatever reason

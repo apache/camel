@@ -35,7 +35,7 @@ public interface IBatisProcessingStrategy {
      * @return Results of the query as a {@link List}
      * @throws Exception can be thrown in case of error
      */
-    List poll(IBatisConsumer consumer, IBatisEndpoint endpoint) throws Exception;
+    List<Object> poll(IBatisConsumer consumer, IBatisEndpoint endpoint) throws Exception;
 
     /**
      * Commit callback if there are a statements to be run after processing.

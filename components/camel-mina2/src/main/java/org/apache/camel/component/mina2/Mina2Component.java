@@ -72,7 +72,6 @@ public class Mina2Component extends DefaultComponent {
 
     private Endpoint createEndpoint(String uri, Mina2Configuration config) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
-        Endpoint endpoint;
         String protocol = config.getProtocol();
         // if mistyped uri then protocol can be null
 

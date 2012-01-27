@@ -72,9 +72,9 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
     }
 
     // START SNIPPET: e1
-    public class MyRemoteFileSorter implements Comparator<RemoteFile> {
+    public class MyRemoteFileSorter implements Comparator<RemoteFile<?>> {
 
-        public int compare(RemoteFile o1, RemoteFile o2) {
+        public int compare(RemoteFile<?> o1, RemoteFile<?> o2) {
             return o1.getFileNameOnly().compareToIgnoreCase(o2.getFileNameOnly());
         }
     }

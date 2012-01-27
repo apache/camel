@@ -70,9 +70,12 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     public DefaultUnitOfWork(Exchange exchange) {
         this(exchange, LOG);
     }
-    protected DefaultUnitOfWork(Exchange exchange, Logger l) {
-        log = l;
-        log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
+
+    protected DefaultUnitOfWork(Exchange exchange, Logger logger) {
+        log = logger;
+        if (log.isTraceEnabled()) {
+            log.trace("UnitOfWork created for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
+        }
         tracedRouteNodes = new DefaultTracedRouteNodes();
         context = exchange.getContext();
 
@@ -107,7 +110,12 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
 
         // fire event
-        EventHelper.notifyExchangeCreated(exchange.getContext(), exchange);
+        try {
+            EventHelper.notifyExchangeCreated(exchange.getContext(), exchange);
+        } catch (Throwable e) {
+            // must catch exceptions to ensure the exchange is not failing due to notification event failed
+            log.warn("Exception occurred during event notification. This exception will be ignored.", e);
+        }
 
         // register to inflight registry
         if (exchange.getContext() != null) {
@@ -218,6 +226,11 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             log.warn("Exception occurred during savepoint onDone. This exception will be ignored.", e);
         }
 
+        // unregister from inflight registry, before signalling we are done
+        if (exchange.getContext() != null) {
+            exchange.getContext().getInflightRepository().remove(exchange);
+        }
+
         // then fire event to signal the exchange is done
         try {
             if (failed) {
@@ -228,11 +241,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         } catch (Throwable e) {
             // must catch exceptions to ensure synchronizations is also invoked
             log.warn("Exception occurred during event notification. This exception will be ignored.", e);
-        } finally {
-            // unregister from inflight registry
-            if (exchange.getContext() != null) {
-                exchange.getContext().getInflightRepository().remove(exchange);
-            }
         }
     }
 
@@ -301,7 +309,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void beginSubUnitOfWork(Exchange exchange) {
-        log.trace("beginSubUnitOfWork exchangeId: {}", exchange.getExchangeId());
+        if (log.isTraceEnabled()) {
+            log.trace("beginSubUnitOfWork exchangeId: {}", exchange.getExchangeId());
+        }
 
         if (subUnitOfWorks == null) {
             subUnitOfWorks = new Stack<DefaultSubUnitOfWork>();
@@ -311,7 +321,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void endSubUnitOfWork(Exchange exchange) {
-        log.trace("endSubUnitOfWork exchangeId: {}", exchange.getExchangeId());
+        if (log.isTraceEnabled()) {
+            log.trace("endSubUnitOfWork exchangeId: {}", exchange.getExchangeId());
+        }
 
         if (subUnitOfWorks == null || subUnitOfWorks.isEmpty()) {
             return;
@@ -342,7 +354,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             // by the error handler which we want to react with the result of the sub unit of work
             exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, null);
             exchange.setProperty(Exchange.FAILURE_HANDLED, null);
-            log.trace("endSubUnitOfWork exchangeId: {} with {} caused exceptions.", exchange.getExchangeId(), list.size());
+            if (log.isTraceEnabled()) {
+                log.trace("endSubUnitOfWork exchangeId: {} with {} caused exceptions.", exchange.getExchangeId(), list != null ? list.size() : 0);
+            }
         }
     }
 

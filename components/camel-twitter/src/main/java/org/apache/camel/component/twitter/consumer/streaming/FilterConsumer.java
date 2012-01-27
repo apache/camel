@@ -14,14 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.twitter.consumer.streaming;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
 
 import twitter4j.FilterQuery;
-import twitter4j.TwitterStream;
-import twitter4j.TwitterStreamFactory;
 
 /**
  * Consumes the filter stream
@@ -31,23 +28,43 @@ public class FilterConsumer extends StreamingConsumer {
 
     public FilterConsumer(TwitterEndpoint te) {
         super(te);
+        twitterStream.filter(createFilter(te));
+    }
 
-        TwitterStream twitterStream = new TwitterStreamFactory(te.getProperties().getConfiguration())
-            .getInstance();
-        twitterStream.addListener(this);
-
+    private FilterQuery createFilter(TwitterEndpoint te) {
+        FilterQuery filterQuery = new FilterQuery();
         String allLocationsString = te.getProperties().getLocations();
-        String[] locationStrings = allLocationsString.split(";");
-        double[][] locations = new double[locationStrings.length][2];
-        for (int i = 0; i < locationStrings.length; i++) {
-            String[] coords = locationStrings[i].split(",");
-            locations[i][0] = Double.valueOf(coords[0]);
-            locations[i][1] = Double.valueOf(coords[1]);
+        if (allLocationsString != null) {
+            String[] locationStrings = allLocationsString.split(";");
+            double[][] locations = new double[locationStrings.length][2];
+            for (int i = 0; i < locationStrings.length; i++) {
+                String[] coords = locationStrings[i].split(",");
+                locations[i][0] = Double.valueOf(coords[0]);
+                locations[i][1] = Double.valueOf(coords[1]);
+            }
+            filterQuery.locations(locations);
         }
 
-        FilterQuery fq = new FilterQuery();
-        fq.locations(locations);
+        String keywords = te.getProperties().getKeywords();
+        if (keywords != null && keywords.length() > 0) {
+            filterQuery.track(keywords.split(","));
+        }
+        
+        String userIds = te.getProperties().getUserIds();
+        if (userIds != null) {
+            String[] stringUserIds = userIds.split(",");
+            long[] longUserIds = new long[stringUserIds.length];
+            for (int i = 0; i < stringUserIds.length; i++) {
+                longUserIds[i] = Long.valueOf(stringUserIds[i]);
+            }
+            filterQuery.follow(longUserIds);
+        }
+        
+        if (allLocationsString == null && keywords == null && userIds == null) {
+            throw new IllegalArgumentException("At least one filter parameter is required");
+        }
 
-        twitterStream.filter(fq);
+        filterQuery.setIncludeEntities(true);
+        return filterQuery;
     }
 }

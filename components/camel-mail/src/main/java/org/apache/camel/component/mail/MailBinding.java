@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -82,7 +83,21 @@ public class MailBinding {
             // fallback to endpoint configuration
             setRecipientFromEndpointConfiguration(mimeMessage, endpoint);
         }
-
+        
+        // set the replyTo if it was passed in as an option in the uri. Note: if it is in both the URI
+        // and headers the headers win.
+        String replyTo = exchange.getIn().getHeader("Reply-To", String.class);
+        if (replyTo == null) {
+            replyTo = endpoint.getConfiguration().getReplyTo();
+        }
+        if (replyTo != null) {
+            ArrayList<InternetAddress> replyToAddresses = new ArrayList<InternetAddress>();
+            for (String reply : splitRecipients(replyTo)) {
+                replyToAddresses.add(new InternetAddress(reply.trim()));
+            }
+            mimeMessage.setReplyTo(replyToAddresses.toArray(new InternetAddress[replyToAddresses.size()]));
+        }
+        
         // must have at least one recipients otherwise we do not know where to send the mail
         if (mimeMessage.getAllRecipients() == null) {
             throw new IllegalArgumentException("The mail message does not have any recipients set.");
@@ -345,7 +360,7 @@ public class MailBinding {
 
                     // Mail messages can repeat the same header...
                     if (ObjectConverter.isCollection(headerValue)) {
-                        Iterator iter = ObjectHelper.createIterator(headerValue);
+                        Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                         while (iter.hasNext()) {
                             Object value = iter.next();
                             mimeMessage.addHeader(headerName, asString(exchange, value));
@@ -365,7 +380,7 @@ public class MailBinding {
             if (headerValue != null && isRecipientHeader(headerName)) {
                 // special handling of recipients
                 if (ObjectConverter.isCollection(headerValue)) {
-                    Iterator iter = ObjectHelper.createIterator(headerValue);
+                    Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                     while (iter.hasNext()) {
                         Object recipient = iter.next();
                         appendRecipientToMimeMessage(mimeMessage, headerName, asString(exchange, recipient));
@@ -531,7 +546,7 @@ public class MailBinding {
 
     protected Map<String, Object> extractHeadersFromMail(Message mailMessage, Exchange exchange) throws MessagingException {
         Map<String, Object> answer = new HashMap<String, Object>();
-        Enumeration names = mailMessage.getAllHeaders();
+        Enumeration<?> names = mailMessage.getAllHeaders();
 
         while (names.hasMoreElements()) {
             Header header = (Header) names.nextElement();
@@ -544,16 +559,16 @@ public class MailBinding {
         return answer;
     }
 
-    private static void appendRecipientToMimeMessage(MimeMessage mimeMessage, String type, String recipient)
-        throws MessagingException {
-
+    private static void appendRecipientToMimeMessage(MimeMessage mimeMessage, String type, String recipient) throws MessagingException {
+        for (String line : splitRecipients(recipient)) {
+            mimeMessage.addRecipients(asRecipientType(type), line.trim());
+        }
+    }
+    
+    private static String[] splitRecipients(String recipients) {
         // we support that multi recipient can be given as a string separated by comma or semicolon
         // regex ignores comma and semicolon inside of double quotes
-        String[] lines = recipient.split("[,;]++(?=(?:(?:[^\\\"]*+\\\"){2})*+[^\\\"]*+$)");
-        for (String line : lines) {
-            line = line.trim();
-            mimeMessage.addRecipients(asRecipientType(type), line);
-        }
+        return recipients.split("[,;]++(?=(?:(?:[^\\\"]*+\\\"){2})*+[^\\\"]*+$)");
     }
 
     /**

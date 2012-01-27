@@ -46,7 +46,7 @@ public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
-            public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition definition) {
+            public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition<?> definition) {
                 AbstractExchangeEvent aee = (AbstractExchangeEvent) event;
                 Exception e = aee.getExchange().getException();
                 logs.add("Breakpoint at " + definition + " caused by: " + e.getClass().getSimpleName() + "[" + e.getMessage() + "]");

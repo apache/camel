@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.twitter.producer;
 
 import org.apache.camel.Exchange;
@@ -31,7 +30,6 @@ import org.slf4j.LoggerFactory;
 public class UserProducer extends DefaultProducer implements Processor {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(UserProducer.class);
-
     private TwitterEndpoint te;
 
     public UserProducer(TwitterEndpoint te) {
@@ -44,11 +42,11 @@ public class UserProducer extends DefaultProducer implements Processor {
         String status = exchange.getIn().getBody(String.class);
 
         if (status.length() > 160) {
-            LOG.warn("Message is longer than 160 characteres and it will be truncated!");
-            status.substring(0, 160);
+            LOG.warn("Message is longer than 160 characters. Message will be truncated!");
+            status = status.substring(0, 160);
         }
 
         te.getTwitter().updateStatus(status);
-        LOG.debug("Successfully updated status with '{0}'", status);
+        LOG.debug("Updated status: {}", status);
     }
 }

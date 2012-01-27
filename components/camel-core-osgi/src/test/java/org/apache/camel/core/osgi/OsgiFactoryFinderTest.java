@@ -27,7 +27,7 @@ public class OsgiFactoryFinderTest extends CamelOsgiTestSupport {
     @Test
     public void testFindClass() throws Exception {
         OsgiFactoryFinder finder = new OsgiFactoryFinder(getBundleContext(), new DefaultClassResolver(), "META-INF/services/org/apache/camel/component/");
-        Class clazz = finder.findClass("file_test", "strategy.factory.");
+        Class<?> clazz = finder.findClass("file_test", "strategy.factory.");
         assertNotNull("We should get the file strategy factory here", clazz);
         
         try {

@@ -39,8 +39,7 @@ public class HdfsComponent extends DefaultComponent {
         initHdfs();
     }
 
-    @SuppressWarnings("unchecked")
-    protected final Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected final Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         HdfsEndpoint hdfsEndpoint = new HdfsEndpoint(uri, this.getCamelContext());
         setProperties(hdfsEndpoint.getConfig(), parameters);
         return hdfsEndpoint;

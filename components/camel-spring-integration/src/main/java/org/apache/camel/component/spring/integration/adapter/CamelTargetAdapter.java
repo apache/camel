@@ -77,7 +77,7 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
             result = true;
         }
 
-        Message response;
+        Message<?> response;
         if (isExpectReply()) {
             //Check the message header for the return address
             response = SpringIntegrationBinding.storeToSpringIntegrationMessage(outExchange.getOut());

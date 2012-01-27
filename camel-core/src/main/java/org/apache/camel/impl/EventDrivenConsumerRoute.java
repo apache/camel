@@ -81,7 +81,7 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
         }
 
         if (answer instanceof Navigate) {
-            return (Navigate) answer;
+            return (Navigate<Processor>) answer;
         }
         return null;
     }

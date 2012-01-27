@@ -74,7 +74,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def filter(predicate: Exchange => Any) = SFilterDefinition(target.filter(predicateBuilder(predicate)))
 
-  def handle[E](block: => Unit)(implicit manifest: Manifest[E]) = SOnExceptionDefinition(target.onException(manifest.erasure)).apply(block)
+  def handle[E <: Throwable](block: => Unit)(implicit manifest: Manifest[E]) = SOnExceptionDefinition[E](target.onException(manifest.erasure.asInstanceOf[Class[Throwable]])).apply(block)
 
   def id(id : String) = wrap(target.id(id))
   def idempotentConsumer(expression: Exchange => Any) = SIdempotentConsumerDefinition(target.idempotentConsumer(expression, null))
@@ -107,7 +107,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def pipeline = SPipelineDefinition(target.pipeline)
   def policy(policy: Policy) = wrap(target.policy(policy))
-  def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = 0) =
+  def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = -1) =
     wrap(target.pollEnrich(uri, timeout, strategy))
   def process(function: Exchange => Unit) = wrap(target.process(new ScalaProcessor(function)))
   def process(processor: Processor) = wrap(target.process(processor))

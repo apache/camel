@@ -31,6 +31,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
@@ -326,11 +327,28 @@ public final class IOConverter {
     }
 
     @Converter
-    public static ObjectInput toObjectInput(InputStream stream) throws IOException {
+    public static ObjectInput toObjectInput(final InputStream stream, final Exchange exchange) throws IOException {
         if (stream instanceof ObjectInput) {
             return (ObjectInput) stream;
         } else {
-            return new ObjectInputStream(IOHelper.buffered(stream));
+            return new ObjectInputStream(IOHelper.buffered(stream)) {
+                @Override
+                protected Class<?> resolveClass(ObjectStreamClass objectStreamClass) throws IOException, ClassNotFoundException {
+                    // need to let Camel be able to resolve class using ClassResolver SPI, to let class loading
+                    // work in OSGi and other containers
+                    Class<?>  answer = null;
+                    String name = objectStreamClass.getName();
+                    if (exchange != null) {
+                        LOG.trace("Loading class {} using Camel ClassResolver", name);
+                        answer = exchange.getContext().getClassResolver().resolveClass(name);
+                    }
+                    if (answer == null) {
+                        LOG.trace("Loading class {} using JDK default implementation", name);
+                        answer = super.resolveClass(objectStreamClass);
+                    }
+                    return answer;
+                }
+            };
         }
     }
 

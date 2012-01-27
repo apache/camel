@@ -82,18 +82,17 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
 
             if (child instanceof DefaultChannel) {
                 DefaultChannel channel = (DefaultChannel) child;
-                ProcessorDefinition def = channel.getProcessorDefinition();
+                ProcessorDefinition<?> def = channel.getProcessorDefinition();
                 navigateDefinition(def, sb);
             }
 
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void navigateDefinition(ProcessorDefinition<?> def, StringBuilder sb) {
 
         // must do this ugly cast to avoid compiler error on HP-UX
-        ProcessorDefinition defn = (ProcessorDefinition) def;
+        ProcessorDefinition<?> defn = (ProcessorDefinition<?>) def;
 
         if (defn instanceof LoadBalanceDefinition) {
             sb.append(".loadBalance()");
@@ -106,16 +105,17 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         }
 
         if (defn instanceof SendDefinition) {
-            SendDefinition send = (SendDefinition) defn;
+            SendDefinition<?> send = (SendDefinition<?>) defn;
             sb.append(".to(\"" + send.getUri() + "\")");
         }
 
+        @SuppressWarnings("rawtypes")
         List<ProcessorDefinition> children = defn.getOutputs();
         if (children == null || children.isEmpty()) {
             return;
         }
 
-        for (ProcessorDefinition child : children) {
+        for (ProcessorDefinition<?> child : children) {
             navigateDefinition(child, sb);
         }
     }

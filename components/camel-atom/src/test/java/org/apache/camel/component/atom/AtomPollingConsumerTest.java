@@ -47,7 +47,7 @@ public class AtomPollingConsumerTest extends CamelTestSupport {
         Feed feed = in.getHeader(AtomConstants.ATOM_FEED, Feed.class);
         assertEquals("James Strachan", feed.getAuthor().getName());
 
-        List entries = in.getBody(List.class);
+        List<?> entries = in.getBody(List.class);
         assertEquals(7, entries.size());
     }
 

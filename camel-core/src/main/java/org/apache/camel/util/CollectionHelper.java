@@ -78,14 +78,14 @@ public final class CollectionHelper {
      * @param value the value to put in the map
      */
     @SuppressWarnings("unchecked")
-    public static void appendValue(Map map, Object key, Object value) {
+    public static void appendValue(Map<String, Object> map, String key, Object value) {
         Object oldValue = map.get(key);
         if (oldValue != null) {
-            List list;
+            List<Object> list;
             if (oldValue instanceof List) {
-                list = (List)oldValue;
+                list = (List<Object>)oldValue;
             } else {
-                list = new ArrayList();
+                list = new ArrayList<Object>();
                 list.add(oldValue);
                 // replace old entry with list
                 map.remove(key);

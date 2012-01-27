@@ -128,15 +128,15 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
                 breakpoint.activate();
             }
 
-            public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+            public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
                 breakpoint.beforeProcess(exchange, processor, definition);
             }
 
-            public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
+            public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
                 breakpoint.afterProcess(exchange, processor, definition, timeTaken);
             }
 
-            public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition definition) {
+            public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition<?> definition) {
                 if (event instanceof ExchangeCreatedEvent) {
                     exchange.getContext().getDebugger().startSingleStepExchange(exchange.getExchangeId(), this);
                 } else if (event instanceof ExchangeCompletedEvent) {
@@ -196,7 +196,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         singleSteps.remove(exchangeId);
     }
 
-    public boolean beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+    public boolean beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
         // is the exchange in single step mode?
         Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
         if (singleStep != null) {
@@ -219,7 +219,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return match;
     }
 
-    public boolean afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
+    public boolean afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
         // is the exchange in single step mode?
         Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
         if (singleStep != null) {
@@ -265,7 +265,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return match;
     }
 
-    protected void onBeforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, Breakpoint breakpoint) {
+    protected void onBeforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, Breakpoint breakpoint) {
         try {
             breakpoint.beforeProcess(exchange, processor, definition);
         } catch (Throwable e) {
@@ -273,7 +273,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         }
     }
 
-    protected void onAfterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken, Breakpoint breakpoint) {
+    protected void onAfterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken, Breakpoint breakpoint) {
         try {
             breakpoint.afterProcess(exchange, processor, definition, timeTaken);
         } catch (Throwable e) {
@@ -282,7 +282,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     protected void onEvent(Exchange exchange, EventObject event, Breakpoint breakpoint) {
-        ProcessorDefinition definition = null;
+        ProcessorDefinition<?> definition = null;
 
         // try to get the last known definition
         if (exchange.getUnitOfWork() != null && exchange.getUnitOfWork().getTracedRouteNodes() != null) {
@@ -299,7 +299,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         }
     }
 
-    private boolean matchConditions(Exchange exchange, Processor processor, ProcessorDefinition definition, BreakpointConditions breakpoint) {
+    private boolean matchConditions(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, BreakpointConditions breakpoint) {
         if (breakpoint.getConditions() != null && !breakpoint.getConditions().isEmpty()) {
             for (Condition condition : breakpoint.getConditions()) {
                 if (!condition.matchProcess(exchange, processor, definition)) {

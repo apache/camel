@@ -23,7 +23,6 @@ import org.junit.Test;
 
 public class AvailablePortFinderTest {
 
-
     @Test
     public void getNextAvailablePort() throws Exception {
         int p1 = AvailablePortFinder.getNextAvailable();
@@ -58,6 +57,5 @@ public class AvailablePortFinderTest {
     public void getMaxOutOfRangePort() throws Exception {
         AvailablePortFinder.getNextAvailable(AvailablePortFinder.MAX_PORT_NUMBER + 1);
     }
-
 
 }

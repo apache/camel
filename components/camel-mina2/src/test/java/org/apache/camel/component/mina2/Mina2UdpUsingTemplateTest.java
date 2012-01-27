@@ -45,7 +45,7 @@ public class Mina2UdpUsingTemplateTest extends BaseMina2Test {
 
     protected void sendUdpMessages() throws Exception {
         for (int i = 0; i < messageCount; i++) {
-            template.sendBody("mina2:udp://127.0.0.1:{{port}}?sync=false", "Hello Message: " + i);
+            template.sendBody(String.format("mina2:udp://127.0.0.1:%1$s?sync=false", getPort()), "Hello Message: " + i);
         }
     }
 
@@ -55,7 +55,7 @@ public class Mina2UdpUsingTemplateTest extends BaseMina2Test {
         endpoint.expectedMessageCount(1);
 
         byte[] in = "Hello from bytes".getBytes();
-        template.sendBody("mina2:udp://127.0.0.1:{{port}}?sync=false", in);
+        template.sendBody(String.format("mina2:udp://127.0.0.1:%1$s?sync=false", getPort()), in);
 
         // sleeping for while to let the mock endpoint get all the message
         Thread.sleep(2000);
@@ -71,9 +71,9 @@ public class Mina2UdpUsingTemplateTest extends BaseMina2Test {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-
             public void configure() {
-                from("mina2:udp://127.0.0.1:{{port}}?sync=false&minaLogger=true").to("mock:result");
+                from(String.format("mina2:udp://127.0.0.1:%1$s?sync=false&minaLogger=true", getPort()))
+                    .to("mock:result");
             }
         };
     }

@@ -48,7 +48,7 @@ public class Mina2VMTransferExchangeOptionTest extends BaseMina2Test {
     }
 
     private Exchange sendExchange(boolean setException) throws Exception {
-        Endpoint endpoint = context.getEndpoint("mina2:vm://localhost:{{port}}?sync=true&encoding=UTF-8&transferExchange=true");
+        Endpoint endpoint = context.getEndpoint(String.format("mina2:vm://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort()));
         Exchange exchange = endpoint.createExchange();
 
         Message message = exchange.getIn();
@@ -95,7 +95,7 @@ public class Mina2VMTransferExchangeOptionTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina2:vm://localhost:{{port}}?sync=true&encoding=UTF-8&transferExchange=true").process(new Processor() {
+                from(String.format("mina2:vm://localhost:%1$s?sync=true&encoding=UTF-8&transferExchange=true", getPort())).process(new Processor() {
 
                     public void process(Exchange e) throws InterruptedException {
                         Assert.assertNotNull(e.getIn().getBody());

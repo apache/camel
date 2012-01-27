@@ -32,7 +32,6 @@ public final class UnitOfWorkHelper {
     private UnitOfWorkHelper() {
     }
 
-    @SuppressWarnings("unchecked")
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {
         boolean failed = exchange.isFailed();
 

@@ -87,7 +87,7 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         try {
             os = soc.getOutputStream();
             // must append newline at the end to flag end of textline to Camel-Mina
-            os.write((input + "\n").getBytes());
+            os.write((input + LS).getBytes());
 
             is = soc.getInputStream();
             int len = is.read(buf);
@@ -109,7 +109,7 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         StringBuilder sb = new StringBuilder();
         for (byte b : buf) {
             char ch = (char) b;
-            if (ch == '\n' || ch == 0) {
+            if (LS.indexOf(ch) > -1) {
                 // newline denotes end of text (added in the end in the processor below)
                 break;
             } else {
@@ -124,22 +124,23 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() {
-                from("mina2:tcp://localhost:{{port}}?textline=true&sync=true").process(new Processor() {
+                from(String.format("mina2:tcp://localhost:%1$s?textline=true&sync=true", getPort()))
+                    .process(new Processor() {
 
-                    public void process(Exchange e) {
-                        String in = e.getIn().getBody(String.class);
-                        if ("force-null-out-body".equals(in)) {
-                            // forcing a null out body
-                            e.getOut().setBody(null);
-                        } else if ("force-exception".equals(in)) {
-                            // clear out before throwing exception
-                            e.getOut().setBody(null);
-                            throw new IllegalArgumentException("Forced exception");
-                        } else {
-                            e.getOut().setBody("Hello " + in);
+                        public void process(Exchange e) {
+                            String in = e.getIn().getBody(String.class);
+                            if ("force-null-out-body".equals(in)) {
+                                // forcing a null out body
+                                e.getOut().setBody(null);
+                            } else if ("force-exception".equals(in)) {
+                                // clear out before throwing exception
+                                e.getOut().setBody(null);
+                                throw new IllegalArgumentException("Forced exception");
+                            } else {
+                                e.getOut().setBody("Hello " + in);
+                            }
                         }
-                    }
-                });
+                    });
             }
         };
     }

@@ -66,7 +66,9 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
         MyNotificationListener listener = new MyNotificationListener();   
         context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,
             listener,                                                                                         
-            new NotificationFilter() {
+            new NotificationFilter() {            
+                private static final long serialVersionUID = 1L;
+
                 public boolean isNotificationEnabled(Notification notification) {
                     return notification.getSource().equals("MyCamel");
                 }
@@ -90,6 +92,8 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
         MyNotificationListener listener = new MyNotificationListener();   
         context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,
             listener, new NotificationFilter() {
+                private static final long serialVersionUID = 1L;
+
                 public boolean isNotificationEnabled(Notification notification) {
                     return true;
                 }

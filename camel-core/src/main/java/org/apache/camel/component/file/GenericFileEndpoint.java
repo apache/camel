@@ -86,6 +86,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Boolean idempotent;
     protected IdempotentRepository<String> idempotentRepository;
     protected GenericFileFilter<T> filter;
+    protected AntPathMatcherGenericFileFilter<T> antFilter;
     protected Comparator<GenericFile<T>> sorter;
     protected Comparator<Exchange> sortBy;
     protected String readLock = "none";
@@ -253,6 +254,24 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     public void setExclude(String exclude) {
         this.exclude = exclude;
+    }
+
+    public void setAntInclude(String antInclude) {
+        if (this.antFilter == null) {
+            this.antFilter = new AntPathMatcherGenericFileFilter<T>();
+        }
+        this.antFilter.setIncludes(antInclude);
+    }
+
+    public void setAntExclude(String antExclude) {
+        if (this.antFilter == null) {
+            this.antFilter = new AntPathMatcherGenericFileFilter<T>();
+        }
+        this.antFilter.setExcludes(antExclude);
+    }
+
+    public GenericFileFilter<T> getAntFilter() {
+        return antFilter;
     }
 
     public boolean isDelete() {

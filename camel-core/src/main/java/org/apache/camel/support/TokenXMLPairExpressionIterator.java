@@ -61,7 +61,7 @@ public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator 
     }
 
     @Override
-    protected Iterator createIterator(InputStream in, String charset) {
+    protected Iterator<?> createIterator(InputStream in, String charset) {
         XMLTokenPairIterator iterator = new XMLTokenPairIterator(startToken, endToken, inheritNamespaceToken, in, charset);
         iterator.init();
         return iterator;

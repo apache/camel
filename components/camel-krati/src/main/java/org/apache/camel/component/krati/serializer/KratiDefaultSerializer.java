@@ -56,8 +56,7 @@ public class KratiDefaultSerializer<T extends Serializable> implements Serialize
         } catch (IOException e) {
             LOG.warn("Error while serializing object. Null will be used.", e);
         } finally {
-            IOHelper.close(oos);
-            IOHelper.close(baos);
+            IOHelper.close(oos, baos);
         }
         return result;
     }
@@ -69,6 +68,7 @@ public class KratiDefaultSerializer<T extends Serializable> implements Serialize
      * @return an object constructed from the raw bytes.
      * @throws SerializationException if the object cannot be constructed from the raw bytes.
      */
+    @SuppressWarnings("unchecked")
     public T deserialize(byte[] binary) throws SerializationException {
         T result = null;
         ObjectInputStream ois = null;
@@ -96,8 +96,7 @@ public class KratiDefaultSerializer<T extends Serializable> implements Serialize
         } catch (ClassNotFoundException e) {
             LOG.warn("Could not find class while deserializing object. Null will be used.", e);
         } finally {
-            IOHelper.close(ois);
-            IOHelper.close(bais);
+            IOHelper.close(ois, bais);
         }
         return result;
     }

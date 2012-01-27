@@ -158,11 +158,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         // Iterate through the list of positions
         // defined in the @DataField
         // and grab the data from the line
-        Collection c = dataFields.values();
-        Iterator itr = c.iterator();
+        Collection<DataField> c = dataFields.values();
+        Iterator<DataField> itr = c.iterator();
 
         while (itr.hasNext()) {
-            dataField = (DataField)itr.next();
+            dataField = itr.next();
             offset = dataField.pos();
             length = dataField.length();
 
@@ -251,7 +251,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         StringBuilder buffer = new StringBuilder();
         Map<Integer, List<String>> results = new HashMap<Integer, List<String>>();
 
-        for (Class clazz : models) {
+        for (Class<?> clazz : models) {
 
             if (model.containsKey(clazz.getName())) {
 
@@ -290,7 +290,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      * Generate a table containing the data formatted and sorted with their position/offset
      * The result is placed in the Map<Integer, List> results
      */
-    private void generateFixedLengthPositionMap(Class clazz, Object obj, Map<Integer, List<String>> results) throws Exception {
+    private void generateFixedLengthPositionMap(Class<?> clazz, Object obj, Map<Integer, List<String>> results) throws Exception {
 
         String result = "";
 

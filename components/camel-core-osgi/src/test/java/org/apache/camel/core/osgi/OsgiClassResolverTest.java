@@ -26,7 +26,7 @@ public class OsgiClassResolverTest extends CamelOsgiTestSupport {
     @Test
     public void testResolveClass() {
         ClassResolver classResolver = getClassResolver();
-        Class routeBuilder = classResolver.resolveClass("org.apache.camel.core.osgi.test.MyRouteBuilder");
+        Class<?> routeBuilder = classResolver.resolveClass("org.apache.camel.core.osgi.test.MyRouteBuilder");
         assertNotNull("The class of routeBuilder should not be null.", routeBuilder);
     }
     

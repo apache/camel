@@ -31,9 +31,9 @@ import org.apache.camel.impl.DefaultExchangeHolder;
  */
 public class HazelcastSedaProducer extends DefaultAsyncProducer {
 
-    private final transient BlockingQueue queue;
+    private final transient BlockingQueue<Object> queue;
 
-    public HazelcastSedaProducer(final HazelcastSedaEndpoint endpoint, final BlockingQueue hzlq) {
+    public HazelcastSedaProducer(final HazelcastSedaEndpoint endpoint, final BlockingQueue<Object> hzlq) {
         super(endpoint);
         this.queue = hzlq;
     }
@@ -44,7 +44,6 @@ public class HazelcastSedaProducer extends DefaultAsyncProducer {
         return true;
     }
 
-    @SuppressWarnings("unchecked")
     private void checkAndStore(final Exchange exchange) {
         Object obj;
         Object body = exchange.getIn().getBody();

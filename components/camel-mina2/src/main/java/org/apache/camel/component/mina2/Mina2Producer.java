@@ -237,7 +237,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             connector.getSessionConfig().setAll(connectorConfig);
         }
 
-        connector.setHandler(new ResponseHandler(getEndpoint()));
+        connector.setHandler(new ResponseHandler());
         ConnectFuture future = connector.connect(address);
         future.awaitUninterruptibly();
         session = future.getSession();
@@ -439,14 +439,9 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
      */
     private final class ResponseHandler extends IoHandlerAdapter {
 
-        private Mina2Endpoint endpoint;
         private Object message;
         private Throwable cause;
         private boolean messageReceived;
-
-        private ResponseHandler(Mina2Endpoint endpoint) {
-            this.endpoint = endpoint;
-        }
 
         public void reset() {
             this.message = null;

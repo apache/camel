@@ -25,8 +25,6 @@ import org.apache.abdera.parser.ParseException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Consumer to poll atom feeds and return each entry from the feed step by step.

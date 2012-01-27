@@ -33,7 +33,7 @@ public class OrderServiceBean {
         this.converter = converter;
     }
 
-    public String handleCustom(GenericFile file) {
+    public String handleCustom(GenericFile<?> file) {
         String content = converter.convertTo(String.class, file.getBody());
         String orderId = FileUtil.stripExt(file.getFileNameOnly());
 

@@ -78,7 +78,7 @@ public class DefaultCxfBindingTest extends Assert {
         cxfBinding.populateCxfRequestFromExchange(cxfExchange, exchange, requestContext);
         
         // check the protocol headers
-        Map<String, List<String>> headers = CastUtils.cast((Map)requestContext.get(Message.PROTOCOL_HEADERS));
+        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>)requestContext.get(Message.PROTOCOL_HEADERS));
         assertNotNull(headers);
         assertTrue(headers.size() == 2);
         
@@ -155,7 +155,7 @@ public class DefaultCxfBindingTest extends Assert {
         cxfMessage = cxfExchange.getOutMessage();
         assertNotNull(cxfMessage);
         
-        Map<String, List<String>> headers = CastUtils.cast((Map)cxfMessage.get(Message.PROTOCOL_HEADERS));
+        Map<String, List<String>> headers = CastUtils.cast((Map<?, ?>)cxfMessage.get(Message.PROTOCOL_HEADERS));
         assertNotNull(headers);
         assertTrue(headers.size() == 2);
         

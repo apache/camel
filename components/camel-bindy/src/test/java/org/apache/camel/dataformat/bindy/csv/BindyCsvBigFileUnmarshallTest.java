@@ -46,7 +46,7 @@ public class BindyCsvBigFileUnmarshallTest extends AbstractJUnit4SpringContextTe
     protected void assertCountRecords() {
         Exchange exchange = resultEndpoint.getExchanges().get(0);
 
-        List models = exchange.getIn().getBody(List.class);
+        List<?> models = exchange.getIn().getBody(List.class);
         assertEquals(10000, models.size());
     }
 

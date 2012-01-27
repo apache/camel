@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.spring;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
+import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.junit.Test;
 
@@ -45,7 +46,12 @@ public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
         // Spring 3.0.0 has an issue of SPR-6589 which will call the BusApplicationListener twice for the same event,
         // so we will get more one InInterceptors here
         assertTrue(endpoint.getBus().getInInterceptors().size() >= 1);
-        assertEquals(LoggingInInterceptor.class, endpoint.getBus().getInInterceptors().get(0).getClass());
+        for (Interceptor<?> i : endpoint.getBus().getInInterceptors()) {
+            if (i instanceof LoggingInInterceptor) {
+                return;
+            }
+        }
+        fail("Could not find the LoggingInInterceptor on the bus. " + endpoint.getBus().getInInterceptors());
     }
     
     @Test

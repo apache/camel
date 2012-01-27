@@ -35,11 +35,9 @@ public class HazelcastListProducer extends DefaultProducer {
 
     private final IList<Object> list;
     private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
-    private HazelcastInstance hazelcastInstance;
 
     public HazelcastListProducer(HazelcastInstance hazelcastInstance, Endpoint endpoint, String listName) {
         super(endpoint);
-        this.hazelcastInstance = hazelcastInstance;
         this.list = hazelcastInstance.getList(listName);
     }
 

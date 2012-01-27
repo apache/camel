@@ -54,7 +54,7 @@ public class HdfsConfiguration {
     public HdfsConfiguration() {
     }
 
-    private Boolean getBoolean(Map hdfsSettings, String param, Boolean dflt) {
+    private Boolean getBoolean(Map<String, Object> hdfsSettings, String param, Boolean dflt) {
         if (hdfsSettings.containsKey(param)) {
             return Boolean.valueOf((String) hdfsSettings.get(param));
         } else {
@@ -62,7 +62,7 @@ public class HdfsConfiguration {
         }
     }
 
-    private Integer getInteger(Map hdfsSettings, String param, Integer dflt) {
+    private Integer getInteger(Map<String, Object> hdfsSettings, String param, Integer dflt) {
         if (hdfsSettings.containsKey(param)) {
             return Integer.valueOf((String) hdfsSettings.get(param));
         } else {
@@ -70,7 +70,7 @@ public class HdfsConfiguration {
         }
     }
 
-    private Short getShort(Map hdfsSettings, String param, Short dflt) {
+    private Short getShort(Map<String, Object> hdfsSettings, String param, Short dflt) {
         if (hdfsSettings.containsKey(param)) {
             return Short.valueOf((String) hdfsSettings.get(param));
         } else {
@@ -78,7 +78,7 @@ public class HdfsConfiguration {
         }
     }
 
-    private Long getLong(Map hdfsSettings, String param, Long dflt) {
+    private Long getLong(Map<String, Object> hdfsSettings, String param, Long dflt) {
         if (hdfsSettings.containsKey(param)) {
             return Long.valueOf((String) hdfsSettings.get(param));
         } else {
@@ -86,7 +86,7 @@ public class HdfsConfiguration {
         }
     }
 
-    private HdfsFileType getFileType(Map hdfsSettings, String param, HdfsFileType dflt) {
+    private HdfsFileType getFileType(Map<String, Object> hdfsSettings, String param, HdfsFileType dflt) {
         String eit = (String) hdfsSettings.get(param);
         if (eit != null) {
             return HdfsFileType.valueOf(eit);
@@ -95,7 +95,7 @@ public class HdfsConfiguration {
         }
     }
 
-    private HdfsFileSystemType getFileSystemType(Map hdfsSettings, String param, HdfsFileSystemType dflt) {
+    private HdfsFileSystemType getFileSystemType(Map<String, Object> hdfsSettings, String param, HdfsFileSystemType dflt) {
         String eit = (String) hdfsSettings.get(param);
         if (eit != null) {
             return HdfsFileSystemType.valueOf(eit);
@@ -104,7 +104,7 @@ public class HdfsConfiguration {
         }
     }
 
-    private HdfsWritableFactories.WritableType getWritableType(Map hdfsSettings, String param, HdfsWritableFactories.WritableType dflt) {
+    private HdfsWritableFactories.WritableType getWritableType(Map<String, Object> hdfsSettings, String param, HdfsWritableFactories.WritableType dflt) {
         String eit = (String) hdfsSettings.get(param);
         if (eit != null) {
             return HdfsWritableFactories.WritableType.valueOf(eit);
@@ -113,7 +113,7 @@ public class HdfsConfiguration {
         }
     }
 
-    private SequenceFile.CompressionType getCompressionType(Map hdfsSettings, String param, SequenceFile.CompressionType ct) {
+    private SequenceFile.CompressionType getCompressionType(Map<String, Object> hdfsSettings, String param, SequenceFile.CompressionType ct) {
         String eit = (String) hdfsSettings.get(param);
         if (eit != null) {
             return SequenceFile.CompressionType.valueOf(eit);
@@ -122,7 +122,7 @@ public class HdfsConfiguration {
         }
     }
 
-    private HdfsCompressionCodec getCompressionCodec(Map hdfsSettings, String param, HdfsCompressionCodec cd) {
+    private HdfsCompressionCodec getCompressionCodec(Map<String, Object> hdfsSettings, String param, HdfsCompressionCodec cd) {
         String eit = (String) hdfsSettings.get(param);
         if (eit != null) {
             return HdfsCompressionCodec.valueOf(eit);
@@ -131,7 +131,7 @@ public class HdfsConfiguration {
         }
     }
 
-    private String getString(Map hdfsSettings, String param, String dflt) {
+    private String getString(Map<String, Object> hdfsSettings, String param, String dflt) {
         if (hdfsSettings.containsKey(param)) {
             return (String) hdfsSettings.get(param);
         } else {
@@ -139,7 +139,7 @@ public class HdfsConfiguration {
         }
     }
 
-    private List<HdfsProducer.SplitStrategy> getSplitStrategies(Map hdfsSettings) {
+    private List<HdfsProducer.SplitStrategy> getSplitStrategies(Map<String, Object> hdfsSettings) {
         List<HdfsProducer.SplitStrategy> strategies = new ArrayList<HdfsProducer.SplitStrategy>();
         for (Object obj : hdfsSettings.keySet()) {
             String key = (String) obj;
@@ -184,7 +184,7 @@ public class HdfsConfiguration {
         hostName = uri.getHost();
         port = uri.getPort() == -1 ? HdfsConstants.DEFAULT_PORT : uri.getPort();
         path = uri.getPath();
-        Map hdfsSettings = URISupport.parseParameters(uri);
+        Map<String, Object> hdfsSettings = URISupport.parseParameters(uri);
 
         overwrite = getBoolean(hdfsSettings, "overwrite", overwrite);
         append = getBoolean(hdfsSettings, "append", append);

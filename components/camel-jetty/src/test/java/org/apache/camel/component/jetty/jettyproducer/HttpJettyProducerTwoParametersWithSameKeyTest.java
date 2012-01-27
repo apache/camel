@@ -47,7 +47,7 @@ public class HttpJettyProducerTwoParametersWithSameKeyTest extends BaseJettyTest
         assertEquals("OK", out.getOut().getBody(String.class));
         assertEquals("yes", out.getOut().getHeader("bar"));
 
-        List foo = out.getOut().getHeader("foo", List.class);
+        List<?> foo = out.getOut().getHeader("foo", List.class);
         assertEquals(2, foo.size());
         assertEquals("123", foo.get(0));
         assertEquals("456", foo.get(1));
@@ -79,7 +79,7 @@ public class HttpJettyProducerTwoParametersWithSameKeyTest extends BaseJettyTest
         assertEquals("OK", out.getOut().getBody(String.class));
         assertEquals("yes", out.getOut().getHeader("bar"));
 
-        List foo = out.getOut().getHeader("foo", List.class);
+        List<?> foo = out.getOut().getHeader("foo", List.class);
         assertNotNull(foo);
         assertEquals(2, foo.size());
         assertEquals("123", foo.get(0));
@@ -96,7 +96,7 @@ public class HttpJettyProducerTwoParametersWithSameKeyTest extends BaseJettyTest
                         String from = exchange.getIn().getHeader("from", String.class);
                         assertEquals("me", from);
 
-                        List values = exchange.getIn().getHeader("to", List.class);
+                        List<?> values = exchange.getIn().getHeader("to", List.class);
                         assertNotNull(values);
                         assertEquals(2, values.size());
                         assertEquals("foo", values.get(0));

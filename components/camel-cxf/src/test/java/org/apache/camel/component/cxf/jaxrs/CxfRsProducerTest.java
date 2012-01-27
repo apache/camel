@@ -69,7 +69,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     }
     
     @Test
-    public void testGetConstumerWithClientProxyAPI() {
+    public void testGetCostumerWithClientProxyAPI() {
         // START SNIPPET: ProxyExample
         Exchange exchange = template.send("direct://proxy", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -97,7 +97,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     }
     
     @Test
-    public void testGetConstumersWithClientProxyAPI() {
+    public void testGetCostumersWithClientProxyAPI() {
         Exchange exchange = template.send("direct://proxy", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
@@ -114,7 +114,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         });
      
         // get the response message 
-        List<Customer> response = CastUtils.cast((List) exchange.getOut().getBody());
+        List<Customer> response = CastUtils.cast((List<?>) exchange.getOut().getBody());
         
         assertNotNull("The response should not be null ", response);
         assertEquals("Get a wrong customer id ", String.valueOf(response.get(0).getId()), "113");
@@ -123,7 +123,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     }
     
     @Test
-    public void testGetConstumerWithHttpCentralClientAPI() {
+    public void testGetCostumerWithHttpCentralClientAPI() {
      // START SNIPPET: HttpExample
         Exchange exchange = template.send("direct://http", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -154,7 +154,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     }
     
     @Test
-    public void testGetConstumerWithCxfRsEndpoint() {
+    public void testGetCostumerWithCxfRsEndpoint() {
         Exchange exchange 
             = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true", new Processor() {
                 public void process(Exchange exchange) throws Exception {

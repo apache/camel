@@ -20,9 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class Mina2VMTextlineProtocolTest extends BaseMina2Test {
 
     @Test
@@ -31,16 +28,18 @@ public class Mina2VMTextlineProtocolTest extends BaseMina2Test {
         Object body = "Hello there!";
         endpoint.expectedBodiesReceived(body);
 
-        template.sendBodyAndHeader("mina2:vm://localhost:{{port}}?textline=true&sync=false", body, "cheese", 123);
+        template.sendBodyAndHeader(String.format("mina2:vm://localhost:%1$s?textline=true&sync=false", getPort()), body, "cheese", 123);
 
         assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-
             public void configure() {
-                from("mina2:vm://localhost:{{port}}?textline=true&sync=false").to("log:before?showAll=true").to("mock:result").to("log:after?showAll=true");
+                from(String.format("mina2:vm://localhost:%1$s?textline=true&sync=false", getPort()))
+                    .to("log:before?showAll=true")
+                    .to("mock:result")
+                    .to("log:after?showAll=true");
             }
         };
     }

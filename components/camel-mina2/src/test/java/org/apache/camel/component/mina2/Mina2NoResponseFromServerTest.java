@@ -41,7 +41,7 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
         mock.expectedMessageCount(0);
 
         try {
-            template.requestBody("mina2:tcp://localhost:{{port}}?sync=true&codec=#myCodec", "Hello World");
+            template.requestBody(String.format("mina2:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort()), "Hello World");
             fail("Should throw a CamelExchangeException");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(CamelExchangeException.class, e.getCause());
@@ -61,7 +61,7 @@ public class Mina2NoResponseFromServerTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from("mina2:tcp://localhost:{{port}}?sync=true&codec=#myCodec").transform(constant("Bye World")).to("mock:result");
+                from(String.format("mina2:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort())).transform(constant("Bye World")).to("mock:result");
             }
         };
     }

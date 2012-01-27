@@ -52,7 +52,7 @@ public final class CxfHeaderHelper {
             Map<String, Object> headers, Message message, Exchange exchange) {
 
         Map<String, List<String>> cxfHeaders =
-            CastUtils.cast((Map)message.get(Message.PROTOCOL_HEADERS));
+            CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));
 
         if (cxfHeaders == null) {
             // use a treemap to keep ordering and ignore key case
@@ -88,7 +88,7 @@ public final class CxfHeaderHelper {
 
         // Copy the CXF protocol headers to the camel headers
         Map<String, List<String>> cxfHeaders =
-            CastUtils.cast((Map)message.get(Message.PROTOCOL_HEADERS));
+            CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
                 if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {

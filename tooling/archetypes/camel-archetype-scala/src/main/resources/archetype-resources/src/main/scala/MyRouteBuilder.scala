@@ -30,7 +30,7 @@ class MyRouteBuilder extends RouteBuilder {
    }
    
    // a route using Scala blocks
-   "timer://foo?fixedRate=true&delay=5s&period=10s" ==> {
+   "timer://foo?period=5s" ==> {
       process(myProcessorMethod)
       to("log:block")
    }

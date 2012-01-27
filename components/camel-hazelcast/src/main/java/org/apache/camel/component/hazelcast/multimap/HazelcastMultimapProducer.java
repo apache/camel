@@ -32,11 +32,9 @@ public class HazelcastMultimapProducer extends DefaultProducer {
 
     private final MultiMap<Object, Object> cache;
     private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
-    private HazelcastInstance hazelcastInstance;
 
     public HazelcastMultimapProducer(HazelcastInstance hazelcastInstance, Endpoint endpoint, String cacheName) {
         super(endpoint);
-        this.hazelcastInstance = hazelcastInstance;
         this.cache = Hazelcast.getMultiMap(cacheName);
     }
 

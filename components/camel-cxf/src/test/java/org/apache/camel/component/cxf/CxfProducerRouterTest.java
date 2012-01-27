@@ -104,7 +104,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         // The result will be extract from the MessageContentsList with the String class type
         MessageContentsList result = (MessageContentsList)out.getBody();
         LOG.info("Received output text: " + result.get(0));
-        Map<String, Object> responseContext = CastUtils.cast((Map)out.getHeader(Client.RESPONSE_CONTEXT));
+        Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>)out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
         assertEquals("We should get the response context here", "UTF-8", responseContext.get(org.apache.cxf.message.Message.ENCODING));
         assertEquals("Reply body on Camel is wrong", "echo " + TEST_MESSAGE, result.get(0));

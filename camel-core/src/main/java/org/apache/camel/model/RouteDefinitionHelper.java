@@ -30,12 +30,12 @@ import org.apache.camel.util.ObjectHelper;
  * Utility methods to help preparing {@link RouteDefinition} before they are added to
  * {@link org.apache.camel.CamelContext}.
  */
+@SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
 public final class RouteDefinitionHelper {
 
     private RouteDefinitionHelper() {
     }
 
-    @SuppressWarnings("unchecked")
     public static void initParent(ProcessorDefinition parent) {
         List<ProcessorDefinition> children = parent.getOutputs();
         for (ProcessorDefinition child : children) {
@@ -47,7 +47,6 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static void initParentAndErrorHandlerBuilder(ProcessorDefinition parent) {
         List<ProcessorDefinition> children = parent.getOutputs();
         for (ProcessorDefinition child : children) {
@@ -157,7 +156,6 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private static void initParentAndErrorHandlerBuilder(ModelCamelContext context, RouteDefinition route,
                                                          List<ProcessorDefinition> abstracts, List<OnExceptionDefinition> onExceptions) {
 
@@ -363,7 +361,6 @@ public final class RouteDefinitionHelper {
      * @param context the camel context
      * @param processor the node
      */
-    @SuppressWarnings("unchecked")
     public static void forceAssignIds(CamelContext context, ProcessorDefinition processor) {
         // force id on the child
         processor.idOrCreate(context.getNodeIdFactory());

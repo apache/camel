@@ -27,7 +27,6 @@ import org.apache.camel.ServiceStatus;
  */
 public class ManagedUnregisterCamelContextTest extends ManagementTestSupport {
 
-    @SuppressWarnings("unchecked")
     public void testUnregisterCamelContext() throws Exception {
         // The camel context already started by ContextTestSupport in the startup method
         
@@ -45,7 +44,7 @@ public class ManagedUnregisterCamelContextTest extends ManagementTestSupport {
         String version = (String) mbeanServer.getAttribute(on, "CamelVersion");
         assertNotNull(version);
 
-        Map<String, String> properties = (Map) mbeanServer.getAttribute(on, "Properties");
+        Map<?, ?> properties = (Map<?, ?>) mbeanServer.getAttribute(on, "Properties");
         assertNull(properties);
 
         Integer num = (Integer) mbeanServer.getAttribute(on, "InflightExchanges");

@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
     protected int entryIndex;
     protected EntryFilter entryFilter;
+    @SuppressWarnings("rawtypes")
     protected List list;
     protected boolean throttleEntries;
     protected Object feed;

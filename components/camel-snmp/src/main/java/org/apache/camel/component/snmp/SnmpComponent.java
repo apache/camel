@@ -28,8 +28,7 @@ import org.apache.camel.impl.DefaultComponent;
 public class SnmpComponent extends DefaultComponent {
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SnmpEndpoint endpoint = new SnmpEndpoint(uri, this);
         setProperties(endpoint, parameters);
         endpoint.initiate();

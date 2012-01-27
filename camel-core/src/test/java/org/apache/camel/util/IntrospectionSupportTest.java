@@ -159,7 +159,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setDate(date);
         bean.setGoldCustomer(true);
         bean.setLittle(true);
-        Collection children = new ArrayList();
+        Collection<?> children = new ArrayList<Object>();
         bean.setChildren(children);
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -220,7 +220,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         bean.setDate(date);
         bean.setGoldCustomer(true);
         bean.setLittle(true);
-        Collection children = new ArrayList();
+        Collection<?> children = new ArrayList<Object>();
         bean.setChildren(children);
 
         Object name = IntrospectionSupport.getProperty(bean, "name");

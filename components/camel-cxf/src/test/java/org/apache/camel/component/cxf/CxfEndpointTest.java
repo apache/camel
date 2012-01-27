@@ -58,7 +58,7 @@ public class CxfEndpointTest extends Assert {
             endpoint.getServiceClass().getCanonicalName(),
             "org.apache.camel.component.cxf.HelloService");
     }
-    
+
     @Test
     public void testSettingClientBus() throws Exception {
         CXFBusImpl bus = (CXFBusImpl) BusFactory.newInstance().createBus();

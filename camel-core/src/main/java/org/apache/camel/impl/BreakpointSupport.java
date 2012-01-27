@@ -46,15 +46,15 @@ public abstract class BreakpointSupport implements Breakpoint {
         state = State.Active;
     }
 
-    public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+    public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
         // noop
     }
 
-    public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
+    public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
         // noop
     }
 
-    public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition definition) {
+    public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition<?> definition) {
         // noop
     }
 }

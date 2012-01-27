@@ -64,7 +64,7 @@ public class PropertiesResolverTest extends ContextTestSupport {
 
     public static class MyCustomResolver implements PropertiesResolver {
 
-        public Properties resolveProperties(CamelContext context, String... uri) throws Exception {
+        public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
             Properties answer = new Properties();
             answer.put("foo", "mock:result");
             return answer;

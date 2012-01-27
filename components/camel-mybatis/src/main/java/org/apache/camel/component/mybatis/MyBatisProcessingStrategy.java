@@ -35,7 +35,7 @@ public interface MyBatisProcessingStrategy {
      * @return Results of the query as a {@link List}
      * @throws Exception can be thrown in case of error
      */
-    List poll(MyBatisConsumer consumer, MyBatisEndpoint endpoint) throws Exception;
+    List<?> poll(MyBatisConsumer consumer, MyBatisEndpoint endpoint) throws Exception;
 
     /**
      * Commit callback if there are a statements to be run after processing.

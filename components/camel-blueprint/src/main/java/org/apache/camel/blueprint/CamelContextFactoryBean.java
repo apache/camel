@@ -92,6 +92,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute(required = false)
     private String useBreadcrumb;
     @XmlAttribute(required = false)
+    private String managementNamePattern;
+    @XmlAttribute(required = false)
     private Boolean useBlueprintPropertyResolver;
     @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
@@ -118,7 +120,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false),
         @XmlElement(name = "errorHandler", type = CamelErrorHandlerFactoryBean.class, required = false)
     })
-    private List beans;
+    private List<?> beans;
     @XmlElement(name = "routeBuilder", required = false)
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
     @XmlElement(name = "routeContextRef", required = false)
@@ -155,7 +157,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private boolean implicitId;
 
 
-    public Class getObjectType() {
+    public Class<BlueprintCamelContext> getObjectType() {
         return BlueprintCamelContext.class;
     }
 
@@ -307,6 +309,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.useBreadcrumb = useBreadcrumb;
     }
 
+    public String getManagementNamePattern() {
+        return managementNamePattern;
+    }
+
+    public void setManagementNamePattern(String managementNamePattern) {
+        this.managementNamePattern = managementNamePattern;
+    }
+
     public Boolean getLazyLoadTypeConverters() {
         return lazyLoadTypeConverters;
     }
@@ -451,11 +461,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.camelJMXAgent = camelJMXAgent;
     }
 
-    public List getBeans() {
+    public List<?> getBeans() {
         return beans;
     }
 
-    public void setBeans(List beans) {
+    public void setBeans(List<?> beans) {
         this.beans = beans;
     }
 

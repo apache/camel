@@ -38,6 +38,7 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +118,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             inputStreamToClose = inputStream;
         }
         Charset charset = endpoint.getCharset();
-        return new BufferedReader(new InputStreamReader(inputStream, charset));
+        return IOHelper.buffered(new InputStreamReader(inputStream, charset));
     }
 
     private void readFromStream() throws Exception {

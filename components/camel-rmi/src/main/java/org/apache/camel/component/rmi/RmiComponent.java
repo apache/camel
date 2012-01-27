@@ -44,10 +44,10 @@ public class RmiComponent extends DefaultComponent {
 
         // lookup remote interfaces
         List<Class<?>> classes = new ArrayList<Class<?>>();
-        Iterator it = getAndRemoveParameter(parameters, "remoteInterfaces", Iterator.class);
+        Iterator<?> it = getAndRemoveParameter(parameters, "remoteInterfaces", Iterator.class);
         while (it != null && it.hasNext()) {
             Object next = it.next();
-            Class clazz = getCamelContext().getTypeConverter().mandatoryConvertTo(Class.class, next);
+            Class<?> clazz = getCamelContext().getTypeConverter().mandatoryConvertTo(Class.class, next);
             classes.add(clazz);
         }
 

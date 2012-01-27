@@ -29,12 +29,9 @@ import javax.mail.MessagingException;
 import javax.mail.Store;
 import javax.mail.search.FlagTerm;
 
-import org.apache.camel.BatchConsumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.impl.ScheduledPollConsumer;
-import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -45,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * A {@link org.apache.camel.Consumer Consumer} which consumes messages from JavaMail using a
  * {@link javax.mail.Transport Transport} and dispatches them to the {@link Processor}
  */
-public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
+public class MailConsumer extends ScheduledBatchPollingConsumer {
     public static final String POP3_UID = "CamelPop3Uid";
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
     private static final transient Logger LOG = LoggerFactory.getLogger(MailConsumer.class);
@@ -53,9 +50,6 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
     private final JavaMailSender sender;
     private Folder folder;
     private Store store;
-    private int maxMessagesPerPoll;
-    private volatile ShutdownRunningTask shutdownRunningTask;
-    private volatile int pendingExchanges;
 
     public MailConsumer(MailEndpoint endpoint, Processor processor, JavaMailSender sender) {
         super(endpoint, processor);
@@ -152,10 +146,6 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         return polledMessages;
     }
 
-    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
-        this.maxMessagesPerPoll = maxMessagesPerPoll;
-    }
-
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
 
@@ -200,54 +190,6 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         }
 
         return total;
-    }
-
-    public boolean deferShutdown(ShutdownRunningTask shutdownRunningTask) {
-        // store a reference what to do in case when shutting down and we have pending messages
-        this.shutdownRunningTask = shutdownRunningTask;
-        // do not defer shutdown
-        return false;
-    }
-
-    public int getPendingExchangesSize() {
-        int answer;
-        // only return the real pending size in case we are configured to complete all tasks
-        if (ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask) {
-            answer = pendingExchanges;
-        } else {
-            answer = 0;
-        }
-
-        if (answer == 0 && isPolling()) {
-            // force at least one pending exchange if we are polling as there is a little gap
-            // in the processBatch method and until an exchange gets enlisted as in-flight
-            // which happens later, so we need to signal back to the shutdown strategy that
-            // there is a pending exchange. When we are no longer polling, then we will return 0
-            log.trace("Currently polling so returning 1 as pending exchanges");
-            answer = 1;
-        }
-
-        return answer;
-    }
-
-    public void prepareShutdown() {
-        // noop
-    }
-
-    public boolean isBatchAllowed() {
-        // stop if we are not running
-        boolean answer = isRunAllowed();
-        if (!answer) {
-            return false;
-        }
-
-        if (shutdownRunningTask == null) {
-            // we are not shutting down so continue to run
-            return true;
-        }
-
-        // we are shutting down so only continue if we are configured to complete all tasks
-        return ShutdownRunningTask.CompleteAllTasks == shutdownRunningTask;
     }
 
     protected Queue<Exchange> createExchanges(Message[] messages) throws MessagingException {
@@ -374,7 +316,7 @@ public class MailConsumer extends ScheduledPollConsumer implements BatchConsumer
         // to be unique
         StringBuilder buffer = new StringBuilder();
         try {
-            Enumeration it = message.getAllHeaders();
+            Enumeration<?> it = message.getAllHeaders();
             while (it.hasMoreElements()) {
                 Header header = (Header)it.nextElement();
                 buffer.append(header.getName()).append("=").append(header.getValue()).append("\n");

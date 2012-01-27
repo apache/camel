@@ -51,8 +51,8 @@ public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSuppor
             }
         });
 
-        Map foo = myBean.foo;
-        Map bar = myBean.bar;
+        Map<?, ?> foo = myBean.foo;
+        Map<?, ?> bar = myBean.bar;
         assertNotNull("myBean.foo", foo);
         assertNotNull("myBean.bar", bar);
 
@@ -79,15 +79,15 @@ public class BeanWithPropertiesAndHeadersInjectionTest extends ContextTestSuppor
     }
 
     public static class MyBean {
-        public Map foo;
-        public Map bar;
+        public Map<?, ?> foo;
+        public Map<?, ?> bar;
 
         @Override
         public String toString() {
             return "MyBean[foo: " + foo + " bar: " + bar + "]";
         }
 
-        public void myMethod(@Properties Map foo, @Headers Map bar) {
+        public void myMethod(@Properties Map<?, ?> foo, @Headers Map<?, ?> bar) {
             this.foo = foo;
             this.bar = bar;
             LOG.info("myMethod() method called on " + this);

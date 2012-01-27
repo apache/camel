@@ -48,7 +48,7 @@ public class JcrRouteTest extends CamelTestSupport {
         String uuid = out.getOut().getBody(String.class);
         Session session = repository.login(new SimpleCredentials("user", "pass".toCharArray()));
         try {
-            Node node = session.getNodeByUUID(uuid);
+            Node node = session.getNodeByIdentifier(uuid);
             assertNotNull(node);
             assertEquals("/home/test/node", node.getPath());
             assertEquals("<hello>world!</hello>", node.getProperty("my.contents.property").getString());

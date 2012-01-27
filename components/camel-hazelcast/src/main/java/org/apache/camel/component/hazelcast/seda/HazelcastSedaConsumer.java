@@ -69,7 +69,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
     }
 
     public void run() {
-        final BlockingQueue queue = endpoint.getQueue();
+        final BlockingQueue<?> queue = endpoint.getQueue();
 
         while (queue != null && isRunAllowed()) {
             final Exchange exchange = this.getEndpoint().createExchange();

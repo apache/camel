@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.core.xml.AbstractCamelProducerTemplateFactoryBean;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.springframework.beans.BeansException;
@@ -39,7 +40,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 @XmlRootElement(name = "template")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelProducerTemplateFactoryBean extends AbstractCamelProducerTemplateFactoryBean implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware {
+public class CamelProducerTemplateFactoryBean extends AbstractCamelProducerTemplateFactoryBean implements FactoryBean<ProducerTemplate>, InitializingBean, DisposableBean, ApplicationContextAware {
 
     @XmlTransient
     private ApplicationContext applicationContext;

@@ -37,9 +37,9 @@ import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
  */
 @XmlRootElement(name = "sort")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SortDefinition extends NoOutputExpressionNode {
+public class SortDefinition<T> extends NoOutputExpressionNode {
     @XmlTransient
-    private Comparator<Object> comparator;
+    private Comparator<? super T> comparator;
     @XmlAttribute
     private String comparatorRef;
 
@@ -50,7 +50,7 @@ public class SortDefinition extends NoOutputExpressionNode {
         setExpression(new ExpressionDefinition(expression));
     }
 
-    public SortDefinition(Expression expression, Comparator<Object> comparator) {
+    public SortDefinition(Expression expression, Comparator<? super T> comparator) {
         this(expression);
         this.comparator = comparator;
     }
@@ -80,8 +80,8 @@ public class SortDefinition extends NoOutputExpressionNode {
 
         // if no comparator then default on to string representation
         if (comparator == null) {
-            comparator = new Comparator<Object>() {
-                public int compare(Object o1, Object o2) {
+            comparator = new Comparator<T>() {
+                public int compare(T o1, T o2) {
                     return ObjectHelper.compare(o1, o2);
                 }
             };
@@ -94,14 +94,14 @@ public class SortDefinition extends NoOutputExpressionNode {
         } else {
             exp = getExpression().createExpression(routeContext);
         }
-        return new SortProcessor(exp, getComparator());
+        return new SortProcessor<T>(exp, getComparator());
     }
 
-    public Comparator<Object> getComparator() {
+    public Comparator<? super T> getComparator() {
         return comparator;
     }
 
-    public void setComparator(Comparator<Object> comparator) {
+    public void setComparator(Comparator<T> comparator) {
         this.comparator = comparator;
     }
 
@@ -119,7 +119,7 @@ public class SortDefinition extends NoOutputExpressionNode {
      * @param comparator  the comparator to use for sorting
      * @return the builder
      */
-    public SortDefinition comparator(Comparator<Object> comparator) {
+    public SortDefinition<T> comparator(Comparator<T> comparator) {
         setComparator(comparator);
         return this;
     }
@@ -130,7 +130,7 @@ public class SortDefinition extends NoOutputExpressionNode {
      * @param ref reference for the comparator
      * @return the builder
      */
-    public SortDefinition comparatorRef(String ref) {
+    public SortDefinition<T> comparatorRef(String ref) {
         setComparatorRef(ref);
         return this;
     }

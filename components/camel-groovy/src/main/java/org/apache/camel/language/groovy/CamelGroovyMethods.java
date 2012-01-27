@@ -31,15 +31,15 @@ public final class CamelGroovyMethods {
         // Utility Class
     }
 
-    public static FilterDefinition filter(ProcessorDefinition self, Closure filter) {
+    public static FilterDefinition filter(ProcessorDefinition<?> self, Closure<?> filter) {
         return self.filter(toExpression(filter));
     }
 
-    public static ChoiceDefinition when(ChoiceDefinition self, Closure filter) {
+    public static ChoiceDefinition when(ChoiceDefinition self, Closure<?> filter) {
         return self.when(toExpression(filter));
     }
 
-    public static ExpressionSupport toExpression(final Closure filter) {
+    public static ExpressionSupport toExpression(final Closure<?> filter) {
         return new ExpressionSupport() {
             protected String assertionFailureMessage(Exchange exchange) {
                 return filter.toString();

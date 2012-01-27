@@ -53,7 +53,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
 
     public void testPropertyOfIncompatibleType() throws Exception {
         try {
-            List value = ExchangeHelper.getMandatoryProperty(exchange, "foo", List.class);
+            List<?> value = ExchangeHelper.getMandatoryProperty(exchange, "foo", List.class);
             fail("Should have failed but got: " + value);
         } catch (NoSuchPropertyException e) {
             assertEquals("foo", e.getPropertyName());
@@ -72,7 +72,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
     public void testHeaderOfIncompatibleType() throws Exception {
         exchange.getIn().setHeader("foo", 123);
         try {
-            List value = ExchangeHelper.getMandatoryHeader(exchange, "foo", List.class);
+            List<?> value = ExchangeHelper.getMandatoryHeader(exchange, "foo", List.class);
             fail("Should have failed but got: " + value);
         } catch (NoSuchHeaderException e) {
             assertEquals("foo", e.getHeaderName());
@@ -135,7 +135,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         exchange.getOut().setBody("bar");
         exchange.getOut().setHeader("quote", "Camel rocks");
 
-        Map map = ExchangeHelper.createVariableMap(exchange);
+        Map<?, ?> map = ExchangeHelper.createVariableMap(exchange);
 
         assertEquals(8, map.size());
         assertSame(exchange, map.get("exchange"));
@@ -154,7 +154,7 @@ public class ExchangeHelperTest extends ContextTestSupport {
         exchange.getIn().setHeader("quote", "Camel rocks");
         assertFalse(exchange.hasOut());
 
-        Map map = ExchangeHelper.createVariableMap(exchange);
+        Map<?, ?> map = ExchangeHelper.createVariableMap(exchange);
 
         // there should still be 8 in the map
         assertEquals(8, map.size());

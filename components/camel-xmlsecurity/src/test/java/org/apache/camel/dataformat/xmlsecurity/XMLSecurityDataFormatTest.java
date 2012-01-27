@@ -16,8 +16,6 @@
  */
 package org.apache.camel.dataformat.xmlsecurity;
 
-import java.net.URL;
-import java.security.KeyStore;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -140,15 +138,14 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testFullPayloadAsymmetricKeyEncryption() throws Exception {
-        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        URL trustStoreUrl = getClass().getClassLoader().getResource("sender.ts");
-        trustStore.load(trustStoreUrl.openStream(), "password".toCharArray());
+        KeyStoreParameters tsParameters = new KeyStoreParameters();
+        tsParameters.setPassword("password");
+        tsParameters.setResource("sender.ts");
 
         final XMLSecurityDataFormat xmlEncDataFormat = new XMLSecurityDataFormat();
         xmlEncDataFormat.setKeyCipherAlgorithm(XMLCipher.RSA_v1dot5);
+        xmlEncDataFormat.setKeyOrTrustStoreParameters(tsParameters);
         xmlEncDataFormat.setXmlCipherAlgorithm(testCypherAlgorithm);
-        xmlEncDataFormat.setTrustStore(trustStore);
-        xmlEncDataFormat.setTrustStorePassword("password");
         xmlEncDataFormat.setRecipientKeyAlias("recipient");
 
         context.addRoutes(new RouteBuilder() {
@@ -162,7 +159,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadAsymmetricKeyEncryptionWithContextTruststoreProperties() throws Exception {
-        
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
         tsParameters.setResource("sender.ts");
@@ -309,7 +305,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testPartialPayloadAsymmetricKeyDecryption() throws Exception {
-                
         final Map<String, String> namespaces = new HashMap<String, String>();
         namespaces.put("ns1", "http://cheese.xmlsecurity.camel.apache.org/");
         
@@ -333,7 +328,6 @@ public class XMLSecurityDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testPartialPayloadAsymmetricKeyDecryptionCustomNS() throws Exception {
-        
         final KeyStoreParameters tsParameters = new KeyStoreParameters();
         tsParameters.setPassword("password");
         tsParameters.setResource("sender.ts");

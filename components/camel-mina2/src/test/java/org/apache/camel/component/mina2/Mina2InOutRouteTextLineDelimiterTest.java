@@ -35,7 +35,7 @@ public class Mina2InOutRouteTextLineDelimiterTest extends BaseMina2Test {
         // we should preserve headers
         mock.setResultWaitTime(5000);
 
-        Object out = template.requestBody("mina2:tcp://localhost:{{port}}?sync=true&textline=true&textlineDelimiter=MAC", "Chad");
+        Object out = template.requestBody(String.format("mina2:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort()), "Chad");
 
         assertMockEndpointsSatisfied();
         assertEquals("Bye Chad", out);
@@ -46,7 +46,7 @@ public class Mina2InOutRouteTextLineDelimiterTest extends BaseMina2Test {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
-                from("mina2:tcp://localhost:{{port}}?sync=true&textline=true&textlineDelimiter=MAC").process(new Processor() {
+                from(String.format("mina2:tcp://localhost:%1$s?sync=true&textline=true&textlineDelimiter=MAC", getPort())).process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);

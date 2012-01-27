@@ -63,13 +63,13 @@ public class StreamGroupLinesTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List list = mock.getExchanges().get(0).getIn().getBody(List.class);
+        List<?> list = mock.getExchanges().get(0).getIn().getBody(List.class);
         assertEquals(3, list.size());
         assertEquals("A", list.get(0));
         assertEquals("B", list.get(1));
         assertEquals("C", list.get(2));
 
-        List list2 = mock.getExchanges().get(1).getIn().getBody(List.class);
+        List<?> list2 = mock.getExchanges().get(1).getIn().getBody(List.class);
         assertEquals(3, list2.size());
         assertEquals("D", list2.get(0));
         assertEquals("E", list2.get(1));

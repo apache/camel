@@ -27,13 +27,13 @@ import org.apache.camel.ProducerTemplate;
  * @version 
  */
 public class MyBean {
-    private Map headers;
+    private Map<?, ?> headers;
     private String body;
     @EndpointInject(uri = "mock:result")
     private ProducerTemplate producer;
 
     @Consume(uri = "activemq:Test.BindingQueue")
-    public void myMethod(@Headers Map headers, String body) {
+    public void myMethod(@Headers Map<?, ?> headers, String body) {
         this.headers = headers;
         this.body = body;
 
@@ -45,7 +45,7 @@ public class MyBean {
         return body;
     }
 
-    public Map getHeaders() {
+    public Map<?, ?> getHeaders() {
         return headers;
     }
 }

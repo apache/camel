@@ -156,7 +156,6 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         ServiceHelper.stopServices(output, errorHandler, routeContextProcessor);
     }
 
-    @SuppressWarnings("unchecked")
     public void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
         this.routeContext = routeContext;
         this.definition = outputDefinition;

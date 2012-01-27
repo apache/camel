@@ -77,7 +77,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 @XmlAccessorType(XmlAccessType.FIELD)
 @SuppressWarnings("unused")
 public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<SpringCamelContext>
-        implements FactoryBean, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener {
+        implements FactoryBean<SpringCamelContext>, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener<ApplicationEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
 
     @XmlAttribute(name = "depends-on", required = false)
@@ -98,6 +98,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String useMDCLogging;
     @XmlAttribute(required = false)
     private String useBreadcrumb;
+    @XmlAttribute(required = false)
+    private String managementNamePattern;
     @XmlAttribute(required = false)
     private ShutdownRoute shutdownRoute;
     @XmlAttribute(required = false)
@@ -122,7 +124,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
             @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false),
             @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class, required = false)})
-    private List beans;
+    private List<?> beans;
     @XmlElement(name = "routeBuilder", required = false)
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
     @XmlElement(name = "routeContextRef", required = false)
@@ -466,6 +468,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setUseBreadcrumb(String useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
+    }
+
+    public String getManagementNamePattern() {
+        return managementNamePattern;
+    }
+
+    public void setManagementNamePattern(String managementNamePattern) {
+        this.managementNamePattern = managementNamePattern;
     }
 
     public Boolean getLazyLoadTypeConverters() {

@@ -39,7 +39,7 @@ public interface TraceEventHandler {
      * @param exchange         the current exchange
      * @throws Exception is thrown if an error occurred during tracing
      */
-    void traceExchange(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception;
+    void traceExchange(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception;
 
     /**
      * Event called when an {@link Exchange} is about to be processed (in)
@@ -53,7 +53,7 @@ public interface TraceEventHandler {
      * @return an optional return object to pass in the <tt>traceEventOut</tt> method.
      * @throws Exception is thrown if an error occurred during tracing
      */
-    Object traceExchangeIn(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception;
+    Object traceExchangeIn(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange) throws Exception;
 
     /**
      * Event called when an {@link Exchange} has been processed (out)
@@ -67,6 +67,6 @@ public interface TraceEventHandler {
      * @param traceState       the optional object which was returned from the <tt>traceEventIn</tt> method.
      * @throws Exception is thrown if an error occurred during tracing
      */
-    void traceExchangeOut(ProcessorDefinition node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception;
+    void traceExchangeOut(ProcessorDefinition<?> node, Processor target, TraceInterceptor traceInterceptor, Exchange exchange, Object traceState) throws Exception;
 
 }

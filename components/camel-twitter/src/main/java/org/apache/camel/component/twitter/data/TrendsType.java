@@ -14,13 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.twitter.data;
 
-
-/**
- * @author Brett E. Meyer (3RiverDev.com)
- */
 public enum TrendsType {
     DAILY, WEEKLY, UNKNOWN;
 

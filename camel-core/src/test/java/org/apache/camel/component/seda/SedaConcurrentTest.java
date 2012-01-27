@@ -102,7 +102,7 @@ public class SedaConcurrentTest extends ContextTestSupport {
         // must start the template
         pt.start();
 
-        List<Future> replies = new ArrayList<Future>(20);
+        List<Future<Object>> replies = new ArrayList<Future<Object>>(20);
         for (int i = 0; i < 20; i++) {
             Future<Object> out = pt.asyncRequestBody("seda:bar", "Message " + i);
             replies.add(out);

@@ -210,7 +210,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @param exception exception to catch
      * @return the builder
      */
-    public OnExceptionDefinition onException(Class exception) {
+    public OnExceptionDefinition onException(Class<? extends Throwable> exception) {
         // is only allowed at the top currently
         if (!getRouteCollection().getRoutes().isEmpty()) {
             throw new IllegalArgumentException("onException must be defined before any routes in the RouteBuilder");
@@ -226,9 +226,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @param exceptions list of exceptions to catch
      * @return the builder
      */
-    public OnExceptionDefinition onException(Class... exceptions) {
+    public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
         OnExceptionDefinition last = null;
-        for (Class ex : exceptions) {
+        for (Class<? extends Throwable> ex : exceptions) {
             last = last == null ? onException(ex) : last.onException(ex);
         }
         return last != null ? last : onException(Exception.class);

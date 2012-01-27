@@ -38,45 +38,68 @@ public final class ProxyHelper {
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    public static Object createProxyObject(Endpoint endpoint, Producer producer, ClassLoader classLoader, Class[] interfaces, MethodInfoCache methodCache) {
-        return Proxy.newProxyInstance(classLoader, interfaces.clone(), new CamelInvocationHandler(endpoint, producer, methodCache));
+    @SuppressWarnings("unchecked")
+    public static <T> T createProxyObject(Endpoint endpoint, Producer producer, ClassLoader classLoader, Class<T>[] interfaces, MethodInfoCache methodCache) {
+        return (T) Proxy.newProxyInstance(classLoader, interfaces.clone(), new CamelInvocationHandler(endpoint, producer, methodCache));
     }
-
 
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class[] interfaces, MethodInfoCache methodCache) throws Exception {
+    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T> interfaceClass, MethodInfoCache methodCache) throws Exception {
+        return createProxy(endpoint, cl, toArray(interfaceClass), methodCache);
+    }
+
+    /**
+     * Creates a Proxy which sends the exchange to the endpoint.
+     */
+    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T>[] interfaceClasses, MethodInfoCache methodCache) throws Exception {
         Producer producer = endpoint.createProducer();
         // ensure the producer is started
         ServiceHelper.startService(producer);
-        return (T) createProxyObject(endpoint, producer, cl, interfaces, methodCache);
+        return createProxyObject(endpoint, producer, cl, interfaceClasses, methodCache);
     }
 
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<?>... interfaceClasses) throws Exception {
-        return (T) createProxy(endpoint, cl, interfaceClasses, createMethodInfoCache(endpoint));
-    }
-
-
-    /**
-     * Creates a Proxy which sends the exchange to the endpoint.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, Class<?>... interfaceClasses) throws Exception {
-        return (T) createProxy(endpoint, getClassLoader(interfaceClasses), interfaceClasses);
+    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T> interfaceClass) throws Exception {
+        return createProxy(endpoint, cl, toArray(interfaceClass));
     }
 
     /**
      * Creates a Proxy which sends the exchange to the endpoint.
      */
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<?>... interfaceClasses) throws Exception {
-        return (T) createProxyObject(endpoint, producer, getClassLoader(interfaceClasses), interfaceClasses, createMethodInfoCache(endpoint));
+    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T>... interfaceClasses) throws Exception {
+        return createProxy(endpoint, cl, interfaceClasses, createMethodInfoCache(endpoint));
+    }
+
+    /**
+     * Creates a Proxy which sends the exchange to the endpoint.
+     */
+    public static <T> T createProxy(Endpoint endpoint, Class<T> interfaceClass) throws Exception {
+        return createProxy(endpoint, toArray(interfaceClass));
+    }
+
+    /**
+     * Creates a Proxy which sends the exchange to the endpoint.
+     */
+    public static <T> T createProxy(Endpoint endpoint, Class<T>... interfaceClasses) throws Exception {
+        return createProxy(endpoint, getClassLoader(interfaceClasses), interfaceClasses);
+    }
+
+    /**
+     * Creates a Proxy which sends the exchange to the endpoint.
+     */
+    public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<T> interfaceClass) throws Exception {
+        return createProxy(endpoint, producer, toArray(interfaceClass));
+    }
+
+    /**
+     * Creates a Proxy which sends the exchange to the endpoint.
+     */
+    public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<T>... interfaceClasses) throws Exception {
+        return createProxyObject(endpoint, producer, getClassLoader(interfaceClasses), interfaceClasses, createMethodInfoCache(endpoint));
     }
 
     /**
@@ -91,5 +114,13 @@ public final class ProxyHelper {
 
     protected static MethodInfoCache createMethodInfoCache(Endpoint endpoint) {
         return new MethodInfoCache(endpoint.getCamelContext());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Class<T>[] toArray(Class<T> interfaceClass) {
+        // this method and it's usage is introduced to avoid compiler warnings
+        // about the generic Class arrays in the case we've got only one single
+        // Class to build a Proxy for
+        return new Class[] {interfaceClass};
     }
 }

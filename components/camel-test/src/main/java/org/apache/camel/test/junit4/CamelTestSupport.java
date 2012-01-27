@@ -37,6 +37,7 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.BreakpointSupport;
+import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
@@ -45,7 +46,6 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.After;
@@ -344,18 +344,14 @@ public abstract class CamelTestSupport extends TestSupport {
         return true;
     }
 
-    /**
-     * Lets post process this test instance to process any Camel annotations.
-     * Note that using Spring Test or Guice is a more powerful approach.
-     */
     protected void postProcessTest() throws Exception {
         context = threadCamelContext.get();
         template = threadTemplate.get();
         consumer = threadConsumer.get();
         camelContextService = threadService.get();
 
-        CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
-        processor.setCamelContext(context);
+        // use the default bean post processor from camel-core
+        DefaultCamelBeanPostProcessor processor = new DefaultCamelBeanPostProcessor(context);
         processor.postProcessBeforeInitialization(this, "this");
     }
 
@@ -425,7 +421,6 @@ public abstract class CamelTestSupport extends TestSupport {
         return new JndiRegistry(createJndiContext());
     }
 
-    @SuppressWarnings("unchecked")
     protected Context createJndiContext() throws Exception {
         Properties properties = new Properties();
 
@@ -437,7 +432,7 @@ public abstract class CamelTestSupport extends TestSupport {
         } else {            
             properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
         }
-        return new InitialContext(new Hashtable(properties));
+        return new InitialContext(new Hashtable<Object, Object>(properties));
     }
 
     /**
@@ -634,14 +629,14 @@ public abstract class CamelTestSupport extends TestSupport {
     /**
      * Single step debugs and Camel invokes this method before entering the given processor
      */
-    protected void debugBefore(Exchange exchange, Processor processor, ProcessorDefinition definition,
+    protected void debugBefore(Exchange exchange, Processor processor, ProcessorDefinition<?> definition,
                                String id, String label) {
     }
 
     /**
      * Single step debugs and Camel invokes this method after processing the given processor
      */
-    protected void debugAfter(Exchange exchange, Processor processor, ProcessorDefinition definition,
+    protected void debugAfter(Exchange exchange, Processor processor, ProcessorDefinition<?> definition,
                               String id, String label, long timeTaken) {
     }
 
@@ -651,12 +646,12 @@ public abstract class CamelTestSupport extends TestSupport {
     private class DebugBreakpoint extends BreakpointSupport {
 
         @Override
-        public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition definition) {
+        public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
             CamelTestSupport.this.debugBefore(exchange, processor, definition, definition.getId(), definition.getLabel());
         }
 
         @Override
-        public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition definition, long timeTaken) {
+        public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
             CamelTestSupport.this.debugAfter(exchange, processor, definition, definition.getId(), definition.getLabel(), timeTaken);
         }
     }

@@ -51,7 +51,7 @@ public class ChoiceDefinitionTest extends TestSupport {
 
         assertEquals(3, choice.getOutputs().size());
         int i = 0;
-        for (ProcessorDefinition def : choice.getOutputs()) {
+        for (ProcessorDefinition<?> def : choice.getOutputs()) {
             if (i == 0) {
                 assertEquals(when1, def);
             } else if (i == 1) {
@@ -90,7 +90,7 @@ public class ChoiceDefinitionTest extends TestSupport {
 
         assertEquals(2, choice.getOutputs().size());
         int i = 0;
-        for (ProcessorDefinition def : choice.getOutputs()) {
+        for (ProcessorDefinition<?> def : choice.getOutputs()) {
             if (i == 0) {
                 assertEquals(when1, def);
             } else if (i == 1) {
@@ -137,7 +137,7 @@ public class ChoiceDefinitionTest extends TestSupport {
 
         assertEquals(3, choice.getOutputs().size());
         int i = 0;
-        for (ProcessorDefinition def : choice.getOutputs()) {
+        for (ProcessorDefinition<?> def : choice.getOutputs()) {
             if (i == 0) {
                 assertEquals(when1, def);
             } else if (i == 1) {

@@ -22,6 +22,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ThreadPoolRejectedPolicy;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -42,8 +44,6 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
                 // use a custom pool which rejects any new tasks while currently in progress
                 // this should force the ThreadsProcessor to run the tasks itself
                 ExecutorService pool = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
-
-                context.setTracing(true);
 
                 from("seda:start")
                     .to("log:before")
@@ -73,8 +73,6 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
                 // this should force the ThreadsProcessor to run the tasks itself
                 ExecutorService pool = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
-                context.setTracing(true);
-
                 from("seda:start")
                     .to("log:before")
                     // will use our custom pool
@@ -102,4 +100,150 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(1, mock.getReceivedCounter());
     }
 
+    public void testThreadsRejectedDiscard() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:start")
+                        .to("log:before")
+                        .threads(1, 1).maxPoolSize(1).maxQueueSize(2).rejectedPolicy(ThreadPoolRejectedPolicy.Discard)
+                        .delay(1000)
+                        .to("log:after")
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
+        
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(2);
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:start", "Message " + i);
+        }
+        assertMockEndpointsSatisfied();
+
+        assertTrue(notify.matchesMockWaitTime());
+
+        int inflight = context.getInflightRepository().size();
+        assertEquals(0, inflight);
+    }
+    
+    public void testThreadsRejectedDiscardOldest() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:start")
+                        .to("log:before")
+                        .threads(1, 1).maxPoolSize(1).maxQueueSize(2).rejectedPolicy(ThreadPoolRejectedPolicy.DiscardOldest)
+                        .delay(1000)
+                        .to("log:after")
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
+
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(2);
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:start", "Message " + i);
+        }
+        assertMockEndpointsSatisfied();
+
+        assertTrue(notify.matchesMockWaitTime());
+
+        int inflight = context.getInflightRepository().size();
+        assertEquals(0, inflight);
+    }
+
+    public void testThreadsRejectedAbort() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:start")
+                        .to("log:before")
+                        .threads(1, 1).maxPoolSize(1).maxQueueSize(2).rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
+                        .delay(1000)
+                        .to("log:after")
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
+
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(2);
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:start", "Message " + i);
+        }
+        assertMockEndpointsSatisfied();
+
+        assertTrue(notify.matchesMockWaitTime());
+
+        int inflight = context.getInflightRepository().size();
+        assertEquals(0, inflight);
+    }
+
+    public void testThreadsRejectedCallerRuns() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("seda:start")
+                        .to("log:before")
+                        .threads(1, 1).maxPoolSize(1).maxQueueSize(2).rejectedPolicy(ThreadPoolRejectedPolicy.CallerRuns)
+                        .delay(200)
+                        .to("log:after")
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
+
+        getMockEndpoint("mock:result").expectedMessageCount(10);
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:start", "Message " + i);
+        }
+        assertMockEndpointsSatisfied();
+
+        assertTrue(notify.matchesMockWaitTime());
+
+        int inflight = context.getInflightRepository().size();
+        assertEquals(0, inflight);
+    }
+
+    public void testThreadsRejectedAbortNoRedelivery() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(Exception.class).maximumRedeliveries(3).handled(true).to("mock:error");
+
+                from("seda:start")
+                        .to("log:before")
+                        .threads(1, 1).maxPoolSize(1).maxQueueSize(2).rejectedPolicy(ThreadPoolRejectedPolicy.Abort)
+                        .delay(1000)
+                        .to("log:after")
+                        .to("mock:result");
+            }
+        });
+        context.start();
+
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(10).create();
+
+        // there should be error handling for aborted tasks (eg no redeliveries and no error handling)
+        getMockEndpoint("mock:error").expectedMessageCount(0);
+
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(2);
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:start", "Message " + i);
+        }
+        assertMockEndpointsSatisfied();
+
+        assertTrue(notify.matchesMockWaitTime());
+
+        int inflight = context.getInflightRepository().size();
+        assertEquals(0, inflight);
+    }
+
+    
 }

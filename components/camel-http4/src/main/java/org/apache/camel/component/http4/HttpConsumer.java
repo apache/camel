@@ -25,9 +25,13 @@ import org.apache.camel.impl.DefaultConsumer;
 public class HttpConsumer extends DefaultConsumer {
 
     private final HttpEndpoint endpoint;
+    private boolean traceEnabled;    
 
     public HttpConsumer(HttpEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        if (endpoint.isTraceEnabled()) {
+            setTraceEnabled(true);
+        }        
         this.endpoint = endpoint;
     }
 
@@ -55,4 +59,12 @@ public class HttpConsumer extends DefaultConsumer {
         endpoint.disconnect(this);
         super.doStop();
     }
+
+    public boolean isTraceEnabled() {        
+        return this.traceEnabled;
+    }
+
+    public void setTraceEnabled(boolean traceEnabled) {
+        this.traceEnabled = traceEnabled;
+    }    
 }

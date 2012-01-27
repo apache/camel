@@ -25,7 +25,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
-import org.osgi.service.blueprint.container.BlueprintContainer;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
@@ -41,7 +40,6 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
     @Test
     public void testRouteWithXSLT() throws Exception {
         getInstalledBundle("CamelBlueprintTestBundle19").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle19)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle19)", 10000);
 
         ProducerTemplate template = ctx.createProducerTemplate();
@@ -59,7 +57,6 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
     @Test
     public void testRouteWithVelocity() throws Exception {
         getInstalledBundle("CamelBlueprintTestBundle20").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle20)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle20)", 10000);
 
         ProducerTemplate template = ctx.createProducerTemplate();
@@ -71,7 +68,6 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
     @Test
     public void testSetHeaderXPathResultType() throws Exception {
         getInstalledBundle("CamelBlueprintTestBundle21").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle21)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle21)", 10000);
 
         ProducerTemplate template = ctx.createProducerTemplate();
@@ -92,7 +88,6 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
     @Test
     public void testGetApplicationContextClassloader() throws Exception {
         getInstalledBundle("CamelBlueprintTestBundle22").start();
-        BlueprintContainer ctn = getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=CamelBlueprintTestBundle22)", 10000);
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintTestBundle22)", 10000);
 
         // test the application context classloader

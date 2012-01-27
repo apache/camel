@@ -47,13 +47,13 @@ public class DualPipelineTest extends ContextTestSupport {
         assertEquals(3, pd1.getOutputs().size());
         assertEquals(4, pd2.getOutputs().size());
 
-        SendDefinition send1 = assertIsInstanceOf(SendDefinition.class, pd1.getOutputs().get(2));
+        SendDefinition<?> send1 = assertIsInstanceOf(SendDefinition.class, pd1.getOutputs().get(2));
         assertEquals("mock:b", send1.getUri());
 
-        SendDefinition send2 = assertIsInstanceOf(SendDefinition.class, pd2.getOutputs().get(3));
+        SendDefinition<?> send2 = assertIsInstanceOf(SendDefinition.class, pd2.getOutputs().get(3));
         assertEquals("mock:e", send2.getUri());
 
-        SendDefinition send = assertIsInstanceOf(SendDefinition.class, context.getRouteDefinitions().get(0).getOutputs().get(1));
+        SendDefinition<?> send = assertIsInstanceOf(SendDefinition.class, context.getRouteDefinitions().get(0).getOutputs().get(1));
         assertEquals("mock:result", send.getUri());
     }
 

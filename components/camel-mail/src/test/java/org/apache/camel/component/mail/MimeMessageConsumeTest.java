@@ -78,7 +78,7 @@ public class MimeMessageConsumeTest extends CamelTestSupport {
             DataHandler dh = exchange.getIn().getAttachment(s);
             Object content = dh.getContent();
             assertNotNull("Content should not be empty", content);
-            //assertEquals("log4j.properties", dh.getName());
+            assertEquals("log4j.properties", dh.getName());
         }
     }
 

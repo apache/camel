@@ -278,7 +278,7 @@ public class BeanExpression implements Expression, Predicate {
             key = StringHelper.removeLeadingAndEndingQuotes(key);
 
             // try map first
-            Map map = exchange.getContext().getTypeConverter().convertTo(Map.class, result);
+            Map<?, ?> map = exchange.getContext().getTypeConverter().convertTo(Map.class, result);
             if (map != null) {
                 return map.get(key);
             }
@@ -288,7 +288,7 @@ public class BeanExpression implements Expression, Predicate {
             boolean checkList = key.startsWith("last") || num != null;
 
             if (checkList) {
-                List list = exchange.getContext().getTypeConverter().convertTo(List.class, result);
+                List<?> list = exchange.getContext().getTypeConverter().convertTo(List.class, result);
                 if (list != null) {
                     if (key.startsWith("last")) {
                         num = list.size() - 1;

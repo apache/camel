@@ -30,7 +30,7 @@ public class MyService {
         this.name = name;
     }
 
-    public Map status() {
+    public Map<String, Object> status() {
         Map<String, Object> answer = new HashMap<String, Object>();
         answer.put("name", name);
         answer.put("time", new Date().getTime());

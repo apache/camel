@@ -45,7 +45,7 @@ public class MailCollectionHeaderTest extends CamelTestSupport {
 
         Object beers = mock.getReceivedExchanges().get(0).getIn().getHeader("beers");
         assertNotNull(beers);
-        List list = assertIsInstanceOf(List.class, beers);
+        List<?> list = assertIsInstanceOf(List.class, beers);
         assertEquals("Carlsberg", list.get(0));
         assertEquals("Heineken", list.get(1));
     }

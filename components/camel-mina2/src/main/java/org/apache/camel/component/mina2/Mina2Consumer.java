@@ -26,17 +26,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.service.IoAcceptor;
-import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.service.IoService;
 import org.apache.mina.core.session.IoSession;
-import org.apache.mina.core.session.IoSessionConfig;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
@@ -61,15 +58,11 @@ public class Mina2Consumer extends DefaultConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(Mina2Consumer.class);
     private SocketAddress address;
     private IoAcceptor acceptor;
-    private CamelLogger noReplyLogger;
     private Mina2Configuration configuration;
-    private IoSessionConfig acceptorConfig;
-    private boolean sync;
 
     public Mina2Consumer(final Mina2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.configuration = endpoint.getConfiguration();
-        this.noReplyLogger = new CamelLogger(LOG, configuration.getNoReplyLogLevel());
         //
         // All mina2 endpoints are InOut. The endpoints are asynchronous. 
         // Endpoints can send "n" messages and receive "m" messages.
@@ -90,8 +83,7 @@ public class Mina2Consumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        IoHandler handler = new ReceiveHandler();
-        acceptor.setHandler(handler);
+        acceptor.setHandler(new ReceiveHandler());
         acceptor.bind(address);
         LOG.info("Bound to server address: {} using acceptor: {}", address, acceptor);
     }
@@ -124,7 +116,6 @@ public class Mina2Consumer extends DefaultConsumer {
     protected void createSocketEndpoint(String uri, Mina2Configuration configuration) {
         LOG.debug("createSocketEndpoint");
         boolean minaLogger = configuration.isMinaLogger();
-        long timeout = configuration.getTimeout();
         List<IoFilter> filters = configuration.getFilters();
 
         address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
@@ -133,7 +124,6 @@ public class Mina2Consumer extends DefaultConsumer {
             new NioProcessor(this.getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaSocketAcceptor")));
 
         // acceptor connectorConfig
-        acceptorConfig = acceptor.getSessionConfig();
         configureCodecFactory("Mina2Consumer", acceptor, configuration);
         ((NioSocketAcceptor) acceptor).setReuseAddress(true);
         acceptor.setCloseOnDeactivation(true);
@@ -181,14 +171,12 @@ public class Mina2Consumer extends DefaultConsumer {
 
     protected void createDatagramEndpoint(String uri, Mina2Configuration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
-        long timeout = configuration.getTimeout();
         List<IoFilter> filters = configuration.getFilters();
 
         address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
         acceptor = new NioDatagramAcceptor(this.getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "MinaDatagramAcceptor"));
 
         // acceptor connectorConfig
-        acceptorConfig = acceptor.getSessionConfig();
         configureDataGramCodecFactory("MinaConsumer", acceptor, configuration);
         acceptor.setCloseOnDeactivation(true);
         // reuse address is default true for datagram

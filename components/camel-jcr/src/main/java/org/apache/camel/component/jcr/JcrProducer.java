@@ -46,7 +46,7 @@ public class JcrProducer extends DefaultProducer {
             }
             node.addMixin("mix:referenceable");
             session.save();
-            exchange.getOut().setBody(node.getUUID());
+            exchange.getOut().setBody(node.getIdentifier());
         } finally {
             if (session != null && session.isLive()) {
                 session.logout();

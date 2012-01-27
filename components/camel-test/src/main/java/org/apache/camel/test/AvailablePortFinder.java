@@ -22,6 +22,8 @@ import java.net.ServerSocket;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Finds currently available server ports.
@@ -29,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @see <a href="http://www.iana.org/assignments/currentMinPort-numbers">IANA.org</a>
  */
 public final class AvailablePortFinder {
+
     /**
      * The minimum server currentMinPort number. Set at 1100 to avoid returning privileged
      * currentMinPort numbers.
@@ -39,6 +42,8 @@ public final class AvailablePortFinder {
      * The maximum server currentMinPort number.
      */
     public static final int MAX_PORT_NUMBER = 49151;
+
+    private static final Logger LOG = LoggerFactory.getLogger(AvailablePortFinder.class);
 
     /**
      * We'll hold open the lowest port in this process
@@ -83,14 +88,15 @@ public final class AvailablePortFinder {
         });
         currentMinPort.set(port + 1);
     }
-    
 
     /**
-     * Gets the next available currentMinPort starting at the lowest currentMinPort number. This is the preferred
+     * Gets the next available port starting at the lowest number. This is the preferred
      * method to use. The port return is immediately marked in use and doesn't rely on the caller actually opening
      * the port.
      *
+     * @throws IllegalArgumentException is thrown if the port number is out of range
      * @throws NoSuchElementException if there are no ports available
+     * @return the available port
      */
     public static synchronized int getNextAvailable() {
         int next = getNextAvailable(currentMinPort.get());
@@ -99,31 +105,36 @@ public final class AvailablePortFinder {
     }
 
     /**
-     * Gets the next available currentMinPort starting at a currentMinPort.
+     * Gets the next available port starting at a given from port.
      *
-     * @param fromPort the currentMinPort to scan for availability
+     * @param fromPort the from port to scan for availability
+     * @throws IllegalArgumentException is thrown if the port number is out of range
      * @throws NoSuchElementException if there are no ports available
+     * @return the available port
      */
     public static synchronized int getNextAvailable(int fromPort) {
         if (fromPort < currentMinPort.get() || fromPort > MAX_PORT_NUMBER) {
-            throw new IllegalArgumentException("Invalid start currentMinPort: " + fromPort);
+            throw new IllegalArgumentException("From port number not in valid range: " + fromPort);
         }
 
         for (int i = fromPort; i <= MAX_PORT_NUMBER; i++) {
             if (available(i)) {
+                LOG.info("getNextAvailable({}) -> {}", fromPort, i);
                 return i;
             }
         }
 
-        throw new NoSuchElementException("Could not find an available currentMinPort above " + fromPort);
+        throw new NoSuchElementException("Could not find an available port above " + fromPort);
     }
 
     /**
-     * Checks to see if a specific currentMinPort is available.
+     * Checks to see if a specific port is available.
      *
-     * @param port the currentMinPort to check for availability
+     * @param port the port number to check for availability
+     * @return <tt>true</tt> if the port is available, or <tt>false</tt> if not
+     * @throws IllegalArgumentException is thrown if the port number is out of range
      */
-    public static boolean available(int port) {
+    public static boolean available(int port) throws IllegalArgumentException {
         if (port < currentMinPort.get() || port > MAX_PORT_NUMBER) {
             throw new IllegalArgumentException("Invalid start currentMinPort: " + port);
         }
@@ -154,4 +165,5 @@ public final class AvailablePortFinder {
 
         return false;
     }
+
 }

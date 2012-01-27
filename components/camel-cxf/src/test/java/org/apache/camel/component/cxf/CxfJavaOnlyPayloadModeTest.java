@@ -52,7 +52,7 @@ public class CxfJavaOnlyPayloadModeTest extends CamelTestSupport {
         assertNotNull(output);
 
         // using CxfPayload in payload mode
-        CxfPayload payload = (CxfPayload) output;
+        CxfPayload<?> payload = (CxfPayload<?>) output;
 
         // convert the payload body to string
         String reply = context.getTypeConverter().convertTo(String.class, payload.getBody().get(0));
