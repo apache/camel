@@ -78,6 +78,11 @@ public class SshConfiguration implements Cloneable {
         return username;
     }
 
+    /**
+     * Sets the username to use in logging into the remote SSH server.
+     *
+     * @param username String representing login username.
+     */
     public void setUsername(String username) {
         this.username = username;
     }
@@ -86,6 +91,11 @@ public class SshConfiguration implements Cloneable {
         return host;
     }
 
+    /**
+     * Sets the hostname of the remote SSH server.
+     *
+     * @param host String representing hostname of SSH server.
+     */
     public void setHost(String host) {
         this.host = host;
     }
@@ -94,6 +104,11 @@ public class SshConfiguration implements Cloneable {
         return port;
     }
 
+    /**
+     * Sets the port number for the remote SSH server.
+     *
+     * @param port int representing port number on remote host. Defaults to 22.
+     */
     public void setPort(int port) {
         this.port = port;
     }
@@ -102,6 +117,12 @@ public class SshConfiguration implements Cloneable {
         return password;
     }
 
+    /**
+     * Sets the password to use in connecting to remote SSH server.
+     * Requires keyPairProvider to be set to null.
+     *
+     * @param password String representing password for username at remote host.
+     */
     public void setPassword(String password) {
         this.password = password;
     }
@@ -110,6 +131,12 @@ public class SshConfiguration implements Cloneable {
         return pollCommand;
     }
 
+    /**
+     * Sets the command string to send to the remote SSH server during every poll cycle.
+     * Only works with camel-ssh component being used as a consumer, i.e. from("ssh://...")
+     *
+     * @param pollCommand String representing the command to send.
+     */
     public void setPollCommand(String pollCommand) {
         this.pollCommand = pollCommand;
     }
@@ -118,6 +145,14 @@ public class SshConfiguration implements Cloneable {
         return keyPairProvider;
     }
 
+    /**
+     * Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server.
+     *
+     * @param keyPairProvider KeyPairProvider reference to use in authenticating. If set to 'null',
+     *                        then will attempt to connect using username/password settings.
+     *
+     * @see KeyPairProvider
+     */
     public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
         this.keyPairProvider = keyPairProvider;
     }
@@ -126,6 +161,14 @@ public class SshConfiguration implements Cloneable {
         return keyType;
     }
 
+    /**
+     * Sets the key type to pass to the KeyPairProvider as part of authentication.
+     * KeyPairProvider.loadKey(...) will be passed this value.
+     *
+     * @param keyType String defining the type of KeyPair to use for authentication.
+     *
+     * @see KeyPairProvider
+     */
     public void setKeyType(String keyType) {
         this.keyType = keyType;
     }
@@ -134,6 +177,12 @@ public class SshConfiguration implements Cloneable {
         return timeout;
     }
 
+    /**
+     * Sets the timeout in milliseconds to wait in establishing the remote SSH server connection.
+     * Defaults to 30000 milliseconds.
+     *
+     * @param timeout long millisconeds to wait.
+     */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
