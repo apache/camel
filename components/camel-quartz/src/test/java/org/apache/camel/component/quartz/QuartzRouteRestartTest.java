@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.quartz;
 
-import java.util.Calendar;
-import java.util.Date;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -34,10 +29,25 @@ public class QuartzRouteRestartTest extends CamelTestSupport {
     @Test
     public void testQuartzCronRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.setResultWaitTime(15000);
-        mock.expectedMinimumMessageCount(3);
-        mock.message(0).arrives().between(6, 9).seconds().beforeNext();
-        mock.message(2).arrives().between(3, 5).seconds().afterPrevious();
+        mock.expectedMinimumMessageCount(2);
+
+        assertMockEndpointsSatisfied();
+
+        // restart route
+        context().stopRoute("trigger");
+        mock.reset();
+        mock.expectedMessageCount(0);
+        
+        // wait a bit
+        Thread.sleep(2000);
+        
+        assertMockEndpointsSatisfied();
+        
+        // start route, and we got messages again
+        mock.reset();
+        mock.expectedMessageCount(1);
+
+        context().startRoute("trigger");
 
         assertMockEndpointsSatisfied();
     }
@@ -46,35 +56,10 @@ public class QuartzRouteRestartTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: e1
-                from("quartz://groupName/timerName?cron=0/4+*+*+*+*+?").routeId("trigger")
-                    .setBody(bean(CurrentTime.class))
-                    // .to("log:QUARTZ")
-                    .to("seda:control");
-
-                from("seda:control").routeId("control")
-                    // .to("log:CONTROL")
-                    .to("mock:result")
-                    .process(new Processor() {
-                        private boolean done;
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            if (!done) {
-                                done = true;
-                                exchange.getContext().stopRoute("trigger");
-                                Thread.sleep(5000);
-                                exchange.getContext().startRoute("trigger");
-                            }
-                        }
-                    });
-                // END SNIPPET: e1
+                from("quartz://groupName/timerName?cron=0/1+*+*+*+*+?").routeId("trigger")
+                    .to("mock:result");
             }
         };
     }
    
-    public static class CurrentTime {
-        public Date get() {
-            return Calendar.getInstance().getTime();
-        }
-    }
 }
