@@ -25,6 +25,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class DelayerTest extends ContextTestSupport {
 
+    private MyDelayCalcBean bean = new MyDelayCalcBean();
+
     public void testSendingMessageGetsDelayed() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 
@@ -50,6 +52,15 @@ public class DelayerTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    public void testDelayBean() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        // should at least take 1 sec to complete
+        resultEndpoint.setMinimumResultWaitTime(900);
+        template.sendBody("seda:c", "<hello>world!</hello>");
+        resultEndpoint.assertIsSatisfied();
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -60,6 +71,10 @@ public class DelayerTest extends ContextTestSupport {
                 // START SNIPPET: ex2
                 from("seda:b").delay(1000).to("mock:result");
                 // END SNIPPET: ex2
+
+                // START SNIPPET: ex3
+                from("seda:c").delay().method(bean, "delayMe").to("mock:result");
+                // END SNIPPET: ex3
             }
         };
     }

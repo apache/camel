@@ -103,10 +103,8 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
     private Expression createAbsoluteTimeDelayExpression(RouteContext routeContext) {
         ExpressionDefinition expr = getExpression();
         if (expr != null) {
-            if (ObjectHelper.isNotEmpty(expr.getExpression()) || expr.getExpressionValue() != null) {
-                return expr.createExpression(routeContext);
-            } 
-        } 
+            return expr.createExpression(routeContext);
+        }
         return null;
     }
 
