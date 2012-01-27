@@ -29,55 +29,60 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
-    
+
     @Test
     public void testFallbackConverterWithoutObjectFactory() throws Exception {
         TypeConverter converter = context.getTypeConverter();
-        Foo foo = converter.convertTo(Foo.class, 
-            "<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
+        Foo foo = converter.convertTo(Foo.class, "<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
         assertNotNull("foo should not be null", foo);
         assertEquals("value", foo.getBarRefs().get(0).getValue());
-        
+
         foo.getBarRefs().clear();
         Bar bar = new Bar();
         bar.setName("myName");
         bar.setValue("myValue");
         foo.getBarRefs().add(bar);
-        
+
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
-       
+
         String value = converter.convertTo(String.class, exchange, foo);
-        
+
         assertTrue("Should get a right marshalled string", value.indexOf("<bar name=\"myName\" value=\"myValue\"/>") > 0);
     }
-    
+
     @Test
-    public void testConvertor() throws Exception {
+    public void testFallbackConverterUnmarshalWithNonJAXBComplaintValue() throws Exception {
         TypeConverter converter = context.getTypeConverter();
-        PersonType person = converter.convertTo(PersonType.class, 
-            "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
+
+        Foo foo = converter.convertTo(Foo.class, "Not every String is XML");
+        assertNull("Should not be able to convert non XML String", foo);
+
+        Bar bar = converter.convertTo(Bar.class, "<bar></bar");
+        assertNull("Should not be able to convert misspelled XML String", bar);
+    }
+
+    @Test
+    public void testConverter() throws Exception {
+        TypeConverter converter = context.getTypeConverter();
+        PersonType person = converter.convertTo(PersonType.class, "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>");
         assertNotNull("Person should not be null ", person);
         assertEquals("Get the wrong first name ", "FOO", person.getFirstName());
         assertEquals("Get the wrong second name ", "BAR", person.getLastName());
         Exchange exchange = new DefaultExchange(context);
         exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
-       
+
         String value = converter.convertTo(String.class, exchange, person);
         assertTrue("Should get a right marshalled string", value.indexOf("<lastName>BAR</lastName>") > 0);
-        
-        try {
-            byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
-            InputStream is = new ByteArrayInputStream(buffers);
-            person = converter.convertTo(PersonType.class, exchange, is);
-            fail("expect the exception here");
-        } catch (Exception ex) {
-            assertTrue("The exception should be CamelExecutionException", ex instanceof org.apache.camel.CamelExecutionException);
-        }
+
+        byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
+        InputStream is = new ByteArrayInputStream(buffers);
+        person = converter.convertTo(PersonType.class, exchange, is);
+        assertNull("Should not be able to convert as FILTER_NON_XML_CHARS property is not enabled", person);
     }
-    
+
     @Test
-    public void testFilteringConvertor() throws Exception {
+    public void testFilteringConverter() throws Exception {
         byte[] buffers = "<Person><firstName>FOO</firstName><lastName>BAR\u0008</lastName></Person>".getBytes("UTF-8");
         InputStream is = new ByteArrayInputStream(buffers);
         Exchange exchange = new DefaultExchange(context);
@@ -88,17 +93,16 @@ public class CamelJaxbFallbackConverterTest extends CamelTestSupport {
         assertNotNull("Person should not be null ", person);
         assertEquals("Get the wrong first name ", "FOO", person.getFirstName());
         assertEquals("Get the wrong second name ", "BAR ", person.getLastName());
-        
-        
+
         person.setLastName("BAR\u0008\uD8FF");
         String value = converter.convertTo(String.class, exchange, person);
         assertTrue("Didn't filter the non-xml chars", value.indexOf("<lastName>BAR  </lastName>") > 0);
-        
+
         exchange.setProperty(Exchange.FILTER_NON_XML_CHARS, false);
-        
+
         value = converter.convertTo(String.class, exchange, person);
         assertTrue("Should not filter the non-xml chars", value.indexOf("<lastName>BAR\uD8FF</lastName>") > 0);
-    
+
     }
 
 }
