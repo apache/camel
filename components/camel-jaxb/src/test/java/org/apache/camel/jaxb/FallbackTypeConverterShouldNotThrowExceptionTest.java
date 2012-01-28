@@ -31,30 +31,33 @@ public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestS
 
     @Test
     public void testJaxbModel() throws InterruptedException {
-        getMockEndpoint("mock:a").expectedMessageCount(1);
-        getMockEndpoint("mock:b").expectedMessageCount(1);
+        Object foo = new Foo();
+        getMockEndpoint("mock:a").expectedBodiesReceived(foo);
+        getMockEndpoint("mock:b").expectedBodiesReceived(foo);
 
-        template.sendBody("direct:a", new Foo());
+        template.sendBody("direct:a", foo);
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testNoneJaxbModel() throws InterruptedException {
-        getMockEndpoint("mock:a").expectedMessageCount(1);
-        getMockEndpoint("mock:b").expectedMessageCount(1);
+        Object camel = "Camel";
+        getMockEndpoint("mock:a").expectedBodiesReceived(camel);
+        getMockEndpoint("mock:b").expectedBodiesReceived(camel);
 
-        template.sendBody("direct:a", "Camel");
+        template.sendBody("direct:a", camel);
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testAnotherJaxbModel() throws InterruptedException {
-        getMockEndpoint("mock:a").expectedMessageCount(1);
-        getMockEndpoint("mock:b").expectedMessageCount(1);
+        Object bar = new Bar();
+        getMockEndpoint("mock:a").expectedBodiesReceived(bar);
+        getMockEndpoint("mock:b").expectedBodiesReceived(bar);
 
-        template.sendBody("direct:a", new Bar());
+        template.sendBody("direct:a", bar);
 
         assertMockEndpointsSatisfied();
     }
@@ -62,18 +65,33 @@ public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestS
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder(context) {
+
             @Override
             public void configure() throws Exception {
                 from("direct:a").process(new Processor() {
+
+                    @Override
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().getBody(Foo.class);
+                        // should return null and not throw any exception if the conversion fails
+                        Foo foo = exchange.getIn().getBody(Foo.class);
+                        if (!(exchange.getIn().getBody() instanceof Foo)) {
+                            assertNull("Failed conversion didn't return null", foo);
+                        }
                     }
+
                 }).to("mock:a").process(new Processor() {
+
+                    @Override
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().getBody(List.class);
+                        // should return null and not throw any exception if the conversion fails
+                        List<?> list = exchange.getIn().getBody(List.class);
+                        assertNull("Failed conversion didn't return null", list);
                     }
+
                 }).to("mock:b");
             }
+
         };
     }
+
 }
