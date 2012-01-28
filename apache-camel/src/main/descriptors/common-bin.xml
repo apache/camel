@@ -64,6 +64,7 @@
         <include>org.apache.camel:camel-gae</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-guice</include>
+        <include>org.apache.camel:camel-gson</include>
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-hawtdb</include>
         <include>org.apache.camel:camel-hazelcast</include>

@@ -76,6 +76,7 @@
     <module>camel-freemarker</module>
     <module>camel-ftp</module>
     <module>camel-gae</module>
+	<module>camel-gson</module>
     <module>camel-guice</module>
     <module>camel-hawtdb</module>
     <module>camel-hazelcast</module>
