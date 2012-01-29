@@ -1546,7 +1546,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // stop route inputs in the same order as they was started so we stop the very first inputs first
         try {
-            shutdownStrategy.shutdown(this, getRouteStartupOrder());
+            // force shutting down routes as they mau otherwise cause shutdown to hang
+            shutdownStrategy.shutdownForced(this, getRouteStartupOrder());
         } catch (Throwable e) {
             log.warn("Error occurred while shutting down routes. This exception will be ignored.", e);
         }

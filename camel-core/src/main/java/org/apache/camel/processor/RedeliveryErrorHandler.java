@@ -201,6 +201,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return false;
     }
 
+    @Override
+    public boolean isRunAllowed() {
+        // determine if we can still run, or the camel context is forcing a shutdown
+        boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(this);
+        if (forceShutdown) {
+            log.trace("Run not allowed as ShutdownStrategy is forcing shutting down");
+        }
+        return !forceShutdown && super.isRunAllowed();
+    }
+
     public void process(Exchange exchange) throws Exception {
         if (output == null) {
             // no output then just return
@@ -227,6 +237,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // can we still run
             if (!isRunAllowed()) {
+                log.trace("Run not allowed, will reject executing exchange: {}", exchange);
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException());
                 }
@@ -393,6 +404,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected void processAsyncErrorHandler(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
         // can we still run
         if (!isRunAllowed()) {
+            log.trace("Run not allowed, will reject executing exchange: {}", exchange);
             if (exchange.getException() == null) {
                 exchange.setException(new RejectedExecutionException());
             }

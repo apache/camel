@@ -41,6 +41,18 @@ import org.apache.camel.Service;
 public interface ShutdownStrategy extends Service {
 
     /**
+     * Shutdown the routes, forcing shutdown being more aggressive, if timeout occurred.
+     * <p/>
+     * This operation is used when {@link CamelContext} is shutting down, to ensure Camel will shutdown
+     * if messages seems to be <i>stuck</i>.
+     *
+     * @param context   the camel context
+     * @param routes    the routes, ordered by the order they was started
+     * @throws Exception is thrown if error shutting down the consumers, however its preferred to avoid this
+     */
+    void shutdownForced(CamelContext context, List<RouteStartupOrder> routes) throws Exception;
+
+    /**
      * Shutdown the routes
      *
      * @param context   the camel context
@@ -163,5 +175,19 @@ public interface ShutdownStrategy extends Service {
      * @return <tt>true</tt> if routes should be shutdown in reverse order.
      */
     boolean isShutdownRoutesInReverseOrder();
+
+    /**
+     * Whether a service is forced to shutdown.
+     * <p/>
+     * Can be used to signal to services that they are no longer allowed to run, such as if a forced
+     * shutdown is currently in progress.
+     * <p/>
+     * For example the Camel {@link org.apache.camel.processor.RedeliveryErrorHandler} uses this information
+     * to know if a forced shutdown is in progress, and then break out of redelivery attempts.
+     * 
+     * @param service the service
+     * @return <tt>true</tt> indicates the service is to be forced to shutdown, <tt>false</tt> the service can keep running.
+     */
+    boolean forceShutdown(Service service);
 
 }
