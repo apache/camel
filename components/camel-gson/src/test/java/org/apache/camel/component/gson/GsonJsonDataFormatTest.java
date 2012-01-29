@@ -14,20 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model.dataformat;
+package org.apache.camel.component.gson;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.JsonLibrary;
 
-/**
- * Represents the concrete Json libraries Camel supports.
- *
- * @version 
- */
-@XmlType
-@XmlEnum(String.class)
-public enum JsonLibrary {
+public class GsonJsonDataFormatTest extends GsonMarshalTest {
 
-    XStream, Jackson, Gson
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:in").marshal().json(JsonLibrary.Gson);
+                from("direct:back").unmarshal().json(JsonLibrary.Gson).to("mock:reverse");
+
+                from("direct:inPojo").marshal().json(JsonLibrary.Gson);
+                from("direct:backPojo").unmarshal().json(JsonLibrary.Gson, TestPojo.class).to("mock:reversePojo");
+            }
+        };
+    }
 
 }

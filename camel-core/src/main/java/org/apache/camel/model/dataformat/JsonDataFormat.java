@@ -87,8 +87,10 @@ public class JsonDataFormat extends DataFormatDefinition {
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == JsonLibrary.XStream) {
             setProperty(this, "dataFormatName", "json-xstream");
-        } else {
+        } else if(library == JsonLibrary.Jackson){
             setProperty(this, "dataFormatName", "json-jackson");
+        } else {
+            setProperty(this, "dataFormatName", "json-gson");
         }
 
         if (unmarshalType == null && unmarshalTypeName != null) {
