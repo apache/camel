@@ -30,7 +30,7 @@ import org.junit.Test;
 public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestSupport {
 
     @Test
-    public void testJaxbModel() throws InterruptedException {
+    public void testJaxbModel() throws Exception {
         Object foo = new Foo();
         getMockEndpoint("mock:a").expectedBodiesReceived(foo);
         getMockEndpoint("mock:b").expectedBodiesReceived(foo);
@@ -41,7 +41,7 @@ public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestS
     }
 
     @Test
-    public void testNoneJaxbModel() throws InterruptedException {
+    public void testNoneJaxbModel() throws Exception {
         Object camel = "Camel";
         getMockEndpoint("mock:a").expectedBodiesReceived(camel);
         getMockEndpoint("mock:b").expectedBodiesReceived(camel);
@@ -52,7 +52,7 @@ public class FallbackTypeConverterShouldNotThrowExceptionTest extends CamelTestS
     }
 
     @Test
-    public void testAnotherJaxbModel() throws InterruptedException {
+    public void testAnotherJaxbModel() throws Exception {
         Object bar = new Bar();
         getMockEndpoint("mock:a").expectedBodiesReceived(bar);
         getMockEndpoint("mock:b").expectedBodiesReceived(bar);
