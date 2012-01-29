@@ -28,7 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class ManagedBrowseableEndpointAsXmlTest extends ManagementTestSupport {
+public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
     public void testBrowseableEndpointAsXmlIncludeBody() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(7);

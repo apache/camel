@@ -24,36 +24,14 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class ManagedBrowseableEndpointTest extends ManagementTestSupport {
+public class ManagedBrowsableEndpointEmptyTest extends ManagementTestSupport {
 
-    public void testBrowseableEndpoint() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(2);
-
-        template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:start", "Bye World");
-
-        assertMockEndpointsSatisfied();
-
+    public void testBrowseableEndpointEmpty() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
-        String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
-        assertEquals("mock://result", uri);
-
-        Long size = (Long) mbeanServer.invoke(name, "queueSize", null, null);
-        assertEquals(2, size.longValue());
 
         String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
-        assertNotNull(out);
-        assertTrue(out.contains("Hello World"));
-
-        out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{1}, new String[]{"java.lang.Integer"});
-        assertNotNull(out);
-        assertTrue(out.contains("Bye World"));
-
-        out = (String) mbeanServer.invoke(name, "browseMessageBody", new Object[]{1}, new String[]{"java.lang.Integer"});
-        assertNotNull(out);
-        assertEquals("Bye World", out);
+        assertNull(out);
     }
 
     @Override
