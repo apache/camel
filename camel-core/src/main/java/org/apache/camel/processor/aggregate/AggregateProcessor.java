@@ -945,7 +945,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // only run if CamelContext has been fully started or is stopping
         boolean allow = camelContext.getStatus().isStarted() || camelContext.getStatus().isStopping();
         if (!allow) {
-            LOG.warn("cannot start force completion because CamelContext({}) has not been started yet", camelContext.getName());
+            LOG.warn("Cannot start force completion of all groups because CamelContext({}) has not been started", camelContext.getName());
             return 0;
         }
 
@@ -963,7 +963,7 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 for (String key : keys) {
                     Exchange exchange = aggregationRepository.get(camelContext, key);
                     if (exchange != null) {
-                        LOG.trace("force completion triggered for correlation key: {}", key);
+                        LOG.trace("Force completion triggered for correlation key: {}", key);
                         // indicate it was completed by a force completion request
                         exchange.setProperty(Exchange.AGGREGATED_COMPLETED_BY, "forceCompletion");
                         onCompletion(key, exchange, false);
