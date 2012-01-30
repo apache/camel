@@ -28,13 +28,19 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.WaitForTaskToComplete;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -42,6 +48,7 @@ import org.apache.camel.util.ServiceHelper;
  * href="http://camel.apache.org/queue.html">Queue components</a> for
  * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  */
+@ManagedResource(description = "Managed SedaEndpoint")
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
     private volatile BlockingQueue<Exchange> queue;
     private int size;
@@ -133,6 +140,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.size = queue.remainingCapacity();
     }
 
+    @ManagedAttribute(description = "Queue max capacity")
     public int getSize() {
         return size;
     }
@@ -141,6 +149,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.size = size;
     }
 
+    @ManagedAttribute(description = "Current queue size")
     public int getCurrentQueueSize() {
         return queue.size();
     }
@@ -149,6 +158,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.blockWhenFull = blockWhenFull;
     }
 
+    @ManagedAttribute(description = "Whether the caller will block sending to a full queue")
     public boolean isBlockWhenFull() {
         return blockWhenFull;
     }
@@ -157,6 +167,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.concurrentConsumers = concurrentConsumers;
     }
 
+    @ManagedAttribute(description = "Number of concurrent consumers")
     public int getConcurrentConsumers() {
         return concurrentConsumers;
     }
@@ -169,6 +180,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.waitForTaskToComplete = waitForTaskToComplete;
     }
 
+    @ManagedAttribute
     public long getTimeout() {
         return timeout;
     }
@@ -177,6 +189,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.timeout = timeout;
     }
 
+    @ManagedAttribute
     public boolean isMultipleConsumers() {
         return multipleConsumers;
     }
@@ -196,6 +209,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return new ArrayList<Exchange>(getQueue());
     }
 
+    @ManagedAttribute
     public boolean isMultipleConsumersSupported() {
         return isMultipleConsumers();
     }
@@ -203,6 +217,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     /**
      * Purges the queue
      */
+    @ManagedOperation(description = "Purges the seda queue")
     public void purgeQueue() {
         queue.clear();
     }
@@ -219,6 +234,74 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     public Set<SedaProducer> getProducers() {
         return new HashSet<SedaProducer>(producers);
+    }
+
+    @ManagedOperation(description = "Current number of Exchanges in Queue")
+    public long queueSize() {
+        return getExchanges().size();
+    }
+
+    @ManagedOperation(description = "Get Exchange from queue by index")
+    public String browseExchange(Integer index) {
+        List<Exchange> exchanges = getExchanges();
+        if (index >= exchanges.size()) {
+            return null;
+        }
+        Exchange exchange = exchanges.get(index);
+        if (exchange == null) {
+            return null;
+        }
+        // must use java type with JMX such as java.lang.String
+        return exchange.toString();
+    }
+
+    @ManagedOperation(description = "Get message body from queue by index")
+    public String browseMessageBody(Integer index) {
+        List<Exchange> exchanges = getExchanges();
+        if (index >= exchanges.size()) {
+            return null;
+        }
+        Exchange exchange = exchanges.get(index);
+        if (exchange == null) {
+            return null;
+        }
+
+        // must use java type with JMX such as java.lang.String
+        String body;
+        if (exchange.hasOut()) {
+            body = exchange.getOut().getBody(String.class);
+        } else {
+            body = exchange.getIn().getBody(String.class);
+        }
+
+        return body;
+    }
+
+    @ManagedOperation(description = "Get message as XML from queue by index")
+    public String browseMessageAsXml(Integer index, Boolean includeBody) {
+        List<Exchange> exchanges = getExchanges();
+        if (index >= exchanges.size()) {
+            return null;
+        }
+        Exchange exchange = exchanges.get(index);
+        if (exchange == null) {
+            return null;
+        }
+
+        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        String xml = MessageHelper.dumpAsXml(msg, includeBody);
+
+        return xml;
+    }
+
+    @ManagedOperation(description = "Gets all the messages as XML from the queue")
+    public String browseAllMessagesAsXml(Boolean includeBody) {
+        return browseRangeMessagesAsXml(0, Integer.MAX_VALUE, includeBody);
+    }
+
+    @ManagedOperation(description = "Gets the range of messages as XML from the queue")
+    public String browseRangeMessagesAsXml(Integer fromIndex, Integer toIndex, Boolean includeBody) {
+        return EndpointHelper.browseRangeMessagesAsXml(this, fromIndex, toIndex, includeBody);
     }
 
     void onStarted(SedaProducer producer) {
