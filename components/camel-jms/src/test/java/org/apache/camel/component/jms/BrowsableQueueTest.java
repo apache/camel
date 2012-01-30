@@ -62,8 +62,6 @@ public class BrowsableQueueTest extends CamelTestSupport {
             Object expected = expectedBodies[++index];
             assertEquals("Body: " + index, expected, actual);
         }
-
-        Thread.sleep(99999999);
     }
 
     @Test
@@ -117,8 +115,6 @@ public class BrowsableQueueTest extends CamelTestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        enableJMX();
-
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
