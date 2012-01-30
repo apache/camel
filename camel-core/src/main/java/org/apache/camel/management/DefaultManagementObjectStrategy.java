@@ -44,7 +44,6 @@ import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedScheduledPollConsumer;
-import org.apache.camel.management.mbean.ManagedSedaEndpoint;
 import org.apache.camel.management.mbean.ManagedSendProcessor;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedSuspendableRoute;
@@ -92,10 +91,6 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
 
         if (endpoint instanceof org.apache.camel.spi.ManagementAware) {
             return ((org.apache.camel.spi.ManagementAware<Endpoint>) endpoint).getManagedObject(endpoint);
-        } else if (endpoint instanceof SedaEndpoint) {
-            ManagedSedaEndpoint me = new ManagedSedaEndpoint((SedaEndpoint) endpoint);
-            me.init(context.getManagementStrategy());
-            return me;
         } else if (endpoint instanceof BrowsableEndpoint) {
             ManagedBrowsableEndpoint me = new ManagedBrowsableEndpoint((BrowsableEndpoint) endpoint);
             me.init(context.getManagementStrategy());

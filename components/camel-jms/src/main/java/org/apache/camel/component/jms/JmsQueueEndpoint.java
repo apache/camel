@@ -27,6 +27,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.MessageHelper;
 import org.springframework.jms.core.JmsOperations;
 
@@ -162,31 +163,7 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
 
     @ManagedOperation(description = "Gets the range of messages as XML from the queue")
     public String browseRangeMessagesAsXml(Integer fromIndex, Integer toIndex, Boolean includeBody) {
-        if (fromIndex == null) {
-            fromIndex = 0;
-        }
-        if (toIndex == null) {
-            toIndex = Integer.MAX_VALUE;
-        }
-        if (fromIndex > toIndex) {
-            throw new IllegalArgumentException("From index cannot be larger than to index, was: " + fromIndex + " > " + toIndex);
-        }
-
-        List<Exchange> exchanges = getExchanges();
-        if (exchanges.size() == 0) {
-            return null;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("<messages>");
-        for (int i = fromIndex; i < exchanges.size() && i <= toIndex; i++) {
-            Exchange exchange = exchanges.get(i);
-            Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-            String xml = MessageHelper.dumpAsXml(msg, includeBody);
-            sb.append("\n").append(xml);
-        }
-        sb.append("\n</messages>");
-        return sb.toString();
+        return EndpointHelper.browseRangeMessagesAsXml(this, fromIndex, toIndex, includeBody);
     }
 
     protected QueueBrowseStrategy createQueueBrowseStrategy() {
