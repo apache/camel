@@ -667,6 +667,12 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-sql/${project.version}</bundle>
   </feature>
+  <feature name='camel-ssh' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency="true">mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.sshd/sshd-core/${sshd-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-ssh/${project.version}</bundle>
+  </feature>
   <feature name='camel-stax' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-stax/${project.version}</bundle>

@@ -154,6 +154,7 @@
     <spring-security-version>3.1.0.RELEASE</spring-security-version>
     <spring-ws-version>2.0.3.RELEASE</spring-ws-version>
     <spymemcached-version>2.5</spymemcached-version>
+    <sshd-version>0.6.0</sshd-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stringtemplate-version>3.0</stringtemplate-version>
     <tagsoup-version>1.2.1</tagsoup-version>
@@ -712,6 +713,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-sql</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ssh</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

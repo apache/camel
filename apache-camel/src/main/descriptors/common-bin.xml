@@ -128,6 +128,7 @@
         <include>org.apache.camel:camel-spring-security</include>
         <include>org.apache.camel:camel-spring-ws</include>
         <include>org.apache.camel:camel-sql</include>
+        <include>org.apache.camel:camel-ssh</include>
         <include>org.apache.camel:camel-stax</include>
         <include>org.apache.camel:camel-stream</include>
         <include>org.apache.camel:camel-stringtemplate</include>
