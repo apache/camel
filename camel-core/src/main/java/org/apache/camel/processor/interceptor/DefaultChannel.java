@@ -319,7 +319,7 @@ public class DefaultChannel extends ServiceSupport implements ModelChannel {
         // determine if we can still run, or the camel context is forcing a shutdown
         boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(this);
         if (forceShutdown) {
-            LOG.trace("Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: {}", exchange);
+            LOG.debug("Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: {}", exchange);
             if (exchange.getException() == null) {
                 exchange.setException(new RejectedExecutionException());
             }

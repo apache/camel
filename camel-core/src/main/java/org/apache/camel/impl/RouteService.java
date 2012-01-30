@@ -134,7 +134,7 @@ public class RouteService extends ChildServiceSupport {
                 // gather list of services to start as we need to start child services as well
                 Set<Service> list = new LinkedHashSet<Service>();
                 for (Service service : services) {
-                    doGetChildServices(list, service);
+                    list.addAll(ServiceHelper.getChildServices(service));
                 }
 
                 // split into consumers and child services as we need to start the consumers
@@ -202,7 +202,7 @@ public class RouteService extends ChildServiceSupport {
             // gather list of services to stop as we need to start child services as well
             Set<Service> list = new LinkedHashSet<Service>();
             for (Service service : services) {
-                doGetChildServices(list, service);
+                list.addAll(ServiceHelper.getChildServices(service));
             }
             stopChildService(route, list, isShutdownCamelContext);
 
@@ -240,7 +240,7 @@ public class RouteService extends ChildServiceSupport {
             // gather list of services to stop as we need to start child services as well
             Set<Service> list = new LinkedHashSet<Service>();
             for (Service service : services) {
-                doGetChildServices(list, service);
+                list.addAll(ServiceHelper.getChildServices(service));
             }
 
             // shutdown services
@@ -345,25 +345,6 @@ public class RouteService extends ChildServiceSupport {
                     Processor onCompletionProcessor = onCompletionDefinition.getOnCompletion(route.getId());
                     if (onCompletionProcessor != null && onCompletionProcessor instanceof Service) {
                         services.add((Service) onCompletionProcessor);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Gather all child services by navigating the service to recursively gather all child services.
-     */
-    private static void doGetChildServices(Set<Service> services, Service service) throws Exception {
-        services.add(service);
-
-        if (service instanceof Navigate) {
-            Navigate<?> nav = (Navigate<?>) service;
-            if (nav.hasNext()) {
-                List<?> children = nav.next();
-                for (Object child : children) {
-                    if (child instanceof Service) {
-                        doGetChildServices(services, (Service) child);
                     }
                 }
             }

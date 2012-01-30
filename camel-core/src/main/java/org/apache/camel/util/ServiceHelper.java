@@ -18,8 +18,11 @@ package org.apache.camel.util;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.camel.Navigate;
 import org.apache.camel.Service;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.StatefulService;
@@ -341,4 +344,31 @@ public final class ServiceHelper {
         return false;
     }
 
+    /**
+     * Gather all child services by navigating the service to recursively gather all child services.
+     *
+     * @param service the service
+     * @return the services, including the parent service, and all its children
+     */
+    public static Set<Service> getChildServices(Service service) {
+        Set<Service> answer = new LinkedHashSet<Service>();
+        doGetChildServices(answer, service);
+        return answer;
+    }
+
+    private static void doGetChildServices(Set<Service> services, Service service) {
+        services.add(service);
+        if (service instanceof Navigate) {
+            Navigate<?> nav = (Navigate<?>) service;
+            if (nav.hasNext()) {
+                List<?> children = nav.next();
+                for (Object child : children) {
+                    if (child instanceof Service) {
+                        doGetChildServices(services, (Service) child);
+                    }
+                }
+            }
+        }
+    }
+    
 }

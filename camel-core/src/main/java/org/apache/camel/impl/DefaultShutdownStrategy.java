@@ -19,7 +19,9 @@ package org.apache.camel.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -36,6 +38,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EventHelper;
@@ -51,6 +54,23 @@ import org.slf4j.LoggerFactory;
  * Graceful shutdown ensures that any inflight and pending messages will be taken into account
  * and it will wait until these exchanges has been completed.
  * <p/>
+ * This strategy will perform graceful shutdown in two steps:
+ * <ul>
+ *     <li>Graceful - By suspending/stopping consumers, and let any in-flight exchanges complete</li>
+ *     <li>Forced - After a given period of time, a timeout occurred and if there are still pending
+ *     exchanges to complete, then a more aggressive forced strategy is performed.</li>
+ * </ul>
+ * The idea by the <tt>graceful</tt> shutdown strategy, is to stop taking in more new messages,
+ * and allow any existing inflight messages to complete. Then when there is no more inflight messages
+ * then the routes can be fully shutdown. This mean that if there is inflight messages then we will have
+ * to wait for these messages to complete. If they do not complete after a period of time, then a
+ * timeout triggers. And then a more aggressive strategy takes over.
+ * <p/>
+ * The idea by the <tt>forced</tt> shutdown strategy, is to stop continue processing messages.
+ * And force routes and its services to shutdown now. There is a risk when shutting down now,
+ * that some resources is not properly shutdown, which can cause side effects. The timeout value
+ * is by default 300 seconds, but can be customized. 
+ * <p/>
  * As this strategy will politely wait until all exchanges has been completed it can potential wait
  * for a long time, and hence why a timeout value can be set. When the timeout triggers you can also
  * specify whether the remainder consumers should be shutdown now or ignore.
@@ -62,6 +82,15 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Routes will by default be shutdown in the reverse order of which they where started.
  * You can customize this using the {@link #setShutdownRoutesInReverseOrder(boolean)} method.
+ * <p/>
+ * After route consumers have been shutdown, then any {@link ShutdownPrepared} services on the routes
+ * is being prepared for shutdown, by invoking {@link ShutdownPrepared#prepareShutdown(boolean)} which
+ * <tt>force=false</tt>.
+ * <p/>
+ * Then if a timeout occurred and the strategy has been configured with shutdown-now on timeout, then
+ * the strategy performs a more aggressive forced shutdown, by forcing all consumers to shutdown
+ * and then invokes {@link ShutdownPrepared#prepareShutdown(boolean)} with <tt>force=true</tt>
+ * on the services. This allows the services to know they should force shutdown now.
  *
  * @version 
  */
@@ -156,6 +185,13 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     LOG.warn("Timeout occurred. Now forcing the routes to be shutdown now.");
                     // force the routes to shutdown now
                     shutdownRoutesNow(routesOrdered);
+
+                    // now the route consumers has been shutdown, then prepare route services for shutdown now (forced)
+                    for (RouteStartupOrder order : routes) {
+                        for (Service service : order.getServices()) {
+                            prepareShutdown(service, true, true);
+                        }
+                    }
                 } else {
                     LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes.");
                 }
@@ -319,6 +355,38 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         }
     }
 
+    /**
+     * Prepares the services for shutdown, by invoking the {@link ShutdownPrepared#prepareShutdown(boolean)} method
+     * on the service if it implement this interface.
+     * 
+     * @param service the service
+     * @param forced  whether to force shutdown
+     * @param includeChildren whether to prepare the child of the service as well
+     */
+    private static void prepareShutdown(Service service, boolean forced, boolean includeChildren) {
+        Set<Service> list;
+        if (includeChildren) {
+            list = ServiceHelper.getChildServices(service);
+        } else {
+            list = new LinkedHashSet<Service>(1);
+            list.add(service);
+        }
+
+        for (Service child : list) {
+            if (child instanceof ShutdownPrepared) {
+                try {
+                    LOG.trace("Preparing {} shutdown on {}", forced ? "forced" : "", child);
+                    ((ShutdownPrepared) child).prepareShutdown(forced);
+                } catch (Exception e) {
+                    LOG.warn("Error during prepare shutdown on " + child + ". This exception will be ignored.", e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Holder for deferred consumers
+     */
     static class ShutdownDeferredConsumer {
         private final Route route;
         private final Consumer consumer;
@@ -372,7 +440,6 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // list of deferred consumers to shutdown when all exchanges has been completed routed
             // and thus there are no more inflight exchanges so they can be safely shutdown at that time
             List<ShutdownDeferredConsumer> deferredConsumers = new ArrayList<ShutdownDeferredConsumer>();
-
             for (RouteStartupOrder order : routes) {
 
                 ShutdownRoute shutdownRoute = order.getRoute().getRouteContext().getShutdownRoute();
@@ -469,7 +536,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 Consumer consumer = deferred.getConsumer();
                 if (consumer instanceof ShutdownAware) {
                     LOG.trace("Route: {} preparing to shutdown.", deferred.getRoute().getId());
-                    ((ShutdownAware) consumer).prepareShutdown();
+                    boolean forced = context.getShutdownStrategy().forceShutdown(consumer);
+                    prepareShutdown(consumer, forced, false);
                     LOG.debug("Route: {} preparing to shutdown complete.", deferred.getRoute().getId());
                 }
             }
@@ -483,6 +551,14 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 } else {
                     shutdownNow(consumer);
                     LOG.info("Route: {} shutdown complete, was consuming from: {}", deferred.getRoute().getId(), deferred.getConsumer().getEndpoint());
+                }
+            }
+
+            // now the route consumers has been shutdown, then prepare route services for shutdown
+            for (RouteStartupOrder order : routes) {
+                for (Service service : order.getServices()) {
+                    boolean forced = context.getShutdownStrategy().forceShutdown(service);
+                    prepareShutdown(service, forced, true);
                 }
             }
         }

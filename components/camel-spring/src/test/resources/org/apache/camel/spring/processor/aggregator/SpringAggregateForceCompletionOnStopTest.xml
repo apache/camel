@@ -23,18 +23,20 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <route>
+        <route id="foo">
             <from uri="direct:forceCompletionTrue"/>
             <aggregate strategyRef="aggregatorStrategy" forceCompletionOnStop="true" completionSize="10">
                 <correlationExpression><header>id</header></correlationExpression>
+                <delay><constant>100</constant></delay>
                 <process ref="myCompletionProcessor"/>
             </aggregate>
         </route>
 
-        <route>
+        <route id="bar">
             <from uri="direct:forceCompletionFalse"/>
             <aggregate strategyRef="aggregatorStrategy" completionSize="10">
                 <correlationExpression><header>id</header></correlationExpression>
+                <delay><constant>100</constant></delay>
                 <process ref="myCompletionProcessor"/>
             </aggregate>
         </route>

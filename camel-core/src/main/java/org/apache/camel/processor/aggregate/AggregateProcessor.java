@@ -47,6 +47,7 @@ import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.RecoverableAggregationRepository;
+import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ServiceSupport;
@@ -74,7 +75,7 @@ import org.slf4j.LoggerFactory;
  * and older prices are discarded). Another idea is to combine line item messages
  * together into a single invoice message.
  */
-public class AggregateProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable {
+public class AggregateProcessor extends ServiceSupport implements Processor, Navigate<Processor>, Traceable, ShutdownPrepared {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
 
@@ -879,15 +880,9 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
 
     @Override
     protected void doStop() throws Exception {
-
-        if (forceCompletionOnStop) {
-            forceCompletionOfAllGroups();
-
-            while (inProgressCompleteExchanges.size() > 0) {
-                LOG.trace("waiting for {} in progress exchanges to complete", inProgressCompleteExchanges.size());
-                Thread.sleep(100);
-            }
-        }
+        // note: we cannot do doForceCompletionOnStop from this doStop method
+        // as this is handled in the prepareShutdown method which is also invoked when stopping a route
+        // and is better suited for preparing to shutdown than this doStop method is
 
         if (recoverService != null) {
             camelContext.getExecutorServiceManager().shutdownNow(recoverService);
@@ -904,6 +899,37 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
     }
 
     @Override
+    public void prepareShutdown(boolean forced) {
+        // we are shutting down, so force completion if this option was enabled
+        // but only do this when forced=false, as that is when we have chance to
+        // send out new messages to be routed by Camel. When forced=true, then
+        // we have to shutdown in a hurry
+        if (!forced && forceCompletionOnStop) {
+            doForceCompletionOnStop();
+        }
+    }
+
+    private void doForceCompletionOnStop() {
+        int expected = forceCompletionOfAllGroups();
+
+        StopWatch watch = new StopWatch();
+        while (inProgressCompleteExchanges.size() > 0) {
+            LOG.trace("Waiting for {} inflight exchanges to complete", inProgressCompleteExchanges.size());
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // break out as we got interrupted such as the JVM terminating
+                LOG.warn("Interrupted while waiting for {} inflight exchanges to complete.", inProgressCompleteExchanges.size());
+                break;
+            }
+        }
+
+        if (expected > 0) {
+            LOG.info("Forcing completion of all groups with {} exchanges completed in {}", expected, TimeUtils.printDuration(watch.stop()));
+        }
+    }
+
+    @Override
     protected void doShutdown() throws Exception {
         // shutdown aggregation repository
         ServiceHelper.stopService(aggregationRepository);
@@ -914,12 +940,13 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         super.doShutdown();
     }
 
-    public void forceCompletionOfAllGroups() {
+    public int forceCompletionOfAllGroups() {
 
-        // only run if CamelContext has been fully started
-        if (!camelContext.getStatus().isStarted()) {
+        // only run if CamelContext has been fully started or is stopping
+        boolean allow = camelContext.getStatus().isStarted() || camelContext.getStatus().isStopping();
+        if (!allow) {
             LOG.warn("cannot start force completion because CamelContext({}) has not been started yet", camelContext.getName());
-            return;
+            return 0;
         }
 
         LOG.trace("Starting force completion of all groups task");
@@ -927,9 +954,11 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
         // trigger completion for all in the repository
         Set<String> keys = aggregationRepository.getKeys();
 
+        int total = 0;
         if (keys != null && !keys.isEmpty()) {
             // must acquire the shared aggregation lock to be able to trigger force completion
             lock.lock();
+            total = keys.size();
             try {
                 for (String key : keys) {
                     Exchange exchange = aggregationRepository.get(camelContext, key);
@@ -944,7 +973,12 @@ public class AggregateProcessor extends ServiceSupport implements Processor, Nav
                 lock.unlock();
             }
         }
-
         LOG.trace("Completed force completion of all groups task");
+
+        if (total > 0) {
+            LOG.debug("Forcing completion of all groups with {} exchanges", total);
+        }
+        return total;
     }
+
 }
