@@ -14,17 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.spring.management;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spring.SpringTestSupport;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version 
+ *
  */
-public class ManagedSedaEndpointTest extends ManagementTestSupport {
+public class SpringManagedSedaEndpointTest extends SpringTestSupport {
+
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringManagedSedaEndpointTest.xml");
+    }
+
+    protected MBeanServer getMBeanServer() {
+        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
+    }
 
     public void testSedaEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
@@ -67,15 +78,4 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
         size = (Integer) mbeanServer.getAttribute(name, "CurrentQueueSize");
         assertEquals(0, size.intValue());
     }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("seda:start").routeId("foo").to("log:foo").to("mock:result");
-            }
-        };
-    }
-
 }
