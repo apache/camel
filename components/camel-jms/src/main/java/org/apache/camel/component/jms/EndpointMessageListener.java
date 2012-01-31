@@ -29,7 +29,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -50,7 +49,6 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public class EndpointMessageListener implements MessageListener {
     private static final transient Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
-    private ExceptionHandler exceptionHandler;
     private final JmsEndpoint endpoint;
     private final AsyncProcessor processor;
     private JmsBinding binding;
@@ -257,14 +255,6 @@ public class EndpointMessageListener implements MessageListener {
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
-    }
-
-    public ExceptionHandler getExceptionHandler() {
-        return exceptionHandler;
-    }
-
-    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
     }
 
     public boolean isEagerLoadingOfProperties() {
