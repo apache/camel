@@ -60,6 +60,6 @@
         </route>
     </camelContext>
 
-    <bean id="myProcessor" class="org.apache.camel.component.jms.tx.JMSTransactionIsTransactedRedeliveredTestTest$MyProcessor"/>
+    <bean id="myProcessor" class="org.apache.camel.component.jms.tx.JMSTransactionIsTransactedRedeliveredTest$MyProcessor"/>
 
 </beans>
