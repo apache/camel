@@ -27,44 +27,46 @@ import java.lang.{String, Class}
  */
 class RichExchange(val exchange : Exchange) extends Exchange {
 
-  def in_=(message: Any) = exchange.getIn().setBody(message)
+  def in_=(message: Any) { exchange.getIn.setBody(message) }
 
-  def in(header:String) : Any = exchange.getIn().getHeader(header)
+  def in(header:String) : Any = exchange.getIn.getHeader(header)
 
-  def in = exchange.getIn().getBody()
-  def in[T](implicit manifest: Manifest[T]) : T = exchange.getIn().getBody(manifest.erasure).asInstanceOf[T]
+  def in = exchange.getIn.getBody
+  def in[T](implicit manifest: Manifest[T]) : T = exchange.getIn.getBody(manifest.erasure).asInstanceOf[T]
 
-  def out : Any = exchange.getOut().getBody()
+  def out : Any = exchange.getOut.getBody
 
-  def out(header:String) : Any = exchange.getOut().getHeader(header)
+  def out(header:String) : Any = exchange.getOut.getHeader(header)
 
-  def out_=(message:Any) = exchange.getOut().setBody(message)
+  def out_=(message:Any) { exchange.getOut.setBody(message) }
 
 
   // Delegation methods
   //-------------------------------------------------------------------------
 
-  def setUnitOfWork(unitOfWork: UnitOfWork) = exchange.setUnitOfWork(unitOfWork)
+  def setUnitOfWork(unitOfWork: UnitOfWork) { exchange.setUnitOfWork(unitOfWork) }
 
-  def setProperty(name: String, value: Any) = exchange.setProperty(name, value)
+  def setProperty(name: String, value: Any) { exchange.setProperty(name, value) }
 
-  def setPattern(pattern: ExchangePattern) = exchange.setPattern(pattern)
+  def setPattern(pattern: ExchangePattern) { exchange.setPattern(pattern) }
 
-  def setOut(out: Message) = exchange.setOut(out)
+  def setOut(out: Message) { exchange.setOut(out) }
 
-  def setIn(in: Message) = exchange.setIn(in)
+  def setIn(in: Message) { exchange.setIn(in) }
 
-  def setFromEndpoint(fromEndpoint: Endpoint) = exchange.setFromEndpoint(fromEndpoint)
+  def setFromEndpoint(fromEndpoint: Endpoint) { exchange.setFromEndpoint(fromEndpoint) }
 
-  def setFromRouteId(routeId: String) = exchange.setFromRouteId(routeId)
+  def setFromRouteId(routeId: String) { exchange.setFromRouteId(routeId) }
 
-  def setExchangeId(id: String) = exchange.setExchangeId(id)
+  def setExchangeId(id: String) { exchange.setExchangeId(id) }
 
-  def setException(t: Throwable) = exchange.setException(t)
+  def setException(t: Throwable) { exchange.setException(t) }
 
   def removeProperty(name: String) = exchange.removeProperty(name)
 
   def isTransacted = exchange.isTransacted
+
+  def isTransactedRedelivered = exchange.isTransactedRedelivered;
 
   def isRollbackOnly = exchange.isRollbackOnly
 
@@ -110,9 +112,9 @@ class RichExchange(val exchange : Exchange) extends Exchange {
 
   def copy = new RichExchange(exchange.copy)
 
-  def addOnCompletion(onCompletion: Synchronization) = exchange.addOnCompletion(onCompletion)
+  def addOnCompletion(onCompletion: Synchronization) { exchange.addOnCompletion(onCompletion) }
   
-  def handoverCompletions(exchange : Exchange) = exchange.handoverCompletions(exchange)
+  def handoverCompletions(exchange : Exchange) { exchange.handoverCompletions(exchange) }
 
   def handoverCompletions = exchange.handoverCompletions
 }

@@ -25,6 +25,7 @@ import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.CamelLogger;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -111,20 +112,31 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     }
 
     protected void processInTransaction(final Exchange exchange) throws Exception {
+        // is the exchange redeliveried, for example JMS brokers support such details
+        Boolean redelivery = exchange.isTransactedRedelivered();
+        final String redelivered = redelivery != null ? redelivery.toString() : "unknown";
+        final String ids = ExchangeHelper.logIds(exchange);
+
         try {
             // mark the beginning of this transaction boundary
             exchange.getUnitOfWork().beginTransactedBy(transactionKey);
 
-            log.debug("Transaction begin ({}) for ExchangeId: {}", transactionKey, exchange.getExchangeId());
+            if (log.isDebugEnabled()) {
+                log.debug("Transaction begin ({}) redelivered({}) for {})", new Object[]{transactionKey, redelivered, ids});
+            }
 
             doInTransactionTemplate(exchange);
 
-            log.debug("Transaction commit ({}) for ExchangeId: {}", transactionKey, exchange.getExchangeId());
+            if (log.isDebugEnabled()) {
+                log.debug("Transaction commit ({}) redelivered({}) for {})", new Object[]{transactionKey, redelivered, ids});
+            }
         } catch (TransactionRollbackException e) {
             // ignore as its just a dummy exception to force spring TX to rollback
-            log.debug("Transaction rollback ({}) for ExchangeId: {} due exchange was marked for rollbackOnly", transactionKey, exchange.getExchangeId());
+            if (log.isDebugEnabled()) {
+                log.debug("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly", new Object[]{transactionKey, redelivered, ids});
+            }
         } catch (Throwable e) {
-            log.warn("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId() + " due exception: " + e.getMessage());
+            log.warn("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
             exchange.setException(e);
         } finally {
             // mark the end of this transaction boundary
@@ -135,14 +147,13 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         Boolean onlyLast = (Boolean) exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
         if (onlyLast != null && onlyLast) {
             if (log.isDebugEnabled()) {
-                // log exception if there was a cause exception so we have the stacktrace
+                // log exception if there was a cause exception so we have the stack trace
                 Exception cause = exchange.getException();
                 if (cause != null) {
-                    log.debug("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId()
-                        + " due exchange was marked for rollbackOnlyLast and due exception: ", cause);
+                    log.debug("Transaction rollback (" + transactionKey + ") redelivered(" + redelivered + ") for "
+                        + ids + " due exchange was marked for rollbackOnlyLast and caught: ", cause);
                 } else {
-                    log.debug("Transaction rollback ({}) for ExchangeId: {} due exchange was marked for rollbackOnlyLast",
-                            transactionKey, exchange.getExchangeId());
+                    log.debug("Transaction rollback ({}) redelivered(" + redelivered + ") for {} due exchange was marked for rollbackOnlyLast", transactionKey, ids);
                 }
             }
             // remove caused exception due we was marked as rollback only last

@@ -653,23 +653,37 @@ public final class ExchangeHelper {
             exchange.setOut(null);
         }
     }
-    
+
+    /**
+     * Gets both the messageId and exchangeId to be used for logging purposes.
+     * <p/>
+     * Logging both ids, can help to correlate exchanges which may be redelivered messages
+     * from for example a JMS broker.
+     *
+     * @param exchange the exchange
+     * @return a log message with both the messageId and exchangeId
+     */
+    public static String logIds(Exchange exchange) {
+        String msgId = exchange.hasOut() ? exchange.getOut().getMessageId() : exchange.getIn().getMessageId();
+        return "(MessageId: " + msgId + " on ExchangeId: " + exchange.getExchangeId()  + ")";
+    }
+
     public static Exchange copyExchangeAndSetCamelContext(Exchange exchange, CamelContext context) {
         DefaultExchange answer = new DefaultExchange(context, exchange.getPattern());
         if (exchange.hasProperties()) {
             answer.setProperties(safeCopy(exchange.getProperties()));
         }
         // Need to hand over the completion for async invocation
-        exchange.handoverCompletions(answer);        
+        exchange.handoverCompletions(answer);
         answer.setIn(exchange.getIn().copy());
         if (exchange.hasOut()) {
             answer.setOut(exchange.getOut().copy());
         }
         answer.setException(exchange.getException());
         return answer;
-        
+
     }
-    
+
     private static Map<String, Object> safeCopy(Map<String, Object> properties) {
         if (properties == null) {
             return null;
