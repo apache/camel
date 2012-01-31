@@ -218,6 +218,22 @@ public final class JmsMessageHelper {
     }
 
     /**
+     * Gets the JMSRedelivered from the message.
+     *
+     * @param message  the message
+     * @return <tt>true</tt> if redelivered, <tt>false</tt> if not, <tt>null</tt> if not able to determine
+     */
+    public static Boolean getJMSRedelivered(Message message) {
+        try {
+            return message.getJMSRedelivered();
+        } catch (Exception e) {
+            // ignore if JMS broker do not support this
+        }
+
+        return null;
+    }
+
+    /**
      * Sets the JMSDeliveryMode on the message.
      *
      * @param exchange the exchange
