@@ -16,27 +16,22 @@
  */
 package ${package};
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.main.Main;
 
 /**
- * A Camel Java DSL Router
+ * A Camel Application
  */
-public class MyRouteBuilder extends RouteBuilder {
+public class MainApp {
 
     /**
-     * Let's configure the Camel routing rules using Java code...
+     * A main() so we can easily run these routing rules in our IDE
      */
-    public void configure() {
-
-        // here is a sample which processes the input files
-        // (leaving them in place - see the 'noop' flag)
-        // then performs content based routing on the message using XPath
-        from("file:src/data?noop=true")
-            .choice()
-                .when(xpath("/person/city = 'London'"))
-                    .to("file:target/messages/uk")
-                .otherwise()
-                    .to("file:target/messages/others");
+    public static void main(String... args) throws Exception {
+        Main main = new Main();
+        main.enableHangupSupport();
+        main.addRouteBuilder(new MyRouteBuilder());
+        main.run(args);
     }
 
 }
+

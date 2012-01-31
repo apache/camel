@@ -40,12 +40,6 @@
       <artifactId>camel-core</artifactId>
       <version>${camel-version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-      <version>${camel-version}</version>
-    </dependency>
-
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -66,7 +60,7 @@
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
+      <artifactId>camel-test</artifactId>
       <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
@@ -92,6 +86,17 @@
         <artifactId>camel-maven-plugin</artifactId>
         <version>${camel-version}</version>
       </plugin>
+
+      <!-- Allows the example to be run via 'mvn compile exec:java' -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+            <mainClass>${package}.MainApp</mainClass>
+            <includePluginDependencies>false</includePluginDependencies>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
