@@ -60,6 +60,7 @@ public class MDCTest extends ContextTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 assertEquals("route-a", MDC.get("routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
+                                assertEquals(exchange.getIn().getMessageId(), MDC.get("messageId"));
                             }
                         })
                         .to("log:foo").to("direct:b");
@@ -69,6 +70,7 @@ public class MDCTest extends ContextTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 assertEquals("route-b", MDC.get("routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("exchangeId"));
+                                assertEquals(exchange.getIn().getMessageId(), MDC.get("messageId"));
                             }
                         })
                         .to("log:bar").to("mock:result");
