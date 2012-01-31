@@ -18,52 +18,33 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * To demonstrate transacted with minimal configuration.
+ *
  */
-public class JMSTransactionErrorHandlerTest extends CamelSpringTestSupport {
+public class JMSTransactionRollbackTest extends CamelSpringTestSupport {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/JMSTransactionErrorHandlerTest.xml");
-    }
-
-    protected int getExpectedRouteCount() {
-        return 1;
+            "/org/apache/camel/component/jms/tx/JMSTransactionRollbackTest.xml");
     }
 
     @Test
-    public void testTransactionSuccess() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Bye World");
-        // success at 3rd attempt
-        mock.message(0).header("count").isEqualTo(3);
-        // and since it was Camel doing the redelivery we should have headers for this
-        mock.message(0).header(Exchange.REDELIVERED).isEqualTo(true);
-        mock.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
-        // and not JMS doing the redelivery
-        mock.message(0).header("JMSRedelivered").isEqualTo(false);
+    public void testTransactionRollback() throws Exception {
+        getMockEndpoint("mock:before").expectedMessageCount(6);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
         template.sendBody("activemq:queue:okay", "Hello World");
 
-        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     public static class MyProcessor implements Processor {
-        private int count;
-
         public void process(Exchange exchange) throws Exception {
-            if (++count <= 2) {
-                throw new IllegalArgumentException("Forced Exception number " + count + ", please retry");
-            }
-            exchange.getIn().setBody("Bye World");
-            exchange.getIn().setHeader("count", count);
+            throw new IllegalArgumentException("Forced Exception");
         }
     }
 
