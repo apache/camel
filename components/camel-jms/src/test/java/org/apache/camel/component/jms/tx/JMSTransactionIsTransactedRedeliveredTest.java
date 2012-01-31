@@ -26,11 +26,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  *
  */
-public class JMSTransactionIsTransactedRedeliveredTestTest extends CamelSpringTestSupport {
+public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSupport {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/component/jms/tx/JMSTransactionIsTransactedRedeliveredTestTest.xml");
+                "/org/apache/camel/component/jms/tx/JMSTransactionIsTransactedRedeliveredTest.xml");
     }
 
     @Test
