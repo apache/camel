@@ -112,9 +112,9 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     }
 
     protected void processInTransaction(final Exchange exchange) throws Exception {
-        // is the exchange redeliveried, for example JMS brokers support such details
-        Boolean redelivery = exchange.isTransactedRedelivered();
-        final String redelivered = redelivery != null ? redelivery.toString() : "unknown";
+        // is the exchange redelivered, for example JMS brokers support such details
+        Boolean txRedelivered = exchange.isTransactedRedelivered();
+        final String redelivered = txRedelivered != null ? txRedelivered.toString() : "unknown";
         final String ids = ExchangeHelper.logIds(exchange);
 
         try {
@@ -153,7 +153,8 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                     log.debug("Transaction rollback (" + transactionKey + ") redelivered(" + redelivered + ") for "
                         + ids + " due exchange was marked for rollbackOnlyLast and caught: ", cause);
                 } else {
-                    log.debug("Transaction rollback ({}) redelivered(" + redelivered + ") for {} due exchange was marked for rollbackOnlyLast", transactionKey, ids);
+                    log.debug("Transaction rollback ({}) redelivered({}) for {} "
+                            + "due exchange was marked for rollbackOnlyLast", new Object[]{transactionKey, redelivered, ids});
                 }
             }
             // remove caused exception due we was marked as rollback only last
