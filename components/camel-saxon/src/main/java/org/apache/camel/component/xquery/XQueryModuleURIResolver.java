@@ -25,6 +25,8 @@ import net.sf.saxon.trans.XPathException;
  * Resolves XQuery file imports
  */
 public class XQueryModuleURIResolver implements ModuleURIResolver {
+    private static final long serialVersionUID = 1L;
+
     private final XQueryComponent xqueryComponent;
 
     public XQueryModuleURIResolver(XQueryComponent xqueryComponent) {
