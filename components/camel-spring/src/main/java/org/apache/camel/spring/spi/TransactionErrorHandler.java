@@ -19,6 +19,7 @@ package org.apache.camel.spring.spi;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.RedeliveryErrorHandler;
@@ -42,6 +43,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
     private final TransactionTemplate transactionTemplate;
     private final String transactionKey;
+    private final LoggingLevel rollbackLoggingLevel;
 
     /**
      * Creates the transaction error handler.
@@ -55,14 +57,17 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param transactionTemplate     the transaction template
      * @param retryWhile              retry while
      * @param executorServiceRef      reference to a {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
+     * @param rollbackLoggingLevel    logging level to use for logging transaction rollback occurred
      */
     public TransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, 
             Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy,
-            TransactionTemplate transactionTemplate, Predicate retryWhile, String executorServiceRef) {
+            TransactionTemplate transactionTemplate, Predicate retryWhile, String executorServiceRef,
+            LoggingLevel rollbackLoggingLevel) {
 
         super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, retryWhile, executorServiceRef);
         setExceptionPolicy(exceptionPolicyStrategy);
         this.transactionTemplate = transactionTemplate;
+        this.rollbackLoggingLevel = rollbackLoggingLevel;
         this.transactionKey = ObjectHelper.getIdentityHashCode(transactionTemplate);
     }
 
@@ -136,8 +141,8 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 log.debug("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly", new Object[]{transactionKey, redelivered, ids});
             }
         } catch (Throwable e) {
-            log.warn("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
             exchange.setException(e);
+            logTransactionRollback(redelivered, ids, e);
         } finally {
             // mark the end of this transaction boundary
             exchange.getUnitOfWork().endTransactedBy(transactionKey);
@@ -146,6 +151,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         // if it was a local rollback only then remove its marker so outer transaction wont see the marker
         Boolean onlyLast = (Boolean) exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
         if (onlyLast != null && onlyLast) {
+            // we only want this logged at debug level
             if (log.isDebugEnabled()) {
                 // log exception if there was a cause exception so we have the stack trace
                 Exception cause = exchange.getException();
@@ -220,6 +226,25 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 // noop
             }
         });
+    }
+
+    /**
+     * Logs the transaction rollback
+     */
+    private void logTransactionRollback(String redelivered, String ids, Throwable e) {
+        if (rollbackLoggingLevel == LoggingLevel.OFF) {
+            return;
+        } else if (rollbackLoggingLevel == LoggingLevel.ERROR && log.isErrorEnabled()) {
+            log.error("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
+        } else if (rollbackLoggingLevel == LoggingLevel.WARN && log.isWarnEnabled()) {
+            log.warn("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
+        } else if (rollbackLoggingLevel == LoggingLevel.INFO && log.isInfoEnabled()) {
+            log.info("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
+        } else if (rollbackLoggingLevel == LoggingLevel.DEBUG && log.isDebugEnabled()) {
+            log.debug("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
+        } else if (rollbackLoggingLevel == LoggingLevel.TRACE && log.isTraceEnabled()) {
+            log.trace("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
+        }
     }
 
     private static String propagationBehaviorToString(int propagationBehavior) {

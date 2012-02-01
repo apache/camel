@@ -102,7 +102,6 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
             parserRefAttribute(element, "onRetryWhileRef", "onRetryWhile", builder);
             parserRefAttribute(element, "redeliveryPolicyRef", "redeliveryPolicy", builder);
             if (type.equals(ErrorHandlerType.TransactionErrorHandler)) {
-                // deal with transactionTemplateRef
                 parserRefAttribute(element, "transactionTemplateRef", "transactionTemplate", builder);
                 parserRefAttribute(element, "transactionManagerRef", "transactionManager", builder);
             }
@@ -123,6 +122,11 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         String transactionManagerRef = element.getAttribute("transactionManagerRef");
         if (ObjectHelper.isNotEmpty(transactionManagerRef) && !type.equals(ErrorHandlerType.TransactionErrorHandler)) {
             throw new IllegalArgumentException("Attribute transactionManagerRef can only be used if type is "
+                    + ErrorHandlerType.TransactionErrorHandler.name() + ", in error handler with id: " + id);
+        }
+        String rollbackLoggingLevel = element.getAttribute("rollbackLoggingLevel");
+        if (ObjectHelper.isNotEmpty(rollbackLoggingLevel) && (!type.equals(ErrorHandlerType.TransactionErrorHandler))) {
+            throw new IllegalArgumentException("Attribute rollbackLoggingLevel can only be used if type is "
                     + ErrorHandlerType.TransactionErrorHandler.name() + ", in error handler with id: " + id);
         }
         String useOriginalMessage = element.getAttribute("useOriginalMessage");
