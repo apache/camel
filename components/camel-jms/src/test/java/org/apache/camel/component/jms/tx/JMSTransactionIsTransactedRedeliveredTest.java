@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
 import org.junit.Test;
@@ -33,8 +34,31 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
                 "/org/apache/camel/component/jms/tx/JMSTransactionIsTransactedRedeliveredTest.xml");
     }
 
+    @Override
+    protected int getExpectedRouteCount() {
+        // have to return 0 because we enable advice with
+        return 0;
+    }
+
+    @Override
+    public boolean isUseAdviceWith() {
+        return true;
+    }
+
     @Test
     public void testTransactionSuccess() throws Exception {
+        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(AssertionError.class).to("log:error", "mock:error");
+            }
+        });
+        context.start();
+
+        // there should be no assertion errors
+        MockEndpoint error = getMockEndpoint("mock:error");
+        error.expectedMessageCount(0);
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Bye World");
@@ -44,6 +68,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         template.sendBody("activemq:queue:okay", "Hello World");
 
         mock.assertIsSatisfied();
+        error.assertIsSatisfied();
     }
 
     public static class MyProcessor implements Processor {
