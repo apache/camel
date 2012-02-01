@@ -67,9 +67,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         } else {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message
-            String text = "Reply received for unknown correlationID [" + correlationID + "]. The message will be ignored: " + message;
             // log a warn and then ignore the message
-            log.warn(text);
+            log.warn("Reply received for unknown correlationID [{}]. The message will be ignored: {}", correlationID, message);
         }
     }
 

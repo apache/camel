@@ -213,7 +213,7 @@ public class JmsBinding {
 
     protected byte[] createByteArrayFromBytesMessage(BytesMessage message) throws JMSException {
         if (message.getBodyLength() > Integer.MAX_VALUE) {
-            LOG.warn("Length of BytesMessage is too long: " + message.getBodyLength());
+            LOG.warn("Length of BytesMessage is too long: {}", message.getBodyLength());
             return null;
         }
         byte[] result = new byte[(int)message.getBodyLength()];
