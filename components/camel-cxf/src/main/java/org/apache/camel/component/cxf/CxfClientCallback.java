@@ -50,16 +50,19 @@ public class CxfClientCallback extends ClientCallback {
         try {
             super.handleResponse(ctx, res);            
         } finally {
-            // bind the CXF response to Camel exchange
+            // bind the CXF response to Camel exchange and
+            // call camel callback
+            // for one way messages callback is already called in 
+            // process method of org.apache.camel.component.cxf.CxfProducer
             if (!boi.getOperationInfo().isOneWay()) {
                 // copy the InMessage header to OutMessage header
                 camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
                 binding.populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
+                camelAsyncCallback.done(false);
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{} calling handleResponse", Thread.currentThread().getName());
             }
-            camelAsyncCallback.done(false);
         }
     }
     
@@ -68,16 +71,19 @@ public class CxfClientCallback extends ClientCallback {
             super.handleException(ctx, ex);
             camelExchange.setException(ex);
         } finally {
-            // copy the context information
+            // copy the context information and 
+            // call camel callback
+            // for one way messages callback is already called in 
+            // process method of org.apache.camel.component.cxf.CxfProducer
             if (!boi.getOperationInfo().isOneWay()) {
                 // copy the InMessage header to OutMessage header
                 camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
                 binding.populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
+                camelAsyncCallback.done(false);
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("{} calling handleException", Thread.currentThread().getName());
             }
-            camelAsyncCallback.done(false);
         }
     }        
 
