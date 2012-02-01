@@ -47,7 +47,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
       <!-- we do not want any exceptions to be logged, neither that a rollback occurred -->
-      <errorHandler id="txEH" type="TransactionErrorHandler" rollbackLoggingLevel="ERROR">
+      <errorHandler id="txEH" type="TransactionErrorHandler" rollbackLoggingLevel="OFF">
         <redeliveryPolicy logStackTrace="false" logExhausted="false"/>
       </errorHandler>
 
