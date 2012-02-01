@@ -77,10 +77,12 @@ public class JmsProducer extends DefaultAsyncProducer {
 
                     if (endpoint.getReplyTo() != null) {
                         replyManager = endpoint.getReplyManager(endpoint.getReplyTo());
-                        LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from: " + endpoint.getReplyTo());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Using JmsReplyManager: {} to process replies from: {}", replyManager, endpoint.getReplyTo());
+                        }
                     } else {
                         replyManager = endpoint.getReplyManager();
-                        LOG.info("Using JmsReplyManager: " + replyManager + " to process replies from temporary queue");
+                        LOG.debug("Using JmsReplyManager: {} to process replies from temporary queue", replyManager);
                     }
                 } catch (Exception e) {
                     throw new FailedToCreateProducerException(endpoint, e);
@@ -240,7 +242,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                 Object jmsReplyTo = JmsMessageHelper.getJMSReplyTo(answer);
                 if (endpoint.isDisableReplyTo()) {
                     // honor disable reply to configuration
-                    LOG.debug("ReplyTo is disabled on endpoint: {}", endpoint);
+                    LOG.trace("ReplyTo is disabled on endpoint: {}", endpoint);
                     JmsMessageHelper.setJMSReplyTo(answer, null);
                 } else {
                     // if the binding did not create the reply to then we have to try to create it here
@@ -332,7 +334,9 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         CamelJmsTemplate template = (CamelJmsTemplate) (inOut ? getInOutTemplate() : getInOnlyTemplate());
 
-        LOG.trace("Using {} jms template", inOut ? "inOut" : "inOnly");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Using {} jms template", inOut ? "inOut" : "inOnly");
+        }
 
         // destination should be preferred
         if (destination != null) {
@@ -368,8 +372,7 @@ public class JmsProducer extends DefaultAsyncProducer {
                     out.setMessageId(out.getJmsMessage().getJMSMessageID());
                 }
             } catch (JMSException e) {
-                LOG.warn("Unable to retrieve JMSMessageID from outgoing "
-                        + "JMS Message and set it into Camel's MessageId", e);
+                LOG.warn("Unable to retrieve JMSMessageID from outgoing JMS Message and set it into Camel's MessageId", e);
             }
         }
     }
@@ -422,11 +425,12 @@ public class JmsProducer extends DefaultAsyncProducer {
             Connection conn = template.getConnectionFactory().createConnection();
             JmsUtils.closeConnection(conn);
 
-            log.info("Successfully tested JMS Connection on startup for destination: " + template.getDefaultDestinationName());
+            log.debug("Successfully tested JMS Connection on startup for destination: " + template.getDefaultDestinationName());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(getEndpoint(), e);
         }
     }
+
     protected void doStart() throws Exception {
         super.doStart();
         if (uuidGenerator == null) {

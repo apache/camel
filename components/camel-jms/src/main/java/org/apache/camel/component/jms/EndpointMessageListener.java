@@ -82,7 +82,7 @@ public class EndpointMessageListener implements MessageListener {
             }
             String correlationId = message.getJMSCorrelationID();
             if (correlationId != null) {
-                LOG.debug("Received Message has JMSCorrelationID [" + correlationId + "]");
+                LOG.debug("Received Message has JMSCorrelationID [{}]", correlationId);
             }
 
             // process the exchange either asynchronously or synchronous
@@ -97,7 +97,9 @@ public class EndpointMessageListener implements MessageListener {
             boolean forceSync = endpoint.isSynchronous() || endpoint.isTransacted();
             if (forceSync || !isAsync()) {
                 // must process synchronous if transacted or configured to do so
-                LOG.trace("Processing exchange {} synchronously", exchange.getExchangeId());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchange {} synchronously", exchange.getExchangeId());
+                }
                 try {
                     processor.process(exchange);
                 } catch (Exception e) {
@@ -107,7 +109,9 @@ public class EndpointMessageListener implements MessageListener {
                 }
             } else {
                 // process asynchronous using the async routing engine
-                LOG.trace("Processing exchange {} asynchronously", exchange.getExchangeId());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchange {} asynchronously", exchange.getExchangeId());
+                }
                 boolean sync = AsyncProcessorHelper.process(processor, exchange, callback);
                 if (!sync) {
                     // will be done async so return now

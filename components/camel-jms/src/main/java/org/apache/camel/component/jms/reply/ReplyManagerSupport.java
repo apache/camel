@@ -96,7 +96,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
             // ignore
         }
         if (correlationID == null) {
-            log.warn("Ignoring message with no correlationID: " + message);
+            log.warn("Ignoring message with no correlationID: {}", message);
             return;
         }
 
@@ -115,9 +115,11 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 boolean timeout = holder.isTimeout();
                 if (timeout) {
                     // timeout occurred do a WARN log so its easier to spot in the logs
-                    log.warn("Timeout occurred after {} millis waiting for reply message with correlationID [{}]."
-                            + " Setting ExchangeTimedOutException on ExchangeId: {} and continue routing.",
-                            new Object[]{holder.getRequestTimeout(), holder.getCorrelationId(), exchange.getExchangeId()});
+                    if (log.isWarnEnabled()) {
+                        log.warn("Timeout occurred after {} millis waiting for reply message with correlationID [{}]."
+                                + " Setting ExchangeTimedOutException on ExchangeId: {} and continue routing.",
+                                new Object[]{holder.getRequestTimeout(), holder.getCorrelationId(), exchange.getExchangeId()});
+                    }
 
                     // no response, so lets set a timed out exception
                     String msg = "reply message with correlationID: " + holder.getCorrelationId() + " not received";
@@ -167,7 +169,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         // event that the reply comes back really really fast, and the correlation map hasn't yet been updated
         // from the provisional id to the JMSMessageID. If so we have to wait a bit and lookup again.
         if (log.isWarnEnabled()) {
-            log.warn("Early reply received with correlationID [" + correlationID + "] -> " + message);
+            log.warn("Early reply received with correlationID [{}] -> {}", correlationID, message);
         }
 
         ReplyHandler answer = null;
@@ -210,7 +212,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         // create JMS listener and start it
         listenerContainer = createListenerContainer();
         listenerContainer.afterPropertiesSet();
-        log.info("Starting reply listener container on endpoint: " + endpoint);
+        log.debug("Starting reply listener container on endpoint: {}", endpoint);
         listenerContainer.start();
     }
 
@@ -219,7 +221,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         ServiceHelper.stopService(correlation);
 
         if (listenerContainer != null) {
-            log.info("Stopping reply listener container on endpoint: " + endpoint);
+            log.debug("Stopping reply listener container on endpoint: {}", endpoint);
             listenerContainer.stop();
             listenerContainer.destroy();
             listenerContainer = null;

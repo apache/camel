@@ -52,7 +52,7 @@ public class UseMessageIdAsCorrelationIdMessageSentCallback implements MessageSe
             newCorrelationID = message.getJMSMessageID();
         } catch (JMSException e) {
             // ignore
-            LOG.warn("Cannot get JMSMessageID from message: " + message, e);
+            LOG.warn("Cannot get JMSMessageID from message: " + message + ". This exception will be ignored.", e);
         }
         if (newCorrelationID != null) {
             replyManager.updateCorrelationId(correlationId, newCorrelationID, requestTimeout);
