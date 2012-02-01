@@ -22,7 +22,7 @@ package org.apache.camel;
  * @version 
  */
 public class FailedToCreateRouteException extends CamelException {
-
+    private static final long serialVersionUID = 1L;
     private final String routeId;
 
     public FailedToCreateRouteException(String routeId, String route, Throwable cause) {

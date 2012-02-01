@@ -306,7 +306,7 @@ public class PropertiesComponent extends DefaultComponent {
      * Key used in the locations cache
      */
     private static final class CacheKey implements Serializable {
-
+        private static final long serialVersionUID = 1L;
         private final String[] locations;
 
         private CacheKey(String[] locations) {
