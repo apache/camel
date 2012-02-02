@@ -31,6 +31,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     private Statistic exchangesFailed;
     private Statistic failuresHandled;
     private Statistic redeliveries;
+    private Statistic transactedRedeliveries;
     private Statistic minProcessingTime;
     private Statistic maxProcessingTime;
     private Statistic totalProcessingTime;
@@ -53,6 +54,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
 
         this.failuresHandled = new Statistic("org.apache.camel.failuresHandled", this, Statistic.UpdateMode.COUNTER);
         this.redeliveries = new Statistic("org.apache.camel.redeliveries", this, Statistic.UpdateMode.COUNTER);
+        this.transactedRedeliveries = new Statistic("org.apache.camel.transactedRedeliveries", this, Statistic.UpdateMode.COUNTER);
 
         this.minProcessingTime = new Statistic("org.apache.camel.minimumProcessingTime", this, Statistic.UpdateMode.MINIMUM);
         this.maxProcessingTime = new Statistic("org.apache.camel.maximumProcessingTime", this, Statistic.UpdateMode.MAXIMUM);
@@ -73,6 +75,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         exchangesFailed.reset();
         failuresHandled.reset();
         redeliveries.reset();
+        transactedRedeliveries.reset();
         minProcessingTime.reset();
         maxProcessingTime.reset();
         totalProcessingTime.reset();
@@ -102,6 +105,10 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
 
     public long getRedeliveries() throws Exception {
         return redeliveries.getValue();
+    }
+
+    public long getTransactedRedeliveries() throws Exception {
+        return transactedRedeliveries.getValue();
     }
 
     public long getMinProcessingTime() throws Exception {
@@ -175,6 +182,10 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
         if (ExchangeHelper.isFailureHandled(exchange)) {
             failuresHandled.increment();
         }
+        Boolean transactedRedelivered = exchange.isTransactedRedelivered();
+        if (transactedRedelivered != null && transactedRedelivered) {
+            transactedRedeliveries.increment();
+        }
 
         minProcessingTime.updateValue(time);
         maxProcessingTime.updateValue(time);
@@ -204,6 +215,10 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
 
         if (ExchangeHelper.isRedelivered(exchange)) {
             redeliveries.increment();
+        }
+        Boolean transactedRedelivered = exchange.isTransactedRedelivered();
+        if (transactedRedelivered != null && transactedRedelivered) {
+            transactedRedeliveries.increment();
         }
 
         long now = new Date().getTime();
