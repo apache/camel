@@ -44,14 +44,22 @@
         <property name="errorHandlerLogStackTrace" value="false"/>
     </bean>
 
+    <bean id="naming" class="org.apache.camel.management.DefaultManagementNamingStrategy">
+        <property name="hostName" value="localhost"/>
+        <property name="domainName" value="org.apache.camel"/>
+    </bean>
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+      
+      <!-- enable JMX -->
+      <jmxAgent id="agent" disabled="false"/>
 
       <!-- we do not want any exceptions to be logged, neither that a rollback occurred -->
       <errorHandler id="txEH" type="TransactionErrorHandler" rollbackLoggingLevel="OFF">
         <redeliveryPolicy logStackTrace="false" logExhausted="false"/>
       </errorHandler>
 
-        <route errorHandlerRef="txEH">
+        <route id="myRoute" errorHandlerRef="txEH">
             <from uri="activemq:queue:okay"/>
             <transacted/>
             <to uri="mock:before"/>

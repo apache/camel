@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jms.tx;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
@@ -45,6 +48,10 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         return true;
     }
 
+    protected MBeanServer getMBeanServer() {
+        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
+    }
+
     @Test
     public void testTransactionSuccess() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
@@ -69,6 +76,28 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
 
         mock.assertIsSatisfied();
         error.assertIsSatisfied();
+
+        // check JMX stats
+
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"myRoute\"");
+
+        Long total = (Long) getMBeanServer().getAttribute(name, "ExchangesTotal");
+        assertEquals(3, total.intValue());
+
+        Long completed = (Long) getMBeanServer().getAttribute(name, "ExchangesCompleted");
+        assertEquals(1, completed.intValue());
+
+        Long failed = (Long) getMBeanServer().getAttribute(name, "ExchangesFailed");
+        assertEquals(2, failed.intValue());
+
+        // Camel error handler redeliveries (we do not use that in this example)
+        Long redeliveries = (Long) getMBeanServer().getAttribute(name, "Redeliveries");
+        assertEquals(0, redeliveries.intValue());
+        // Camel error handler redeliveries (we do not use that in this example)
+
+        // there should be 2 transacted redeliveries
+        Long transactedRedeliveries = (Long) getMBeanServer().getAttribute(name, "TransactedRedeliveries");
+        assertEquals(2, transactedRedeliveries.intValue());
     }
 
     public static class MyProcessor implements Processor {
