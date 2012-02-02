@@ -172,17 +172,18 @@ public interface Exchange {
     String SPLIT_COMPLETE     = "CamelSplitComplete";
     String SPLIT_SIZE         = "CamelSplitSize";
 
-    String TIMER_COUNTER         = "CamelTimerCounter";
-    String TIMER_FIRED_TIME      = "CamelTimerFiredTime";
-    String TIMER_NAME            = "CamelTimerName";
-    String TIMER_PERIOD          = "CamelTimerPeriod";
-    String TIMER_TIME            = "CamelTimerTime";
-    String TO_ENDPOINT           = "CamelToEndpoint";
-    String TRACE_EVENT           = "CamelTraceEvent";
-    String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
-    String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
-    String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
-    String TRANSFER_ENCODING     = "Transfer-Encoding";
+    String TIMER_COUNTER          = "CamelTimerCounter";
+    String TIMER_FIRED_TIME       = "CamelTimerFiredTime";
+    String TIMER_NAME             = "CamelTimerName";
+    String TIMER_PERIOD           = "CamelTimerPeriod";
+    String TIMER_TIME             = "CamelTimerTime";
+    String TO_ENDPOINT            = "CamelToEndpoint";
+    String TRACE_EVENT            = "CamelTraceEvent";
+    String TRACE_EVENT_NODE_ID    = "CamelTraceEventNodeId";
+    String TRACE_EVENT_TIMESTAMP  = "CamelTraceEventTimestamp";
+    String TRACE_EVENT_EXCHANGE   = "CamelTraceEventExchange";
+    String TRANSACTED_REDELIVERED = "CamelTransactedRedelivered";
+    String TRANSFER_ENCODING      = "Transfer-Encoding";
 
     String UNIT_OF_WORK_EXHAUSTED    = "CamelUnitOfWorkExhausted";
     String UNIT_OF_WORK_PROCESS_SYNC = "CamelUnitOfWorkProcessSync";
