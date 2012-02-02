@@ -66,7 +66,7 @@ class RichExchange(val exchange : Exchange) extends Exchange {
 
   def isTransacted = exchange.isTransacted
 
-  def isTransactedRedelivered = exchange.isTransactedRedelivered;
+  def isExternalRedelivered = exchange.isExternalRedelivered;
 
   def isRollbackOnly = exchange.isRollbackOnly
 

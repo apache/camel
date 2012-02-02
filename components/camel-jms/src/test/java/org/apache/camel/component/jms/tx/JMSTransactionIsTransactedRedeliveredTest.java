@@ -95,9 +95,9 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         assertEquals(0, redeliveries.intValue());
         // Camel error handler redeliveries (we do not use that in this example)
 
-        // there should be 2 transacted redeliveries
-        Long transactedRedeliveries = (Long) getMBeanServer().getAttribute(name, "TransactedRedeliveries");
-        assertEquals(2, transactedRedeliveries.intValue());
+        // there should be 2 external redeliveries
+        Long externalRedeliveries = (Long) getMBeanServer().getAttribute(name, "ExternalRedeliveries");
+        assertEquals(2, externalRedeliveries.intValue());
     }
 
     public static class MyProcessor implements Processor {
@@ -108,9 +108,9 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
 
             // the first is not redelivered
             if (count == 1) {
-                assertFalse("Should not be transacted redelivered", exchange.isTransactedRedelivered());
+                assertFalse("Should not be external redelivered", exchange.isExternalRedelivered());
             } else {
-                assertTrue("Should be transacted redelivered", exchange.isTransactedRedelivered());
+                assertTrue("Should be external redelivered", exchange.isExternalRedelivered());
             }
 
             if (count < 3) {

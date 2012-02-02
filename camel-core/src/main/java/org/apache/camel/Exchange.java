@@ -107,6 +107,7 @@ public interface Exchange {
     String EXCEPTION_CAUGHT           = "CamelExceptionCaught";
     String EVALUATE_EXPRESSION_RESULT = "CamelEvaluateExpressionResult";
     String ERRORHANDLER_HANDLED       = "CamelErrorHandlerHandled";
+    String EXTERNAL_REDELIVERED       = "CamelExternalRedelivered";
 
     String FAILURE_HANDLED      = "CamelFailureHandled";
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
@@ -172,18 +173,17 @@ public interface Exchange {
     String SPLIT_COMPLETE     = "CamelSplitComplete";
     String SPLIT_SIZE         = "CamelSplitSize";
 
-    String TIMER_COUNTER          = "CamelTimerCounter";
-    String TIMER_FIRED_TIME       = "CamelTimerFiredTime";
-    String TIMER_NAME             = "CamelTimerName";
-    String TIMER_PERIOD           = "CamelTimerPeriod";
-    String TIMER_TIME             = "CamelTimerTime";
-    String TO_ENDPOINT            = "CamelToEndpoint";
-    String TRACE_EVENT            = "CamelTraceEvent";
-    String TRACE_EVENT_NODE_ID    = "CamelTraceEventNodeId";
-    String TRACE_EVENT_TIMESTAMP  = "CamelTraceEventTimestamp";
-    String TRACE_EVENT_EXCHANGE   = "CamelTraceEventExchange";
-    String TRANSACTED_REDELIVERED = "CamelTransactedRedelivered";
-    String TRANSFER_ENCODING      = "Transfer-Encoding";
+    String TIMER_COUNTER         = "CamelTimerCounter";
+    String TIMER_FIRED_TIME      = "CamelTimerFiredTime";
+    String TIMER_NAME            = "CamelTimerName";
+    String TIMER_PERIOD          = "CamelTimerPeriod";
+    String TIMER_TIME            = "CamelTimerTime";
+    String TO_ENDPOINT           = "CamelToEndpoint";
+    String TRACE_EVENT           = "CamelTraceEvent";
+    String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
+    String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
+    String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
+    String TRANSFER_ENCODING     = "Transfer-Encoding";
 
     String UNIT_OF_WORK_EXHAUSTED    = "CamelUnitOfWorkExhausted";
     String UNIT_OF_WORK_PROCESS_SYNC = "CamelUnitOfWorkProcessSync";
@@ -399,15 +399,15 @@ public interface Exchange {
     boolean isTransacted();
 
     /**
-     * Returns true if this exchange is redelivered from a transacted source (such as a JMS broker)
+     * Returns true if this exchange is an external initiated redelivered message (such as a JMS broker).
      * <p/>
-     * <b>Important: </b> It is not always possible to determine if the transacted is a redelivery
+     * <b>Important: </b> It is not always possible to determine if the message is a redelivery
      * or not, and therefore <tt>null</tt> is returned. Such an example would be a JDBC message.
-     * However JMS brokers provides details if a transacted message is redelivered.
+     * However JMS brokers provides details if a message is redelivered.
      *
      * @return <tt>true</tt> if redelivered, <tt>false</tt> if not, <tt>null</tt> if not able to determine
      */
-    Boolean isTransactedRedelivered();
+    Boolean isExternalRedelivered();
 
     /**
      * Returns true if this exchange is marked for rollback
