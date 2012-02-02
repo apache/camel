@@ -251,6 +251,19 @@
                 </executions>
             </plugin>
 
+            <!-- mvn tomcat7:run -->
+            <plugin>  
+              <groupId>org.apache.tomcat.maven</groupId>  
+              <artifactId>tomcat7-maven-plugin</artifactId>  
+              <version>2.0-beta-1</version>
+              <configuration>
+                <path>/</path>  
+                <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>                       
+              </configuration>  
+            </plugin>
+
+
+            <!-- mvn jetty:run -->
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
