@@ -135,7 +135,11 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("sysenv.PATH", path);
         }
     }
-    
+
+    public void testSimpleCamelId() throws Exception {
+        assertExpression("camelId", context.getName());
+    }
+
     public void testOGNLBodyListAndMap() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("cool", "Camel rocks");
