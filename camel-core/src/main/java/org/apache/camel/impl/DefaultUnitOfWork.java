@@ -109,10 +109,10 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             }
         }
         
-        // setup whether the exchange is transacted redelivered or not (if not initialized before)
-        // store as property so we know that the origin exchange was transacted redelivered
-        if (exchange.getProperty(Exchange.TRANSACTED_REDELIVERED) == null) {
-            exchange.setProperty(Exchange.TRANSACTED_REDELIVERED, exchange.isTransactedRedelivered());
+        // setup whether the exchange is externally redelivered or not (if not initialized before)
+        // store as property so we know that the origin exchange was redelivered
+        if (exchange.getProperty(Exchange.EXTERNAL_REDELIVERED) == null) {
+            exchange.setProperty(Exchange.EXTERNAL_REDELIVERED, exchange.isExternalRedelivered());
         }
 
         // fire event

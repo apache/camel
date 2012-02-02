@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Test that exchange.isTransactedRedelivered() is kept around even when
+ * Test that exchange.isExternalRedelivered() is kept around even when
  * Message implementation changes from JmsMessage to DefaultMessage, when routing
  * from JMS over Jetty.
  */
@@ -93,9 +93,9 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
 
             // the first is not redelivered
             if (count == 1) {
-                assertFalse("Should not be transacted redelivered", exchange.isTransactedRedelivered());
+                assertFalse("Should not be external redelivered", exchange.isExternalRedelivered());
             } else {
-                assertTrue("Should be transacted redelivered", exchange.isTransactedRedelivered());
+                assertTrue("Should be external redelivered", exchange.isExternalRedelivered());
             }
 
             if (count < 3) {
@@ -107,8 +107,8 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
 
     public static class MyAfterProcessor implements Processor {
         public void process(Exchange exchange) throws Exception {
-            // origin message should be a transacted redeliveries
-            assertTrue("Should be transacted redelivered", exchange.isTransactedRedelivered());
+            // origin message should be a external redelivered
+            assertTrue("Should be external redelivered", exchange.isExternalRedelivered());
         }
     }
 

@@ -331,27 +331,27 @@ public final class DefaultExchange implements Exchange {
         }
     }
 
-    public Boolean isTransactedRedelivered() {
+    public Boolean isExternalRedelivered() {
         Boolean answer = null;
 
         // check property first, as the implementation details to know if the message
-        // was transacted redelivered is message specific, and thus the message implementation
+        // was externally redelivered is message specific, and thus the message implementation
         // could potentially change during routing, and therefore later we may not know if the
-        // original message was transacted redelivered or not, therefore we store this detail
+        // original message was externally redelivered or not, therefore we store this detail
         // as a exchange property to keep it around for the lifecycle of the exchange
         if (hasProperties()) {
-            answer = getProperty(Exchange.TRANSACTED_REDELIVERED, null, Boolean.class); 
+            answer = getProperty(Exchange.EXTERNAL_REDELIVERED, null, Boolean.class);
         }
         
         if (answer == null) {
             // lets avoid adding methods to the Message API, so we use the
             // DefaultMessage to allow component specific messages to extend
-            // and implement the isTransactedRedelivered method.
+            // and implement the isExternalRedelivered method.
             DefaultMessage msg = getIn(DefaultMessage.class);
             if (msg != null) {
                 answer = msg.isTransactedRedelivered();
                 // store as property to keep around
-                setProperty(Exchange.TRANSACTED_REDELIVERED, answer);
+                setProperty(Exchange.EXTERNAL_REDELIVERED, answer);
             }
         }
 

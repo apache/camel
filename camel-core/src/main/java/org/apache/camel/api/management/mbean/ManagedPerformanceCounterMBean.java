@@ -35,11 +35,11 @@ public interface ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Number of failures handled")
     long getFailuresHandled() throws Exception;
 
-    @ManagedAttribute(description = "Number of redeliveries (Camel error handler)")
+    @ManagedAttribute(description = "Number of redeliveries (internal only)")
     long getRedeliveries() throws Exception;
 
-    @ManagedAttribute(description = "Number of transacted redeliveries (from external transacted source)")
-    long getTransactedRedeliveries() throws Exception;
+    @ManagedAttribute(description = "Number of external initiated redeliveries (such as from JMS broker)")
+    long getExternalRedeliveries() throws Exception;
 
     @ManagedAttribute(description = "Min Processing Time [milliseconds]")
     long getMinProcessingTime() throws Exception;
