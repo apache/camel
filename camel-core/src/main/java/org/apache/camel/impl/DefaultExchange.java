@@ -332,14 +332,30 @@ public final class DefaultExchange implements Exchange {
     }
 
     public Boolean isTransactedRedelivered() {
-        // lets avoid adding methods to the Message API, so we use the
-        // DefaultMessage to allow component specific messages to extend
-        // and implement the isTransactedRedelivered method.
-        DefaultMessage msg = getIn(DefaultMessage.class);
-        if (msg != null) {
-            return msg.isTransactedRedelivered();
+        Boolean answer = null;
+
+        // check property first, as the implementation details to know if the message
+        // was transacted redelivered is message specific, and thus the message implementation
+        // could potentially change during routing, and therefore later we may not know if the
+        // original message was transacted redelivered or not, therefore we store this detail
+        // as a exchange property to keep it around for the lifecycle of the exchange
+        if (hasProperties()) {
+            answer = getProperty(Exchange.TRANSACTED_REDELIVERED, null, Boolean.class); 
         }
-        return null;
+        
+        if (answer == null) {
+            // lets avoid adding methods to the Message API, so we use the
+            // DefaultMessage to allow component specific messages to extend
+            // and implement the isTransactedRedelivered method.
+            DefaultMessage msg = getIn(DefaultMessage.class);
+            if (msg != null) {
+                answer = msg.isTransactedRedelivered();
+                // store as property to keep around
+                setProperty(Exchange.TRANSACTED_REDELIVERED, answer);
+            }
+        }
+
+        return answer;
     }
 
     public boolean isRollbackOnly() {

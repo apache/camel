@@ -108,6 +108,12 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
                 exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbId);
             }
         }
+        
+        // setup whether the exchange is transacted redelivered or not (if not initialized before)
+        // store as property so we know that the origin exchange was transacted redelivered
+        if (exchange.getProperty(Exchange.TRANSACTED_REDELIVERED) == null) {
+            exchange.setProperty(Exchange.TRANSACTED_REDELIVERED, exchange.isTransactedRedelivered());
+        }
 
         // fire event
         try {
