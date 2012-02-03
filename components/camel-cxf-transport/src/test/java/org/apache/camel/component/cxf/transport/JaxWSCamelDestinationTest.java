@@ -16,56 +16,52 @@
  */
 package org.apache.camel.component.cxf.transport;
 
+import javax.xml.ws.Endpoint;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 
-/**
- * Test CXF-CamelConduit when the destination is not a pipeline
- */
-public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
+// Test the CamelDestination with whole CXF context
+public class JaxWSCamelDestinationTest extends JaxWSCamelTestSupport {
+    private Endpoint endpoint;
     
-
+    @After
+    public void stopEndpoint() {
+        if (endpoint != null) {
+            endpoint.stop();
+        }
+    }
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 
             public void configure() throws Exception {
 
-                from("direct:start1").setBody(constant(ANSWER));
-
-                from("direct:start2").setBody(constant(ANSWER)).log("Force pipeline creation");
-                
-                from("direct:start3").choice().when(header(Exchange.CONTENT_TYPE).isEqualTo("text/xml; charset=UTF-8")).process(new Processor() {
-                    public void process(final Exchange exchange) {
-                        exchange.getOut().setBody(ANSWER);
-                    }
-                });
-                // otherwise you will get the request message back
-                    
+                from("direct:start").to("direct:endpoint");
                 
             }
         };
     }
+    @Test
+    public void testDestinationContentType() {
+        // publish the endpoint
+        endpoint = publishSampleWS("direct:endpoint");
+        Exchange exchange = template.request("direct:start", new Processor() {
 
-   
-    @Test
-    public void testStart1() {
-        assertThat(getSampleWS("direct:start1").getSomething(), is("Something"));
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(REQUEST);
+            }
+            
+        });
+        assertThat(exchange.getOut().getHeader(Exchange.CONTENT_TYPE, String.class), is("text/xml; charset=UTF-8"));
+        assertTrue(exchange.getOut().getBody(String.class).indexOf("something!") > 0);
     }
 
-    /**
-     * Success
-     */
-    @Test
-    public void testStart2() {
-        assertThat(getSampleWS("direct:start2").getSomething(), is("Something"));
-    }
-    
-    // test the content type
-    @Test
-    public void testStart3() {
-        assertThat(getSampleWS("direct:start3").getSomething(), is("Something"));
-    }
 }
