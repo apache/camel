@@ -89,4 +89,11 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>cubeindia</id>
+            <url>http://m2.cubeia.com/nexus/content/repositories/thirdparty/</url>
+        </repository>
+    </repositories>
 </project>

@@ -4,6 +4,9 @@ import de.roderick.weberknecht.WebSocketConnection;
 import de.roderick.weberknecht.WebSocketEventHandler;
 import de.roderick.weberknecht.WebSocketException;
 import de.roderick.weberknecht.WebSocketMessage;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.CamelTestSupport;
 import org.junit.Test;
@@ -11,7 +14,7 @@ import org.junit.Test;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class WebsocketClientCamelRouteTest extends CamelTestSupport {
+public class WebsocketClientCamelRoute2Test extends CamelTestSupport {
 
     private static URI uriWS;
     private static WebSocketConnection webSocketConnection;
@@ -42,7 +45,7 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
             webSocketConnection.connect();
             System.out.println(">>> Connection established.");
 
-            // Send Data
+                        // Send Data
             webSocketConnection.send("Hello from WS Client");
 
 
@@ -60,10 +63,16 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("websocket://test")
+                    .setExchangePattern(ExchangePattern.InOut)
                     .log(">>> Message received from WebSocket Client : ${body}")
-                    .loop(10)
-                        .setBody().constant(">> Welcome on board !")
-                        .to("websocket://test");
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            String response = ">> welcome on board";
+                            exchange.getOut().setBody(response);
+                            exchange.getIn().setBody(response);
+                        }
+                    });
 
             }
         };
