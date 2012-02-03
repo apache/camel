@@ -54,8 +54,9 @@
       <!-- enable JMX -->
       <jmxAgent id="agent" disabled="false"/>
 
-      <!-- we do not want any exceptions to be logged, neither that a rollback occurred -->
-      <errorHandler id="txEH" type="TransactionErrorHandler" rollbackLoggingLevel="OFF">
+      <!-- we want TX rollbacks to be logged at WARN level -->
+      <errorHandler id="txEH" type="TransactionErrorHandler" rollbackLoggingLevel="WARN">
+        <!-- we do not want any exceptions to be logged with stacktraces -->
         <redeliveryPolicy logStackTrace="false" logExhausted="false"/>
       </errorHandler>
 
