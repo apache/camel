@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.websocket;
 
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.eclipse.jetty.server.Server;
@@ -31,6 +27,10 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WebsocketComponent extends DefaultComponent {
 
@@ -62,9 +62,6 @@ public class WebsocketComponent extends DefaultComponent {
     }
 
     @Override
-    /**
-     * uri --> websocket://foo?storeImplementationClass=org.apache.camel.hazelcast.HazelcastWebsocketStore&storeName=foo
-     */
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         WebsocketEndpoint endpoint = endpoints.get(remaining);
         if (endpoint == null) {
@@ -165,7 +162,7 @@ public class WebsocketComponent extends DefaultComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.info("Staring server {}:{}; static resources: {}", new Object[] {host, port, staticResources});
+        LOG.info("Starting server {}:{}; static resources: {}", new Object[] {host, port, staticResources});
         context = createContext();
         server = createServer(context, host, port, staticResources);
         server.start();
