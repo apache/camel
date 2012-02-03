@@ -83,8 +83,10 @@ public final class URISupport {
                 for (String parameter : parameters) {
                     int p = parameter.indexOf("=");
                     if (p >= 0) {
+                        // The replaceAll is an ugly workaround for CAMEL-4954, awaiting a cleaner fix once CAMEL-4425
+                        // is fully resolved in all components
                         String name = URLDecoder.decode(parameter.substring(0, p), CHARSET);
-                        String value = URLDecoder.decode(parameter.substring(p + 1), CHARSET);
+                        String value = URLDecoder.decode(parameter.substring(p + 1).replaceAll("%", "%25"), CHARSET);
 
                         // does the key already exist?
                         if (rc.containsKey(name)) {
