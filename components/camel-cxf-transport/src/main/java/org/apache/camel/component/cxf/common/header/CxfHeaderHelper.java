@@ -52,7 +52,7 @@ public final class CxfHeaderHelper {
             Map<String, Object> headers, Message message, Exchange exchange) {
 
         Map<String, List<String>> cxfHeaders =
-            CastUtils.cast((Map)message.get(Message.PROTOCOL_HEADERS));
+            CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));
 
         if (cxfHeaders == null) {
             // use a treemap to keep ordering and ignore key case
@@ -88,7 +88,7 @@ public final class CxfHeaderHelper {
 
         // Copy the CXF protocol headers to the camel headers
         Map<String, List<String>> cxfHeaders =
-            CastUtils.cast((Map)message.get(Message.PROTOCOL_HEADERS));
+            CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
                 if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
@@ -97,9 +97,11 @@ public final class CxfHeaderHelper {
             }
         }
 
-        // propagate content type
+        // propagate content type with the encoding information
+        // We need to do it as the CXF does this kind of thing in transport level
         String key = Message.CONTENT_TYPE;
-        Object value = message.get(key);
+        Object value = determineContentType(message);
+        
         if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
             headers.put(Exchange.CONTENT_TYPE, value);
         }
@@ -124,6 +126,26 @@ public final class CxfHeaderHelper {
         if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
             headers.put(Exchange.HTTP_RESPONSE_CODE, value);
         }
+    }
+    
+    private static String determineContentType(Message message) {
+        String ct  = (String)message.get(Message.CONTENT_TYPE);
+        String enc = (String)message.get(Message.ENCODING);
+
+        if (null != ct) {
+            if (enc != null 
+                && ct.indexOf("charset=") == -1
+                && !ct.toLowerCase().contains("multipart/related")) {
+                ct = ct + "; charset=" + enc;
+            }
+        } else if (enc != null) {
+            ct = "text/xml; charset=" + enc;
+        } else {
+            ct = "text/xml";
+        }
+        // update the content_type value in the message
+        message.put(Message.CONTENT_TYPE, ct);
+        return ct;
     }
 
 }
