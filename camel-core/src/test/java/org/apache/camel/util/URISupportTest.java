@@ -126,6 +126,13 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals("jms://queue:foo?foo=bar&selector=somekey%3D%27somevalue%27", out);
     }
 
+    public void testNormalizeEndpointWithPercentSignInParameter() throws Exception {
+        String out = URISupport.normalizeUri("http://someendpoint?username=james&password=%25test");
+        assertNotNull(out);
+        // Camel will safe encode the URI
+        assertEquals("http://someendpoint?password=%25test&username=james", out);
+    }
+
     public void testParseParameters() throws Exception {
         URI u = new URI("quartz:myGroup/myTimerName?cron=0+0+*+*+*+?");
         Map<String, Object> params = URISupport.parseParameters(u);
