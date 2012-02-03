@@ -28,7 +28,7 @@ public class DefaultSpringErrorHandler implements ErrorHandler {
     private final LoggingExceptionHandler handler;
     private final boolean logStackTrace;
 
-    public DefaultSpringErrorHandler(Class owner, LoggingLevel level, boolean logStackTrace) {
+    public DefaultSpringErrorHandler(Class<?> owner, LoggingLevel level, boolean logStackTrace) {
         this.handler = new LoggingExceptionHandler(owner, level);
         this.logStackTrace = logStackTrace;
     }
