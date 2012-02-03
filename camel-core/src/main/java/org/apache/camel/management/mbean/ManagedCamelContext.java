@@ -318,11 +318,7 @@ public class ManagedCamelContext implements TimerListener, ManagedCamelContextMB
     public int removeEndpoints(String pattern) throws Exception {
         // endpoints is always removed from JMX if removed from context
         Collection<Endpoint> removed = context.removeEndpoints(pattern);
-        if (removed == null) {
-            return 0;
-        } else {
-            return removed.size();
-        }
+        return removed.size();
     }
 
 }
