@@ -57,6 +57,7 @@
     <module>camel-amqp</module>
     <module>camel-apns</module>
     <module>camel-atom</module>
+    <module>camel-avro</module>  
     <module>camel-aws</module>
     <module>camel-bean-validator</module>
     <module>camel-bindy</module>
@@ -150,6 +151,7 @@
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
     <module>camel-zookeeper</module>
+    <module>camel-websocket</module>      
   </modules>
   
 </project>

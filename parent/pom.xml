@@ -41,6 +41,8 @@
     <apacheds-version>1.5.7</apacheds-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
     <atomikos-trascations-version>3.7.0</atomikos-trascations-version>
+    <avro-version>1.6.1</avro-version>
+    <avro-bundle-version>1.6.1_1</avro-bundle-version>
     <axiom-version>1.2.12</axiom-version>
     <bouncycastle-version>1.46</bouncycastle-version>
     <castor-bundle-version>1.3.1_2</castor-bundle-version>
@@ -126,6 +128,7 @@
     <ode-version>1.3.3</ode-version>
     <ognl-version>3.0.2_1</ognl-version>
     <osgi-version>4.2.0</osgi-version>
+    <paranamer-bundle-version>2.4_1</paranamer-bundle-version>
     <pax-exam-version>1.2.4</pax-exam-version>
     <pax-runner-version>1.6.1</pax-runner-version>
     <pax-tiny-bundle-version>1.3.1</pax-tiny-bundle-version>
@@ -144,6 +147,7 @@
     <shiro-version>1.2.0</shiro-version>
     <slf4j-version>1.6.1</slf4j-version>
     <smack-version>3.2.1</smack-version>
+    <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
     <snmp4j-version>1.8.1_5</snmp4j-version>
     <solr-version>3.5.0</solr-version>
     <spring-integration-version>2.1.0.RELEASE</spring-integration-version>
@@ -246,6 +250,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-atom</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-avro</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1458,6 +1467,18 @@
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
         <version>${xerces-version}</version>
+      </dependency>
+
+      <!-- optional avro -->
+      <dependency>
+        <groupId>org.apache.avro</groupId>
+        <artifactId>avro</artifactId>
+        <version>${avro-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.avro</groupId>
+        <artifactId>avro-ipc</artifactId>
+        <version>${avro-version}</version>
       </dependency>
 
       <!-- optional ftpserver -->
