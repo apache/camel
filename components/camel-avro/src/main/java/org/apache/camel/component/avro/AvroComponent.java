@@ -57,16 +57,9 @@ public class AvroComponent extends DefaultComponent {
         } else {
             config = new AvroConfiguration();
         }
-        URI enpointUri = new URI(URISupport.normalizeUri(remaining));
-        config.parseURI(enpointUri, parameters, this);
-        setProperties(config, parameters);
 
-        if (config.getProtocol() == null && config.getProtocolClassName() != null) {
-            Class<?> protocolClass = getCamelContext().getClassResolver().resolveClass(config.getProtocolClassName());
-            Field f = protocolClass.getField("PROTOCOL");
-            Protocol protocol = (Protocol) f.get(null);
-            config.setProtocol(protocol);
-        }
+        URI enpointUri = new URI(URISupport.normalizeUri(remaining));
+        applyToConfiguration(config, enpointUri, parameters);
 
         if (AvroConstants.AVRO_NETTY_TRANSPORT.equals(enpointUri.getScheme())) {
             return new AvroNettyEndpoint(remaining, this, config);
@@ -74,6 +67,33 @@ public class AvroComponent extends DefaultComponent {
             return new AvroHttpEndpoint(remaining, this, config);
         } else {
             throw new IllegalArgumentException("Unknown avro scheme. Should use either netty or http.");
+        }
+    }
+
+    /**
+     * Applies enpoint parameters to configuration & resolves protocol and other required configuration properties.
+     * @param config
+     * @param enpointUri
+     * @param parameters
+     * @throws Exception
+     */
+    private void applyToConfiguration(AvroConfiguration config, URI enpointUri, Map<String, Object> parameters) throws Exception {
+        config.parseURI(enpointUri, parameters, this);
+        setProperties(config, parameters);
+
+        if (config.getProtocol() == null && config.getProtocolClassName() != null) {
+            Class<?> protocolClass = getCamelContext().getClassResolver().resolveClass(config.getProtocolClassName());
+            if (protocolClass != null) {
+                Field f = protocolClass.getField("PROTOCOL");
+                if (f != null) {
+                    Protocol protocol = (Protocol) f.get(null);
+                    config.setProtocol(protocol);
+                }
+            }
+        }
+
+        if (config.getProtocol() == null) {
+            throw new IllegalArgumentException("Avro configuration does not contain protocol");
         }
     }
 
