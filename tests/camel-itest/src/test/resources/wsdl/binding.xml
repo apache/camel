@@ -5,7 +5,7 @@
           xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
     <jxb:bindings>
         <jxb:globalBindings>
-            <jxb:serializable/>
+            <jxb:serializable uid="1"/>
         </jxb:globalBindings>
     </jxb:bindings>
 </jxb:bindings>
