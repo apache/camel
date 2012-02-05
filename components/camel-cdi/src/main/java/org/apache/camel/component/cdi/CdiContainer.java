@@ -23,12 +23,15 @@ import org.apache.webbeans.spi.ContainerLifecycle;
 
 /**
  * OpenWebBeans CDI container. It can be used in a Camel standalone project to start
- * and stop container. The container exposes a Bean?Manager that we can use to instantiate the
+ * and stop container. The container exposes a {@link BeanManager} that we can use to instantiate the
  * {@link CdiBeanRegistry} used by Camel
  */
-public class CdiContainer {
+public final class CdiContainer {
 
-    private static ContainerLifecycle lifecycle = null;
+    private static ContainerLifecycle lifecycle;
+
+    private CdiContainer() {
+    }
 
     public static void start() throws Exception {
         lifecycle = WebBeansContext.currentInstance().getService(ContainerLifecycle.class);
