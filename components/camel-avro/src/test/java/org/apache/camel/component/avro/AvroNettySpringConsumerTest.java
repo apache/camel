@@ -17,15 +17,13 @@
 
 package org.apache.camel.component.avro;
 
-import java.io.IOException;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.avro.processors.GetProcessor;
-import org.apache.camel.component.avro.processors.PutProcessor;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+
 import org.junit.After;
 import org.junit.Before;
+
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

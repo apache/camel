@@ -22,6 +22,7 @@ import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.ipc.specific.SpecificResponder;
 import org.apache.avro.specific.SpecificData;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ExchangeHelper;
 
@@ -44,7 +45,7 @@ public class AvroResponder extends SpecificResponder {
         Object response = null;
         int numParams = message.getRequest().getFields().size();
         Object[] params = new Object[numParams];
-        Class[] paramTypes = new Class[numParams];
+        Class<?>[] paramTypes = new Class[numParams];
         int i = 0;
         for (Schema.Field param : message.getRequest().getFields()) {
             params[i] = ((GenericRecord) request).get(param.name());

@@ -20,12 +20,8 @@ package org.apache.camel.component.avro;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AvroConsumer extends DefaultConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AvroConsumer.class);
 
     public AvroConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);

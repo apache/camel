@@ -19,7 +19,9 @@ package org.apache.camel.component.avro;
 
 import java.net.URI;
 import java.util.Map;
+
 import org.apache.avro.Protocol;
+
 import org.apache.camel.RuntimeCamelException;
 
 public class AvroConfiguration implements Cloneable {

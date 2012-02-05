@@ -20,7 +20,9 @@ package org.apache.camel.component.avro;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.Map;
+
 import org.apache.avro.Protocol;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;

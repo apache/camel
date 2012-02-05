@@ -19,8 +19,10 @@ package org.apache.camel.component.avro;
 
 import java.io.IOException;
 import java.net.URL;
+
 import org.apache.avro.ipc.HttpTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
+
 import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.avro.processors.GetProcessor;

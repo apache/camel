@@ -18,21 +18,18 @@
 package org.apache.camel.component.avro;
 
 import java.net.InetSocketAddress;
+
 import org.apache.avro.ipc.NettyServer;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AvroNettyConsumer extends AvroConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AvroNettyConsumer.class);
     NettyServer server;
-
 
     public AvroNettyConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        String uri = endpoint.getEndpointUri();
     }
 
     @Override

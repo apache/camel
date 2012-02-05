@@ -19,16 +19,17 @@ package org.apache.camel.component.avro;
 
 import java.io.IOException;
 import junit.framework.Assert;
+
 import org.apache.avro.Protocol;
 import org.apache.avro.ipc.Requestor;
 import org.apache.avro.ipc.Transceiver;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.avro.generated.Key;
 import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.CamelTestSupport;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -20,6 +20,7 @@ package org.apache.camel.dataformat.avro;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericContainer;
 import org.apache.avro.generic.GenericRecord;
@@ -31,6 +32,7 @@ import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
@@ -41,7 +43,6 @@ public class AvroDataFormat implements DataFormat {
 
     private Schema schema;
     private String instanceClassName;
-
 
     /**
      * @param schema
@@ -96,25 +97,15 @@ public class AvroDataFormat implements DataFormat {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.camel.spi.DataFormat#marshal(org.apache.camel.Exchange,
-     * java.lang.Object, java.io.OutputStream)
-     */
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
-        DatumWriter datum = new SpecificDatumWriter(getSchema(exchange, graph));
+        DatumWriter<Object> datum = new SpecificDatumWriter<Object>(getSchema(exchange, graph));
         Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
         datum.write(graph, encoder);
         encoder.flush();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.camel.spi.DataFormat#unmarshal(org.apache.camel.Exchange,
-     * java.io.InputStream)
-     */
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        DatumReader<GenericRecord> reader = new SpecificDatumReader(getSchema(exchange, null));
+        DatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(getSchema(exchange, null));
         Decoder decoder = DecoderFactory.get().binaryDecoder(inputStream, null);
         Object result = reader.read(null, decoder);
         return result;

@@ -18,20 +18,16 @@
 package org.apache.camel.component.avro;
 
 import org.apache.avro.ipc.HttpServer;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AvroHttpConsumer extends AvroConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AvroHttpConsumer.class);
     HttpServer server;
-
 
     public AvroHttpConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        String uri = endpoint.getEndpointUri();
     }
 
     @Override

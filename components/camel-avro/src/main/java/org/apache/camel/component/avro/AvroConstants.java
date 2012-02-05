@@ -19,7 +19,6 @@ package org.apache.camel.component.avro;
 
 public final class AvroConstants {
 
-
     public static final transient String AVRO_NETTY_TRANSPORT = "netty";
     public static final transient String AVRO_HTTP_TRANSPORT = "http";
 

@@ -18,21 +18,19 @@
 package org.apache.camel.component.avro;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
+
 import junit.framework.Assert;
+
 import org.apache.avro.Protocol;
-import org.apache.avro.ipc.HttpServer;
-import org.apache.avro.ipc.NettyServer;
 import org.apache.avro.ipc.Server;
-import org.apache.avro.ipc.specific.SpecificResponder;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.avro.generated.Key;
 import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.CamelTestSupport;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

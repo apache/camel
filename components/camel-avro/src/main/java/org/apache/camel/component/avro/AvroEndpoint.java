@@ -19,6 +19,7 @@ package org.apache.camel.component.avro;
 
 import org.apache.avro.Protocol;
 import org.apache.avro.Schema;
+
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,8 +28,6 @@ import org.apache.camel.impl.DefaultEndpoint;
 public abstract class AvroEndpoint extends DefaultEndpoint {
 
     private AvroConfiguration configuration;
-    private boolean sync;
-
 
     /**
      * Constructs a fully-initialized DefaultEndpoint instance. This is the

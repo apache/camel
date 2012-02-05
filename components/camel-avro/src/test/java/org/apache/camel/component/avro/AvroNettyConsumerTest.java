@@ -18,23 +18,15 @@
 package org.apache.camel.component.avro;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import org.apache.avro.ipc.HttpTransceiver;
+
 import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
+
 import org.apache.camel.avro.generated.KeyValueProtocol;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.avro.processors.GetProcessor;
 import org.apache.camel.component.avro.processors.PutProcessor;
-import org.apache.camel.test.CamelTestSupport;
-import org.apache.camel.util.URISupport;
-import org.junit.Assert;
-import org.junit.Test;
-
 
 public class AvroNettyConsumerTest extends AvroConsumerTestSupport {
 
