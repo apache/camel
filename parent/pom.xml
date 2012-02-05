@@ -90,7 +90,7 @@
     <hazelcast-version>1.9.4.6</hazelcast-version>
     <hibernate-version>3.2.6.ga</hibernate-version>
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
-    <hsqldb-version>2.2.6</hsqldb-version>
+    <hsqldb-version>2.2.8</hsqldb-version>
     <httpunit-version>1.6.2</httpunit-version>
     <httpcore4-version>4.1.2</httpcore4-version>
     <httpclient4-version>4.1.2</httpclient4-version>
