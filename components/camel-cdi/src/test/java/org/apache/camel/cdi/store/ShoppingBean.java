@@ -18,22 +18,20 @@
  */
 package org.apache.camel.cdi.store;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.enterprise.inject.New;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Named
 public class ShoppingBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private
     @Inject
-    Products products;
-
+    private Products products;
     private List<Item> items = new ArrayList<Item>();
 
     public ShoppingBean() {
@@ -47,7 +45,6 @@ public class ShoppingBean implements Serializable {
         items.add(defaultItem);
     }
 
-
     @Produces
     @Named("selectedItems")
     public List<Item> listSelectedItems() {
@@ -59,6 +56,5 @@ public class ShoppingBean implements Serializable {
     public List<Item> listAllProducts() {
         return this.products.getProducts();
     }
-
 
 }

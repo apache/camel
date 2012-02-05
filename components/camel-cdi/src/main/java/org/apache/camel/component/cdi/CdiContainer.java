@@ -14,40 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.cdi;
+
+import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.webbeans.config.WebBeansContext;
 import org.apache.webbeans.spi.ContainerLifecycle;
 
-import javax.enterprise.inject.spi.BeanManager;
-
 /**
  * OpenWebBeans CDI container. It can be used in a Camel standalone project to start
  * and stop container. The container exposes a Bean?Manager that we can use to instantiate the
- * CdiRegistry used by Camel
+ * {@link CdiBeanRegistry} used by Camel
  */
 public class CdiContainer {
 
     private static ContainerLifecycle lifecycle = null;
 
     public static void start() throws Exception {
-        try {
-            lifecycle = WebBeansContext.currentInstance().getService(ContainerLifecycle.class);
-            lifecycle.startApplication(null);
-
-        } catch (Exception e) {
-            throw e;
-        }
+        lifecycle = WebBeansContext.currentInstance().getService(ContainerLifecycle.class);
+        lifecycle.startApplication(null);
     }
 
     public static void shutdown() throws Exception {
-        try {
-            lifecycle.stopApplication(null);
-
-        } catch (Exception e) {
-            throw e;
-        }
+        lifecycle.stopApplication(null);
     }
 
     public static BeanManager getBeanManager() {

@@ -1,8 +1,12 @@
 package org.apache.camel.cdi;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.inject.Inject;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.store.Item;
 import org.apache.camel.cdi.store.ShoppingBean;
@@ -16,41 +20,27 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-
 public class CdiContainerBeanManagerTest extends CamelTestSupport {
 
-    private MockEndpoint resultEndpoint;
-
-    private ProducerTemplate template;
-
-    CdiTestContainer cdiContainer;
-    CamelContext camelContext;
+    private CdiTestContainer cdiContainer;
 
     @Inject
-    ShoppingBean shoppingBean;
+    private ShoppingBean shoppingBean;
 
     @Before
     public void setUp() throws Exception {
         cdiContainer = CdiTestContainerLoader.getCdiContainer();
         cdiContainer.bootContainer();
         cdiContainer.startContexts();
+
+        super.setUp();
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
         BeanManager beanManager = cdiContainer.getBeanManager();
-
-        System.out.println(">> Container started and bean manager instantiated !");
-
-        // Camel
         context = new DefaultCamelContext(new CdiBeanRegistry(beanManager));
-        context.addRoutes(createRouteBuilder());
-        context.setTracing(true);
-        context.start();
-        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-        template = context.createProducerTemplate();
-
-        System.out.println(">> Camel started !");
+        return context;
     }
 
     @After
@@ -60,22 +50,25 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testInjection() throws InterruptedException {
-        resultEndpoint.expectedMessageCount(1);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
         template.sendBody("direct:inject", "hello");
 
         assertMockEndpointsSatisfied();
 
-        Exchange exchange = resultEndpoint.getExchanges().get(0);
+        Exchange exchange = mock.getExchanges().get(0);
         List<Item> results = (List<Item>) exchange.getIn().getBody();
 
-        Object[] items = (Object[]) results.toArray();
-        Object[] itemsExpected = (Object[]) itemsExpected().toArray();
-        for(int i=0; i< items.length; ++i) {
-           Item itemExpected = (Item)items[i];
-           Item itemReceived = (Item)itemsExpected[i];
-           assertEquals(itemExpected.getName(), itemReceived.getName());
-           assertEquals(itemExpected.getPrice(), itemReceived.getPrice());
+        Object[] items = results.toArray();
+        Object[] itemsExpected = itemsExpected().toArray();
+        for (int i = 0; i < items.length; ++i) {
+            Item itemExpected = (Item) items[i];
+            Item itemReceived = (Item) itemsExpected[i];
+            assertEquals(itemExpected.getName(), itemReceived.getName());
+            assertEquals(itemExpected.getPrice(), itemReceived.getPrice());
         }
 
         assertNotNull(results);
@@ -100,15 +93,11 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
                 from("direct:inject")
                         .beanRef("shoppingBean", "listAllProducts")
                         .to("mock:result");
-
             }
-
         };
     }
-
 
 }

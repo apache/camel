@@ -32,7 +32,6 @@ public class Products implements Serializable {
     private List<Item> products = new ArrayList<Item>();
 
     public Products() {
-
     }
 
     @PostConstruct

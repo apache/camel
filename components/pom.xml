@@ -64,6 +64,7 @@
     <module>camel-bindy</module>
     <module>camel-cache</module>
     <module>camel-castor</module>
+    <module>camel-cdi</module>
     <module>camel-cometd</module>
     <module>camel-context</module>
     <module>camel-crypto</module>
