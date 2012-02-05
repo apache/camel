@@ -20,8 +20,9 @@ import java.io.Serializable;
 
 public class SimpleObject implements Serializable {
 
-    Long id;
-    Object value;
+    private static final long serialVersionUID = 1L;
+    private Long id;
+    private Object value;
 
     public SimpleObject(Long id) {
         this.id = id;
