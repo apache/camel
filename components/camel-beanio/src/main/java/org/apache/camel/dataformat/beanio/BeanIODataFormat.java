@@ -27,9 +27,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.beanio.BeanReader;
 import org.beanio.BeanReaderErrorHandlerSupport;
 import org.beanio.BeanWriter;
@@ -44,41 +49,65 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
  * {@link DataFormat}) for beanio data.
  */
-public class BeanIODataFormat implements DataFormat {
+public class BeanIODataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
     private static final String LOG_PREFIX = "BeanIO: ";
     private static final transient Logger LOG = LoggerFactory.getLogger(BeanIODataFormat.class);
 
-    private StreamFactory factory;
+    private transient CamelContext camelContext;
+    private transient StreamFactory factory;
     private String streamName;
+    private String mapping;
     private boolean ignoreUnidentifiedRecords;
     private boolean ignoreUnexpectedRecords;
     private boolean ignoreInvalidRecords;
-    private Charset characterSet = Charset.defaultCharset();
+    private Charset encoding = Charset.defaultCharset();
+
+    public BeanIODataFormat() {
+    }
 
     public BeanIODataFormat(String mapping, String streamName) {
-        // Create the stream factory that will be used to read/write objects.
-        factory = StreamFactory.newInstance();
-
-        // Load the mapping file
-        factory.loadResource(mapping);
-
-        // Save the stream name that we want to read
+        this.mapping = mapping;
         this.streamName = streamName;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        ObjectHelper.notNull(streamName, "Stream name not configured.");
+        if (factory == null) {
+            // Create the stream factory that will be used to read/write objects.
+            factory = StreamFactory.newInstance();
+
+            // Load the mapping file using the resource helper to ensure it can be loaded in OSGi and other environments
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), mapping);
+            try {
+                factory.load(is);
+            } finally {
+                IOHelper.close(is);
+            }
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        factory = null;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
-
-        validateRequiredProperties();
-
         List<Object> models = getModels(exchange, body);
-
         writeModels(stream, models);
     }
 
-    private void validateRequiredProperties() {
-        ObjectHelper.notNull(factory, "StreamFactory not configured.");
-        ObjectHelper.notNull(streamName, "Stream name not configured.");
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return readModels(exchange, stream);
     }
 
     @SuppressWarnings("unchecked")
@@ -95,7 +124,7 @@ public class BeanIODataFormat implements DataFormat {
     }
 
     private void writeModels(OutputStream stream, List<Object> models) {
-        BufferedWriter streamWriter = new BufferedWriter(new OutputStreamWriter(stream, characterSet));
+        BufferedWriter streamWriter = new BufferedWriter(new OutputStreamWriter(stream, encoding));
         BeanWriter out = factory.createWriter(streamName, streamWriter);
 
         for (Object obj : models) {
@@ -106,14 +135,9 @@ public class BeanIODataFormat implements DataFormat {
         out.close();
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        validateRequiredProperties();
-        return readModels(exchange, stream);
-    }
-
     private List<Object> readModels(Exchange exchange, InputStream stream) {
         List<Object> results = new ArrayList<Object>();
-        BufferedReader streamReader = new BufferedReader(new InputStreamReader(stream, characterSet));
+        BufferedReader streamReader = new BufferedReader(new InputStreamReader(stream, encoding));
 
         BeanReader in = factory.createReader(streamName, streamReader);
 
@@ -166,41 +190,51 @@ public class BeanIODataFormat implements DataFormat {
         });
     }
 
-    /**
-     * @param streamName The beanio stream that will be marshaled/unmarshaled.
-     */
-    public void setStreamName(String streamName) {
-        this.streamName = streamName;
+    public Charset getEncoding() {
+        return encoding;
     }
 
-    /**
-     * @param ignoreUnidentifiedRecords When true any unidentified records will be ignored when
-     *                                  unmarshaling.
-     */
-    public void setIgnoreUnidentifiedRecords(boolean ignoreUnidentifiedRecords) {
-        this.ignoreUnidentifiedRecords = ignoreUnidentifiedRecords;
+    public void setEncoding(Charset encoding) {
+        this.encoding = encoding;
     }
 
-    /**
-     * @param ignoreUnexpectedRecords When true any unexpected records will be ignored when
-     *                                unmarshaling.
-     */
-    public void setIgnoreUnexpectedRecords(boolean ignoreUnexpectedRecords) {
-        this.ignoreUnexpectedRecords = ignoreUnexpectedRecords;
+    public boolean isIgnoreInvalidRecords() {
+        return ignoreInvalidRecords;
     }
 
-    /**
-     * @param ignoreInvalidRecords When true any invalid records will be ignored when
-     *                             unmarshaling.
-     */
     public void setIgnoreInvalidRecords(boolean ignoreInvalidRecords) {
         this.ignoreInvalidRecords = ignoreInvalidRecords;
     }
 
-    /**
-     * @param characterSet the characterSet to set
-     */
-    public void setCharacterSet(String characterSet) {
-        this.characterSet = Charset.forName(characterSet);
+    public boolean isIgnoreUnexpectedRecords() {
+        return ignoreUnexpectedRecords;
+    }
+
+    public void setIgnoreUnexpectedRecords(boolean ignoreUnexpectedRecords) {
+        this.ignoreUnexpectedRecords = ignoreUnexpectedRecords;
+    }
+
+    public boolean isIgnoreUnidentifiedRecords() {
+        return ignoreUnidentifiedRecords;
+    }
+
+    public void setIgnoreUnidentifiedRecords(boolean ignoreUnidentifiedRecords) {
+        this.ignoreUnidentifiedRecords = ignoreUnidentifiedRecords;
+    }
+
+    public String getMapping() {
+        return mapping;
+    }
+
+    public void setMapping(String mapping) {
+        this.mapping = mapping;
+    }
+
+    public String getStreamName() {
+        return streamName;
+    }
+
+    public void setStreamName(String streamName) {
+        this.streamName = streamName;
     }
 }

@@ -39,6 +39,7 @@
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-aws</include>
         <include>org.apache.camel:camel-bam</include>
+        <include>org.apache.camel:camel-beanio</include>
         <include>org.apache.camel:camel-bean-validator</include>
         <include>org.apache.camel:camel-bindy</include>
         <include>org.apache.camel:camel-blueprint</include>

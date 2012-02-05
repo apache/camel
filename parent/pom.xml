@@ -44,6 +44,7 @@
     <avro-version>1.6.1</avro-version>
     <avro-bundle-version>1.6.1_2-SNAPSHOT</avro-bundle-version>
     <axiom-version>1.2.12</axiom-version>
+    <beanio-version>1.2.2</beanio-version>
     <bouncycastle-version>1.46</bouncycastle-version>
     <castor-bundle-version>1.3.1_2</castor-bundle-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
@@ -265,6 +266,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-bam</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-beanio</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
