@@ -517,9 +517,9 @@ public class JettyHttpComponent extends HttpComponent {
     
             String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
             if (keystoreProperty != null) {
-                answer.getSslContextFactory().setKeyStore(keystoreProperty);
+                answer.getSslContextFactory().setKeyStorePath(keystoreProperty);
             } else if (sslKeystore != null) {
-                answer.getSslContextFactory().setKeyStore(sslKeystore);
+                answer.getSslContextFactory().setKeyStorePath(sslKeystore);
             }
     
             String keystorePassword = System.getProperty(JETTY_SSL_KEYPASSWORD);
