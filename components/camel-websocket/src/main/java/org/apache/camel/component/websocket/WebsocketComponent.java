@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.websocket;
 
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.eclipse.jetty.server.Server;
@@ -27,10 +31,6 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
 
 public class WebsocketComponent extends DefaultComponent {
 

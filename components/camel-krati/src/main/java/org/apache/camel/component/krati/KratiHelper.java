@@ -17,11 +17,17 @@
 package org.apache.camel.component.krati;
 
 import java.io.File;
+
 import krati.core.StoreConfig;
 import krati.core.segment.SegmentFactory;
 import krati.io.Serializer;
-import krati.store.*;
+import krati.store.DataSet;
+import krati.store.DataStore;
+import krati.store.DynamicDataSet;
+import krati.store.DynamicDataStore;
+import krati.store.SerializableObjectStore;
 import krati.util.HashFunction;
+
 import org.apache.camel.RuntimeCamelException;
 
 public final class KratiHelper {
