@@ -197,6 +197,10 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
     public void setEncoding(Charset encoding) {
         this.encoding = encoding;
     }
+    
+    public void setEncoding(String encoding) {
+        this.encoding = Charset.forName(encoding);
+    }
 
     public boolean isIgnoreInvalidRecords() {
         return ignoreInvalidRecords;

@@ -63,7 +63,9 @@ public class BeanioDataFormat extends DataFormatDefinition {
         if (ignoreInvalidRecords != null) {
             setProperty(dataFormat, "ignoreInvalidRecords", ignoreInvalidRecords);
         }
-        setProperty(dataFormat, "encoding", encoding);
+        if (encoding != null) {
+            setProperty(dataFormat, "encoding", encoding);
+        }
     }
 
 }
