@@ -1680,6 +1680,10 @@
           <version>${cxf-version}</version>
           <configuration>
             <fork>once</fork>
+            <defaultOptions>
+              <markGenerated>true</markGenerated>
+              <faultSerialVersionUID>1</faultSerialVersionUID>
+            </defaultOptions>
           </configuration>
           <dependencies>
             <!--
