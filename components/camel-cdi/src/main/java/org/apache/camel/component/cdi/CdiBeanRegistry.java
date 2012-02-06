@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.cdi;
 
-import org.apache.camel.spi.Registry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Map;
 
-import static org.apache.camel.component.cdi.util.BeanProvider.getContextualNamesReferences;
-import static org.apache.camel.component.cdi.util.BeanProvider.getContextualReference;
-import static org.apache.camel.util.ObjectHelper.notEmpty;
-import static org.apache.camel.util.ObjectHelper.notNull;
+import org.apache.camel.component.cdi.util.BeanProvider;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.util.ObjectHelper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -34,7 +32,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * to the CdiRegistry constructor.
  */
 public class CdiBeanRegistry implements Registry {
-
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     /**
@@ -42,27 +39,27 @@ public class CdiBeanRegistry implements Registry {
      */
     @Override
     public Object lookup(final String name) {
-        notEmpty(name, "name");
+        ObjectHelper.notEmpty(name, "name");
         log.trace("Looking up bean using name = [{}] in CDI registry ...", name);
 
-        return getContextualReference(name, true);
+        return BeanProvider.getContextualReference(name, true);
     }
 
-      @Override
-      public <T> T lookup(final String name, final Class<T> type) {
-         notEmpty(name, "name");
-         notNull(type, "type");
-          return type.cast(lookup(name));
-      }
+    @Override
+    public <T> T lookup(final String name, final Class<T> type) {
+        ObjectHelper.notEmpty(name, "name");
+        ObjectHelper.notNull(type, "type");
+        return type.cast(lookup(name));
+    }
 
-      @Override
-      public <T> Map<String, T> lookupByType(final Class<T> type) {
-         notNull(type, "type");
-         return getContextualNamesReferences(type, true, true);
-      }
+    @Override
+    public <T> Map<String, T> lookupByType(final Class<T> type) {
+        ObjectHelper.notNull(type, "type");
+        return BeanProvider.getContextualNamesReferences(type, true, true);
+    }
 
-      @Override
-      public String toString() {
-         return "CdiRegistry[" + System.identityHashCode(this) + "]";
-      }
+    @Override
+    public String toString() {
+        return "CdiRegistry[" + System.identityHashCode(this) + "]";
+    }
 }
