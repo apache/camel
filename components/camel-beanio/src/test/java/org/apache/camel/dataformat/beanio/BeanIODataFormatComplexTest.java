@@ -21,16 +21,23 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.beanio.InvalidRecordException;
 import org.beanio.UnexpectedRecordException;
 import org.beanio.UnidentifiedRecordException;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class BeanIODataFormatComplexTest extends CamelTestSupport {
+
+    private static Locale defaultLocale;
 
     private final String recordData = "0001917A112345.678900           " + LS
             + "0002374A159303290.020           " + LS
@@ -64,6 +71,24 @@ public class BeanIODataFormatComplexTest extends CamelTestSupport {
             + "0000000B1030808SECURITY         " + LS
             + "HEADER END                      " + LS
             + recordData;
+
+    @BeforeClass
+    public static void setLocale() {
+        if (!Locale.getDefault().equals(Locale.ENGLISH)) {
+
+            // the Locale used for the number formatting of the above data is
+            // english which could be other than the default locale
+            defaultLocale = Locale.getDefault();
+            Locale.setDefault(Locale.ENGLISH);
+        }
+    }
+
+    @AfterClass
+    public static void resetLocale() {
+        if (defaultLocale != null) {
+            Locale.setDefault(defaultLocale);
+        }
+    }
 
     @Test
     public void testMarshal() throws Exception {

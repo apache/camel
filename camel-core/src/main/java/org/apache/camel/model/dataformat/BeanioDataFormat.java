@@ -68,4 +68,52 @@ public class BeanioDataFormat extends DataFormatDefinition {
         }
     }
 
+    public String getMapping() {
+        return mapping;
+    }
+
+    public void setMapping(String mapping) {
+        this.mapping = mapping;
+    }
+
+    public String getStreamName() {
+        return streamName;
+    }
+
+    public void setStreamName(String streamName) {
+        this.streamName = streamName;
+    }
+
+    public Boolean getIgnoreUnidentifiedRecords() {
+        return ignoreUnidentifiedRecords;
+    }
+
+    public void setIgnoreUnidentifiedRecords(Boolean ignoreUnidentifiedRecords) {
+        this.ignoreUnidentifiedRecords = ignoreUnidentifiedRecords;
+    }
+
+    public Boolean getIgnoreUnexpectedRecords() {
+        return ignoreUnexpectedRecords;
+    }
+
+    public void setIgnoreUnexpectedRecords(Boolean ignoreUnexpectedRecords) {
+        this.ignoreUnexpectedRecords = ignoreUnexpectedRecords;
+    }
+
+    public Boolean getIgnoreInvalidRecords() {
+        return ignoreInvalidRecords;
+    }
+
+    public void setIgnoreInvalidRecords(Boolean ignoreInvalidRecords) {
+        this.ignoreInvalidRecords = ignoreInvalidRecords;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
 }
