@@ -393,12 +393,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
                 oldEndpoint = entry.getValue();
                 if (EndpointHelper.matchEndpoint(oldEndpoint.getEndpointUri(), uri)) {
-                    answer.add(oldEndpoint);
-                    stopServices(oldEndpoint);
+                    try {
+                        stopServices(oldEndpoint);
+                        answer.add(oldEndpoint);
+                        endpoints.remove(entry.getKey());
+                    } catch (Exception e) {
+                        log.warn("Endpoint '{}' matching pattern '{}' should be removed, but could not be stopped. Remove ignored...");
+                    }
                 }
-            }
-            for (Endpoint endpoint : answer) {
-                endpoints.remove(getEndpointKey(endpoint.getEndpointUri()));
             }
         }
 
