@@ -44,10 +44,7 @@ public class RemoveEndpointsTest extends CamelTestSupport {
 
         Collection<Endpoint> list = context.removeEndpoints("*");
         assertEquals(7, list.size()); // all have been removed
-
-        // TODO: [CAMEL-4976] the following fails, but it should pass
-        // assertEquals(0, context.getEndpoints().size());
-        // assertNull(context.hasEndpoint("jms://topic:bar"));
+        assertEquals(0, context.getEndpoints().size());
     }
 
     @Override
