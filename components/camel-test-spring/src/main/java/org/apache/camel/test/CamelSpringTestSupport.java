@@ -17,16 +17,11 @@
 package org.apache.camel.test;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.impl.DefaultPackageScanClassResolver;
-import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
-import org.apache.camel.impl.scan.InvertingPackageScanFilter;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.CastUtils;
@@ -73,15 +68,6 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         processor.setCamelContext(context);
         processor.postProcessBeforeInitialization(this, getClass().getName());
         processor.postProcessAfterInitialization(this, getClass().getName());
-    }
-
-    private static class ExcludingPackageScanClassResolver extends DefaultPackageScanClassResolver {
-
-        public void setExcludedClasses(Set<Class<?>> excludedClasses) {
-            Set<Class<?>> parents = excludedClasses == null ? Collections.<Class<?>>emptySet() : excludedClasses;
-            addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(parents)));
-        }
-
     }
 
     /**
