@@ -16,18 +16,16 @@
  */
 package org.apache.camel.itest.issues;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
 import java.util.Collection;
 
-import javax.jms.ConnectionFactory;
+import javax.naming.Context;
 
-import org.apache.camel.CamelContext;
+import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 /**
@@ -52,13 +50,15 @@ public class RemoveEndpointsTest extends CamelTestSupport {
         // assertNull(context.hasEndpoint("jms://topic:bar"));
     }
 
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    @Override
+    protected Context createJndiContext() throws Exception {
+        JndiContext answer = new JndiContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
-
-        return camelContext;
+        // add ActiveMQ with embedded broker
+        ActiveMQComponent amq = ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false");
+        amq.setCamelContext(context);
+        answer.bind("jms", amq);
+        return answer;
     }
 
     @Override
