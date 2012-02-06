@@ -1,28 +1,8 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.camel.cdi;
-
-import java.util.ArrayList;
-import java.util.List;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.store.Item;
 import org.apache.camel.cdi.store.ShoppingBean;
@@ -36,27 +16,38 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
 public class CdiContainerBeanManagerTest extends CamelTestSupport {
 
-    private CdiTestContainer cdiContainer;
+    private MockEndpoint resultEndpoint;
+
+    private ProducerTemplate template;
+
+    CdiTestContainer cdiContainer;
+    CamelContext camelContext;
 
     @Inject
-    private ShoppingBean shoppingBean;
+    ShoppingBean shoppingBean;
 
     @Before
     public void setUp() throws Exception {
         cdiContainer = CdiTestContainerLoader.getCdiContainer();
         cdiContainer.bootContainer();
-        cdiContainer.startContexts();
 
-        super.setUp();
-    }
+        System.out.println(">> Container started and bean manager instantiated !");
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        BeanManager beanManager = cdiContainer.getBeanManager();
-        context = new DefaultCamelContext(new CdiBeanRegistry(beanManager));
-        return context;
+        // Camel
+        context = new DefaultCamelContext(new CdiBeanRegistry());
+        context.addRoutes(createRouteBuilder());
+        context.setTracing(true);
+        context.start();
+        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        template = context.createProducerTemplate();
+
+        System.out.println(">> Camel started !");
     }
 
     @After
@@ -66,25 +57,22 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testInjection() throws InterruptedException {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-
+        resultEndpoint.expectedMessageCount(1);
         template.sendBody("direct:inject", "hello");
 
         assertMockEndpointsSatisfied();
 
-        Exchange exchange = mock.getExchanges().get(0);
+        Exchange exchange = resultEndpoint.getExchanges().get(0);
         List<Item> results = (List<Item>) exchange.getIn().getBody();
 
-        Object[] items = results.toArray();
-        Object[] itemsExpected = itemsExpected().toArray();
-        for (int i = 0; i < items.length; ++i) {
-            Item itemExpected = (Item) items[i];
-            Item itemReceived = (Item) itemsExpected[i];
-            assertEquals(itemExpected.getName(), itemReceived.getName());
-            assertEquals(itemExpected.getPrice(), itemReceived.getPrice());
+        Object[] items = (Object[]) results.toArray();
+        Object[] itemsExpected = (Object[]) itemsExpected().toArray();
+        for(int i=0; i< items.length; ++i) {
+           Item itemExpected = (Item)items[i];
+           Item itemReceived = (Item)itemsExpected[i];
+           assertEquals(itemExpected.getName(), itemReceived.getName());
+           assertEquals(itemExpected.getPrice(), itemReceived.getPrice());
         }
 
         assertNotNull(results);
@@ -109,11 +97,15 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+
                 from("direct:inject")
                         .beanRef("shoppingBean", "listAllProducts")
                         .to("mock:result");
+
             }
+
         };
     }
+
 
 }

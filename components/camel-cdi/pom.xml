@@ -41,6 +41,7 @@
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import.pkg>
+        <openwebbeans.version>1.1.4-SNAPSHOT</openwebbeans.version>
     </properties>
 
     <dependencies>
@@ -48,20 +49,24 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+        </dependency>
 
         <!-- JSR-299 Impl -->
         <dependency>
             <groupId>org.apache.openwebbeans</groupId>
             <artifactId>openwebbeans-impl</artifactId>
-            <version>${openwebbeans-version}</version>
-            <scope>compile</scope>
+            <version>${openwebbeans.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- SPI API -->
         <dependency>
             <groupId>org.apache.openwebbeans</groupId>
             <artifactId>openwebbeans-spi</artifactId>
-            <version>${openwebbeans-version}</version>
+            <version>${openwebbeans.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -76,7 +81,7 @@
         <dependency>
             <groupId>org.apache.openwebbeans</groupId>
             <artifactId>openwebbeans-el10</artifactId>
-            <version>${openwebbeans-version}</version>
+            <version>${openwebbeans.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -85,6 +90,7 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jcdi_1.0_spec</artifactId>
             <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- JSR-330 API -->
@@ -92,6 +98,7 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-atinject_1.0_spec</artifactId>
             <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- logging -->
@@ -112,13 +119,13 @@
         <dependency>
             <groupId>org.apache.openwebbeans.test</groupId>
             <artifactId>cditest</artifactId>
-            <version>${openwebbeans-version}</version>
+            <version>${openwebbeans.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.openwebbeans.test</groupId>
             <artifactId>cditest-owb</artifactId>
-            <version>${openwebbeans-version}</version>
+            <version>${openwebbeans.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -139,5 +146,8 @@
         </dependency>
 
     </dependencies>
- 
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+    </build>
 </project>
