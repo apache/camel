@@ -22,11 +22,11 @@
 
     <display-name>My Web Application</display-name>
 
-    <!-- location of spring xml files -->
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/applicationContext-security.xml</param-value>
-    </context-param>
+  <!-- location of spring xml files -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:camel-context.xml</param-value>
+  </context-param>
 
     <!-- the listener that kick-starts Spring -->
     <listener>
@@ -43,19 +43,11 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <servlet>
-        <servlet-name>CamelServlet</servlet-name>
-        <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
-        <init-param>
-            <param-name>matchOnUriPrefix</param-name>
-            <param-value>true</param-value>
-        </init-param>
-        <!-- set the camel context application file location here -->
-        <init-param>
-            <param-name>contextConfigLocation</param-name>
-            <param-value>/org/apache/camel/example/spring/security/camel-context.xml</param-value>
-        </init-param>
-    </servlet>
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
 
     <servlet-mapping>
         <servlet-name>CamelServlet</servlet-name>
