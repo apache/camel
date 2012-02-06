@@ -19,7 +19,6 @@ package org.apache.camel.component.cdi.util;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -80,10 +79,9 @@ public final class BeanProvider {
                 return null;
             }
 
-            throw new IllegalStateException("Could not find beans for Type=" + type
-                    + " and qualifiers:" + Arrays.toString(qualifiers));
+            throw new IllegalStateException("Could not find beans for Type='" + type
+                    + "' and qualifiers: " + Arrays.toString(qualifiers));
         }
-
         return getContextualReference(type, beanManager, beans);
     }
 
@@ -126,11 +124,9 @@ public final class BeanProvider {
             if (optional) {
                 return null;
             }
-
             throw new IllegalStateException("Could not find beans for Type=" + type
                     + " and name:" + name);
         }
-
         return getContextualReference(type, beanManager, beans);
     }
 
@@ -151,8 +147,7 @@ public final class BeanProvider {
      * @param <T>      target type
      * @return the resolved list of Contextual Reference or an empty-list if optional is true
      */
-    public static <T> List<T> getContextualReferences(Class<T> type,
-                                                      boolean optional) {
+    public static <T> List<T> getContextualReferences(Class<T> type, boolean optional) {
         return getContextualReferences(type, optional, true);
     }
 
@@ -168,9 +163,9 @@ public final class BeanProvider {
      * @param <T>                       target type
      * @return the resolved list of Contextual Reference or an empty-list if optional is true
      */
-    public static <T> List<T> getContextualReferences(Class<T> type,
-                                                      boolean optional,
-                                                      boolean includeDefaultScopedBeans) {
+    public static <T> List<T> getContextualReferences(
+            Class<T> type, boolean optional, boolean includeDefaultScopedBeans) {
+
         BeanManager beanManager = getBeanManager();
         Set<Bean<?>> beans = beanManager.getBeans(type, new AnyLiteral());
 
@@ -190,7 +185,7 @@ public final class BeanProvider {
 
         for (Bean<?> bean : beans) {
             result.add(getContextualReference(type, beanManager,
-                    new HashSet<Bean<?>>((Collection) Arrays.asList(new Object[]{bean}))));
+                new HashSet<Bean<?>>(Arrays.asList(new Bean<?>[]{bean}))));
         }
         return result;
     }
@@ -217,7 +212,7 @@ public final class BeanProvider {
 
         for (Bean<?> bean : beans) {
             result.put(bean.getName(), getContextualReference(type, beanManager,
-                    new HashSet<Bean<?>>((Collection) Arrays.asList(new Object[]{bean}))));
+                    new HashSet<Bean<?>>(Arrays.asList(new Bean<?>[]{bean}))));
         }
         return result;
     }
@@ -247,14 +242,11 @@ public final class BeanProvider {
      * @param <T>         target type
      * @return the contextual reference
      */
+    @SuppressWarnings("unchecked")
     private static <T> T getContextualReference(Class<T> type, BeanManager beanManager, Set<Bean<?>> beans) {
         Bean<?> bean = beanManager.resolve(beans);
-
         CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
-
-        @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable"})
-        T result = (T) beanManager.getReference(bean, type, creationalContext);
-        return result;
+        return (T)beanManager.getReference(bean, type, creationalContext);
     }
 
     /**

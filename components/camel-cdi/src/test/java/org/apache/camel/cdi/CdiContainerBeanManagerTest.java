@@ -19,13 +19,10 @@ package org.apache.camel.cdi;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.store.Item;
-import org.apache.camel.cdi.store.ShoppingBean;
 import org.apache.camel.component.cdi.CdiBeanRegistry;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -35,23 +32,27 @@ import org.apache.webbeans.cditest.CdiTestContainerLoader;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class CdiContainerBeanManagerTest extends CamelTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(CdiContainerBeanManagerTest.class);
+
     private MockEndpoint resultEndpoint;
     private ProducerTemplate template;
 
     private CdiTestContainer cdiContainer;
 
-    @Inject
-    private ShoppingBean shoppingBean;
+    // @Inject
+    // private ShoppingBean shoppingBean;
 
     @Before
     public void setUp() throws Exception {
         cdiContainer = CdiTestContainerLoader.getCdiContainer();
         cdiContainer.bootContainer();
 
-        System.out.println(">> Container started and bean manager instantiated !");
+        LOG.info(">> Container started and bean manager instantiated !");
 
         // Camel
         context = new DefaultCamelContext(new CdiBeanRegistry());
@@ -61,7 +62,7 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
         resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         template = context.createProducerTemplate();
 
-        System.out.println(">> Camel started !");
+        LOG.info(">> Camel started !");
     }
 
     @After
@@ -78,13 +79,19 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = resultEndpoint.getExchanges().get(0);
-        List<Item> results = (List<Item>) exchange.getIn().getBody();
+        List<?> results = exchange.getIn().getBody(List.class);
+        ArrayList<Item> expected = itemsExpected();
+        assertNotNull(results);
+        assertNotNull(expected);
+        assertEquals(expected.size(), results.size());
 
-        Object[] items = (Object[]) results.toArray();
-        Object[] itemsExpected = (Object[]) itemsExpected().toArray();
+        Object[] items = results.toArray();
+        Object[] itemsExpected = itemsExpected().toArray();
         for (int i = 0; i < items.length; ++i) {
-            Item itemExpected = (Item)items[i];
-            Item itemReceived = (Item)itemsExpected[i];
+            assertTrue(itemsExpected[i] != null && (itemsExpected[i] instanceof Item));
+            assertTrue(items[i] != null && (items[i] instanceof Item));
+            Item itemExpected = (Item)itemsExpected[i];
+            Item itemReceived = (Item)items[i];
             assertEquals(itemExpected.getName(), itemReceived.getName());
             assertEquals(itemExpected.getPrice(), itemReceived.getPrice());
         }
@@ -93,15 +100,9 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
 
     private ArrayList<Item> itemsExpected() {
         ArrayList<Item> products = new ArrayList<Item>();
-        Item defaultItem = new Item();
-        defaultItem.setName("Default Item");
-        defaultItem.setPrice(1000L);
-
         for (int i = 1; i < 10; i++) {
-            Item item = new Item("Item-" + i, i * 1500L);
-            products.add(item);
+            products.add(new Item("Item-" + i, 1500L * i));
         }
-
         return products;
     }
 
@@ -112,13 +113,9 @@ public class CdiContainerBeanManagerTest extends CamelTestSupport {
             public void configure() throws Exception {
 
                 from("direct:inject")
-                        .beanRef("shoppingBean", "listAllProducts")
-                        .to("mock:result");
-
+                    .beanRef("shoppingBean", "listAllProducts")
+                    .to("mock:result");
             }
-
         };
     }
-
-
 }
