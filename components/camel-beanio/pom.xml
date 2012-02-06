@@ -24,6 +24,7 @@
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
     <version>2.10-SNAPSHOT</version>
+    <relativePath>../../parent</relativePath>
   </parent>
 
   <artifactId>camel-beanio</artifactId>
