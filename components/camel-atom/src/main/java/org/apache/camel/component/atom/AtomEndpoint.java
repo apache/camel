@@ -39,14 +39,6 @@ public class AtomEndpoint extends FeedEndpoint {
         super(endpointUri, component, feedUri);
     }
 
-    public AtomEndpoint(String endpointUri, String feedUri) {
-        super(endpointUri, feedUri);
-    }
-
-    public AtomEndpoint(String endpointUri) {
-        super(endpointUri);
-    }   
-
     @Override
     public Exchange createExchange(Object feed) {
         Exchange exchange = createExchangeWithFeedHeader(feed, AtomConstants.ATOM_FEED);
