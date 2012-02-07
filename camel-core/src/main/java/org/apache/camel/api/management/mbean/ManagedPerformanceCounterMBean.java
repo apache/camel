@@ -21,7 +21,10 @@ import java.util.Date;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
+public interface ManagedPerformanceCounterMBean {
+
+    @ManagedOperation(description = "Reset counters")
+    void reset();
 
     @ManagedAttribute(description = "Number of completed exchanges")
     long getExchangesCompleted() throws Exception;
