@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
@@ -112,7 +113,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         // Pojos of the model
         Map<String, Object> model;
 
-        InputStreamReader in = new InputStreamReader(inputStream);
+        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
 
         // Scanner is used to read big file
         Scanner scanner = new Scanner(in);
