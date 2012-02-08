@@ -104,6 +104,13 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("header.foo", "abc");
         assertExpression("headers.foo", "abc");
     }
+    
+    public void testTrimSimpleExpressions() throws Exception {
+        assertExpression(" \texchangeId\n", exchange.getExchangeId());
+        assertExpression("\nid\r", exchange.getIn().getMessageId());
+        assertExpression("\t\r body", "<hello id='m123'>world!</hello>");
+        assertExpression("\nin.body\r", "<hello id='m123'>world!</hello>");
+    }
 
     public void testSimpleThreadName() throws Exception {
         String name = Thread.currentThread().getName();
