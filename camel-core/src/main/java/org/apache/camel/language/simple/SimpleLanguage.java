@@ -112,6 +112,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
 
     @Override
     public Expression createExpression(String expression) {
+        expression = expression.trim();
         Expression answer = super.createExpression(expression);
         if (resultType != null) {
             return ExpressionBuilder.convertToExpression(answer, resultType);
