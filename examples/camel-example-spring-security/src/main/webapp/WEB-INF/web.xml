@@ -25,7 +25,7 @@
   <!-- location of spring xml files -->
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>/WEB-INF/applicationContext-security.xml</param-value>
+    <param-value>classpath:camel-context.xml</param-value>
   </context-param>
 
   <!-- the listener that kick-starts Spring -->
@@ -46,15 +46,7 @@
   <servlet>
     <servlet-name>CamelServlet</servlet-name>
     <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
-    <init-param>
-      <param-name>matchOnUriPrefix</param-name>
-      <param-value>true</param-value>
-    </init-param>
-    <!-- set the camel context application file location here -->
-    <init-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>/org/apache/camel/example/spring/security/camel-context.xml</param-value>
-    </init-param>
+    <load-on-startup>1</load-on-startup>
   </servlet>
 
   <servlet-mapping>
