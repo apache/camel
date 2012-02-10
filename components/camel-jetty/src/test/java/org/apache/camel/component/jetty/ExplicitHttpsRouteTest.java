@@ -35,7 +35,7 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
         sslSocketConnector.getSslContextFactory().setKeyManagerPassword(pwd);
         sslSocketConnector.getSslContextFactory().setKeyStorePassword(pwd);
         URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
-        sslSocketConnector.getSslContextFactory().setKeyStore(keyStoreUrl.toURI().getPath());
+        sslSocketConnector.getSslContextFactory().setKeyStorePath(keyStoreUrl.toURI().getPath());
         sslSocketConnector.getSslContextFactory().setTrustStoreType("JKS");
         return sslSocketConnector;
     }

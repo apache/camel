@@ -220,7 +220,7 @@ public class CometdComponent extends DefaultComponent {
             sslSocketConnector.getSslContextFactory().setKeyManagerPassword(sslPassword);
             sslSocketConnector.getSslContextFactory().setKeyStorePassword(sslKeyPassword);
             if (sslKeystore != null) {
-                sslSocketConnector.getSslContextFactory().setKeyStore(sslKeystore);
+                sslSocketConnector.getSslContextFactory().setKeyStorePath(sslKeystore);
             }
 
         }
