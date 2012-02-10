@@ -30,6 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PurchaseOrder implements Serializable {
+    private static final long serialVersionUID = 1L;
     @XmlAttribute
     private String name;
     @XmlAttribute
