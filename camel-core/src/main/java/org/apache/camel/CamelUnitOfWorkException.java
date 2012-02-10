@@ -26,7 +26,7 @@ import java.util.List;
  * from the {@link #getCauses()} method.
  */
 public class CamelUnitOfWorkException extends CamelExchangeException {
-
+    private static final long serialVersionUID = 1L;
     private final List<Exception> causes;
 
     public CamelUnitOfWorkException(Exchange exchange, List<Exception> causes) {
@@ -39,5 +39,4 @@ public class CamelUnitOfWorkException extends CamelExchangeException {
     public List<Exception> getCauses() {
         return causes;
     }
-
 }

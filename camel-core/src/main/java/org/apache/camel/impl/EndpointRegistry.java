@@ -31,7 +31,7 @@ import org.apache.camel.util.ServiceHelper;
  * We use a soft reference cache to allow the JVM to re-claim memory if it runs low on memory.
  */
 public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> implements Service {
-
+    private static final long serialVersionUID = 1L;
     private final CamelContext context;
 
     public EndpointRegistry(CamelContext context) {
