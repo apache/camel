@@ -114,7 +114,7 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
         fromMessageSender.setAcceptGzipEncoding(false);
 
         CamelHttpUrlConnectionMessageSender toMessageSender = new CamelHttpUrlConnectionMessageSender(new SpringWebserviceConfiguration(), fromMessageSender);
-        assertFalse("acceptGzipEncoding property didn't get populated!", toMessageSender.isAcceptGzipEncoding());
+        assertFalse("acceptGzipEncoding property didn't get populated properly!", toMessageSender.isAcceptGzipEncoding());
 
         fromMessageSender.setAcceptGzipEncoding(true);
         toMessageSender = new CamelHttpUrlConnectionMessageSender(new SpringWebserviceConfiguration(), fromMessageSender);
@@ -143,7 +143,7 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
 
         CamelHttpsUrlConnectionMessageSender toMessageSender = new CamelHttpsUrlConnectionMessageSender(new SpringWebserviceConfiguration(), fromMessageSender);
 
-        assertFalse("acceptGzipEncoding field didn't get populated!", toMessageSender.isAcceptGzipEncoding());
+        assertFalse("acceptGzipEncoding field didn't get populated properly!", toMessageSender.isAcceptGzipEncoding());
         for (Field expectedField : fromMessageSender.getClass().getDeclaredFields()) {
             if (Modifier.isStatic(expectedField.getModifiers())) {
                 continue;
