@@ -118,6 +118,14 @@
             <to uri="mock:result"/>
         </route>    
         <!-- END SNIPPET: headerkey -->
+        <!-- START SNIPPET: clearheaders -->
+        <route>
+            <from uri="direct:headers"/>
+            <to uri="crypto:sign://headers?privateKey=#myPrivateKey" />
+            <to uri="crypto:verify://headers?publicKey=#myPublicKey&amp;clearHeaders=false" />
+            <to uri="mock:result"/>
+        </route>
+        <!-- END SNIPPET: clearheaders -->
     </camelContext>
 
     <bean id="keystore" class="org.apache.camel.component.crypto.SpringSignatureTest" factory-method="keystore"/>

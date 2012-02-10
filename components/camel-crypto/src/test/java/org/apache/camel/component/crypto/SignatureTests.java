@@ -30,6 +30,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -135,6 +136,12 @@ public class SignatureTests extends CamelTestSupport {
                 from("direct:headerkey-verify").to("crypto:verify://alias", "mock:result");
                 // END SNIPPET: headerkey
             }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: clearheaders
+                from("direct:headers").to("crypto:sign://headers?privateKey=#myPrivateKey", "crypto:verify://headers?publicKey=#myPublicKey&clearHeaders=false", "mock:result");
+                // END SNIPPET: clearheaders
+            }
         }};
     }
 
@@ -143,6 +150,11 @@ public class SignatureTests extends CamelTestSupport {
         setupMock();
         sendBody("direct:keypair", payload);
         assertMockEndpointsSatisfied();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        Exchange e = mock.getExchanges().get(0);
+        Message result = e == null ? null : e.hasOut() ? e.getOut() : e.getIn();
+        assertNull(result.getHeader(DigitalSignatureConstants.SIGNATURE));
     }
 
     @Test
@@ -266,6 +278,19 @@ public class SignatureTests extends CamelTestSupport {
         template.send("direct:headerkey-verify", signed);
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testVerifyHeadersNotCleared() throws Exception {
+        setupMock();
+        template.requestBody("direct:headers", payload);
+        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied();
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        Exchange e = mock.getExchanges().get(0);
+        Message result = e == null ? null : e.hasOut() ? e.getOut() : e.getIn();
+        assertNotNull(result.getHeader(DigitalSignatureConstants.SIGNATURE));
     }
 
     private MockEndpoint setupMock() {

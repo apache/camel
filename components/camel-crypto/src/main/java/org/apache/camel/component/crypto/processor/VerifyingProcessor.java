@@ -23,10 +23,10 @@ import java.security.cert.Certificate;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.crypto.DigitalSignatureConfiguration;
+import org.apache.camel.component.crypto.DigitalSignatureConstants;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.codec.binary.Base64;
 
-import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT;
 
 /**
  * <code>VerifyingProcessor</code>
@@ -44,7 +44,7 @@ public class VerifyingProcessor extends DigitalSignatureProcessor {
             PublicKey pk = getPublicKeyOrCertificateFromHeader(exchange, PublicKey.class, config.getPublicKey());
             if (pk == null) {
                 throw new IllegalStateException(String.format("Cannot verify signature as no Public Key or Certificate has been supplied."
-                        + " Either supply one in the route definition or via the message header '%s'", SIGNATURE_PUBLIC_KEY_OR_CERT));
+                        + " Either supply one in the route definition or via the message header '%s'", DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT));
             }
             signer.initVerify(pk);
         } else {
@@ -74,7 +74,7 @@ public class VerifyingProcessor extends DigitalSignatureProcessor {
     }
 
     private <T> T getPublicKeyOrCertificateFromHeader(Exchange exchange, Class<? extends T> verificationType, T defaultsTo) {
-        T pkOrCert = exchange.getIn().getHeader(SIGNATURE_PUBLIC_KEY_OR_CERT, verificationType);
+        T pkOrCert = exchange.getIn().getHeader(DigitalSignatureConstants.SIGNATURE_PUBLIC_KEY_OR_CERT, verificationType);
         if (pkOrCert == null) {
             pkOrCert = defaultsTo;
         }

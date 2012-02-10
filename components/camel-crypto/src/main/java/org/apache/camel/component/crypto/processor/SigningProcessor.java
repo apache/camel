@@ -28,7 +28,6 @@ import org.apache.camel.component.crypto.DigitalSignatureConfiguration;
 import org.apache.camel.component.crypto.DigitalSignatureConstants;
 import org.apache.commons.codec.binary.Base64;
 
-import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY;
 
 public class SigningProcessor extends DigitalSignatureProcessor {
 
@@ -64,10 +63,11 @@ public class SigningProcessor extends DigitalSignatureProcessor {
         PrivateKey pk = config.getPrivateKey(getAlias(exchange), getKeyPassword(exchange));
 
         if (pk == null) {
-            pk = exchange.getIn().getHeader(SIGNATURE_PRIVATE_KEY, PrivateKey.class);
+            pk = exchange.getIn().getHeader(DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY, PrivateKey.class);
             if (pk == null) {
-                throw new IllegalStateException(format("Cannot sign message as no Private Key has been supplied. Either supply one in"
-                                                       + " the route definition sign(keystore, alias) or sign(privateKey) or via the message header '%s'", SIGNATURE_PRIVATE_KEY));
+                throw new IllegalStateException(format("Cannot sign message as no Private Key has been supplied. "
+                    + "Either supply one in the route definition sign(keystore, alias) or sign(privateKey) "
+                    + "or via the message header '%s'", DigitalSignatureConstants.SIGNATURE_PRIVATE_KEY));
             }
         }
         return pk;
