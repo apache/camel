@@ -101,9 +101,6 @@ public abstract class ServiceSupport implements StatefulService {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#suspend()
-     */
     @Override
     public void suspend() throws Exception {
         if (!suspended.get()) {
@@ -126,9 +123,6 @@ public abstract class ServiceSupport implements StatefulService {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#resume()
-     */
     @Override
     public void resume() throws Exception {
         if (suspended.get()) {
@@ -149,9 +143,6 @@ public abstract class ServiceSupport implements StatefulService {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#shutdown()
-     */
     @Override
     public void shutdown() throws Exception {
         // ensure we are stopped first
@@ -168,9 +159,6 @@ public abstract class ServiceSupport implements StatefulService {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#getStatus()
-     */
     @Override
     public ServiceStatus getStatus() {
         // lets check these in oldest first as these flags can be changing in a concurrent world
@@ -197,64 +185,62 @@ public abstract class ServiceSupport implements StatefulService {
         return ServiceStatus.Stopped;
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#isStarted()
-     */
     @Override
     public boolean isStarted() {
         return started.get();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#isStarting()
-     */
     @Override
     public boolean isStarting() {
         return starting.get();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#isStopping()
-     */
     @Override
     public boolean isStopping() {
         return stopping.get();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#isStopped()
-     */
     @Override
     public boolean isStopped() {
         return stopped.get();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#isSuspending()
-     */
     @Override
     public boolean isSuspending() {
         return suspending.get();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#isSuspended()
-     */
     @Override
     public boolean isSuspended() {
         return suspended.get();
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#isRunAllowed()
-     */
     @Override
     public boolean isRunAllowed() {
         return !(stopping.get() || stopped.get());
     }
 
+    /**
+     * Implementations override this method to support customized start/stop.
+     * <p/>
+     * <b>Important: </b> See {@link #doStop()} for more details.
+     * 
+     * @see #doStop()
+     */
     protected abstract void doStart() throws Exception;
 
+    /**
+     * Implementations override this method to support customized start/stop.
+     * <p/>
+     * <b>Important:</b> Camel will invoke this {@link #doStop()} method when
+     * the service is being stopped. This method will <b>also</b> be invoked
+     * if the service is still in <i>uninitialized</i> state (eg has not
+     * been started). The method is <b>always</b> called to allow the service
+     * to do custom logic when the service is being stopped, such as when
+     * {@link org.apache.camel.CamelContext} is shutting down.
+     * 
+     * @see #doStart() 
+     */
     protected abstract void doStop() throws Exception;
 
     /**
@@ -270,15 +256,12 @@ public abstract class ServiceSupport implements StatefulService {
     }
 
     /**
-     * Implementations override this method to perform customized shutdown
+     * Implementations override this method to perform customized shutdown.
      */
     protected void doShutdown() throws Exception {
         // noop
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.camel.support.StatefulService#getVersion()
-     */
     @Override
     public synchronized String getVersion() {
         if (version != null) {
