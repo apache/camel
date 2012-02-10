@@ -41,14 +41,6 @@ public class RssEndpoint extends FeedEndpoint {
         super(endpointUri, component, feedUri);
     }
 
-    public RssEndpoint(String endpointUri, String feedUri) {
-        super(endpointUri, feedUri);
-    }
-
-    public RssEndpoint(String endpointUri) {
-        super(endpointUri);
-    }      
-    
     @Override
     public Exchange createExchange(Object feed) {
         Exchange exchange = createExchangeWithFeedHeader(feed, RssConstants.RSS_FEED);

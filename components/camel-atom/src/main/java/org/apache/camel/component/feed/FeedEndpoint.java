@@ -46,15 +46,6 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
         this.feedUri = feedUri;
     }
 
-    public FeedEndpoint(String endpointUri, String feedUri) {
-        this(endpointUri);
-        this.feedUri = feedUri;
-    }
-
-    public FeedEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public boolean isSingleton() {
         return true;
     }
