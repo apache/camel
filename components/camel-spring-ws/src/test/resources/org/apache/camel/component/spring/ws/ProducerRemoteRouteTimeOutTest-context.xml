@@ -39,21 +39,25 @@
 		<route>
 			<from uri="direct:stockQuoteWebserviceCommonsHttpWith3MillSecondsTimeout" />
 			<to uri="spring-ws:http://www.webservicex.net/stockquote.asmx?timeout=3&amp;webServiceTemplate=#commonsHttpWebServiceTemplate&amp;soapAction=http://www.webserviceX.NET/GetQuote" />
+			<convertBodyTo type="java.lang.String"/>
 		</route>
 
 		<route>
 			<from uri="direct:stockQuoteWebserviceCommonsHttpWith5000MillSecondsTimeout" />
 			<to uri="spring-ws:http://www.webservicex.net/stockquote.asmx?timeout=5000&amp;webServiceTemplate=#commonsHttpWebServiceTemplate&amp;soapAction=http://www.webserviceX.NET/GetQuote" />
+			<convertBodyTo type="java.lang.String"/>
 		</route>
 
 		<route>
 			<from uri="direct:stockQuoteWebserviceJDKWith3MillSecondsTimeout" />
 			<to uri="spring-ws:http://www.webservicex.net/stockquote.asmx?timeout=3&amp;webServiceTemplate=#jdkHttpWebServiceTemplate&amp;soapAction=http://www.webserviceX.NET/GetQuote" />
+			<convertBodyTo type="java.lang.String"/>
 		</route>
 
 		<route>
 			<from uri="direct:stockQuoteWebserviceJDKWith5000MillSecondsTimeout" />
 			<to uri="spring-ws:http://www.webservicex.net/stockquote.asmx?timeout=5000&amp;webServiceTemplate=#jdkHttpWebServiceTemplate&amp;soapAction=http://www.webserviceX.NET/GetQuote" />
+			<convertBodyTo type="java.lang.String"/>
 		</route>
 	</camelContext>
 

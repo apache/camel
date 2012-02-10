@@ -31,14 +31,17 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.spring.ws.SpringWebserviceProducer.CamelHttpUrlConnectionMessageSender;
 import org.apache.camel.component.spring.ws.SpringWebserviceProducer.CamelHttpsUrlConnectionMessageSender;
+
 import org.junit.Ignore;
 import org.junit.Test;
+
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
 import org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -65,7 +68,12 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
     @Ignore("Run manually, makes connection to external webservice")
     @Test
     public void callStockQuoteWebserviceCommonsHttpWith5000MillSecondsTimeout() throws Exception {
-        template.requestBody("direct:stockQuoteWebserviceCommonsHttpWith5000MillSecondsTimeout", xmlRequestForGoogleStockQuote);
+        Object result = template.requestBody("direct:stockQuoteWebserviceCommonsHttpWith5000MillSecondsTimeout", xmlRequestForGoogleStockQuote);
+        
+        assertNotNull(result);
+        assertTrue(result instanceof String);
+        String resultMessage = (String) result;
+        assertTrue(resultMessage.contains("Google Inc."));
     }
 
     @Ignore("Run manually, makes connection to external webservice")
@@ -82,7 +90,12 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
     @Ignore("Run manually, makes connection to external webservice")
     @Test
     public void callStockQuoteWebserviceJDKWith5000MillSecondsTimeout() throws Exception {
-        template.requestBody("direct:stockQuoteWebserviceJDKWith5000MillSecondsTimeout", xmlRequestForGoogleStockQuote);
+        Object result = template.requestBody("direct:stockQuoteWebserviceJDKWith5000MillSecondsTimeout", xmlRequestForGoogleStockQuote);
+
+        assertNotNull(result);
+        assertTrue(result instanceof String);
+        String resultMessage = (String) result;
+        assertTrue(resultMessage.contains("Google Inc."));
     }
 
     private static boolean hasThrowableInChain(Throwable throwable, Class<? extends Throwable> clazz) {
