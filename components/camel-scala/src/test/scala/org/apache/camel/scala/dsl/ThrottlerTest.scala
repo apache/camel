@@ -28,7 +28,7 @@ class ThrottlerTest extends ScalaTestSupport {
   @Test
   def testSimpleThrottler = {
     "mock:a" expect { _.count = 3 } 
-    "mock:a" expect { _.setResultWaitTime(1000) }
+    "mock:a" expect { _.setResultWaitTime(1500) }
     for (id <- 1 to 6) "seda:a" ! id   
     "mock:a" assert()
   }
@@ -37,7 +37,7 @@ class ThrottlerTest extends ScalaTestSupport {
   def testBlockThrottler = {
     "mock:b" expect { _.count = 6 }
     "mock:c" expect { _.count = 3 } 
-    "mock:c" expect { _.setResultWaitTime(1000) }
+    "mock:c" expect { _.setResultWaitTime(1500) }
     for (id <- 1 to 6) "seda:b" ! id   
     "mock:b" assert()
   }
