@@ -230,6 +230,12 @@
           <childDelegation>false</childDelegation>
           <useFile>true</useFile>
           <forkMode>once</forkMode>
+          <systemProperties>
+            <property>
+              <name>derby.stream.error.file</name>
+              <value>target/derby.log</value>
+            </property>
+          </systemProperties>
           <includes>
              <include>**/*Test.java</include>
           </includes>
