@@ -121,13 +121,13 @@ public class SpringWebserviceProducer extends DefaultProducer {
     }
 
     private static void setTimeOut(HttpURLConnection connection, SpringWebserviceConfiguration configuration) {
-        if (configuration.getTimeout() > -1) {
+        if (shouldConsiderTimeoutConfiguration(configuration)) {
             connection.setReadTimeout(configuration.getTimeout());
         }
     }
 
     private static void setTimeOut(CommonsHttpMessageSender commonsHttpMessageSender, SpringWebserviceConfiguration configuration) {
-        if (configuration.getTimeout() > -1) {
+        if (shouldConsiderTimeoutConfiguration(configuration)) {
             commonsHttpMessageSender.setReadTimeout(configuration.getTimeout());
         }
     }
