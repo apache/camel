@@ -161,21 +161,23 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public ServiceStatus getStatus() {
-        // lets check these in oldest first as these flags can be changing in a concurrent world
+        // we should check the ---ing states first, as this indicate the state is in the middle of doing that
         if (isStarting()) {
             return ServiceStatus.Starting;
-        }
-        if (isStarted()) {
-            return ServiceStatus.Started;
         }
         if (isStopping()) {
             return ServiceStatus.Stopping;
         }
-        if (isStopped()) {
-            return ServiceStatus.Stopped;
-        }
         if (isSuspending()) {
             return ServiceStatus.Suspending;
+        }
+
+        // then check for the regular states
+        if (isStarted()) {
+            return ServiceStatus.Started;
+        }
+        if (isStopped()) {
+            return ServiceStatus.Stopped;
         }
         if (isSuspended()) {
             return ServiceStatus.Suspended;

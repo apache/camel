@@ -30,6 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
+import org.apache.camel.Service;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.SuspendableService;
@@ -73,6 +74,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private TimeUnit timeUnit = TimeUnit.SECONDS;
     private boolean shutdownNowOnTimeout = true;
     private boolean shutdownRoutesInReverseOrder = true;
+    private volatile boolean forceShutdown;
 
     public DefaultShutdownStrategy() {
     }
@@ -85,25 +87,32 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         shutdown(context, routes, getTimeout(), getTimeUnit());
     }
 
+    @Override
+    public void shutdownForced(CamelContext context, List<RouteStartupOrder> routes) throws Exception {
+        doShutdown(context, routes, getTimeout(), getTimeUnit(), false, false, true);
+    }
+
     public void suspend(CamelContext context, List<RouteStartupOrder> routes) throws Exception {
-        doShutdown(context, routes, getTimeout(), getTimeUnit(), true, false);
+        doShutdown(context, routes, getTimeout(), getTimeUnit(), true, false, false);
     }
 
     public void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
-        doShutdown(context, routes, timeout, timeUnit, false, false);
+        doShutdown(context, routes, timeout, timeUnit, false, false, false);
     }
 
     public boolean shutdown(CamelContext context, RouteStartupOrder route, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
         List<RouteStartupOrder> routes = new ArrayList<RouteStartupOrder>(1);
         routes.add(route);
-        return doShutdown(context, routes, timeout, timeUnit, false, abortAfterTimeout);
+        return doShutdown(context, routes, timeout, timeUnit, false, abortAfterTimeout, false);
     }
 
     public void suspend(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
-        doShutdown(context, routes, timeout, timeUnit, true, false);
+        doShutdown(context, routes, timeout, timeUnit, true, false, false);
     }
 
-    protected boolean doShutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit, boolean suspendOnly, boolean abortAfterTimeout) throws Exception {
+    protected boolean doShutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit,
+                                 boolean suspendOnly, boolean abortAfterTimeout, boolean forceShutdown) throws Exception {
+
         StopWatch watch = new StopWatch();
 
         // at first sort according to route startup order
@@ -135,12 +144,15 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             // timeout then cancel the task
             future.cancel(true);
 
+            // signal we are forcing shutdown now, since timeout occurred
+            this.forceShutdown = forceShutdown;
+
             // if set, stop processing and return false to indicate that the shutdown is aborting
-            if (abortAfterTimeout) {
+            if (!forceShutdown && abortAfterTimeout) {
                 LOG.warn("Timeout occurred. Aborting the shutdown now.");
                 return false;
             } else {
-                if (shutdownNowOnTimeout) {
+                if (forceShutdown || shutdownNowOnTimeout) {
                     LOG.warn("Timeout occurred. Now forcing the routes to be shutdown now.");
                     // force the routes to shutdown now
                     shutdownRoutesNow(routesOrdered);
@@ -158,6 +170,11 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         LOG.info("Graceful shutdown of " + routesOrdered.size() + " routes completed in " + seconds + " seconds");
         return true;
+    }
+
+    @Override
+    public boolean forceShutdown(Service service) {
+        return forceShutdown;
     }
 
     public void setTimeout(long timeout) {
@@ -284,6 +301,8 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
+        // reset option
+        forceShutdown = false;
     }
 
     @Override
