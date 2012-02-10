@@ -16,18 +16,30 @@
  */
 package org.apache.camel.component.spring.ws;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.SocketTimeoutException;
+import java.security.SecureRandom;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-
+import org.apache.camel.component.spring.ws.SpringWebserviceProducer.CamelHttpUrlConnectionMessageSender;
+import org.apache.camel.component.spring.ws.SpringWebserviceProducer.CamelHttpsUrlConnectionMessageSender;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
+import org.springframework.ws.transport.http.HttpsUrlConnectionMessageSender;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -81,6 +93,55 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
         }
 
         return hasThrowableInChain(throwable.getCause(), clazz);
+    }
+
+    @Test
+    public void verifyTheFieldPopulationFromHttpUrlConnectionMessageSenderToCamelHttpUrlConnectionMessageSender() throws Exception {
+        HttpUrlConnectionMessageSender fromConnectionMessageSender = new HttpUrlConnectionMessageSender();
+        fromConnectionMessageSender.setAcceptGzipEncoding(false);
+
+        CamelHttpUrlConnectionMessageSender toConnectionMessageSender = new CamelHttpUrlConnectionMessageSender(new SpringWebserviceConfiguration(), fromConnectionMessageSender);
+        assertFalse("acceptGzipEncoding property didn't get populated", toConnectionMessageSender.isAcceptGzipEncoding());
+
+        fromConnectionMessageSender.setAcceptGzipEncoding(true);
+        toConnectionMessageSender = new CamelHttpUrlConnectionMessageSender(new SpringWebserviceConfiguration(), fromConnectionMessageSender);
+        assertTrue("acceptGzipEncoding property didn't get populated properly!", toConnectionMessageSender.isAcceptGzipEncoding());
+    }
+
+    @Test
+    public void verifyTheFieldPopulationFromHttpsUrlConnectionMessageSenderToCamelHttpsUrlConnectionMessageSender() throws Exception {
+        HttpsUrlConnectionMessageSender fromConnectionMessageSender = new HttpsUrlConnectionMessageSender();
+        fromConnectionMessageSender.setAcceptGzipEncoding(false);
+        fromConnectionMessageSender.setHostnameVerifier(new HostnameVerifier() {
+
+            @Override
+            public boolean verify(String s, SSLSession sslsession) {
+                return false;
+            }
+        });
+        fromConnectionMessageSender.setKeyManagers(new KeyManager[] {new KeyManager() {
+        }});
+        fromConnectionMessageSender.setSecureRandom(new SecureRandom());
+        fromConnectionMessageSender.setSslProtocol("sslProtocol");
+        fromConnectionMessageSender.setSslProvider("sslProvider");
+        fromConnectionMessageSender.setTrustManagers(new TrustManager[] {new TrustManager() {
+        }});
+
+        CamelHttpsUrlConnectionMessageSender toConnectionMessageSender = new CamelHttpsUrlConnectionMessageSender(new SpringWebserviceConfiguration(), fromConnectionMessageSender);
+
+        assertFalse("acceptGzipEncoding field didn't get populated", toConnectionMessageSender.isAcceptGzipEncoding());
+        for (Field expectedField : fromConnectionMessageSender.getClass().getDeclaredFields()) {
+            if (Modifier.isStatic(expectedField.getModifiers())) {
+                continue;
+            }
+            expectedField.setAccessible(true);
+            String fieldName = expectedField.getName();
+
+            Field actualField = toConnectionMessageSender.getClass().getSuperclass().getDeclaredField(fieldName);
+            actualField.setAccessible(true);
+
+            assertSame("The field '" + fieldName + "' didn't get populated properly!", expectedField.get(fromConnectionMessageSender), actualField.get(toConnectionMessageSender));
+        }
     }
 
 }

@@ -17,6 +17,8 @@
 package org.apache.camel.component.spring.ws;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
@@ -31,6 +33,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ReflectionHelper;
+import org.apache.camel.util.ReflectionHelper.FieldCallback;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +89,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
         }
     }
 
-    private static void populateTimeout(SpringWebserviceConfiguration configuration) {
+    private static void populateTimeout(SpringWebserviceConfiguration configuration) throws Exception {
         WebServiceTemplate webServiceTemplate = configuration.getWebServiceTemplate();
         List<WebServiceMessageSender> webServiceMessageSenders = new ArrayList<WebServiceMessageSender>(webServiceTemplate.getMessageSenders().length);
         Collections.addAll(webServiceMessageSenders, webServiceTemplate.getMessageSenders());
@@ -94,15 +98,15 @@ public class SpringWebserviceProducer extends DefaultProducer {
                 CommonsHttpMessageSender commonsHttpMessageSender = (CommonsHttpMessageSender) webServiceMessageSender;
                 setTimeOut(commonsHttpMessageSender, configuration);
             } else if (webServiceMessageSender instanceof HttpsUrlConnectionMessageSender) {
-                // Should check HttpsUrlConnectionMessageSender first as it extends HttpUrlConnectionMessageSender
+                // Should check HttpsUrlConnectionMessageSender beforehand as it extends HttpUrlConnectionMessageSender
                 if (shouldConsiderTimeoutConfiguration(configuration)) {
                     webServiceMessageSenders.remove(webServiceMessageSender);
-                    webServiceMessageSenders.add(new CamelHttpsUrlConnectionMessageSender(configuration));
+                    webServiceMessageSenders.add(new CamelHttpsUrlConnectionMessageSender(configuration, (HttpsUrlConnectionMessageSender) webServiceMessageSender));
                 }
             } else if (webServiceMessageSender instanceof HttpUrlConnectionMessageSender) {
                 if (shouldConsiderTimeoutConfiguration(configuration)) {
                     webServiceMessageSenders.remove(webServiceMessageSender);
-                    webServiceMessageSenders.add(new CamelHttpUrlConnectionMessageSender(configuration));
+                    webServiceMessageSenders.add(new CamelHttpUrlConnectionMessageSender(configuration, (HttpUrlConnectionMessageSender) webServiceMessageSender));
                 }
             } else {
                 // Warn only if the timeout option has been explicitly specified
@@ -132,12 +136,15 @@ public class SpringWebserviceProducer extends DefaultProducer {
         }
     }
 
-    private static class CamelHttpUrlConnectionMessageSender extends HttpUrlConnectionMessageSender {
+    protected static class CamelHttpUrlConnectionMessageSender extends HttpUrlConnectionMessageSender {
 
         private final SpringWebserviceConfiguration configuration;
 
-        CamelHttpUrlConnectionMessageSender(SpringWebserviceConfiguration configuration) {
+        CamelHttpUrlConnectionMessageSender(SpringWebserviceConfiguration configuration, HttpUrlConnectionMessageSender webServiceMessageSender) {
             this.configuration = configuration;
+
+            // Populate the single acceptGzipEncoding property
+            setAcceptGzipEncoding(webServiceMessageSender.isAcceptGzipEncoding());
         }
 
         @Override
@@ -149,12 +156,46 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
     }
 
-    private static class CamelHttpsUrlConnectionMessageSender extends HttpsUrlConnectionMessageSender {
+    protected static class CamelHttpsUrlConnectionMessageSender extends HttpsUrlConnectionMessageSender {
 
         private final SpringWebserviceConfiguration configuration;
 
-        CamelHttpsUrlConnectionMessageSender(SpringWebserviceConfiguration configuration) {
+        CamelHttpsUrlConnectionMessageSender(SpringWebserviceConfiguration configuration, final HttpsUrlConnectionMessageSender webServiceMessageSender) throws Exception {
             this.configuration = configuration;
+
+            // Populate the single acceptGzipEncoding property beforehand as we have got a proper set/is API for it
+            setAcceptGzipEncoding(webServiceMessageSender.isAcceptGzipEncoding());
+
+            // Populate the fields having no getXXX available on HttpsUrlConnectionMessageSender
+            ReflectionHelper.doWithFields(HttpsUrlConnectionMessageSender.class, new FieldCallback() {
+
+                @Override
+                public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+                    if (!Modifier.isStatic(field.getModifiers())) {
+                        String fieldName = field.getName();
+                        if ("logger".equals(fieldName) || "acceptGzipEncoding".equals(fieldName)) {
+                            // skip them
+                            return;
+                        }
+
+                        field.setAccessible(true);
+                        Object value = field.get(webServiceMessageSender);
+
+                        Field inheritedField;
+                        try {
+                            inheritedField = CamelHttpsUrlConnectionMessageSender.this.getClass().getSuperclass().getDeclaredField(fieldName);
+                        } catch (NoSuchFieldException e) {
+                            throw new IllegalArgumentException("Unexpected exception!", e);
+                        }
+
+                        inheritedField.setAccessible(true);
+                        inheritedField.set(CamelHttpsUrlConnectionMessageSender.this, value);
+                        LOG.trace("Populated the field {} with the value {}", value, fieldName);
+                    }
+                }
+
+            });
+
         }
 
         @Override
@@ -166,7 +207,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
     }
 
-    private static class DefaultWebserviceMessageCallback implements WebServiceMessageCallback {
+    protected static class DefaultWebserviceMessageCallback implements WebServiceMessageCallback {
         private final String soapActionHeader;
         private final URI wsAddressingActionHeader;
         private final SpringWebserviceConfiguration configuration;
