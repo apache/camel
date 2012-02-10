@@ -41,7 +41,7 @@ public class ProducerLocalRouteTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint resultEndpoint;
 
-    @Test()
+    @Test
     public void consumeStockQuoteWebserviceWithDefaultTemplate() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebserviceWithDefaultTemplate", xmlRequestForGoogleStockQuote);
 
@@ -49,7 +49,7 @@ public class ProducerLocalRouteTest extends AbstractJUnit4SpringContextTests {
         assertTrue(result instanceof Source);
     }
 
-    @Test()
+    @Test
     public void consumeStockQuoteWebserviceAndPreserveHeaders() throws Exception {
         resultEndpoint.expectedHeaderReceived("helloHeader", "hello world!");
 
@@ -59,7 +59,7 @@ public class ProducerLocalRouteTest extends AbstractJUnit4SpringContextTests {
         resultEndpoint.assertIsSatisfied();
     }
 
-    @Test()
+    @Test
     public void consumeStockQuoteWebservice() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebservice", xmlRequestForGoogleStockQuote);
 
@@ -67,7 +67,7 @@ public class ProducerLocalRouteTest extends AbstractJUnit4SpringContextTests {
         assertTrue(result instanceof Source);
     }
 
-    @Test()
+    @Test
     public void consumeStockQuoteWebserviceWithCamelStringSourceInput() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebservice", new StringSource(xmlRequestForGoogleStockQuote));
 
@@ -75,7 +75,7 @@ public class ProducerLocalRouteTest extends AbstractJUnit4SpringContextTests {
         assertTrue(result instanceof Source);
     }
 
-    @Test()
+    @Test
     public void consumeStockQuoteWebserviceWithNonDefaultMessageFactory() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebserviceWithNonDefaultMessageFactory", xmlRequestForGoogleStockQuote);
 
@@ -83,7 +83,7 @@ public class ProducerLocalRouteTest extends AbstractJUnit4SpringContextTests {
         assertTrue(result instanceof Source);
     }
 
-    @Test()
+    @Test
     public void consumeStockQuoteWebserviceAndConvertResult() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebserviceAsString", xmlRequestForGoogleStockQuote);
 
@@ -93,7 +93,7 @@ public class ProducerLocalRouteTest extends AbstractJUnit4SpringContextTests {
         assertTrue(resultMessage.contains("Google Inc."));
     }
 
-    @Test()
+    @Test
     public void consumeStockQuoteWebserviceAndProvideEndpointUriByHeader() throws Exception {
         Object result = template.requestBodyAndHeader("direct:stockQuoteWebserviceWithoutDefaultUri", xmlRequestForGoogleStockQuote,
                 SpringWebserviceConstants.SPRING_WS_ENDPOINT_URI, stockQuoteWebserviceUri);

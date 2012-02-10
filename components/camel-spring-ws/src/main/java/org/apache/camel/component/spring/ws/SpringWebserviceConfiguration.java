@@ -31,6 +31,7 @@ public class SpringWebserviceConfiguration {
     private WebServiceTemplate webServiceTemplate;
     private String soapAction;
     private URI wsAddressingAction;
+    private int timeout = -1;
 
     /* Consumer configuration */
     private CamelEndpointMapping endpointMapping;
@@ -74,7 +75,15 @@ public class SpringWebserviceConfiguration {
     }
 
     public void setWsAddressingAction(String wsAddressingAction) throws URISyntaxException {
-        this.wsAddressingAction = new URI(wsAddressingAction);
+        setWsAddressingAction(new URI(wsAddressingAction));
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
     }
 
     public CamelEndpointMapping getEndpointMapping() {
