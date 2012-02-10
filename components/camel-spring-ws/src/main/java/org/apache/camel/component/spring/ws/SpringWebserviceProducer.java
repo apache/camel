@@ -107,6 +107,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
             } else {
                 // Warn only if the timeout option has been explicitly specified
                 if (shouldConsiderTimeoutConfiguration(configuration)) {
+                    // For example this will be the case during unit-testing with the net.javacrumbs.spring-ws-test API
                     LOG.warn("Ignoring the timeout option for {} as there's no provided API available to populate it!", webServiceMessageSender);
                 }
             }
