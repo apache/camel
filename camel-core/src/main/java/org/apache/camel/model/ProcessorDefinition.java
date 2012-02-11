@@ -254,17 +254,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 // only wrap the parent (not the children of the multicast)
                 wrapChannelInErrorHandler(channel, routeContext);
             } else {
-                log.trace("{} is part of multicast/recipientList which have special error handling so no error handler is applied", defn);
-            }
-        } else if (defn instanceof RecipientListDefinition) {
-            // do not use error handler for recipient list as it offers fine grained error handlers for its outputs
-            // however if share unit of work is enabled, we need to wrap an error handler on the recipient list parent
-            RecipientListDefinition def = (RecipientListDefinition) defn;
-            if (def.isShareUnitOfWork()) {
-                // note a recipient list cannot have children so no need for a child == null check
-                wrapChannelInErrorHandler(channel, routeContext);
-            } else {
-                log.trace("{} is part of multicast/recipientList which have special error handling so no error handler is applied", defn);
+                log.trace("{} is part of multicast which have special error handling so no error handler is applied", defn);
             }
         } else {
             // use error handler by default or if configured to do so
