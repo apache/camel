@@ -90,6 +90,10 @@ public class SpringWebserviceProducer extends DefaultProducer {
     }
 
     private static void populateTimeout(SpringWebserviceConfiguration configuration) throws Exception {
+        if (!(configuration.getTimeout() > -1)) {
+            return;
+        }
+
         WebServiceTemplate webServiceTemplate = configuration.getWebServiceTemplate();
         List<WebServiceMessageSender> webServiceMessageSenders = new ArrayList<WebServiceMessageSender>(webServiceTemplate.getMessageSenders().length);
         Collections.addAll(webServiceMessageSenders, webServiceTemplate.getMessageSenders());
@@ -99,41 +103,26 @@ public class SpringWebserviceProducer extends DefaultProducer {
                 setTimeOut(commonsHttpMessageSender, configuration);
             } else if (webServiceMessageSender instanceof HttpsUrlConnectionMessageSender) {
                 // Should check HttpsUrlConnectionMessageSender beforehand as it extends HttpUrlConnectionMessageSender
-                if (shouldConsiderTimeoutConfiguration(configuration)) {
-                    webServiceMessageSenders.remove(webServiceMessageSender);
-                    webServiceMessageSenders.add(new CamelHttpsUrlConnectionMessageSender(configuration, (HttpsUrlConnectionMessageSender) webServiceMessageSender));
-                }
+                webServiceMessageSenders.remove(webServiceMessageSender);
+                webServiceMessageSenders.add(new CamelHttpsUrlConnectionMessageSender(configuration, (HttpsUrlConnectionMessageSender) webServiceMessageSender));
             } else if (webServiceMessageSender instanceof HttpUrlConnectionMessageSender) {
-                if (shouldConsiderTimeoutConfiguration(configuration)) {
-                    webServiceMessageSenders.remove(webServiceMessageSender);
-                    webServiceMessageSenders.add(new CamelHttpUrlConnectionMessageSender(configuration, (HttpUrlConnectionMessageSender) webServiceMessageSender));
-                }
+                webServiceMessageSenders.remove(webServiceMessageSender);
+                webServiceMessageSenders.add(new CamelHttpUrlConnectionMessageSender(configuration, (HttpUrlConnectionMessageSender) webServiceMessageSender));
             } else {
-                // Warn only if the timeout option has been explicitly specified
-                if (shouldConsiderTimeoutConfiguration(configuration)) {
-                    // For example this will be the case during unit-testing with the net.javacrumbs.spring-ws-test API
-                    LOG.warn("Ignoring the timeout option for {} as there's no provided API available to populate it!", webServiceMessageSender);
-                }
+                // For example this will be the case during unit-testing with the net.javacrumbs.spring-ws-test API
+                LOG.warn("Ignoring the timeout option for {} as there's no provided API available to populate it!", webServiceMessageSender);
             }
         }
 
         webServiceTemplate.setMessageSenders(webServiceMessageSenders.toArray(new WebServiceMessageSender[webServiceMessageSenders.size()]));
     }
 
-    private static boolean shouldConsiderTimeoutConfiguration(SpringWebserviceConfiguration configuration) {
-        return configuration.getTimeout() > -1;
-    }
-
     private static void setTimeOut(HttpURLConnection connection, SpringWebserviceConfiguration configuration) {
-        if (shouldConsiderTimeoutConfiguration(configuration)) {
-            connection.setReadTimeout(configuration.getTimeout());
-        }
+        connection.setReadTimeout(configuration.getTimeout());
     }
 
     private static void setTimeOut(CommonsHttpMessageSender commonsHttpMessageSender, SpringWebserviceConfiguration configuration) {
-        if (shouldConsiderTimeoutConfiguration(configuration)) {
-            commonsHttpMessageSender.setReadTimeout(configuration.getTimeout());
-        }
+        commonsHttpMessageSender.setReadTimeout(configuration.getTimeout());
     }
 
     protected static class CamelHttpUrlConnectionMessageSender extends HttpUrlConnectionMessageSender {
@@ -166,7 +155,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
             // Populate the single acceptGzipEncoding property beforehand as we have got a proper set/is API for it
             setAcceptGzipEncoding(webServiceMessageSender.isAcceptGzipEncoding());
 
-            // Populate the fields having no getXXX available on HttpsUrlConnectionMessageSender
+            // Populate the fields not having getXXX available on HttpsUrlConnectionMessageSender
             ReflectionHelper.doWithFields(HttpsUrlConnectionMessageSender.class, new FieldCallback() {
 
                 @Override
