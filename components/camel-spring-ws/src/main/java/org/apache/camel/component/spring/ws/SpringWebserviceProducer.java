@@ -160,27 +160,29 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
                 @Override
                 public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                    if (!Modifier.isStatic(field.getModifiers())) {
-                        String fieldName = field.getName();
-                        if ("logger".equals(fieldName) || "acceptGzipEncoding".equals(fieldName)) {
-                            // skip them
-                            return;
-                        }
-
-                        field.setAccessible(true);
-                        Object value = field.get(webServiceMessageSender);
-
-                        Field inheritedField;
-                        try {
-                            inheritedField = CamelHttpsUrlConnectionMessageSender.this.getClass().getSuperclass().getDeclaredField(fieldName);
-                        } catch (NoSuchFieldException e) {
-                            throw new IllegalArgumentException("Unexpected exception!", e);
-                        }
-
-                        inheritedField.setAccessible(true);
-                        inheritedField.set(CamelHttpsUrlConnectionMessageSender.this, value);
-                        LOG.trace("Populated the field {} with the value {}", value, fieldName);
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        return;
                     }
+
+                    String fieldName = field.getName();
+                    if ("logger".equals(fieldName) || "acceptGzipEncoding".equals(fieldName)) {
+                        // skip them
+                        return;
+                    }
+
+                    field.setAccessible(true);
+                    Object value = field.get(webServiceMessageSender);
+
+                    Field inheritedField;
+                    try {
+                        inheritedField = CamelHttpsUrlConnectionMessageSender.this.getClass().getSuperclass().getDeclaredField(fieldName);
+                    } catch (NoSuchFieldException e) {
+                        throw new IllegalArgumentException("Unexpected exception!", e);
+                    }
+
+                    inheritedField.setAccessible(true);
+                    inheritedField.set(CamelHttpsUrlConnectionMessageSender.this, value);
+                    LOG.trace("Populated the field {} with the value {}", fieldName, value);
                 }
 
             });
