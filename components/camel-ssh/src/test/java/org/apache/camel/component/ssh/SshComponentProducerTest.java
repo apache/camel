@@ -62,19 +62,6 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
     }
 
     @Test
-    public void testRsa() throws Exception {
-        final String msg = "test\n";
-
-        MockEndpoint mock = getMockEndpoint("mock:rsa");
-        mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived(msg);
-
-        template.sendBody("direct:ssh-rsa", msg);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
     public void testConnectionTimeout() throws Exception {
         final String msg = "test\n";
 
@@ -104,19 +91,6 @@ public class SshComponentProducerTest extends SshComponentTestSupport {
                 from("direct:ssh")
                         .to("ssh://smx:smx@localhost:" + port + "?timeout=3000")
                         .to("mock:password");
-
-                SshComponent sshComponent = new SshComponent();
-                sshComponent.setHost("localhost");
-                sshComponent.setPort(port);
-                sshComponent.setUsername("smx");
-                sshComponent.setKeyPairProvider(new FileKeyPairProvider(new String[]{"src/test/resources/hostkey.pem"}));
-                sshComponent.setKeyType(KeyPairProvider.SSH_RSA);
-
-                getContext().addComponent("ssh-rsa", sshComponent);
-
-                from("direct:ssh-rsa")
-                        .to("ssh-rsa:test")
-                        .to("mock:rsa");
             }
         };
     }

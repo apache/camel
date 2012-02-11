@@ -31,7 +31,8 @@ public class SshConfiguration implements Cloneable {
     private String password;
     private String pollCommand;
     private KeyPairProvider keyPairProvider;
-    private String keyType;
+    private String keyType = KeyPairProvider.SSH_RSA;
+    private String certFilename;
     private long timeout = 30000;
 
     public SshConfiguration() {
@@ -163,7 +164,7 @@ public class SshConfiguration implements Cloneable {
 
     /**
      * Sets the key type to pass to the KeyPairProvider as part of authentication.
-     * KeyPairProvider.loadKey(...) will be passed this value.
+     * KeyPairProvider.loadKey(...) will be passed this value. Defaults to "ssh-rsa".
      *
      * @param keyType String defining the type of KeyPair to use for authentication.
      *
@@ -181,9 +182,23 @@ public class SshConfiguration implements Cloneable {
      * Sets the timeout in milliseconds to wait in establishing the remote SSH server connection.
      * Defaults to 30000 milliseconds.
      *
-     * @param timeout long millisconeds to wait.
+     * @param timeout long milliseconds to wait.
      */
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+    
+    public String getCertFilename() {
+        return this.certFilename;
+    }
+
+    /**
+     * Sets the filename of the certificate to use for Authentication.
+     * Will use FileKeyPairProvider to resolve file based certificate, and depends on keyType setting.
+     *
+     * @param certFilename
+     */
+    public void setCertFilename(String certFilename) {
+        this.certFilename = certFilename;
     }
 }

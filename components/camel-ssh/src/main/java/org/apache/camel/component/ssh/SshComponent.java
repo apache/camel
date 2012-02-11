@@ -118,4 +118,12 @@ public class SshComponent extends DefaultComponent {
     public void setTimeout(long timeout) {
         getConfiguration().setTimeout(timeout);
     }
+
+    public String getCertFilename() {
+        return getConfiguration().getCertFilename();
+    }
+
+    public void setCertFilename(String certFilename) {
+        getConfiguration().setCertFilename(certFilename);
+    }
 }
