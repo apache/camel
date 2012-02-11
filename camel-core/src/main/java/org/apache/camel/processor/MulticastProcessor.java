@@ -733,14 +733,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     protected void doDone(Exchange original, Exchange subExchange, AsyncCallback callback, boolean doneSync, boolean exhaust) {
         // cleanup any per exchange aggregation strategy
         removeAggregationStrategyFromExchange(original);
-        if (original.getException() != null) {
+        if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // multicast uses error handling on its output processors and they have tried to redeliver
             // so we shall signal back to the other error handlers that we are exhausted and they should not
             // also try to redeliver as we will then do that twice
             original.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhaust);
         }
         if (subExchange != null) {
-            // and copy the current result to original so it will contain this exception
+            // and copy the current result to original so it will contain this result of this eip
             ExchangeHelper.copyResults(original, subExchange);
         }
         callback.done(doneSync);
