@@ -71,7 +71,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
     @XmlTransient
     private Processor onPrepare;
     @XmlAttribute
-    @Deprecated
     private Boolean shareUnitOfWork;
 
     public RecipientListDefinition() {
@@ -309,7 +308,6 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
      * @return the builder.
      * @see org.apache.camel.spi.SubUnitOfWork
      */
-    @Deprecated
     public RecipientListDefinition<Type> shareUnitOfWork() {
         setShareUnitOfWork(true);
         return this;
@@ -430,17 +428,14 @@ public class RecipientListDefinition<Type extends ProcessorDefinition> extends N
         this.onPrepare = onPrepare;
     }
 
-    @Deprecated
     public Boolean getShareUnitOfWork() {
         return shareUnitOfWork;
     }
 
-    @Deprecated
     public void setShareUnitOfWork(Boolean shareUnitOfWork) {
         this.shareUnitOfWork = shareUnitOfWork;
     }
 
-    @Deprecated
     public boolean isShareUnitOfWork() {
         return shareUnitOfWork != null && shareUnitOfWork;
     }
