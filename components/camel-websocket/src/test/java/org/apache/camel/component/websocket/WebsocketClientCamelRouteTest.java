@@ -27,13 +27,9 @@ import org.junit.Test;
 
 public class WebsocketClientCamelRouteTest extends CamelTestSupport {
 
-    private static URI uriWS;
-
     @Test
     public void testWSHttpCall() throws Exception {
-
-        uriWS = new URI("ws://127.0.0.1:9292/test");
-        WebSocketConnection webSocketConnection = new WebSocketConnection(uriWS);
+        WebSocketConnection webSocketConnection = new WebSocketConnection(new URI("ws://127.0.0.1:9292/test"));
 
         // Register Event Handlers
         webSocketConnection.setEventHandler(new WebSocketEventHandler() {
@@ -56,6 +52,9 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
 
         // Send Data
         webSocketConnection.send("Hello from WS Client");
+
+        // Close WebSocket Connection
+        webSocketConnection.close();
     }
 
     @Override
@@ -65,10 +64,9 @@ public class WebsocketClientCamelRouteTest extends CamelTestSupport {
                 from("websocket://test")
                     .log(">>> Message received from WebSocket Client : ${body}")
                     .loop(10)
-                        .setBody().constant(">> Welcome on board !")
+                        .setBody().constant(">> Welcome on board!")
                         .to("websocket://test");
             }
         };
     }
-
 }

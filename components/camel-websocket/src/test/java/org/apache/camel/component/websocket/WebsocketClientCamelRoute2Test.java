@@ -30,12 +30,11 @@ import org.junit.Test;
 
 public class WebsocketClientCamelRoute2Test extends CamelTestSupport {
 
-    private static URI uriWS;
-
     @Test
     public void testWSHttpCall() throws Exception {
-        uriWS = new URI("ws://127.0.0.1:9292/test");
-        WebSocketConnection webSocketConnection = new WebSocketConnection(uriWS);
+        getMockEndpoint("mock:websocket").expectedBodiesReceived(">> Welcome on board!");
+
+        WebSocketConnection webSocketConnection = new WebSocketConnection(new URI("ws://127.0.0.1:9292/test"));
 
         // Register Event Handlers
         webSocketConnection.setEventHandler(new WebSocketEventHandler() {
@@ -58,6 +57,11 @@ public class WebsocketClientCamelRoute2Test extends CamelTestSupport {
 
         // Send Data
         webSocketConnection.send("Hello from WS Client");
+
+        // Close WebSocket Connection
+        webSocketConnection.close();
+
+        getMockEndpoint("mock:websocket").assertIsSatisfied();
     }
 
     @Override
@@ -70,14 +74,11 @@ public class WebsocketClientCamelRoute2Test extends CamelTestSupport {
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
-                            String response = ">> welcome on board";
-                            exchange.getOut().setBody(response);
-                            exchange.getIn().setBody(response);
+                            exchange.getIn().setBody(">> Welcome on board!");
                         }
-                    });
+                    })
+                    .to("mock:websocket");
             }
         };
     }
-
-
 }
