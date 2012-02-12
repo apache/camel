@@ -42,6 +42,7 @@ public class UpdateItemCommand extends AbstractDdbCommand {
         addAttributesToResult(result.getAttributes());
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, AttributeValueUpdate> determineUpdateValues() {
         return exchange.getIn().getHeader(DdbConstants.UPDATE_VALUES, Map.class);
     }

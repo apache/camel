@@ -39,6 +39,7 @@ public class BatchGetItemsCommand extends AbstractDdbCommand {
         addToResult(DdbConstants.UNPROCESSED_KEYS, result.getUnprocessedKeys());
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, KeysAndAttributes> determineBatchItems() {
         return exchange.getIn().getHeader(DdbConstants.BATCH_ITEMS, Map.class);
     }

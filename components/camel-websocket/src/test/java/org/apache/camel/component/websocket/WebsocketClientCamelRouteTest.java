@@ -28,7 +28,6 @@ import org.junit.Test;
 public class WebsocketClientCamelRouteTest extends CamelTestSupport {
 
     private static URI uriWS;
-    private static WebSocketConnection webSocketConnection;
 
     @Test
     public void testWSHttpCall() throws Exception {

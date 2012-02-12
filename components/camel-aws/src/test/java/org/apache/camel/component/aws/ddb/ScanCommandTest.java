@@ -61,18 +61,12 @@ public class ScanCommandTest {
         command.execute();
 
         assertEquals(scanFilter, ddbClient.scanRequest.getScanFilter());
-        assertEquals(Integer.valueOf(10), exchange.getIn().getHeader(DdbConstants.SCANNED_COUNT,
-                Integer.class));
+        assertEquals(Integer.valueOf(10), exchange.getIn().getHeader(DdbConstants.SCANNED_COUNT, Integer.class));
         assertEquals(Integer.valueOf(1), exchange.getIn().getHeader(DdbConstants.COUNT, Integer.class));
-        assertEquals(Double.valueOf(1.0), exchange.getIn().getHeader(DdbConstants.CONSUMED_CAPACITY,
-                Double.class));
-        assertEquals(new Key(new AttributeValue("LAST_KEY")), exchange.getIn().getHeader(
-                DdbConstants.LAST_EVALUATED_KEY, Key.class));
+        assertEquals(Double.valueOf(1.0), exchange.getIn().getHeader(DdbConstants.CONSUMED_CAPACITY, Double.class));
+        assertEquals(new Key(new AttributeValue("LAST_KEY")), exchange.getIn().getHeader(DdbConstants.LAST_EVALUATED_KEY, Key.class));
 
-        Map<String, AttributeValue> items = (Map<String, AttributeValue>)exchange.getIn().getHeader(
-                DdbConstants.ITEMS, List.class).get(0);
-
+        Map<?, ?> items = (Map<?, ?>) exchange.getIn().getHeader(DdbConstants.ITEMS, List.class).get(0);
         assertEquals(new AttributeValue("attrValue"), items.get("attrName"));
-
     }
 }

@@ -546,8 +546,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
             // lookup and resolve known constant fields for String based properties
             for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                // the name is always a String
-                String name = (String) entry.getKey();
+                String name = entry.getKey();
                 Object value = entry.getValue();
                 if (value instanceof String) {
                     // we can only resolve String typed values

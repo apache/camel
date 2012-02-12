@@ -27,4 +27,8 @@ public final class DigitalSignatureConstants {
     public static final String SIGNATURE = "CamelDigitalSignature";
     public static final String KEYSTORE_ALIAS = "CamelSignatureKeyStoreAlias";
     public static final String KEYSTORE_PASSWORD = "CamelSignatureKeyStorePassword";
+
+    private DigitalSignatureConstants() {
+        // Utility class
+    }
 }

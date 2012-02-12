@@ -19,15 +19,13 @@ package org.apache.camel.component.aws.ddb;
 import java.util.Date;
 
 import com.amazonaws.services.dynamodb.model.KeySchema;
-import com.amazonaws.services.dynamodb.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodb.model.ProvisionedThroughputDescription;
-import com.amazonaws.services.dynamodb.model.TableDescription;
 import com.amazonaws.services.dynamodb.model.TableStatus;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.aws.sdb.AmazonSDBClientMock;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+
 import org.junit.Before;
 import org.junit.Test;
 

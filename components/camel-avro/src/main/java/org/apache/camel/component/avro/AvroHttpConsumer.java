@@ -44,9 +44,4 @@ public class AvroHttpConsumer extends AvroConsumer {
             server.close();
         }
     }
-
-    @Override
-    public AvroEndpoint getEndpoint() {
-        return (AvroEndpoint) super.getEndpoint();
-    }
 }

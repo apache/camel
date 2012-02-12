@@ -34,9 +34,7 @@ public class EchoCommandFactory implements CommandFactory {
 
     protected static class EchoCommand implements Command, Runnable {
         private String command;
-        private InputStream in;
         private OutputStream out;
-        private OutputStream err;
         private ExitCallback callback;
         private Thread thread;
 
@@ -46,7 +44,6 @@ public class EchoCommandFactory implements CommandFactory {
 
         @Override
         public void setInputStream(InputStream in) {
-            this.in = in;
         }
 
         @Override
@@ -56,7 +53,6 @@ public class EchoCommandFactory implements CommandFactory {
 
         @Override
         public void setErrorStream(OutputStream err) {
-            this.err = err;
         }
 
         @Override
@@ -77,13 +73,20 @@ public class EchoCommandFactory implements CommandFactory {
 
         @Override
         public void run() {
+            boolean succeeded = true;
+            String message = null;
             try {
                 out.write(command.getBytes());
                 out.flush();
             } catch (Exception e) {
-                e.printStackTrace();
+                succeeded = false;
+                message = e.toString();
             } finally {
-                callback.onExit(0);
+                if (succeeded) {
+                    callback.onExit(0);
+                } else {
+                    callback.onExit(1, message);
+                }
             }
         }
     }

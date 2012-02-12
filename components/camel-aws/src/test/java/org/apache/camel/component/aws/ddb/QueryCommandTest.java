@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.ddb;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +24,11 @@ import com.amazonaws.services.dynamodb.model.AttributeValue;
 import com.amazonaws.services.dynamodb.model.ComparisonOperator;
 import com.amazonaws.services.dynamodb.model.Condition;
 import com.amazonaws.services.dynamodb.model.Key;
-import com.amazonaws.services.dynamodb.model.QueryResult;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -73,12 +72,10 @@ public class QueryCommandTest {
         command.execute();
 
         assertEquals(Integer.valueOf(1), exchange.getIn().getHeader(DdbConstants.COUNT, Integer.class));
-        assertEquals(Double.valueOf(1.0), exchange.getIn().getHeader(DdbConstants.CONSUMED_CAPACITY,
-                Double.class));
-        assertEquals(new Key(new AttributeValue("LAST_KEY")), exchange.getIn().getHeader(
-                DdbConstants.LAST_EVALUATED_KEY, Key.class));
-        Map<String, AttributeValue> items = (Map<String, AttributeValue>)exchange.getIn().getHeader(
-                DdbConstants.ITEMS, List.class).get(0);
+        assertEquals(Double.valueOf(1.0), exchange.getIn().getHeader(DdbConstants.CONSUMED_CAPACITY, Double.class));
+        assertEquals(new Key(new AttributeValue("LAST_KEY")), exchange.getIn().getHeader(DdbConstants.LAST_EVALUATED_KEY, Key.class));
+
+        Map<?, ?> items = (Map<?, ?>) exchange.getIn().getHeader(DdbConstants.ITEMS, List.class).get(0);
         assertEquals(new AttributeValue("attrValue"), items.get("attrName"));
     }
 }

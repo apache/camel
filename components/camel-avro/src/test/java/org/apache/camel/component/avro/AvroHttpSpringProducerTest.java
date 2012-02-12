@@ -18,7 +18,6 @@
 package org.apache.camel.component.avro;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 
 import org.junit.After;
@@ -54,7 +53,7 @@ public class AvroHttpSpringProducerTest extends AvroHttpProducerTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return (ModelCamelContext) SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext);
     }
 
     @Override

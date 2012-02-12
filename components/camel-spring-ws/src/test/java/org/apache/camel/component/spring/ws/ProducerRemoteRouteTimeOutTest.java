@@ -69,7 +69,7 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
     @Test
     public void callStockQuoteWebserviceCommonsHttpWith5000MillSecondsTimeout() throws Exception {
         Object result = template.requestBody("direct:stockQuoteWebserviceCommonsHttpWith5000MillSecondsTimeout", xmlRequestForGoogleStockQuote);
-        
+
         assertNotNull(result);
         assertTrue(result instanceof String);
         String resultMessage = (String) result;
@@ -144,18 +144,15 @@ public class ProducerRemoteRouteTimeOutTest extends AbstractJUnit4SpringContextT
         CamelHttpsUrlConnectionMessageSender toMessageSender = new CamelHttpsUrlConnectionMessageSender(new SpringWebserviceConfiguration(), fromMessageSender);
 
         assertFalse("acceptGzipEncoding field didn't get populated properly!", toMessageSender.isAcceptGzipEncoding());
-        for (Field expectedField : fromMessageSender.getClass().getDeclaredFields()) {
-            if (Modifier.isStatic(expectedField.getModifiers())) {
+        for (Field field : fromMessageSender.getClass().getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
 
-            expectedField.setAccessible(true);
-            String fieldName = expectedField.getName();
+            field.setAccessible(true);
+            String fieldName = field.getName();
 
-            Field actualField = toMessageSender.getClass().getSuperclass().getDeclaredField(fieldName);
-            actualField.setAccessible(true);
-
-            assertSame("The field '" + fieldName + "' didn't get populated properly!", expectedField.get(fromMessageSender), actualField.get(toMessageSender));
+            assertSame("The field '" + fieldName + "' didn't get populated properly!", field.get(fromMessageSender), field.get(toMessageSender));
         }
     }
 

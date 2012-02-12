@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.xquery;
 
-import org.w3c.dom.Document;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;

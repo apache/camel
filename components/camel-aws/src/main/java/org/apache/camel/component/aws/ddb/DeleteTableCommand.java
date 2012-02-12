@@ -17,9 +17,7 @@
 package org.apache.camel.component.aws.ddb;
 
 import com.amazonaws.services.dynamodb.AmazonDynamoDB;
-import com.amazonaws.services.dynamodb.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodb.model.DeleteTableRequest;
-import com.amazonaws.services.dynamodb.model.DeleteTableResult;
 import com.amazonaws.services.dynamodb.model.TableDescription;
 
 import org.apache.camel.Exchange;

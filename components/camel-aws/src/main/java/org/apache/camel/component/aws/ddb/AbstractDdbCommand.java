@@ -26,8 +26,6 @@ import com.amazonaws.services.dynamodb.model.Key;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractDdbCommand {
     protected DdbConfiguration configuration;
@@ -59,10 +57,12 @@ public abstract class AbstractDdbCommand {
         return tableName != null ? tableName : configuration.getTableName();
     }
 
+    @SuppressWarnings("unchecked")
     protected Map<String, ExpectedAttributeValue> determineUpdateCondition() {
         return exchange.getIn().getHeader(DdbConstants.UPDATE_CONDITION, Map.class);
     }
 
+    @SuppressWarnings("unchecked")
     protected Map<String, AttributeValue> determineItem() {
         return exchange.getIn().getHeader(DdbConstants.ITEM, Map.class);
     }
@@ -85,6 +85,7 @@ public abstract class AbstractDdbCommand {
         return exchange.getIn().getHeader(DdbConstants.KEY, Key.class);
     }
 
+    @SuppressWarnings("unchecked")
     protected Collection<String> determineAttributeNames() {
         return exchange.getIn().getHeader(DdbConstants.ATTRIBUTE_NAMES, Collection.class);
     }

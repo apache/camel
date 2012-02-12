@@ -43,6 +43,7 @@ public class ScanCommand extends AbstractDdbCommand {
         addToResult(DdbConstants.SCANNED_COUNT, result.getScannedCount());
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Condition> determineScanFilter() {
         return exchange.getIn().getHeader(DdbConstants.SCAN_FILTER, Map.class);
     }

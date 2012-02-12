@@ -18,8 +18,7 @@ package org.apache.camel.component.ssh;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.sshd.common.KeyPairProvider;
-import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
+
 import org.junit.Test;
 
 public class SshComponentProducerTest extends SshComponentTestSupport {

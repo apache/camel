@@ -156,6 +156,7 @@ public class AmazonDDBClientMock extends AmazonDynamoDBClient {
         return new GetItemResult().withItem(getAttributes());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public BatchGetItemResult batchGetItem(BatchGetItemRequest batchGetItemRequest) {
         this.batchGetItemRequest = batchGetItemRequest;
@@ -171,6 +172,7 @@ public class AmazonDDBClientMock extends AmazonDynamoDBClient {
                 .withUnprocessedKeys(unprocessedKeys);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ScanResult scan(ScanRequest scanRequest) {
         this.scanRequest = scanRequest;
@@ -182,6 +184,7 @@ public class AmazonDDBClientMock extends AmazonDynamoDBClient {
                 .withLastEvaluatedKey(new Key(new AttributeValue("LAST_KEY")));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public QueryResult query(QueryRequest queryRequest) {
         this.queryRequest = queryRequest;
