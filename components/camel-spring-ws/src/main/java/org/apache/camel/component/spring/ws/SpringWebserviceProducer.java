@@ -99,8 +99,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
         Collections.addAll(webServiceMessageSenders, webServiceTemplate.getMessageSenders());
         for (WebServiceMessageSender webServiceMessageSender : webServiceMessageSenders) {
             if (webServiceMessageSender instanceof CommonsHttpMessageSender) {
-                CommonsHttpMessageSender commonsHttpMessageSender = (CommonsHttpMessageSender) webServiceMessageSender;
-                setTimeOut(commonsHttpMessageSender, configuration);
+                setTimeOut((CommonsHttpMessageSender) webServiceMessageSender, configuration);
             } else if (webServiceMessageSender instanceof HttpsUrlConnectionMessageSender) {
                 // Should check HttpsUrlConnectionMessageSender beforehand as it extends HttpUrlConnectionMessageSender
                 webServiceMessageSenders.remove(webServiceMessageSender);
