@@ -147,7 +147,7 @@ public class JmsProducer extends DefaultAsyncProducer {
         final ValueHolder<MessageSentCallback> sentCallback = new ValueHolder<MessageSentCallback>(messageSentCallback);
 
         final String originalCorrelationId = in.getHeader("JMSCorrelationID", String.class);
-        if (originalCorrelationId == null && !msgIdAsCorrId) {
+        if (ObjectHelper.isEmpty(originalCorrelationId) && !msgIdAsCorrId) {
             in.setHeader("JMSCorrelationID", getUuidGenerator().generateUuid());
         }
 
