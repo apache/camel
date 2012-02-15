@@ -109,7 +109,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         // instead we use the proxy endpoints producer do the triggering. That is we trigger when someone sends
         // an exchange to the endpoint, see InterceptSendToEndpoint for details.
         RouteDefinition route = routeContext.getRoute();
-        List<ProcessorDefinition> outputs = route.getOutputs();
+        List<ProcessorDefinition<?>> outputs = route.getOutputs();
         outputs.remove(this);
 
         return new InterceptEndpointProcessor(uri, detour);

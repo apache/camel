@@ -356,18 +356,16 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(text, uri, value.getUri());
     }
 
-    @SuppressWarnings("rawtypes")
     protected void assertChildTo(ProcessorDefinition<?> route, String... uris) {
-        List<ProcessorDefinition> list = assertListSize(route.getOutputs(), uris.length);
+        List<ProcessorDefinition<?>> list = assertListSize(route.getOutputs(), uris.length);
         int idx = 0;
         for (String uri : uris) {
             assertTo("output[" + idx + "] ", list.get(idx++), uri);
         }
     }
 
-    @SuppressWarnings("rawtypes")
     protected void assertChildTo(ProcessorDefinition<?> route, String uri, int toIdx) {
-        List<ProcessorDefinition> list = route.getOutputs();
+        List<ProcessorDefinition<?>> list = route.getOutputs();
         assertTo("to and idx=" + toIdx, list.get(toIdx), uri);
     }
 

@@ -593,13 +593,12 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         routeContext.setManagedInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
     }
 
-    @SuppressWarnings("rawtypes")
     private void registerPerformanceCounters(RouteContext routeContext, ProcessorDefinition<?> processor,
                                              Map<ProcessorDefinition<?>, PerformanceCounter> registeredCounters) {
 
         // traverse children if any exists
-        List<ProcessorDefinition> children = processor.getOutputs();
-        for (ProcessorDefinition child : children) {
+        List<ProcessorDefinition<?>> children = processor.getOutputs();
+        for (ProcessorDefinition<?> child : children) {
             registerPerformanceCounters(routeContext, child, registeredCounters);
         }
 

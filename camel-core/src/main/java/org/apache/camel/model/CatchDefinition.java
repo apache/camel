@@ -50,7 +50,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @XmlElement(name = "handled")
     private ExpressionSubElementDefinition handled;
     @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
     @XmlTransient
     private List<Class<? extends Throwable>> exceptionClasses;
     @XmlTransient
@@ -111,11 +111,12 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         return new CatchProcessor(exceptionClasses, childProcessor, when, handle);
     }
 
-    public List<ProcessorDefinition> getOutputs() {
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
     }
 

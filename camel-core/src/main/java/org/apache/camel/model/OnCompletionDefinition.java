@@ -58,7 +58,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     @XmlAttribute(name = "useOriginalMessage")
     private Boolean useOriginalMessagePolicy;
     @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
     @XmlTransient
     private ExecutorService executorService;
     @XmlTransient
@@ -149,10 +149,9 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      *
      * @param definition the parent definition that is the route
      */
-    @SuppressWarnings("unchecked")
-    public void removeAllOnCompletionDefinition(ProcessorDefinition definition) {
-        for (Iterator<ProcessorDefinition> it = definition.getOutputs().iterator(); it.hasNext();) {
-            ProcessorDefinition out = it.next();
+    public void removeAllOnCompletionDefinition(ProcessorDefinition<?> definition) {
+        for (Iterator<ProcessorDefinition<?>> it = definition.getOutputs().iterator(); it.hasNext();) {
+            ProcessorDefinition<?> out = it.next();
             if (out instanceof OnCompletionDefinition) {
                 it.remove();
             }
@@ -233,11 +232,11 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         return this;
     }
 
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
     }
 

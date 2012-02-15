@@ -89,7 +89,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     private Map<QName, Object> otherAttributes;
 
     // else to use an optional attribute in JAXB2
-    public abstract List<ProcessorDefinition> getOutputs();
+    public abstract List<ProcessorDefinition<?>> getOutputs();
 
     public abstract boolean isOutputSupported();
 
@@ -126,7 +126,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Prefer to use {#link #createChildProcessor}.
      */
     public Processor createOutputsProcessor(RouteContext routeContext) throws Exception {
-        Collection<ProcessorDefinition> outputs = getOutputs();
+        Collection<ProcessorDefinition<?>> outputs = getOutputs();
         return createOutputsProcessor(routeContext, outputs);
     }
 
@@ -155,7 +155,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return children;
     }
 
-    public void addOutput(ProcessorDefinition output) {
+    public void addOutput(ProcessorDefinition<?> output) {
         if (!blocks.isEmpty()) {
             // let the Block deal with the output
             Block block = blocks.getLast();
@@ -364,7 +364,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return new DefaultChannel();
     }
 
-    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition> outputs) throws Exception {
+    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorDefinition<?> output : outputs) {
 
@@ -972,7 +972,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             // set it on last output as this is what the user means to do
             // for Block(s) with non empty getOutputs() the id probably refers
             //  to the last definition in the current Block
-            List<ProcessorDefinition> outputs = getOutputs();
+            List<ProcessorDefinition<?>> outputs = getOutputs();
             if (!blocks.isEmpty()) {
                 if (blocks.getLast() instanceof ProcessorDefinition) {
                     ProcessorDefinition<?> block = (ProcessorDefinition<?>)blocks.getLast();

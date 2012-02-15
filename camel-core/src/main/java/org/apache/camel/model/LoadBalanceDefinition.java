@@ -70,7 +70,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     )
     private LoadBalancerDefinition loadBalancerType;
     @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
     public LoadBalanceDefinition() {
     }
@@ -80,11 +80,12 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         return "loadbalance";
     }
 
-    public List<ProcessorDefinition> getOutputs() {
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
         if (outputs != null) {
             for (ProcessorDefinition<?> output : outputs) {
@@ -117,7 +118,8 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     }
 
     protected Processor createOutputsProcessor(RouteContext routeContext,
-                                               Collection<ProcessorDefinition> outputs) throws Exception {
+        Collection<ProcessorDefinition<?>> outputs) throws Exception {
+
         LoadBalancer loadBalancer = LoadBalancerDefinition.getLoadBalancer(routeContext, loadBalancerType, ref);
         for (ProcessorDefinition<?> processorType : outputs) {
             Processor processor = processorType.createProcessor(routeContext);
@@ -295,8 +297,8 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     @Override
     public String getLabel() {
         CollectionStringBuffer buffer = new CollectionStringBuffer("loadBalance[");
-        List<ProcessorDefinition> list = getOutputs();
-        for (ProcessorDefinition processorType : list) {
+        List<ProcessorDefinition<?>> list = getOutputs();
+        for (ProcessorDefinition<?> processorType : list) {
             buffer.append(processorType.getLabel());
         }
         buffer.append("]");

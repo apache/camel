@@ -32,9 +32,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends ProcessorDefinition<Type> {
     @XmlElementRef
-    protected List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    protected List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
@@ -42,7 +42,7 @@ public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends Pr
         return true;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
         if (outputs != null) {
             for (ProcessorDefinition<?> output : outputs) {

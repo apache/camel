@@ -93,7 +93,7 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition> extends NoO
     }
 
     @Override
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
     }
 
