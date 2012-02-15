@@ -75,6 +75,26 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("Hello World", "Hello World");
     }
 
+    public void testEmptyExpression() throws Exception {
+        assertExpression("", "");
+        assertExpression(" ", "");
+        try {
+            assertExpression(null, null);
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expression must be specified", e.getMessage());
+        }
+
+        assertPredicate("", false);
+        assertPredicate(" ", false);
+        try {
+            assertPredicate(null, false);
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expression must be specified", e.getMessage());
+        }
+    }
+
     public void testBodyExpression() throws Exception {
         Expression exp = SimpleLanguage.simple("${body}");
         assertNotNull(exp);

@@ -21,6 +21,7 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Language;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A <a href="http://camel.apache.org/simple.html">simple language</a>
@@ -126,6 +127,8 @@ public class SimpleLanguage implements Language, IsSingleton {
     }
 
     public Predicate createPredicate(String expression) {
+        ObjectHelper.notNull(expression, "expression");
+
         // trim the expression first
         expression = expression.trim();
         // support old simple language syntax
@@ -140,6 +143,8 @@ public class SimpleLanguage implements Language, IsSingleton {
     }
 
     public Expression createExpression(String expression) {
+        ObjectHelper.notNull(expression, "expression");
+
         // trim the expression first
         expression = expression.trim();
         // support old simple language syntax

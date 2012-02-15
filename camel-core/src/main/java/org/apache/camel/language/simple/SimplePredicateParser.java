@@ -112,7 +112,8 @@ public class SimplePredicateParser extends BaseSimpleParser {
         // create and return as a Camel predicate
         List<Predicate> predicates = createPredicates();
         if (predicates.isEmpty()) {
-            return null;
+            // return a false predicate as response as there was nothing to parse
+            return PredicateBuilder.constant(false);
         } else if (predicates.size() == 1) {
             return predicates.get(0);
         } else {
