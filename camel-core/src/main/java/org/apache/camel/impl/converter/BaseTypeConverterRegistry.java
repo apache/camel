@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.camel.CamelExecutionException;
@@ -52,8 +53,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
-    protected final ConcurrentHashMap<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
-    protected final Map<TypeMapping, TypeMapping> misses = new ConcurrentHashMap<TypeMapping, TypeMapping>();
+    protected final ConcurrentMap<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
+    protected final ConcurrentMap<TypeMapping, TypeMapping> misses = new ConcurrentHashMap<TypeMapping, TypeMapping>();
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
     protected final List<FallbackTypeConverter> fallbackConverters = new ArrayList<FallbackTypeConverter>();
     protected final PackageScanClassResolver resolver;
