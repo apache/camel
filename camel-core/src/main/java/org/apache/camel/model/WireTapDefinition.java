@@ -42,7 +42,7 @@ import org.apache.camel.util.CamelContextHelper;
  */
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutputDefinition implements ExecutorServiceAwareDefinition<ProcessorDefinition> {
+public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> implements ExecutorServiceAwareDefinition<WireTapDefinition<Type>> {
     @XmlAttribute
     protected String uri;
     @XmlAttribute
@@ -145,7 +145,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition> extends NoOutpu
     }
 
     @Override
-    public void addOutput(ProcessorDefinition output) {
+    public void addOutput(ProcessorDefinition<?> output) {
         // add outputs on parent as this wiretap does not support outputs
         getParent().addOutput(output);
     }

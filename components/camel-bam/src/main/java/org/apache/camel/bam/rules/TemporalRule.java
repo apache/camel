@@ -50,6 +50,8 @@ public class TemporalRule extends ServiceSupport {
     private long expectedMillis;
     private long overdueMillis;
     private Processor overdueAction;
+
+    @SuppressWarnings("rawtypes")
     private OutputDefinition<?> overdueProcessors = new OutputDefinition();
 
     public TemporalRule(TimeExpression first, TimeExpression second) {

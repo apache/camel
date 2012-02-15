@@ -77,7 +77,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition implements Block {
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected Boolean inheritErrorHandler;
     private NodeFactory nodeFactory;
@@ -155,6 +155,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return children;
     }
 
+    @Override
     public void addOutput(ProcessorDefinition<?> output) {
         if (!blocks.isEmpty()) {
             // let the Block deal with the output
@@ -1539,7 +1540,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, String uriDelimiter) {
-        RoutingSlipDefinition answer = new RoutingSlipDefinition(header, uriDelimiter);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header, uriDelimiter);
         addOutput(answer);
         return (Type) this;
     }
@@ -1561,7 +1562,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header) {
-        RoutingSlipDefinition answer = new RoutingSlipDefinition(header);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header);
         addOutput(answer);
         return (Type) this;
     }
@@ -1585,7 +1586,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, String uriDelimiter, boolean ignoreInvalidEndpoints) {
-        RoutingSlipDefinition answer = new RoutingSlipDefinition(header, uriDelimiter);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header, uriDelimiter);
         answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
         addOutput(answer);
         return (Type) this;
@@ -1610,7 +1611,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, boolean ignoreInvalidEndpoints) {
-        RoutingSlipDefinition answer = new RoutingSlipDefinition(header);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header);
         answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
         addOutput(answer);
         return (Type) this;

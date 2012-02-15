@@ -23,7 +23,7 @@ import org.apache.camel.model.RouteDefinition;
 /**
  * A builder when using the <a href="http://camel.apache.org/advicewith.html">advice with</a> feature.
  */
-public class AdviceWithBuilder<T extends ProcessorDefinition> {
+public class AdviceWithBuilder<T extends ProcessorDefinition<?>> {
 
     private final AdviceWithRouteBuilder builder;
     private final String id;
