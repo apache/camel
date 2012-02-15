@@ -67,7 +67,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
 
         public void setExcludedClasses(Set<Class<?>> excludedClasses) {
             if (excludedClasses == null) {
-                excludedClasses = CastUtils.cast(Collections.emptySet());
+                excludedClasses = Collections.emptySet();
             }
             addFilter(new InvertingPackageScanFilter(new AssignableToPackageScanFilter(excludedClasses)));
         }

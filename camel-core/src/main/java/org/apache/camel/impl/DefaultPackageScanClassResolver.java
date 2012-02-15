@@ -124,7 +124,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
 
     public Set<Class<?>> findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
         if (packageNames == null) {
-            return Collections.<Class<?>>emptySet();
+            return Collections.emptySet();
         }
 
         if (log.isDebugEnabled()) {
@@ -144,7 +144,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
 
     public Set<Class<?>> findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames) {
         if (packageNames == null) {
-            return Collections.<Class<?>>emptySet();
+            return Collections.emptySet();
         }
 
         if (log.isDebugEnabled()) {
