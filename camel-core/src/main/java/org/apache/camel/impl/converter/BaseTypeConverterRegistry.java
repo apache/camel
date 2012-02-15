@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
-    protected final Map<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
+    protected final ConcurrentHashMap<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
     protected final Map<TypeMapping, TypeMapping> misses = new ConcurrentHashMap<TypeMapping, TypeMapping>();
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
     protected final List<FallbackTypeConverter> fallbackConverters = new ArrayList<FallbackTypeConverter>();
@@ -237,18 +237,16 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         log.trace("Adding type converter: {}", typeConverter);
         TypeMapping key = new TypeMapping(toType, fromType);
-        synchronized (typeMappings) {
-            TypeConverter converter = typeMappings.get(key);
-            // only override it if its different
-            // as race conditions can lead to many threads trying to promote the same fallback converter
-            if (typeConverter != converter) {
-                if (converter != null) {
-                    log.warn("Overriding type converter from: " + converter + " to: " + typeConverter);
-                }
-                typeMappings.put(key, typeConverter);
-                // remove any previous misses, as we added the new type converter
-                misses.remove(key);
+        TypeConverter converter = typeMappings.get(key);
+        // only override it if its different
+        // as race conditions can lead to many threads trying to promote the same fallback converter
+        if (typeConverter != converter) {
+            if (converter != null) {
+                log.warn("Overriding type converter from: " + converter + " to: " + typeConverter);
             }
+            typeMappings.put(key, typeConverter);
+            // remove any previous misses, as we added the new type converter
+            misses.remove(key);
         }
     }
 
@@ -281,22 +279,18 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
     public Set<Class<?>> getFromClassMappings() {
         Set<Class<?>> answer = new HashSet<Class<?>>();
-        synchronized (typeMappings) {
-            for (TypeMapping mapping : typeMappings.keySet()) {
-                answer.add(mapping.getFromType());
-            }
+        for (TypeMapping mapping : typeMappings.keySet()) {
+            answer.add(mapping.getFromType());
         }
         return answer;
     }
 
     public Map<Class<?>, TypeConverter> getToClassMappings(Class<?> fromClass) {
         Map<Class<?>, TypeConverter> answer = new HashMap<Class<?>, TypeConverter>();
-        synchronized (typeMappings) {
-            for (Map.Entry<TypeMapping, TypeConverter> entry : typeMappings.entrySet()) {
-                TypeMapping mapping = entry.getKey();
-                if (mapping.isApplicable(fromClass)) {
-                    answer.put(mapping.getToType(), entry.getValue());
-                }
+        for (Map.Entry<TypeMapping, TypeConverter> entry : typeMappings.entrySet()) {
+            TypeMapping mapping = entry.getKey();
+            if (mapping.isApplicable(fromClass)) {
+                answer.put(mapping.getToType(), entry.getValue());
             }
         }
         return answer;
@@ -312,14 +306,12 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             fromType = value.getClass();
         }
         TypeMapping key = new TypeMapping(toType, fromType);
-        TypeConverter converter;
-        synchronized (typeMappings) {
-            converter = typeMappings.get(key);
-            if (converter == null) {
-                converter = lookup(toType, fromType);
-                if (converter != null) {
-                    typeMappings.put(key, converter);
-                }
+        TypeConverter converter = typeMappings.get(key);
+        if (converter == null) {
+            // converter not found, try to lookup then
+            converter = lookup(toType, fromType);
+            if (converter != null) {
+                typeMappings.putIfAbsent(key, converter);
             }
         }
         return converter;
