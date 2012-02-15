@@ -441,4 +441,24 @@ public final class PredicateBuilder {
         }
         return answer;
     }
+
+    /**
+     * A constant predicate.
+     *
+     * @param answer the constant matches
+     * @return a predicate that always returns the given answer.
+     */
+    public static Predicate constant(final boolean answer) {
+        return new Predicate() {
+            @Override
+            public boolean matches(Exchange exchange) {
+                return answer;
+            }
+
+            @Override
+            public String toString() {
+                return "" + answer;
+            }
+        };
+    }
 }
