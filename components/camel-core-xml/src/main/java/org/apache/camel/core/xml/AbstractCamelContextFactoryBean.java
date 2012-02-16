@@ -499,6 +499,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getManagementNamePattern();
 
+    /**
+     * @deprecated this option is no longer supported, will be removed in a future Camel release.
+     */
+    @Deprecated
     public abstract Boolean getLazyLoadTypeConverters();
 
     public abstract CamelJMXAgentDefinition getCamelJMXAgent();

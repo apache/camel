@@ -100,6 +100,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute(required = false)
     private ShutdownRunningTask shutdownRunningTask;
     @XmlAttribute(required = false)
+    @Deprecated
     private Boolean lazyLoadTypeConverters = Boolean.FALSE;
     @XmlElement(name = "properties", required = false)
     private PropertiesDefinition properties;
@@ -317,10 +318,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.managementNamePattern = managementNamePattern;
     }
 
+    @Deprecated
     public Boolean getLazyLoadTypeConverters() {
         return lazyLoadTypeConverters;
     }
 
+    @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
     }

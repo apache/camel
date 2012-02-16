@@ -1040,14 +1040,18 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Whether or not type converters should be loaded lazy
      *
      * @return <tt>true</tt> to load lazy, <tt>false</tt> to load on startup
+     * @deprecated this option is no longer supported, will be removed in a future Camel release.
      */
+    @Deprecated
     Boolean isLazyLoadTypeConverters();
 
     /**
      * Sets whether type converters should be loaded lazy
      *
      * @param lazyLoadTypeConverters <tt>true</tt> to load lazy, <tt>false</tt> to load on startup
+     * @deprecated this option is no longer supported, will be removed in a future Camel release.
      */
+    @Deprecated
     void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters);
 
     /**

@@ -2298,11 +2298,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public Boolean isAutoStartup() {
         return autoStartup != null && autoStartup;
     }
-    
+
+    @Deprecated
     public Boolean isLazyLoadTypeConverters() {
         return lazyLoadTypeConverters != null && lazyLoadTypeConverters;
     }
-    
+
+    @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
     }
