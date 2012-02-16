@@ -100,28 +100,28 @@ public class JmsRequestReplyCorrelationTest extends CamelTestSupport {
      * to contain the correlation id dynamically generated on send.
      */
      
-     @Test
-     public void testRequestReplyCorrelationWithEmptyString() throws Exception {
-         MockEndpoint result = getMockEndpoint("mock:result");
-         result.expectedMessageCount(1);
+    @Test
+    public void testRequestReplyCorrelationWithEmptyString() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
 
-         Exchange out = template.send("jms:queue:hello", ExchangePattern.InOut, new Processor() {
-             public void process(Exchange exchange) throws Exception {
-                 Message in = exchange.getIn();
-                 in.setBody("Hello World");
-                 in.setHeader("JMSCorrelationID", "");
-             }
-         });
+        Exchange out = template.send("jms:queue:hello", ExchangePattern.InOut, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                Message in = exchange.getIn();
+                in.setBody("Hello World");
+                in.setHeader("JMSCorrelationID", "");
+            }
+        });
 
-         assertNotNull(out);
-         result.assertIsSatisfied();
+        assertNotNull(out);
+        result.assertIsSatisfied();
      
-         assertEquals(REPLY_BODY, out.getOut().getBody(String.class));
-         String correlationId = out.getOut().getHeader("JMSCorrelationID", String.class);
-         assertNotNull(correlationId);
-         // In ActiveMQ messageIds start with ID: (currently) so the ID should not be generated from AMQ
-         assertFalse("CorrelationID should NOT start with ID, was: " + correlationId, correlationId.startsWith("ID:"));
-     }
+        assertEquals(REPLY_BODY, out.getOut().getBody(String.class));
+        String correlationId = out.getOut().getHeader("JMSCorrelationID", String.class);
+        assertNotNull(correlationId);
+        // In ActiveMQ messageIds start with ID: (currently) so the ID should not be generated from AMQ
+        assertFalse("CorrelationID should NOT start with ID, was: " + correlationId, correlationId.startsWith("ID:"));
+    }
     
     
     /**
