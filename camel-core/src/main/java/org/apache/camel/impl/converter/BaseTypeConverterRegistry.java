@@ -389,19 +389,12 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // load all the type converters from camel-core
         CoreTypeConverterLoader core = new CoreTypeConverterLoader();
         core.load(this);
-
-        int delta = typeMappings.size() - before;
-        log.info("Loaded {} core type converters (total {} type converters)" , delta, typeMappings.size());
     }
 
     /**
      * Checks if the registry is loaded and if not lazily load it
      */
     protected void loadTypeConverters() throws Exception {
-        StopWatch watch = new StopWatch();
-        int before = typeMappings.size();
-
-        log.debug("Loading additional type converters ...");
         for (TypeConverterLoader typeConverterLoader : getTypeConverterLoaders()) {
             typeConverterLoader.load(this);
         }
@@ -411,14 +404,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             loadFallbackTypeConverters();
         } catch (NoFactoryAvailableException e) {
             // ignore its fine to have none
-        }
-        log.debug("Loading additional type converters done");
-
-        // report how long time it took to load
-        int delta = typeMappings.size() - before;
-        if (log.isInfoEnabled()) {
-            log.info("Loaded additional " + delta + " type converters (total " + typeMappings.size()
-                    + " type converters) in " + TimeUtils.printDuration(watch.stop()));
         }
     }
 
