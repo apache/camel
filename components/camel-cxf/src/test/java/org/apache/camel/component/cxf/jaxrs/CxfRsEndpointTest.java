@@ -54,5 +54,20 @@ public class CxfRsEndpointTest extends CamelTestSupport {
         assertNotNull("The Parameter should not be null" + endpoint.getParameters());
         assertEquals("Get a wrong parameter map", "{q1=11, q2=12}", endpoint.getParameters().toString());
     }
+    
+    @Test
+    public void testCxfRsEndpointResourceClass() throws Exception {
+        String endpointUri = "cxfrs://http://localhost:" + CTX + ""
+            + "?resourceClass=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
+            
+        CxfRsComponent component = new CxfRsComponent(context);
+        CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint(endpointUri);
+        
+        assertNotNull("The endpoint should not be null ", endpoint);
+        assertEquals("Get a wrong address ", endpointUri, endpoint.getEndpointUri());
+        assertEquals("Get a wrong size of resouces classes", 1, endpoint.getResourceClasses().size());
+        assertEquals("Get a wrong resources class", CustomerService.class, endpoint.getResourceClasses().get(0));
+        
+    }
 
 }
