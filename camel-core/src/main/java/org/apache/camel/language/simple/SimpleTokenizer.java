@@ -16,9 +16,7 @@
  */
 package org.apache.camel.language.simple;
 
-import java.awt.font.NumericShaper;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.language.simple.types.SimpleToken;
