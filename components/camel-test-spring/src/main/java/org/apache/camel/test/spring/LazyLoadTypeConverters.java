@@ -31,11 +31,12 @@ import java.lang.annotation.Target;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
+@Deprecated
 public @interface LazyLoadTypeConverters {
     
     /**
      * Whether the test annotated with this annotation should be run with lazy type converter loading in Camel.
      * Defaults to {@code true}. 
      */
-    boolean value() default true;
+    boolean value() default false;
 }
