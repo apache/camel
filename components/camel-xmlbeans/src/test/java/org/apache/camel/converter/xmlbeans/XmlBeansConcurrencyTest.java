@@ -29,6 +29,12 @@ import org.junit.Test;
  */
 public class XmlBeansConcurrencyTest extends CamelTestSupport {
 
+    @Override
+    protected boolean isLazyLoadingTypeConverter() {
+        // load type converters before testing
+        return false;
+    }
+
     @Test
     public void testNoConcurrentProducers() throws Exception {
         doSendMessages(1, 1);
