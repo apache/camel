@@ -226,6 +226,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public void setResourceClasses(Class<?>... classes) {
         setResourceClasses(Arrays.asList(classes));
     }
+    
+    public void setResourceClass(Class<?> clazz) {
+        setResourceClasses(clazz);
+    }
 
     public void setAddress(String address) {
         this.address = address;
