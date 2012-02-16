@@ -109,6 +109,7 @@
     <module>camel-mail</module>
     <module>camel-mina</module>
     <module>camel-mina2</module>
+    <module>camel-mongodb</module>
     <module>camel-msv</module>
     <module>camel-mvel</module>
     <module>camel-mybatis</module>
