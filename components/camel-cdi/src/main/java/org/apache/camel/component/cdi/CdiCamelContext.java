@@ -16,32 +16,21 @@
  */
 package org.apache.camel.component.cdi;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Named;
-
 /**
  * CDI Camel Context class
- * Register the CDIBeasnManager to lookup CDI Beans
- * Can be used to produce a SimpleDefaultContext
+ * Register the CDI BeanManager to lookup CDI Beans
  */
 public class CdiCamelContext extends DefaultCamelContext {
 
     private final Registry registry;
-    private final CamelContext context;
 
     public CdiCamelContext() {
         this.registry = new CdiBeanRegistry();
-        this.context = new DefaultCamelContext(registry);
-
+        super.setRegistry(registry);
     }
 
-    @Named("simpleContext") @Produces
-    public DefaultCamelContext createContext() throws Exception {
-        return (DefaultCamelContext) context;
-    }
 
 }
