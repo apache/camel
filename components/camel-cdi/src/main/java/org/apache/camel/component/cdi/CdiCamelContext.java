@@ -17,7 +17,6 @@
 package org.apache.camel.component.cdi;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.Registry;
 
 /**
  * CDI Camel Context class
@@ -25,11 +24,8 @@ import org.apache.camel.spi.Registry;
  */
 public class CdiCamelContext extends DefaultCamelContext {
 
-    private final Registry registry;
-
     public CdiCamelContext() {
-        this.registry = new CdiBeanRegistry();
-        super.setRegistry(registry);
+        super.setRegistry(new CdiBeanRegistry());
     }
 
 
