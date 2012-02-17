@@ -54,9 +54,9 @@
 			<artifactId>camel-core</artifactId>
 		</dependency>
         <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.netty</artifactId>
-            <version>${netty-bundle-version}</version>
+            <groupId>io.netty</groupId>
+            <artifactId>netty</artifactId>
+            <version>${netty-version}</version>
         </dependency>
 
 		<!-- testing -->

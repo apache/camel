@@ -516,7 +516,7 @@
   </feature>
   <feature name='camel-netty' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.netty/${netty-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty/${netty-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-netty/${project.version}</bundle>
   </feature>      
   <feature name='camel-ognl' version='${project.version}' resolver='(obr)' start-level='50'>
