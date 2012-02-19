@@ -22,7 +22,6 @@ import java.util.zip.Inflater;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -63,33 +62,25 @@ public class ZipDataFormatTest extends ContextTestSupport {
         }
     }
 
-    private void sendText() throws Exception {
-        template.send("direct:start", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // Set the property of the charset encoding
-                exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
-                Message in = exchange.getIn();
-                in.setBody(TEXT);
-            }
-            
-        });       
-    }
-
     public void testMarshalTextToZipBestCompression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").marshal().zip(Deflater.BEST_COMPRESSION).process(new ZippedMessageProcessor());
+                from("direct:start")
+                    .marshal().zip(Deflater.BEST_COMPRESSION)
+                    .process(new ZippedMessageProcessor());
             }
         });
         context.start();
 
         sendText();
     }
-    
+
     public void testMarshalTextToZipBestSpeed() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").marshal().zip(Deflater.BEST_SPEED).process(new ZippedMessageProcessor());
+                from("direct:start")
+                    .marshal().zip(Deflater.BEST_SPEED)
+                    .process(new ZippedMessageProcessor());
             }
         });
         context.start();
@@ -101,18 +92,23 @@ public class ZipDataFormatTest extends ContextTestSupport {
     public void testMarshalTextToZipDefaultCompression() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").marshal().zip(Deflater.DEFAULT_COMPRESSION).process(new ZippedMessageProcessor());
+                from("direct:start")
+                    .marshal().zip(Deflater.DEFAULT_COMPRESSION)
+                    .process(new ZippedMessageProcessor());
             }
         });
         context.start();
 
         sendText();
     }
-    
+
     public void testUnMarshalTextToZip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:start").marshal().zip().unmarshal().zip().to("mock:result");
+                from("direct:start")
+                    .marshal().zip()
+                    .unmarshal().zip()
+                    .to("mock:result");
             }
         });
         context.start();
@@ -121,8 +117,12 @@ public class ZipDataFormatTest extends ContextTestSupport {
         result.expectedBodiesReceived(TEXT);
         sendText();
         result.assertIsSatisfied();
-    }    
-    
+    }
+
+    private void sendText() throws Exception {
+        template.sendBodyAndProperty("direct:start", TEXT, Exchange.CHARSET_NAME, "UTF-8");
+    }
+
     private static class ZippedMessageProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
@@ -147,5 +147,4 @@ public class ZipDataFormatTest extends ContextTestSupport {
             assertEquals(TEXT, result);
         }
     }    
-  
 }
