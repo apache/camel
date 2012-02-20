@@ -88,9 +88,8 @@ public class CryptoDataFormatTest extends CamelTestSupport {
         assertTrue(!ex.getIn().getHeaders().containsKey(CryptoDataFormat.KEY) || "".equals(header) || header == null);
     }
 
-    @SuppressWarnings("unchecked")
     private void doRoundTripEncryptionTests(String endpointUri) throws Exception, InterruptedException, InvalidPayloadException {
-        doRoundTripEncryptionTests(endpointUri, Collections.EMPTY_MAP);
+        doRoundTripEncryptionTests(endpointUri, Collections.<String, Object>emptyMap());
     }
 
     private void doRoundTripEncryptionTests(String endpoint, Map<String, Object> headers) throws Exception, InterruptedException, InvalidPayloadException {

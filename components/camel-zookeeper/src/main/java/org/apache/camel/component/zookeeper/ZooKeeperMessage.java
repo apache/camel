@@ -43,9 +43,8 @@ public class ZooKeeperMessage extends DefaultMessage {
 
     public static final String ZOOKEEPER_STATISTICS = "CamelZookeeperStatistics";
 
-    @SuppressWarnings("unchecked")
     public ZooKeeperMessage(String node, Stat statistics) {
-        this(node, statistics, Collections.EMPTY_MAP);
+        this(node, statistics, Collections.<String, Object>emptyMap());
     }
 
     public ZooKeeperMessage(String node, Stat statistics, Map<String, Object> headers) {

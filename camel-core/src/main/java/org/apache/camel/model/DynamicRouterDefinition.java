@@ -65,7 +65,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     @Override
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return Collections.emptyList();
     }
 

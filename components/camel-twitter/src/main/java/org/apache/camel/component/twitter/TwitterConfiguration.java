@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.twitter;
 
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
+import twitter4j.TwitterStream;
+import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -31,11 +35,13 @@ public class TwitterConfiguration {
     private String type;
     private String locations;
     private String userIds;
+    private Twitter twitter;
+    private TwitterStream twitterStream;
 
     public void checkComplete() {
-        if (consumerKey.isEmpty() || consumerSecret.isEmpty() || accessToken.isEmpty()
-            || accessTokenSecret.isEmpty()) {
-            throw new IllegalArgumentException("consumerKey, consumerSecret, accessToken, and accessTokenSecret must be set!");
+        if (twitter == null && twitterStream == null
+                && (consumerKey.isEmpty() || consumerSecret.isEmpty() || accessToken.isEmpty() || accessTokenSecret.isEmpty())) {
+            throw new IllegalArgumentException("twitter or twitterStream or all of consumerKey, consumerSecret, accessToken, and accessTokenSecret must be set!");
         }
     }
 
@@ -127,4 +133,33 @@ public class TwitterConfiguration {
     public void setUserIds(String userIds) {
         this.userIds = userIds;
     }
+
+    public Twitter getTwitter() {
+        return twitter;
+    }
+
+    public void setTwitter(Twitter twitter) {
+        this.twitter = twitter;
+    }
+
+    public TwitterStream getTwitterStream() {
+        return twitterStream;
+    }
+
+    public void setTwitterStream(TwitterStream twitterStream) {
+        this.twitterStream = twitterStream;
+    }
+
+    public Twitter getTwitterInstance() {
+        checkComplete();
+        return getTwitter() != null ? getTwitter() : new TwitterFactory(getConfiguration()).getInstance();
+    }
+
+    public TwitterStream getTwitterStreamInstance() {
+        checkComplete();
+        return getTwitterStream() != null ? getTwitterStream() : new TwitterStreamFactory(getConfiguration()).getInstance();
+    }
 }
+
+
+

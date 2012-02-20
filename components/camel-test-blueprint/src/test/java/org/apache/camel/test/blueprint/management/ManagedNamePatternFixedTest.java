@@ -16,10 +16,6 @@
  */
 package org.apache.camel.test.blueprint.management;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -29,8 +25,8 @@ import org.junit.Test;
 public class ManagedNamePatternFixedTest extends CamelBlueprintTestSupport {
 
     @Override
-    protected Collection<URL> getBlueprintDescriptors() {
-        return Collections.singleton(getClass().getResource("managedNamePatternFixedTest.xml"));
+    protected String getBlueprintDescriptor() {
+        return "org/apache/camel/test/blueprint/management/managedNamePatternFixedTest.xml";
     }
 
     @Test

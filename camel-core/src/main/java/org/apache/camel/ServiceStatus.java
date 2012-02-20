@@ -46,8 +46,16 @@ public enum ServiceStatus implements Serializable {
         return this == Started;
     }
 
+    public boolean isStopping() {
+        return this == Stopping;
+    }
+
     public boolean isStopped() {
         return this == Stopped;
+    }
+
+    public boolean isSuspending() {
+        return this == Suspending;
     }
 
     public boolean isSuspended() {

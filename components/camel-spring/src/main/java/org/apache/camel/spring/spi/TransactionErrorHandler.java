@@ -19,12 +19,14 @@ package org.apache.camel.spring.spi;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.CamelLogger;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -41,6 +43,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
     private final TransactionTemplate transactionTemplate;
     private final String transactionKey;
+    private final LoggingLevel rollbackLoggingLevel;
 
     /**
      * Creates the transaction error handler.
@@ -54,14 +57,17 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param transactionTemplate     the transaction template
      * @param retryWhile              retry while
      * @param executorServiceRef      reference to a {@link java.util.concurrent.ScheduledExecutorService} to be used for redelivery thread pool. Can be <tt>null</tt>.
+     * @param rollbackLoggingLevel    logging level to use for logging transaction rollback occurred
      */
     public TransactionErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger, 
             Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy,
-            TransactionTemplate transactionTemplate, Predicate retryWhile, String executorServiceRef) {
+            TransactionTemplate transactionTemplate, Predicate retryWhile, String executorServiceRef,
+            LoggingLevel rollbackLoggingLevel) {
 
         super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, false, retryWhile, executorServiceRef);
         setExceptionPolicy(exceptionPolicyStrategy);
         this.transactionTemplate = transactionTemplate;
+        this.rollbackLoggingLevel = rollbackLoggingLevel;
         this.transactionKey = ObjectHelper.getIdentityHashCode(transactionTemplate);
     }
 
@@ -111,21 +117,26 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     }
 
     protected void processInTransaction(final Exchange exchange) throws Exception {
+        // is the exchange redelivered, for example JMS brokers support such details
+        Boolean externalRedelivered = exchange.isExternalRedelivered();
+        final String redelivered = externalRedelivered != null ? externalRedelivered.toString() : "unknown";
+        final String ids = ExchangeHelper.logIds(exchange);
+
         try {
             // mark the beginning of this transaction boundary
             exchange.getUnitOfWork().beginTransactedBy(transactionKey);
 
-            log.debug("Transaction begin ({}) for ExchangeId: {}", transactionKey, exchange.getExchangeId());
-
+            // do in transaction
+            logTransactionBegin(redelivered, ids);
             doInTransactionTemplate(exchange);
+            logTransactionCommit(redelivered, ids);
 
-            log.debug("Transaction commit ({}) for ExchangeId: {}", transactionKey, exchange.getExchangeId());
         } catch (TransactionRollbackException e) {
-            // ignore as its just a dummy exception to force spring TX to rollback
-            log.debug("Transaction rollback ({}) for ExchangeId: {} due exchange was marked for rollbackOnly", transactionKey, exchange.getExchangeId());
+            // do not set as exception, as its just a dummy exception to force spring TX to rollback
+            logTransactionRollback(redelivered, ids, null, true);
         } catch (Throwable e) {
-            log.warn("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId() + " due exception: " + e.getMessage());
             exchange.setException(e);
+            logTransactionRollback(redelivered, ids, e, false);
         } finally {
             // mark the end of this transaction boundary
             exchange.getUnitOfWork().endTransactedBy(transactionKey);
@@ -134,15 +145,16 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         // if it was a local rollback only then remove its marker so outer transaction wont see the marker
         Boolean onlyLast = (Boolean) exchange.removeProperty(Exchange.ROLLBACK_ONLY_LAST);
         if (onlyLast != null && onlyLast) {
+            // we only want this logged at debug level
             if (log.isDebugEnabled()) {
-                // log exception if there was a cause exception so we have the stacktrace
+                // log exception if there was a cause exception so we have the stack trace
                 Exception cause = exchange.getException();
                 if (cause != null) {
-                    log.debug("Transaction rollback (" + transactionKey + ") for ExchangeId: " + exchange.getExchangeId()
-                        + " due exchange was marked for rollbackOnlyLast and due exception: ", cause);
+                    log.debug("Transaction rollback (" + transactionKey + ") redelivered(" + redelivered + ") for "
+                        + ids + " due exchange was marked for rollbackOnlyLast and caught: ", cause);
                 } else {
-                    log.debug("Transaction rollback ({}) for ExchangeId: {} due exchange was marked for rollbackOnlyLast",
-                            transactionKey, exchange.getExchangeId());
+                    log.debug("Transaction rollback ({}) redelivered({}) for {} "
+                            + "due exchange was marked for rollbackOnlyLast", new Object[]{transactionKey, redelivered, ids});
                 }
             }
             // remove caused exception due we was marked as rollback only last
@@ -208,6 +220,72 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
                 // noop
             }
         });
+    }
+
+    /**
+     * Logs the transaction begin
+     */
+    private void logTransactionBegin(String redelivered, String ids) {
+        if (log.isDebugEnabled()) {
+            log.debug("Transaction begin ({}) redelivered({}) for {})", new Object[]{transactionKey, redelivered, ids});
+        }
+    }
+
+    /**
+     * Logs the transaction commit
+     */
+    private void logTransactionCommit(String redelivered, String ids) {
+        if ("true".equals(redelivered)) {
+            // okay its a redelivered message so log at INFO level if rollbackLoggingLevel is INFO or higher
+            // this allows people to know that the redelivered message was committed this time
+            if (rollbackLoggingLevel == LoggingLevel.INFO || rollbackLoggingLevel == LoggingLevel.WARN || rollbackLoggingLevel == LoggingLevel.ERROR) {
+                log.info("Transaction commit ({}) redelivered({}) for {})", new Object[]{transactionKey, redelivered, ids});
+                // return after we have logged
+                return;
+            }
+        }
+
+        // log non redelivered by default at DEBUG level
+        log.debug("Transaction commit ({}) redelivered({}) for {})", new Object[]{transactionKey, redelivered, ids});
+    }
+
+    /**
+     * Logs the transaction rollback.
+     */
+    private void logTransactionRollback(String redelivered, String ids, Throwable e, boolean rollbackOnly) {
+        if (rollbackLoggingLevel == LoggingLevel.OFF) {
+            return;
+        } else if (rollbackLoggingLevel == LoggingLevel.ERROR && log.isErrorEnabled()) {
+            if (rollbackOnly) {
+                log.error("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly", new Object[]{transactionKey, redelivered, ids});
+            } else {
+                log.error("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
+            }
+        } else if (rollbackLoggingLevel == LoggingLevel.WARN && log.isWarnEnabled()) {
+            if (rollbackOnly) {
+                log.warn("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly", new Object[]{transactionKey, redelivered, ids});
+            } else {
+                log.warn("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
+            }
+        } else if (rollbackLoggingLevel == LoggingLevel.INFO && log.isInfoEnabled()) {
+            if (rollbackOnly) {
+                log.info("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly", new Object[]{transactionKey, redelivered, ids});
+            } else {
+                log.info("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
+            }
+        } else if (rollbackLoggingLevel == LoggingLevel.DEBUG && log.isDebugEnabled()) {
+            if (rollbackOnly) {
+                log.debug("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly", new Object[]{transactionKey, redelivered, ids});
+            } else {
+                log.debug("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
+            }
+        } else if (rollbackLoggingLevel == LoggingLevel.TRACE && log.isTraceEnabled()) {
+            if (rollbackOnly) {
+                log.trace("Transaction rollback ({}) redelivered({}) for {} due exchange was marked for rollbackOnly", new Object[]{transactionKey, redelivered, ids});
+            } else {
+                log.trace("Transaction rollback ({}) redelivered({}) for {} caught: {}", new Object[]{transactionKey, redelivered, ids, e.getMessage()});
+            }
+        }
     }
 
     private static String propagationBehaviorToString(int propagationBehavior) {

@@ -17,15 +17,17 @@
 package org.apache.camel.component.krati;
 
 import java.io.File;
+
 import krati.core.StoreConfig;
 import krati.core.segment.SegmentFactory;
 import krati.io.Serializer;
-import krati.sos.SerializableObjectStore;
 import krati.store.DataSet;
 import krati.store.DataStore;
 import krati.store.DynamicDataSet;
 import krati.store.DynamicDataStore;
+import krati.store.SerializableObjectStore;
 import krati.util.HashFunction;
+
 import org.apache.camel.RuntimeCamelException;
 
 public final class KratiHelper {
@@ -35,7 +37,7 @@ public final class KratiHelper {
     }
 
     /**
-     * Creates a {@link krati.sos.SerializableObjectStore} with the given parameters.
+     * Creates a {@link krati.store.SerializableObjectStore} with the given parameters.
      *
      * @param path            The directory which the store will use.
      * @param initialCapacity

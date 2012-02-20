@@ -130,17 +130,17 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
             return;
         }
 
-        ProcessorDefinition first = getOutputs().get(0);
+        ProcessorDefinition<?> first = getOutputs().get(0);
         if (first instanceof WhenDefinition) {
             WhenDefinition when = (WhenDefinition) first;
             // move this outputs to the when, expect the first one
             // as the first one is the interceptor itself
             for (int i = 1; i < outputs.size(); i++) {
-                ProcessorDefinition out = outputs.get(i);
+                ProcessorDefinition<?> out = outputs.get(i);
                 when.addOutput(out);
             }
             // remove the moved from the original output, by just keeping the first one
-            ProcessorDefinition keep = outputs.get(0);
+            ProcessorDefinition<?> keep = outputs.get(0);
             clearOutput();
             outputs.add(keep);
         }

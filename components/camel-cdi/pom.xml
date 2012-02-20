@@ -41,6 +41,7 @@
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import.pkg>
+        <openwebbeans.version>1.1.4-SNAPSHOT</openwebbeans.version>
     </properties>
 
     <dependencies>
@@ -57,15 +58,15 @@
         <dependency>
             <groupId>org.apache.openwebbeans</groupId>
             <artifactId>openwebbeans-impl</artifactId>
-            <version>1.1.4-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${openwebbeans.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- SPI API -->
         <dependency>
             <groupId>org.apache.openwebbeans</groupId>
             <artifactId>openwebbeans-spi</artifactId>
-            <version>1.1.4-SNAPSHOT</version>
+            <version>${openwebbeans.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -80,7 +81,8 @@
         <dependency>
             <groupId>org.apache.openwebbeans</groupId>
             <artifactId>openwebbeans-el10</artifactId>
-            <version>1.1.4-SNAPSHOT</version>
+            <version>${openwebbeans.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- JSR-299 API -->
@@ -88,6 +90,7 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jcdi_1.0_spec</artifactId>
             <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- JSR-330 API -->
@@ -95,6 +98,7 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-atinject_1.0_spec</artifactId>
             <version>1.0</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- logging -->
@@ -115,13 +119,13 @@
         <dependency>
             <groupId>org.apache.openwebbeans.test</groupId>
             <artifactId>cditest</artifactId>
-            <version>1.1.4-SNAPSHOT</version>
+            <version>${openwebbeans.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.openwebbeans.test</groupId>
             <artifactId>cditest-owb</artifactId>
-            <version>1.1.4-SNAPSHOT</version>
+            <version>${openwebbeans.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

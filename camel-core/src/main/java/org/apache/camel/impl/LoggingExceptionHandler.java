@@ -62,7 +62,11 @@ public class LoggingExceptionHandler implements ExceptionHandler {
                 // do not log stacktrace for intended rollbacks
                 logger.log(msg);
             } else {
-                logger.log(msg, exception);
+                if (exception != null) {
+                    logger.log(msg, exception);
+                } else {
+                    logger.log(msg);
+                }
             }
         } catch (Throwable e) {
             // the logging exception handler must not cause new exceptions to occur
@@ -70,6 +74,9 @@ public class LoggingExceptionHandler implements ExceptionHandler {
     }
 
     protected boolean isCausedByRollbackExchangeException(Throwable exception) {
+        if (exception == null) {
+            return false;
+        }
         if (exception instanceof RollbackExchangeException) {
             return true;
         } else if (exception.getCause() != null) {

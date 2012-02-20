@@ -187,6 +187,17 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-aws/${project.version}</bundle>
   </feature>
+  <feature name='camel-avro' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.snappy-java/${snappy-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.netty/${netty-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.paranamer/${paranamer-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.avro/${avro-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.avro-ipc/${avro-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-avro/${project.version}</bundle>
+  </feature>
   <feature name='camel-bam' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='[3,4)'>spring-tx</feature>
     <feature version='[3,4)'>spring-web</feature>
@@ -203,6 +214,11 @@
     <feature version='[3,4)'>spring-orm</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-bam/${project.version}</bundle>
+  </feature>
+  <feature name='camel-beanio' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:org.beanio/beanio/${beanio-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-beanio/${project.version}</bundle>
   </feature>
   <feature name='camel-bean-validator' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -285,6 +301,11 @@
     <bundle dependency='true'>mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-groovy/${project.version}</bundle>
   </feature>
+  <feature name='camel-gson' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-gson/${project.version}</bundle>
+  </feature>
   <feature name='camel-hazelcast' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.hazelcast/hazelcast/${hazelcast-version}</bundle>
@@ -318,7 +339,7 @@
     <bundle dependency='true'>mvn:commons-net/commons-net/${commons-net-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty/${jetty-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jetty/${jetty6-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hadoop-core/${hadoop-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hdfs/${project.version}</bundle>
   </feature>
@@ -495,7 +516,7 @@
   </feature>
   <feature name='camel-netty' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.netty/${netty-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty/${netty-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-netty/${project.version}</bundle>
   </feature>      
   <feature name='camel-ognl' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -596,7 +617,7 @@
   <feature name='camel-shiro' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-beanutils/${commons-beanutils-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.shiro/${shiro-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.shiro/shiro-core/${shiro-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-shiro/${project.version}</bundle>
   </feature>
   <feature name='camel-smpp' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -661,6 +682,12 @@
     <feature version='[3,4)'>spring-jdbc</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-sql/${project.version}</bundle>
+  </feature>
+  <feature name='camel-ssh' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency="true">mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle dependency="true">mvn:org.apache.sshd/sshd-core/${sshd-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-ssh/${project.version}</bundle>
   </feature>
   <feature name='camel-stax' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

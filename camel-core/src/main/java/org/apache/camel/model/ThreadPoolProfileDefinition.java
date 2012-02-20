@@ -34,7 +34,7 @@ import org.apache.camel.builder.xml.TimeUnitAdapter;
  */
 @XmlRootElement(name = "threadPoolProfile")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition {
+public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<ThreadPoolProfileDefinition> {
     @XmlAttribute
     private Boolean defaultProfile;
     @XmlAttribute

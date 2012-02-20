@@ -122,26 +122,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         registerParser("errorHandler", errorHandlerParser);
         parserMap.put("errorHandler", errorHandlerParser);
 
-        // camel context
-        boolean osgi = false;
         Class<?> cl = CamelContextFactoryBean.class;
-        try {
-            Class<?> c = Class.forName("org.apache.camel.osgi.Activator");
-            Method mth = c.getDeclaredMethod("getBundle");
-            Object bundle = mth.invoke(null);
-            if (bundle != null) {
-                cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
-                osgi = true;
-            }
-        } catch (Throwable t) {
-            // not running with camel-osgi so we fallback to the regular factory bean
-            LOG.trace("Cannot find class so assuming not running in OSGi container: " + t.getMessage());
-        }
-        if (osgi) {
-            LOG.info("OSGi environment detected.");
-        } else {
-            LOG.info("OSGi environment not detected.");
-        }
         LOG.debug("Using {} as CamelContextBeanDefinitionParser", cl.getCanonicalName());
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }

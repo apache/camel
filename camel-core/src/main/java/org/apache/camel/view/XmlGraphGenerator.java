@@ -98,12 +98,11 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorDefinition node) {
+    protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorDefinition<?> node) {
         if (node instanceof MulticastDefinition) {
             // no need for a multicast node
-            List<ProcessorDefinition> outputs = node.getOutputs();
-            for (ProcessorDefinition output : outputs) {
+            List<ProcessorDefinition<?>> outputs = node.getOutputs();
+            for (ProcessorDefinition<?> output : outputs) {
                 printNode(writer, fromData, output);
             }
             return fromData;
@@ -126,9 +125,9 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         }
 
         // now lets write any children
-        List<ProcessorDefinition> outputs = toData.outputs;
+        List<ProcessorDefinition<?>> outputs = toData.outputs;
         if (outputs != null) {
-            for (ProcessorDefinition output : outputs) {
+            for (ProcessorDefinition<?> output : outputs) {
                 NodeData newData = printNode(writer, toData, output);
                 if (!isMulticastNode(node)) {
                     toData = newData;

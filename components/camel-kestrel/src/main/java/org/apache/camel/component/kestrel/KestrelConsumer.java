@@ -103,7 +103,8 @@ public class KestrelConsumer extends DefaultConsumer implements ShutdownAware {
         return pendingExchangeCount.get();
     }
 
-    public void prepareShutdown() {
+    @Override
+    public void prepareShutdown(boolean forced) {
         // Signal to our threads that shutdown is happening
         shutdownPending = true;
 

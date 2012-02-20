@@ -306,7 +306,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Removes all endpoints with the given URI.
      *
      * @param pattern an uri or pattern to match
-     * @return a collection of endpoints removed or null if there are no endpoints for this URI
+     * @return a collection of endpoints removed which could be empty if there are no endpoints found for the given <tt>pattern</tt>
      * @throws Exception if at least one endpoint could not be stopped
      * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String) for pattern
      */
@@ -1040,14 +1040,18 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Whether or not type converters should be loaded lazy
      *
      * @return <tt>true</tt> to load lazy, <tt>false</tt> to load on startup
+     * @deprecated this option is no longer supported, will be removed in a future Camel release.
      */
+    @Deprecated
     Boolean isLazyLoadTypeConverters();
 
     /**
      * Sets whether type converters should be loaded lazy
      *
      * @param lazyLoadTypeConverters <tt>true</tt> to load lazy, <tt>false</tt> to load on startup
+     * @deprecated this option is no longer supported, will be removed in a future Camel release.
      */
+    @Deprecated
     void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters);
 
     /**

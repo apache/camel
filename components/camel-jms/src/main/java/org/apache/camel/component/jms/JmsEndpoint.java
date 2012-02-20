@@ -34,6 +34,7 @@ import javax.jms.Topic;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -103,6 +104,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.pubSubDomain = pubSubDomain;
     }
 
+    @SuppressWarnings("deprecation")
     public JmsEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destinationName, boolean pubSubDomain) {
         super(UnsafeUriCharactersEncoder.encode(endpointUri));
         this.binding = binding;
@@ -548,7 +550,22 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     public ErrorHandler getErrorHandler() {
         return getConfiguration().getErrorHandler();
     }
+
+    @ManagedAttribute
+    public LoggingLevel getErrorHandlerLoggingLevel() {
+        return getConfiguration().getErrorHandlerLoggingLevel();
+    }
     
+    @ManagedAttribute
+    public boolean isErrorHandlerLogStackTrace() {
+        return getConfiguration().isErrorHandlerLogStackTrace();
+    }
+
+    @ManagedAttribute
+    public void setErrorHandlerLogStackTrace(boolean errorHandlerLogStackTrace) {
+        getConfiguration().setErrorHandlerLogStackTrace(errorHandlerLogStackTrace);
+    }
+
     @ManagedAttribute
     public int getIdleTaskExecutionLimit() {
         return getConfiguration().getIdleTaskExecutionLimit();

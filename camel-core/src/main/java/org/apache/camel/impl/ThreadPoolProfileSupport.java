@@ -25,9 +25,9 @@ import org.apache.camel.spi.ThreadPoolProfile;
  */
 @Deprecated
 public class ThreadPoolProfileSupport extends ThreadPoolProfile {
+    private static final long serialVersionUID = 1L;
 
     public ThreadPoolProfileSupport(String id) {
         super(id);
     }
-
 }

@@ -30,8 +30,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.crypto.DigitalSignatureConfiguration;
 import org.apache.camel.component.crypto.DigitalSignatureConstants;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.component.crypto.DigitalSignatureConstants.KEYSTORE_ALIAS;
 
 public abstract class DigitalSignatureProcessor implements Processor {
 
@@ -56,7 +56,7 @@ public abstract class DigitalSignatureProcessor implements Processor {
     protected String getAlias(Exchange exchange) throws Exception {
         KeyStore keystore = config.getKeystore();
         if (keystore != null) {
-            String alias = exchange.getIn().getHeader(KEYSTORE_ALIAS, String.class);
+            String alias = exchange.getIn().getHeader(DigitalSignatureConstants.KEYSTORE_ALIAS, String.class);
             if (alias == null) {
                 alias = config.getAlias();
             }
@@ -85,7 +85,7 @@ public abstract class DigitalSignatureProcessor implements Processor {
         if (config.getClearHeaders()) {
             Map<String, Object> headers = in.getHeaders();
             for (Field f : DigitalSignatureConstants.class.getFields()) {
-                headers.remove(f.getName());
+                headers.remove(ObjectHelper.lookupConstantFieldValue(DigitalSignatureConstants.class, f.getName()));
             }
         }
     }

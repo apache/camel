@@ -83,13 +83,12 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorDefinition node) {
+    protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorDefinition<?> node) {
         if (node instanceof MulticastDefinition) {
             // no need for a multicast or interceptor node
-            List<ProcessorDefinition> outputs = node.getOutputs();
+            List<ProcessorDefinition<?>> outputs = node.getOutputs();
             boolean isPipeline = isPipeline(node);
-            for (ProcessorDefinition output : outputs) {
+            for (ProcessorDefinition<?> output : outputs) {
                 NodeData out = printNode(writer, fromData, output);
                 // if in pipeline then we should move the from node to the next in the pipeline
                 if (isPipeline) {
@@ -116,9 +115,9 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
         }
 
         // now lets write any children
-        List<ProcessorDefinition> outputs = toData.outputs;
+        List<ProcessorDefinition<?>> outputs = toData.outputs;
         if (outputs != null) {
-            for (ProcessorDefinition output : outputs) {
+            for (ProcessorDefinition<?> output : outputs) {
                 NodeData newData = printNode(writer, toData, output);
                 if (!isMulticastNode(node)) {
                     toData = newData;

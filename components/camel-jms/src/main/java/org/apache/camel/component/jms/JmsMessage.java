@@ -232,6 +232,15 @@ public class JmsMessage extends DefaultMessage {
         }
     }
 
+    @Override
+    protected Boolean isTransactedRedelivered() {
+        if (jmsMessage != null) {
+            return JmsMessageHelper.getJMSRedelivered(jmsMessage);
+        } else {
+            return null;
+        }
+    }
+
     private String getDestinationAsString(Destination destination) throws JMSException {
         String result;
         if (destination == null) {

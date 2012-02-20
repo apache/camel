@@ -23,7 +23,6 @@ import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerDirect;
 import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
 
 /**
  * Twitter direct endpoint
@@ -51,8 +50,7 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
 
     @Override
     protected void doStart() {
-        properties.checkComplete();
-        twitter = new TwitterFactory(properties.getConfiguration()).getInstance();
+        twitter = properties.getTwitterInstance();
     }
 
     public Twitter getTwitter() {

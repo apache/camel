@@ -17,11 +17,13 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
+import org.apache.camel.Service;
 import org.apache.camel.spi.RouteStartupOrder;
 
 /**
@@ -54,6 +56,15 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
         Map<Route, Consumer> inputs = routeService.getInputs();
         for (Consumer consumer : inputs.values()) {
             answer.add(consumer);
+        }
+        return answer;
+    }
+
+    public List<Service> getServices() {
+        List<Service> answer = new ArrayList<Service>();
+        Collection<Route> routes = routeService.getRoutes();
+        for (Route route : routes) {
+            answer.addAll(route.getServices());
         }
         return answer;
     }

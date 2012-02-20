@@ -23,6 +23,7 @@ import javax.jms.Session;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -210,8 +211,16 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
     public void setErrorHandler(ErrorHandler errorHandler) {
         getConfiguration().setErrorHandler(errorHandler);
-    }    
-    
+    }
+
+    public void setErrorHandlerLoggingLevel(LoggingLevel errorHandlerLoggingLevel) {
+        getConfiguration().setErrorHandlerLoggingLevel(errorHandlerLoggingLevel);
+    }
+
+    public void setErrorHandlerLogStackTrace(boolean errorHandlerLogStackTrace) {
+        getConfiguration().setErrorHandlerLogStackTrace(errorHandlerLogStackTrace);
+    }
+
     public void setExplicitQosEnabled(boolean explicitQosEnabled) {
         getConfiguration().setExplicitQosEnabled(explicitQosEnabled);
     }

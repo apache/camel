@@ -21,9 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.testng.CamelTestSupport;
 import org.testng.annotations.Test;
 
-/**
- *
- */
 public class IsUseAdviceWithTest extends CamelTestSupport {
 
     @Test

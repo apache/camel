@@ -75,6 +75,26 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("Hello World", "Hello World");
     }
 
+    public void testEmptyExpression() throws Exception {
+        assertExpression("", "");
+        assertExpression(" ", "");
+        try {
+            assertExpression(null, null);
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expression must be specified", e.getMessage());
+        }
+
+        assertPredicate("", false);
+        assertPredicate(" ", false);
+        try {
+            assertPredicate(null, false);
+            fail("Should have thrown exception");
+        } catch (IllegalArgumentException e) {
+            assertEquals("expression must be specified", e.getMessage());
+        }
+    }
+
     public void testBodyExpression() throws Exception {
         Expression exp = SimpleLanguage.simple("${body}");
         assertNotNull(exp);
@@ -103,6 +123,13 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("in.headers.foo", "abc");
         assertExpression("header.foo", "abc");
         assertExpression("headers.foo", "abc");
+    }
+    
+    public void testTrimSimpleExpressions() throws Exception {
+        assertExpression(" \texchangeId\n", exchange.getExchangeId());
+        assertExpression("\nid\r", exchange.getIn().getMessageId());
+        assertExpression("\t\r body", "<hello id='m123'>world!</hello>");
+        assertExpression("\nin.body\r", "<hello id='m123'>world!</hello>");
     }
 
     public void testSimpleThreadName() throws Exception {
@@ -135,7 +162,11 @@ public class SimpleTest extends LanguageTestSupport {
             assertExpression("sysenv.PATH", path);
         }
     }
-    
+
+    public void testSimpleCamelId() throws Exception {
+        assertExpression("camelId", context.getName());
+    }
+
     public void testOGNLBodyListAndMap() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("cool", "Camel rocks");

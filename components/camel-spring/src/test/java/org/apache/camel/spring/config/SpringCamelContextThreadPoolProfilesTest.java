@@ -50,7 +50,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         assertEquals(5, tp.getMaximumPoolSize());
         // should inherit default options
         assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertIsInstanceOf(ThreadPoolExecutor.CallerRunsPolicy.class, tp.getRejectedExecutionHandler());
+        assertEquals("CallerRuns", tp.getRejectedExecutionHandler().toString());
     }
 
     public void testBigProfile() throws Exception {
@@ -70,7 +70,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         assertEquals(100, tp.getMaximumPoolSize());
         // should inherit default options
         assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertIsInstanceOf(ThreadPoolExecutor.DiscardOldestPolicy.class, tp.getRejectedExecutionHandler());
+        assertEquals("DiscardOldest", tp.getRejectedExecutionHandler().toString());
     }
 
 }

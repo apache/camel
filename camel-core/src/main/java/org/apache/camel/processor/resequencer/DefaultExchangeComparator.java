@@ -21,7 +21,7 @@ import org.apache.camel.Expression;
 
 /**
  * Compares elements of an {@link Exchange} sequence by comparing
- * <code>long</code> values returned by this comaprator's
+ * <code>long</code> values returned by this comparator's
  * <code>expression</code>.
  * 
  * @version 

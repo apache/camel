@@ -28,13 +28,13 @@
     <!--
         Simple camel route which send every one minute a message on the console.
     -->
-    <camelContext trace="false" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route id="timer-to-console">
-            <from uri="timer://foo?fixedRate=true&amp;period=10s" />
+            <from uri="timer://foo?fixedRate=true&amp;period=10s"/>
             <transform>
                <simple>Hello Web Application, how are you?</simple>
             </transform>
-            <to uri="stream:out" />
+            <to uri="stream:out"/>
         </route>
     </camelContext>
 

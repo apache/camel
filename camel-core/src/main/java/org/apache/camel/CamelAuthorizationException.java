@@ -25,6 +25,7 @@ package org.apache.camel;
  * @version 
  */
 public class CamelAuthorizationException extends CamelExchangeException {
+    private static final long serialVersionUID = 1L;
     private final String policyId;
     
     public CamelAuthorizationException(String message, Exchange exchange) {

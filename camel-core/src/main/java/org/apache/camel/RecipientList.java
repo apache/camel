@@ -53,5 +53,6 @@ public @interface RecipientList {
     String executorServiceRef() default "";
     long timeout() default 0;
     String onPrepareRef() default "";
+    @Deprecated
     boolean shareUnitOfWork() default false;
 }

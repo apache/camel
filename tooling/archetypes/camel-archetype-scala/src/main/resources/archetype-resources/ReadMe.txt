@@ -1,7 +1,7 @@
 Camel Router with Scala DSL Project
 ===================================
 
-To compile you run:
+To build this project use
 
     mvn install
 

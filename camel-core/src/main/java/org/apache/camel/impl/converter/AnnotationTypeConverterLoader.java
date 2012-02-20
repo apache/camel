@@ -106,7 +106,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         Set<Class<?>> classes = new HashSet<Class<?>>();
         packageNames = filterPackageNamesOnly(resolver, packageNames, classes);
         if (!classes.isEmpty()) {
-            LOG.info("Loaded " + classes.size() + " @Converter classes");
+            LOG.debug("Loaded " + classes.size() + " @Converter classes");
         }
 
         // if there is any packages to scan and load @Converter classes, then do it
@@ -116,7 +116,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             if (scannedClasses.isEmpty()) {
                 throw new TypeConverterLoaderException("Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));
             }
-            LOG.info("Found " + packageNames.length + " packages with " + scannedClasses.size() + " @Converter classes to load");
+            LOG.debug("Found " + packageNames.length + " packages with " + scannedClasses.size() + " @Converter classes to load");
             classes.addAll(scannedClasses);
         }
 

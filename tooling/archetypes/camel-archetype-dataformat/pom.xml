@@ -33,7 +33,7 @@
   <description>Creates a new Camel data format.</description>
   <packaging>maven-archetype</packaging>
 
- <build>
+  <build>
     <extensions>
       <extension>
         <groupId>org.apache.maven.archetype</groupId>
@@ -47,7 +47,7 @@
       <resource>
         <directory>src/main/resources</directory>
         <filtering>false</filtering>
-      </resource> 
+      </resource>
       <resource>
         <directory>src/main/resources-filtered</directory>
         <filtering>true</filtering>

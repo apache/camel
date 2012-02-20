@@ -102,6 +102,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
         } else {
             thread.setCallerRunsWhenRejected(getCallerRunsWhenRejected());
         }
+        thread.setRejectedPolicy(getRejectedPolicy());
 
         List<Processor> pipe = new ArrayList<Processor>(2);
         pipe.add(thread);

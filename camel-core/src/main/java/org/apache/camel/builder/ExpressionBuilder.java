@@ -442,6 +442,24 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an expression for the {@link org.apache.camel.CamelContext} name
+     *
+     * @return an expression object which will return the camel context name
+     */
+    public static Expression camelContextNameExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getContext().getName();
+            }
+
+            @Override
+            public String toString() {
+                return "camelContextName";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for an exception message set on the exchange
      *
      * @see <tt>Exchange.getException().getMessage()</tt>
@@ -480,8 +498,7 @@ public final class ExpressionBuilder {
                     StringWriter sw = new StringWriter();
                     PrintWriter pw = new PrintWriter(sw);
                     exception.printStackTrace(pw);
-                    IOHelper.close(pw);
-                    IOHelper.close(sw);
+                    IOHelper.close(pw, sw);
                     return sw.toString();
                 } else {
                     return null;

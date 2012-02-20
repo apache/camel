@@ -1,10 +1,13 @@
-Camel Router Project
-====================
+Camel Java Router Project
+=========================
 
-To run this router either embed the jar inside Spring
-or to run the route from within maven try
+To build this project use
 
-    mvn camel:run
+    mvn install
+
+To run this router from within Maven use
+
+    mvn exec:java
 
 For more help see the Apache Camel documentation
 

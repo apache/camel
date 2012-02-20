@@ -60,7 +60,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     @Required
     private ExpressionDefinition expression;
     @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
     public ResequenceDefinition() {
     }
@@ -70,11 +70,11 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         return "resequence";
     }
 
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
     }
 

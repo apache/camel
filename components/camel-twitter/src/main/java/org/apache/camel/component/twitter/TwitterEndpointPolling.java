@@ -24,7 +24,6 @@ import org.apache.camel.component.twitter.consumer.TwitterConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerPolling;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
 
 /**
  * Twitter polling endpoint
@@ -54,8 +53,7 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
 
     @Override
     protected void doStart() {
-        properties.checkComplete();
-        twitter = new TwitterFactory(properties.getConfiguration()).getInstance();
+        twitter = properties.getTwitterInstance();
     }
 
     public Twitter getTwitter() {

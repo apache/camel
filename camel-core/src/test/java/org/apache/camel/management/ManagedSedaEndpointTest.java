@@ -55,6 +55,13 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
         size = (Integer) mbeanServer.getAttribute(name, "CurrentQueueSize");
         assertEquals(1, size.intValue());
 
+        Long size2 = (Long) mbeanServer.invoke(name, "queueSize", null, null);
+        assertEquals(1, size2.longValue());
+
+        String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
+        assertNotNull(out);
+        assertTrue(out.contains("Hi World"));
+
         mbeanServer.invoke(name, "purgeQueue", null, null);
 
         size = (Integer) mbeanServer.getAttribute(name, "CurrentQueueSize");

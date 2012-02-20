@@ -77,7 +77,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition implements Block {
+public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     protected Boolean inheritErrorHandler;
     private NodeFactory nodeFactory;
@@ -89,7 +89,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     private Map<QName, Object> otherAttributes;
 
     // else to use an optional attribute in JAXB2
-    public abstract List<ProcessorDefinition> getOutputs();
+    public abstract List<ProcessorDefinition<?>> getOutputs();
 
     public abstract boolean isOutputSupported();
 
@@ -126,7 +126,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Prefer to use {#link #createChildProcessor}.
      */
     public Processor createOutputsProcessor(RouteContext routeContext) throws Exception {
-        Collection<ProcessorDefinition> outputs = getOutputs();
+        Collection<ProcessorDefinition<?>> outputs = getOutputs();
         return createOutputsProcessor(routeContext, outputs);
     }
 
@@ -155,7 +155,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return children;
     }
 
-    public void addOutput(ProcessorDefinition output) {
+    @Override
+    public void addOutput(ProcessorDefinition<?> output) {
         if (!blocks.isEmpty()) {
             // let the Block deal with the output
             Block block = blocks.getLast();
@@ -254,17 +255,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 // only wrap the parent (not the children of the multicast)
                 wrapChannelInErrorHandler(channel, routeContext);
             } else {
-                log.trace("{} is part of multicast/recipientList which have special error handling so no error handler is applied", defn);
-            }
-        } else if (defn instanceof RecipientListDefinition) {
-            // do not use error handler for recipient list as it offers fine grained error handlers for its outputs
-            // however if share unit of work is enabled, we need to wrap an error handler on the recipient list parent
-            RecipientListDefinition<?> def = (RecipientListDefinition<?>) defn;
-            if (def.isShareUnitOfWork()) {
-                // note a recipient list cannot have children so no need for a child == null check
-                wrapChannelInErrorHandler(channel, routeContext);
-            } else {
-                log.trace("{} is part of multicast/recipientList which have special error handling so no error handler is applied", defn);
+                log.trace("{} is part of multicast which have special error handling so no error handler is applied", defn);
             }
         } else {
             // use error handler by default or if configured to do so
@@ -374,7 +365,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return new DefaultChannel();
     }
 
-    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition> outputs) throws Exception {
+    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition<?>> outputs) throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorDefinition<?> output : outputs) {
 
@@ -556,8 +547,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
             // lookup and resolve known constant fields for String based properties
             for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                // the name is always a String
-                String name = (String) entry.getKey();
+                String name = entry.getKey();
                 Object value = entry.getValue();
                 if (value instanceof String) {
                     // we can only resolve String typed values
@@ -983,7 +973,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             // set it on last output as this is what the user means to do
             // for Block(s) with non empty getOutputs() the id probably refers
             //  to the last definition in the current Block
-            List<ProcessorDefinition> outputs = getOutputs();
+            List<ProcessorDefinition<?>> outputs = getOutputs();
             if (!blocks.isEmpty()) {
                 if (blocks.getLast() instanceof ProcessorDefinition) {
                     ProcessorDefinition<?> block = (ProcessorDefinition<?>)blocks.getLast();
@@ -1550,7 +1540,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, String uriDelimiter) {
-        RoutingSlipDefinition answer = new RoutingSlipDefinition(header, uriDelimiter);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header, uriDelimiter);
         addOutput(answer);
         return (Type) this;
     }
@@ -1572,7 +1562,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header) {
-        RoutingSlipDefinition answer = new RoutingSlipDefinition(header);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header);
         addOutput(answer);
         return (Type) this;
     }
@@ -1596,7 +1586,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, String uriDelimiter, boolean ignoreInvalidEndpoints) {
-        RoutingSlipDefinition answer = new RoutingSlipDefinition(header, uriDelimiter);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header, uriDelimiter);
         answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
         addOutput(answer);
         return (Type) this;
@@ -1621,7 +1611,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     @Deprecated
     public Type routingSlip(String header, boolean ignoreInvalidEndpoints) {
-        RoutingSlipDefinition answer = new RoutingSlipDefinition(header);
+        RoutingSlipDefinition<Type> answer = new RoutingSlipDefinition<Type>(header);
         answer.setIgnoreInvalidEndpoints(ignoreInvalidEndpoints);
         addOutput(answer);
         return (Type) this;

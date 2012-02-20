@@ -65,6 +65,7 @@ public class Jt400PgmEndpoint extends DefaultEndpoint {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public Jt400PgmEndpoint(String endpointUri, String programToExecute, Map<String, Object> parameters,
                             CamelContext camelContext) {
         super(endpointUri, camelContext);

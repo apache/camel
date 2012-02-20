@@ -759,10 +759,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
         }
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        private void findOutputComponents(List<ProcessorDefinition> defs, Set<String> components, Set<String> languages, Set<String> dataformats) {
+        @SuppressWarnings({"rawtypes"})
+        private void findOutputComponents(List<ProcessorDefinition<?>> defs, Set<String> components, Set<String> languages, Set<String> dataformats) {
             if (defs != null) {
-                for (ProcessorDefinition def : defs) {
+                for (ProcessorDefinition<?> def : defs) {
                     if (def instanceof SendDefinition) {
                         findUriComponent(((SendDefinition) def).getUri(), components);
                     }

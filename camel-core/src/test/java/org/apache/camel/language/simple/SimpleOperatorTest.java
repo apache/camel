@@ -148,6 +148,25 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertPredicate("${in.header.bar} != '1'", true);
     }
 
+    public void testFloatingNumber() throws Exception {
+        // set a String value
+        exchange.getIn().setBody("0.02");
+
+        assertPredicate("${body} > 0", true);
+        assertPredicate("${body} < 0", false);
+
+        assertPredicate("${body} > 0.00", true);
+        assertPredicate("${body} < 0.00", false);
+
+        assertPredicate("${body} > 0.01", true);
+        assertPredicate("${body} < 0.01", false);
+
+        assertPredicate("${body} > 0.02", false);
+        assertPredicate("${body} < 0.02", false);
+
+        assertPredicate("${body} == 0.02", true);
+    }
+
     public void testGreaterThanOperator() throws Exception {
         // string to string comparison
         assertPredicate("${in.header.foo} > 'aaa'", true);
@@ -380,7 +399,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
             assertPredicate("${in.header.foo} range 100.200", false);
             fail("Should have thrown an exception");
         } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(26, e.getIndex());
+            assertEquals(30, e.getIndex());
         }
 
         assertPredicate("${in.header.bar} range '100..200' && ${in.header.foo} == 'abc'" , true);
@@ -417,7 +436,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
             assertPredicate("${in.header.foo} not range 100.200", false);
             fail("Should have thrown an exception");
         } catch (SimpleIllegalSyntaxException e) {
-            assertEquals(30, e.getIndex());
+            assertEquals(34, e.getIndex());
         }
     }
 

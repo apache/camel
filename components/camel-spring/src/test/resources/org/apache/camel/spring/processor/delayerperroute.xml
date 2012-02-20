@@ -25,8 +25,8 @@
     <!-- define a global delayer using 2000 ms -->
     <camelContext delayer="2000" xmlns="http://camel.apache.org/schema/spring">
 
-        <!-- this route uses a 1000 ms delayer -->
-        <route delayer="1000">
+        <!-- this route will inherit the global delayer -->
+        <route>
             <from uri="seda:a"/>
             <to uri="mock:result"/>
         </route>
@@ -34,12 +34,6 @@
         <!-- use -1 to indicate delayer is disabled on this particular route (you can also use 0 to disable) -->
         <route delayer="-1">
             <from uri="seda:b"/>
-            <to uri="mock:result"/>
-        </route>
-
-        <!-- this route will inherit the global delayer -->
-        <route>
-            <from uri="seda:c"/>
             <to uri="mock:result"/>
         </route>
 

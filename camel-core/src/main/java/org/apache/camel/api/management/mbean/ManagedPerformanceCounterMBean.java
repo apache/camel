@@ -21,10 +21,7 @@ import java.util.Date;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedPerformanceCounterMBean {
-
-    @ManagedOperation(description = "Reset counters")
-    void reset();
+public interface ManagedPerformanceCounterMBean extends ManagedCounterMBean {
 
     @ManagedAttribute(description = "Number of completed exchanges")
     long getExchangesCompleted() throws Exception;
@@ -35,8 +32,11 @@ public interface ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Number of failures handled")
     long getFailuresHandled() throws Exception;
 
-    @ManagedAttribute(description = "Number of redeliveries")
+    @ManagedAttribute(description = "Number of redeliveries (internal only)")
     long getRedeliveries() throws Exception;
+
+    @ManagedAttribute(description = "Number of external initiated redeliveries (such as from JMS broker)")
+    long getExternalRedeliveries() throws Exception;
 
     @ManagedAttribute(description = "Min Processing Time [milliseconds]")
     long getMinProcessingTime() throws Exception;
@@ -82,5 +82,8 @@ public interface ManagedPerformanceCounterMBean {
 
     @ManagedAttribute(description = "Statistics enabled")
     void setStatisticsEnabled(boolean statisticsEnabled);
+
+    @ManagedOperation(description = "Dumps the statistics as XML")
+    String dumpStatsAsXml(boolean fullStats);
 
 }

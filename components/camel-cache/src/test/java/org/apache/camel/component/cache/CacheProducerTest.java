@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.cache;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
@@ -30,7 +29,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
+
 import org.junit.Test;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +59,7 @@ public class CacheProducerTest extends CamelTestSupport {
         template.send("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Read from an input stream
-                InputStream is = new BufferedInputStream(
-                        new FileInputStream(path));    // "./src/test/resources/test.txt"));
+                InputStream is = IOHelper.buffered(new FileInputStream(path)); // "./src/test/resources/test.txt"));
 
                 byte buffer[] = IOConverter.toBytes(is);
                 is.close();
@@ -81,7 +82,7 @@ public class CacheProducerTest extends CamelTestSupport {
 
     private byte[] getFileAsByteArray(String path) throws Exception {
         // Read from an input stream
-        InputStream is = new BufferedInputStream(new FileInputStream(path));
+        InputStream is = IOHelper.buffered(new FileInputStream(path));
 
         byte[] buffer = IOConverter.toBytes(is);
         is.close();

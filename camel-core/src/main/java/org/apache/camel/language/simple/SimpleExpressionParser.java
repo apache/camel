@@ -79,7 +79,8 @@ public class SimpleExpressionParser extends BaseSimpleParser {
         // create and return as a Camel expression
         List<Expression> expressions = createExpressions();
         if (expressions.isEmpty()) {
-            return null;
+            // return an empty string as response as there was nothing to parse
+            return ExpressionBuilder.constantExpression("");
         } else if (expressions.size() == 1) {
             return expressions.get(0);
         } else {

@@ -84,7 +84,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         // Map to hold the model @OneToMany classes while binding
         Map<String, List<Object>> lists = new HashMap<String, List<Object>>();
 
-        InputStreamReader in = new InputStreamReader(inputStream);
+        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
 
         // Scanner is used to read big file
         Scanner scanner = new Scanner(in);

@@ -16,10 +16,6 @@
  */
 package ${package};
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
-
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 
 import org.junit.Test;
@@ -27,19 +23,17 @@ import org.junit.Test;
 public class RouteTest extends CamelBlueprintTestSupport {
 	
     @Override
-    protected Collection<URL> getBlueprintDescriptors() {
-        return Collections.singleton(getClass().getResource("/OSGI-INF/blueprint/blueprint.xml"));
+    protected String getBlueprintDescriptor() {
+        return "/OSGI-INF/blueprint/blueprint.xml";
     }
 
     @Test
-    public void testDebugger() throws Exception {
-        // set mock expectations
-        getMockEndpoint("mock:a").expectedMessageCount(1);
+    public void testRoute() throws Exception {
+        // the route is timer based, so every 5th second a message is send
+        // we should then expect at least one message
+        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
 
-        // send a message
-        template.sendBody("direct:start", "World");
-
-        // assert mocks
+        // assert expectations
         assertMockEndpointsSatisfied();
     }
 

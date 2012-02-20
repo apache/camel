@@ -131,7 +131,7 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
             }
         }
         if (delayPattern != null) {
-            answer.setDelayPattern(delayPattern);
+            answer.setDelayPattern(CamelContextHelper.parseText(context, delayPattern));
         }
 
         return answer;

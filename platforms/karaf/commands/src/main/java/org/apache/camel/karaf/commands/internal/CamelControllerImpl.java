@@ -90,7 +90,7 @@ public class CamelControllerImpl implements CamelController {
         return null;
     }
 
-
+    @SuppressWarnings("deprecation")
     public List<RouteDefinition> getRouteDefinitions(String camelContextName) {
         if (camelContextName != null) {
             CamelContext context = this.getCamelContext(camelContextName);
@@ -120,6 +120,7 @@ public class CamelControllerImpl implements CamelController {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     public RouteDefinition getRouteDefinition(String routeId, String camelContextName) {
         CamelContext context = this.getCamelContext(camelContextName);
         if (context == null) {

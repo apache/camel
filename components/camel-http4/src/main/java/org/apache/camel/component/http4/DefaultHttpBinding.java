@@ -301,8 +301,7 @@ public class DefaultHttpBinding implements HttpBinding {
                 // copy directly from input stream to output stream
                 IOHelper.copy(is, os);
             } finally {
-                IOHelper.close(os);
-                IOHelper.close(is);
+                IOHelper.close(os, is);
             }
         } else {
             // not convertable as a stream so try as a String

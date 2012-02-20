@@ -16,6 +16,9 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,9 +30,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class PendingExchangesShutdownGracefulTest extends ContextTestSupport {
 
     private static String foo = "";
+    private static CountDownLatch latch = new CountDownLatch(1);
 
     public void testShutdownGraceful() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
 
         template.sendBody("seda:foo", "A");
         template.sendBody("seda:foo", "B");
@@ -40,11 +44,11 @@ public class PendingExchangesShutdownGracefulTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // now stop the route before its complete
-        foo = foo + "stop";
+        latch.await(10, TimeUnit.SECONDS);
         context.stop();
 
         // it should wait as there was 1 inflight exchange and 4 pending messages left
-        assertEquals("Should graceful shutdown", "stopABCDE", foo);
+        assertEquals("Should graceful shutdown", "ABCDE", foo);
     }
 
     @Override
@@ -52,9 +56,10 @@ public class PendingExchangesShutdownGracefulTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").to("mock:foo").delay(1000).process(new Processor() {
+                from("seda:foo").to("mock:foo").delay(500).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         foo = foo + exchange.getIn().getBody(String.class);
+                        latch.countDown();
                     }
                 });
             }

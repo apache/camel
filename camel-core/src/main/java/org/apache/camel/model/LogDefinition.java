@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LogDefinition extends NoOutputDefinition {
+public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     @XmlAttribute(required = true)
     private String message;
     @XmlAttribute
@@ -87,7 +87,7 @@ public class LogDefinition extends NoOutputDefinition {
     }
 
     @Override
-    public void addOutput(ProcessorDefinition output) {
+    public void addOutput(ProcessorDefinition<?> output) {
         // add outputs on parent as this log does not support outputs
         getParent().addOutput(output);
     }

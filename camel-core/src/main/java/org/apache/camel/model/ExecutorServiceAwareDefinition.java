@@ -25,7 +25,7 @@ import org.apache.camel.ExecutorServiceAware;
  *
  * @version 
  */
-public interface ExecutorServiceAwareDefinition<Type extends ProcessorDefinition> extends ExecutorServiceAware {
+public interface ExecutorServiceAwareDefinition<Type extends ProcessorDefinition<?>> extends ExecutorServiceAware {
 
     /**
      * Setting the executor service for executing

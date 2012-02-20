@@ -29,8 +29,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.LoggingExceptionHandler;
-import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -51,7 +49,6 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public class EndpointMessageListener implements MessageListener {
     private static final transient Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
-    private ExceptionHandler exceptionHandler;
     private final JmsEndpoint endpoint;
     private final AsyncProcessor processor;
     private JmsBinding binding;
@@ -85,7 +82,7 @@ public class EndpointMessageListener implements MessageListener {
             }
             String correlationId = message.getJMSCorrelationID();
             if (correlationId != null) {
-                LOG.debug("Received Message has JMSCorrelationID [" + correlationId + "]");
+                LOG.debug("Received Message has JMSCorrelationID [{}]", correlationId);
             }
 
             // process the exchange either asynchronously or synchronous
@@ -100,7 +97,9 @@ public class EndpointMessageListener implements MessageListener {
             boolean forceSync = endpoint.isSynchronous() || endpoint.isTransacted();
             if (forceSync || !isAsync()) {
                 // must process synchronous if transacted or configured to do so
-                LOG.trace("Processing exchange {} synchronously", exchange.getExchangeId());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchange {} synchronously", exchange.getExchangeId());
+                }
                 try {
                     processor.process(exchange);
                 } catch (Exception e) {
@@ -110,7 +109,9 @@ public class EndpointMessageListener implements MessageListener {
                 }
             } else {
                 // process asynchronous using the async routing engine
-                LOG.trace("Processing exchange {} asynchronously", exchange.getExchangeId());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Processing exchange {} asynchronously", exchange.getExchangeId());
+                }
                 boolean sync = AsyncProcessorHelper.process(processor, exchange, callback);
                 if (!sync) {
                     // will be done async so return now
@@ -125,9 +126,12 @@ public class EndpointMessageListener implements MessageListener {
         }
 
         // an exception occurred so rethrow to trigger rollback on JMS listener
+        // the JMS listener will use the error handler to handle the uncaught exception
         if (rce != null) {
-            handleException(rce);
             LOG.trace("onMessage END throwing exception: {}", rce.getMessage());
+            // Spring message listener container will handle uncaught exceptions
+            // being thrown from this onMessage, and will us the ErrorHandler configured
+            // on the JmsEndpoint to handle the exception
             throw rce;
         }
 
@@ -213,8 +217,10 @@ public class EndpointMessageListener implements MessageListener {
                     // method and rethrow it
                     exchange.setException(rce);
                 } else {
-                    // we were done async, so use the Camel built in exception handler to deal with it
-                    handleException(rce);
+                    // we were done async, so use the endpoint error handler
+                    if (endpoint.getErrorHandler() != null) {
+                        endpoint.getErrorHandler().handleError(rce);
+                    }
                 }
             }
         }
@@ -253,17 +259,6 @@ public class EndpointMessageListener implements MessageListener {
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
-    }
-
-    public ExceptionHandler getExceptionHandler() {
-        if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
-        }
-        return exceptionHandler;
-    }
-
-    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
-        this.exceptionHandler = exceptionHandler;
     }
 
     public boolean isEagerLoadingOfProperties() {
@@ -396,15 +391,6 @@ public class EndpointMessageListener implements MessageListener {
             destination = JmsMessageHelper.getJMSReplyTo(message);
         }
         return destination;
-    }
-
-    /**
-     * Handles the given exception using the {@link #getExceptionHandler()}
-     *
-     * @param t the exception to handle
-     */
-    protected void handleException(Throwable t) {
-        getExceptionHandler().handleException(t);
     }
 
     @Override

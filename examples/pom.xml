@@ -63,6 +63,7 @@
     <module>camel-example-spring-ws</module>
     <module>camel-example-spring-xquery</module>
     <module>camel-example-spring-security</module>
+    <module>camel-example-ssh</module>
     <module>camel-example-tracer</module>
   </modules>
  

@@ -40,6 +40,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
     private static final transient Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerBuilder.class);
     private static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
     private TransactionTemplate transactionTemplate;
+    private LoggingLevel rollbackLoggingLevel = LoggingLevel.WARN;
 
     public TransactionErrorHandlerBuilder() {
         // no-arg constructor used by Spring DSL
@@ -108,7 +109,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
         TransactionErrorHandler answer = new TransactionErrorHandler(routeContext.getCamelContext(), processor,
             getLogger(), getOnRedelivery(), getRedeliveryPolicy(), getExceptionPolicyStrategy(), transactionTemplate, 
-            getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorServiceRef());
+            getRetryWhilePolicy(routeContext.getCamelContext()), getExecutorServiceRef(), getRollbackLoggingLevel());
         // configure error handler before we can use it
         configure(routeContext, answer);
         return answer;
@@ -126,7 +127,37 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
         this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
+    public LoggingLevel getRollbackLoggingLevel() {
+        return rollbackLoggingLevel;
+    }
+
+    /**
+     * Sets the logging level to use for logging transactional rollback.
+     * <p/>
+     * This option is default WARN.
+     *
+     * @param rollbackLoggingLevel the logging level
+     */
+    public void setRollbackLoggingLevel(LoggingLevel rollbackLoggingLevel) {
+        this.rollbackLoggingLevel = rollbackLoggingLevel;
+    }
+
     // Builder methods
+    // -------------------------------------------------------------------------
+
+    /**
+     * Sets the logging level to use for logging transactional rollback.
+     * <p/>
+     * This option is default WARN.
+     *
+     * @param rollbackLoggingLevel the logging level
+     */
+    public TransactionErrorHandlerBuilder rollbackLoggingLevel(LoggingLevel rollbackLoggingLevel) {
+        setRollbackLoggingLevel(rollbackLoggingLevel);
+        return this;
+    }
+
+    // Implementation
     // -------------------------------------------------------------------------
 
     protected CamelLogger createLogger() {

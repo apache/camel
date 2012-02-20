@@ -326,8 +326,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (componentType.isInstance(component)) {
             return componentType.cast(component);
         } else {
-            throw new IllegalArgumentException("Found component of type: " 
-                + component.getClass() + " instead of expected: " + componentType);
+            String message;
+            if (component == null) {
+                message = "Did not find component given by the name: " + name;
+            } else {
+                message = "Found component of type: " + component.getClass() + " instead of expected: " + componentType;
+            }
+            throw new IllegalArgumentException(message);
         }
     }
 
@@ -388,12 +393,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
                 oldEndpoint = entry.getValue();
                 if (EndpointHelper.matchEndpoint(oldEndpoint.getEndpointUri(), uri)) {
-                    answer.add(oldEndpoint);
-                    stopServices(oldEndpoint);
+                    try {
+                        stopServices(oldEndpoint);
+                        answer.add(oldEndpoint);
+                        endpoints.remove(entry.getKey());
+                    } catch (Exception e) {
+                        log.warn("Endpoint '{}' matching pattern '{}' should be removed, but could not be stopped. Remove ignored...");
+                    }
                 }
-            }
-            for (Endpoint endpoint : answer) {
-                endpoints.remove(getEndpointKey(endpoint.getEndpointUri()));
             }
         }
 
@@ -1546,7 +1553,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // stop route inputs in the same order as they was started so we stop the very first inputs first
         try {
-            shutdownStrategy.shutdown(this, getRouteStartupOrder());
+            // force shutting down routes as they may otherwise cause shutdown to hang
+            shutdownStrategy.shutdownForced(this, getRouteStartupOrder());
         } catch (Throwable e) {
             log.warn("Error occurred while shutting down routes. This exception will be ignored.", e);
         }
@@ -1599,8 +1607,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         stopWatch.stop();
         if (log.isInfoEnabled()) {
-            log.info("Uptime: " + getUptime());
-            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + TimeUtils.printDuration(stopWatch.taken()));
+            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is shutdown in " + TimeUtils.printDuration(stopWatch.taken()) + ". Uptime " + getUptime() + ".");
         }
 
         // and clear start date
@@ -2052,6 +2059,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     /**
      * Lazily create a default implementation
      */
+    @SuppressWarnings("deprecation")
     protected TypeConverter createTypeConverter() {
         BaseTypeConverterRegistry answer;
         if (isLazyLoadTypeConverters()) {
@@ -2290,11 +2298,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public Boolean isAutoStartup() {
         return autoStartup != null && autoStartup;
     }
-    
+
+    @Deprecated
     public Boolean isLazyLoadTypeConverters() {
         return lazyLoadTypeConverters != null && lazyLoadTypeConverters;
     }
-    
+
+    @Deprecated
     public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
         this.lazyLoadTypeConverters = lazyLoadTypeConverters;
     }

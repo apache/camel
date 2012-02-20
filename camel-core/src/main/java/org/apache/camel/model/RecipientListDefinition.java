@@ -45,7 +45,7 @@ import org.apache.camel.util.CamelContextHelper;
  */
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RecipientListDefinition<Type extends ProcessorDefinition> extends NoOutputExpressionNode implements ExecutorServiceAwareDefinition<RecipientListDefinition> {
+public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputExpressionNode implements ExecutorServiceAwareDefinition<RecipientListDefinition<Type>> {
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient

@@ -32,18 +32,18 @@ public class ManagementStrategyFactory {
         ManagementStrategy answer = null;
 
         if (disableJMX || Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-            log.info("JMX is disabled. Using DefaultManagementStrategy.");
+            log.info("JMX is disabled.");
         } else {
             try {
-                log.info("JMX enabled. Using ManagedManagementStrategy.");
                 answer = new ManagedManagementStrategy(new DefaultManagementAgent(context));
                 // must start it to ensure JMX works and can load needed Spring JARs
                 ServiceHelper.startService(answer);
                 // prefer to have it at first strategy
                 context.getLifecycleStrategies().add(0, new DefaultManagementLifecycleStrategy(context));
+                log.info("JMX enabled.");
             } catch (Exception e) {
                 answer = null;
-                log.warn("Cannot create JMX lifecycle strategy. Fallback to using DefaultManagementStrategy (non JMX).", e);
+                log.warn("Cannot create JMX lifecycle strategy. Will fallback and disable JMX.", e);
             }
         }
 

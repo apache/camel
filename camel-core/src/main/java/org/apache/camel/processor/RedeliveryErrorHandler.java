@@ -201,6 +201,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return false;
     }
 
+    @Override
+    public boolean isRunAllowed() {
+        // determine if we can still run, or the camel context is forcing a shutdown
+        boolean forceShutdown = camelContext.getShutdownStrategy().forceShutdown(this);
+        if (forceShutdown) {
+            log.trace("Run not allowed as ShutdownStrategy is forcing shutting down");
+        }
+        return !forceShutdown && super.isRunAllowed();
+    }
+
     public void process(Exchange exchange) throws Exception {
         if (output == null) {
             // no output then just return
@@ -227,6 +237,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // can we still run
             if (!isRunAllowed()) {
+                log.trace("Run not allowed, will reject executing exchange: {}", exchange);
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException());
                 }
@@ -393,6 +404,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected void processAsyncErrorHandler(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
         // can we still run
         if (!isRunAllowed()) {
+            log.trace("Run not allowed, will reject executing exchange: {}", exchange);
             if (exchange.getException() == null) {
                 exchange.setException(new RejectedExecutionException());
             }
@@ -568,7 +580,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // keep the Exchange.EXCEPTION_CAUGHT as property so end user knows the caused exception
 
         // create log message
-        String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId();
+        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
         msg = msg + ". Exhausted after delivery attempt: " + data.redeliveryCounter + " caught: " + caught;
         msg = msg + ". Handled and continue routing.";
 
@@ -656,7 +668,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
         // only log if not failure handled or not an exhausted unit of work
         if (!ExchangeHelper.isFailureHandled(exchange) && !ExchangeHelper.isUnitOfWorkExhausted(exchange)) {
-            String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId()
+            String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange)
                     + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e;
             logFailedDelivery(true, false, false, exchange, msg, data, e);
         }
@@ -764,7 +776,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
 
         // create log message
-        String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId();
+        String msg = "Failed delivery for " + ExchangeHelper.logIds(exchange);
         msg = msg + ". Exhausted after delivery attempt: " + data.redeliveryCounter + " caught: " + caught;
         if (processor != null) {
             msg = msg + ". Processed by failure processor: " + processor;
@@ -858,7 +870,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
 
         if (exchange.isRollbackOnly()) {
-            String msg = "Rollback exchangeId: " + exchange.getExchangeId();
+            String msg = "Rollback " + ExchangeHelper.logIds(exchange);
             Throwable cause = exchange.getException() != null ? exchange.getException() : exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
             if (cause != null) {
                 msg = msg + " due: " + cause.getMessage();

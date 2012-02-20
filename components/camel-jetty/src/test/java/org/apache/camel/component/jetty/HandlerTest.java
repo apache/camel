@@ -24,7 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.util.IOHelper;
+
 import org.eclipse.jetty.server.handler.StatisticsHandler;
+
 import org.junit.Test;
 
 public class HandlerTest extends BaseJettyTest {
@@ -44,7 +47,7 @@ public class HandlerTest extends BaseJettyTest {
         assertEquals(0, statisticsHandler3.getRequests());
         
         InputStream html = (InputStream) template.requestBody("http://localhost:" + port1, "");
-        BufferedReader br = new BufferedReader(new InputStreamReader(html));
+        BufferedReader br = IOHelper.buffered(new InputStreamReader(html));
         
         assertEquals(htmlResponse, br.readLine());
         assertEquals(1, statisticsHandler1.getRequests());
@@ -60,7 +63,7 @@ public class HandlerTest extends BaseJettyTest {
         assertEquals(0, statisticsHandler3.getRequests());
 
         InputStream html = (InputStream) template.requestBody("http://localhost:" + port2, "");
-        BufferedReader br = new BufferedReader(new InputStreamReader(html));
+        BufferedReader br = IOHelper.buffered(new InputStreamReader(html));
         
         assertEquals(htmlResponse, br.readLine());
         assertEquals(0, statisticsHandler1.getRequests());

@@ -30,12 +30,12 @@ import org.apache.camel.util.ObjectHelper;
  * Utility methods to help preparing {@link RouteDefinition} before they are added to
  * {@link org.apache.camel.CamelContext}.
  */
+@SuppressWarnings({"unchecked", "rawtypes", "deprecation"})
 public final class RouteDefinitionHelper {
 
     private RouteDefinitionHelper() {
     }
 
-    @SuppressWarnings("unchecked")
     public static void initParent(ProcessorDefinition parent) {
         List<ProcessorDefinition> children = parent.getOutputs();
         for (ProcessorDefinition child : children) {
@@ -47,7 +47,6 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private static void initParentAndErrorHandlerBuilder(ProcessorDefinition parent) {
         List<ProcessorDefinition> children = parent.getOutputs();
         for (ProcessorDefinition child : children) {
@@ -59,8 +58,8 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    public static void prepareRouteForInit(RouteDefinition route, List<ProcessorDefinition> abstracts,
-                                           List<ProcessorDefinition> lower) {
+    public static void prepareRouteForInit(RouteDefinition route, List<ProcessorDefinition<?>> abstracts,
+                                           List<ProcessorDefinition<?>> lower) {
         // filter the route into abstracts and lower
         for (ProcessorDefinition output : route.getOutputs()) {
             if (output.isAbstract()) {
@@ -104,13 +103,13 @@ public final class RouteDefinitionHelper {
                                     List<OnCompletionDefinition> onCompletions) {
 
         // abstracts is the cross cutting concerns
-        List<ProcessorDefinition> abstracts = new ArrayList<ProcessorDefinition>();
+        List<ProcessorDefinition<?>> abstracts = new ArrayList<ProcessorDefinition<?>>();
 
         // upper is the cross cutting concerns such as interceptors, error handlers etc
-        List<ProcessorDefinition> upper = new ArrayList<ProcessorDefinition>();
+        List<ProcessorDefinition<?>> upper = new ArrayList<ProcessorDefinition<?>>();
 
         // lower is the regular route
-        List<ProcessorDefinition> lower = new ArrayList<ProcessorDefinition>();
+        List<ProcessorDefinition<?>> lower = new ArrayList<ProcessorDefinition<?>>();
 
         RouteDefinitionHelper.prepareRouteForInit(route, abstracts, lower);
 
@@ -157,9 +156,8 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private static void initParentAndErrorHandlerBuilder(ModelCamelContext context, RouteDefinition route,
-                                                         List<ProcessorDefinition> abstracts, List<OnExceptionDefinition> onExceptions) {
+                                                         List<ProcessorDefinition<?>> abstracts, List<OnExceptionDefinition> onExceptions) {
 
         if (context != null) {
             // let the route inherit the error handler builder from camel context if none already set
@@ -178,7 +176,7 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initOnExceptions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper,
+    private static void initOnExceptions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
                                          List<OnExceptionDefinition> onExceptions) {
         // add global on exceptions if any
         if (onExceptions != null && !onExceptions.isEmpty()) {
@@ -209,7 +207,7 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initInterceptors(CamelContext context, RouteDefinition route,
-                                         List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper,
+                                         List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
                                          List<InterceptDefinition> intercepts,
                                          List<InterceptFromDefinition> interceptFromDefinitions,
                                          List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
@@ -237,7 +235,7 @@ public final class RouteDefinitionHelper {
         doInitInterceptors(context, route, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
     }
 
-    private static void doInitInterceptors(CamelContext context, RouteDefinition route, List<ProcessorDefinition> upper,
+    private static void doInitInterceptors(CamelContext context, RouteDefinition route, List<ProcessorDefinition<?>> upper,
                                            List<InterceptDefinition> intercepts,
                                            List<InterceptFromDefinition> interceptFromDefinitions,
                                            List<InterceptSendToEndpointDefinition> interceptSendToEndpointDefinitions) {
@@ -303,7 +301,7 @@ public final class RouteDefinitionHelper {
         }
     }
 
-    private static void initOnCompletions(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> upper,
+    private static void initOnCompletions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
                                           List<OnCompletionDefinition> onCompletions) {
         List<OnCompletionDefinition> completions = new ArrayList<OnCompletionDefinition>();
 
@@ -331,11 +329,11 @@ public final class RouteDefinitionHelper {
         upper.addAll(completions);
     }
 
-    private static void initTransacted(List<ProcessorDefinition> abstracts, List<ProcessorDefinition> lower) {
+    private static void initTransacted(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> lower) {
         TransactedDefinition transacted = null;
 
         // add to correct type
-        for (ProcessorDefinition type : abstracts) {
+        for (ProcessorDefinition<?> type : abstracts) {
             if (type instanceof TransactedDefinition) {
                 if (transacted == null) {
                     transacted = (TransactedDefinition) type;
@@ -363,7 +361,6 @@ public final class RouteDefinitionHelper {
      * @param context the camel context
      * @param processor the node
      */
-    @SuppressWarnings("unchecked")
     public static void forceAssignIds(CamelContext context, ProcessorDefinition processor) {
         // force id on the child
         processor.idOrCreate(context.getNodeIdFactory());

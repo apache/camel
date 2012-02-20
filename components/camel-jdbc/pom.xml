@@ -44,12 +44,7 @@
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test</artifactId>           
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>            
+            <artifactId>camel-test-spring</artifactId>           
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -73,5 +68,21 @@
             <scope>test</scope>
         </dependency>
      </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>derby.stream.error.file</name>
+              <value>target/derby.log</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

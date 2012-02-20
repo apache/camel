@@ -35,7 +35,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.ZooKeeperMessage;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.util.FileUtil;
-import org.apache.log4j.Logger;
+import org.apache.camel.util.IOHelper;
+
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -47,16 +48,22 @@ import org.apache.zookeeper.data.Stat;
 import org.apache.zookeeper.server.NIOServerCnxn;
 import org.apache.zookeeper.server.ZooKeeperServer;
 import org.apache.zookeeper.server.persistence.FileTxnSnapLog;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 
 public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
 
-    protected static final Logger LOG = Logger.getLogger(ZookeeperOSGiTestSupport.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(ZookeeperOSGiTestSupport.class);
     protected static TestZookeeperServer server;
     protected static TestZookeeperClient client;
 
@@ -66,7 +73,7 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
         server = new TestZookeeperServer(getServerPort(), clearServerData());
         waitForServerUp("localhost:" + getServerPort(), 1000);
         client = new TestZookeeperClient(getServerPort(), getTestClientSessionTimeout());
-        LOG.info("Started Zookeeper Test Infrastructure on port " + getServerPort());
+        LOG.info("Started Zookeeper Test Infrastructure on port {}", getServerPort());
     }
 
     public ZooKeeper getConnection() {
@@ -141,7 +148,7 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
 
     public static class TestZookeeperClient implements Watcher {
 
-        private final Logger log = Logger.getLogger(getClass());
+        private final Logger log = LoggerFactory.getLogger(getClass());
         private final CountDownLatch connected = new CountDownLatch(1);
         private ZooKeeper zk;
 
@@ -222,7 +229,7 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
                     return true;
                 }
             } catch (IOException e) {
-                LOG.info("server " + hp + " not up " + e);
+                LOG.info("server {} not up {}", hp, e);
             }
 
             if (System.currentTimeMillis() > start + timeout) {
@@ -254,7 +261,7 @@ public class ZookeeperOSGiTestSupport extends OSGiIntegrationTestSupport {
             outstream.write(cmd.getBytes());
             outstream.flush();
 
-            reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+            reader = IOHelper.buffered(new InputStreamReader(sock.getInputStream()));
             StringBuffer sb = new StringBuffer();
             String line;
             while ((line = reader.readLine()) != null) {

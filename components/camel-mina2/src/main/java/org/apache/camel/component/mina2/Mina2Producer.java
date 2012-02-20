@@ -104,6 +104,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     public void process(Exchange exchange) throws Exception {
         LOG.debug("Mina2Producer process");
 

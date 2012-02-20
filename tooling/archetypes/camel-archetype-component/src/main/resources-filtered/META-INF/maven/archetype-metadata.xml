@@ -21,9 +21,7 @@
     xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <requiredProperties>
-    <requiredProperty key="name">
-      <defaultValue>HelloWorld</defaultValue>
-    </requiredProperty>
+    <requiredProperty key="name"/>
     <requiredProperty key="scheme">
       <defaultValue>helloworld</defaultValue>
     </requiredProperty>
@@ -57,6 +55,12 @@
       <directory>src/test/java</directory>
       <includes>
         <include>**/*.java</include>
+      </includes>
+    </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory>src/test/resources</directory>
+      <includes>
+        <include>**/*</include>
       </includes>
     </fileSet>
     <fileSet encoding="UTF-8">

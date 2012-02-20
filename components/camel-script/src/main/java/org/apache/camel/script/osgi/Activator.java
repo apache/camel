@@ -30,6 +30,8 @@ import javax.script.ScriptEngineFactory;
 
 import org.apache.camel.impl.osgi.tracker.BundleTracker;
 import org.apache.camel.impl.osgi.tracker.BundleTrackerCustomizer;
+import org.apache.camel.util.IOHelper;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -37,6 +39,7 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +149,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         }
         public ScriptEngine resolveScriptEngine(String name) {
             try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(configFile.openStream()));
+                BufferedReader in = IOHelper.buffered(new InputStreamReader(configFile.openStream()));
                 String className = in.readLine();
                 in.close();
                 Class<?> cls = bundle.loadClass(className);

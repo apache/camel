@@ -63,7 +63,7 @@ import org.apache.camel.util.ObjectHelper;
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private final AtomicBoolean prepared = new AtomicBoolean(false);
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
     private String group;
     private String streamCache;
     private String trace;
@@ -548,16 +548,16 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.inputs = inputs;
     }
 
-    public List<ProcessorDefinition> getOutputs() {
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
     @XmlElementRef
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
 
         if (outputs != null) {
-            for (ProcessorDefinition output : outputs) {
+            for (ProcessorDefinition<?> output : outputs) {
                 configureChild(output);
             }
         }
@@ -733,7 +733,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
     protected RouteContext addRoutes(CamelContext camelContext, Collection<Route> routes, FromDefinition fromType) throws Exception {
         RouteContext routeContext = new DefaultRouteContext(camelContext, this, fromType, routes);
 
@@ -846,8 +845,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             throw new FailedToCreateRouteException(route.getId(), route.toString(), at, cause);
         }
 
-        List<ProcessorDefinition> list = new ArrayList<ProcessorDefinition>(outputs);
-        for (ProcessorDefinition output : list) {
+        List<ProcessorDefinition<?>> list = new ArrayList<ProcessorDefinition<?>>(outputs);
+        for (ProcessorDefinition<?> output : list) {
             try {
                 output.addRoutes(routeContext, routes);
             } catch (Exception e) {

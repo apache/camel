@@ -22,7 +22,7 @@ You can view the Web Console by pointing your browser to http://localhost:8080/
 You should be able to do things like
 
     * browse the available endpoints
-    * browse the messages on an endpoint if it is a BrowsableEndpoint
+    * browse the messages on an endpoint if it is a browsable endpoint
     * send a message to an endpoint
     * create new endpoints
 

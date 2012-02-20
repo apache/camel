@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Route;
+import org.apache.camel.Service;
 
 /**
  * Information about a route to be started where we want to control the order
@@ -52,5 +53,12 @@ public interface RouteStartupOrder {
      * @return the input consumers.
      */
     List<Consumer> getInputs();
+
+    /**
+     * Gets the services to this route.
+     *
+     * @return the services.
+     */
+    List<Service> getServices();
 
 }

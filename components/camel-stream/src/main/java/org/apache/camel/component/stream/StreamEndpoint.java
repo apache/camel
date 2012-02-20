@@ -41,6 +41,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     private long initialPromptDelay = 2000;
     private int groupLines;
     private Charset charset;
+    private GroupStrategy groupStrategy = new DefaultGroupStrategy();
 
     public StreamEndpoint(String endpointUri, Component component) throws Exception {
         super(endpointUri, component);
@@ -128,6 +129,14 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     public void setScanStream(boolean scanStream) {
         this.scanStream = scanStream;
+    }
+    
+    public GroupStrategy getGroupStrategy() {
+        return groupStrategy;
+    }
+    
+    public void setGroupStrategy(GroupStrategy strategy) {
+        this.groupStrategy = strategy;
     }
 
     public boolean isRetry() {

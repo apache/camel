@@ -31,6 +31,7 @@ import org.jboss.netty.channel.ChannelDownstreamHandler;
 import org.jboss.netty.channel.ChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
 import org.jboss.netty.handler.codec.frame.Delimiters;
+import org.jboss.netty.handler.codec.serialization.ClassResolvers;
 import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
 import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
 import org.jboss.netty.handler.codec.string.StringDecoder;
@@ -145,7 +146,7 @@ public class NettyConfiguration implements Cloneable {
                 } else {
                     // object serializable is then used
                     encoders.add(new ObjectEncoder());
-                    decoders.add(new ObjectDecoder());
+                    decoders.add(new ObjectDecoder(ClassResolvers.weakCachingResolver(null)));
 
                     LOG.debug("Using object encoders and decoders");
                 }

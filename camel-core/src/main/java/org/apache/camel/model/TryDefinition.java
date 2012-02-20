@@ -50,7 +50,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     @XmlTransient
     private boolean initialized;
     @XmlTransient
-    private List<ProcessorDefinition> outputsWithoutCatches;
+    private List<ProcessorDefinition<?>> outputsWithoutCatches;
 
     public TryDefinition() {
     }
@@ -223,20 +223,20 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         return finallyClause;
     }
 
-    public List<ProcessorDefinition> getOutputsWithoutCatches() {
+    public List<ProcessorDefinition<?>> getOutputsWithoutCatches() {
         if (outputsWithoutCatches == null) {
             checkInitialized();
         }
         return outputsWithoutCatches;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         initialized = false;
         super.setOutputs(outputs);
     }
 
     @Override
-    public void addOutput(ProcessorDefinition output) {
+    public void addOutput(ProcessorDefinition<?> output) {
         initialized = false;
         super.addOutput(output);
     }
@@ -247,11 +247,11 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     protected void checkInitialized() {
         if (!initialized) {
             initialized = true;
-            outputsWithoutCatches = new ArrayList<ProcessorDefinition>();
+            outputsWithoutCatches = new ArrayList<ProcessorDefinition<?>>();
             catchClauses = new ArrayList<CatchDefinition>();
             finallyClause = null;
 
-            for (ProcessorDefinition output : outputs) {
+            for (ProcessorDefinition<?> output : outputs) {
                 if (output instanceof CatchDefinition) {
                     catchClauses.add((CatchDefinition)output);
                 } else if (output instanceof FinallyDefinition) {

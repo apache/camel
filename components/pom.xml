@@ -35,6 +35,7 @@
     <module>camel-test</module>
     <module>camel-testng</module>
     <module>camel-test-blueprint</module>
+    <module>camel-test-spring</module>
     <module>camel-core-osgi</module>
     <module>camel-core-xml</module>
     <module>camel-blueprint</module>
@@ -56,11 +57,14 @@
     <module>camel-amqp</module>
     <module>camel-apns</module>
     <module>camel-atom</module>
+    <module>camel-avro</module>  
     <module>camel-aws</module>
+    <module>camel-beanio</module>
     <module>camel-bean-validator</module>
     <module>camel-bindy</module>
     <module>camel-cache</module>
     <module>camel-castor</module>
+    <module>camel-cdi</module>
     <module>camel-cometd</module>
     <module>camel-context</module>
     <module>camel-crypto</module>
@@ -75,6 +79,7 @@
     <module>camel-freemarker</module>
     <module>camel-ftp</module>
     <module>camel-gae</module>
+	<module>camel-gson</module>
     <module>camel-guice</module>
     <module>camel-hawtdb</module>
     <module>camel-hazelcast</module>
@@ -104,6 +109,7 @@
     <module>camel-mail</module>
     <module>camel-mina</module>
     <module>camel-mina2</module>
+    <module>camel-mongodb</module>
     <module>camel-msv</module>
     <module>camel-mvel</module>
     <module>camel-mybatis</module>
@@ -134,6 +140,7 @@
     <module>camel-spring-security</module>
     <module>camel-spring-ws</module>
     <module>camel-sql</module>
+    <module>camel-ssh</module>
     <module>camel-stax</module>
     <module>camel-stream</module>
     <module>camel-stringtemplate</module>
@@ -141,12 +148,12 @@
     <module>camel-tagsoup</module>
     <module>camel-twitter</module>
     <module>camel-velocity</module>
+    <module>camel-websocket</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmlsecurity</module>
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
     <module>camel-zookeeper</module>
-    <module>camel-websocket</module>
   </modules>
   
 </project>

@@ -41,7 +41,7 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
     @XmlElementRef
     private ExpressionDefinition expression;
     @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
     public ExpressionNode() {
     }
@@ -76,11 +76,12 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
         this.expression = expression;
     }
 
-    public List<ProcessorDefinition> getOutputs() {
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
     }
 
@@ -120,7 +121,7 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
     }
 
     @Override
-    protected void configureChild(ProcessorDefinition output) {
+    protected void configureChild(ProcessorDefinition<?> output) {
         // reuse the logic from pre create processor
         preCreateProcessor();
     }

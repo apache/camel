@@ -62,9 +62,6 @@ public class WebsocketComponent extends DefaultComponent {
     }
 
     @Override
-    /**
-     * uri --> websocket://foo?storeImplementationClass=org.apache.camel.hazelcast.HazelcastWebsocketStore&storeName=foo
-     */
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         WebsocketEndpoint endpoint = endpoints.get(remaining);
         if (endpoint == null) {
@@ -165,7 +162,7 @@ public class WebsocketComponent extends DefaultComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.info("Staring server {}:{}; static resources: {}", new Object[] {host, port, staticResources});
+        LOG.info("Starting server {}:{}; static resources: {}", new Object[] {host, port, staticResources});
         context = createContext();
         server = createServer(context, host, port, staticResources);
         server.start();

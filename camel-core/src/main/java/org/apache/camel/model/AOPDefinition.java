@@ -96,7 +96,7 @@ public class AOPDefinition extends OutputDefinition<AOPDefinition> {
 
         // use a pipeline to assemble the before and target processor
         // and the after if not afterFinally
-        Collection<ProcessorDefinition> pipe = new ArrayList<ProcessorDefinition>();
+        Collection<ProcessorDefinition<?>> pipe = new ArrayList<ProcessorDefinition<?>>();
 
         Processor finallyProcessor = null;
 

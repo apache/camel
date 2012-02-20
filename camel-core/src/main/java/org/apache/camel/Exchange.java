@@ -107,6 +107,7 @@ public interface Exchange {
     String EXCEPTION_CAUGHT           = "CamelExceptionCaught";
     String EVALUATE_EXPRESSION_RESULT = "CamelEvaluateExpressionResult";
     String ERRORHANDLER_HANDLED       = "CamelErrorHandlerHandled";
+    String EXTERNAL_REDELIVERED       = "CamelExternalRedelivered";
 
     String FAILURE_HANDLED      = "CamelFailureHandled";
     String FAILURE_ENDPOINT     = "CamelFailureEndpoint";
@@ -396,6 +397,17 @@ public interface Exchange {
      * Returns true if this exchange is transacted
      */
     boolean isTransacted();
+
+    /**
+     * Returns true if this exchange is an external initiated redelivered message (such as a JMS broker).
+     * <p/>
+     * <b>Important: </b> It is not always possible to determine if the message is a redelivery
+     * or not, and therefore <tt>null</tt> is returned. Such an example would be a JDBC message.
+     * However JMS brokers provides details if a message is redelivered.
+     *
+     * @return <tt>true</tt> if redelivered, <tt>false</tt> if not, <tt>null</tt> if not able to determine
+     */
+    Boolean isExternalRedelivered();
 
     /**
      * Returns true if this exchange is marked for rollback

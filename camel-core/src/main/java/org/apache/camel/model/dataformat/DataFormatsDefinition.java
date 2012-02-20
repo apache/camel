@@ -37,6 +37,8 @@ public class DataFormatsDefinition {
 
     // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
+        @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
+        @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
         @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
         @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
         @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),

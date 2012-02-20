@@ -73,7 +73,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @XmlAttribute(name = "useOriginalMessage")
     private Boolean useOriginalMessagePolicy;
     @XmlElementRef
-    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
     @XmlTransient
     private List<Class<? extends Throwable>> exceptionClasses;
     @XmlTransient
@@ -721,12 +721,12 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
 
     // Properties
     //-------------------------------------------------------------------------
-
-    public List<ProcessorDefinition> getOutputs() {
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorDefinition> outputs) {
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         this.outputs = outputs;
     }
 

@@ -1,6 +1,10 @@
 Camel Router Project for Spring-DM (OSGi)
 =========================================
 
+To build this project use
+
+    mvn install
+
 You can run this example from the command line using
 the following maven goal:
 

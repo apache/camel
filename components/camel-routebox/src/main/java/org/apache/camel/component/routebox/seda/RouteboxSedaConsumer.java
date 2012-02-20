@@ -122,8 +122,9 @@ public class RouteboxSedaConsumer extends RouteboxServiceSupport implements Rout
         // TODO: Get size of queue
         return 0;
     }
-    
-    public void prepareShutdown() {
+
+    @Override
+    public void prepareShutdown(boolean forced) {
     }
     
     public void setProcessor(AsyncProcessor processor) {

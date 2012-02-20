@@ -27,7 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
 
-import static org.apache.camel.component.crypto.DigitalSignatureConstants.SIGNATURE;
 
 public class DigitalSignatureConfiguration implements Cloneable, CamelContextAware {
 
@@ -50,7 +49,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private String privateKeyName;
     private String keystoreName;
     private String randomName;
-    private boolean clearHeaders;
+    private boolean clearHeaders = true;
     private String operation;
 
     public DigitalSignatureConfiguration copy() {
@@ -367,7 +366,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      * base64 encoded signature. This defaults to 'CamelDigitalSignature'
      */
     public String getSignatureHeader() {
-        return signatureHeaderName != null ? signatureHeaderName : SIGNATURE;
+        return signatureHeaderName != null ? signatureHeaderName : DigitalSignatureConstants.SIGNATURE;
     }
 
     /**

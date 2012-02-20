@@ -131,6 +131,13 @@ public final class ObjectHelper {
             return leftNum.compareTo(rightNum);
         }
 
+        // also try with floating point numbers
+        Double leftDouble = converter.convertTo(Double.class, leftValue);
+        Double rightDouble = converter.convertTo(Double.class, rightValue);
+        if (leftDouble != null && rightDouble != null) {
+            return leftDouble.compareTo(rightDouble);
+        }
+
         // prefer to NOT coerce to String so use the type which is not String
         // for example if we are comparing String vs Integer then prefer to coerce to Integer
         // as all types can be converted to String which does not work well for comparison

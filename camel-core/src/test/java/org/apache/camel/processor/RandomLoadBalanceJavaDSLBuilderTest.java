@@ -109,8 +109,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
             sb.append(".to(\"" + send.getUri() + "\")");
         }
 
-        @SuppressWarnings("rawtypes")
-        List<ProcessorDefinition> children = defn.getOutputs();
+        List<ProcessorDefinition<?>> children = defn.getOutputs();
         if (children == null || children.isEmpty()) {
             return;
         }
@@ -119,5 +118,4 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
             navigateDefinition(child, sb);
         }
     }
-
 }

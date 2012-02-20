@@ -21,25 +21,31 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.component.twitter.TwitterEndpoint;
+import org.apache.camel.component.twitter.consumer.TweeterStatusListener;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 import twitter4j.TwitterException;
+import twitter4j.TwitterStream;
 
 /**
  * Super class providing consuming capabilities for the streaming API.
  * 
  */
 public class StreamingConsumer extends Twitter4JConsumer implements StatusListener {
-
+    protected final TwitterStream twitterStream;
     TwitterEndpoint te;
     private final List<Status> receivedStatuses = new ArrayList<Status>();
     private volatile boolean clear;
+    private TweeterStatusListener tweeterStatusListener;
+
 
     public StreamingConsumer(TwitterEndpoint te) {
         this.te = te;
+        twitterStream = te.getProperties().getTwitterStreamInstance();
+        twitterStream.addListener(this);
     }
 
     public List<Status> pollConsume() throws TwitterException {
@@ -58,11 +64,15 @@ public class StreamingConsumer extends Twitter4JConsumer implements StatusListen
 
     @Override
     public void onStatus(Status status) {
-        if (clear) {
-            receivedStatuses.clear();
-            clear = false;
+        if (tweeterStatusListener != null) {
+            tweeterStatusListener.onStatus(status);
+        } else {
+            if (clear) {
+                receivedStatuses.clear();
+                clear = false;
+            }
+            receivedStatuses.add(status);
         }
-        receivedStatuses.add(status);
     }
 
     @Override
@@ -77,4 +87,7 @@ public class StreamingConsumer extends Twitter4JConsumer implements StatusListen
     public void onScrubGeo(long userId, long upToStatusId) {
     }
 
+    public void registerTweetListener(TweeterStatusListener tweeterStatusListener) {
+        this.tweeterStatusListener = tweeterStatusListener;
+    }
 }

@@ -171,24 +171,37 @@ public class XmlConverter {
      */
     @Deprecated
     public DOMSource toSource(Document document) {
-        return toDOMSource(document);
+        return new DOMSource(document);
     }
 
     /**
      * Converts the given Node to a Source
+     * @throws TransformerException 
+     * @throws ParserConfigurationException 
      * @deprecated  use toDOMSource instead
      */
     @Deprecated
-    public Source toSource(Node node) {
+    public Source toSource(Node node) throws ParserConfigurationException, TransformerException {
         return toDOMSource(node);
     }
 
     /**
      * Converts the given Node to a Source
+     * @throws TransformerException 
+     * @throws ParserConfigurationException 
      */
     @Converter
-    public DOMSource toDOMSource(Node node) {
-        return new DOMSource(node);
+    public DOMSource toDOMSource(Node node) throws ParserConfigurationException, TransformerException {
+        Document document = toDOMDocument(node);
+        return new DOMSource(document);
+    }
+    
+    /**
+     * Converts the given Document to a DOMSource
+     */
+    @Converter
+    public DOMSource toDOMSource(Document document) {
+        return new DOMSource(document);
     }
 
     /**

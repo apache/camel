@@ -113,7 +113,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     }
 
     public void testHasProperties() throws Exception {
-        Map<String, Object> empty = CastUtils.cast(Collections.emptyMap());
+        Map<String, Object> empty = Collections.emptyMap();
         assertFalse(IntrospectionSupport.hasProperties(empty, null));
         assertFalse(IntrospectionSupport.hasProperties(empty, ""));
         assertFalse(IntrospectionSupport.hasProperties(empty, "foo."));

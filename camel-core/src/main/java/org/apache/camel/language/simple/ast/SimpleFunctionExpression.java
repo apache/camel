@@ -275,6 +275,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.exchangeExceptionStackTraceExpression();
         } else if (ObjectHelper.equal(expression, "threadName")) {
             return ExpressionBuilder.threadNameExpression();
+        } else if (ObjectHelper.equal(expression, "camelId")) {
+            return ExpressionBuilder.camelContextNameExpression();
         }
 
         return null;

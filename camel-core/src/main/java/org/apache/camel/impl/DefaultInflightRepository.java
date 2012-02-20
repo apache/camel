@@ -87,7 +87,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         if (count > 0) {
             LOG.warn("Shutting down while there are still " + count + " in flight exchanges.");
         } else {
-            LOG.info("Shutting down with no inflight exchanges.");
+            LOG.debug("Shutting down with no inflight exchanges.");
         }
         endpointCount.clear();
     }

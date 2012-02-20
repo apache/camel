@@ -37,6 +37,7 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.BreakpointSupport;
+import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
@@ -45,7 +46,6 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.After;
@@ -335,27 +335,22 @@ public abstract class CamelTestSupport extends TestSupport {
 
     /**
      * Whether or not type converters should be lazy loaded (notice core converters is always loaded)
-     * <p/>
-     * We enabled lazy by default as it would speedup unit testing.
      *
-     * @return <tt>true</tt> by default.
+     * @return <tt>false</tt> by default.
      */
+    @Deprecated
     protected boolean isLazyLoadingTypeConverter() {
-        return true;
+        return false;
     }
 
-    /**
-     * Lets post process this test instance to process any Camel annotations.
-     * Note that using Spring Test or Guice is a more powerful approach.
-     */
     protected void postProcessTest() throws Exception {
         context = threadCamelContext.get();
         template = threadTemplate.get();
         consumer = threadConsumer.get();
         camelContextService = threadService.get();
 
-        CamelBeanPostProcessor processor = new CamelBeanPostProcessor();
-        processor.setCamelContext(context);
+        // use the default bean post processor from camel-core
+        DefaultCamelBeanPostProcessor processor = new DefaultCamelBeanPostProcessor(context);
         processor.postProcessBeforeInitialization(this, "this");
     }
 
@@ -415,6 +410,7 @@ public abstract class CamelTestSupport extends TestSupport {
         }
     }
 
+    @SuppressWarnings("deprecation")
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
         context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());

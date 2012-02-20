@@ -156,7 +156,7 @@ public final class Twitter4JFactory {
             switch (ConsumerType.fromUri(uriSplit[0])) {
             case DIRECTMESSAGE:
                 if (te.getProperties().getUser() == null || te.getProperties().getUser().trim().isEmpty()) {
-                    throw new IllegalArgumentException("Producer type set to DIRECT MESSAGE but no recipientuser was set.");
+                    throw new IllegalArgumentException("Producer type set to DIRECT MESSAGE but no recipient user was set.");
                 } else {
                     return new DirectMessageProducer(te);
                 }

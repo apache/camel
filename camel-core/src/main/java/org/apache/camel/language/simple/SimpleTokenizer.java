@@ -146,6 +146,17 @@ public final class SimpleTokenizer {
                     char ch = expression.charAt(index);
                     sb.append(ch);
                     index++;
+                    continue;
+                }
+                // is it a dot or comma as part of a floating point number
+                boolean decimalSeparator = '.' == expression.charAt(index) || ',' == expression.charAt(index);
+                if (decimalSeparator && sb.length() > 0) {
+                    char ch = expression.charAt(index);
+                    sb.append(ch);
+                    index++;
+                    // assume its still a digit
+                    digit = true;
+                    continue;
                 }
             }
             if (sb.length() > 0) {

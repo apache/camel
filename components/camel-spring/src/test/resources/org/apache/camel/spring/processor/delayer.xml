@@ -23,6 +23,8 @@
     ">
 
     <!-- START SNIPPET: example -->
+    <bean id="myDelayBean" class="org.apache.camel.processor.MyDelayCalcBean"/>
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="seda:a"/>
@@ -35,6 +37,13 @@
             <from uri="seda:b"/>
             <delay>
                 <constant>1000</constant>
+            </delay>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="seda:c"/>
+            <delay>
+                <method ref="myDelayBean" method="delayMe"/>
             </delay>
             <to uri="mock:result"/>
         </route>

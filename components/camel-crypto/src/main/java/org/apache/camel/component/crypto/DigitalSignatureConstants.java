@@ -20,11 +20,14 @@ package org.apache.camel.component.crypto;
  * <code>DigitalSignatureConstants</code> contains Constants for use as Message
  * header keys.
  */
-public interface DigitalSignatureConstants {
-
-    String SIGNATURE_PRIVATE_KEY = "CamelSignaturePrivateKey";
-    String SIGNATURE_PUBLIC_KEY_OR_CERT = "CamelSignaturePublicKeyOrCert";
-    String SIGNATURE = "CamelDigitalSignature";
-    String KEYSTORE_ALIAS = "CamelSignatureKeyStoreAlias";
-    String KEYSTORE_PASSWORD = "CamelSignatureKeyStorePassword";
+public final class DigitalSignatureConstants {
+    public static final String SIGNATURE_PRIVATE_KEY = "CamelSignaturePrivateKey";
+    public static final String SIGNATURE_PUBLIC_KEY_OR_CERT = "CamelSignaturePublicKeyOrCert";
+    public static final String SIGNATURE = "CamelDigitalSignature";
+    public static final String KEYSTORE_ALIAS = "CamelSignatureKeyStoreAlias";
+    public static final String KEYSTORE_PASSWORD = "CamelSignatureKeyStorePassword";
+    
+    private DigitalSignatureConstants() {
+        // Helper Class
+    }
 }

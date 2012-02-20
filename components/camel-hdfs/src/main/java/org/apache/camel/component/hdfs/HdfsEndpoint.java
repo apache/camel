@@ -29,6 +29,7 @@ public class HdfsEndpoint extends DefaultEndpoint {
 
     private final HdfsConfiguration config;
 
+    @SuppressWarnings("deprecation")
     public HdfsEndpoint(String endpointUri, CamelContext context) throws URISyntaxException {
         super(endpointUri, context);
         this.config = new HdfsConfiguration();
