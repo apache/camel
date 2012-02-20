@@ -32,6 +32,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class MongoDbFindOperationTest extends AbstractMongoDbTest {
  
+    
     @Test
     public void testFindAllNoCriteriaOperation() throws Exception {
         // Test that the collection has 0 documents in it
@@ -40,8 +41,10 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         
         Object result = template.requestBody("direct:findAll", (Object) null);
         assertTrue("Result is not of type List", result instanceof List);
-        
+
+        @SuppressWarnings("unchecked")
         List<DBObject> resultList = (List<DBObject>) result;
+
         assertListSize("Result does not contain all entries in collection", resultList, 1000);
         
         // Ensure that all returned documents contain all fields
@@ -66,8 +69,10 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         DBObject fieldFilter = BasicDBObjectBuilder.start().add("_id", 0).add("fixedField", 0).get();
         Object result = template.requestBodyAndHeader("direct:findAll", (Object) null, MongoDbConstants.FIELDS_FILTER, fieldFilter);
         assertTrue("Result is not of type List", result instanceof List);
-        
+
+        @SuppressWarnings("unchecked")
         List<DBObject> resultList = (List<DBObject>) result;
+
         assertListSize("Result does not contain all entries in collection", resultList, 1000);
         
         // Ensure that all returned documents contain all fields
@@ -98,8 +103,10 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
             headers.put(MongoDbConstants.LIMIT, 100);
             Object result = template.requestBodyAndHeaders("direct:findAll", (Object) null, headers);
             assertTrue("Result is not of type List", result instanceof List);
-            
+
+            @SuppressWarnings("unchecked")
             List<DBObject> resultList = (List<DBObject>) result;
+
             assertListSize("Result does not contain 100 elements", resultList, 100);
             assertEquals("Id of first record is not as expected", numToSkip + 1, Integer.parseInt((String) resultList.get(0).get("_id")));
             

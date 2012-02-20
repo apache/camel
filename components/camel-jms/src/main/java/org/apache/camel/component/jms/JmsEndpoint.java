@@ -104,6 +104,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.pubSubDomain = pubSubDomain;
     }
 
+    @SuppressWarnings("deprecation")
     public JmsEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destinationName, boolean pubSubDomain) {
         super(UnsafeUriCharactersEncoder.encode(endpointUri));
         this.binding = binding;

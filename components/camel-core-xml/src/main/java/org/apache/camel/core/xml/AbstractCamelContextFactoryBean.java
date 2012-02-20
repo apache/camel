@@ -330,6 +330,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     protected abstract void initCustomRegistry(T context);
     
+    @SuppressWarnings("deprecation")
     protected void initLazyLoadTypeConverteres() {
         if (getLazyLoadTypeConverters() != null) {
             getContext().setLazyLoadTypeConverters(getLazyLoadTypeConverters());

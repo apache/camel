@@ -124,7 +124,8 @@ public class CamelSpringJUnit4ClassRunnerPlainTest {
         assertNull(camelContext.getDebugger());
         assertNull(camelContext2.getDebugger());
     }
-    
+
+    @SuppressWarnings("deprecation")
     @Test
     public void testLazyLoadTypeConverters() {
         assertTrue(camelContext.isLazyLoadTypeConverters());

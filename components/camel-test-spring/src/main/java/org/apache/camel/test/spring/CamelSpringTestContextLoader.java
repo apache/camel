@@ -355,6 +355,7 @@ public class CamelSpringTestContextLoader extends
         }
     }
     
+    @SuppressWarnings("deprecation")
     protected void handleLazyLoadTypeConverters(GenericApplicationContext context, Class<?> testClass) throws Exception {
         final boolean lazy;
         

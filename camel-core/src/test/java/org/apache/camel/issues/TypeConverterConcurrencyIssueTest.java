@@ -46,7 +46,7 @@ public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
             pool.submit(new Runnable() {
                 @Override
                 public void run() {
-                    MyCamelBean bean = context.getTypeConverter().convertTo(MyCamelBean.class, "1;MyCamel");
+                    context.getTypeConverter().convertTo(MyCamelBean.class, "1;MyCamel");
                     latch.countDown();
                 }
             });

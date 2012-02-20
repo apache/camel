@@ -21,6 +21,7 @@ import org.apache.camel.test.spring.LazyLoadTypeConverters;
 import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 
+@SuppressWarnings("deprecation")
 @LazyLoadTypeConverters(false)
 public class CamelSpringJUnit4ClassRunnerLazyLoadTypeConvertersTest 
         extends CamelSpringJUnit4ClassRunnerPlainTest {

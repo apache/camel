@@ -29,15 +29,18 @@ public class DefaultCamelContextLazyLoadTypeConvertersTest extends TestSupport {
 
     private CamelContext context = new DefaultCamelContext();
 
+    @SuppressWarnings("deprecation")
     public void testLazyLoadDefault() throws Exception {
         assertFalse("Default setting should have been true", context.isLazyLoadTypeConverters());
     }
 
+    @SuppressWarnings("deprecation")
     public void testConvertLoadUpFront() throws Exception {
         context.setLazyLoadTypeConverters(false);
         doConvertTest();
     }
 
+    @SuppressWarnings("deprecation")
     public void testConvertLazyLoad() throws Exception {
         context.setLazyLoadTypeConverters(true);
         doConvertTest();

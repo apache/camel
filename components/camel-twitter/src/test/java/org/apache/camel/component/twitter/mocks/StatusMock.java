@@ -129,6 +129,7 @@ public class StatusMock implements Status {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public Annotations getAnnotations() {
         return null;
     }

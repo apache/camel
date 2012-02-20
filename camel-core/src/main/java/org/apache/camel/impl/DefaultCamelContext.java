@@ -2059,6 +2059,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     /**
      * Lazily create a default implementation
      */
+    @SuppressWarnings("deprecation")
     protected TypeConverter createTypeConverter() {
         BaseTypeConverterRegistry answer;
         if (isLazyLoadTypeConverters()) {

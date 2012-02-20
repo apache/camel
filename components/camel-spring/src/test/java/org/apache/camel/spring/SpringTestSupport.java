@@ -42,6 +42,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
     protected abstract AbstractXmlApplicationContext createApplicationContext();
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void setUp() throws Exception {
         if (isLazyLoadingTypeConverter()) {
@@ -153,6 +154,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
         return 1;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = SpringCamelContext.springCamelContext(applicationContext);

@@ -70,6 +70,7 @@ public class CamelBlueprint2Test extends OSGiBlueprintTestSupport {
         assertEquals(TestProxySender.class.getName(), proxy.getClass().getInterfaces()[0].getName());
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testErrorHandler() throws Exception {
         getInstalledBundle("CamelBlueprintTestBundle14").start();

@@ -71,6 +71,7 @@ public class RoutesResource extends CamelChildResourceSupport {
      */
     @GET
     @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @SuppressWarnings("deprecation")
     public RoutesDefinition getRouteDefinitions() {
         RoutesDefinition answer = new RoutesDefinition();
         CamelContext camelContext = getCamelContext();

@@ -40,8 +40,7 @@ import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
-import org.apache.camel.util.TimeUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -384,8 +383,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
      * Loads the core type converters which is mandatory to use Camel
      */
     public void loadCoreTypeConverters() throws Exception {
-        int before = typeMappings.size();
-
         // load all the type converters from camel-core
         CoreTypeConverterLoader core = new CoreTypeConverterLoader();
         core.load(this);

@@ -43,6 +43,7 @@ public class RouteStart extends OsgiCommandSupport {
         this.camelController = camelController;
     }
 
+    @SuppressWarnings("deprecation")
     public Object doExecute() throws Exception {
         Route camelRoute = camelController.getRoute(route, context);
         if (camelRoute == null) {

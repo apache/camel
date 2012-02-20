@@ -16,20 +16,14 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.io.IOException;
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Source;
 import javax.xml.ws.Endpoint;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import org.xml.sax.SAXException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
