@@ -57,7 +57,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private StreamEndpoint endpoint;
     private String uri;
     private boolean initialPromptDone;
-    private final List<Object> lines = new CopyOnWriteArrayList<Object>();
+    private final List<String> lines = new CopyOnWriteArrayList<String>();
 
     public StreamConsumer(StreamEndpoint endpoint, Processor processor, String uri) throws Exception {
         super(endpoint, processor);
@@ -166,7 +166,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     /**
      * Strategy method for processing the line
      */
-    protected synchronized void processLine(Object line) throws Exception {
+    protected synchronized void processLine(String line) throws Exception {
         if (endpoint.getGroupLines() > 0) {
             // remember line
             lines.add(line);
@@ -178,8 +178,8 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
                 // create message with the lines
                 Message msg = new DefaultMessage();
-                List<Object> copy = new ArrayList<Object>(lines);
-                msg.setBody(copy);
+                List<String> copy = new ArrayList<String>(lines);
+                msg.setBody(endpoint.getGroupStrategy().groupLines(copy));
                 exchange.setIn(msg);
 
                 // clear lines
