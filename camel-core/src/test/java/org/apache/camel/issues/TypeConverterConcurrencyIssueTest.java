@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.converter.StaticMethodTypeConverter;
 import org.apache.camel.util.StopWatch;
 
@@ -46,13 +47,18 @@ public class TypeConverterConcurrencyIssueTest extends ContextTestSupport {
             pool.submit(new Runnable() {
                 @Override
                 public void run() {
-                    context.getTypeConverter().convertTo(MyCamelBean.class, "1;MyCamel");
-                    latch.countDown();
+                    try {
+                        context.getTypeConverter().mandatoryConvertTo(MyCamelBean.class, "1;MyCamel");
+                        latch.countDown();
+                    } catch (NoTypeConversionAvailableException e) {
+                        // ignore, as the latch will not be decremented anymore so that the assert below
+                        // will fail after the one minute timeout anyway
+                    }
                 }
             });
         }
         
-        assertTrue(latch.await(1, TimeUnit.MINUTES));
+        assertTrue("The expected mandatory conversions failed!", latch.await(1, TimeUnit.MINUTES));
         log.info("Took " + watch.stop() + " millis to convert " + size + " objects");
     }
     
