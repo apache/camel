@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import com.hazelcast.core.Hazelcast;
+
 import org.apache.camel.test.junit4.CamelSpringTestSupport;
+
 import org.junit.Test;
+
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -60,21 +64,12 @@ public class HazelcastAtomicnumberProducerForSpringTest extends CamelSpringTestS
         assertEquals(9, body);
     }
 
-    /*
-     * will be fixed in next hazelcast version (1.9.3). Mail from Talip (21.02.2011):
-     * 
-     * I see. Hazelcast.shutdownAll() should cleanup instances (maps/queues). I just fixed it.
-     * 
-     * AtomicNumber.destroy() should also destroy the number and if you call atomicNumber.get() after the destroy it should throw IllegalStateException. It is also fixed.
-     * 
-     * set test to true by default. TODO: if we'll get the new hazelcast version I'll fix the test.
-     */
     @Test
     public void testDestroy() {
         template.sendBody("direct:set", 10);
         template.sendBody("direct:destroy", null);
 
-        // assertTrue(Hazelcast.getInstances().isEmpty());
+        assertTrue(Hazelcast.getInstances().isEmpty());
     }
 
 }

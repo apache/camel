@@ -68,22 +68,4 @@
 
     </dependencies>
 
-    <build>
-        <plugins>
-
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <childDelegation>false</childDelegation>
-                    <useFile>true</useFile>
-                    <forkMode>pertest</forkMode>
-                    <excludes>
-                        <exclude>**/XXXTest.*</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
-
 </project>

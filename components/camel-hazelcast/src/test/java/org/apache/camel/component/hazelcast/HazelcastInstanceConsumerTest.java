@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -53,7 +54,6 @@ public class HazelcastInstanceConsumerTest extends CamelTestSupport {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
     @Ignore("Shutdown causes further hazelast tests to fail")
     public void testRemoveInstance() throws InterruptedException {
 
@@ -62,8 +62,7 @@ public class HazelcastInstanceConsumerTest extends CamelTestSupport {
 
         HazelcastInstance h1 = Hazelcast.newHazelcastInstance(null);
 
-        // TODO --> check how an instance can be killed...
-        h1.shutdown();
+        h1.getLifecycleService().shutdown();
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
 

@@ -34,18 +34,16 @@ public class HazelcastQueueConsumerTest extends CamelTestSupport {
 
     @Override
     protected void doPostSetup() throws Exception {
-        HazelcastComponent component = (HazelcastComponent) context().getComponent("hazelcast");
+        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
         HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
         this.map = hazelcastInstance.getQueue("mm");
         this.map.clear();
     }
 
-
     @AfterClass
     public static void tearDownClass() {
         Hazelcast.shutdownAll();
     }
-
 
     @Test
     public void add() throws InterruptedException {
