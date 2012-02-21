@@ -209,7 +209,8 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
             // after we have created the processors we consider the exchange as exhausted if an unhandled
             // exception was thrown, (used in the catch block)
-            exhaust = true;
+            // if the processors is working in Streaming model, the exchange could not be processed at this point.
+            exhaust = !isStreaming();
 
             if (isParallelProcessing()) {
                 // ensure an executor is set when running in parallel
