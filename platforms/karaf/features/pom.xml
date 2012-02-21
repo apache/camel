@@ -118,7 +118,7 @@
       <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version>
       <stringtemplate-bundle-version>3.2_5</stringtemplate-bundle-version>
       <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
-      <twitter4j-bundle-version>2.2.5_1</twitter4j-bundle-version>
+      <twitter4j-bundle-version>2.2.5_2-SNAPSHOT</twitter4j-bundle-version>
       <velocity-bundle-version>1.7_3</velocity-bundle-version>
       <xalan-bundle-version>2.7.1_4</xalan-bundle-version>
       <xerces-bundle-version>2.9.1_5</xerces-bundle-version>
