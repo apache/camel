@@ -143,9 +143,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
         if (osgi) {
             LOG.info("OSGi environment detected.");
-        } else {
-            LOG.info("OSGi environment not detected.");
-        }
+        } 
         LOG.debug("Using {} as CamelContextBeanDefinitionParser", cl.getCanonicalName());
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }
