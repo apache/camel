@@ -80,6 +80,11 @@ public class InstrumentationProcessor extends DelegateAsyncProcessor implements 
                     callback.done(doneSync);
                 }
             }
+
+            @Override
+            public String toString() {
+                return InstrumentationProcessor.this.toString();
+            }
         });
     }
 
