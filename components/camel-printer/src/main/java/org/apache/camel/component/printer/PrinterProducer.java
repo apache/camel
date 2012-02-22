@@ -150,7 +150,7 @@ public class PrinterProducer extends DefaultProducer {
         ObjectHelper.notNull(printService, "PrintService", this);
 
         if (printerOperations == null) {
-            printerOperations = new PrinterOperations(printService, assignPrintJob(printService), assignDocFlavor(), assignPrintAttributes());
+            printerOperations = new PrinterOperations(printService, assignDocFlavor(), assignPrintAttributes());
         }
         super.doStart();
     }
