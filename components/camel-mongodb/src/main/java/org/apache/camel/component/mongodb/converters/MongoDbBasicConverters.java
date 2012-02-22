@@ -27,25 +27,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({"rawtypes"})
 @Converter
 public final class MongoDbBasicConverters {
     
     private static final transient Logger LOG = LoggerFactory.getLogger(MongoDbBasicConverters.class);
 
     // Jackson's ObjectMapper is thread-safe, so no need to create a pool nor synchronize access to it
-    private static ObjectMapper objectMapper;
-    
-    // will attempt to load the Jackson ObjectMapper class using the class loader of MongoDbBasicConverters
-    // in an OSGi environment, if Jackson is present it would have already been wired since Jackson is an optional dependency (Import-Package)
-    static {
-        try {
-            Class<ObjectMapper> objectMapperC = (Class<ObjectMapper>) MongoDbBasicConverters.class.getClassLoader().loadClass("org.codehaus.jackson.map.ObjectMapper");
-            MongoDbBasicConverters.objectMapper = objectMapperC.newInstance();
-        } catch (Exception e) {
-            // do nothing, Jackson not found
-        }
-    }
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     private MongoDbBasicConverters() { }
     
@@ -73,12 +62,6 @@ public final class MongoDbBasicConverters {
    
     @Converter
     public static DBObject fromAnyObjectToDBObject(Object value) {
-        if (MongoDbBasicConverters.objectMapper == null) {
-            LOG.warn("Conversion has fallen back to generic Object -> DBObject, but Jackson " 
-                         + "was not available on the classpath during initialization. Returning null.");
-            return null;
-        }
-        
         BasicDBObject answer;
         try {
             Map m = MongoDbBasicConverters.objectMapper.convertValue(value, Map.class);

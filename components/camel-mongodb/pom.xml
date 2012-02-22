@@ -46,18 +46,17 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
+	<!-- JSON is vital to MongoDB, so we absolutely require camel-jackson -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jackson</artifactId>
+    </dependency>
+
     <!-- MongoDB driver dependency -->
     <dependency>
       <groupId>org.mongodb</groupId>
       <artifactId>mongo-java-driver</artifactId>
       <version>${mongo-java-driver-version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-mapper-asl</artifactId>
-      <version>${jackson-version}</version>
-      <optional>true</optional>
     </dependency>
 
     <!-- testing -->
