@@ -37,6 +37,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     private int maxInterval = 30000;
     private int multiFrameInterval = 1500;
     private boolean jsonCommented = true;
+    private boolean sessionHeadersEnabled;
     private int logLevel = 1;
     private URI uri;
     private CometdComponent component;
@@ -148,6 +149,14 @@ public class CometdEndpoint extends DefaultEndpoint {
 
     public void setJsonCommented(boolean commented) {
         jsonCommented = commented;
+    }
+    
+    public void setSessionHeadersEnabled(boolean enable) {
+        this.sessionHeadersEnabled = enable;
+    }
+
+    public boolean areSessionHeadersEnabled() {
+        return sessionHeadersEnabled;
     }
 
     public int getLogLevel() {

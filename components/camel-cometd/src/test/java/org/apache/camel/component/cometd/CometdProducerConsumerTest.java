@@ -18,6 +18,7 @@ package org.apache.camel.component.cometd;
 
 import java.util.List;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -71,13 +72,31 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
             assertNotNull(message.getHeader(CometdBinding.COMETD_CLIENT_ID_HEADER_NAME));
         }
     }
+    
+    @Test
+    public void testSessionHeaderArgumentSet() throws Exception {
+        // setup
+        CometdComponent component = context.getComponent("cometd", CometdComponent.class);
+
+        // act
+        Endpoint result = component
+            .createEndpoint("cometd://127.0.0.1:"
+                            + port
+                            + "/service/testArgs?baseResource=file:./target/test-classes/webapp&"
+                            + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2");
+
+        // assert
+        assertTrue(result instanceof CometdEndpoint);
+        CometdEndpoint cometdEndpoint = (CometdEndpoint)result;
+        assertTrue(cometdEndpoint.areSessionHeadersEnabled());
+    }
 
     @Override
     @Before
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable(23500);
         uri = "cometd://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
-                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
+                + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&sessionHeadersEnabled=true&logLevel=2";
 
         super.setUp();
     }
@@ -121,3 +140,4 @@ public class CometdProducerConsumerTest extends CamelTestSupport {
         }
     }
 }
+
