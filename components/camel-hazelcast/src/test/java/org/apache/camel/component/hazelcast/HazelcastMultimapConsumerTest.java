@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class HazelcastMultimapConsumerTest extends CamelTestSupport {
@@ -56,9 +57,8 @@ public class HazelcastMultimapConsumerTest extends CamelTestSupport {
 
     /*
      * mail from talip (hazelcast) on 21.02.2011: MultiMap doesn't support eviction yet. We can and should add this feature.
-     * 
-     * see also http://code.google.com/p/hazelcast/issues/detail?id=577&q=eviction
      */
+    @Ignore("See also http://code.google.com/p/hazelcast/issues/detail?id=577&q=eviction")
     @Test
     public void testEnvict() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:envicted");
@@ -71,7 +71,7 @@ public class HazelcastMultimapConsumerTest extends CamelTestSupport {
         map.put("5", "my-foo-5");
         map.put("6", "my-foo-6");
 
-        // assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
+        assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
     }
 
     @Test
