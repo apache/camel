@@ -96,4 +96,9 @@ public @interface DataField {
      * Indicates to clip data in the field if it exceeds the allowed length when using fixed length.
      */
     boolean clip() default false;
+    
+    /**
+     * Field's default value in case no value is set 
+     */
+    String defaultValue() default "";
 }

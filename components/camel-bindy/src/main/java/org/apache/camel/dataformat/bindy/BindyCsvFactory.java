@@ -200,7 +200,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     throw new IllegalArgumentException("Parsing error detected for field defined at the position: " + pos + ", line: " + line, e);
                 }
             } else {
-                value = getDefaultValueForPrimitive(field.getType());
+                if (!dataField.defaultValue().isEmpty()) {
+                    value = format.parse(dataField.defaultValue());
+                } else {
+                    value = getDefaultValueForPrimitive(field.getType());
+                }
             }
 
             field.set(modelField, value);
@@ -211,12 +215,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
         LOG.debug("Counter mandatory fields: {}", counterMandatoryFields);
 
-        if (pos < totalFields) {
-            throw new IllegalArgumentException("Some fields are missing (optional or mandatory), line: " + line);
-        }
-
         if (counterMandatoryFields < numberMandatoryFields) {
             throw new IllegalArgumentException("Some mandatory fields are missing, line: " + line);
+        }
+
+        if (pos < totalFields) {
+            setDefaultValuesForFields(model);
         }
 
     }
@@ -555,6 +559,29 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     // Get section number and add it to the sections
                     sections.put(cl.getName(), section.number());
                 }
+            }
+        }
+    }
+    /**
+     * Set the default values for the non defined fields.
+     * @param The model which has its default fields set.
+     * @throws IllegalAccessException if the underlying fields are inaccessible
+     * @throws Exception In case the field cannot be parsed
+     */
+    private void setDefaultValuesForFields(final Map<String, Object> model) throws IllegalAccessException,
+        Exception {
+        // Set the default values, if defined
+        for (int i = 1; i <= dataFields.size(); i++) {
+            Field field = annotatedFields.get(i);
+            field.setAccessible(true);
+            DataField dataField = dataFields.get(i);
+            Object modelField = model.get(field.getDeclaringClass().getName());
+            if (field.get(modelField) == null && !dataField.defaultValue().isEmpty()) {
+                String pattern = dataField.pattern();
+                Format<?> format = FormatFactory.getFormat(field.getType(), pattern, getLocale(),
+                                                                 dataField.precision());
+                Object value = format.parse(dataField.defaultValue());
+                field.set(modelField, value);
             }
         }
     }

@@ -31,7 +31,7 @@ public class Order {
     @DataField(pos = 2)
     private String clientNr;
 
-    @DataField(pos = 3)
+    @DataField(pos = 3, defaultValue = "Joe")
     private String firstName;
 
     @DataField(pos = 4)
