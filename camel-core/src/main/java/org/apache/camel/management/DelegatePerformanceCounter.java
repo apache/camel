@@ -67,4 +67,9 @@ public class DelegatePerformanceCounter implements PerformanceCounter {
             this.statisticsEnabled = statisticsEnabled;
         }
     }
+
+    @Override
+    public String toString() {
+        return counter != null ? counter.toString() : super.toString();
+    }
 }

@@ -137,7 +137,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
                 throw new IllegalArgumentException("Loadbalancer already configured to: " + loadBalancerType + ". Cannot set it to: " + processorType);
             }
             Processor processor = processorType.createProcessor(routeContext);
-            processor = wrapProcessor(routeContext, processor);
+            processor = wrapChannel(routeContext, processor, processorType);
             loadBalancer.addProcessor(processor);
         }
         return loadBalancer;
