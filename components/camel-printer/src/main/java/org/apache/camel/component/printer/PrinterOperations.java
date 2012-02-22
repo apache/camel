@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 public class PrinterOperations implements PrinterOperationsInterface {
     private static final transient Logger LOG = LoggerFactory.getLogger(PrinterOperations.class);
     private PrintService printService;
-    private DocPrintJob job;
     private DocFlavor flavor;
     private PrintRequestAttributeSet printRequestAttributeSet;
     private Doc doc;
@@ -49,7 +48,6 @@ public class PrinterOperations implements PrinterOperationsInterface {
         if (printService == null) {
             throw new PrintException("Printer lookup failure. No default printer set up for this host");
         }
-        job = printService.createPrintJob(); 
         flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         printRequestAttributeSet = new HashPrintRequestAttributeSet();
         printRequestAttributeSet.add(new Copies(1));
@@ -57,10 +55,9 @@ public class PrinterOperations implements PrinterOperationsInterface {
         printRequestAttributeSet.add(Sides.ONE_SIDED);
     }
 
-    public PrinterOperations(PrintService printService, DocPrintJob job, DocFlavor flavor, PrintRequestAttributeSet printRequestAttributeSet) throws PrintException {
+    public PrinterOperations(PrintService printService, DocFlavor flavor, PrintRequestAttributeSet printRequestAttributeSet) throws PrintException {
         this();
         this.setPrintService(printService);
-        this.setJob(job);
         this.setFlavor(flavor);
         this.setPrintRequestAttributeSet(printRequestAttributeSet);
     }
@@ -104,6 +101,8 @@ public class PrinterOperations implements PrinterOperationsInterface {
     }
         
     public void print(Doc doc) throws PrintException {
+        // we need create a new job for each print 
+        DocPrintJob job = getPrintService().createPrintJob();
         job.print(doc, printRequestAttributeSet);
     }
 
@@ -114,15 +113,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
     public void setPrintService(PrintService printService) {
         this.printService = printService;
     }
-
-    public DocPrintJob getJob() {
-        return job;
-    }
-
-    public void setJob(DocPrintJob job) {
-        this.job = job;
-    }
-
+    
     public DocFlavor getFlavor() {
         return flavor;
     }
