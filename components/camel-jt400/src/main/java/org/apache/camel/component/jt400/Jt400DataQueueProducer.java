@@ -17,7 +17,9 @@
 package org.apache.camel.component.jt400;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.BaseDataQueue;
 import com.ibm.as400.access.DataQueue;
+import com.ibm.as400.access.KeyedDataQueue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
@@ -41,13 +43,32 @@ public class Jt400DataQueueProducer extends DefaultProducer {
      * data will be sent as a <code>byte[]</code>. If the endpoint's format is
      * set to {@link Format#text}, the data queue entry's data will be sent as a
      * <code>String</code>.
+     * <p/>
+     * If the endpoint is configured to publish to a {@link KeyedDataQueue},
+     * then the {@link org.apache.camel.Message} header <code>KEY</code> must be set.
      */
     public void process(Exchange exchange) throws Exception {
-        DataQueue queue = endpoint.getDataQueue();
+        BaseDataQueue queue = endpoint.getDataQueue();
+        if (endpoint.isKeyed()) {
+            process((KeyedDataQueue) queue, exchange);
+        } else {
+            process((DataQueue) queue, exchange);
+        }
+    }
+
+    private void process(DataQueue queue, Exchange exchange) throws Exception {
         if (endpoint.getFormat() == Format.binary) {
             queue.write(exchange.getIn().getBody(byte[].class));
         } else {
             queue.write(exchange.getIn().getBody(String.class));
+        }
+    }
+
+    private void process(KeyedDataQueue queue, Exchange exchange) throws Exception {
+        if (endpoint.getFormat() == Format.binary) {
+            queue.write(exchange.getIn().getHeader(Jt400DataQueueEndpoint.KEY, byte[].class), exchange.getIn().getBody(byte[].class));
+        } else {
+            queue.write(exchange.getIn().getHeader(Jt400DataQueueEndpoint.KEY, String.class), exchange.getIn().getBody(String.class));
         }
     }
 

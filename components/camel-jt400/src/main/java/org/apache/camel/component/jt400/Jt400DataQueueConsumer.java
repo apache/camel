@@ -16,21 +16,17 @@
  */
 package org.apache.camel.component.jt400;
 
-import java.io.IOException;
 import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.AS400SecurityException;
+import com.ibm.as400.access.BaseDataQueue;
 import com.ibm.as400.access.DataQueue;
 import com.ibm.as400.access.DataQueueEntry;
-import com.ibm.as400.access.ErrorCompletingRequestException;
-import com.ibm.as400.access.IllegalObjectTypeException;
-import com.ibm.as400.access.ObjectDoesNotExistException;
-
+import com.ibm.as400.access.KeyedDataQueue;
+import com.ibm.as400.access.KeyedDataQueueEntry;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.PollingConsumerSupport;
-
 
 /**
  * {@link org.apache.camel.PollingConsumer} that polls a data queue for data
@@ -79,46 +75,79 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport {
      * <code>byte[]</code>. If the endpoint's format is set to
      * {@link Format#text}, the data queue entry's data will be received/sent as
      * a <code>String</code>.
+     * <p/>
+     * The following message headers may be set by the receiver
+     * <ul>
+     * <li>SENDER_INFORMATION: The Sender Information from the Data Queue</li>
+     * <li>KEY: The message key if the endpoint is configured to connect to a <code>KeyedDataQueue</code></li>
+     * </ul>
      *
      * @param timeout time to wait when reading from data queue. A value of -1
-     *            indicates a blocking read.
+     *                indicates a blocking read.
      */
     public Exchange receive(long timeout) {
-        DataQueue queue = endpoint.getDataQueue();
+        BaseDataQueue queue = endpoint.getDataQueue();
         try {
-            DataQueueEntry entry;
-            if (timeout >= 0) {
-                int seconds = (int)timeout / 1000;
-                log.trace("Reading from data queue: {} with {} seconds timeout", queue.getName(), seconds);
-                entry = queue.read(seconds);
+            if (endpoint.isKeyed()) {
+                return receive((KeyedDataQueue) queue, timeout);
             } else {
-                log.trace("Reading from data queue: {} with no timeout", queue.getName());
-                entry = queue.read(-1);
+                return receive((DataQueue) queue, timeout);
             }
+        } catch (Exception e) {
+            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
+        }
+    }
 
-            Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
-            if (entry != null) {
-                if (endpoint.getFormat() == Format.binary) {
-                    exchange.getIn().setBody(entry.getData());
-                } else {
-                    exchange.getIn().setBody(entry.getString());
-                }
-                return exchange;
+    private Exchange receive(DataQueue queue, long timeout) throws Exception {
+        DataQueueEntry entry;
+        if (timeout >= 0) {
+            int seconds = (int) timeout / 1000;
+            log.trace("Reading from data queue: {} with {} seconds timeout", queue.getName(), seconds);
+            entry = queue.read(seconds);
+        } else {
+            log.trace("Reading from data queue: {} with no timeout", queue.getName());
+            entry = queue.read(-1);
+        }
+
+        Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
+        if (entry != null) {
+            exchange.getIn().setHeader(Jt400DataQueueEndpoint.SENDER_INFORMATION, entry.getSenderInformation());
+            if (endpoint.getFormat() == Format.binary) {
+                exchange.getIn().setBody(entry.getData());
+            } else {
+                exchange.getIn().setBody(entry.getString());
             }
-        } catch (AS400SecurityException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
-        } catch (ErrorCompletingRequestException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
-        } catch (IOException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
-        } catch (IllegalObjectTypeException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
-        } catch (InterruptedException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
-        } catch (ObjectDoesNotExistException e) {
-            throw new RuntimeCamelException("Unable to read from data queue: " + queue.getName(), e);
+            return exchange;
         }
         return null;
     }
 
+    private Exchange receive(KeyedDataQueue queue, long timeout) throws Exception {
+        String key = endpoint.getSearchKey();
+        String searchType = endpoint.getSearchType().name();
+        KeyedDataQueueEntry entry;
+        if (timeout >= 0) {
+            int seconds = (int) timeout / 1000;
+            log.trace("Reading from data queue: {} with {} seconds timeout", queue.getName(), seconds);
+            entry = queue.read(key, seconds, searchType);
+        } else {
+            log.trace("Reading from data queue: {} with no timeout", queue.getName());
+            entry = queue.read(key, -1, searchType);
+        }
+
+        Exchange exchange = new DefaultExchange(endpoint.getCamelContext());
+        if (entry != null) {
+            exchange.getIn().setHeader(Jt400DataQueueEndpoint.SENDER_INFORMATION, entry.getSenderInformation());
+            if (endpoint.getFormat() == Format.binary) {
+                exchange.getIn().setBody(entry.getData());
+                exchange.getIn().setHeader(Jt400DataQueueEndpoint.KEY, entry.getKey());
+            } else {
+                exchange.getIn().setBody(entry.getString());
+                exchange.getIn().setHeader(Jt400DataQueueEndpoint.KEY, entry.getKeyString());
+            }
+
+            return exchange;
+        }
+        return null;
+    }
 }
