@@ -40,6 +40,7 @@
     <ahc-version>1.7.0</ahc-version>
     <apacheds-version>1.5.7</apacheds-version>
     <aries-blueprint-version>0.3</aries-blueprint-version>
+    <asm-bundle-version>3.3_2</asm-bundle-version>
     <atomikos-trascations-version>3.7.0</atomikos-trascations-version>
     <avro-version>1.6.1</avro-version>
     <avro-bundle-version>1.6.1_1</avro-bundle-version>
