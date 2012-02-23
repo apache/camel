@@ -30,11 +30,7 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("/org/apache/camel/component/jms/tx/JmsToJmsTransactedSecurityTest.xml");
     }
-
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
+    
     @Test
     public void testJmsSecurityFailure() throws Exception {
         context.addRoutes(new RouteBuilder() {

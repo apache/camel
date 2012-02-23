@@ -30,10 +30,6 @@ public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupp
             "/org/apache/camel/component/jms/tx/JMSTransactionThrottlingRoutePolicyTest.xml");
     }
 
-    protected int getExpectedRouteCount() {
-        return 1;
-    }
-
     @Override
     public void setUp() throws Exception {
         deleteDirectory("activemq-data");

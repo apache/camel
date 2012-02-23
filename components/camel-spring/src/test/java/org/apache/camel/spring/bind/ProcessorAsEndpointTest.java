@@ -59,7 +59,4 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/bind/processorAsEndpoint.xml");
     }
 
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
 }

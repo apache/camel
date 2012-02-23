@@ -64,11 +64,6 @@ public abstract class AbstractJdbcAggregationTestSupport extends CamelSpringTest
         return new ClassPathXmlApplicationContext("org/apache/camel/processor/aggregate/jdbc/JdbcSpringDataSource.xml");
     }
 
-    @Override
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
     public static class MyAggregationStrategy implements AggregationStrategy {
 
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

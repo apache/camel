@@ -131,23 +131,6 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
     }
 
     @Override
-    protected void assertValidContext(CamelContext context) {
-        super.assertValidContext(context);
-
-        List<Route> routes = context.getRoutes();
-        int routeCount = getExpectedRouteCount();
-        if (routeCount > 0) {
-            assertNotNull("Should have some routes defined", routes);
-            assertTrue("Should have at least one route", routes.size() >= routeCount);
-        }
-        log.debug("Camel Routes: " + routes);
-    }
-
-    protected int getExpectedRouteCount() {
-        return 1;
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext);
     }

@@ -32,11 +32,6 @@ public class JmsInOutWithSpringRestartIssueTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/issues/JmsInOutWithSpringRestartIssueTest.xml");
     }
 
-    @Override
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
     @Test
     public void testRestartSpringIssue() throws Exception {
         context.startRoute("foo");

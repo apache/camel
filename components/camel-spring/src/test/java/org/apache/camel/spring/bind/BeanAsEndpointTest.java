@@ -37,10 +37,6 @@ public class BeanAsEndpointTest extends SpringTestSupport {
         mock.assertIsSatisfied();
     }
 
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/bind/beanAsEndpoint.xml");
     }

@@ -33,10 +33,6 @@ public class TransactionErrorHandlerBuilderAsSpringBeanTest extends CamelSpringT
             "/org/apache/camel/component/jms/tx/TransactionErrorHandlerBuilderAsSpringBeanTest.xml");
     }
 
-    protected int getExpectedRouteCount() {
-        return 1;
-    }
-
     @Test
     public void testTransactionSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

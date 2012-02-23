@@ -33,10 +33,6 @@ public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringT
     private static final transient Logger LOG = LoggerFactory.getLogger(JmsSendToAlotOfDestinationWithSameEndpointTest.class);
     private static final String URI = "activemq:queue:foo?autoStartup=false";
 
-    public int getExpectedRouteCount() {
-        return 0;
-    }
-
     @Test
     public void testSendToAlotOfMessageToQueues() throws Exception {
         int size = 100;

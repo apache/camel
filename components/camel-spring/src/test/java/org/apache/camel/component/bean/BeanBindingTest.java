@@ -30,11 +30,6 @@ public class BeanBindingTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/bean/beanBindingTest.xml");
     }
 
-    @Override
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
     public void testBeanBindingUsingBeanExpression() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(2);

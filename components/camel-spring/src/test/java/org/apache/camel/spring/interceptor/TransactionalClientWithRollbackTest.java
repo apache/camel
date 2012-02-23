@@ -42,10 +42,6 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("/org/apache/camel/spring/interceptor/transactionalClientDataSource.xml");
     }
 
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
