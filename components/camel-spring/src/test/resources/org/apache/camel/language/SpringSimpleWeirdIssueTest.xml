@@ -19,26 +19,21 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+  
+  <bean id="myString" class="java.lang.String">
+    <constructor-arg index="0" value="weird"/>
+  </bean>
 
-    <!-- configure Simple to use custom prefix/suffix tokens -->
-    <bean id="simple" class="org.apache.camel.language.simple.SimpleLanguage">
-      <property name="functionStartToken" value="["/>
-      <property name="functionEndToken" value="]"/>
-    </bean>
-
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-
-        <!-- This route transforms the body using simple with custom prefix and suffix tokens configured by "simple" bean,
-        the text ' is cool' is appended to the body and then routed to mock:result. -->
-        <route>
-            <from uri="direct:start"/>
-            <transform>
-                <simple>[body] is cool</simple>
-            </transform>
-            <to uri="mock:result"/>
-        </route>
-
-    </camelContext>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+      <route>
+	      <from uri="direct:start"/>
+        <setBody>
+          <simple>Hello ${body}</simple>
+        </setBody>
+        <to uri="mock:result"/>
+      </route>
+  </camelContext>
 
 </beans>

@@ -101,17 +101,6 @@ public class SimpleLanguage implements Language, IsSingleton {
     public SimpleLanguage() {
     }
 
-    /**
-     * Constructor that customizes the function start and end tokens.
-     *
-     * @param functionStartToken The function start token.
-     * @param functionEndToken   The function end token.
-     */
-    public SimpleLanguage(String functionStartToken, String functionEndToken) {
-        changeFunctionStartToken(functionStartToken);
-        changeFunctionEndToken(functionEndToken);
-    }
-
     public Class<?> getResultType() {
         return resultType;
     }
@@ -177,7 +166,7 @@ public class SimpleLanguage implements Language, IsSingleton {
      * This can be used to alter the function tokens to avoid clashes with other
      * frameworks etc.
      * <p/>
-     * The default start tokens is <tt>${</tt> and <tt>$simple{}</tt>.
+     * The default start tokens is <tt>${</tt> and <tt>$simple{</tt>.
      *
      * @param startToken new start token(s) to be used for functions
      */
@@ -197,5 +186,33 @@ public class SimpleLanguage implements Language, IsSingleton {
      */
     public static void changeFunctionEndToken(String... endToken) {
         SimpleTokenizer.changeFunctionEndToken(endToken);
+    }
+
+    /**
+     * Change the start token used for functions.
+     * <p/>
+     * This can be used to alter the function tokens to avoid clashes with other
+     * frameworks etc.
+     * <p/>
+     * The default start tokens is <tt>${</tt> and <tt>$simple{</tt>.
+     *
+     * @param startToken new start token to be used for functions
+     */
+    public void setFunctionStartToken(String startToken) {
+        changeFunctionStartToken(startToken);
+    }
+
+    /**
+     * Change the end token used for functions.
+     * <p/>
+     * This can be used to alter the function tokens to avoid clashes with other
+     * frameworks etc.
+     * <p/>
+     * The default end token is <tt>}</tt>
+     *
+     * @param endToken new end token to be used for functions
+     */
+    public void setFunctionEndToken(String endToken) {
+        changeFunctionEndToken(endToken);
     }
 }
