@@ -99,6 +99,7 @@
     <module>camel-jmx</module>
     <module>camel-josql</module>
     <module>camel-jpa</module>
+    <module>camel-jsch</module>
     <module>camel-jt400</module>
     <module>camel-juel</module>
     <module>camel-jxpath</module>
