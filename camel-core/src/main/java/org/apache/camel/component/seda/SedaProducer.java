@@ -58,12 +58,6 @@ public class SedaProducer extends DefaultAsyncProducer {
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        // use a new copy of the exchange to route async and handover the on completion to the new copy
-        // so its the new copy that performs the on completion callback when its done
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, true);
-        // set a new from endpoint to be the seda queue
-        copy.setFromEndpoint(endpoint);
-
         WaitForTaskToComplete wait = waitForTaskToComplete;
         if (exchange.getProperty(Exchange.ASYNC_WAIT) != null) {
             wait = exchange.getProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.class);
@@ -71,6 +65,9 @@ public class SedaProducer extends DefaultAsyncProducer {
 
         if (wait == WaitForTaskToComplete.Always
             || (wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange))) {
+
+            // do not handover the completion as we wait for the copy to complete, and copy its result back when it done
+            Exchange copy = prepareCopy(exchange, false);
 
             // latch that waits until we are complete
             final CountDownLatch latch = new CountDownLatch(1);
@@ -145,6 +142,8 @@ public class SedaProducer extends DefaultAsyncProducer {
             }
         } else {
             // no wait, eg its a InOnly then just add to queue and return
+            // handover the completion so its the copy which performs that, as we do not wait
+            Exchange copy = prepareCopy(exchange, true);
             log.trace("Adding Exchange to queue: {}", copy);
             addToQueue(copy);
         }
@@ -153,6 +152,14 @@ public class SedaProducer extends DefaultAsyncProducer {
         // so we should just signal the callback we are done synchronously
         callback.done(true);
         return true;
+    }
+
+    protected Exchange prepareCopy(Exchange exchange, boolean handover) {
+        // use a new copy of the exchange to route async
+        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover);
+        // set a new from endpoint to be the seda queue
+        copy.setFromEndpoint(endpoint);
+        return copy;
     }
 
     @Override
