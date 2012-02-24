@@ -33,6 +33,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.converter.CxfPayloadConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
@@ -68,7 +69,8 @@ public class CxfProducerTest extends Assert {
         return "http://localhost:" + CXFTestSupport.getPort2() + "/" + getClass().getSimpleName() + "/test";
     }
     protected String getWrongServerAddress() {
-        return "http://localhost:" + CXFTestSupport.getPort3() + "/" + getClass().getSimpleName() + "/test";
+        // Avoiding the test error on camel-cxf module
+        return "http://localhost:" + AvailablePortFinder.getNextAvailable() + "/" + getClass().getSimpleName() + "/test";
     }
     
     @Before
@@ -126,6 +128,7 @@ public class CxfProducerTest extends Assert {
     public void testInvokingAWrongServer() throws Exception {
         Exchange reply = sendSimpleMessage(getWrongEndpointUri());
         assertNotNull("We should get the exception here", reply.getException());
+        System.out.println(reply.getException());
         assertTrue(reply.getException().getCause() instanceof ConnectException);
         
         

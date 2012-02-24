@@ -69,7 +69,23 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     public CxfProducer(CxfEndpoint endpoint) throws Exception {
         super(endpoint);
         this.endpoint = endpoint;
-        client = endpoint.createClient();
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+        if (client == null) {
+            client = endpoint.createClient();
+        }
+    }
+    
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (client != null) {
+            // It will help to release the request context map
+            client.destroy();
+            client = null;
+        }
     }
    
     // As the cxf client async and sync api is implement different,
