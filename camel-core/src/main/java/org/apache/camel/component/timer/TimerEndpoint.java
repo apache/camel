@@ -21,6 +21,7 @@ import java.util.Timer;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
@@ -34,7 +35,7 @@ import org.apache.camel.impl.DefaultEndpoint;
  * @version 
  */
 @ManagedResource(description = "Managed TimerEndpoint")
-public class TimerEndpoint extends DefaultEndpoint {
+public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     private String timerName;
     private Date time;
     private long period = 1000;
@@ -70,6 +71,11 @@ public class TimerEndpoint extends DefaultEndpoint {
     protected void doStop() throws Exception {
         setTimer(null);
         super.doStop();
+    }
+
+    @ManagedAttribute
+    public boolean isMultipleConsumersSupported() {
+        return true;
     }
 
     @ManagedAttribute(description = "Timer Name")
