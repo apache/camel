@@ -139,12 +139,28 @@ public class ObjectHelperTest extends TestCase {
         assertSame("Should return the same iterator", iterator, ObjectHelper.createIterator(iterator));
     }
 
+    public void testCreateIteratorAllowEmpty() {
+        String s = "a,b,,c";
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ",", true));
+        assertEquals("a", it.next());
+        assertEquals("b", it.next());
+        assertEquals("", it.next());
+        assertEquals("c", it.next());
+    }
+
     public void testCreateIteratorWithStringAndCommaSeparator() {
         String s = "a,b,c";
         Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ","));
         assertEquals("a", it.next());
         assertEquals("b", it.next());
         assertEquals("c", it.next());
+    }
+
+    public void testCreateIteratorWithStringAndCommaSeparatorEmptyString() {
+        String s = "";
+        Iterator<String> it = CastUtils.cast(ObjectHelper.createIterator(s, ",", true));
+        assertEquals("", it.next());
+        assertFalse(it.hasNext());
     }
 
     public void testCreateIteratorWithStringAndSemiColonSeparator() {

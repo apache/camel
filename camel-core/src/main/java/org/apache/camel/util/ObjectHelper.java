@@ -460,6 +460,7 @@ public final class ObjectHelper {
      * we just create a singleton collection iterator over a single value
      * <p/>
      * Will default use comma for String separating String values.
+     * This method does <b>not</b> allow empty values
      *
      * @param value  the value
      * @return the iterator
@@ -473,13 +474,31 @@ public final class ObjectHelper {
      * Object[], a String with values separated by the given delimiter,
      * or a primitive type array; otherwise to simplify the caller's
      * code, we just create a singleton collection iterator over a single value
+     * <p/>
+     * This method does <b>not</b> allow empty values
      *
-     * @param value  the value
-     * @param  delimiter  delimiter for separating String values
+     * @param value      the value
+     * @param delimiter  delimiter for separating String values
+     * @return the iterator
+     */
+    public static Iterator<Object> createIterator(Object value, String delimiter) {
+        return createIterator(value, delimiter, false);
+    }
+
+    /**
+     * Creates an iterator over the value if the value is a collection, an
+     * Object[], a String with values separated by the given delimiter,
+     * or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     *
+     * @param value             the value
+     * @param delimiter         delimiter for separating String values
+     * @param allowEmptyValues  whether to allow empty values
      * @return the iterator
      */
     @SuppressWarnings("unchecked")
-    public static Iterator<Object> createIterator(Object value, String delimiter) {
+    public static Iterator<Object> createIterator(Object value, String delimiter, final boolean allowEmptyValues) {
+
         // if its a message than we want to iterate its body
         if (value instanceof Message) {
             value = ((Message) value).getBody();
@@ -545,8 +564,7 @@ public final class ObjectHelper {
                     int idx = -1;
 
                     public boolean hasNext() {
-                        // empty string should not be regarded as having next
-                        return idx + 1 == 0 && ObjectHelper.isNotEmpty(s);
+                        return idx + 1 == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
                     }
 
                     public String next() {
