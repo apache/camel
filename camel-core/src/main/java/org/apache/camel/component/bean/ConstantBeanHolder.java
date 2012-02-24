@@ -50,7 +50,8 @@ public class ConstantBeanHolder implements BeanHolder {
 
     @Override
     public String toString() {
-        return bean.toString();
+        // avoid invoke toString on bean as it may be a remote proxy
+        return ObjectHelper.className(bean) + "(" + ObjectHelper.getIdentityHashCode(bean) + ")";
     }
 
     public Object getBean()  {
