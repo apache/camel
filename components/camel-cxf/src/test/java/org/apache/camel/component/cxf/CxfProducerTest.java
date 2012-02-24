@@ -128,7 +128,6 @@ public class CxfProducerTest extends Assert {
     public void testInvokingAWrongServer() throws Exception {
         Exchange reply = sendSimpleMessage(getWrongEndpointUri());
         assertNotNull("We should get the exception here", reply.getException());
-        System.out.println(reply.getException());
         assertTrue(reply.getException().getCause() instanceof ConnectException);
         
         
