@@ -103,8 +103,8 @@ public class HttpProducer extends DefaultProducer {
             Object headerValue = in.getHeader(key);
 
             if (headerValue != null) {
-                // use an iterator as there can be multiple values. (must not use a delimiter)
-                final Iterator it = ObjectHelper.createIterator(headerValue, null);
+                // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
+                final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
                 // the value to add as request header
                 final List<String> values = new ArrayList<String>();

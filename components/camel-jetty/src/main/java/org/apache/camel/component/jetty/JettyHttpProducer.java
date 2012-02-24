@@ -153,8 +153,8 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
             Object headerValue = in.getHeader(key);
 
             if (headerValue != null) {
-                // use an iterator as there can be multiple values. (must not use a delimiter)
-                final Iterator it = ObjectHelper.createIterator(headerValue, null);
+                // use an iterator as there can be multiple values. (must not use a delimiter, and allow empty values)
+                final Iterator<?> it = ObjectHelper.createIterator(headerValue, null, true);
 
                 // the values to add as a request header
                 final List<String> values = new ArrayList<String>();
