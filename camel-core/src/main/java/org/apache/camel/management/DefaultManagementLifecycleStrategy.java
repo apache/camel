@@ -548,8 +548,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
                                 String sourceId, String routeId, String threadPoolProfileId) {
 
-        // always register thread pools as there are only a few of those
-        if (!initialized) {
+        if (!shouldRegister(threadPool, null)) {
+            // avoid registering if not needed
             return;
         }
 
