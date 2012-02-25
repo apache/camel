@@ -178,7 +178,6 @@ public class SpringWebserviceProducer extends DefaultProducer {
                 }
 
             });
-
         }
 
         @Override

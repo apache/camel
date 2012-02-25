@@ -16,19 +16,18 @@
  */
 package org.apache.camel.component.jsch;
 
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Hashtable;
+import java.util.List;
+
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Hashtable;
-import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -38,6 +37,8 @@ import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * SCP remote file operations
@@ -98,7 +99,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             // TODO: need config for scp *-p* (preserves modification times, access times, and modes from the original file)
             // String command="scp " + (ptimestamp ? "-p " : "") + "-t " + configuration.getDirectory();
             // TODO: refactor to use generic command
-            String command="scp -t " + target;
+            String command = "scp -t " + target;
             channel.setCommand(command);
             channel.connect(timeout);
             LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
