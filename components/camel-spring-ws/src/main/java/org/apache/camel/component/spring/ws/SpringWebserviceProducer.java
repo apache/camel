@@ -96,7 +96,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
         WebServiceTemplate webServiceTemplate = configuration.getWebServiceTemplate();
 
-        // can't use java.util.Arrays.asList() as it doesn't support the optional remove() operation which we need here
+        // Can't use java.util.Arrays.asList() as it doesn't support the optional remove() operation which we need here
         List<WebServiceMessageSender> webServiceMessageSenders = new ArrayList<WebServiceMessageSender>(webServiceTemplate.getMessageSenders().length);
         Collections.addAll(webServiceMessageSenders, webServiceTemplate.getMessageSenders());
         for (WebServiceMessageSender webServiceMessageSender : webServiceMessageSenders) {
