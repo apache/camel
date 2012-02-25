@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Unit test for writing done files
  */
-public class FilerConsumerDoneFileNameTest extends ContextTestSupport {
+public class FilerConsumerDoneFileNameDeleteTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -57,9 +57,9 @@ public class FilerConsumerDoneFileNameTest extends ContextTestSupport {
         File file = new File("target/done/done").getAbsoluteFile();
         assertFalse("Done file should be deleted: " + file, file.exists());
 
-        // as well the original file should be moved to backup
-        file = new File("target/done/.camel/hello.txt").getAbsoluteFile();
-        assertTrue("Original file should be moved: " + file, file.exists());
+        // as well the original file should be deleted
+        file = new File("target/done/hello.txt").getAbsoluteFile();
+        assertFalse("Original file should be deleted: " + file, file.exists());
     }
 
     @Override
@@ -67,7 +67,7 @@ public class FilerConsumerDoneFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/done?doneFileName=done&initialDelay=0&delay=10").to("mock:result");
+                from("file:target/done?doneFileName=done&delete=true&initialDelay=0&delay=10").to("mock:result");
             }
         };
     }
