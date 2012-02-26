@@ -80,9 +80,9 @@ public final class ObjectConverter {
         if (value instanceof Byte) {
             return (Byte) value;
         } else if (value instanceof Number) {
-            if (value.equals(Float.NaN) || value.equals(Double.NaN)) {
+            if (isNaN(value)) {
                 // return zero for a NaN value
-                return Byte.valueOf("0");
+                return Byte.valueOf((byte) 0);
             }
             Number number = (Number) value;
             return number.byteValue();
@@ -100,11 +100,11 @@ public final class ObjectConverter {
 
     @Converter
     public static char toChar(String value) {
-        // must be 1 length string
+        // must be string with the length of 1
         if (value == null || value.length() != 1) {
             throw new IllegalArgumentException("String must have exactly a length of 1: " + value);
         }
-        return value.toCharArray()[0];
+        return value.charAt(0);
     }
 
     @Converter
@@ -139,9 +139,9 @@ public final class ObjectConverter {
         if (value instanceof Short) {
             return (Short) value;
         } else if (value instanceof Number) {
-            if (value.equals(Float.NaN) || value.equals(Double.NaN)) {
+            if (isNaN(value)) {
                 // return zero for a NaN value
-                return Short.valueOf("0");
+                return Short.valueOf((short) 0);
             }
             Number number = (Number) value;
             return number.shortValue();
@@ -160,7 +160,7 @@ public final class ObjectConverter {
         if (value instanceof Integer) {
             return (Integer) value;
         } else if (value instanceof Number) {
-            if (value.equals(Float.NaN) || value.equals(Double.NaN)) {
+            if (isNaN(value)) {
                 // return zero for a NaN value
                 return Integer.valueOf(0);
             }
@@ -181,7 +181,7 @@ public final class ObjectConverter {
         if (value instanceof Long) {
             return (Long) value;
         } else if (value instanceof Number) {
-            if (value.equals(Float.NaN) || value.equals(Double.NaN)) {
+            if (isNaN(value)) {
                 // return zero for a NaN value
                 return Long.valueOf(0);
             }
@@ -202,7 +202,7 @@ public final class ObjectConverter {
         if (value instanceof Float) {
             return (Float) value;
         } else if (value instanceof Number) {
-            if (value.equals(Double.NaN) || value.equals(Float.NaN)) {
+            if (isNaN(value)) {
                 return Float.NaN;
             }
             Number number = (Number) value;
@@ -222,7 +222,7 @@ public final class ObjectConverter {
         if (value instanceof Double) {
             return (Double) value;
         } else if (value instanceof Number) {
-            if (value.equals(Double.NaN) || value.equals(Float.NaN)) {
+            if (isNaN(value)) {
                 return Double.NaN;
             }
             Number number = (Number) value;
@@ -232,6 +232,11 @@ public final class ObjectConverter {
         } else {
             return null;
         }
+    }
+
+    private static boolean isNaN(Object value) {
+        // 'value' should have been already checked to be 'instanceof Number', that's 'value != null'
+        return value.equals(Float.NaN) || value.equals(Double.NaN);
     }
 
     // add fast type converters from most common used
@@ -283,7 +288,7 @@ public final class ObjectConverter {
 
     @Converter
     public static Boolean toBoolean(String value) {
-        return "true".equalsIgnoreCase(value.toString()) ? Boolean.TRUE : Boolean.FALSE;
+        return Boolean.parseBoolean(value);
     }
 
 }
