@@ -417,61 +417,34 @@
                 </execution>
             </executions>
         </plugin>
-        <!-- lets enhance the classes for OpenJPA (shame it can't do it at runtime!) -->
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.openjpa</groupId>
-                    <artifactId>openjpa-persistence-jdbc</artifactId>
-                    <version>${openjpa-version}</version>
-                </dependency>
-            </dependencies>
 
-            <executions>
-                <execution>
-                    <phase>process-test-classes</phase>
-                    <configuration>
-                        <target>
-                            <path id="cp">
-                                <path refid="maven.test.classpath" />
-                                <path refid="maven.compile.classpath" />
-                                <path refid="maven.dependency.classpath" />
-                            </path>
-                            <taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask">
-                                <classpath refid="cp" />
-                            </taskdef>
-
-                            <mkdir dir="${basedir}/target/jpa-test-classes" />
-
-                            <openjpac directory="${basedir}/target/jpa-test-classes">
-                                <classpath refid="cp" />
-                                <fileset dir="${basedir}/target/classes">
-                                    <include name="org/apache/camel/itest/osgi/jpa/SendEmail.class" />
-                                </fileset>
-                                <config propertiesFile="${basedir}/src/test/resources/META-INF/persistence.xml" />
-                            </openjpac>
-
-                            <openjpac directory="${basedir}/target/jpa-test-classes">
-                                <classpath refid="cp" />
-                                <fileset dir="${basedir}/target/test-classes">
-                                    <include name="org/apache/camel/examples/*.class" />
-                                </fileset>
-                                <config propertiesFile="${basedir}/src/test/resources/META-INF/persistence.xml" />
-                            </openjpac>
-
-                            <copy overwrite="true" todir="${basedir}/target/test-classes">
-                                <fileset dir="${basedir}/target/jpa-test-classes" />
-                            </copy>
-                        </target>
-                    </configuration>
-                    <goals>
-                        <goal>run</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
+		<plugin>
+			<groupId>org.apache.openjpa</groupId>
+			<artifactId>openjpa-maven-plugin</artifactId>
+			<version>${openjpa-version}</version>
+			<configuration>
+				<persistenceXmlFile>${project.basedir}/src/test/resources/META-INF/persistence.xml</persistenceXmlFile>
+				<includes>org/apache/camel/itest/osgi/jpa/SendEmail.class</includes>
+				<addDefaultConstructor>true</addDefaultConstructor>
+				<enforcePropertyRestrictions>true</enforcePropertyRestrictions>
+			</configuration>
+			<executions>
+				<execution>
+					<id>test enhancer</id>
+					<phase>process-test-classes</phase>
+					<goals>
+						<goal>test-enhance</goal>
+					</goals>
+				</execution>
+			</executions>
+			<dependencies>
+				<dependency>
+					<groupId>org.apache.openjpa</groupId>
+					<artifactId>openjpa</artifactId>
+					<version>${openjpa-version}</version>
+				</dependency>
+			</dependencies>
+		</plugin>
     </plugins>
   </build>
    
