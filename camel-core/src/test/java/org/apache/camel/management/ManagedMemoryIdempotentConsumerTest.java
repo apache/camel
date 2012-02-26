@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.util.CastUtils;
 
 /**
  * @version 
@@ -42,7 +41,7 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // services
-        Set<ObjectName> names = CastUtils.cast(mbeanServer.queryNames(new ObjectName("org.apache.camel" + ":type=services,*"), null));
+        Set<ObjectName> names = mbeanServer.queryNames(new ObjectName("org.apache.camel" + ":type=services,*"), null);
         ObjectName on = null;
         for (ObjectName name : names) {
             if (name.toString().contains("MemoryIdempotentRepository")) {
@@ -91,6 +90,57 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
         assertTrue(repo.contains("2"));
         assertTrue(repo.contains("3"));
         assertTrue(repo.contains("4"));
+    }
+
+    public void testDuplicateMessagesCountAreCorrectlyCounted() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+
+        // processors
+        Set<ObjectName> names = mbeanServer.queryNames(new ObjectName("org.apache.camel" + ":type=processors,*"), null);
+        ObjectName on = null;
+        for (ObjectName name : names) {
+            if (name.toString().contains("idempotentConsumer")) {
+                on = name;
+                break;
+            }
+        }
+        assertTrue("Should be registered", mbeanServer.isRegistered(on));
+
+        Long count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
+        assertEquals(0L, count.longValue());
+        
+        resultEndpoint.expectedBodiesReceived("one", "two");
+
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+
+        resultEndpoint.assertIsSatisfied();
+
+        count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
+        assertEquals(2L, count.longValue());
+
+        // reset the count
+        mbeanServer.invoke(on, "resetDuplicateMessageCount", null, null);
+
+        // count should be resetted
+        count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
+        assertEquals(0L, count.longValue());
+        
+        resetMocks();
+        
+        resultEndpoint.expectedBodiesReceived("five");
+
+        sendMessage("4", "four");
+        sendMessage("4", "four");
+        sendMessage("5", "five");
+        sendMessage("4", "four");
+
+        resultEndpoint.assertIsSatisfied();
+        
+        count = (Long) mbeanServer.getAttribute(on, "DuplicateMessageCount");
+        assertEquals(3L, count.longValue());
     }
 
     protected void sendMessage(final Object messageId, final Object body) {

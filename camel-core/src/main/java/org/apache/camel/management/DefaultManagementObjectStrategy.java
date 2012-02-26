@@ -39,6 +39,7 @@ import org.apache.camel.management.mbean.ManagedDelayer;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedErrorHandler;
 import org.apache.camel.management.mbean.ManagedEventNotifier;
+import org.apache.camel.management.mbean.ManagedIdempotentConsumer;
 import org.apache.camel.management.mbean.ManagedProcessor;
 import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
@@ -54,6 +55,7 @@ import org.apache.camel.processor.Delayer;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Throttler;
+import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectStrategy;
@@ -178,6 +180,8 @@ public class DefaultManagementObjectStrategy implements ManagementObjectStrategy
                 answer = new ManagedSendProcessor(context, (SendProcessor) target, definition);
             } else if (target instanceof BeanProcessor) {
                 answer = new ManagedBeanProcessor(context, (BeanProcessor) target, definition);
+            } else if (target instanceof IdempotentConsumer) {
+                answer = new ManagedIdempotentConsumer(context, (IdempotentConsumer) target, definition);
             } else if (target instanceof org.apache.camel.spi.ManagementAware) {
                 return ((org.apache.camel.spi.ManagementAware<Processor>) target).getManagedObject(processor);
             }

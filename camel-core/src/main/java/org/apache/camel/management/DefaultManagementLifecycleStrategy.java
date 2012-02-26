@@ -422,10 +422,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             ManagedService ms = (ManagedService) answer;
             ms.setRoute(route);
             ms.init(getManagementStrategy());
-            return answer;
-        } else {
-            return answer;
         }
+
+        return answer;
     }
 
     private Object getManagedObjectForProcessor(CamelContext context, Processor processor, Route route) {

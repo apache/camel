@@ -18,6 +18,7 @@ package org.apache.camel.processor.idempotent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -45,6 +46,7 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
     private final boolean eager;
     private final boolean skipDuplicate;
     private final boolean removeOnFailure;
+    private final AtomicLong duplicateMessageCount = new AtomicLong();
 
     public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository<String> idempotentRepository,
                               boolean eager, boolean skipDuplicate, boolean removeOnFailure, Processor processor) {
@@ -84,11 +86,10 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         if (!newKey) {
             // mark the exchange as duplicate
             exchange.setProperty(Exchange.DUPLICATE_MESSAGE, Boolean.TRUE);
-        }
 
-        if (!newKey) {
             // we already have this key so its a duplicate message
-            onDuplicateMessage(exchange, messageId);
+            onDuplicate(exchange, messageId);
+
             if (skipDuplicate) {
                 // if we should skip duplicate then we are done
                 LOG.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
@@ -131,6 +132,10 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
         return processor;
     }
 
+    public long getDuplicateMessageCount() {
+        return duplicateMessageCount.get();
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -140,6 +145,19 @@ public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor
 
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(processor);
+    }
+
+    /**
+     * Resets the duplicate message counter to <code>0L</code>.
+     */
+    public void resetDuplicateMessageCount() {
+        duplicateMessageCount.set(0L);
+    }
+
+    private void onDuplicate(Exchange exchange, String messageId) {
+        duplicateMessageCount.incrementAndGet();
+
+        onDuplicateMessage(exchange, messageId);
     }
 
     /**
