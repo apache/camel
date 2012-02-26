@@ -36,7 +36,7 @@ public class JmsToHttpWithOnExceptionRoute extends JmsToHttpRoute {
     private String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     public void configure() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable();
+        port = AvailablePortFinder.getNextAvailable(8000);
 
         // configure a global transacted error handler
         errorHandler(transactionErrorHandler(required));
