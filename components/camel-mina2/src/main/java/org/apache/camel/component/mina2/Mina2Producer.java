@@ -181,9 +181,9 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         // should session be closed after complete?
         Boolean close;
         if (ExchangeHelper.isOutCapable(exchange)) {
-            close = exchange.getOut().getHeader(Mina2Constants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+            close = exchange.getOut().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
         } else {
-            close = exchange.getIn().getHeader(Mina2Constants.MINA_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+            close = exchange.getIn().getHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
         }
 
         // should we disconnect, the header can override the configuration

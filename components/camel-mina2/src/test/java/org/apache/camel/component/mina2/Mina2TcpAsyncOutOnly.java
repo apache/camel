@@ -1,18 +1,16 @@
 /**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.apache.camel.component.mina2;
 
@@ -26,46 +24,33 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
-public class Mina2TcpWithInOutTest extends BaseMina2Test {
+public class Mina2TcpAsyncOutOnly extends BaseMina2Test {
 
     private String uri;
     private Exchange receivedExchange;
     private CountDownLatch latch;
+    Boolean sessionCreated = Boolean.FALSE;
+
+    @Before
+    public void setup() {
+        sessionCreated = Boolean.FALSE;
+    }
 
     @Test
-    public void testMinaRouteWithInOut() throws Exception {
+    public void testMina2SessionCreation() throws Exception {
         latch = new CountDownLatch(1);
-        uri = String.format("mina2:tcp://localhost:%1$s?textline=true", getPort());
-
-        Mina2ReverserServer server = new Mina2ReverserServer(getPort());
-        server.start();
-
-        context.addRoutes(new RouteBuilder() {
-
-            @Override
-            public void configure() throws Exception {
-                from("direct:x").to(uri).process(new Processor() {
-
-                    public void process(Exchange e) {
-                        receivedExchange = e;
-                        latch.countDown();
-                    }
-                });
-            }
-        });
-        context.start();
 
         // now lets fire in a message
         Endpoint endpoint = context.getEndpoint("direct:x");
         Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
         Message message = exchange.getIn();
-        message.setBody("Hello!");
-        message.setHeader("cheese", 123);
+        //message.setBody("Hello!");
 
         Producer producer = endpoint.createProducer();
         producer.start();
@@ -74,62 +59,32 @@ public class Mina2TcpWithInOutTest extends BaseMina2Test {
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);
         assertTrue("Did not receive the message!", received);
-        assertNotNull(receivedExchange.getIn());
-        assertEquals("!olleH", receivedExchange.getIn().getBody());
+        assertTrue("Did not receive session creation event!", sessionCreated.booleanValue());
 
         producer.stop();
-        context.stop();
-        server.stop();
     }
 
-    @Test
-    public void testMinaRouteWithInOutLazy() throws Exception {
-        latch = new CountDownLatch(1);
-        uri = String.format("mina2:tcp://localhost:%1$s?textline=true&lazySessionCreation=true", getPort());
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
 
-        // The server is activated after Camel to check if the lazyness is working
-        Mina2ReverserServer server = new Mina2ReverserServer(getPort());
-        server.start();
-
-        context.addRoutes(new RouteBuilder() {
-
-            @Override
-            public void configure() throws Exception {
-                from("direct:x").to(uri).process(new Processor() {
+            public void configure() {
+                from(String.format("mina2:tcp://localhost:%1$s?minaLogger=true&textline=true",
+                                   getPort())).to("log:before?showAll=true").process(new Processor() {
 
                     public void process(Exchange e) {
-                        receivedExchange = e;
-                        latch.countDown();
+                        Boolean sessionCreatedProp = (Boolean) e.getIn().getHeader(
+                            Mina2Constants.MINA2_SESSION_CREATED);
+                        if (sessionCreatedProp != null) {
+                            sessionCreated = sessionCreatedProp;
+                            receivedExchange = e;
+                            latch.countDown();
+                        }
                     }
                 });
+                uri = String.format("mina2:tcp://localhost:%1$s?textline=true", getPort());
+                from("direct:x").to(uri);
+
             }
-        });
-        context.start();
-
-        // now lets fire in a message
-        Endpoint endpoint = context.getEndpoint("direct:x");
-        Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
-        Message message = exchange.getIn();
-        message.setBody("Hello!");
-        message.setHeader("cheese", 123);
-
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        producer.process(exchange);
-
-        // now lets sleep for a while
-        boolean received = latch.await(5, TimeUnit.SECONDS);
-        assertTrue("Did not receive the message!", received);
-        assertNotNull(receivedExchange.getIn());
-        assertEquals("!olleH", receivedExchange.getIn().getBody());
-
-        producer.stop();
-        context.stop();
-        server.stop();
-    }
-
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+        };
     }
 }
