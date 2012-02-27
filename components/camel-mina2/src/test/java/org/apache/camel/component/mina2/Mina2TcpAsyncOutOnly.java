@@ -64,6 +64,30 @@ public class Mina2TcpAsyncOutOnly extends BaseMina2Test {
         producer.stop();
     }
 
+    @Test
+    public void testMina2SessionCreatedOpenedClosed() throws Exception {
+        latch = new CountDownLatch(3);
+
+        // now lets fire in a message
+        template.sendBody("direct:x", "nada");
+//        Endpoint endpoint = context.getEndpoint("direct:x");
+//        Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
+//        Message message = exchange.getIn();
+//        //message.setBody("Hello!");
+//
+//
+//        Producer producer = endpoint.createProducer();
+//        producer.start();
+//        producer.process(exchange);
+//        producer.stop();
+
+        // now lets sleep for a while
+        boolean received = latch.await(5, TimeUnit.SECONDS);
+        assertTrue("Did not receive the message!", received);
+        assertTrue("Did not receive session creation event!", sessionCreated.booleanValue());
+
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
@@ -72,11 +96,25 @@ public class Mina2TcpAsyncOutOnly extends BaseMina2Test {
                                    getPort())).to("log:before?showAll=true").process(new Processor() {
 
                     public void process(Exchange e) {
-                        Boolean sessionCreatedProp = (Boolean) e.getIn().getHeader(
+                        Boolean prop = (Boolean) e.getIn().getHeader(
                             Mina2Constants.MINA2_SESSION_CREATED);
-                        if (sessionCreatedProp != null) {
-                            sessionCreated = sessionCreatedProp;
+                        if (prop != null) {
+                            sessionCreated = prop;
                             receivedExchange = e;
+                            latch.countDown();
+                        }
+                        prop = (Boolean) e.getIn().getHeader(
+                            Mina2Constants.MINA2_SESSION_OPENED);
+                        // Received session open. Countdown the latch
+                        if (prop != null) {
+                            latch.countDown();
+                            e.getOut().setHeader(Mina2Constants.MINA2_CLOSE_SESSION_WHEN_COMPLETE,
+                                                 true);
+                        }
+                        prop = (Boolean) e.getIn().getHeader(
+                            Mina2Constants.MINA2_SESSION_CLOSED);
+                        // Received session closed. Countdown the latch
+                        if (prop != null) {
                             latch.countDown();
                         }
                     }
