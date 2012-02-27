@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,6 +65,7 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.CamelContextNameStrategy;
@@ -94,6 +96,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultManagementLifecycleStrategy extends ServiceSupport implements LifecycleStrategy, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementLifecycleStrategy.class);
+    // the wrapped processors is for performance counters, which are in use for the created routes
+    // when a route is removed, we should remove the associated processors from this map
     private final Map<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> wrappedProcessors =
             new HashMap<Processor, KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>>();
     private final List<PreRegisterService> preServices = new ArrayList<PreRegisterService>();
@@ -528,7 +532,14 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             } catch (Exception e) {
                 LOG.warn("Could not unregister Route MBean", e);
             }
+
+            // remove from known routes ids, as the route has been removed
+            knowRouteIds.remove(route.getId());
         }
+
+        // after the routes has been removed, we should clear the wrapped processors as we no longer need them
+        // as they were just a provisional map used during creation of routes
+        removeWrappedProcessorsForRoutes(routes);
     }
 
     public void onErrorHandlerAdd(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory errorHandlerBuilder) {
@@ -600,7 +611,30 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         routeContext.setManagedInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters, wrappedProcessors));
     }
 
-    @SuppressWarnings("unchecked")
+    /**
+     * Removes the wrapped processors for the given routes, as they are no longer in use.
+     * <p/>
+     * This is needed to avoid accumulating memory, if a lot of routes is being added and removed.
+     *
+     * @param routes the routes
+     */
+    private void removeWrappedProcessorsForRoutes(Collection<Route> routes) {
+        // loop the routes, and remove the route associated wrapped processors, as they are no longer in use
+        for (Route route : routes) {
+            String id = route.getId();
+
+            Iterator<KeyValueHolder<ProcessorDefinition, InstrumentationProcessor>> it = wrappedProcessors.values().iterator();
+            while (it.hasNext()) {
+                KeyValueHolder<ProcessorDefinition, InstrumentationProcessor> holder = it.next();
+                RouteDefinition def = ProcessorDefinitionHelper.getRoute(holder.getKey());
+                if (def != null && id.equals(def.getId())) {
+                    it.remove();
+                }
+            }
+        }
+        
+    }
+
     private void registerPerformanceCounters(RouteContext routeContext, ProcessorDefinition processor,
                                              Map<ProcessorDefinition, PerformanceCounter> registeredCounters) {
 
@@ -767,6 +801,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         initialized = false;
         knowRouteIds.clear();
         preServices.clear();
+        wrappedProcessors.clear();
+        managedTracers.clear();
         ServiceHelper.stopService(timerListenerManager);
     }
 
