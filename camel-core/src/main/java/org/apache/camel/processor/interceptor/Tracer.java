@@ -54,13 +54,12 @@ public class Tracer implements InterceptStrategy, Service {
     private boolean useJpa;
     private CamelLogProcessor logger;
     private TraceInterceptorFactory traceInterceptorFactory = new DefaultTraceInterceptorFactory();
-    private CopyOnWriteArrayList<TraceEventHandler> traceHandlers;
+    private final List<TraceEventHandler> traceHandlers = new CopyOnWriteArrayList<TraceEventHandler>();
     private String jpaTraceEventMessageClassName = JPA_TRACE_EVENT_MESSAGE;
     private boolean jmxTraceNotifications;
     private int traceBodySize = 10000;
     
     public Tracer() {
-        traceHandlers = new CopyOnWriteArrayList<TraceEventHandler>();
         traceHandlers.add(new DefaultTraceEventHandler(this));
     }
 
@@ -316,7 +315,6 @@ public class Tracer implements InterceptStrategy, Service {
     
     /**
      * Add the given tracehandler
-     * @param traceHandler
      */
     public void addTraceHandler(TraceEventHandler traceHandler) {
         this.traceHandlers.add(traceHandler);
@@ -324,7 +322,6 @@ public class Tracer implements InterceptStrategy, Service {
     
     /**
      * Remove the given tracehandler
-     * @param traceHandler
      */
     public void removeTraceHandler(TraceEventHandler traceHandler) {
         this.traceHandlers.add(traceHandler);
@@ -367,7 +364,7 @@ public class Tracer implements InterceptStrategy, Service {
     }
 
     public void stop() throws Exception {
-        // noop
+        traceHandlers.clear();
     }
 
     @Override
