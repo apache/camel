@@ -105,6 +105,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
     private volatile boolean initialized;
     private final Set<String> knowRouteIds = new HashSet<String>();
     private final Map<Tracer, ManagedTracer> managedTracers = new HashMap<Tracer, ManagedTracer>();
+    private final Map<ThreadPoolExecutor, Object> managedThreadPools = new HashMap<ThreadPoolExecutor, Object>();
 
     public DefaultManagementLifecycleStrategy() {
     }
@@ -573,8 +574,33 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
 
         try {
             manageObject(mtp);
+            // store a reference so we can unmanage from JMX when the thread pool is removed
+            // we need to keep track here, as we cannot re-construct the thread pool ObjectName when removing the thread pool
+            managedThreadPools.put(threadPool, mtp);
         } catch (Exception e) {
             LOG.warn("Could not register thread pool: " + threadPool + " as ThreadPool MBean.", e);
+        }
+    }
+
+    public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
+        if (!initialized) {
+            return;
+        }
+
+        // lookup the thread pool and remove it from JMX
+        Object mtp = managedThreadPools.remove(threadPool);
+        if (mtp != null) {
+            // skip unmanaged routes
+            if (!getManagementStrategy().isManaged(mtp, null)) {
+                LOG.trace("The thread pool is not managed: {}", threadPool);
+                return;
+            }
+
+            try {
+                unmanageObject(mtp);
+            } catch (Exception e) {
+                LOG.warn("Could not unregister ThreadPool MBean", e);
+            }
         }
     }
 
@@ -795,6 +821,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
         preServices.clear();
         wrappedProcessors.clear();
         managedTracers.clear();
+        managedThreadPools.clear();
         ServiceHelper.stopService(timerListenerManager);
     }
 

@@ -140,4 +140,12 @@ public interface LifecycleStrategy {
     void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id,
                          String sourceId, String routeId, String threadPoolProfileId);
 
+    /**
+     * Notification on removing a thread pool.
+     *
+     * @param camelContext the camel context
+     * @param threadPool   the thread pool
+     */
+    void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool);
+
 }

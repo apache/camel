@@ -160,6 +160,10 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         public void onThreadPoolAdd(CamelContext camelContext, ThreadPoolExecutor threadPool, String id, String sourceId, String routeId, String threadPoolProfileId) {
         }
 
+        @Override
+        public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
+        }
+
         public int getContextStartCounter() {
             return contextStartCounter.get();
         }

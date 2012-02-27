@@ -245,26 +245,37 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     public void shutdown(ExecutorService executorService) {
         ObjectHelper.notNull(executorService, "executorService");
 
-        if (executorService.isShutdown()) {
-            return;
+        if (!executorService.isShutdown()) {
+            LOG.debug("Shutdown ExecutorService: {}", executorService);
+            executorService.shutdown();
+            LOG.trace("Shutdown ExecutorService: {} complete.", executorService);
         }
 
-        LOG.debug("Shutdown ExecutorService: {}", executorService);
-        executorService.shutdown();
-        LOG.trace("Shutdown ExecutorService: {} complete.", executorService);
+        if (executorService instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) executorService;
+            for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
+                lifecycle.onThreadPoolRemove(camelContext, threadPool);
+            }
+        }
     }
 
     @Override
     public List<Runnable> shutdownNow(ExecutorService executorService) {
         ObjectHelper.notNull(executorService, "executorService");
 
-        if (executorService.isShutdown()) {
-            return null;
+        List<Runnable> answer = null;
+        if (!executorService.isShutdown()) {
+            LOG.debug("ShutdownNow ExecutorService: {}", executorService);
+            answer = executorService.shutdownNow();
+            LOG.trace("ShutdownNow ExecutorService: {} complete.", executorService);
         }
 
-        LOG.debug("ShutdownNow ExecutorService: {}", executorService);
-        List<Runnable> answer = executorService.shutdownNow();
-        LOG.trace("ShutdownNow ExecutorService: {} complete.", executorService);
+        if (executorService instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutor threadPool = (ThreadPoolExecutor) executorService;
+            for (LifecycleStrategy lifecycle : camelContext.getLifecycleStrategies()) {
+                lifecycle.onThreadPoolRemove(camelContext, threadPool);
+            }
+        }
 
         return answer;
     }

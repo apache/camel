@@ -91,6 +91,10 @@ public class DummyLifecycleStrategy implements LifecycleStrategy {
         events.add("onThreadPoolAdd");
     }
 
+    public void onThreadPoolRemove(CamelContext camelContext, ThreadPoolExecutor threadPool) {
+        events.add("onThreadPoolRemove");
+    }
+
     public List<String> getEvents() {
         return events;
     }
