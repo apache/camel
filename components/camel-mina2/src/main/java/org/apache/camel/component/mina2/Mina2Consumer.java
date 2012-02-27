@@ -28,10 +28,10 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
+import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.service.IoService;
-import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
@@ -58,7 +58,6 @@ public class Mina2Consumer extends DefaultConsumer {
     private SocketAddress address;
     private IoAcceptor acceptor;
     private Mina2Configuration configuration;
-    private int maxReadBufferSize = 1024 * 64; // 64K readBufferSize
 
     public Mina2Consumer(final Mina2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -135,7 +134,6 @@ public class Mina2Consumer extends DefaultConsumer {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         }
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
-        acceptor.getSessionConfig().setMaxReadBufferSize(maxReadBufferSize);
     }
 
     protected void configureCodecFactory(String type, IoService service,
@@ -340,7 +338,6 @@ public class Mina2Consumer extends DefaultConsumer {
         @Override
         public void messageReceived(IoSession session, Object object) throws Exception {
             Mina2PayloadHelper.setIn(exchange, object);
-
             // log what we received
             if (LOG.isDebugEnabled()) {
                 Object in = object;

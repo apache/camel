@@ -79,7 +79,6 @@ public class Mina2TcpAsyncOutOnly extends BaseMina2Test {
 //        Producer producer = endpoint.createProducer();
 //        producer.start();
 //        producer.process(exchange);
-//        producer.stop();
 
         // now lets sleep for a while
         boolean received = latch.await(5, TimeUnit.SECONDS);
