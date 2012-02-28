@@ -257,6 +257,9 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
                 lifecycle.onThreadPoolRemove(camelContext, threadPool);
             }
         }
+
+        // remove reference as its shutdown
+        executorServices.remove(executorService);
     }
 
     @Override
@@ -276,6 +279,9 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
                 lifecycle.onThreadPoolRemove(camelContext, threadPool);
             }
         }
+
+        // remove reference as its shutdown
+        executorServices.remove(executorService);
 
         return answer;
     }
