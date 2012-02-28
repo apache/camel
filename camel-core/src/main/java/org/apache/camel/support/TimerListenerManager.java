@@ -33,6 +33,9 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The {@link #setExecutorService(java.util.concurrent.ScheduledExecutorService)} method
  * must be invoked prior to starting this manager using the {@link #start()} method.
+ * <p/>
+ * Also ensure when adding and remove listeners, that they are correctly removed to avoid
+ * leaking memory.
  *
  * @see TimerListener
  */
@@ -91,11 +94,27 @@ public class TimerListenerManager extends ServiceSupport implements Runnable {
         }
     }
 
+    /**
+     * Adds the listener.
+     * <p/>
+     * It may be important to implement {@link #equals(Object)} and {@link #hashCode()} for the listener
+     * to ensure that we can remove the same listener again, when invoking remove.
+     * 
+     * @param listener listener
+     */
     public void addTimerListener(TimerListener listener) {
         listeners.add(listener);
         LOG.debug("Added TimerListener: {}", listener);
     }
 
+    /**
+     * Removes the listener.
+     * <p/>
+     * It may be important to implement {@link #equals(Object)} and {@link #hashCode()} for the listener
+     * to ensure that we can remove the same listener again, when invoking remove.
+     *
+     * @param listener listener.
+     */
     public void removeTimerListener(TimerListener listener) {
         listeners.remove(listener);
         LOG.debug("Removed TimerListener: {}", listener);
@@ -117,5 +136,10 @@ public class TimerListenerManager extends ServiceSupport implements Runnable {
         }
     }
 
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        listeners.clear();
+    }
 }
 
