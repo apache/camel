@@ -241,7 +241,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
             writeFile(filename.substring(pos + 1), data, os, is);
 
-            os.write(("E\n").getBytes());
+            os.write("E\n".getBytes());
             os.flush();
             is.read();
         } else {
