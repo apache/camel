@@ -251,4 +251,20 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ManagedRoute that = (ManagedRoute) o;
+
+        if (!route.equals(that.route)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return route.hashCode();
+    }
 }
