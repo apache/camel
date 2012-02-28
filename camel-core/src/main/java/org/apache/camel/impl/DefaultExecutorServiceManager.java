@@ -259,6 +259,10 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     public List<Runnable> shutdownNow(ExecutorService executorService) {
+        return doShutdownNow(executorService, true);
+    }
+
+    private List<Runnable> doShutdownNow(ExecutorService executorService, boolean remove) {
         ObjectHelper.notNull(executorService, "executorService");
 
         if (executorService.isShutdown()) {
@@ -270,7 +274,9 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         LOG.trace("ShutdownNow ExecutorService: {} complete.", executorService);
 
         // remove reference as its shutdown
-        executorServices.remove(executorService);
+        if (remove) {
+            executorServices.remove(executorService);
+        }
 
         return answer;
     }
@@ -299,11 +305,12 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     @Override
     protected void doShutdown() throws Exception {
-        // shutdown all executor services
+        // shutdown all executor services by looping
         for (ExecutorService executorService : executorServices) {
             // only log if something goes wrong as we want to shutdown them all
             try {
-                shutdownNow(executorService);
+                // must not remove during looping, as we clear the list afterwards
+                doShutdownNow(executorService, false);
             } catch (Throwable e) {
                 LOG.warn("Error occurred during shutdown of ExecutorService: "
                         + executorService + ". This exception will be ignored.", e);
