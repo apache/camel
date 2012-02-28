@@ -27,7 +27,6 @@ import org.junit.Test;
  * @version 
  */
 public class ScpSimpleProduceTest extends ScpServerTestSupport {
-
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -37,36 +36,34 @@ public class ScpSimpleProduceTest extends ScpServerTestSupport {
     public void testScpSimpleProduce() throws Exception {
         Assume.assumeTrue(this.isSetupComplete());
 
-        String uri = "scp://localhost:" + getPort() + "/target/scp?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
+        String uri = getScpUri() + "?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File(SCP_ROOT_DIR + "/hello.txt").getAbsoluteFile();
+        File file = new File(getScpPath() + "/hello.txt").getAbsoluteFile();
         assertTrue("File should exist: " + file, file.exists());
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
 
     @Test
-    @Ignore("Scenario not supported by scp but could be emulated with recursive copy")
     public void testScpSimpleSubPathProduce() throws Exception {
         Assume.assumeTrue(this.isSetupComplete());
 
-        String uri = "scp://localhost:" + getPort() + "/target/scp?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
-        template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "bye.txt");
+        String uri = getScpUri() + "?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
+        template.sendBodyAndHeader(uri, "Bye World", Exchange.FILE_NAME, "mysub/bye.txt");
 
-        File file = new File(SCP_ROOT_DIR + "/mysub/bye.txt").getAbsoluteFile();
+        File file = new File(getScpPath() + "/mysub/bye.txt").getAbsoluteFile();
         assertTrue("File should exist: " + file, file.exists());
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
     @Test
-    @Ignore("Scenario not supported by scp but could be emulated with recursive copy")
     public void testScpSimpleTwoSubPathProduce() throws Exception {
         Assume.assumeTrue(this.isSetupComplete());
 
-        String uri = "scp://localhost:" + getPort() + "/target/scp?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
-        template.sendBodyAndHeader(uri, "Farewell World", Exchange.FILE_NAME, "farewell.txt");
+        String uri = getScpUri() + "?username=admin&password=admin&knownHostsFile=" + getKnownHostsFile();
+        template.sendBodyAndHeader(uri, "Farewell World", Exchange.FILE_NAME, "mysub/mysubsub/farewell.txt");
 
-        File file = new File(SCP_ROOT_DIR + "/mysub/myother/farewell.txt").getAbsoluteFile();
+        File file = new File(getScpPath() + "/mysub/mysubsub/farewell.txt").getAbsoluteFile();
         assertTrue("File should exist: " + file, file.exists());
         assertEquals("Farewell World", context.getTypeConverter().convertTo(String.class, file));
     }

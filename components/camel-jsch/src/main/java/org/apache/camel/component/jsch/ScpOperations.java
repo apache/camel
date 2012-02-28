@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jsch;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,10 +31,12 @@ import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration;
 import org.apache.camel.component.file.remote.RemoteFileOperations;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,20 +95,17 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         int timeout = cfg.getConnectTimeout();
         LOG.trace("Opening channel to {} with {} timeout...", cfg.remoteServerInformation(), 
             timeout > 0 ? (Integer.toString(timeout) + " ms") : "no");
-        String target = getRemoteTarget(cfg);
         String file = getRemoteFile(name, cfg);
         try {
             channel = (ChannelExec) session.openChannel("exec");
-            // TODO: need config for scp *-p* (preserves modification times, access times, and modes from the original file)
-            // String command="scp " + (ptimestamp ? "-p " : "") + "-t " + configuration.getDirectory();
-            // TODO: refactor to use generic command
-            String command = "scp -t " + target;
-            channel.setCommand(command);
+            channel.setCommand(getScpCommand(cfg, file));
             channel.connect(timeout);
             LOG.trace("Channel connected to {}", cfg.remoteServerInformation());
 
             try {
-                writeFile(channel, file, "foo");
+                write(channel, file, ExchangeHelper.getMandatoryInBody(exchange, InputStream.class));
+            } catch (InvalidPayloadException e) {
+                throw new GenericFileOperationFailedException("Failed extract message body as InputStream", e);
             } catch (IOException e) {
                 throw new GenericFileOperationFailedException("Failed to write file " + file, e);
             }
@@ -198,10 +198,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 ciphers.put("cipher.c2s", config.getCiphers());
                 JSch.setConfig(ciphers);
             }
-            
 
-            
-            
             String knownHostsFile = config.getKnownHostsFile();
             jsch.setKnownHosts(ObjectHelper.isEmpty(knownHostsFile) ? DEFAULT_KNOWN_HOSTS : knownHostsFile);
             session = jsch.getSession(config.getUsername(), config.getHost(), config.getPort());
@@ -223,23 +220,58 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         return session;
     }
     
-    private void writeFile(ChannelExec c, String name, String data) throws IOException {
-        data = "Hello World";
+    private void write(ChannelExec c, String name, InputStream data) throws IOException {
         OutputStream os = c.getOutputStream();
         InputStream is = c.getInputStream();
 
-        os.write(("C7777 " + data.length() + " " + name + "\n").getBytes());
-        os.flush();
-        is.read();
-        
-        os.write(data.getBytes());
-        os.flush();
-        is.read();
-        
-        os.write(0);
-        os.flush();
+        writeFile(name, data, os, is);
+
         os.close();
         is.close();
+    }
+
+    private void writeFile(String filename, InputStream data, OutputStream os, InputStream is) throws IOException {
+        int pos = filename.indexOf('/');
+        if (pos >= 0) {
+            // write to child directory
+            String dir = filename.substring(0, pos);
+            os.write(("D0775 0 " + dir + "\n").getBytes());
+            os.flush();
+            is.read();
+
+            writeFile(filename.substring(pos + 1), data, os, is);
+
+            os.write(("E\n").getBytes());
+            os.flush();
+            is.read();
+        } else {
+            int count = 0;
+            int read = 0;
+            int size = endpoint.getBufferSize();
+            byte[] bytes = new byte[size];
+
+            // figure out the stream size as we need to pass it in the header
+            BufferedInputStream buffer = new BufferedInputStream(data, size);
+            buffer.mark(Integer.MAX_VALUE);
+            while ((read = buffer.read(bytes)) != -1) {
+                count += read;
+            }
+
+            // send the header
+            os.write(("C0775 " + count + " " + filename + "\n").getBytes());
+            os.flush();
+            is.read();
+
+            // now send the stream
+            buffer.reset();
+            while ((read = buffer.read(bytes)) != -1) {
+                os.write(bytes, 0, read);
+            }
+            os.flush();
+            is.read();
+        }
+        os.write(0);
+        os.flush();
     }
     
     private static String getRemoteTarget(ScpConfiguration config) {
@@ -248,11 +280,26 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
     }
 
     private static String getRemoteFile(String name, ScpConfiguration config) {
-        // assume that the directory path of 'name' is the same as config.getDirectory()
-        int pos = name.lastIndexOf('/');
-        return pos >= 0 ? name.substring(pos + 1) : name;
+        String dir = config.getDirectory();
+        dir = dir.endsWith("/") ? dir : dir + "/";
+        return name.startsWith(dir) ? name.substring(dir.length()) : name;
     }
 
+    private static boolean isRecursiveScp(String name) {
+        return name.indexOf('/') > 0;
+    }
+
+    private static String getScpCommand(ScpConfiguration config, String name) {
+        StringBuilder cmd = new StringBuilder();
+        cmd.append("scp ");
+        // TODO: need config for scp *-p* (preserves modification times, access times, and modes from the original file)
+        // String command="scp " + (ptimestamp ? "-p " : "") + "-t " + configuration.getDirectory();
+        // TODO: refactor to use generic command
+        cmd.append(isRecursiveScp(name) ? "-r " : "");
+        cmd.append("-t ");
+        cmd.append(getRemoteTarget(config));
+        return cmd.toString(); 
+    }
 
     protected static final class SessionUserInfo implements UserInfo, UIKeyboardInteractive {
         private final ScpConfiguration config;
