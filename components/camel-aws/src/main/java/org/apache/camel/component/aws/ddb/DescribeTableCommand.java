@@ -37,7 +37,7 @@ public class DescribeTableCommand extends AbstractDdbCommand {
         Message msg = getMessageForResponse(exchange);
         msg.setHeader(DdbConstants.TABLE_NAME, result.getTable().getTableName());
         msg.setHeader(DdbConstants.TABLE_STATUS, result.getTable().getTableStatus());
-        msg.setHeader(DdbConstants.TABLE_CREATION_DATE, result.getTable().getCreationDateTime());
+        msg.setHeader(DdbConstants.CREATION_DATE, result.getTable().getCreationDateTime());
         msg.setHeader(DdbConstants.ITEM_COUNT, result.getTable().getItemCount());
         msg.setHeader(DdbConstants.KEY_SCHEMA, result.getTable().getKeySchema());
         msg.setHeader(DdbConstants.READ_CAPACITY,

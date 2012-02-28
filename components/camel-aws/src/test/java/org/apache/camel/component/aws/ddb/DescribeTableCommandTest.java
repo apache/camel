@@ -51,7 +51,7 @@ public class DescribeTableCommandTest {
         assertEquals("FULL_DESCRIBE_TABLE", ddbClient.describeTableRequest.getTableName());
         assertEquals("FULL_DESCRIBE_TABLE", exchange.getIn().getHeader(DdbConstants.TABLE_NAME));
         assertEquals("ACTIVE", exchange.getIn().getHeader(DdbConstants.TABLE_STATUS));
-        assertEquals(new Date(AmazonDDBClientMock.NOW), exchange.getIn().getHeader(DdbConstants.TABLE_CREATION_DATE));
+        assertEquals(new Date(AmazonDDBClientMock.NOW), exchange.getIn().getHeader(DdbConstants.CREATION_DATE));
         assertEquals(100L, exchange.getIn().getHeader(DdbConstants.ITEM_COUNT));
         assertEquals(new KeySchema(new KeySchemaElement().withAttributeName("name")),
                 exchange.getIn().getHeader(DdbConstants.KEY_SCHEMA));
