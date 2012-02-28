@@ -67,6 +67,10 @@ public class SmppConfigurationTest {
         assertEquals(false, configuration.getUsingSSL());
         assertEquals(5000, configuration.getInitialReconnectDelay());
         assertEquals(5000, configuration.getReconnectDelay());
+        assertEquals(null, configuration.getHttpProxyHost());
+        assertEquals(new Integer(3128), configuration.getHttpProxyPort());
+        assertEquals(null, configuration.getHttpProxyUsername());
+        assertEquals(null, configuration.getHttpProxyPassword());
     }
     
     @Test
@@ -97,6 +101,10 @@ public class SmppConfigurationTest {
         assertEquals(true, configuration.getUsingSSL());
         assertEquals(5001, configuration.getInitialReconnectDelay());
         assertEquals(5002, configuration.getReconnectDelay());
+        assertEquals("127.0.0.1", configuration.getHttpProxyHost());
+        assertEquals(new Integer(3129), configuration.getHttpProxyPort());
+        assertEquals("user", configuration.getHttpProxyUsername());
+        assertEquals("secret", configuration.getHttpProxyPassword());
     }
 
     @Test
@@ -137,6 +145,10 @@ public class SmppConfigurationTest {
         assertEquals(config.getUsingSSL(), configuration.getUsingSSL());
         assertEquals(config.getInitialReconnectDelay(), configuration.getInitialReconnectDelay());
         assertEquals(config.getReconnectDelay(), configuration.getReconnectDelay());
+        assertEquals(config.getHttpProxyHost(), configuration.getHttpProxyHost());
+        assertEquals(config.getHttpProxyPort(), configuration.getHttpProxyPort());
+        assertEquals(config.getHttpProxyUsername(), configuration.getHttpProxyUsername());
+        assertEquals(config.getHttpProxyPassword(), configuration.getHttpProxyPassword());
         
     }
     
@@ -168,7 +180,11 @@ public class SmppConfigurationTest {
                 + "numberingPlanIndicator=0, "
                 + "initialReconnectDelay=5000, "
                 + "reconnectDelay=5000, "
-                + "lazySessionCreation=false]";
+                + "lazySessionCreation=false, "
+                + "httpProxyHost=null, "
+                + "httpProxyPort=3128, "
+                + "httpProxyUsername=null, "
+                + "httpProxyPassword=null]";
         assertEquals(expected, configuration.toString());
     }
 
@@ -197,5 +213,9 @@ public class SmppConfigurationTest {
         config.setUsingSSL(true);
         config.setInitialReconnectDelay(5001);
         config.setReconnectDelay(5002);
+        config.setHttpProxyHost("127.0.0.1");
+        config.setHttpProxyPort(new Integer(3129));
+        config.setHttpProxyUsername("user");
+        config.setHttpProxyPassword("secret");
     }
 }

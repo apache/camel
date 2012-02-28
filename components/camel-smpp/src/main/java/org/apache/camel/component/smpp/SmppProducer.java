@@ -106,12 +106,9 @@ public class SmppProducer extends DefaultProducer {
      * @return the SMPPSession
      */
     SMPPSession createSMPPSession() {
-        if (configuration.getUsingSSL()) {
-            return new SMPPSession(new SynchronizedPDUSender(new DefaultPDUSender(new DefaultComposer())),
-                                   new DefaultPDUReader(), SmppSSLConnectionFactory.getInstance());
-        } else {
-            return new SMPPSession();
-        }
+        return new SMPPSession(new SynchronizedPDUSender(new DefaultPDUSender(
+                new DefaultComposer())), new DefaultPDUReader(), SmppConnectionFactory
+                .getInstance(configuration));
     }
 
     public void process(Exchange exchange) throws Exception {
