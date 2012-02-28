@@ -46,7 +46,6 @@ public class ManagedSedaRouteRemoveTest extends ManagementTestSupport {
 
         // and there should be 2 thread pools (1 default + 1 seda)
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
-        assertEquals(2, set.size());
         // there should be a seda thread pool in there
         boolean seda = false;
         for (ObjectName names : set) {
@@ -76,10 +75,15 @@ public class ManagedSedaRouteRemoveTest extends ManagementTestSupport {
 
         // and thread pool should be removed (shutdown creates a new thread pool as well)
         set = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);
-        assertEquals(1, set.size());
-        // and the thread pool should not be a seda thread pool
-        String name = set.iterator().next().toString();
-        assertFalse("There should not be a seda thread pool", name.contains("Seda"));
+        // there should NOT be a seda thread pool in there
+        seda = false;
+        for (ObjectName names : set) {
+            if (names.toString().contains("Seda")) {
+                seda = true;
+                break;
+            }
+        }
+        assertFalse("There should not be a seda thread pool", seda);
     }
 
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
