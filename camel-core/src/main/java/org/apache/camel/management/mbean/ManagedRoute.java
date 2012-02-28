@@ -253,14 +253,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ManagedRoute that = (ManagedRoute) o;
-
-        if (!route.equals(that.route)) return false;
-
-        return true;
+        return this == o || (o != null && getClass() == o.getClass() && route.equals(((ManagedRoute)o).route));
     }
 
     @Override
