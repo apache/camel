@@ -252,6 +252,9 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         LOG.debug("Shutdown ExecutorService: {}", executorService);
         executorService.shutdown();
         LOG.trace("Shutdown ExecutorService: {} complete.", executorService);
+
+        // remove reference as its shutdown
+        executorServices.remove(executorService);
     }
 
     @Override
@@ -265,6 +268,9 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         LOG.debug("ShutdownNow ExecutorService: {}", executorService);
         List<Runnable> answer = executorService.shutdownNow();
         LOG.trace("ShutdownNow ExecutorService: {} complete.", executorService);
+
+        // remove reference as its shutdown
+        executorServices.remove(executorService);
 
         return answer;
     }
