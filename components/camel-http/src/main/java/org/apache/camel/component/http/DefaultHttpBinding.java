@@ -177,17 +177,19 @@ public class DefaultHttpBinding implements HttpBinding {
             }
             // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
             String body = message.getBody(String.class);
-            for (String param : body.split("&")) {
-                String[] pair = param.split("=", 2);
-                if (pair.length == 2) {
-                    String name = URLDecoder.decode(pair[0], charset);
-                    String value = URLDecoder.decode(pair[1], charset);
-                    if (headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
-                        HttpHelper.appendHeader(headers, name, value);
+            if (ObjectHelper.isNotEmpty(body)) {
+                for (String param : body.split("&")) {
+                    String[] pair = param.split("=", 2);
+                    if (pair.length == 2) {
+                        String name = URLDecoder.decode(pair[0], charset);
+                        String value = URLDecoder.decode(pair[1], charset);
+                        if (headerFilterStrategy != null
+                                && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                            HttpHelper.appendHeader(headers, name, value);
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
                     }
-                } else {
-                    throw new IllegalArgumentException("Invalid parameter, expected to be a pair but was " + param);
                 }
             }
         }
