@@ -176,6 +176,18 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             // we have tried before but we cannot convert this one
             return Void.TYPE;
         }
+        
+        // special for NaN numbers, which we can only convert for flating numbers
+        if (ObjectHelper.isNaN(value)) {
+            if (Float.class.isAssignableFrom(type)) {
+                return Float.NaN;
+            } else if (Double.class.isAssignableFrom(type)) {
+                return Double.NaN;
+            } else {
+                // we cannot convert the NaN
+                return Void.TYPE;
+            }
+        }
 
         // try to find a suitable type converter
         TypeConverter converter = getOrFindTypeConverter(type, value);
