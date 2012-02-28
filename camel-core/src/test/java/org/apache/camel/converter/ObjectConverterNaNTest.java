@@ -30,50 +30,61 @@ public class ObjectConverterNaNTest extends ContextTestSupport {
 
     public void testDoubleToLongWithNaN() throws Exception {
         assertEquals(Long.valueOf("4"), context.getTypeConverter().convertTo(Long.class, Double.valueOf("4")));
-        assertEquals(Long.valueOf("0"), context.getTypeConverter().convertTo(Long.class, Double.NaN));
+        assertEquals(null, context.getTypeConverter().convertTo(Long.class, Double.NaN));
         assertEquals(Long.valueOf("3"), context.getTypeConverter().convertTo(Long.class, Double.valueOf("3")));
     }
 
     public void testFloatToLongWithNaN() throws Exception {
         assertEquals(Long.valueOf("4"), context.getTypeConverter().convertTo(Long.class, Float.valueOf("4")));
-        assertEquals(Long.valueOf("0"), context.getTypeConverter().convertTo(Long.class, Float.NaN));
+        assertEquals(null, context.getTypeConverter().convertTo(Long.class, Float.NaN));
         assertEquals(Long.valueOf("3"), context.getTypeConverter().convertTo(Long.class, Float.valueOf("3")));
     }
 
     public void testDoubleToIntegerWithNaN() throws Exception {
         assertEquals(Integer.valueOf("4"), context.getTypeConverter().convertTo(Integer.class, Double.valueOf("4")));
-        assertEquals(Integer.valueOf("0"), context.getTypeConverter().convertTo(Integer.class, Double.NaN));
+        assertEquals(null, context.getTypeConverter().convertTo(Integer.class, Double.NaN));
         assertEquals(Integer.valueOf("3"), context.getTypeConverter().convertTo(Integer.class, Double.valueOf("3")));
     }
 
     public void testFloatToIntegerWithNaN() throws Exception {
         assertEquals(Integer.valueOf("4"), context.getTypeConverter().convertTo(Integer.class, Float.valueOf("4")));
-        assertEquals(Integer.valueOf("0"), context.getTypeConverter().convertTo(Integer.class, Float.NaN));
+        assertEquals(null, context.getTypeConverter().convertTo(Integer.class, Float.NaN));
         assertEquals(Integer.valueOf("3"), context.getTypeConverter().convertTo(Integer.class, Float.valueOf("3")));
     }
 
     public void testDoubleToShortWithNaN() throws Exception {
         assertEquals(Short.valueOf("4"), context.getTypeConverter().convertTo(Short.class, Double.valueOf("4")));
-        assertEquals(Short.valueOf("0"), context.getTypeConverter().convertTo(Short.class, Double.NaN));
+        assertEquals(null, context.getTypeConverter().convertTo(Short.class, Double.NaN));
         assertEquals(Short.valueOf("3"), context.getTypeConverter().convertTo(Short.class, Double.valueOf("3")));
     }
 
     public void testFloatToShortWithNaN() throws Exception {
         assertEquals(Short.valueOf("4"), context.getTypeConverter().convertTo(Short.class, Float.valueOf("4")));
-        assertEquals(Short.valueOf("0"), context.getTypeConverter().convertTo(Short.class, Float.NaN));
+        assertEquals(null, context.getTypeConverter().convertTo(Short.class, Float.NaN));
         assertEquals(Short.valueOf("3"), context.getTypeConverter().convertTo(Short.class, Float.valueOf("3")));
     }
 
     public void testDoubleToByteWithNaN() throws Exception {
         assertEquals(Byte.valueOf("4"), context.getTypeConverter().convertTo(Byte.class, Double.valueOf("4")));
-        assertEquals(Byte.valueOf("0"), context.getTypeConverter().convertTo(Byte.class, Double.NaN));
+        assertEquals(null, context.getTypeConverter().convertTo(Byte.class, Double.NaN));
         assertEquals(Byte.valueOf("3"), context.getTypeConverter().convertTo(Byte.class, Double.valueOf("3")));
     }
 
     public void testFloatToByteWithNaN() throws Exception {
         assertEquals(Byte.valueOf("4"), context.getTypeConverter().convertTo(Byte.class, Float.valueOf("4")));
-        assertEquals(Byte.valueOf("0"), context.getTypeConverter().convertTo(Byte.class, Float.NaN));
+        assertEquals(null, context.getTypeConverter().convertTo(Byte.class, Float.NaN));
         assertEquals(Byte.valueOf("3"), context.getTypeConverter().convertTo(Byte.class, Float.valueOf("3")));
     }
 
+    public void testDoubleToFloatWithNaN() throws Exception {
+        assertEquals(Float.valueOf("4"), context.getTypeConverter().convertTo(Float.class, Double.valueOf("4")));
+        assertEquals(Float.NaN, context.getTypeConverter().convertTo(Float.class, Double.NaN));
+        assertEquals(Float.valueOf("3"), context.getTypeConverter().convertTo(Float.class, Double.valueOf("3")));
+    }
+
+    public void testFloatToDoubleWithNaN() throws Exception {
+        assertEquals(Double.valueOf("4"), context.getTypeConverter().convertTo(Double.class, Float.valueOf("4")));
+        assertEquals(Double.NaN, context.getTypeConverter().convertTo(Double.class, Float.NaN));
+        assertEquals(Double.valueOf("3"), context.getTypeConverter().convertTo(Double.class, Float.valueOf("3")));
+    }
 }
