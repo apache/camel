@@ -1377,6 +1377,19 @@ public final class ObjectHelper {
         return null;
     }
 
+    /**
+     * Is the given value a numeric NaN type
+     * 
+     * @param value the value
+     * @return <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
+     */
+    public static boolean isNaN(Object value) {
+        if (value == null) {
+            return false;
+        }
+        return value.equals(Float.NaN) || value.equals(Double.NaN);
+    }
+
     private static final class ExceptionIterator implements Iterator<Throwable> {
         private List<Throwable> tree = new ArrayList<Throwable>();
         private Iterator<Throwable> it;
