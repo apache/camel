@@ -392,10 +392,9 @@ public class BeanInfo {
         for (Class<?> i : c.getInterfaces()) {
             collectParameterAnnotations(i, m, a);
         }
-        if (!c.isInterface() && c.getSuperclass() != Object.class) {
+        if (!c.isInterface() && c.getSuperclass() != null) {
             collectParameterAnnotations(c.getSuperclass(), m, a);
         }
-
     }
 
     /**
