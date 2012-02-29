@@ -51,7 +51,6 @@
       <commons-httpclient-bundle-version>3.1_6</commons-httpclient-bundle-version>
       <commons-io-bundle-version>1.3.2_3</commons-io-bundle-version>
       <commons-jxpath-version>1.3</commons-jxpath-version>
-      <commons-net-version>2.2</commons-net-version>
       <commons-math-version>2.2</commons-math-version>
       <commons-dbcp-bundle-version>1.4_1</commons-dbcp-bundle-version>
       <dom4j-bundle-version>1.6.1_4</dom4j-bundle-version>
