@@ -37,6 +37,14 @@ public class BeanInfoTest extends TestCase {
 
     protected CamelContext camelContext = new DefaultCamelContext();
 
+    public void testObjectOperations() throws Exception {
+        BeanInfo info = createBeanInfo(Object.class);
+
+        List<MethodInfo> operations = info.getMethods();
+        assertEquals(1, operations.size());
+        assertEquals("toString", operations.get(0).getMethod().getName());
+    }
+
     public void testGetOperations() throws Exception {
         BeanInfo info = createBeanInfo(Foo.class);
 
