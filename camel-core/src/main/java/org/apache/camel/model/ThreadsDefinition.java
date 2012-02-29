@@ -80,7 +80,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
         // the threads name
         String name = getThreadName() != null ? getThreadName() : "Threads";
         // prefer any explicit configured executor service
-        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, name, this);
+        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, name, this, false);
         // if no explicit then create from the options
         if (executorService == null) {
             ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();

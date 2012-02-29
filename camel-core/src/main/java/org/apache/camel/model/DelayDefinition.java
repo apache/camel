@@ -78,13 +78,7 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
         Processor childProcessor = this.createChildProcessor(routeContext, false);
         Expression delay = createAbsoluteTimeDelayExpression(routeContext);
 
-        ScheduledExecutorService scheduled = null;
-        if (getAsyncDelayed() != null && getAsyncDelayed()) {
-            scheduled = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", this);
-            if (scheduled == null) {
-                scheduled = routeContext.getCamelContext().getExecutorServiceManager().newDefaultScheduledThreadPool(this, "Delay");
-            }
-        }
+        ScheduledExecutorService scheduled = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Delay", this, isAsyncDelayed());
 
         Delayer answer = new Delayer(childProcessor, delay, scheduled);
         if (getAsyncDelayed() != null) {
@@ -163,6 +157,10 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
 
     public void setAsyncDelayed(Boolean asyncDelayed) {
         this.asyncDelayed = asyncDelayed;
+    }
+
+    public boolean isAsyncDelayed() {
+        return asyncDelayed != null && asyncDelayed;
     }
 
     public Boolean getCallerRunsWhenRejected() {

@@ -48,8 +48,8 @@ public class AggregateUnknownExecutorServiceRefTest extends ContextTestSupport {
             context.start();
             fail("Should have thrown exception");
         } catch (FailedToCreateRouteException e) {
-            NoSuchBeanException cause = assertIsInstanceOf(NoSuchBeanException.class, e.getCause());
-            assertEquals("myUnknownProfile", cause.getName());
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertTrue(cause.getMessage().contains("myUnknownProfile"));
         }
     }
 

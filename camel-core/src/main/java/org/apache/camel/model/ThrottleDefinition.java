@@ -83,13 +83,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = this.createChildProcessor(routeContext, true);
 
-        ScheduledExecutorService scheduled = null;
-        if (getAsyncDelayed() != null && getAsyncDelayed()) {
-            scheduled = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this);
-            if (scheduled == null) {
-                scheduled = routeContext.getCamelContext().getExecutorServiceManager().newDefaultScheduledThreadPool(this, "Throttle");
-            }
-        }
+        ScheduledExecutorService scheduled = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this, isAsyncDelayed());
 
         // should be default 1000 millis
         long period = getTimePeriodMillis() != null ? getTimePeriodMillis() : 1000L;
@@ -193,6 +187,10 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     public void setAsyncDelayed(Boolean asyncDelayed) {
         this.asyncDelayed = asyncDelayed;
+    }
+
+    public boolean isAsyncDelayed() {
+        return asyncDelayed != null && asyncDelayed;
     }
 
     public Boolean getCallerRunsWhenRejected() {
