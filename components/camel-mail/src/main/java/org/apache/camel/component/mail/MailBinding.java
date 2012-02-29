@@ -25,7 +25,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Address;
@@ -35,6 +34,7 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -55,8 +55,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and
  * from a Mail {@link MimeMessage}
- *
- * @version 
  */
 public class MailBinding {
 
@@ -78,12 +76,12 @@ public class MailBinding {
 
         // camel message headers takes precedence over endpoint configuration
         if (hasRecipientHeaders(exchange)) {
-            setRecipientFromCamelMessage(mimeMessage, exchange);
+            setRecipientFromCamelMessage(mimeMessage, endpoint.getConfiguration(), exchange);
         } else {
             // fallback to endpoint configuration
-            setRecipientFromEndpointConfiguration(mimeMessage, endpoint);
+            setRecipientFromEndpointConfiguration(mimeMessage, endpoint, exchange);
         }
-        
+
         // set the replyTo if it was passed in as an option in the uri. Note: if it is in both the URI
         // and headers the headers win.
         String replyTo = exchange.getIn().getHeader("Reply-To", String.class);
@@ -93,11 +91,11 @@ public class MailBinding {
         if (replyTo != null) {
             ArrayList<InternetAddress> replyToAddresses = new ArrayList<InternetAddress>();
             for (String reply : splitRecipients(replyTo)) {
-                replyToAddresses.add(new InternetAddress(reply.trim()));
+                replyToAddresses.add(asEncodedInternetAddress(reply.trim(), determineCharSet(endpoint.getConfiguration(), exchange)));
             }
             mimeMessage.setReplyTo(replyToAddresses.toArray(new InternetAddress[replyToAddresses.size()]));
         }
-        
+
         // must have at least one recipients otherwise we do not know where to send the mail
         if (mimeMessage.getAllRecipients() == null) {
             throw new IllegalArgumentException("The mail message does not have any recipients set.");
@@ -116,7 +114,7 @@ public class MailBinding {
         if (empty(mimeMessage.getFrom())) {
             // lets default the address to the endpoint destination
             String from = endpoint.getConfiguration().getFrom();
-            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.setFrom(asEncodedInternetAddress(from, determineCharSet(endpoint.getConfiguration(), exchange)));
         }
 
         // if there is an alternative body provided, set up a mime multipart alternative message
@@ -157,9 +155,9 @@ public class MailBinding {
         return contentType;
     }
 
-    protected String determineCharSet(MailConfiguration configuration, Exchange exchange) {
+    protected static String determineCharSet(MailConfiguration configuration, Exchange exchange) {
 
-         // see if we got any content type set
+        // see if we got any content type set
         String contentType = configuration.getContentType();
         if (exchange.getIn().getHeader("contentType") != null) {
             contentType = exchange.getIn().getHeader("contentType", String.class);
@@ -199,7 +197,7 @@ public class MailBinding {
         String contentType = determineContentType(configuration, exchange);
 
         LOG.trace("Using Content-Type {} for MimeMessage: {}", contentType, part);
-        
+
         String body = exchange.getIn().getBody(String.class);
         if (body == null) {
             body = "";
@@ -238,7 +236,7 @@ public class MailBinding {
     public Object extractBodyFromMail(Exchange exchange, MailMessage mailMessage) {
         Message message = mailMessage.getMessage();
         try {
-            if (((MailEndpoint)exchange.getFromEndpoint()).getConfiguration().isMapMailMessage()) {
+            if (((MailEndpoint) exchange.getFromEndpoint()).getConfiguration().isMapMailMessage()) {
                 return message.getContent();
             }
             return message; // raw message
@@ -254,7 +252,7 @@ public class MailBinding {
                         // try again with fixed content type
                         LOG.debug("Trying to extract mail message again with fixed Content-Type: " + type);
                         // Since message is read-only, we need to use a copy
-                        MimeMessage messageCopy = new MimeMessage((MimeMessage)message);
+                        MimeMessage messageCopy = new MimeMessage((MimeMessage) message);
                         messageCopy.setHeader("Content-Type", type);
                         Object body = messageCopy.getContent();
                         // If we got this far, our fix worked...
@@ -268,24 +266,24 @@ public class MailBinding {
             }
 
             throw new RuntimeCamelException("Failed to extract body due to: " + e.getMessage()
-                + ". Exchange: " + exchange + ". Message: " + message, e);
+                    + ". Exchange: " + exchange + ". Message: " + message, e);
         }
     }
 
     /**
      * Parses the attachments of the given mail message and adds them to the map
      *
-     * @param  message  the mail message with attachments
-     * @param  map      the map to add found attachments (attachmentFilename is the key)
+     * @param message the mail message with attachments
+     * @param map     the map to add found attachments (attachmentFilename is the key)
      */
     public void extractAttachmentsFromMail(Message message, Map<String, DataHandler> map)
-        throws javax.mail.MessagingException, IOException {
+        throws MessagingException, IOException {
 
         LOG.trace("Extracting attachments +++ start +++");
 
         Object content = message.getContent();
         if (content instanceof Multipart) {
-            extractAttachmentsFromMultipart((Multipart)content, map);
+            extractAttachmentsFromMultipart((Multipart) content, map);
         } else if (content != null) {
             LOG.trace("No attachments to extract as content is not Multipart: " + content.getClass().getName());
         }
@@ -294,7 +292,7 @@ public class MailBinding {
     }
 
     protected void extractAttachmentsFromMultipart(Multipart mp, Map<String, DataHandler> map)
-        throws javax.mail.MessagingException, IOException {
+        throws MessagingException, IOException {
 
         for (int i = 0; i < mp.getCount(); i++) {
             Part part = mp.getBodyPart(i);
@@ -302,7 +300,7 @@ public class MailBinding {
 
             if (part.isMimeType("multipart/*")) {
                 LOG.trace("Part #" + i + ": is mimetype: multipart/*");
-                extractAttachmentsFromMultipart((Multipart)part.getContent(), map);
+                extractAttachmentsFromMultipart((Multipart) part.getContent(), map);
             } else {
                 String disposition = part.getDisposition();
                 if (LOG.isTraceEnabled()) {
@@ -335,7 +333,7 @@ public class MailBinding {
      * Appends the Mail headers from the Camel {@link MailMessage}
      */
     protected void appendHeadersFromCamelMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange)
-        throws MessagingException {
+        throws MessagingException, IOException {
 
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             String headerName = entry.getKey();
@@ -344,7 +342,15 @@ public class MailBinding {
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
                     if (headerName.equalsIgnoreCase("subject")) {
-                        mimeMessage.setSubject(asString(exchange, headerValue), IOHelper.getCharsetName(exchange, false));
+                        mimeMessage.setSubject(asString(exchange, headerValue), determineCharSet(configuration, exchange));
+                        continue;
+                    }
+                    if (headerName.equalsIgnoreCase("from")) {
+                        mimeMessage.setFrom(asEncodedInternetAddress(asString(exchange, headerValue), determineCharSet(configuration, exchange)));
+                        continue;
+                    }
+                    if (headerName.equalsIgnoreCase("sender")) {
+                        mimeMessage.setSender(asEncodedInternetAddress(asString(exchange, headerValue), determineCharSet(configuration, exchange)));
                         continue;
                     }
                     if (isRecipientHeader(headerName)) {
@@ -373,7 +379,7 @@ public class MailBinding {
         }
     }
 
-    private void setRecipientFromCamelMessage(MimeMessage mimeMessage, Exchange exchange) throws MessagingException {
+    private void setRecipientFromCamelMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange) throws MessagingException, IOException {
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
@@ -383,10 +389,10 @@ public class MailBinding {
                     Iterator iter = ObjectHelper.createIterator(headerValue);
                     while (iter.hasNext()) {
                         Object recipient = iter.next();
-                        appendRecipientToMimeMessage(mimeMessage, headerName, asString(exchange, recipient));
+                        appendRecipientToMimeMessage(mimeMessage, configuration, exchange, headerName, asString(exchange, recipient));
                     }
                 } else {
-                    appendRecipientToMimeMessage(mimeMessage, headerName, asString(exchange, headerValue));
+                    appendRecipientToMimeMessage(mimeMessage, configuration, exchange, headerName, asString(exchange, headerValue));
                 }
             }
         }
@@ -395,18 +401,18 @@ public class MailBinding {
     /**
      * Appends the Mail headers from the endpoint configuration.
      */
-    protected void setRecipientFromEndpointConfiguration(MimeMessage mimeMessage, MailEndpoint endpoint)
-        throws MessagingException {
+    protected void setRecipientFromEndpointConfiguration(MimeMessage mimeMessage, MailEndpoint endpoint, Exchange exchange)
+        throws MessagingException, IOException {
 
         Map<Message.RecipientType, String> recipients = endpoint.getConfiguration().getRecipients();
         if (recipients.containsKey(Message.RecipientType.TO)) {
-            appendRecipientToMimeMessage(mimeMessage, Message.RecipientType.TO.toString(), recipients.get(Message.RecipientType.TO));
+            appendRecipientToMimeMessage(mimeMessage, endpoint.getConfiguration(), exchange, Message.RecipientType.TO.toString(), recipients.get(Message.RecipientType.TO));
         }
         if (recipients.containsKey(Message.RecipientType.CC)) {
-            appendRecipientToMimeMessage(mimeMessage, Message.RecipientType.CC.toString(), recipients.get(Message.RecipientType.CC));
+            appendRecipientToMimeMessage(mimeMessage, endpoint.getConfiguration(), exchange, Message.RecipientType.CC.toString(), recipients.get(Message.RecipientType.CC));
         }
         if (recipients.containsKey(Message.RecipientType.BCC)) {
-            appendRecipientToMimeMessage(mimeMessage, Message.RecipientType.BCC.toString(), recipients.get(Message.RecipientType.BCC));
+            appendRecipientToMimeMessage(mimeMessage, endpoint.getConfiguration(), exchange, Message.RecipientType.BCC.toString(), recipients.get(Message.RecipientType.BCC));
         }
     }
 
@@ -559,12 +565,16 @@ public class MailBinding {
         return answer;
     }
 
-    private static void appendRecipientToMimeMessage(MimeMessage mimeMessage, String type, String recipient) throws MessagingException {
+    private static void appendRecipientToMimeMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange,
+                                                     String type, String recipient) throws MessagingException, IOException {
+        ArrayList<InternetAddress> recipientsAddresses = new ArrayList<InternetAddress>();
         for (String line : splitRecipients(recipient)) {
-            mimeMessage.addRecipients(asRecipientType(type), line.trim());
+            recipientsAddresses.add(asEncodedInternetAddress(line.trim(), determineCharSet(configuration, exchange)));
         }
+
+        mimeMessage.addRecipients(asRecipientType(type), recipientsAddresses.toArray(new InternetAddress[recipientsAddresses.size()]));
     }
-    
+
     private static String[] splitRecipients(String recipients) {
         // we support that multi recipient can be given as a string separated by comma or semicolon
         // regex ignores comma and semicolon inside of double quotes
@@ -620,13 +630,23 @@ public class MailBinding {
         throw new IllegalArgumentException("Unknown recipient type: " + type);
     }
 
-
     private static boolean empty(Address[] addresses) {
         return addresses == null || addresses.length == 0;
     }
 
     private static String asString(Exchange exchange, Object value) {
         return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+    }
+
+    /**
+     * Returns internet address with encoded personal.
+     */
+    private static InternetAddress asEncodedInternetAddress(String address, String charset)
+        throws UnsupportedEncodingException, AddressException {
+
+        InternetAddress internetAddress = new InternetAddress(address);
+        internetAddress.setPersonal(internetAddress.getPersonal(), charset);
+        return internetAddress;
     }
 
 }
