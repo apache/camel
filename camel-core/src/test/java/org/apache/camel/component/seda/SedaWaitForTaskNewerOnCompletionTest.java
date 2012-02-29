@@ -30,8 +30,8 @@ import org.apache.camel.support.SynchronizationAdapter;
  */
 public class SedaWaitForTaskNewerOnCompletionTest extends ContextTestSupport {
 
-    private final CountDownLatch latch = new CountDownLatch(1);
     private static String done = "";
+    private final CountDownLatch latch = new CountDownLatch(1);
 
     public void testNever() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(0);
