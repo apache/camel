@@ -63,7 +63,16 @@
               <groupId>org.apache.geronimo.specs</groupId>
               <artifactId>geronimo-stax-api_1.0_spec</artifactId>
           </exclusion>
+          <exclusion>
+              <groupId>commons-codec</groupId>
+              <artifactId>commons-codec</artifactId>
+          </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.abdera</groupId>

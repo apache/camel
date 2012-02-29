@@ -47,7 +47,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>${commons-codec}</version>
+            <version>${commons-codec-version}</version>
         </dependency>
 
         <!-- testing -->
