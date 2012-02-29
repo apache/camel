@@ -34,7 +34,6 @@ import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -128,11 +127,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         if (getTimeout() != null) {
             answer.setTimeout(getTimeout());
         }
-        if (isParallelProcessing() && executorService == null) {
-            String ref = this.executorServiceRef != null ? this.executorServiceRef : "RecipientList";
-            ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
-            executorService = manager.newDefaultThreadPool(this, ref);
-        }
+
+        executorService = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "RecipientList", this, isParallelProcessing());
         answer.setExecutorService(executorService);
         long timeout = getTimeout() != null ? getTimeout() : 0;
         if (timeout > 0 && !isParallelProcessing()) {
