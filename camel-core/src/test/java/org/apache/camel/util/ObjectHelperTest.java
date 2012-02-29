@@ -346,5 +346,19 @@ public class ObjectHelperTest extends TestCase {
         String code3 = ObjectHelper.getIdentityHashCode(dummyB);
         assertNotSame(code, code3);
     }
+    
+    public void testIsNaN() throws Exception {
+        assertTrue(ObjectHelper.isNaN(Float.NaN));
+        assertTrue(ObjectHelper.isNaN(Double.NaN));
+
+        assertFalse(ObjectHelper.isNaN(null));
+        assertFalse(ObjectHelper.isNaN(""));
+        assertFalse(ObjectHelper.isNaN("1.0"));
+        assertFalse(ObjectHelper.isNaN(1));
+        assertFalse(ObjectHelper.isNaN(1.5f));
+        assertFalse(ObjectHelper.isNaN(1.5d));
+        assertFalse(ObjectHelper.isNaN(false));
+        assertFalse(ObjectHelper.isNaN(true));
+    }
 
 }
