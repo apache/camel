@@ -17,32 +17,35 @@
 package org.apache.camel.test.junit4;
 
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.test.spring.StopWatchTestExecutionListener;
 import org.apache.camel.test.spring.UseAdviceWith;
+import org.apache.camel.util.StopWatch;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @UseAdviceWith
 public class CamelSpringJUnit4ClassRunnerUseAdviceWithTest extends CamelSpringJUnit4ClassRunnerPlainTest {
-
-    protected static boolean checked;
-    
-    @BeforeClass
-    public static void setup() {
-        checked = false;
-    }
     
     @Before
     public void testContextStarted() throws Exception {
-        if (!checked) {
-            assertEquals(ServiceStatus.Stopped, camelContext.getStatus());
-            camelContext.start();
-            camelContext2.start();
-            
-            Thread.sleep(2000);
-            
-            checked = true;
-        }
+        
+        assertEquals(ServiceStatus.Stopped, camelContext.getStatus());
+        assertEquals(ServiceStatus.Stopped, camelContext2.getStatus());
+        camelContext.start();
+        camelContext2.start();
+        
+        Thread.sleep(4000);
+    }
+    
+    @Test
+    public void testStopwatch() {
+        StopWatch stopWatch = StopWatchTestExecutionListener.getStopWatch();
+        
+        assertNotNull(stopWatch);
+        assertTrue(stopWatch.taken() < 4100);
     }
 }

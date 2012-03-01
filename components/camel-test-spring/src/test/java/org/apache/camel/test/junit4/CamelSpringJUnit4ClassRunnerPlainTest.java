@@ -28,12 +28,12 @@ import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.test.spring.StopWatchTestExecutionListener;
 import org.apache.camel.util.StopWatch;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.Assert.assertEquals;
@@ -41,11 +41,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+// START SNIPPET: e1
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration
-// Put here to prevent Spring context caching across tests since some tests inherit from this test and
-// therefore use the same Spring context.
-@DirtiesContext
+// Put here to prevent Spring context caching across tests and test methods since some tests inherit 
+// from this test and therefore use the same Spring context.  Also because we want to reset the
+// Camel context and mock endpoints between test methods automatically.
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class CamelSpringJUnit4ClassRunnerPlainTest {
     
     @Autowired
@@ -69,17 +71,6 @@ public class CamelSpringJUnit4ClassRunnerPlainTest {
     @Produce(uri = "direct:start2", context = "camelContext2")
     protected ProducerTemplate start2;
     
-    /**
-     * Multiple test methods operate on the same mock endpoint instances since the
-     * test methods do not use {@link DirtiesContext}.  Reset them
-     * between tests.
-     */
-    @Before
-    public void resetMocks() {
-        MockEndpoint.resetMocks(camelContext);
-        MockEndpoint.resetMocks(camelContext2);
-    }
-
     @Test
     public void testPositive() throws Exception {
         assertEquals(ServiceStatus.Started, camelContext.getStatus());
@@ -132,3 +123,4 @@ public class CamelSpringJUnit4ClassRunnerPlainTest {
         assertTrue(camelContext2.isLazyLoadTypeConverters());
     }
 }
+// END SNIPPET: e1
