@@ -21,9 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jms.ConnectionFactory;
 
-import junit.framework.AssertionFailedError;
-
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -66,7 +63,9 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
 
         });
 
-        latch.await(2, TimeUnit.SECONDS);
+        // make sure that the latch reached zero and that timeout did not elapse
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
+
         errors.assertIsSatisfied();
     }
 
@@ -77,12 +76,11 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
         // add "testheader" to in filter set
-        JmsComponent component = (JmsComponent)camelContext.getComponent(componentName);
+        JmsComponent component = camelContext.getComponent(componentName, JmsComponent.class);
         ((DefaultHeaderFilterStrategy)component.getHeaderFilterStrategy()).getInFilter().add("testheader");
         // add "anotherheader" to out filter set
         ((DefaultHeaderFilterStrategy)component.getHeaderFilterStrategy()).getOutFilter().add("anotherheader");
-        // add a regular expression pattern filter
-        // notice that dots are encoded to underscores in jms headers
+        // add a regular expression pattern filter, notice that dots are encoded to '_DOT_' in jms headers
         ((DefaultHeaderFilterStrategy)component.getHeaderFilterStrategy()).setInFilterPattern(IN_FILTER_PATTERN);
 
         return camelContext;
@@ -93,7 +91,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
 
-                onException(AssertionFailedError.class).maximumRedeliveries(1).to(assertionReceiver);
+                onException(AssertionError.class).to(assertionReceiver);
 
                 from(testQueueEndpointA).process(new OutHeaderChecker()).to(testQueueEndpointB);
                 from(testQueueEndpointB).process(new InHeaderChecker());
@@ -104,7 +102,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
     class OutHeaderChecker implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            JmsMessage message = (JmsMessage) exchange.getIn();
+            JmsMessage message = exchange.getIn(JmsMessage.class);
 
             // testheader not filtered out until it is copied back to camel
             assertEquals(1020, message.getJmsMessage().getObjectProperty("testheader"));
@@ -112,11 +110,11 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
             // anotherheader has been filtered out
             assertNull(message.getJmsMessage().getObjectProperty("anotherheader"));
 
-            // notice dots are replaced by underscores when it is copied to jms message properties
-            assertEquals(10000, message.getJmsMessage().getObjectProperty("org_apache_camel_jms"));
+            // notice dots are replaced by '_DOT_' when it is copied to the jms message properties
+            assertEquals(10000, message.getJmsMessage().getObjectProperty("org_DOT_apache_DOT_camel_DOT_jms"));
 
-            // like testheader, org.apache.camel.test.jms will be filtered "in" filter
-            assertEquals(20000, message.getJmsMessage().getObjectProperty("org_apache_camel_test_jms"));
+            // like testheader, org.apache.camel.test.jms will be filtered by the "in" filter
+            assertEquals(20000, message.getJmsMessage().getObjectProperty("org_DOT_apache_DOT_camel_DOT_test_DOT_jms"));
 
             latch.countDown();
         }
@@ -137,7 +135,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
             assertEquals(10000, exchange.getIn().getHeader("org.apache.camel.jms"));
 
             // filtered out by "in" filter
-            assertNull(exchange.getIn().getHeader("org.apache.camel.test.jms"));
+            assertNull(exchange.getIn().getHeader("org_DOT_apache_DOT_camel_DOT_test_DOT_jms"));
 
             latch.countDown();
         }
