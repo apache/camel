@@ -2411,7 +2411,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type bean(Class<?> beanType) {
         BeanDefinition answer = new BeanDefinition();
-        answer.setBeanType(beanType.getName());
+        answer.setBeanType(beanType);
         addOutput(answer);
         return (Type) this;
     }
@@ -2427,7 +2427,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type bean(Class<?> beanType, String method) {
         BeanDefinition answer = new BeanDefinition();
-        answer.setBeanType(beanType.getName());
+        answer.setBeanType(beanType);
         answer.setMethod(method);
         addOutput(answer);
         return (Type) this;

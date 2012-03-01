@@ -30,7 +30,6 @@ import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.ConstantTypeBeanHolder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.component.bean.RegistryBean;
-import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -49,6 +48,8 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     private String method;
     @XmlAttribute
     private String beanType;
+    @XmlTransient
+    private Class<?> beanClass;
     @XmlTransient
     private Object bean;
 
@@ -78,6 +79,8 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             return "ref:" + ref + methodText;
         } else if (bean != null) {
             return bean.toString();
+        } else if (beanClass != null) {
+            return beanClass.getName();
         } else if (beanType != null) {
             return beanType;
         } else {
@@ -99,7 +102,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return ref;
     }
 
-    @Required
     public void setRef(String ref) {
         this.ref = ref;
     }
@@ -124,6 +126,10 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         this.beanType = beanType;
     }
 
+    public void setBeanType(Class<?> beanType) {
+        this.beanClass = beanType;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
     /**
@@ -131,7 +137,9 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
      *
      * @param ref  the bean's id in the registry
      * @return the builder
+     * @deprecated not in use, will be removed in next Camel release
      */
+    @Deprecated
     public BeanDefinition ref(String ref) {
         setRef(ref);
         return this;
@@ -142,7 +150,9 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
      *
      * @param method  the bean's method name which wants camel to call
      * @return the builder
+     * @deprecated not in use, will be removed in next Camel release
      */
+    @Deprecated
     public BeanDefinition method(String method) {
         setMethod(method);
         return this;
@@ -153,7 +163,9 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
      *
      * @param bean the instance of the bean
      * @return the builder
+     * @deprecated not in use, will be removed in next Camel release
      */
+    @Deprecated
     public BeanDefinition bean(Object bean) {
         setBean(bean);
         return this;
@@ -164,9 +176,11 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
      *
      * @param beanType the Class of the bean
      * @return the builder
+     * @deprecated not in use, will be removed in next Camel release
      */
+    @Deprecated
     public BeanDefinition beanType(Class<?> beanType) {
-        setBean(beanType);
+        setBeanType(beanType);
         return this;
     }
 
@@ -183,12 +197,22 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             answer = new BeanProcessor(beanHolder);
         } else {
             if (bean == null) {
-                ObjectHelper.notNull(beanType, "bean, ref or beanType", this);
-                try {
-                    clazz = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(beanType);
-                } catch (ClassNotFoundException e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                
+                if (beanType == null && beanClass == null) {
+                    throw new IllegalArgumentException("bean, ref or beanType must be provided");
                 }
+
+                // the clazz is either from beanType or beanClass
+                if (beanType != null) {
+                    try {
+                        clazz = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(beanType);
+                    } catch (ClassNotFoundException e) {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                    }
+                } else {
+                    clazz = beanClass;
+                }
+
                 // create a bean if there is a default public no-arg constructor
                 if (ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
                     bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), clazz);
