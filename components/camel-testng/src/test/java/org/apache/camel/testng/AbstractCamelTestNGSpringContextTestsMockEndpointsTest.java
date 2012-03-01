@@ -32,8 +32,10 @@ public class AbstractCamelTestNGSpringContextTestsMockEndpointsTest
     @Test
     @Override
     public void testPositive() throws Exception {
-        mockLog.expectedBodiesReceived("Hell David");
+        mockLog.expectedBodiesReceived("Hello David");
         
         super.testPositive();
+        
+        mockLog.assertIsSatisfied();
     }
 }

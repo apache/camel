@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * Indicates if certain route builder classes should be excluded from discovery.  
  * Initializes a {@link org.apache.camel.spi.PackageScanClassResolver} to exclude a set of given
  * classes from being resolved. Typically this is used at test time to exclude certain routes,
- * which might otherwise be just noisy, from being discovered and initialized.
+ * which might otherwise be noisy, from being discovered and initialized.
  */
 @Documented
 @Inherited
