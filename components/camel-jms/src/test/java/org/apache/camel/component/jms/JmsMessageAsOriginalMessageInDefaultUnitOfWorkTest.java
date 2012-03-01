@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -59,8 +57,7 @@ public class JmsMessageAsOriginalMessageInDefaultUnitOfWorkTest extends CamelTes
         CamelContext camelContext = super.createCamelContext();
 
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
-        camelContext.addComponent("jms", jmsComponentAutoAcknowledge(connectionFactory));
-
+        camelContext.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory)); 
         return camelContext;
     }
 
