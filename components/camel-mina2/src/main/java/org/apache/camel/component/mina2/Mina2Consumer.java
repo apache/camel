@@ -40,6 +40,7 @@ import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactor
 import org.apache.mina.filter.codec.textline.LineDelimiter;
 import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioDatagramAcceptor;
 import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
@@ -60,7 +61,7 @@ public class Mina2Consumer extends DefaultConsumer {
     private IoAcceptor acceptor;
     private Mina2Configuration configuration;
 
-    public Mina2Consumer(final Mina2Endpoint endpoint, Processor processor) {
+    public Mina2Consumer(final Mina2Endpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.configuration = endpoint.getConfiguration();
         //
@@ -111,9 +112,13 @@ public class Mina2Consumer extends DefaultConsumer {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         }
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
+        if (configuration.getSslContextParameters() != null) {
+            LOG.warn("Using vm protocol"
+                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+        }
     }
 
-    protected void createSocketEndpoint(String uri, Mina2Configuration configuration) {
+    protected void createSocketEndpoint(String uri, Mina2Configuration configuration) throws Exception {
         LOG.debug("createSocketEndpoint");
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
@@ -133,6 +138,11 @@ public class Mina2Consumer extends DefaultConsumer {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         }
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
+        if (configuration.getSslContextParameters() != null) {
+            SslFilter filter = new SslFilter(configuration.getSslContextParameters().createSSLContext(), configuration.isAutoStartTls());
+            filter.setUseClientMode(true);
+            acceptor.getFilterChain().addFirst("sslFilter", filter);
+        }
     }
 
     protected void configureCodecFactory(String type, IoService service, Mina2Configuration configuration) {
@@ -186,6 +196,10 @@ public class Mina2Consumer extends DefaultConsumer {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         }
         appendIoFiltersToChain(filters, acceptor.getFilterChain());
+        if (configuration.getSslContextParameters() != null) {
+            LOG.warn("Using datagram protocol, " + configuration.getProtocol()
+                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+        }
     }
 
     /**

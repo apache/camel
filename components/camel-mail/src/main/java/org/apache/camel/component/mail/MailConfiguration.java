@@ -22,8 +22,10 @@ import java.util.Map;
 import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.Session;
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Represents the configuration data for communicating over email
@@ -59,6 +61,7 @@ public class MailConfiguration implements Cloneable {
     private boolean useInlineAttachments;
     private boolean ignoreUnsupportedCharset;
     private boolean disconnect;
+    private SSLContextParameters sslContextParameters;
 
     public MailConfiguration() {
     }
@@ -170,6 +173,15 @@ public class MailConfiguration implements Cloneable {
             properties.put("javax.net.debug", "all");
         }
 
+        if (sslContextParameters != null && isSecureProtocol()) {
+            SSLContext sslContext;
+            try {
+                sslContext = sslContextParameters.createSSLContext();
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Error initializing SSLContext.", e);
+            }
+            properties.put("mail." + protocol + ".socketFactory", sslContext.getSocketFactory());
+        }
         if (dummyTrustManager && isSecureProtocol()) {
             // set the custom SSL properties
             properties.put("mail." + protocol + ".socketFactory.class", "org.apache.camel.component.mail.security.DummySSLSocketFactory");
@@ -452,5 +464,13 @@ public class MailConfiguration implements Cloneable {
 
     public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
+    }
+    
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 }

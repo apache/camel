@@ -47,6 +47,7 @@ import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactor
 import org.apache.mina.filter.codec.textline.LineDelimiter;
 import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioDatagramConnector;
 import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
@@ -74,7 +75,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     private Mina2Configuration configuration;
     private IoSessionConfig connectorConfig;
 
-    public Mina2Producer(Mina2Endpoint endpoint) {
+    public Mina2Producer(Mina2Endpoint endpoint) throws Exception {
         super(endpoint);
         configuration = endpoint.getConfiguration();
         this.lazySessionCreation = configuration.isLazySessionCreation();
@@ -259,6 +260,10 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             connector.getFilterChain().addLast("logger", new LoggingFilter());
         }
         appendIoFiltersToChain(filters, connector.getFilterChain());
+        if (configuration.getSslContextParameters() != null) {
+            LOG.warn("Using vm protocol"
+                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+        }
         configureCodecFactory("Mina2Producer", connector);
 
         // set sync or async mode after endpoint is created
@@ -269,7 +274,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         }
     }
 
-    protected void createSocketEndpoint(String uri) {
+    protected void createSocketEndpoint(String uri) throws Exception {
         LOG.debug("createSocketEndpoint");
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
@@ -288,6 +293,9 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             connector.getFilterChain().addLast("logger", new LoggingFilter());
         }
         appendIoFiltersToChain(filters, connector.getFilterChain());
+        if (configuration.getSslContextParameters() != null) {
+            connector.getFilterChain().addFirst("sslFilter", new SslFilter(configuration.getSslContextParameters().createSSLContext(), configuration.isAutoStartTls()));
+        }
         configureCodecFactory("Mina2Producer", connector);
         // set connect timeout to mina in seconds
         connector.setConnectTimeoutMillis(timeout);
@@ -354,6 +362,10 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             connector.getFilterChain().addLast("logger", new LoggingFilter());
         }
         appendIoFiltersToChain(filters, connector.getFilterChain());
+        if (configuration.getSslContextParameters() != null) {
+            LOG.warn("Using datagram protocol, " + configuration.getProtocol()
+                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+        }
         configureDataGramCodecFactory("Mina2Producer", connector, configuration);
         // set connect timeout to mina in seconds
         connector.setConnectTimeoutMillis(timeout);

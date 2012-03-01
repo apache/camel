@@ -16,11 +16,20 @@
  */
 package org.apache.camel.component.mina2;
 
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.jsse.ClientAuthentication;
+import org.apache.camel.util.jsse.KeyManagersParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.SSLContextServerParameters;
+import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.BeforeClass;
 
 public class BaseMina2Test extends CamelTestSupport {
+    
+    protected static final String KEY_STORE_PASSWORD = "changeit";
 
     private static volatile int port;
 
@@ -35,5 +44,45 @@ public class BaseMina2Test extends CamelTestSupport {
 
     protected int getPort() {
         return port;
+    }
+    
+    protected boolean isUseSslContext() {
+        return false;
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry reg = super.createRegistry();
+        
+        if (isUseSslContext()) {
+            addSslContextParametersToRegistry(reg);
+        }
+        return reg;
+    }
+    
+    protected void addSslContextParametersToRegistry(JndiRegistry registry) {
+        KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
+        ksp.setPassword(KEY_STORE_PASSWORD);
+
+        KeyManagersParameters kmp = new KeyManagersParameters();
+        kmp.setKeyPassword(KEY_STORE_PASSWORD);
+        kmp.setKeyStore(ksp);
+
+        TrustManagersParameters tmp = new TrustManagersParameters();
+        tmp.setKeyStore(ksp);
+
+        // NOTE: Needed since the client uses a loose trust configuration when no ssl context
+        // is provided.  We turn on client-auth to ensure that the tests onlt pass when
+        // the client is configured explicitly.
+        SSLContextServerParameters scsp = new SSLContextServerParameters();
+        scsp.setClientAuthentication(ClientAuthentication.REQUIRE.name());
+        
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setKeyManagers(kmp);
+        sslContextParameters.setTrustManagers(tmp);
+        sslContextParameters.setServerParameters(scsp);
+
+        registry.bind("sslContextParameters", sslContextParameters);
     }
 }
