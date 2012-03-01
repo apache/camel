@@ -120,9 +120,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/camel/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/camel/trunk</developerConnection>
-    <url>http://svn.apache.org/viewvc/camel/trunk/</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/camel/branches/camel-2.9.x</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/camel/branches/camel-2.9.x</developerConnection>
+    <url>http://svn.apache.org/viewvc/camel/branches/camel-2.9.x/</url>
   </scm>
 
   <build>
