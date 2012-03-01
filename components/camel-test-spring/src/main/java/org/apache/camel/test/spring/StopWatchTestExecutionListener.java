@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.spring;
 
-import org.apache.camel.test.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;

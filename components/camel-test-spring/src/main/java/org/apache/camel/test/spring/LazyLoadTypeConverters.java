@@ -26,6 +26,8 @@ import java.lang.annotation.Target;
 /**
  * Indicates if the {@code CamelContext}s that are bootstrapped during the test through the use of Spring Test
  * loaded application contexts should use lazy loading of type converters.
+ * 
+ * @deprecated See <a href="https://issues.apache.org/jira/browse/CAMEL-5011">CAMEL-5011</a> for more details.
  */
 @Documented
 @Inherited
@@ -36,7 +38,7 @@ public @interface LazyLoadTypeConverters {
     
     /**
      * Whether the test annotated with this annotation should be run with lazy type converter loading in Camel.
-     * Defaults to {@code true}. 
+     * Defaults to {@code false}. 
      */
     boolean value() default false;
 }

@@ -118,6 +118,7 @@ public class AbstractCamelTestNGSpringContextTestsPlainTest
         assertNull(camelContext2.getDebugger());
     }
     
+    @SuppressWarnings("deprecation")
     @Test
     public void testLazyLoadTypeConverters() {
         assertTrue(camelContext.isLazyLoadTypeConverters());

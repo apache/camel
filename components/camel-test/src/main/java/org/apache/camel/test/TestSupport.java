@@ -47,7 +47,10 @@ import org.slf4j.LoggerFactory;
  * A bunch of useful testing methods
  *
  * @version 
+ * @deprecated Support for JUnit 3.x is slated for removal in Camel 3.x. You are encouraged to move to
+ *             JUnit 4.x based tests.  See {@link org.apache.camel.test.junit4.TestSupport}.
  */
+@Deprecated
 public abstract class TestSupport extends TestCase {
     protected static final String LS = System.getProperty("line.separator");
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);

@@ -25,7 +25,10 @@ import org.apache.camel.impl.DefaultExchange;
  * a populated {@link Exchange}
  *
  * @version 
+ * @deprecated Support for JUnit 3.x is slated for removal in Camel 3.x. You are encouraged to move to
+ *             JUnit 4.x based tests.  See {@link org.apache.camel.test.junit4.ExchangeTestSupport}.
  */
+@Deprecated
 public abstract class ExchangeTestSupport extends CamelTestSupport {
     protected Exchange exchange;
 

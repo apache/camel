@@ -30,8 +30,11 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
 /**
- * @version 
+ * @deprecated Support for JUnit 3.x is slated for removal in Camel 3.x. You are encouraged to move to
+ *             JUnit 4.x based tests.  See {@link org.apache.camel.test.junit4.CamelSpringTestSupport} or
+ *             {@link org.apache.camel.test.junit4.CamelSpringJUnit4ClassRunner}.
  */
+@Deprecated
 public abstract class CamelSpringTestSupport extends CamelTestSupport {
     protected AbstractApplicationContext applicationContext;
     protected abstract AbstractApplicationContext createApplicationContext();

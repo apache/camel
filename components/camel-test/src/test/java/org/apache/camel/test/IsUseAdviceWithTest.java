@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  *
  */
+@SuppressWarnings("deprecation")
 public class IsUseAdviceWithTest extends CamelTestSupport {
 
     public void testIsUseAdviceWith() throws Exception {

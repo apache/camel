@@ -21,6 +21,7 @@ import org.apache.camel.test.spring.LazyLoadTypeConverters;
 import org.testng.annotations.Test;
 import static org.testng.Assert.assertFalse;
 
+@SuppressWarnings("deprecation")
 @LazyLoadTypeConverters(false)
 public class AbstractCamelTestNGSpringContextTestsLazyLoadTypeConvertersTest 
         extends AbstractCamelTestNGSpringContextTestsPlainTest {

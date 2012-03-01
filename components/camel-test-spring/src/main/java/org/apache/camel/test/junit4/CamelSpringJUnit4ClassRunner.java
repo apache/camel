@@ -19,7 +19,6 @@ package org.apache.camel.test.junit4;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.apache.camel.test.CamelSpringTestSupport;
 import org.apache.camel.test.spring.CamelSpringTestContextLoader;
 import org.apache.camel.test.spring.CamelSpringTestContextLoaderTestExecutionListener;
 import org.apache.camel.test.spring.DisableJmxTestExecutionListener;
